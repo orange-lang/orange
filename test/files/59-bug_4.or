@@ -1,0 +1,7 @@
+def foo(n)
+	return n + 1
+end 
+
+extern int32 printf(char *s, ...)
+printf("%d\n", foo(5))
+return 0

@@ -65,10 +65,22 @@ void FuncCallExpr::resolve() {
 			}
 		}
 
+		for (int i = fstmt->args->size(); i < args->size(); i++) {
+			args->at(i)->resolve();
+		}
+
 		extern Block *globalBlock;
 		std::cout << globalBlock->string() << std::endl;
 
 		fstmt->resolve();
+	} else if (o->reference->getClass() == "ExternFunction") {
+		// Resolve arguments in external function calls.
+
+		for (int i = 0; i < args->size(); i++) {
+			DEBUG_MSG("RESOLVE ARGUMENT " << args->at(i)->string());
+			args->at(i)->resolve();
+		}
+
 	}
 
 }

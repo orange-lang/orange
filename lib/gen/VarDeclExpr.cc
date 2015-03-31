@@ -24,6 +24,16 @@ Value* VarDeclExpr::Codegen() {
 	return v; 
 }
 
+void VarDeclExpr::resolve() {
+	if (resolved)
+		return;
+
+	if (value)
+		value->resolve();
+
+	resolved = true; 
+}
+
 VarDeclExpr::VarDeclExpr(AnyType *type, std::string *name, Expression *value) {
 	DEBUG_MSG("STARTING VarDeclExpr");
 

@@ -1,0 +1,5 @@
+def foo(n)
+	return n + 1
+end 
+
+return 0

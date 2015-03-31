@@ -36,16 +36,6 @@ void BinOpExpr::resolve() {
 	LHS->resolve();
 	RHS->resolve();
 
-	resolved = true;
-}
-
-BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
-	DEBUG_MSG("STARTING BinOpExpr");
-
-	this->LHS = LHS;
-	this->op = op;
-	this->RHS = RHS;
-
 	if (op == "=" && LHS->getClass() == "VarExpr") {
 		VarExpr *L = (VarExpr *)LHS;
 
@@ -61,6 +51,16 @@ BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 		CG::Symtab->create(L->name);
 		CG::Symtab->objs[L->name]->setType(RHS->getType()->getPointerTo());
 	}
+
+	resolved = true;
+}
+
+BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
+	DEBUG_MSG("STARTING BinOpExpr");
+
+	this->LHS = LHS;
+	this->op = op;
+	this->RHS = RHS;
 
 	DEBUG_MSG("COMPLETED BinOpExpr");
 }
