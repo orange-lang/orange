@@ -1,13 +1,13 @@
-[bits 64]
-[section .text]
-[global _start]
-[extern @main]
-_start:
-	push rbp
-	call @main
-	pop rbp
-	mov rdi, rax
-	
-	mov rax, 60
-	syscall
-	jmp $
+.globl start 
+
+.text 
+start:
+	pushq %rbp 
+	callq $main 
+	popq %rbp 
+	movq %rax, %rdi 
+
+	movq $60, %rax 
+	syscall 
+.exit:
+	jmp .exit 

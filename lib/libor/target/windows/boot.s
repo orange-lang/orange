@@ -1,13 +1,12 @@
-[bits 64]
-[section .text]
-[global _start]
-[extern __INTERNAL_main]
-[extern ExitProcess]
-_start:
-	push rbp
-	call __INTERNAL_main
-	pop rbp
-	
-	mov rcx, rax
-	call ExitProcess
-	jmp $
+.globl start 
+
+.text 
+start:
+	pushq %rbp 
+	callq __INTERNAL_main
+	popq %rbp 
+
+	mov %rax, %rcx 
+	callq ExitProcess
+.exit:
+	jmp .exit 
