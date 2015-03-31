@@ -9,12 +9,17 @@ bool isCmpOperator(std::string op) {
 		op == "<=" || op == "==" || op == "!=";
 }
 
+bool isAssignOperator(std::string op) {
+	return op == "=" || op == "+=" || op == "-=" || 
+		op == "*=" || op == "/=";
+}
+
 bool BinOpExpr::isSigned() {
 	if (isCmpOperator(op)) {
 		return false; 
 	}
 
-	std::cout << LHS->string() << " " << op << " " << RHS->string();
+	// std::cout << LHS->string() << " " << op << " " << RHS->string();
 
 	return LHS->isSigned() && RHS->isSigned();
 }
@@ -42,7 +47,14 @@ Type *BinOpExpr::getType() {
 
 	if (isCmpOperator(op)) {
 		return Type::getInt1Ty(getGlobalContext());
-	} 
+	} else if (isAssignOperator(op)) {
+		Type *t = LHS->getType(); 
+		if (t == nullptr) {
+			return RHS->getType();
+		}
+
+		return t; 
+	}
 
 	return GetFittingType(LHS->getType(), RHS->getType());
 }
@@ -188,7 +200,8 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	else if (op == "=") {
-		return CG::Builder.CreateStore(R, L);
+		Value *v = CG::Builder.CreateStore(R, L);
+		return CG::Builder.CreateLoad(L);
 	} 
 	else if (op == "<") {
 		Value *v = nullptr;
