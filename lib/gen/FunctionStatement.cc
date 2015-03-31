@@ -129,7 +129,7 @@ Value* FunctionStatement::Codegen() {
 		}
 
 		std::string className = body->statements.back()->getClass();
-		if (returnsPtr(className)) {
+		if (returnsPtr(className) && finalV->getType()->isPointerTy()) {
 			DEBUG_MSG("Block: LOADING PTR");
 			finalV = CG::Builder.CreateLoad(finalV);
 		}

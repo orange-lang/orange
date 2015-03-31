@@ -3,7 +3,7 @@
 typedef CodeGenerator CG;
 
 bool returnsPtr(std::string className) {
-	return className == "VarExpr" || className == "IfStatement" || className == "DerefId";
+	return className == "VarExpr" || className == "IfStatement" || className == "DerefId" || className == "VarDeclExpr";
 }
 
 

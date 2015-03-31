@@ -21,6 +21,7 @@ Value* VarDeclExpr::Codegen() {
 
 	CG::Symtab->objs[name]->setValue(v);
 
+	DEBUG_MSG("COMPLETED VarDeclExpr");
 	return v; 
 }
 
