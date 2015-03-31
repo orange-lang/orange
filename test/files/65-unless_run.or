@@ -1,0 +1,7 @@
+a = 1
+
+unless 5 < 3 
+	a = 0
+end
+
+return a

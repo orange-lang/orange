@@ -86,7 +86,11 @@ Value* IfStatement::Codegen() {
 
 			// if it's true, jump to the created BB
 			// if it's false, jump forward to the next conditional check.
-			CG::Builder.CreateCondBr(cond, BBs[BBi], BBs[BBi+1]);
+
+			if (b->inverted == true) 
+				CG::Builder.CreateCondBr(cond, BBs[BBi+1], BBs[BBi]);
+			else 
+				CG::Builder.CreateCondBr(cond, BBs[BBi], BBs[BBi+1]);				
 
 			continue; 
 		}		

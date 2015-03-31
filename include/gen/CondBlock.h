@@ -4,12 +4,12 @@
 
 class CondBlock : public Block {
 public:
-	Value* Codegen();
-
 	Expression *condition; 
 
-	CondBlock(Expression *cond) : condition(cond) { } 
-	CondBlock(Expression *cond, Block *block);
+	int inverted = false;
+
+	CondBlock(Expression *cond, int inverted = false) : condition(cond), inverted(inverted) { } 
+	CondBlock(Expression *cond, Block *block, int inverted = false);
 
 	~CondBlock();
 };

@@ -1,7 +1,6 @@
 #include "gen/CondBlock.h"
 
-
-CondBlock::CondBlock(Expression *cond, Block *block) {
+CondBlock::CondBlock(Expression *cond, Block *block, int inverted) {
 	condition = cond; 
 
 	// Copy block 
@@ -10,6 +9,7 @@ CondBlock::CondBlock(Expression *cond, Block *block) {
 	}
 
 	this->symtab = block->symtab; 
+	this->inverted = inverted;
 }
 
 CondBlock::~CondBlock() {

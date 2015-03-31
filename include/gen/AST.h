@@ -116,5 +116,7 @@ public:
 
 bool returnsPtr(std::string className);
 
+Value *replace(Value *del, Value *v);
+
 
 #endif

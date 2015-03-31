@@ -57,6 +57,7 @@
 "end"										return END; 
 "if"										return IF;
 "when"									return WHEN;
+"unless"								return UNLESS;
 "class"									return CLASS; 
 "using"									return USING; 
 "public"								return PUBLIC; 

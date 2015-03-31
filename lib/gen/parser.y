@@ -39,8 +39,9 @@
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
+%token UNLESS
 
-%type <ifstmt> if_statement opt_else inline_if
+%type <ifstmt> if_statement opt_else inline_if inline_unless unless 
 %type <block> statements opt_statements
 %type <stmt> statement extern return_stmt expr_or_ret
 %type <expr> expression primary VALUE opt_expr declaration opt_eq
@@ -85,6 +86,8 @@ statement
 	|	extern term { $$ = (Statement *)$1; }
 	|	expression term { $$ = (Statement *)$1; } 
 	| inline_if term { $$ = $1; }
+	| inline_unless term { $$ = $1; }
+	| unless term { $$ = $1; }
 	|	declaration term { $$ = (Statement *)$1; }
 	| return_stmt term { $$ = $1; }
 	| term { $$ = nullptr; }
@@ -92,6 +95,22 @@ statement
 
 return_stmt
 	: RETURN opt_expr { $$ = (Statement *)(new ReturnExpr($2)); }
+
+inline_unless 
+	: expr_or_ret UNLESS expression
+		{
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+
+			CondBlock *b = new CondBlock($3, true); 
+			b->statements.push_back($1); 
+			b->symtab = CG::Symtabs.top(); 
+
+			CG::Symtabs.pop();
+
+			$$ = new IfStatement;
+			$$->blocks.push_back(b);
+		}
+	;
 
 inline_if
 	:	expr_or_ret IF expression
@@ -126,6 +145,20 @@ extern
 	:	EXTERN type TYPE_ID OPEN_PAREN opt_args CLOSE_PAREN 
 		{ $$ = new ExternFunction($2, *$3, $5); }
 	;
+
+unless 
+	: UNLESS expression term opt_statements END 
+		{
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+
+			CondBlock *b = new CondBlock($2, $4, true); 
+			b->symtab = CG::Symtabs.top(); 
+
+			CG::Symtabs.pop();
+
+			$$ = new IfStatement;
+			$$->blocks.insert($$->blocks.begin(), b);
+		}
 
 function
 	:	DEF opt_id term opt_statements END 

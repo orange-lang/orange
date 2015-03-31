@@ -2,6 +2,12 @@
 #include "gen/generator.h"
 typedef CodeGenerator CG;
 
+Value *replace(Value *del, Value *v) {
+	delete del; 
+	return v; 
+}
+
+
 bool returnsPtr(std::string className) {
 	return className == "VarExpr" || className == "IfStatement" || className == "DerefId" || className == "VarDeclExpr";
 }
