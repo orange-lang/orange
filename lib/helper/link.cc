@@ -52,6 +52,10 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+
 	std::string optionsStr = "";
 	for (auto s : coptions) {
 		if (s == nullptr) continue;
@@ -59,14 +63,11 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 		optionsStr += " ";
 	}
 
-	//CreateProcess(linker, (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
-	//WaitForSingleObject(pi.hProcess, INFINITE);
+	CreateProcess(linker, (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
+	WaitForSingleObject(pi.hProcess, INFINITE);
 
-	//CloseHandle(pi.hProcess);
-	//CloseHandle(pi.hThread);
-
-	_execvp(linker, (char **)&coptions[0]);
-
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
 #endif 
 }
 
