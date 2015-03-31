@@ -60,6 +60,7 @@
 
 "char"									SAVESTR(); return TYPE_CHAR; 
 "int"										SAVESTR(); return TYPE_INT; 
+"uint"									SAVESTR(); return TYPE_UINT; 
 "float"									SAVESTR(); return TYPE_FLOAT; 
 "double"								SAVESTR(); return TYPE_DOUBLE; 
 "int8"									SAVESTR(); return TYPE_INT8; 

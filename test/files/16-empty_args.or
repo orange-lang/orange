@@ -1,7 +1,7 @@
 extern int32 puts(char* s)
 
 def foo()
-	puts("foo")
+	puts("hey")
 end
 
 foo()

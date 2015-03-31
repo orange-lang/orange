@@ -30,7 +30,7 @@
 
 %token DEF END TYPE_ID OPEN_PAREN CLOSE_PAREN TYPE COMMA
 %token TIMES NUMBER DIVIDE MINUS PLUS NEWLINE SEMICOLON
-%token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
+%token TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %token TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR
 %token RETURN CLASS USING PUBLIC SHARED PRIVATE OPEN_BRACE CLOSE_BRACE 
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
@@ -43,8 +43,8 @@
 %type <fstmt> function opt_id 
 %type <argexpr> opt_arg
 %type <arglist> opt_args arg_list opt_parens
-%type <exprlist> expr_list
-%type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
+%type <exprlist> expr_list optexprlist
+%type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR basic_type STRING
 %type <anytype> type
 %type <number> var_ptrs
@@ -104,7 +104,7 @@ type 				: 		basic_type var_ptrs { $$ = new AnyType($1, $2); }
 var_ptrs 		: 		var_ptrs TIMES { $$ = $1 + 1; }
 						|			{ $$ = 0; };
 
-basic_type  :			TYPE_INT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
+basic_type  :			TYPE_INT | TYPE_UINT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
 						|			TYPE_INT32 | TYPE_INT64 | TYPE_UINT8 | TYPE_UINT16 | TYPE_UINT32 | TYPE_UINT64 | TYPE_CHAR				
 
 expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, "=", $3); }
@@ -120,10 +120,13 @@ expr3 			:			expr3 TIMES primary { $$ = new BinOpExpr($1, "*", $3); }
 
 primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; } 
 						| 		VALUE { $$ = $1; }
-						| 		TYPE_ID OPEN_PAREN expr_list CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
+						| 		TYPE_ID OPEN_PAREN optexprlist CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
 						|			TYPE_ID { $$ = new VarExpr(*$1); }
 						|			STRING { $$ = new StrVal(*$1); }
 						;
+
+optexprlist :			expr_list { $$ = $1; }
+						|			{ $$ = new ExprList(); }
 
 expr_list		:			expr_list COMMA expression { $1->push_back($3); }
 						|			expression { $$ = new ExprList(); $$->push_back($1); }

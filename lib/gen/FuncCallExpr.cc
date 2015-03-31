@@ -65,5 +65,6 @@ Value* FuncCallExpr::Codegen() {
 		}
 	}
 
-	return CG::Builder.CreateCall(o->getValue(), Args, name);
+	Value *v = CG::Builder.CreateCall(o->getValue(), Args);
+	return v;
 }

@@ -1,2 +1,3 @@
 extern int32 puts(char *s)
 puts("hello!")
+return 0

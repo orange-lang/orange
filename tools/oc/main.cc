@@ -7,6 +7,7 @@
 #include <gen/generator.h>
 #include <helper/args.h>
 #include <llvm/Support/CommandLine.h>
+#include <gen/Block.h>
 
 extern FILE* yyin;
 extern int yylex();
@@ -132,6 +133,10 @@ int main(int argc, char **argv) {
 	if (globalBlock == nullptr) {
 		std::cerr << "fatal: some parsing issue occured...\n";
 		return 1;
+	}
+
+	if (CodeGenerator::verboseOutput) {
+		std::cout << globalBlock->string() << std::endl;
 	}
 
 	CodeGenerator::init();

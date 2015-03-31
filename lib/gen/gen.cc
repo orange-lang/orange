@@ -70,7 +70,7 @@ void CodeGenerator::init() {
 	OurFPM->add(createDeadStoreEliminationPass());
 	OurFPM->add(createCodeGenPreparePass());
 	OurFPM->add(createUnifyFunctionExitNodesPass());
-	OurFPM->add(createVerifierPass(true));
+	OurFPM->add(createVerifierPass(false));
 	OurFPM->doInitialization();
 	
 	TheFPM = OurFPM;
