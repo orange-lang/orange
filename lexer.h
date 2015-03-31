@@ -4,11 +4,22 @@
 #include <vector>
 #include <string>
 
+const char LexemeMap[][10] = {
+	"id", "def", "end", "class", "using", "public",
+	"private", "shared", "int", "float", "double", "int8",
+	"uint8", "int16", "uint16", "int32", "uint32", "int64",
+	"uint64", "(", ")", "{", "}", "[", "]", "+", "-", "*",
+	"/", "%", "->", "<-", ".", "++", "--", "=", "==", "+=",
+	"-=", "*=", "/=", "%=", ";", "<", "<=", ">", ">=", "f", 
+	"d", "i8", "u8", "i16", "u16", "i32", "u32", "i64", "u64"
+};
+
 typedef enum LexemeType {
 	ID,												// [a-zA-Z][0-9a-zA-Z_]*
 
 	// Keywords 
 	KEYWORD_DEF,						
+	KEYWORD_RETURN,
 	KEYWORD_END,
 	KEYWORD_CLASS,
 	KEYWORD_USING,

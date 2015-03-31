@@ -26,10 +26,15 @@ int main(int argc, char **argv) {
 
 	std::string fileContents = getFileContents(argv[1]);
 	std::vector<Lexeme*> lexemes = Lex(fileContents);
-	PrintLexemes(lexemes);
+	// PrintLexemes(lexemes);
 
 	Parser parser(lexemes);
-	parser.Parse(); 
-	
+	OBlock *b = parser.Parse(); 
+
+	std::cout << b->string() << std::endl;
+	b->Codegen();
+
+	parser.Dump();
+
 	return 0;
 }

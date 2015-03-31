@@ -65,8 +65,6 @@ ODeclaraions *Parser::parseDeclaration() {
 		var->name = getLexeme()->value.string; 
 		lookahead++;
 
-		std::cout << "Creating variable " << var->name << std::endl;
-
 		if (LexemeIs(getLexeme(), ASSIGN)) {
 			lookahead++;
 			var->value = parseExpression();
@@ -101,6 +99,29 @@ OExpression *Parser::parsePrimary() {
 		OID *id = new OID;
 		id->name = getLexeme()->value.string;
 		lookahead++;
+
+		if (LexemeIs(getLexeme(), OPEN_PAREN)) {
+			lookahead++;
+
+			OFuncCall *funcC = new OFuncCall;
+			funcC->name = id->name;
+
+			while (LexemeIs(getLexeme(), CLOSE_PAREN) == false) {
+				if (LexemeIs(getLexeme(), COMMA)) {
+					lookahead++;
+				} 
+
+				funcC->args.push_back(parseExpression());
+			}
+
+			if (LexemeIs(getLexeme(), CLOSE_PAREN)) {
+				lookahead++;
+			}
+
+			delete id; 
+			return funcC;
+		}
+
 		return id;
 	} 
 
@@ -181,7 +202,6 @@ OExpression *Parser::parseExpression1(OExpression *LHS, int min_prec) {
 			return nullptr;
 		}
 
-
 		if (getLexeme() != nullptr) {
 			int next_prec = Precedence(getLexeme()->type); 
 			if (current_prec < next_prec) {
@@ -189,11 +209,25 @@ OExpression *Parser::parseExpression1(OExpression *LHS, int min_prec) {
 			}
 		}		
 
-		OBinopStatement* stmt = new OBinopStatement();
-		stmt->LHS = LHS; 
-		stmt->RHS = RHS; 
-		stmt->op = op->type;
-		LHS = stmt;
+		if (op->type == ASSIGN) {
+			OID* LHSID = dynamic_cast<OID*>(LHS);
+			if (LHSID == nullptr) {
+				std::cerr << "destination of = must be a variable\n";
+				return nullptr; 
+			}
+
+			OVariable *v = new OVariable();
+			v->type = LHSID->type; 
+			v->name = LHSID->name;
+			v->value = RHS; 
+			LHS = v; 
+		} else {
+			OBinopStatement* stmt = new OBinopStatement();
+			stmt->LHS = LHS; 
+			stmt->RHS = RHS; 
+			stmt->op = op->type;
+			LHS = stmt;
+		}
 	}
 }
 
@@ -255,11 +289,6 @@ OFunction *Parser::parseFunction() {
 		return nullptr;
 	}
 
-	std::cout << "Parsed function header " << ret->name << std::endl;
-	for (OID *id : ret->args) {
-		std::cout << "Argument: " << id->name << std::endl; 
-	}
-
 	// TODO: parse body 
 	ret->block = Parse(false);
 
@@ -270,7 +299,7 @@ OFunction *Parser::parseFunction() {
 	} 
 	lookahead++;
 
-	return nullptr;
+	return ret;
 }
 
 /*
@@ -327,7 +356,6 @@ OBlock *Parser::Parse(bool defaultIsError) {
 		switch (lexeme->type) {
 			case KEYWORD_DEF: 
 				// parse function 
-				printf("Parsing function...\n");
 				globalBlock->Statements.push_back(parseFunction());
 				break;
 			case OPEN_PAREN:
@@ -343,7 +371,6 @@ OBlock *Parser::Parse(bool defaultIsError) {
 			case TYPE_UINT64:
 			case ID: 
 				// parse expression 
-				printf("parsing expr\n");
 				globalBlock->Statements.push_back(parseExpression());
 				break; 
 			case KEYWORD_INT:
@@ -358,7 +385,6 @@ OBlock *Parser::Parse(bool defaultIsError) {
 			case KEYWORD_INT64:
 			case KEYWORD_UINT64:
 				// parse declaration
-				printf("parsing decl\n");
 				globalBlock->Statements.push_back(parseDeclaration());
 				break; 
 			default:

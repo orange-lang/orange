@@ -15,7 +15,7 @@ int Precedence(LexemeType type) {
 	if (PrecedenceTable == nullptr) {
 		// initialize table 
 		PrecedenceTable = new std::map<LexemeType, int>();
-		(*PrecedenceTable)[EQUALS] = 1; 
+		(*PrecedenceTable)[ASSIGN] = 1; 
 		(*PrecedenceTable)[PLUS_ASSIGN] = 1; 
 		(*PrecedenceTable)[MINUS_ASSIGN] = 1;
 		(*PrecedenceTable)[TIMES_ASSIGN] = 1;
@@ -39,6 +39,8 @@ int Precedence(LexemeType type) {
 LexemeType TypeForKeyword(std::string id) {
 	if (id == "def") 
 		return KEYWORD_DEF;
+	if (id == "return")
+		return KEYWORD_RETURN;
 	else if (id == "end")
 		return KEYWORD_END;
 	else if (id == "class")

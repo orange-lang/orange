@@ -5,8 +5,9 @@ statement 	::= 	function | expression | declaration | $
 declaration	::=		TYPE decl_assign opt_assigns
 opt_assigns	::=		',' decl_assign opt_assigns | $
 decl_assign	::=		ID opt_assign
-opt_assign  ::=		assign_ops expression | $
+opt_assign  ::=		assign_ops func_expr | $
 assign_ops	::=		'=' | '<-'
+func_expr 	::= 	'return' expression | expression
 
 function		::= 	'def' opt_id statements 'end'
 opt_id			::= 	ID opt_parens | '(' opt_args ')'
@@ -22,5 +23,4 @@ expression	::= 	assign_expr
 assign_expr ::=		add_expr ( ('=' | '+=' | '-=' | '*=' | '/=' | '%=') add_expr) *
 add_expr	 	::=		mult_expr ( ('-' | '+') mult_expr) *
 mult_expr		::= 	primary ( ('*' | '/') primary ) *
-primary			::= 	'(' expression ')' | NUMBER | ID
-
+primary			::= 	'(' expression ')' | NUMBER | ID | ID '(' expresssion (, expression)*  ')'
