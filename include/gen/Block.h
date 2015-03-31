@@ -11,6 +11,8 @@ public:
 	std::vector<Statement *> statements;
 	Type* getReturnType();
 
+	bool hasReturnStatement();
+
 	bool resolved = false;
 	void resolve();
 

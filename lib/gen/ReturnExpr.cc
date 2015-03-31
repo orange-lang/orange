@@ -32,7 +32,7 @@ Value* ReturnExpr::Codegen() {
 		Value *v = expr->Codegen();
 		DEBUG_MSG("ReturnExpr: COMPLETED CODEGEN FOR EXPR");
 
-		if (expr->getClass() == "VarExpr" || expr->getClass() == "IfStatement" || expr->getClass() == "DerefId") {
+		if (returnsPtr(expr->getClass())) {
 			DEBUG_MSG("ReturnExpr: LOADING PTR");
 
 			v = CG::Builder.CreateLoad(v);

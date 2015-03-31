@@ -15,10 +15,6 @@ bool isAssignOperator(std::string op) {
 		op == "*=" || op == "/=" || op == "<-";
 }
 
-bool returnsPtr(std::string className) {
-	return className == "VarExpr" || className == "IfStatement" || className == "DerefId";
-}
-
 bool BinOpExpr::isSigned() {
 	if (isCmpOperator(op)) {
 		return false; 

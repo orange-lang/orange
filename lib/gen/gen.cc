@@ -18,6 +18,7 @@
 #include <gen/generator.h>
 #include <helper/link.h>
 #include <gen/Block.h>
+#include <gen/FunctionStatement.h>
 
 using namespace llvm::sys::fs;
 
@@ -88,63 +89,9 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	CG::Symtab = globalBlock->symtab;
 	CG::Symtab->FunctionName = new std::string(MainFunctionName());
 
-	// Get return type of globalBlock
-	DEBUG_MSG("GETTING RETURN TYPE FOR GLOBAL BLOCK");
-	bool noRet = false; 
-	Type *retType = globalBlock->getReturnType();
-
-	if (retType == nullptr) {
-		DEBUG_MSG("DETERMINED NO RETURN FOR MAIN FUNCTION");
-
-		noRet = true; 
-		retType = Type::getVoidTy(getGlobalContext());
-	}
-
-	DEBUG_MSG("GOT RETURN TYPE FOR GLOBAL BLOCK");
-
-	std::vector<Type*> Args;
-	FunctionType *FT = FunctionType::get(retType, Args, false);
-	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, MainFunctionName(), TheModule);
-	CG::Symtab->TheFunction = TheFunction;
-
-	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
-	Builder.SetInsertPoint(BB);
-
-	BasicBlock *ExitBB = BasicBlock::Create(getGlobalContext(), "", TheFunction);
-	CG::Symtab->FunctionEnd = ExitBB;
-
-	Value *v = nullptr;  
-	if (noRet == false) {
-		v = CG::Builder.CreateAlloca(retType, nullptr, "");
-		CG::Symtab->retVal = v;
-	}
-
-	globalBlock->Codegen();
-
-	// does the body /have/ a return statement?
-	bool hasReturn = false; 
-	for (Statement *stmt : globalBlock->statements) {
-		if (stmt->getClass() == "ReturnExpr") {
-			hasReturn = true; 
-			break; 
-		}
-	}
-
-	if (hasReturn == false) 
-		Builder.CreateBr(ExitBB);
-
-	if (noRet == true) {
-		Builder.SetInsertPoint(ExitBB);
-		CG::Builder.CreateRetVoid();
-	} else {
-		Builder.SetInsertPoint(ExitBB);
-		Value *r = CG::Builder.CreateLoad(v);
-		CG::Builder.CreateRet(r);
-	}
-
-	DEBUG_MSG("OPTIMIZING CODE...\n");
-	TheFPM->run(*TheFunction);
-
+	// Create the global block as a function so we don't have to repeat the code here.
+	FunctionStatement *fstmt = new FunctionStatement(CG::Symtab->FunctionName, nullptr, globalBlock);
+	fstmt->Codegen();
 
 	GenerateObject();
 }

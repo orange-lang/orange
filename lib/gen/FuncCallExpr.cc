@@ -107,7 +107,14 @@ Type *FuncCallExpr::getType() {
 	if (o->getValue() == nullptr && o->reference->getClass() == "FunctionStatement") { 
 		FunctionStatement *fstmt = (FunctionStatement *)o->reference;
 		fstmt->body->symtab->FunctionName = new std::string(fstmt->name);
-		return fstmt->body->getReturnType();
+		Type *t = fstmt->body->getReturnType();
+
+		bool hasReturn = fstmt->body->hasReturnStatement(); 
+		if (hasReturn == false && t == nullptr && fstmt->body->statements.size() > 0) {
+			t = fstmt->body->statements.back()->getType();
+		}
+
+		return t;
 	}
 
 	if (o->getType()) {

@@ -4,6 +4,15 @@
 #include "gen/FunctionStatement.h"
 #include "gen/ReturnExpr.h"
 
+bool Block::hasReturnStatement() {
+	for (auto stmt : statements) {
+		if (stmt->getClass() == "ReturnExpr") 
+			return true; 
+	}
+	
+	return false; 
+}
+
 Type* Block::getReturnType() {
 	Type *ret; 
 
@@ -86,12 +95,13 @@ void Block::resolve() {
 
 Value* Block::Codegen() {
 	Value *ret = nullptr; 
+
 	for (Statement *stmt : statements) {
 		if (stmt == nullptr) {
 			std::cerr << "fatal: generating a null statement\n";
 		}
 
-		DEBUG_MSG("(BLOCK) CALLING CODEGEN FOR " << stmt->getClass());
+		DEBUG_MSG("(BLOCK) CALLING CODEGEN FOR " << stmt->getClass() << " ( " << stmt->string() << " )");
 		ret = stmt->Codegen();
 
 

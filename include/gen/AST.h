@@ -111,4 +111,7 @@ public:
 	BaseVal *produce();
 };
 
+bool returnsPtr(std::string className);
+
+
 #endif

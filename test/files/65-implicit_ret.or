@@ -1,0 +1,5 @@
+def foo()
+	5
+end
+
+foo() - foo()

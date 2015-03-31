@@ -2,6 +2,10 @@
 #include "gen/generator.h"
 typedef CodeGenerator CG;
 
+bool returnsPtr(std::string className) {
+	return className == "VarExpr" || className == "IfStatement" || className == "DerefId";
+}
+
 
 Type *getType(std::string typeStr) {
 	if (typeStr == "int" || typeStr == "int64") {
