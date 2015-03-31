@@ -19,20 +19,18 @@ private:
 	 */
 	SymTable *m_symtab;
 
+	std::vector<ASTNode *> m_statements;
+protected:
 	/**
 	 * Determines whether or not this block is locked,
 	 * which will happen upon calling Codegen().
 	 */
 	bool m_locked = false;
 
-	std::vector<ASTNode *> m_statements;
-
-protected:
 	/**
 	 * Generates all of the statements.
 	 */
-	void generateStatements();
-	
+	void generateStatements();	
 public:
 	virtual std::string getClass() { return "Block"; }
 
