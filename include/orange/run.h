@@ -39,7 +39,6 @@ public:
 	 */
 	std::vector<CompilerMessage> messages() const;
 
-
 	/**
 	 * Get the list of errors from the run, if any. This list is 
 	 * constructed from the messages list. 

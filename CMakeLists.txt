@@ -43,9 +43,17 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
   ADD_DEFINITIONS(-DDEBUG)
 endif()
 
+find_package(LLVM QUIET)
+if(NOT LLVM_FOUND)
+	message(STATUS "Need to build LLVM...")
+	add_subdirectory(etc/llvm)
 
-include_directories(etc/cereal/include)
+	MESSAGE(WARNING "LLVM has been configured, and needs to be built before Orange. Make and install the generated project and then run CMake again.")
+else()
+	include_directories(etc/cereal/include)
 
-add_subdirectory(lib/libor)
-add_subdirectory(lib/helper)
-add_subdirectory(tools/orange)
+	add_subdirectory(lib/libor)
+	add_subdirectory(lib/helper)
+	add_subdirectory(tools/orange)
+endif()
+

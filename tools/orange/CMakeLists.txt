@@ -1,6 +1,6 @@
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-find_package(LLVM REQUIRED CONFIG)
+find_package(LLVM REQUIRED)
 find_package(Boost REQUIRED)
 
 include_directories(${LLVM_INCLUDE_DIRS})
