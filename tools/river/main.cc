@@ -31,10 +31,9 @@ int main(int argc, char **argv) {
 	}
 
 	for (std::string option : test.unparsed()) {
-		std::cout << option << std::endl;
 	}
 
-	if (test.isActive()) {
+	if (test.isActive() && test.unparsed().size() == 0) {
 		// for now, test everything in test, going through each subdirectory.
 		path p("test");
 
@@ -52,6 +51,28 @@ int main(int argc, char **argv) {
 
 			testFiles(toTest);
 		}
+	} else if (test.isActive() && test.unparsed().size() > 0) {
+		regex filter(".*\\.or");
+		std::vector<path> toTest;
+
+		for (std::string subdir : test.unparsed()) {
+			std::string search = "test/" + subdir; 
+			path p(search);
+
+			if (!exists(p)) {
+				std::cerr << "fatal: path " << search << " does not exist.\n";
+				exit(1);
+			}	
+
+			for (auto& entry : make_iterator_range(recursive_directory_iterator(p), {})) {
+				smatch what;
+				if (!regex_match(entry.path().filename().string(), what, filter)) continue;
+				toTest.push_back(entry.path());
+			}
+		
+		}
+
+		testFiles(toTest);
 	}
 
 	return 0;

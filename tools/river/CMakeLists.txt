@@ -1,3 +1,5 @@
+find_package(Boost REQUIRED)
+
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/river RIVER_SOURCES) 
