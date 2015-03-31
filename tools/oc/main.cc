@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 			std::cerr << "OPTIONS:\n";
 			std::cerr << "\t-c\t\t\tOnly output an .o file (do not link)\n";
 			std::cerr << "\t-o <file>\t\tWrite output to <file>\n";
-			std::cerr << "\t-S\t\t\tWrite output as assembly\n";
+			std::cerr << "\t-S\t\t\tWrite output as assembly (implies -c)\n";
 			std::cerr << "\t-v | --verbose\t\tEnable verbose output\n";
 			std::cerr << "\t-h | --help\t\tGet this help message\n";
 			exit(1); 
@@ -78,6 +78,20 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	// while (yylex() != 0);
+
+	// get file base 
+	std::string stripped = file; 
+	size_t loc = stripped.find_last_of('/');
+	if (loc != std::string::npos) {
+		stripped = stripped.substr(loc+1);
+	}
+
+	loc = stripped.find('.');
+	if (loc == std::string::npos) {
+		CodeGenerator::fileBase = stripped; 
+	} else {
+		CodeGenerator::fileBase = stripped.substr(0, loc);
+	}
 
 	yyparse();
 

@@ -19,10 +19,11 @@ Module *CodeGenerator::TheModule;
 IRBuilder<> CodeGenerator::Builder(getGlobalContext());
 SymTable* CodeGenerator::Symtab = nullptr;
 FunctionPassManager* CodeGenerator::TheFPM;
-std::string CodeGenerator::outputFile = "a.o";
+std::string CodeGenerator::outputFile = "a.out";
 bool CodeGenerator::outputAssembly = false;
 bool CodeGenerator::verboseOutput = false;
 bool CodeGenerator::doLink = true;
+std::string CodeGenerator::fileBase = "";
 
 typedef CodeGenerator CG;
 PassManager *ThePM = nullptr;
@@ -110,8 +111,16 @@ void CodeGenerator::GenerateObject() {
 		exit(1);
 	}
 
+	// local output file
+	std::string loutput = fileBase;
+	if (outputAssembly == true) {
+		loutput += ".s";
+	} else {
+		loutput += ".o";
+	}
+
 	std::string ec = "";
-	raw_fd_ostream raw(outputFile.c_str(), ec, OpenFlags::F_RW);
+	raw_fd_ostream raw(loutput.c_str(), ec, OpenFlags::F_RW);
 
 	if (ec != "") {
 		std::cerr << "fatal: " << ec << std::endl;
@@ -143,20 +152,25 @@ void CodeGenerator::GenerateObject() {
 	raw.flush();
 	raw.close();
 
-	if (doLink) {
+	if (doLink && outputAssembly == false) {
 		std::vector<const char *> options; 
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__linux__)
 		std::string root = INSTALL_LOCATION;
 		root += "/lib/libor/boot.o";
 
 		options.push_back(root.c_str());
 		options.push_back("-w");
+		options.push_back("-o");
+		options.push_back(outputFile.c_str()); // final output. defaults to a.out
 #endif 
 
-		options.push_back(outputFile.c_str());
+		// local output 
+		options.push_back(loutput.c_str());
 
 		invokeLinkerWithOptions(options);
+
+		remove(loutput.c_str());
 	}
 
 

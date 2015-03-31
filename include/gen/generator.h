@@ -8,6 +8,7 @@ private:
 	static void GenerateObject();
 public:
 	static std::string outputFile;
+	static std::string fileBase;
 	static bool outputAssembly;
 	static bool verboseOutput;
 	static bool doLink;
