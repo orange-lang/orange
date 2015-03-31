@@ -29,7 +29,6 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	// print out shit
 	std::cout << globalBlock->string() << std::endl; 
 
 	printf("generating code...\n");

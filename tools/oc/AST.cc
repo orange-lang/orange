@@ -3,17 +3,12 @@
 ArgExpr::ArgExpr(std::string* type, std::string* name) {
 	this->type = type ? *type : "";
 	this->name = name ? *name : "";
-
-	// printf("[Creating arg %s (type: %s)...] ", this->name.c_str(), this->type.c_str());
 }
 
 FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *body) {
 	this->name = name ? *name : "";
 	this->args = args;
 	this->body = body;
-	
-
-	// printf("[Creating function %s...] ", this->name.c_str());
 }
 
 BinOpExpr::BinOpExpr(Expression *LHS, char op, Expression *RHS) {
@@ -21,7 +16,6 @@ BinOpExpr::BinOpExpr(Expression *LHS, char op, Expression *RHS) {
 	this->op = op;
 	this->RHS = RHS;
 }
-
 
 BaseVal *ValFactory::produce() {
 	BaseVal *ret = nullptr;
