@@ -1,0 +1,25 @@
+extern int* malloc(int a)
+
+def swap(a, b)
+	temp = *a
+	*a = *b
+	*b = temp
+end
+
+a = malloc(8)
+*a = 8
+
+b = malloc(8)
+*b = 5 
+
+swap(a, b)
+
+if *a != 5
+	return 1
+end 
+
+if *b != 8
+	return 1
+end
+
+return 0

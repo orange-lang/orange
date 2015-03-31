@@ -47,6 +47,12 @@ Value* FunctionStatement::Codegen() {
 	std::vector<Type*> Args(args->size());
 	for (unsigned int i = 0; i < args->size(); i++) {
 		ArgExpr *arg = (*args)[i];
+
+		if (arg->type == nullptr) {
+			std::cout << "warning: function " << name << " didn't have arguments resolved.\n";
+			return nullptr; 
+		}
+
 		Args[i] = arg->type->getType();
 	}
 
