@@ -30,6 +30,21 @@ bool Block::hasReturnStatement() {
 	return false; 
 }
 
+Type* Block::getLastStatementType() {
+	Type *ret = nullptr; 
+
+	auto oldSymtab = CG::Symtab;
+	CG::Symtab = symtab;
+
+	if (statements.size() > 0) {
+		ret = statements.back()->getType();
+	}
+
+	CG::Symtab = oldSymtab;
+	return ret;
+}
+
+
 Type* Block::getReturnType() {
 	Type *ret; 
 
@@ -121,7 +136,6 @@ Value* Block::Codegen() {
 
 		DEBUG_MSG("(BLOCK) CALLING CODEGEN FOR " << stmt->getClass() << " ( " << stmt->string() << " )");
 		ret = stmt->Codegen();
-
 
 		if (stmt->getClass() == "VarExpr" || stmt->getClass() == "IfStatement") {
 			if (ret) ret = CG::Builder.CreateLoad(ret);

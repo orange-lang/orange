@@ -19,5 +19,6 @@
 #include "CondBlock.h"
 #include "CastExpr.h"
 #include "DerefId.h"
+#include "NegativeExpr.h"
 
 #endif

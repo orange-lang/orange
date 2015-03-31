@@ -150,6 +150,7 @@ primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 						|			STRING { $$ = new StrVal(*$1); }
 						|			if_statement { $$ = $1; }
 						|			TIMES dereference { $$ = $2; $<did>$->pointers++; }
+						|			MINUS primary { $$ = new NegativeExpr($2); }
 						;
 
 dereference : 		TIMES dereference { $$ = $2; $$->pointers++; } 

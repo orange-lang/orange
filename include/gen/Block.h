@@ -10,6 +10,7 @@ public:
 
 	std::vector<Statement *> statements;
 	Type* getReturnType();
+	Type* getLastStatementType();
 
 	bool hasReturnStatement();
 

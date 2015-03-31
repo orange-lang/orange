@@ -116,7 +116,7 @@ Type *IfStatement::getType() {
 	// is null, and can't be used as an expression. 
 	Type *ret = nullptr;
 	for (Block *b : blocks) {
-		Type *t = b->statements.back()->getType();
+		Type *t = b->getLastStatementType();
 
 		if (ret == nullptr) {
 			ret = t; 

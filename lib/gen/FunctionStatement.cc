@@ -66,7 +66,7 @@ Value* FunctionStatement::Codegen() {
 	Type *retType = body->getReturnType();
 
 	if (hasReturn == false && retType == nullptr && body->statements.size() > 0) {
-		retType = body->statements.back()->getType();
+		retType = body->getLastStatementType();
 	}
 
 	if (retType == nullptr) {
@@ -122,6 +122,7 @@ Value* FunctionStatement::Codegen() {
 	}
 
 	Value *finalV = body->Codegen();
+	DEBUG_MSG("COMPLETED CODEGEN FUNCTION BLOCK");
 
 	if (hasReturn == false && finalV) {
 		BasicBlock *bb = CG::Symtab->getFunctionEnd();

@@ -3,3 +3,4 @@ def foo(n)
 end
 
 foo(3)
+0

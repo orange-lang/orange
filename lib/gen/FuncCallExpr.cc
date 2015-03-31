@@ -113,7 +113,7 @@ Type *FuncCallExpr::getType() {
 
 		bool hasReturn = fstmt->body->hasReturnStatement(); 
 		if (hasReturn == false && t == nullptr && fstmt->body->statements.size() > 0) {
-			t = fstmt->body->statements.back()->getType();
+			t = fstmt->body->getLastStatementType();
 		}
 
 		return t;
