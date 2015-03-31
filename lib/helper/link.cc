@@ -23,15 +23,9 @@
 #include <process.h>
 #endif 
 
-void invokeLinkerWithOptions(std::vector<const char *> options) {
-	const char *linker = linkerPath();
-	if (linker == nullptr) {
-		std::cerr << "Error: a linker could not be found on this machine." << std::endl;
-		exit(1);
-	} 
-
+int invokeProgramWithOptions(const char *program, std::vector<const char *> options, bool do_close) {
 	std::vector<const char *> coptions(options);
-	coptions.insert(coptions.begin(), linker);
+	coptions.insert(coptions.begin(), program);
 	coptions.push_back(nullptr);
 
 #if defined(__APPLE__) || defined(__linux__)
@@ -43,8 +37,14 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 	} else if (pid > 0) {
 		int status;
 		waitpid(pid, &status, 0);
+		return (int)WEXITSTATUS(status);
 	} else {
-		execvp(linker, (char **) &coptions[0]);
+		if (do_close == true) {
+			close(0);
+			close(1);
+			close(2);
+		}
+		execvp(program, (char **) &coptions[0]);
 		exit(1); // should never reach this
 	}
 
@@ -66,9 +66,24 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 	CreateProcess(linker, (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
 	WaitForSingleObject(pi.hProcess, INFINITE);
 
+	DWORD dwExitCode = 9999;
+	GetExitCodeProcess(pi.hProcess, &dwExitCode);
+
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
+
+	return (int)dwExitCode;
 #endif 
+}
+
+void invokeLinkerWithOptions(std::vector<const char *> options) {
+	const char *linker = linkerPath();
+	if (linker == nullptr) {
+		std::cerr << "Error: a linker could not be found on this machine." << std::endl;
+		exit(1);
+	} 
+
+	invokeProgramWithOptions(linker, options);
 }
 
 #if defined(__APPLE__) || defined(__linux__)
@@ -77,10 +92,10 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 	const char pathDelimiter = ';';
 #endif 
 
-const char *linkerPath() {
+const char *programPath(std::string programName) {
 	char *ret = nullptr;
 
-	std::string toFind = "ld";
+	std::string toFind = programName;
 
 #if defined(_WIN32)
 	// On Win32, we want to use gcc as a linker instead.
@@ -161,4 +176,8 @@ const char *linkerPath() {
 	}
 
 	return (const char *)ret;
+}
+
+const char *linkerPath() {
+	return programPath("ld");
 }

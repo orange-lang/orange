@@ -1,5 +1,0 @@
-def test()
-	1
-end
-
-return test()

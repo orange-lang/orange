@@ -1,7 +1,0 @@
-a = 5 
-
-def test(b)
-	return a + b 
-end 
-
-test(7)
