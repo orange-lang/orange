@@ -60,7 +60,7 @@ bool Block::hasReturn() {
 	return returnType() != nullptr; 
 }
 
-Type* Block::returnType() {
+AnyType* Block::returnType() {
 	for (ASTNode *s : m_statements) {
 		if (s->getClass() == "ReturnStmt") return s->getType(); 
 	}
@@ -68,8 +68,8 @@ Type* Block::returnType() {
 	return nullptr;
 }
 
-Type* Block::searchForReturn() {
-	Type* retType = nullptr; 
+AnyType* Block::searchForReturn() {
+	AnyType* retType = nullptr; 
 
 	for (ASTNode *s : m_statements) {
 		if (s->getClass() == "ReturnStmt") {
@@ -82,7 +82,7 @@ Type* Block::searchForReturn() {
 		} else if (s->isBlock() && s->getClass() != "FunctionStmt") {
 			// If we're a block (and not a function, since that shouldn't affect this), look for returns.
 			Block* block = (Block*)s; 
-			Type* innerRetType = block->searchForReturn();
+			AnyType* innerRetType = block->searchForReturn();
 
 			if (innerRetType) {
 				retType = CastingEngine::GetFittingType(retType, innerRetType);				

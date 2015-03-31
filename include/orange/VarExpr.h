@@ -10,6 +10,7 @@
 #define __ORANGE_VAR_EXPR_H__
 
 #include "AST.h"
+#include "AnyType.h"
 
 class VarExpr : public Expression {
 private:
@@ -26,7 +27,7 @@ protected:
 	/** 
 	 * Determines the type of the variable.
 	 */
-	Type* m_type = nullptr; 
+	AnyType* m_type = nullptr; 
 public:
 	virtual std::string getClass() { return "VarExpr"; }
 
@@ -43,9 +44,9 @@ public:
 
 	virtual std::string string();
 
-	virtual Type* getType();
+	virtual AnyType* getType();
 
-	virtual void setType(Type* type) { m_type = type; }
+	virtual void setType(AnyType* type) { m_type = type; }
 
 	virtual Value* getValue();
 
@@ -68,6 +69,11 @@ public:
 	virtual bool returnsPtr() { return true; }
 
 	VarExpr(std::string name); 
+
+	/** 
+	 * Creates a variable with a locked down type.
+	 */
+	VarExpr(std::string name, AnyType* type);
 };
 
 #endif 

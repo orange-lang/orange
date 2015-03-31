@@ -130,14 +130,14 @@ Value* BinOpExpr::Codegen() {
 		VarExpr* vExpr = (VarExpr *)m_LHS; 
 		vExpr->create();
 		vExpr->setValue(RHS);
-		vExpr->setType(RHS->getType());
+		vExpr->setType(new AnyType(RHS->getType(), m_RHS->isSigned()));
 		return GE::builder()->CreateLoad(vExpr->getValue());
 	}
 
 	// If we're assigning, we want to cast RHS to LHS (forced).
 	// Otherwise, cast them to fit.
 	if (IsAssignOp(m_op)) {
-		CastingEngine::CastValueToType(&RHS, m_LHS->getType(), m_LHS->isSigned(), true);
+		CastingEngine::CastValueToType(&RHS, m_LHS->getType(), true);
 	} else {
 		CastingEngine::CastValuesToFit(&LHS, &RHS, m_LHS->isSigned(), m_RHS->isSigned());
 	}
@@ -172,11 +172,12 @@ std::string BinOpExpr::string() {
 	return ss.str();
 }
 
-Type* BinOpExpr::getType() {
+AnyType* BinOpExpr::getType() {
 	if (IsAssignOp(m_op)) {
-		return m_LHS->getType(); 
+		AnyType* t = m_LHS->getType(); 
+		return t->isVoidTy() ? m_RHS->getType() : t; 
 	} else if (IsCompareOp(m_op)) {
-		return Type::getInt1Ty(getGlobalContext());
+		return AnyType::getUIntNTy(1);
 	} else {
 		return CastingEngine::GetFittingType(m_LHS->getType(), m_RHS->getType());
 	}

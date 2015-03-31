@@ -39,9 +39,9 @@ Value* ReturnStmt::Codegen() {
 	return retExpr; 
 }
 
-Type* ReturnStmt::getType() {
+AnyType* ReturnStmt::getType() {
 	if (m_expr) return m_expr->getType();
-	return Type::getVoidTy(getGlobalContext());
+	return AnyType::getVoidTy();
 }
 
 void ReturnStmt::resolve() {
@@ -66,6 +66,9 @@ void ReturnStmt::resolve() {
 		}
 
 		if (CastingEngine::AreTypesCompatible(m_expr->getType(), containingFunc->getType()) == false) {
+			std::cout << m_expr->getType()->string() << std::endl;
+			std::cout << containingFunc->getType()->string() << std::endl;
+
 			throw CompilerMessage(*m_expr, "Cannot convert return value to function return type.");
 		}
 	}

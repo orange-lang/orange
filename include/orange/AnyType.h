@@ -9,7 +9,14 @@
 #ifndef __ORANGE_ANY_TYPE_H__
 #define __ORANGE_ANY_TYPE_H__
 
-#include "AST.h"
+#include <map>
+
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+
+#include "CodeElement.h"
+
+using namespace llvm;
 
 class AnyType : public CodeElement {
 private:
@@ -17,10 +24,26 @@ private:
 	std::string m_type_str;
 
 	bool m_signed = false;
+
+	static std::map<std::string, AnyType*> m_defined_tyes;
 public:
 	std::string string() const { return m_type_str; }
-	Type* getType() const { return m_type; }
+	Type* getLLVMType() const { return m_type; }
 	bool isSigned() const { return m_signed; }
+
+	bool isVoidTy() const;
+	bool isIntegerTy() const; 
+	bool isFloatTy() const; 
+	bool isDoubleTy() const;
+	bool isFloatingPointTy() const;
+	bool isPointerTy() const { return false; }
+	int getIntegerBitWidth() const;
+
+	static AnyType* getVoidTy();
+	static AnyType* getUIntNTy(int size);
+	static AnyType* getIntNTy(int size);
+	static AnyType* getFloatTy();
+	static AnyType* getDoubleTy();
 
 	AnyType(Type* type, bool isSigned = false);
 	AnyType(std::string type);

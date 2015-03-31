@@ -32,43 +32,10 @@
 
 // Include the casting engine so any class inheriting from AST has access to it.
 #include "CastingEngine.h"
+#include "CodeElement.h"
+#include "AnyType.h"
 
 using namespace llvm;
-
-class CodeLocation {
-public:
-	int row_begin = 0, row_end = 0;
-	int col_begin = 0, col_end = 0;
-
-	CodeLocation() {};
-	CodeLocation(int row_begin, int row_end, int col_begin, int col_end) : row_begin(row_begin), row_end(row_end), 
-		col_begin(col_begin), col_end(col_end) { }
-};
-
-/**
- * Code element is the root class that contains information about code location.
- */
-class CodeElement {
-protected:
-	/**
-	 * Indicates where the code is located in a file.
-	 */
-	CodeLocation m_location;
-public:
-	/**
-	 * Gets the current code location
-	 *
-	 * @return The location where this fragment of code resides.
-	 */
-	CodeLocation location() const { return m_location; }
-
-	/**
-	 * Sets the code location
-	 *
-	 * @param location The new location to use.
-	 */
-	void setLocation(CodeLocation location) { m_location = location; }  
-};
 
 /**
  * ASTNode is the base class for all structures in the AST. It provides some methods for pseudo-reflection and 
@@ -142,12 +109,19 @@ public:
 	virtual bool isBlock() { return false; }
 
 	/**
-	 * Gets the LLVM type of this object. For classes inheriting from Statement, the type will 
-	 * be void, as getType() only returns a value if it is to be used as part of an expression.
+	 * Gets the type of this object. For most classes inheriting from Statement, the type will be 
+	 * void. 
+	 *
+	 * @return The type of this object.
+	 */
+	virtual AnyType* getType() { return AnyType::getVoidTy(); }
+
+	/**
+	 * Gets the LLVM type of this object.
 	 *
 	 * @return The LLVM type of this object in code.
 	 */
-	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
+	virtual Type *getLLVMType() { return getType()->getLLVMType(); }
 
 	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 

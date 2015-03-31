@@ -9,6 +9,7 @@
 #ifndef __ORANGE_VALUES_H__
 #define __ORANGE_VALUES_H__
 #include "AST.h"
+#include "AnyType.h"
 
 class BaseVal : public Expression { 
 
@@ -62,8 +63,8 @@ public:
 		return ss.str();
 	}
 
-	virtual Type *getType() { 
-		return Type::getIntNTy(getGlobalContext(), size); 
+	virtual AnyType *getType() { 
+		return AnyType::getUIntNTy(size); 
 	}
 
 	virtual ASTNode* clone() { 
@@ -93,8 +94,8 @@ public:
 		return ss.str();
 	}
 
-	virtual Type *getType() { 
-		return Type::getIntNTy(getGlobalContext(), size); 
+	virtual AnyType *getType() { 
+		return AnyType::getIntNTy(size); 
 	}
 
 	virtual ASTNode* clone() { 
@@ -120,8 +121,8 @@ public:
 		return ss.str();
 	}
 
-	virtual Type *getType() { 
-		return Type::getFloatTy(getGlobalContext()); 
+	virtual AnyType *getType() { 
+		return AnyType::getFloatTy(); 
 	}
 
 	virtual ASTNode* clone() { 
@@ -147,8 +148,8 @@ public:
 		return ss.str();
 	}
 
-	virtual Type *getType() { 
-		return Type::getDoubleTy(getGlobalContext()); 
+	virtual AnyType *getType() { 
+		return AnyType::getDoubleTy(); 
 	}
 
 	virtual ASTNode* clone() { 

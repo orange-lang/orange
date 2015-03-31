@@ -9,23 +9,23 @@
 #include <orange/FunctionStmt.h>
 #include <orange/generator.h>
 
-FunctionStmt::FunctionStmt(std::string name, SymTable* symtab) : Block(symtab) {
+FunctionStmt::FunctionStmt(std::string name, ArgList arguments, SymTable* symtab) : Block(symtab) {
 	m_name = name;
 }
 
-FunctionStmt::FunctionStmt(std::string name, AnyType* type, SymTable* symtab) : Block(symtab) {
+FunctionStmt::FunctionStmt(std::string name, AnyType* type, ArgList arguments, SymTable* symtab) : Block(symtab) {
 	m_name = name; 
 	m_type = type; 
 }
 
-Type* FunctionStmt::getType() {
+AnyType* FunctionStmt::getType() {
 	if (m_type == nullptr) {
 		// If we don't have an explicit type set, we have to determine it from our body and nested bodies.
-		Type* foundRet = searchForReturn();
+		AnyType* foundRet = searchForReturn();
 		return foundRet ? foundRet : ASTNode::getType();
 	} 
 
-	return m_type->getType();
+	return m_type;
 }
 
 Value* FunctionStmt::Codegen() {
@@ -36,7 +36,7 @@ Value* FunctionStmt::Codegen() {
 	std::vector<Type*> Args;
 
 	// Create the function itself, and set it as our AST value.
-	FunctionType* funcType = FunctionType::get(getType(), Args, m_isVarArg);
+	FunctionType* funcType = FunctionType::get(getLLVMType(), Args, m_isVarArg);
 	Function* generatedFunc = Function::Create(funcType, m_linkageType, m_name, GE::module());
 	m_value = generatedFunc;
 
@@ -53,7 +53,7 @@ Value* FunctionStmt::Codegen() {
 	// Set up values for children statements to use. 
 	Value *retVal = nullptr; 
 	if (getType()->isVoidTy() == false) {
-		retVal = GE::builder()->CreateAlloca(getType(), nullptr, "return");
+		retVal = GE::builder()->CreateAlloca(getLLVMType(), nullptr, "return");
 		m_retVal = retVal;
 	}
 
@@ -98,10 +98,24 @@ Value* FunctionStmt::Codegen() {
 }
 
 ASTNode* FunctionStmt::clone() {
-	FunctionStmt* clonedFunc = new FunctionStmt(m_name, symtab()->clone());
+	ArgList clonedArgs;
+
+	for (auto arg : m_arguments) {
+		clonedArgs.push_back((VarExpr*)arg->clone());
+	}
+
+	FunctionStmt* clonedFunc = nullptr; 
+
+	if (m_type) {
+		clonedFunc = new FunctionStmt(m_name, m_type, clonedArgs, symtab()->clone());	
+	} else {
+		clonedFunc = new FunctionStmt(m_name, clonedArgs, symtab()->clone());	
+	}
+
 	for (auto stmt : m_statements) {
 		clonedFunc->addStatement(stmt->clone());
 	}
+
 	return clonedFunc;
 }
 

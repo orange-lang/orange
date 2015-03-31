@@ -42,7 +42,7 @@ Runner::Runner(std::string pathname) {
 
 	// Create the global block
 	SymTable *globalSymtab = new SymTable(nullptr);
-	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), globalSymtab);
+	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), ArgList(), globalSymtab);
 	pushBlock(m_function);
 
 	// Create LLVM stuff; module, builder, etc
@@ -244,11 +244,17 @@ Block* Runner::makeBlock() {
 	return newBlock;
 }
 
-Block* Runner::topBlock() {
+Block* Runner::topBlock() const {
 	if (m_blocks.empty()) return nullptr;
 
 	return m_blocks.top();
 }
+
+SymTable* Runner::symtab() const {
+	if (topBlock()) return topBlock()->symtab();
+	return nullptr;
+}
+
 
 FunctionStmt* Runner::mainFunction() const {
 	return m_function;

@@ -38,11 +38,11 @@ std::string VarExpr::string() {
 	return m_name; 
 }
 
-Type* VarExpr::getType() {
+AnyType* VarExpr::getType() {
 	// If we've been assigned a value, we'll return that, otherwise 
 	// we'll return the default type from ASTNode.
 	if (getValue() && getValue()->getType()) 
-		return getValue()->getType()->getPointerElementType(); 
+		return new AnyType(getValue()->getType()->getPointerElementType()); 
 	
 	if (m_type) {
 		return m_type; 
@@ -94,4 +94,8 @@ void VarExpr::setValue(Value* value) {
 
 VarExpr::VarExpr(std::string name) : m_name(name) { 
 
+}
+
+VarExpr::VarExpr(std::string name, AnyType* type) : m_name(name), m_type(type) {
+	m_locked = true;
 }

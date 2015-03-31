@@ -128,7 +128,14 @@ public:
 	 *
 	 * @return The block on the top of the stack.
 	 */
-	Block* topBlock();
+	Block* topBlock() const;
+
+	/**
+	 * Returns the symbol table of the top block.
+	 *
+	 * @return The symbol table of the top block
+	 */
+	SymTable* symtab() const;
 
 	/**
 	 * Gets the global block for this runner.

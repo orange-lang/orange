@@ -28,6 +28,7 @@
 	StrElement *strele;
 	ASTNode *node;
 	Block *block;
+	ArgList *arglist;
 	std::string *str;
 	int token; 
 	int number;
@@ -51,8 +52,10 @@
 %type <node> statement
 %type <expr> expression primary VALUE
 %type <stmt> return function
-%type <str> TYPE_ID 
+%type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE
+%type <arglist> opt_func_args func_args
+%type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID
 
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
 
@@ -77,30 +80,30 @@ statements
 
 statement 		
 	:	term { $$ = nullptr; }
-	| expression term { $$ = $1; SET_LOCATION($$); }
-	| function term { $$ = $1; SET_LOCATION($$); }
-	| return term { $$ = $1; SET_LOCATION($$); }
+	| expression term { $$ = $1; }
+	| function term { $$ = $1; }
+	| return term { $$ = $1; }
 	;
 
 expression
-	: expression ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression PLUS_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression MINUS_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression TIMES_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression DIVIDE_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
+	: expression ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression PLUS_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression MINUS_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression TIMES_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression DIVIDE_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
-	|	expression COMP_LT expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression COMP_GT expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression LEQ expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression GEQ expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression EQUALS expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression NEQUALS expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression COMP_LT expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression COMP_GT expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression LEQ expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression GEQ expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression EQUALS expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression NEQUALS expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
-	|	expression PLUS expression { $$ = new BinOpExpr($1, *$2, $3); }
-	|	expression MINUS expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression PLUS expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	|	expression MINUS expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
-	|	expression TIMES expression { $$ = new BinOpExpr($1, *$2, $3); } 
-	|	expression DIVIDE expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression TIMES expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); } 
+	|	expression DIVIDE expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
 	| primary { $$ = $1; }
 	;
@@ -109,14 +112,27 @@ primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; SET_LOCATION($$); } 
 	|	VALUE { $$ = $1; SET_LOCATION($$); }
 	|	TYPE_ID { $$ = new VarExpr(*$1); SET_LOCATION($$); }
+	| TYPE_ID OPEN_PAREN CLOSE_PAREN { $$ = new FuncCall(*$1); SET_LOCATION($$); }
 	;
 
 function
-	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN term { 
+	: DEF TYPE_ID OPEN_PAREN opt_func_args CLOSE_PAREN term { 
 			SymTable *tab = new SymTable(GE::runner()->topBlock()->symtab());
-			$<stmt>$ = new FunctionStmt(*$2, tab);
+			$<stmt>$ = new FunctionStmt(*$2, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$$);
-		} statements END { $$ = $<stmt>6; GE::runner()->popBlock(); }
+		} statements END { $$ = $<stmt>7; GE::runner()->popBlock(); SET_LOCATION($$); }
+	;
+
+opt_func_args 
+	: func_args { $$ = $1; } 
+	| { $$ = new ArgList(); }
+	;
+
+func_args
+	: opt_func_args COMMA basic_type TYPE_ID { $1->push_back(new VarExpr(*$4, new AnyType(*$3))); }
+	| opt_func_args COMMA TYPE_ID { $1->push_back(new VarExpr(*$3)); }
+	| basic_type TYPE_ID { $$ = new ArgList(); $$->push_back(new VarExpr(*$2, new AnyType(*$1))); } 
+	| TYPE_ID { $$ = new ArgList(); $$->push_back(new VarExpr(*$1)); }
 	;
 
 return
@@ -127,6 +143,23 @@ return
 term 
 	: NEWLINE
 	| SEMICOLON
+	;
+
+basic_type
+	:	TYPE_INT 
+	|	TYPE_UINT 
+	|	TYPE_FLOAT 
+	|	TYPE_DOUBLE 
+	|	TYPE_INT8 
+	|	TYPE_INT16 
+	|	TYPE_INT32 
+	|	TYPE_INT64 
+	|	TYPE_UINT8 
+	|	TYPE_UINT16 
+	|	TYPE_UINT32 
+	|	TYPE_UINT64 
+	|	TYPE_CHAR
+	| TYPE_VOID
 	;
 						 
 %%

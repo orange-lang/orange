@@ -82,7 +82,7 @@ public:
 	 *
 	 * @return A type if a return type exists, nullptr otherwise.
 	 */ 
-	Type* returnType();
+	AnyType* returnType();
 
 	/**
 	 * Gets the return type from the body, checking for all nested 
@@ -90,7 +90,7 @@ public:
 	 *
 	 * @return A type if a return type exists, nullptr otherwise.
 	 */
-	Type* searchForReturn();
+	AnyType* searchForReturn();
 
 	virtual ASTNode* clone();
 

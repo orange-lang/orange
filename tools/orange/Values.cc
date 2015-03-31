@@ -25,11 +25,11 @@ Value* IntVal::Codegen() {
 }
 
 Value* FloatVal::Codegen() {
-	return ConstantFP::get(getType(), value);
+	return ConstantFP::get(getLLVMType(), value);
 }
 
 Value* DoubleVal::Codegen() {
-	return ConstantFP::get(getType(), value);
+	return ConstantFP::get(getLLVMType(), value);
 }
 
 BaseVal *ValFactory::produce() {

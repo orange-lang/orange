@@ -83,7 +83,7 @@ public:
 
 	virtual std::string string();
 
-	virtual Type* getType();
+	virtual AnyType* getType();
 
 	virtual void resolve();
 

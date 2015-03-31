@@ -10,6 +10,8 @@
 #define __ORANGE_CASTING_ENGINE_H__
 
 #include "AST.h"
+#include "AnyType.h"
+
 using namespace llvm;
 
 class CastingEngine {
@@ -24,7 +26,7 @@ public:
 	 *
 	 * @return True if the types are compatible, false otherwise.
 	 */
-	static bool AreTypesCompatible(Type* a, Type* b);
+	static bool AreTypesCompatible(AnyType* a, AnyType* b);
 
 	/**
 	 * Determines whether or not a source type can be casted to a destination type. If the source 
@@ -36,7 +38,7 @@ public:
 	 *
 	 * @return True if src can be casted to dest, false otherwise.
 	 */
-	static bool CanTypeBeCasted(Type* src, Type* dest); 
+	static bool CanTypeBeCasted(AnyType* src, AnyType* dest); 
 
 	/**
 	 * Casts a value to a specified type. If the types are compatible, then the cast will 
@@ -52,7 +54,7 @@ public:
 	 *
 	 * @return Returns true if the cast was successful, false otherwise.
 	 */ 
-	static bool CastValueToType(Value** v, Type* t, bool isSigned, bool force = false);
+	static bool CastValueToType(Value** v, AnyType* t, bool isSigned, bool force = false);
 
 	/**
 	 * Casts two values to match types. The type that will be used is determined by type precedence: 
@@ -81,7 +83,7 @@ public:
 	 * 
 	 * @see CastvalueToType
 	 */ 
-	static bool ShouldTypeMorph(Type* src, Type* dest);
+	static bool ShouldTypeMorph(AnyType* src, AnyType* dest);
 
 	/**
 	 * Gets the higher precedence type between two types. See CastValueToType to get information on type 
@@ -95,7 +97,7 @@ public:
 	 *
 	 * @see CastValueToType
 	 */
-	static Type* GetFittingType(Type* v1, Type* v2); 
+	static AnyType* GetFittingType(AnyType* v1, AnyType* v2); 
 };
 
 #endif

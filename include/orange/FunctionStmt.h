@@ -11,6 +11,9 @@
 #include "AST.h"
 #include "Block.h"
 #include "AnyType.h"
+#include "VarExpr.h"
+
+typedef std::vector<VarExpr*> ArgList;
 
 class FunctionStmt : public Block {
 private:
@@ -32,6 +35,8 @@ private:
 	 * Indicates the return value of the function, if any.
 	 */
 	Value* m_retVal = nullptr;
+
+	ArgList m_arguments;
 public:
 	virtual std::string getClass() { return "FunctionStmt"; }
 
@@ -41,7 +46,7 @@ public:
 
 	virtual std::string string();
 
-	virtual Type* getType();
+	virtual AnyType* getType();
 
 	/** 
 	 * Gets the exit block of the function to jump to when returning a value.
@@ -61,8 +66,8 @@ public:
 	 */
 	virtual void resolve();
 
-	FunctionStmt(std::string name, SymTable* symtab);
-	FunctionStmt(std::string name, AnyType* type, SymTable* symtab);
+	FunctionStmt(std::string name, ArgList arguments, SymTable* symtab);
+	FunctionStmt(std::string name, AnyType* type, ArgList arguments, SymTable* symtab);
 
 };
 
