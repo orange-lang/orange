@@ -5,10 +5,12 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
+#include <fstream>
 using namespace boost::filesystem;
 using namespace boost;
 
 void testFiles(std::vector<path> paths);
+void runFailed();
 
 int main(int argc, char **argv) {
 	cOptions options("River version 0.1"); 
@@ -30,10 +32,9 @@ int main(int argc, char **argv) {
 		exit(0);
 	}
 
-	for (std::string option : test.unparsed()) {
-	}
-
-	if (test.isActive() && test.unparsed().size() == 0) {
+	if (test.isActive() && testFailed.isSet()) {
+		runFailed();
+	} else if (test.isActive() && test.unparsed().size() == 0) {
 		// for now, test everything in test, going through each subdirectory.
 		path p("test");
 
@@ -78,6 +79,43 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
+class TestError {
+public:
+	std::string file; 
+	std::string reason;
+
+	std::string string() {
+		return file + " (" + reason + ")";
+	}
+};
+
+void runFailed() {
+	std::vector<path> toTest;
+
+	std::ifstream errorCache("build/test/.fails-cache.river", std::ios_base::in);
+	std::string line;
+	while (std::getline(errorCache, line)) {
+		if (line == "") continue; 
+		toTest.push_back(line);
+	}
+
+	testFiles(toTest);
+}
+
+void createFailCache(std::vector<TestError> fails) {
+	std::ofstream errorCache("build/test/.fails-cache.river", std::ios_base::out | std::ios_base::trunc);
+	if (errorCache.is_open() == false) {
+		std::cerr << "fatal: could not create fail cache\n";
+		exit(1);
+	}
+
+	for (TestError error : fails) {
+		errorCache << error.file << std::endl;
+	}
+
+	errorCache.close();
+}
+
 void testFiles(std::vector<path> paths) {
   boost::posix_time::ptime startTime = boost::posix_time::microsec_clock::local_time();
 
@@ -86,7 +124,7 @@ void testFiles(std::vector<path> paths) {
 	int passed = 0;
 	int warnings = 0;
 
-	std::vector<std::string> errors;
+	std::vector<TestError> errors;
 
 	const char *ocPath = programPath("oc");
 	if (ocPath == nullptr) {
@@ -123,7 +161,10 @@ void testFiles(std::vector<path> paths) {
 		if (!exists(output_p)) status = 1;
 
 		if (status && !added_error) {
-			errors.push_back(p.string() + " (compile failed)");
+			TestError err; 
+			err.file = p.string();
+			err.reason = "compile failed";
+			errors.push_back(err);
 			added_error = true;
 		}
 
@@ -133,7 +174,10 @@ void testFiles(std::vector<path> paths) {
 		}
 
 		if (status && !added_error) {
-			errors.push_back(p.string() + " (program did not return 0)");
+			TestError err; 
+			err.file = p.string();
+			err.reason = "program did not return 0";
+			errors.push_back(err);
 			added_error = true;
 		}
 
@@ -165,9 +209,11 @@ void testFiles(std::vector<path> paths) {
 
 	if (errors.size() > 0) {
 		std::cout << "\nErrors:\n";
-		for (std::string error : errors) {
-			std::cout << "\t" << error << std::endl;
+		for (TestError error : errors) {
+			std::cout << "\t" << error.string() << std::endl;
 		}
 		std::cout << std::endl;
 	}
+
+	createFailCache(errors);
 }
