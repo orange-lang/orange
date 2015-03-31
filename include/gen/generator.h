@@ -2,6 +2,7 @@
 #define __GEN_GENERATOR_H__
 
 #include "AST.h"
+#include "Symtab.h"
 
 class CodeGenerator {
 private:
@@ -22,5 +23,7 @@ public:
 	static void init();
 	static void Generate(Block *globalBlock);
 };
+
+typedef CodeGenerator CG;
 
 #endif 

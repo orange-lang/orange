@@ -1,4 +1,5 @@
-#include "gen/AST.h"
+#include "gen/Symtab.h"
+
 
 //// Symobj
 Value *Symobj::getValue() const { return m_value; }

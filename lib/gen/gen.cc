@@ -17,6 +17,7 @@
 #include <gen/AST.h>
 #include <gen/generator.h>
 #include <helper/link.h>
+#include <gen/Block.h>
 
 using namespace llvm::sys::fs;
 

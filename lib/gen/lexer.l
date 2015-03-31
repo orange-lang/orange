@@ -1,6 +1,6 @@
 %{
 	// c stuff 
-	#include "gen/AST.h"
+	#include "gen/gen.h"
 	#include "parser.hh"
 	#define STR (std::string(yytext, yyleng))
 

@@ -1,7 +1,7 @@
 %{
 // c stuff 
 	#include <iostream>
-	#include <gen/AST.h>
+	#include <gen/gen.h>
 	#include <gen/generator.h>
 
 	extern int yylex();
