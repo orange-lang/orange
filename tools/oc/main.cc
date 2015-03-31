@@ -6,6 +6,7 @@
 #include <gen/AST.h>
 #include <gen/generator.h>
 #include <helper/args.h>
+#include <llvm/Support/CommandLine.h>
 
 extern FILE* yyin;
 extern int yylex();
@@ -13,7 +14,14 @@ extern int yylex();
 extern Block *globalBlock;
 extern int yyparse();
 
+#include <string>
+
 int main(int argc, char **argv) {
+	InitializeAllTargets();
+	InitializeAllTargetMCs();
+	InitializeAllAsmPrinters();
+	InitializeAllAsmParsers();
+
 	if (linkerPath() == nullptr) {
 		std::cerr << "fatal: linker not found in $PATH.\n"; 
 		return 1;
@@ -24,7 +32,15 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	// this is a really unintelligent hack 
+	// i don't know how to set a command line option otherwise, 
+	// and for the moment i don't want to switch over to LLVM's confusing 
+	// arg system with very little documentation 
+	std::vector<const char *> forced_args; 
+	forced_args.push_back(argv[0]);
+
 	bool outputSet = false;
+	std::string assemblySet = "";
 
 	getArgs(argc, argv, [&] (std::vector<std::string> a, int loc) {
 		// a[0] has the argument 
@@ -54,14 +70,31 @@ int main(int argc, char **argv) {
 			std::cerr << "\t-c\t\t\tOnly output an .o file (do not link)\n";
 			std::cerr << "\t-o <file>\t\tWrite output to <file>\n";
 			std::cerr << "\t-S\t\t\tWrite output as assembly (implies -c)\n";
+			std::cerr << "\t-masm\t\t\tSets an assembly style (defaults to intel)\n";
+			std::cerr << "\t\t=intel\t\tSets style to intel (default)\n";
+			std::cerr << "\t\t=att\t\tSets style to AT&T\n";
 			std::cerr << "\t-v | --verbose\t\tEnable verbose output\n";
 			std::cerr << "\t-h | --help\t\tGet this help message\n";
 			exit(1); 
+		} else if (a[0] == "-m") {
+			if (a[1] == "asm=intel") {
+				assemblySet = "intel";
+				forced_args.push_back("-x86-asm-syntax=intel");
+			} else if (a[1] == "asm=att") {
+				assemblySet = "att";
+				forced_args.push_back("-x86-asm-syntax=att");
+			} 
 		} else {
 			std::cerr << "fatal: option " << a[0] << " is not recognized.\n";
 			exit(1);
 		}
 	});
+
+	if (assemblySet == "") {
+		forced_args.push_back("-x86-asm-syntax=intel");
+	}
+
+	llvm::cl::ParseCommandLineOptions(forced_args.size(),&forced_args[0]);
 
 	std::string file = argv[1];
 	if (file[0] == '-') 
@@ -104,7 +137,6 @@ int main(int argc, char **argv) {
 	CodeGenerator::Generate(globalBlock);
 
 	fclose(yyin);
-
 
 	return 0;
 }
