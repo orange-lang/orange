@@ -146,7 +146,8 @@ Value* BinOpExpr::Codegen() {
 
 		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 
-		return CG::Builder.CreateStore(v, OrigL);		
+		CG::Builder.CreateStore(v, OrigL);		
+		return CG::Builder.CreateLoad(OrigL);	
 	}
 	else if (op == "-") {
 		if (FPOperation) {
@@ -165,7 +166,8 @@ Value* BinOpExpr::Codegen() {
 
 		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 
-		return CG::Builder.CreateStore(v, OrigL);		
+		CG::Builder.CreateStore(v, OrigL);	
+		return CG::Builder.CreateLoad(OrigL);		
 	}	
 	else if (op == "*") {
 		if (FPOperation) {
@@ -184,7 +186,8 @@ Value* BinOpExpr::Codegen() {
 
 		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 
-		return CG::Builder.CreateStore(v, OrigL);		
+		CG::Builder.CreateStore(v, OrigL);		
+		return CG::Builder.CreateLoad(OrigL);	
 	}	
 	else if (op == "/") {
 		// if one of them is signed, they're both signed.
@@ -212,7 +215,8 @@ Value* BinOpExpr::Codegen() {
 
 		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 
-		return CG::Builder.CreateStore(v, OrigL);		
+		CG::Builder.CreateStore(v, OrigL);	
+		return CG::Builder.CreateLoad(OrigL);	
 	}
 
 	else if (op == "=" || op == "<-") {
