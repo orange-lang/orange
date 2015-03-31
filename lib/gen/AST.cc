@@ -128,6 +128,13 @@ bool AnyType::isSigned() {
 	return (type[0] == 'i');
 }
 
+int AnyType::absoluteNumPtrs() {
+	int ret = numPointers + arrays.size();
+	if (mArrayType) ret++;
+	return ret;
+}
+
+
 Type *AnyType::getType() {
 	Type *initial = ::getType(type);
 

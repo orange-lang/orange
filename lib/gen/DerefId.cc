@@ -8,14 +8,13 @@ std::string DerefId::string() {
 		ss << "*"; 
 	}
 
-	ss << id->string(); 
+	ss << "(" << id->string() << ")"; 
 	return ss.str();
 }
 
 Type* DerefId::getType() {
 	AnyType *at = AnyType::Create(id->getType());
-
-	int newPtrs = at->numPointers - pointers; 
+	int newPtrs = at->absoluteNumPtrs() - pointers; 
 
 	if (newPtrs < 0) {
 		std::stringstream myStr; 
@@ -34,6 +33,7 @@ Type* DerefId::getType() {
 
 	std::string *name = new std::string(at->type);
 	AnyType *ret = new AnyType(name, newPtrs, nullptr);
+
 	delete name; 
 	return ret->getType();
 }

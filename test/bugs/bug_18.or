@@ -1,0 +1,15 @@
+extern int32 printf(char *s, ...)
+
+def foo(arr) 
+	printf("%d\n", *arr[0])
+	*arr[0] = 2
+	*arr[1] += 2
+end
+
+a = 1 
+b = 2 
+
+arr = [&a, &b] 
+foo(arr)
+
+return b - a - a

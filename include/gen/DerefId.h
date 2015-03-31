@@ -5,7 +5,7 @@
 
 class DerefId : public Expression {
 public:
-	VarExpr *id; 
+	Expression *id; 
 	int pointers = 0;
 
 	virtual std::string getClass() { return "DerefId"; }
@@ -24,7 +24,7 @@ public:
 	}
 
 
-	DerefId(VarExpr *id) : id(id) { }
+	DerefId(Expression *id) : id(id) { }
 
 	~DerefId();
 }; 

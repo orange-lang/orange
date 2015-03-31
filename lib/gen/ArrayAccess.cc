@@ -29,6 +29,7 @@ void ArrayAccess::resolve() {
 	bool isArray = arrayTy->isPointerTy() || arrayTy->isArrayTy();
 	if (isArray == false) {
 		std::cerr << "fatal: cannot access element of a non-array\n";
+		std::cerr << string() << std::endl;
 		exit(1);
 	}
 }

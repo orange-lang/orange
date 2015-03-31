@@ -97,6 +97,7 @@ public:
 	int numPointers = 0; 
 	bool arrayType() const { return mArrayType; }  
 	int arraySize() const { return mArraySize; }
+	int absoluteNumPtrs();
 
 	std::string string(bool no_brackets = false);
 

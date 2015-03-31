@@ -45,7 +45,8 @@
 %type <ifstmt> if_statement opt_else inline_if inline_unless unless 
 %type <block> statements opt_statements
 %type <stmt> statement extern return_stmt expr_or_ret
-%type <expr> expression primary VALUE opt_expr declaration opt_eq opt_num
+%type <expr> primary_high
+%type <expr> expression primary VALUE opt_expr declaration opt_eq opt_num 
 %type <did> dereference
 %type <fstmt> function opt_id 
 %type <argexpr> opt_arg arg_end
@@ -283,9 +284,13 @@ expression
 	|	expression TIMES expression { $$ = new BinOpExpr($1, "*" , $3); } 
 	|	expression DIVIDE expression { $$ = new BinOpExpr($1, "/" , $3); }
 
-	|	primary { $$ = $1; }
+	|	primary_high { $$ = $1; }
 	;
 
+primary_high
+	: TIMES dereference { $$ = $2; $<did>$->pointers++; }
+	| primary { $$ = $1; }
+	;
 
 primary			
 	:	OPEN_PAREN expression CLOSE_PAREN { $$ = $2; } 
@@ -295,7 +300,6 @@ primary
 	|	TYPE_ID { $$ = new VarExpr(*$1); }
 	|	STRING { $$ = new StrVal(*$1); }
 	|	if_statement { $$ = $1; }
-	|	TIMES dereference { $$ = $2; $<did>$->pointers++; }
 	|	MINUS primary { $$ = new NegativeExpr($2); }
 	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayExpr($2); }
 	| primary OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess($1, $3); }
@@ -304,7 +308,7 @@ primary
 
 dereference 
 	:	TIMES dereference { $$ = $2; $$->pointers++; } 
-	|	TYPE_ID { $$ = new DerefId(new VarExpr(*$1)); }
+	|	primary { $$ = new DerefId($1); }
 	;
 
 if_statement
