@@ -71,6 +71,8 @@
 
 %right IF
 
+%left INCREMENT DECREMENT
+
 %%
 	
 start
@@ -260,6 +262,10 @@ expression
 	|	expression MINUS_ASSIGN expression { $$ = new BinOpExpr($1, "-=", $3); }
 	|	expression TIMES_ASSIGN expression { $$ = new BinOpExpr($1, "*=", $3); }
 	|	expression DIVIDE_ASSIGN expression { $$ = new BinOpExpr($1, "/=", $3); }
+	| expression %prec INCREMENT INCREMENT { $$ = new IncrementExpr($1, "++", false); }
+	| expression %prec DECREMENT DECREMENT { $$ = new IncrementExpr($1, "--", false); }
+	| %prec INCREMENT INCREMENT expression { $$ = new IncrementExpr($2, "++", true); }
+	| %prec DECREMENT DECREMENT expression { $$ = new IncrementExpr($2, "--", true); } 
 
 	|	expression COMP_LT expression { $$ = new BinOpExpr($1, "<" , $3); }
 	|	expression COMP_GT expression { $$ = new BinOpExpr($1, ">" , $3); }

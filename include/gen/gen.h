@@ -22,5 +22,6 @@
 #include "NegativeExpr.h"
 #include "ArrayExpr.h"
 #include "ArrayAccess.h"
+#include "IncrementExpr.h"
 
 #endif
