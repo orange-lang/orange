@@ -115,11 +115,12 @@ void showTestResults(std::vector<RunResult> results) {
 	// Print out a line break
 	std::cout << std::endl;
 
+	int percPassed = ((float)numPassedTests(results)/(float)results.size()) * 100;
+
 	std::cout << "Test results (" << totalTestTime(results) << " seconds):\n";
-	std::cout << "\t" << results.size() << " tests total.\n";
-	std::cout << "\t" << numPassedTests(results) << " tests passed.\n";
-	std::cout << "\t" << numFailedTests(results) << " tests failed.\n";
-	std::cout << "\t" << avgTestTime(results) << " seconds to run on average.\n";
+	std::cout << "\t" << numPassedTests(results) << "/" << results.size() << " tests passed (" << percPassed << "%).\n";
+		if (avgTestTime(results) > 0.00001f)
+		std::cout << "\t" << avgTestTime(results) << " seconds to run on average.\n";
 	std::cout << "\tLongest test was: " << getLongestTest(results) << "\n";
 
 	// Print out the number of failed tests if we have any
@@ -131,7 +132,7 @@ void showTestResults(std::vector<RunResult> results) {
 
 			// Get only the filename itself, not the full path
 			path p(res.filename()); 
-			std::cout << "\t" << p.filename().string(); 
+			std::cout << "\t" << p.relative_path().string(); 
 
 			// If we only have one error, print on same line and continue.
 			if (res.errors().size() == 1) {
@@ -152,7 +153,7 @@ void doTestCommand(cOptionsState test) {
 	addedCharacters = 0; 
 
 	try {
-		current_path(findProjectDirectory() / "test");
+		current_path(findProjectDirectory());
 	} catch (std::runtime_error& e) {
 		std::cerr << e.what() << std::endl;
 		return;
@@ -160,7 +161,7 @@ void doTestCommand(cOptionsState test) {
 
 	// If the user didn't enter anything, we'll just test everything in the test/ folder.
 	if (test.unparsed().size() == 0) {
-		auto results = runTest(current_path());
+		auto results = runTest(path("test"));
 		showTestResults(results);
 		return;
 	}

@@ -143,5 +143,7 @@ void FunctionStmt::resolve() {
 	// Add us as a structure.
 	symtab()->setStructure(this);
 
+	// TODO: set up our arguments, if any, into the symbol table.
+
 	Block::resolve();
 }
