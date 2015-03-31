@@ -1,31 +1,58 @@
 %{
 	// c stuff 
+	#include "AST.h"
 	#include "parser.hh"
+	#define STR (std::string(yytext, yyleng))
+
+	ValFactory *factory = nullptr;
+
+	#define MKFACTORY() factory = new ValFactory(); factory->value = yytext;
+	#define DOFACTORY(SZ) factory->size = SZ; yylval.expr = factory->produce(); delete factory;
 %}
 
 %option noyywrap
 
 %x COMMENT 
+%x INT
+%x BINARY 
+%x HEX 
+
 %%
 
 [\ \t\r]								;
 
 "#"[^\r\n]*							;
 
-"-"?[1-9][0-9]*"u"			printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"i"			printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"u8"			printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"i8"			printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"u16"		printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"i16"		printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"u32"		printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"i32"		printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"u64"		printf("%%%s ", yytext);
-"-"?[1-9][0-9]*"i64"		printf("%%%s ", yytext);
-"-"?[1-9][0-9]*					printf("%%%s ", yytext);
-"-"?[1-9][0-9]*.[0-9]+	printf("%%%s ", yytext);
-[0|1]+"b"								printf("%%%s ", yytext);
-"0x"[0-9A-Fa-f]+				printf("%%%s ", yytext);
+
+[0|1]+									MKFACTORY(); BEGIN(BINARY); 
+<BINARY>{
+	"b"										DOFACTORY("b"); BEGIN(INITIAL); return VALUE;
+	.											BEGIN(INT);
+}							
+
+"0x"										MKFACTORY(); BEGIN(HEX); 
+<HEX>{
+	[0-9A-Fa-f]+					factory->value = yytext; DOFACTORY("x"); BEGIN(INITIAL); return VALUE; 
+	.											printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
+}
+
+"-"?[1-9][0-9]*.[0-9]+	MKFACTORY(); DOFACTORY("d"); return VALUE;
+
+"-"?[1-9][0-9]*					MKFACTORY(); BEGIN(INT);
+
+<INT>{
+	"u"										DOFACTORY("u"); BEGIN(INITIAL); return VALUE; 
+	"i"										DOFACTORY("i"); BEGIN(INITIAL); return VALUE;
+	"u8"									DOFACTORY("u8"); BEGIN(INITIAL); return VALUE; 
+	"i8"									DOFACTORY("i8"); BEGIN(INITIAL); return VALUE; 
+	"u16"									DOFACTORY("u16"); BEGIN(INITIAL); return VALUE; 
+	"i16"									DOFACTORY("i16"); BEGIN(INITIAL); return VALUE; 
+	"u32"									DOFACTORY("u32"); BEGIN(INITIAL); return VALUE; 
+	"i32"									DOFACTORY("i32"); BEGIN(INITIAL); return VALUE; 
+	"u64"									DOFACTORY("u64"); BEGIN(INITIAL); return VALUE; 
+	"i64"									DOFACTORY("i64"); BEGIN(INITIAL); return VALUE; 
+	[\ \t\r\n]						DOFACTORY("i"); BEGIN(INITIAL); return VALUE; 
+}
 
 "def"										printf("def "); return DEF; 
 "return"								printf("return "); return RETURN;

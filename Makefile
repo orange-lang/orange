@@ -1,4 +1,4 @@
-SOURCES=main.o parser.o lexer.o
+SOURCES=main.o parser.o lexer.o AST.o
 CXXFLAGS=--std=c++11 `llvm-config --cxxflags` -fexceptions -Wno-unused -O3 -Wno-deprecated-register
 
 
