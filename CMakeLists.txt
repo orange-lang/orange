@@ -19,6 +19,6 @@ if(${WIN32})
 	list(APPEND C_DEFINES "${CMAKE_C_DEFINES} -DYY_NO_UNISTD_H")
 endif(${WIN32})
 
+add_subdirectory(lib/helper)
 add_subdirectory(lib/gen)
 add_subdirectory(tools/oc)
-

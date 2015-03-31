@@ -308,6 +308,9 @@ public:
 
 class CodeGenerator {
 public:
+	static std::string outputFile;
+	static bool outputAssembly;
+
 	static Module *TheModule;
 	static IRBuilder<> Builder;
 	static FunctionPassManager *TheFPM;
