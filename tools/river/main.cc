@@ -27,7 +27,31 @@ public:
 	}
 };
 
+void get_working_dir() {
+	bool found = false;
+	path p = current_path();
+
+	while (found == false) {
+		if (!exists(p)) {
+			std::cerr << "fatal: not in a river project (no river.settings.json found)!\n";
+			exit(1);
+		}
+
+		for (auto& entry : make_iterator_range(directory_iterator(p), {})) {
+			if (entry.path().filename().string() == RIVER_SETTINGS) {
+				current_path(p);
+				return;
+			}
+		}		
+
+		p = p.parent_path();
+	}
+
+}
+
 int main(int argc, char **argv) {
+	get_working_dir();
+
 	cOptions options("River version 0.1"); 
 
 	// main state 
