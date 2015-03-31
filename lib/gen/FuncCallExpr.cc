@@ -60,10 +60,6 @@ Type *FuncCallExpr::getType() {
 		return nullptr; 
 	}
 
-	for (auto obj : CG::Symtab->objs) {
-		std::cout << obj.first << std::endl;
-	}
-
 	if (o->getValue() && isa<Function>(o->getValue())) {
 		Function *f = (Function *)o->getValue();
 		return f->getReturnType();

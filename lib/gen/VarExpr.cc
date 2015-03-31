@@ -18,8 +18,6 @@ bool VarExpr::isSigned() {
 		exit(1);
 	}	
 
-	std::cout << name << " signed: " << o->isSigned << std::endl;
-
 	return o->isSigned;
 }
 

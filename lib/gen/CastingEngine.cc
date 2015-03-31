@@ -36,6 +36,15 @@ bool CastValueToType(Value **v, Type *t, bool isSigned, bool force) {
 				*v = CG::Builder.CreateFPToUI(*v, t);
 			}
 		} else {
+			AnyType *a = AnyType::Create(changeType);
+			AnyType *b = AnyType::Create(t);
+
+			if (a->type == b->type && a->isSigned() == b->isSigned() && a->numPointers == b->numPointers) {
+				// don't worry about not being able to force, since they're the same.
+				return false;
+			}
+
+
 			std::cerr << "fatal: can't determine type to force to.\n";
 			changeType->dump(); printf("\n");
 			t->dump(); printf("\n");
@@ -92,8 +101,8 @@ Type *GetFittingType(Type *v1, Type *v2) {
 		return v1; 
 	}
 
-	std::cerr << "WARNING: could not determine fitting type for the following:\n";
-	v1->dump(); std::cerr << " and "; 
-	v2->dump(); std::cerr << std::endl; 
+	// std::cerr << "WARNING: could not determine fitting type for the following:\n";
+	// v1->dump(); std::cerr << " and "; 
+	// v2->dump(); std::cerr << std::endl; 
 	return nullptr;
 }

@@ -95,6 +95,12 @@ Value* BinOpExpr::Codegen() {
 		FPOperation = true;
 	}
 
+	if (op == "/" && L->getType()->isFloatingPointTy() != R->getType()->isFloatingPointTy()) {
+		std::cerr << "fatal: trying to perform operation " << op 
+			<< " with only one of the operands being a floating point value.\n";
+		exit(1);
+	}
+
 	if (op == "+") {
 		if (FPOperation) {
 			return CG::Builder.CreateFAdd(L, R);
