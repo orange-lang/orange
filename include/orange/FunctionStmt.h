@@ -22,6 +22,16 @@ private:
 	llvm::GlobalValue::LinkageTypes m_linkageType = Function::ExternalLinkage;
 
 	AnyType* m_type = nullptr;
+
+	/**
+	 * Indicates the exit block of the function to jump to when returning a value.
+	 */
+	BasicBlock* m_blockEnd = nullptr; 
+
+	/**
+	 * Indicates the return value of the function, if any.
+	 */
+	Value* m_retVal = nullptr;
 public:
 	virtual std::string getClass() { return "FunctionStmt"; }
 
@@ -32,6 +42,17 @@ public:
 	virtual std::string string();
 
 	virtual Type* getType();
+
+	/** 
+	 * Gets the exit block of the function to jump to when returning a value.
+	 */
+	BasicBlock* getBlockEnd() const { return m_blockEnd; }
+
+	/**
+	 * Gets the return value of the function. This value will be nullptr 
+	 * if the function returns void.
+	 */
+	Value* getRetVal() const { return m_retVal; }
 
 	/** 
 	 * Gets the parent symbol table, if there is one. 

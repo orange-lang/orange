@@ -22,7 +22,7 @@ Value* VarExpr::getValue() {
 
 	// If a variable exists in the symtab by this name, 
 	SymTable* tab = GE::runner()->topBlock()->symtab();
-	
+
 	ASTNode* node = tab->find(m_name);
 	if (node == nullptr) return m_value; 
 
@@ -30,6 +30,7 @@ Value* VarExpr::getValue() {
 		throw std::runtime_error(node->string() + " is not a variable!");
 	}
 
+	if (node == this) return nullptr;
 	return node->getValue();
 }
 
@@ -42,6 +43,22 @@ Type* VarExpr::getType() {
 	// we'll return the default type from ASTNode.
 	if (getValue() && getValue()->getType()) 
 		return getValue()->getType()->getPointerElementType(); 
+	
+	if (m_type) {
+		return m_type; 
+	} else if (GE::runner()->topBlock()->symtab()->find(m_name)) {
+		ASTNode* node = GE::runner()->topBlock()->symtab()->find(m_name);
+
+		if (node->getClass() != getClass()) {
+			throw std::runtime_error(node->string() + " is not a variable!");
+		}
+		VarExpr* nodeExpr = (VarExpr*)node;
+
+		if (nodeExpr->m_type) {
+			return nodeExpr->m_type;
+		}
+	}
+
 	return ASTNode::getType(); 
 }
 
@@ -52,12 +69,12 @@ void VarExpr::resolve() {
 	// Nothing to do for now.
 }
 
-void VarExpr::create() {
+void VarExpr::create(bool throwError) {
 	// Tries to add this variable to the symbol table.
 	// If it already exists in the symbol table, and it's not this, throw an error.
 	SymTable* tab = GE::runner()->topBlock()->symtab();
 
-	if (tab->create(m_name, this) == false) {
+	if (tab->create(m_name, this) == false && throwError) {
 		// We couldn't create it because it already exists. 
 		// If the ASTNode in the table isn't this var, throw an error.
 		if (tab->find(m_name) && tab->find(m_name) != this) {

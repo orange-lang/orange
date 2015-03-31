@@ -12,6 +12,25 @@
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/GenericValue.h>
 #include <llvm/ExecutionEngine/MCJIT.h>
+#include <llvm/MC/MCObjectFileInfo.h>
+#include <llvm/MC/MCContext.h>
+#include <llvm/MC/MCAsmInfo.h>
+#include <llvm/CodeGen/AsmPrinter.h>
+#include <llvm/CodeGen/Passes.h>
+#include <llvm/Support/FormattedStream.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/raw_os_ostream.h>
+#include <llvm/Support/TargetRegistry.h>
+#include <llvm/Target/TargetLibraryInfo.h>
+#include <llvm/Analysis/Lint.h>
+#include <llvm/Analysis/CFGPrinter.h>
+#include <llvm/Target/TargetMachine.h>
+#include <llvm/Transforms/IPO/InlinerPass.h>
+#include <llvm/Transforms/IPO.h>
+#include <llvm/Transforms/Vectorize.h>
+#include <llvm/Transforms/Utils/UnifyFunctionExitNodes.h>
+#include <llvm/Analysis/InlineCost.h>
+
 
 Runner::Runner(std::string pathname) {
 	m_pathname = pathname;
@@ -69,6 +88,9 @@ RunResult Runner::run() {
 	extern int yyonce; // used to get the endline
 	extern void yyflushbuffer();
 
+	RunResult result(pathname());
+	result.start(); 
+
 	try {
 		yyflushbuffer(); // reset buffer 
 		yyonce = 0; // reset yyonce 
@@ -78,12 +100,22 @@ RunResult Runner::run() {
 		// Now that we've parsed everything, let's analyze and resolve code...
 		mainFunction()->resolve();
 
+		if (hasError()) {
+			result.finish(false, 1, m_messages);
+			return result;
+		}
+
 		if (debug())
 			std::cout << mainFunction()->string() << std::endl;
 
 		Value *function = mainFunction()->Codegen();
 
-		// TODO: do module optimization.
+		if (hasError()) {
+			result.finish(false, 1, m_messages);
+			return result;
+		}
+
+		optimizeModule();
 
 		if (debug())
 			m_module->dump();
@@ -94,8 +126,13 @@ RunResult Runner::run() {
 		fclose(file);
 		m_isRunning = false;
 
+		if (debug() && hasError() == false) 
+			std::cout << "Program returned " << retCode << std::endl;
+
 		bool succeeded = (retCode == 0) && (hasError() == false); 
-		return RunResult(pathname(), succeeded, retCode, m_messages);
+
+		result.finish(succeeded, retCode, m_messages);
+		return result;
 	} catch (CompilerMessage& e) {
 		std::cerr << "fatal: " << e.what() << std::endl;
 		exit(1);
@@ -123,6 +160,51 @@ int Runner::runModule(Function *function) {
 	std::vector<GenericValue> args;
 	return engine->runFunction((Function *)function, args).IntVal.getSExtValue();
 
+}
+
+void Runner::optimizeModule() {
+	PassManager MPM;
+	MPM.add(createVerifierPass(true));
+	MPM.add(createUnreachableBlockEliminationPass());
+	MPM.add(createGCLoweringPass());
+	MPM.add(createAlwaysInlinerPass());
+	MPM.add(createPruneEHPass());
+	MPM.add(createIPConstantPropagationPass());
+	MPM.add(createIPSCCPPass());
+	MPM.add(createMergeFunctionsPass());
+	MPM.add(createStripDeadPrototypesPass());
+	MPM.add(createConstantPropagationPass());
+	MPM.add(createAliasAnalysisCounterPass()); 
+	MPM.add(createBasicAliasAnalysisPass());
+	MPM.add(createLazyValueInfoPass());
+	MPM.add(createDependenceAnalysisPass());
+	MPM.add(createCostModelAnalysisPass());
+	MPM.add(createDelinearizationPass());
+	MPM.add(createInstCountPass());
+	MPM.add(createInstructionCombiningPass());
+	MPM.add(createInstructionSimplifierPass());
+	MPM.add(createReassociatePass());
+	MPM.add(createGVNPass());
+	MPM.add(createCFGSimplificationPass());
+	MPM.add(createBBVectorizePass());
+	MPM.add(createCodeGenPreparePass());
+	MPM.add(createGVNPass());
+	MPM.add(createSinkingPass());
+	MPM.add(createUnifyFunctionExitNodesPass());
+	MPM.add(createAggressiveDCEPass());
+	MPM.add(createDeadInstEliminationPass());
+	MPM.add(createDeadCodeEliminationPass());
+	MPM.add(createDeadStoreEliminationPass());
+	MPM.add(createGlobalsModRefPass());
+	MPM.add(createModuleDebugInfoPrinterPass());
+	MPM.add(createArgumentPromotionPass());
+	MPM.add(createGlobalOptimizerPass());
+	MPM.add(createConstantMergePass());
+	MPM.add(createGlobalsModRefPass());
+	MPM.add(createPartialInliningPass());
+	MPM.add(createFunctionInliningPass());
+	MPM.run(*m_module);
+	MPM.run(*m_module);
 }
 
 void Runner::log(CompilerMessage message) {

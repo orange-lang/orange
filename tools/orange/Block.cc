@@ -33,6 +33,8 @@ void Block::generateStatements() {
 	for (ASTNode* stmt : m_statements) {
 		try {
 			stmt->Codegen();
+
+			if (stmt->getClass() == "ReturnStmt") break;
 		} catch (CompilerMessage& e) {
 			curRunner->log(e);
 		} catch (std::runtime_error& e) {
@@ -93,7 +95,9 @@ void Block::resolve() {
 	m_resolved = true;
 	m_locked = true;
 
-	Runner* curRunner = GeneratingEngine::sharedEngine()->active();
+	Runner* curRunner = GE::runner();
+
+	GE::runner()->pushBlock(this);
 
 	// Resolve all of our statements.
 	for (auto stmt : m_statements) {
@@ -107,6 +111,8 @@ void Block::resolve() {
 			curRunner->log(msg);
 		}
 	}
+
+	GE::runner()->popBlock();
 }
 
 Block::Block(SymTable* symtab) {

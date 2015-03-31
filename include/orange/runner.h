@@ -64,6 +64,8 @@ private:
 	bool m_debug = false; 
 
 	int runModule(Function *function);
+
+	void optimizeModule();
 public:
 	/**
 	 * Returns whether or not there is at least one error in the run.

@@ -70,7 +70,8 @@ public:
 	 * 
 	 * @return The LLVM binary ops function.
 	 */
-	static Instruction::BinaryOps GetBinOpFunction(Value* value1, StrElement op, Value* value2);
+	static Instruction::BinaryOps GetBinOpFunction(Value* value1, bool signed1, StrElement op, Value* value2, bool signed2);
+	static CmpInst::Predicate GetBinOpPredComp(Value* value1, bool signed1, StrElement op, Value* value2, bool signed2);
 
 	virtual std::string getClass() { return "BinOpExpr"; }
 

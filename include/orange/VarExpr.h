@@ -22,6 +22,11 @@ protected:
 	 * type.
 	 */
 	bool m_signed = false;
+
+	/** 
+	 * Determines the type of the variable.
+	 */
+	Type* m_type = nullptr; 
 public:
 	virtual std::string getClass() { return "VarExpr"; }
 
@@ -40,6 +45,8 @@ public:
 
 	virtual Type* getType();
 
+	virtual void setType(Type* type) { m_type = type; }
+
 	virtual Value* getValue();
 
 	virtual void resolve();
@@ -53,7 +60,7 @@ public:
 	/**
 	 * Tries to create this variable in the symbol table.
 	 */
-	virtual void create(); 
+	virtual void create(bool throwError = true); 
 
 	// variables are *never* constant expressions.
 	virtual bool isConstant() { return false; }

@@ -46,8 +46,17 @@ Value* FunctionStmt::Codegen() {
 
 	// Create basic block and set our insertion point to it.
 	BasicBlock *funcBody = BasicBlock::Create(getGlobalContext(), "entry", generatedFunc);
+	BasicBlock *funcEnd = BasicBlock::Create(getGlobalContext(), "exit", generatedFunc);
 	GE::builder()->SetInsertPoint(funcBody);
 
+	// Set up values for children statements to use. 
+	Value *retVal = nullptr; 
+	if (getType()->isVoidTy() == false) {
+		retVal = GE::builder()->CreateAlloca(getType(), nullptr, "return");
+		m_retVal = retVal;
+	}
+
+	m_blockEnd = funcEnd;
 
 	// Generate the body, which will add code to our new insert block
 	generateStatements();
@@ -60,12 +69,23 @@ Value* FunctionStmt::Codegen() {
 	// if we _need_ a return type, it _needs_ to be in the main body. 
 	if (hasReturn() == false) {
 		if (isRoot()) {
-			// TODO: We're the main block; force return a 0.
-			GE::builder()->CreateRet(ConstantInt::getSigned(funcType->getReturnType(), 0));
+			GE::builder()->CreateStore(ConstantInt::getSigned(funcType->getReturnType(), 0), m_retVal);
 		} else if (m_type != nullptr) {
 			throw CompilerMessage(*this, "Missing return type; expected a " + m_type->string());
 		}
+
+		// Jump to the end now.
+		GE::builder()->CreateBr(m_blockEnd);
 	} 
+
+	GE::builder()->SetInsertPoint(m_blockEnd);
+
+	// Let's return from the function now; returning our value if we have one (e.g., we're not a void func)
+	if (retVal != nullptr) {
+		GE::builder()->CreateRet(GE::builder()->CreateLoad(retVal));
+	} else {
+		GE::builder()->CreateRetVoid();
+	}
 
 	// Optimize our function.
 	GE::sharedEngine()->functionOptimizer()->run(*generatedFunc);
@@ -102,8 +122,6 @@ std::string FunctionStmt::string() {
 
 void FunctionStmt::resolve() {
 	if (m_resolved) return; 
-	
-	Block::resolve();
 
 	// If we don't exist in the parent symtab, add us as a reference.
 	// If the parent doesn't exist, we're in the global block, so 
@@ -120,4 +138,9 @@ void FunctionStmt::resolve() {
 	if (added == false) {
 		throw std::runtime_error("Can't create function " + m_name + ". Something with that name already exists!");
 	}	
+
+	// Add us as a structure.
+	symtab()->setStructure(this);
+
+	Block::resolve();
 }

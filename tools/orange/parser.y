@@ -24,6 +24,7 @@
 
 %union {
 	Expression *expr;
+	Statement *stmt;
 	StrElement *strele;
 	ASTNode *node;
 	Block *block;
@@ -49,6 +50,7 @@
 %type <block> statements
 %type <node> statement
 %type <expr> expression primary VALUE
+%type <stmt> return
 %type <str> TYPE_ID 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE
 
@@ -76,6 +78,7 @@ statements
 statement 		
 	:	term { $$ = nullptr; }
 	| expression term { $$ = $1; SET_LOCATION($$); }
+	| return term { $$ = $1; SET_LOCATION($$); }
 	;
 
 expression
@@ -107,7 +110,10 @@ primary
 	|	TYPE_ID { $$ = new VarExpr(*$1); SET_LOCATION($$); }
 	;
 
-
+return
+	: RETURN { $$ = new ReturnStmt(); SET_LOCATION($$); }
+	| RETURN expression { $$ = new ReturnStmt($2); SET_LOCATION($$); }
+	;
 
 term 
 	: NEWLINE

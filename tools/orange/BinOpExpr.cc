@@ -56,7 +56,7 @@ bool BinOpExpr::IsCompareOp(std::string op) {
 		op == "==" || op == "!=";
 }
 
-Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, StrElement op, Value* value2) {
+Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, StrElement op, Value* value2, bool signed2) {
 	if ((value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy() == false) || 
 		(value2->getType()->isFloatingPointTy() && value1->getType()->isFloatingPointTy() == false)) {
 		throw CompilerMessage(op, "Can't do operation with a float and non-float value.");
@@ -66,9 +66,48 @@ Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, StrElement op,
 
 	if (op == "+") {
 		return isFPOp ? Instruction::FAdd : Instruction::Add;
+	} else if (op == "-") {
+		return isFPOp ? Instruction::FSub : Instruction::Sub;
 	}
 
 	throw CompilerMessage(op, "Unhandled operation " + op);
+}
+
+CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrElement op, Value* value2, bool signed2) {
+	if ((value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy() == false) || 
+		(value2->getType()->isFloatingPointTy() && value1->getType()->isFloatingPointTy() == false)) {
+		throw CompilerMessage(op, "Can't do operation with a float and non-float value.");
+	} 
+
+	bool isFPOp = value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy();
+
+	if (op == ">") {
+		if (isFPOp) {
+			return CmpInst::FCMP_OGT;
+		} else {
+			return (signed1 || signed2) ? CmpInst::ICMP_SGT : CmpInst::ICMP_UGT;
+		}
+	} else if (op == ">=") {
+		if (isFPOp) {
+			return CmpInst::FCMP_OGE;
+		} else {
+			return (signed1 || signed2) ? CmpInst::ICMP_SGE : CmpInst::ICMP_UGE;
+		}		
+	} else if (op == "<") {
+		if (isFPOp) {
+			return CmpInst::FCMP_OLT;
+		} else {
+			return (signed1 || signed2) ? CmpInst::ICMP_SLT : CmpInst::ICMP_ULT;
+		}		
+	} else if (op == "<=") {
+		if (isFPOp) {
+			return CmpInst::FCMP_OLE;
+		} else {
+			return (signed1 || signed2) ? CmpInst::ICMP_SLE : CmpInst::ICMP_ULE;
+		}				
+	}
+
+	throw CompilerMessage(op, "Unhandled compare operation " + op);
 }
 
 
@@ -91,6 +130,7 @@ Value* BinOpExpr::Codegen() {
 		VarExpr* vExpr = (VarExpr *)m_LHS; 
 		vExpr->create();
 		vExpr->setValue(RHS);
+		vExpr->setType(RHS->getType());
 		return GE::builder()->CreateLoad(vExpr->getValue());
 	}
 
@@ -111,7 +151,19 @@ Value* BinOpExpr::Codegen() {
 		return GE::builder()->CreateLoad(LHS);
 	} // other assign ops 
 
-	return GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_op, RHS), LHS, RHS);
+	if (IsCompareOp(m_op) == false) {
+		return GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);	
+	} else {
+		bool isFPOp = LHS->getType()->isFloatingPointTy() && RHS->getType()->isFloatingPointTy();
+		CmpInst::Predicate pred = GetBinOpPredComp(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned());
+
+		if (isFPOp) {
+			return GE::builder()->CreateFCmp(pred, LHS, RHS); 
+		} else {
+			return GE::builder()->CreateICmp(pred, LHS, RHS);
+		}
+
+	}
 }
 
 std::string BinOpExpr::string() {
@@ -123,6 +175,8 @@ std::string BinOpExpr::string() {
 Type* BinOpExpr::getType() {
 	if (IsAssignOp(m_op)) {
 		return m_LHS->getType(); 
+	} else if (IsCompareOp(m_op)) {
+		return Type::getInt1Ty(getGlobalContext());
 	} else {
 		return CastingEngine::GetFittingType(m_LHS->getType(), m_RHS->getType());
 	}
@@ -134,9 +188,23 @@ void BinOpExpr::resolve() {
 
 	m_LHS->resolve();
 	m_RHS->resolve();
+
+	if (m_op == "=" && m_LHS->getClass() == "VarExpr") {
+		// Set the type of LHS if it doesn't exist or this type has higher precedence. 
+		VarExpr* vExpr = (VarExpr *)m_LHS; 
+		vExpr->create(false);
+
+		if (vExpr->getType()->isVoidTy()) {
+			vExpr->setType(m_RHS->getType());
+		} else if (vExpr->isLocked() == false && CastingEngine::GetFittingType(vExpr->getType(), m_RHS->getType()) == m_RHS->getType()) {
+			vExpr->setType(m_RHS->getType());
+		}
+	}
 }
 
 bool BinOpExpr::isSigned() {
+	if (IsCompareOp(m_op)) return false;
+
 	return m_LHS->isSigned() || m_RHS->isSigned();
 }
 
