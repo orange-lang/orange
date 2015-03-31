@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.8.8)
 project(orange)
 
+enable_testing()
+
 set(oc_SOURCE_DIR ${CMAKE_SOURCE_DIR}/tools/oc)
 set(gen_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/gen)
 
@@ -27,3 +29,4 @@ add_subdirectory(lib/libor)
 add_subdirectory(lib/helper)
 add_subdirectory(lib/gen)
 add_subdirectory(tools/oc)
+add_subdirectory(test)
