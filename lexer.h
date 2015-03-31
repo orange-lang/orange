@@ -41,6 +41,7 @@ typedef enum LexemeType {
 	DIVIDE,
 	MODULUS,
 	ARROW, 										// ->
+	ARROW_LEFT,								// <-
 	DOT, 											// . 
 	INCREMENT,								// ++
 	DECREMENT,								// --

@@ -2,6 +2,7 @@
 def test(a)
 	a.add(-2i64)
 end
-
-int n = +0							# statically typed 
-a = [0.123f,-1.53,0xFF] 	# dynamically typed
+	
+int n = +0									# statically typed 
+a = [0.123f, -1.53, 0xFF] 	# dynamically typed
+test(a)

@@ -339,6 +339,10 @@ std::vector<Lexeme *> Lex(std::string source) {
 				lex->value.string += source[idx];
 				lex->type = LESS_OR_EQUAL;
 				idx++;
+			} else if (source[idx] == '-') {
+				lex->value.string += source[idx];
+				lex->type = ARROW_LEFT;
+				idx++;
 			}
 
 			ret.push_back(lex);
