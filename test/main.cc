@@ -25,7 +25,25 @@ int main(int argc, char **argv) {
 #if defined(__linux__) || defined(__APPLE__)
 	execvp(argv[1], nullptr);
 #elif defined(_WIN32) 
-	_execvp(argv[1], nullptr);
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+
+	std::string optionsStr = "";
+
+	CreateProcess(argv[1], (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
+	WaitForSingleObject(pi.hProcess, INFINITE);
+
+	DWORD ExitCode; 
+	GetExitCodeProcess(pi.hProcess, &ExitCode);
+
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+
+	return (int)ExitCode;
 #endif 
 
 	return 0;
