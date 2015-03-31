@@ -40,6 +40,7 @@ Value* FunctionStatement::Codegen() {
 		Args[i] = arg->type->getType();
 	}
 
+	DEBUG_MSG("GETTING RETURN TYPE FOR FUNCTION BLOCK");
 	bool noRet = false; 
 	Type *retType = body->getReturnType();
 
@@ -47,6 +48,8 @@ Value* FunctionStatement::Codegen() {
 		noRet = true; 
 		retType = Type::getVoidTy(getGlobalContext());
 	}
+
+	DEBUG_MSG("GOT RETURN TYPE FOR FUNCTION BLOCK");
 
 	FunctionType *FT = FunctionType::get(retType, Args, false);
 	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);

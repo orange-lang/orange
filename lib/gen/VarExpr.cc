@@ -8,6 +8,11 @@ Type *VarExpr::getType() {
 		return nullptr;
 	}
 	
+	if (o->getType()->isPointerTy() == false) {
+		std::cerr << "BUG: variable not registered as a pointer. report this bug.\n";
+		exit(1);
+	}
+
 	return o->getType()->getPointerElementType();
 }
 

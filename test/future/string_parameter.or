@@ -1,8 +1,0 @@
-# test functions with strings 
-extern int32 puts(char *s) 
-def foo(char *a) 
-	puts(a)
-end 
-
-foo("d.or")
-return 0

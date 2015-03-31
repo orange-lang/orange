@@ -40,7 +40,7 @@ FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
 			// we need to find 
 			Symobj *arg = fstmt->body->symtab->find(expr->name);
 			if (arg->getType() == nullptr) {
-				arg->setType(((*args)[i])->getType());
+				arg->setType(((*args)[i])->getType()->getPointerTo());
 			}
 		}
 	} 

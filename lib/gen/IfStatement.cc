@@ -36,6 +36,11 @@ Value* IfStatement::Codegen() {
 			CondBlock *b = (CondBlock *)blocks[i];
 			Value *cond = b->condition->Codegen();
 
+			if (cond->getType()->isIntegerTy(1) == false) {
+				std::cerr << "fatal: must use a boolean value as the condition in an if statement.\n";
+				exit(1);
+			}
+
 			// if it's true, jump to the created BB
 			// if it's false, jump forward to the next conditional check.
 			CG::Builder.CreateCondBr(cond, BBs[BBi], BBs[BBi+1]);
