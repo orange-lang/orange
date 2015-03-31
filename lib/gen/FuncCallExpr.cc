@@ -6,6 +6,47 @@
 #include "gen/FunctionStatement.h"
 #include "gen/FuncCallExpr.h"
 
+FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
+	this->name = name;
+	this->args = args;
+
+	// try to find function in symbol table 
+	// go through its arguments. get their types. 
+	// if the types don't exist, create them here.
+	Symobj *func = CG::Symtab->find(name);
+	if (func == nullptr) {
+		std::cerr << "fatal: calling function that hasn't been declared.\n";
+		exit(1);
+	}
+
+	// we're not going to through an error if it's null, since that is the 
+	// case for external functions 
+	if (func->reference->getClass() == "FunctionStatement") {
+		FunctionStatement *fstmt = (FunctionStatement *)func->reference;
+
+		if (fstmt->args == nullptr) {
+			std::cerr << "args for " << fstmt->name << " is null!\n";
+			exit(1);
+		}
+
+		for (int i = 0; i < fstmt->args->size(); i++) {
+			ArgExpr *expr = (*fstmt->args)[i];
+
+			if (expr->type == nullptr) {
+				expr->type = AnyType::Create(((*args)[i])->getType());
+			}
+			
+			// we need to find 
+			Symobj *arg = fstmt->body->symtab->find(expr->name);
+			if (arg->getType() == nullptr) {
+				arg->setType(((*args)[i])->getType());
+			}
+		}
+	} 
+
+}
+
+
 Type *FuncCallExpr::getType() {
 	Symobj *o = CG::Symtab->find(name);
 	if (o == nullptr) {

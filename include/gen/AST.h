@@ -53,12 +53,16 @@ public:
 };
 
 class AnyType {
+private:
+	AnyType() { }
 public:
 	std::string type; 
 	bool isSigned();
 	int numPointers = 0; 
 
 	Type *getType();
+
+	static AnyType *Create(Type *t);
 
 	AnyType(std::string *type, int numPointers) : type(*type), numPointers(numPointers) {}
 };

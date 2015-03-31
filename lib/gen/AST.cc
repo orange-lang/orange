@@ -31,6 +31,32 @@ Type *getType(std::string typeStr) {
 	return nullptr;
 }
 
+AnyType *AnyType::Create(Type *t) {
+	AnyType *ret = new AnyType;
+	ret->numPointers = 0;
+
+	while (t->isPointerTy()) {
+		ret->numPointers++;
+		t = t->getPointerElementType();
+	}
+
+	if (t->isFloatTy()) {
+		ret->type = "float"; 
+	} else if (t->isDoubleTy()) {
+		ret->type = "double";
+	} else if (t->isIntegerTy(8)) {
+		ret->type = "int8";
+	} else if (t->isIntegerTy(16)) {
+		ret->type = "int16"; 
+	} else if (t->isIntegerTy(32)) {
+		ret->type = "int32";
+	} else if (t->isIntegerTy(64)) {
+		ret->type = "int64";
+	}
+
+	return ret;
+}
+
 bool AnyType::isSigned() {
 	return (type[0] == 'i');
 }

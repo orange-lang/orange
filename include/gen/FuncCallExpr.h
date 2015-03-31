@@ -27,7 +27,7 @@ public:
 		return ss.str();
 	}
 
-	FuncCallExpr(std::string name, ExprList *args) : name(name), args(args) { };
+	FuncCallExpr(std::string name, ExprList *args);
 };
 
 #endif

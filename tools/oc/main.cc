@@ -139,6 +139,8 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	printf("Generating code...\n");
+
 	if (CodeGenerator::verboseOutput) {
 		std::cout << globalBlock->string() << std::endl;
 	}

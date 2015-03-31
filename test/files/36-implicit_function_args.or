@@ -1,0 +1,7 @@
+extern int32 printf(char *s, ...)
+
+def foo(s, a)
+	return printf(s, a + 1)
+end 
+
+return foo("hello: %d\n", -1)

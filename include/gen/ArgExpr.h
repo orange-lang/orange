@@ -15,7 +15,7 @@ public:
 
 	virtual std::string string() {
 		std::stringstream ss;
-		if (type->type != "") {
+		if (type && type->type != "") {
 			ss << type->type << " ";
 		}
 		ss << name;

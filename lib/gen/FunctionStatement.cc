@@ -17,12 +17,15 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 	CG::Symtab->parent->objs[this->name]->reference = (Statement *)this; 
 
 	// Add arguments to symbol table
-	for (ArgExpr *expr : *(this->args)) {
-		if (expr->type && (expr->type->type)[0] == 'u') {
-			expr->isSigned = false;
-		} else expr->isSigned = true;
-
+	for (ArgExpr *expr : *(this->args)) {	
 		CG::Symtab->create(expr->name);
+
+		if (expr->type == nullptr) {
+			continue;
+		}
+
+		expr->isSigned = expr->type->isSigned();
+
 		if (expr->type) {
 			CG::Symtab->objs[expr->name]->setType(expr->type->getType());
 		}
