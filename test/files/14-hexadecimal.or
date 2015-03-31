@@ -1,0 +1,5 @@
+def foo(uint a)
+	return a - 15
+end 
+
+return foo(0xF)

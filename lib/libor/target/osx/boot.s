@@ -2,6 +2,7 @@
 
 .text 
 start:
+	xor %rax, %rax
 	andq $0xfffffffffffffff0, %rsp 
 	callq ___INTERNAL_main
 	movq %rax, %rdi 

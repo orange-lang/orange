@@ -1,0 +1,9 @@
+extern int32 puts(char *s)
+
+def foo(int a)
+	puts("hello!")
+	return a
+end 
+
+foo(1)
+return foo(0)
