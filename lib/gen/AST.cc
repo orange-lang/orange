@@ -2,7 +2,6 @@
 #include "gen/generator.h"
 #include "gen/Values.h"
 #include "gen/ArgExpr.h"
-typedef CodeGenerator CG;
 
 ArgList* ArgList::clone() {
 	ArgList *ret = new ArgList; 
@@ -10,11 +9,6 @@ ArgList* ArgList::clone() {
 		ret->push_back((ArgExpr *)expr->clone());
 	}
 	return ret;
-}
-
-Value *replace(Value *del, Value *v) {
-	delete del; 
-	return v; 
 }
 
 Type *getType(std::string typeStr) {
@@ -26,11 +20,11 @@ Type *getType(std::string typeStr) {
 		return Type::getInt16Ty(getGlobalContext());
 	} else if (typeStr == "int32") {
 		return Type::getInt32Ty(getGlobalContext());
-	} else if (typeStr == "uint8") {
+	} else if (typeStr == "uint8" || typeStr == "int8") {
 		return Type::getInt8Ty(getGlobalContext());
-	} else if (typeStr == "uint16") {
+	} else if (typeStr == "uint16" || typeStr == "int16") {
 		return Type::getInt16Ty(getGlobalContext());
-	} else if (typeStr == "uint32") {
+	} else if (typeStr == "uint32" || typeStr == "int32") {
 		return Type::getInt32Ty(getGlobalContext());
 	} else if (typeStr == "uint" || typeStr == "uint64") {
 		return Type::getInt64Ty(getGlobalContext());
@@ -46,4 +40,3 @@ Type *getType(std::string typeStr) {
 
 	return nullptr;
 }
-

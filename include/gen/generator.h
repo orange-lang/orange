@@ -2,6 +2,7 @@
 #define __GEN_GENERATOR_H__
 
 #include "AST.h"
+#include "Block.h"
 #include "Symtab.h"
 #include <llvm/Support/CodeGen.h>
 #include <stack>
