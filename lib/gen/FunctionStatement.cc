@@ -7,6 +7,10 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 	this->args = args;
 	this->body = body;
 
+	if (args == nullptr) {
+		this->args = new ArgList();
+	}
+
 	// Create this as a symbol in our parent.
 	CG::Symtab->parent->create(this->name);
 	CG::Symtab->parent->objs[this->name]->isFunction = true; 
@@ -72,6 +76,17 @@ Value* FunctionStatement::Codegen() {
 	body->Codegen();
 
 	if (noRet == true) {
+		bool hasReturn = false; 
+		for (Statement *stmt : body->statements) {
+			if (stmt->getClass() == "ReturnExpr") {
+				hasReturn = true; 
+				break; 
+			}
+		}
+
+		if (hasReturn == false) 
+			CG::Builder.CreateBr(ExitBB);
+
 		CG::Builder.SetInsertPoint(ExitBB);
 		CG::Builder.CreateRetVoid();
 	} else {

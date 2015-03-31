@@ -39,10 +39,10 @@
 
 %type <block> statements
 %type <stmt> statement extern
-%type <expr> expression expr2 expr3 primary VALUE
+%type <expr> expression expr2 expr3 primary VALUE opt_expr
 %type <fstmt> function opt_id 
 %type <argexpr> opt_arg
-%type <arglist> opt_args opt_parens
+%type <arglist> opt_args arg_list opt_parens
 %type <exprlist> expr_list
 %type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR basic_type STRING
@@ -68,9 +68,12 @@ statements	: 		statements statement { if ($2) $1->statements.push_back($2); }
 statement 	: 		function term { $$ = $1; } 
 						|			extern term { $$ = (Statement *)$1; }
 						| 		expression term { $$ = (Statement *)$1; } 
-						|			RETURN expression term { $$ = (Statement *)(new ReturnExpr($2)); }
+						|			RETURN opt_expr term { $$ = (Statement *)(new ReturnExpr($2)); }
 						| 		term { $$ = nullptr; } 
 						;
+
+opt_expr 		:			expression { $$ = $1; }
+						|			{ $$ = nullptr; }
 
 term 				:			NEWLINE | SEMICOLON ;
 
@@ -87,7 +90,10 @@ opt_id			:			TYPE_ID opt_parens { $$ = new FunctionStatement($1, $2, nullptr); }
 opt_parens 	: 		OPEN_PAREN opt_args CLOSE_PAREN { $$ = $2; } 
 						| 		{ $$ = nullptr; };
 
-opt_args 		:			opt_args COMMA opt_arg { $1->push_back($3); } 	
+opt_args 		:			arg_list { $$ = $1; }
+						|			{ $$ = nullptr; }
+
+arg_list 		:			arg_list COMMA opt_arg { $1->push_back($3); } 	
 						| 		opt_arg { $$ = new ArgList(); $$->push_back($1); }; 
 
 opt_arg 		:			type TYPE_ID { $$ = new ArgExpr($1, $2); } 

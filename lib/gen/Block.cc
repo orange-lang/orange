@@ -10,6 +10,12 @@ Type* Block::getReturnType() {
 
 	for (auto stmt : statements) {
 	  if (dynamic_cast<ReturnExpr*>(stmt)) {
+	  	ReturnExpr *RE = (ReturnExpr *)stmt;
+	  	if (RE->expr == nullptr) {
+				CG::Symtab = oldSymtab;
+	  		return nullptr;
+	  	}
+
 	  	ret = ((ReturnExpr *)stmt)->expr->getType();
 			CG::Symtab = oldSymtab;	  	
 	  	return ret; 

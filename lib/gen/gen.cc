@@ -114,7 +114,17 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	globalBlock->Codegen();
 
 	if (noRet == true) {
-		Builder.CreateBr(ExitBB);
+		// does the body /have/ a return statement?
+		bool hasReturn = false; 
+		for (Statement *stmt : globalBlock->statements) {
+			if (stmt->getClass() == "ReturnExpr") {
+				hasReturn = true; 
+				break; 
+			}
+		}
+
+		if (hasReturn == false) 
+			Builder.CreateBr(ExitBB);
 		Builder.SetInsertPoint(ExitBB);
 		CG::Builder.CreateRetVoid();
 	} else {

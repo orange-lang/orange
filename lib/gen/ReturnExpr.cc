@@ -5,6 +5,11 @@
 
 Value* ReturnExpr::Codegen() {
 	BasicBlock *bb = CG::Symtab->getFunctionEnd();
+	if (bb == nullptr) {
+		std::cerr << "fatal: no Function End found!\n";
+		exit(1);
+	}
+
 	if (expr) {
 		Value *v = expr->Codegen();
 
@@ -16,6 +21,7 @@ Value* ReturnExpr::Codegen() {
 		Value *r = CG::Builder.CreateBr(bb);
 		return r; 
 	} else {
-		return CG::Builder.CreateBr(bb);
+		Value *r = CG::Builder.CreateBr(bb);
+		return r;
 	}
 }
