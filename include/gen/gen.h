@@ -14,5 +14,6 @@
 #include "Symtab.h"
 #include "Values.h"
 #include "VarExpr.h"
+#include "VarDeclExpr.h"
 
 #endif

@@ -39,7 +39,7 @@
 
 %type <block> statements
 %type <stmt> statement extern
-%type <expr> expression expr_eq expr2 expr3 primary VALUE opt_expr
+%type <expr> expression expr_eq expr2 expr3 primary VALUE opt_expr declaration opt_eq
 %type <fstmt> function opt_id 
 %type <argexpr> opt_arg
 %type <arglist> opt_args arg_list opt_parens
@@ -68,6 +68,7 @@ statements	: 		statements statement { if ($2) $1->statements.push_back($2); }
 statement 	: 		function term { $$ = $1; } 
 						|			extern term { $$ = (Statement *)$1; }
 						| 		expression term { $$ = (Statement *)$1; } 
+						|			declaration term { $$ = (Statement *)$1; }
 						|			RETURN opt_expr term { $$ = (Statement *)(new ReturnExpr($2)); }
 						| 		term { $$ = nullptr; } 
 						;
@@ -106,6 +107,10 @@ var_ptrs 		: 		var_ptrs TIMES { $$ = $1 + 1; }
 
 basic_type  :			TYPE_INT | TYPE_UINT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
 						|			TYPE_INT32 | TYPE_INT64 | TYPE_UINT8 | TYPE_UINT16 | TYPE_UINT32 | TYPE_UINT64 | TYPE_CHAR				
+
+declaration	:			type TYPE_ID opt_eq { $$ = new VarDeclExpr($1, $2, $3); }
+opt_eq 			:			ASSIGN expression { $$ = $2; } 
+						|			{ $$ = nullptr; }
 
 expression  :			expr_eq ASSIGN expression { $$ = new BinOpExpr($1, "=", $3); }
 						|			expr_eq { $$ = $1; }
