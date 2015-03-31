@@ -1,13 +1,13 @@
-.globl start 
+.globl WinMain 
 
 .text 
-start:
+WinMain:
 	xor %rax, %rax
 	pushq %rbp 
 	callq __INTERNAL_main
 	popq %rbp 
 
 	mov %rax, %rcx 
-	callq ExitProcess
+	callq exit
 .exit:
 	jmp .exit 

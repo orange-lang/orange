@@ -17,8 +17,13 @@ foreach(file ${files})
 		COMMAND oc ${file} -o ${the_name}
 	)
 
+	set(run_file ${CMAKE_BINARY_DIR}/test/${the_name})
+	if(${WIN32})
+		set(run_file ${CMAKE_BINARY_DIR}/test/${the_name}.exe)
+	endif()
+
 	add_test(
 		NAME run_${the_name}
-		COMMAND oc_tester ${CMAKE_BINARY_DIR}/test/${the_name}
+		COMMAND oc_tester ${run_file}
 	)
 endforeach()

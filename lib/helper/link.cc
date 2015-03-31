@@ -82,8 +82,10 @@ const char *linkerPath() {
 
 	std::string toFind = "ld";
 
-#if defined(_WIN32) 
-	toFind += ".exe";
+#if defined(_WIN32)
+	// On Win32, we want to use gcc as a linker instead.
+	// Using ld.exe directly is a little iffy. 
+	toFind = "gcc.exe";
 #endif 
 
 	std::stringstream ss(getenv("PATH"));

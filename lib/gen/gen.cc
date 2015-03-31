@@ -253,9 +253,9 @@ void CodeGenerator::GenerateObject() {
 
 		options.push_back(root.c_str());
 
-		options.push_back("-LC:/Windows/System32");
-		options.push_back("-lkernel32");
-		options.push_back("-lmsvcrt");
+		//options.push_back("-LC:/Windows/System32");
+		//options.push_back("-lkernel32");
+		//options.push_back("-lmsvcrt");
 
 		options.push_back("-o");
 		options.push_back(outputFile.c_str());
