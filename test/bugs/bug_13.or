@@ -1,0 +1,5 @@
+def foo(n)
+	n + 5
+end
+
+return foo(3)
