@@ -205,7 +205,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateICmpULT(L, R);
 		}
 
-		return v;
+		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
 	} 
 	else if (op == "<=") {
 		Value *v = nullptr;
@@ -217,7 +217,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateICmpULE(L, R);
 		}
 
-		return v;
+		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
 	}
 	else if (op == ">") {
 		Value *v = nullptr;
