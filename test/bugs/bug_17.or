@@ -1,0 +1,28 @@
+def foo(a)
+	a[0] -= 1
+end
+
+def foo2(int[] a)
+	a[0] -= 1
+end 
+
+def foo3(int[1] a)
+	a[0] -= 1
+end
+
+# test foo
+a = [1]
+foo(a)
+return 1 if a[0] != 0
+
+# test foo2
+a = [1]
+foo2(a)
+return 2 if a[0] != 0
+
+# test foo3
+a = [1]
+foo3(a)
+return 3 if a[0] != 0
+
+return 0
