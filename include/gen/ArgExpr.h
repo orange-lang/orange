@@ -11,32 +11,45 @@
 #include "AST.h"
 #include "AnyType.h"
 
+/**
+ * ArgExprs are represented by argument variables in function definitions. 
+ * They don't need to have a type defined; if there's no type, then it is a 
+ * generic argument.
+ */
 class ArgExpr : public Statement {
-public:
-	Value* Codegen() {
-		printf("ArgExpr::Codegen()\n");
-		return nullptr;
-	}
-
-	AnyType *type;
+protected:
+	AnyType *type;	
 	std::string name;
 	bool isLocked = false;
-
+public:
 	Type *getType();
+
+	/**
+	 * Gets the AnyType, if any, assigned to this instance.
+	 *
+	 * @return The AnyType assigned to this instance.
+	 */
+	AnyType *getAnyType() const;
+
+	/**
+	 * Sets the AnyType, replacing the current one, if any.
+	 *
+	 * @param newType The new type to assign.
+	 */
+	void setType(AnyType *newType);
 
 	Statement *clone();
 
-	virtual bool isSigned() { return type->isSigned(); }
-	virtual bool isConstant() { return false; }
+	/**
+	 * Gets the name assigned to this parameter.
+	 *
+	 * @return The name of this parameter.
+	 */
+	std::string getName() const;
 
-	virtual std::string string() {
-		std::stringstream ss;
-		if (type && type->getTypeStr() != "") {
-			ss << type->getTypeStr() << " ";
-		}
-		ss << name;
-		return ss.str();
-	}
+	virtual bool isSigned();
+
+	virtual std::string string();
 
 	ArgExpr(AnyType* type, std::string* name);
 };

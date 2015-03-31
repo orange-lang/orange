@@ -33,22 +33,18 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 
 	// Add arguments to symbol table
 	for (ArgExpr *expr : *(this->args)) {	
-		CG::Symtabs.top()->create(expr->name);
+		CG::Symtabs.top()->create(expr->getName());
 
-		if (expr->type == nullptr) {
-			continue;
-		}
+		if (expr->getType() == nullptr) continue;
 
-		if (expr->type && expr->getType()->isArrayTy()) {
+		if (expr->getType()->isArrayTy()) {
 			// change to be a pointer, since all array arguments for a function are passed by reference 
-			std::string typeStr = expr->type->getTypeStr();
-			expr->type = new AnyType(&typeStr, expr->type->arrays_size(), nullptr);
+			std::string typeStr = expr->getAnyType()->getTypeStr();
+			expr->setType(new AnyType(&typeStr, expr->getAnyType()->arrays_size(), nullptr));
 		}
 
-		if (expr->type) {
-			CG::Symtabs.top()->objs[expr->name]->setType(expr->type->getType()->getPointerTo());
-		}
-		CG::Symtabs.top()->objs[expr->name]->isSigned = expr->type->isSigned();
+		CG::Symtabs.top()->objs[expr->getName()]->setType(expr->getType()->getPointerTo());
+		CG::Symtabs.top()->objs[expr->getName()]->isSigned = expr->getAnyType()->isSigned();
 	}
 }
 
@@ -94,8 +90,8 @@ std::string FunctionStatement::getTemplatedInstance(ExprList *callArgs, bool for
 		// If newArgs[i] doesn't have a type, take on type of callType.
 		// If it does have a type, and callType can't be casted to it, 
 		// throw an error.  
-		if (newArgs->at(i)->type == nullptr) {
-			newArgs->at(i)->type = AnyType::Create(callType);
+		if (newArgs->at(i)->getAnyType() == nullptr) {
+			newArgs->at(i)->setType(AnyType::Create(callType));
 			requires_templating = true;
 		} else if (CanTypeBeCasted(callType, newArgs->at(i)->getType()) == false) {
 			// we can't cast callType to newArgs[i] type, so an exception should be thrown. 
@@ -116,7 +112,7 @@ std::string FunctionStatement::getTemplatedInstance(ExprList *callArgs, bool for
 	templated_name << name; 
 
 	for (ArgExpr *ae : *newArgs) {
-		templated_name << "__" << ae->type->string(true);
+		templated_name << "__" << ae->getAnyType()->string(true);
 	}
 
 	std::string templated_name_str = templated_name.str();
@@ -176,7 +172,7 @@ void FunctionStatement::resolve() {
 	for (unsigned int i = 0; i < args->size(); i++) {
 		ArgExpr *arg = (*args)[i];
 
-		if (arg->type == nullptr) {
+		if (arg->getType() == nullptr) {
 			argsResolved = false;
 			break; 
 		}
@@ -204,13 +200,13 @@ Value* FunctionStatement::Codegen() {
 	for (unsigned int i = 0; i < args->size(); i++) {
 		ArgExpr *arg = (*args)[i];
 
-		if (arg->type == nullptr) {
+		if (arg->getType() == nullptr) {
 			std::cout << "warning: function " << name << " didn't have arguments resolved.\n";
 			argsResolved = false;
 			break; 
 		}
 
-		Args[i] = arg->type->getType();
+		Args[i] = arg->getType();
 	}
 
 	if (argsResolved == false) {
@@ -267,7 +263,7 @@ Value* FunctionStatement::Codegen() {
 
 	auto arg_it = TheFunction->arg_begin();
 	for (unsigned int i = 0; i < args->size(); i++, arg_it++) {
-		arg_it->setName((*args)[i]->name);
+		arg_it->setName((*args)[i]->getName());
 	}
 
 	auto IP = CG::Builder.GetInsertBlock();
@@ -291,8 +287,8 @@ Value* FunctionStatement::Codegen() {
 	for (unsigned int i = 0; i < args->size(); i++, arg_it++) {
 		Value *v = CG::Builder.CreateAlloca(arg_it->getType());
 		CG::Builder.CreateStore(arg_it, v);
-		CG::Symtabs.top()->create((*args)[i]->name);
-		CG::Symtabs.top()->objs[(*args)[i]->name]->setValue(v);
+		CG::Symtabs.top()->create((*args)[i]->getName());
+		CG::Symtabs.top()->objs[(*args)[i]->getName()]->setValue(v);
 	}
 
 	Value *finalV = body->Codegen();

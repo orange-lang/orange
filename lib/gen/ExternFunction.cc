@@ -36,7 +36,7 @@ Value* ExternFunction::Codegen() {
 	std::vector<Type*> Args(args->size());
 	for (unsigned int i = 0; i < args->size(); i++) {
 		ArgExpr *arg = (*args)[i];
-		Args[i] = arg->type->getType();
+		Args[i] = arg->getType();
 	}
 
 	FunctionType *FT = FunctionType::get(returnType->getType(), Args, args->isVarArg);
