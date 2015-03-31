@@ -14,6 +14,7 @@
 %union {
 	IfStatement *ifstmt;
 	CondBlock *cblock;
+	DerefId *did;
 	Block *block; 
 	Statement *stmt; 
 	ArgList *arglist;
@@ -43,6 +44,7 @@
 %type <block> statements
 %type <stmt> statement extern
 %type <expr> expression expr_eq expr2 expr3 primary VALUE opt_expr declaration opt_eq
+%type <did> dereference
 %type <fstmt> function opt_id 
 %type <argexpr> opt_arg arg_end
 %type <arglist> opt_args arg_list opt_parens
@@ -52,8 +54,6 @@
 %type <anytype> type
 %type <number> var_ptrs
 
-%left ASSIGN 
-%right PLUS MINUS TIMES DIVIDE COMMA
 
 
 %%
@@ -119,7 +119,7 @@ opt_eq 			:			ASSIGN expression { $$ = $2; }
 						|			{ $$ = nullptr; }
 
 expression  :			expr_eq ASSIGN expression { $$ = new BinOpExpr($1, "=", $3); }
-expression  :			expr_eq ARROW_LEFT expression { $$ = new BinOpExpr($1, "<-", $3); }
+						|			expr_eq ARROW_LEFT expression { $$ = new BinOpExpr($1, "<-", $3); }
 						|			expr_eq PLUS_ASSIGN expression { $$ = new BinOpExpr($1, "+=", $3); }
 						|			expr_eq MINUS_ASSIGN expression { $$ = new BinOpExpr($1, "-=", $3); }
 						|			expr_eq TIMES_ASSIGN expression { $$ = new BinOpExpr($1, "*=", $3); }
@@ -149,6 +149,11 @@ primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 						|			TYPE_ID { $$ = new VarExpr(*$1); }
 						|			STRING { $$ = new StrVal(*$1); }
 						|			if_statement { $$ = $1; }
+						|			TIMES dereference { $$ = $2; $<did>$->pointers++; }
+						;
+
+dereference : 		TIMES dereference { $$ = $2; $$->pointers++; } 
+						|			TYPE_ID { $$ = new DerefId(new VarExpr(*$1)); }
 						;
 
 if_statement: 		{ $<symtab>$ = CodeGenerator::Symtab; } 

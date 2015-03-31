@@ -35,6 +35,8 @@ bool CastValueToType(Value **v, Type *t, bool isSigned, bool force) {
 			} else {
 				*v = CG::Builder.CreateFPToUI(*v, t);
 			}
+
+			return true;
 		} else {
 			AnyType *a = AnyType::Create(changeType);
 			AnyType *b = AnyType::Create(t);
@@ -44,6 +46,14 @@ bool CastValueToType(Value **v, Type *t, bool isSigned, bool force) {
 				return false;
 			}
 
+			// try forcing pointer cast?
+			if (changeType->isPointerTy() && t->isIntegerTy()) {
+				*v = CG::Builder.CreatePtrToInt(*v, t);
+				return true;
+			} else if (changeType->isIntegerTy() && t->isPointerTy()) {
+				*v = CG::Builder.CreateIntToPtr(*v, t);
+				return true;
+			}
 
 			std::cerr << "fatal: can't determine type to force to.\n";
 			changeType->dump(); printf("\n");

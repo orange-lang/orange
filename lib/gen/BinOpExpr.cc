@@ -16,7 +16,7 @@ bool isAssignOperator(std::string op) {
 }
 
 bool returnsPtr(std::string className) {
-	return className == "VarExpr" || className == "IfStatement";
+	return className == "VarExpr" || className == "IfStatement" || className == "DerefId";
 }
 
 bool BinOpExpr::isSigned() {
@@ -131,9 +131,9 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	Value *OrigL = L;
-	if ((op != "=" && op != "<-") && LHS->getClass() == "VarExpr") {
+	if ((op != "=" && op != "<-") && (LHS->getClass() == "VarExpr" || LHS->getClass() == "DerefId")) {
 		// If it's a variable load it in. 
-		L = CG::Builder.CreateLoad(L, ((VarExpr*)LHS)->name);
+		L = CG::Builder.CreateLoad(L);
 	}
 
 	Value *R = RHS->Codegen();

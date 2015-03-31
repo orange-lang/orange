@@ -18,5 +18,6 @@
 #include "IfStatement.h"
 #include "CondBlock.h"
 #include "CastExpr.h"
+#include "DerefId.h"
 
 #endif
