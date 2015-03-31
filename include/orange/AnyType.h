@@ -39,6 +39,7 @@ public:
 	bool isFloatingPointTy() const;
 	bool isPointerTy() const { return m_ptrs > 0; }
 	int getIntegerBitWidth() const;
+	int getPointerLength() const { return m_ptrs; }
 
 	static AnyType* getVoidTy();
 	static AnyType* getUIntNTy(int size);

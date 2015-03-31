@@ -22,7 +22,7 @@ Value* ExternFunction::Codegen() {
 		Args.push_back(param->getLLVMType());
 	}
 
-	FunctionType *FT = FunctionType::get(getLLVMType(), Args, false); // TODO: check for vararg!
+	FunctionType *FT = FunctionType::get(getLLVMType(), Args, m_parameters.varArg());
 	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, m_name, GE::module());
 
 	m_value = TheFunction;

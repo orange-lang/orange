@@ -169,5 +169,6 @@ public:
 	virtual bool isConstant() { return false; } 
 };
 
+typedef std::vector<Expression *> ArgList; 
 
 #endif

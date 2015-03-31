@@ -46,6 +46,8 @@ public:
 
 	virtual AnyType* getType();
 
+	virtual AnyType* type() const { return m_type; }
+
 	virtual void setType(AnyType* type) { m_type = type; }
 
 	virtual Value* getValue();
@@ -70,7 +72,7 @@ public:
 
 	virtual bool returnsPtr() { return true; }
 
-	virtual std::string getName() const { return m_name; }
+	virtual std::string name() const { return m_name; }
 
 	VarExpr(std::string name); 
 

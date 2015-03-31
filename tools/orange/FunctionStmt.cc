@@ -20,8 +20,99 @@ FunctionStmt::FunctionStmt(std::string name, AnyType* type, ParamList parameters
 	m_parameters = parameters;
 }
 
+std::string FunctionStmt::getClonesFullSignature(ArgList args) {
+	std::string ret_name = m_name + "_"; 
+	for (auto arg : args) {
+		AnyType* type = arg->getType();
+
+		if (type->isIntegerTy()) {
+			int width = type->getIntegerBitWidth();
+			switch (width) {
+				case 1:
+					ret_name += "T";
+					break;
+				case 8:
+					ret_name += (type->isSigned() ? "b" : "B");
+					break; 
+				case 16:
+					ret_name += (type->isSigned() ? "s" : "S");
+					break;
+				case 32:
+					ret_name += (type->isSigned() ? "i" : "I");
+					break;
+				case 64:
+					ret_name += (type->isSigned() ? "l" : "L");
+					break;
+				default:
+					ret_name += "?";
+					break;
+			}
+		} else if (type->isFloatTy()) {
+			ret_name += "f";
+		} else if (type->isDoubleTy()) {
+			ret_name += "F";
+		}
+
+		for (int i = 0; i < type->getPointerLength(); i++) {
+			ret_name += "p";
+		}
+	}
+
+	return ret_name;
+}
+
+FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
+	// If we're not a generic, we shouldn't be trying to make a clone.
+	if (isGeneric() == false) {
+		return nullptr;
+	}
+
+	if (args.size() != m_parameters.size()) {
+		throw CompilerMessage(*this, "Mismatched number of arguments while calling " + m_name + "!");
+	}
+
+	std::string cloned_name = getClonesFullSignature(args);
+
+	// Does a clone with that name already exist? If so, return that clone.
+	for (auto clone : m_clones) {
+		if (clone->m_name == cloned_name) {
+			return clone;
+		}
+	}
+
+	// Create paramlist from args
+	ParamList cloned_params; 
+
+	for (int i = 0; i < args.size(); i++) {
+		VarExpr* curParam = m_parameters[i];
+		VarExpr* newParam = new VarExpr(curParam->name(), args[i]->getType());
+		cloned_params.push_back(newParam);
+	}
+
+	// Otherwise, create that clone here, add it to the list, and return it.
+	FunctionStmt* clone;
+	if (m_type) {
+		clone = new FunctionStmt(cloned_name, m_type, cloned_params, symtab()->clone());	
+	} else {
+		clone = new FunctionStmt(cloned_name, cloned_params, symtab()->clone());
+	}
+
+	for (auto stmt : m_statements) {
+		clone->addStatement(stmt->clone());
+	}
+
+	m_clones.push_back(clone);
+	return clone;
+}
+
+
 AnyType* FunctionStmt::getType() {
 	AnyType *ret = m_type; 
+
+	// This should not happen; getType() should only be called against clones.
+	if (isGeneric()) {
+		throw CompilerMessage(*this, "Cannot get type of a generic function.");
+	}
 
 	GE::runner()->pushBlock(this);
 
@@ -37,6 +128,17 @@ AnyType* FunctionStmt::getType() {
 }
 
 Value* FunctionStmt::Codegen() {
+	// Check to see if we're a generic function. 
+	// If we are, we only should generate our clones since we're incomplete. 
+	if (isGeneric()) {
+		for (auto clone : m_clones) {
+			clone->Codegen();
+		}
+
+		return nullptr;
+	}
+
+
 	// Push ourselves onto the stack first.
 	GE::runner()->pushBlock(this);
 
@@ -55,7 +157,7 @@ Value* FunctionStmt::Codegen() {
 	// TODO: Set argument names, if any (generatedFunc->arg_begin, setName on iterator)
 	auto arg_it = generatedFunc->arg_begin();
 	for (unsigned int i = 0; i < Args.size(); i++, arg_it++) {
-		arg_it->setName(m_parameters[i]->getName());
+		arg_it->setName(m_parameters[i]->name());
 	}
 
 
@@ -160,6 +262,18 @@ std::string FunctionStmt::string() {
 	return ss.str();
 }
 
+bool FunctionStmt::isGeneric() const {
+	for (auto param : m_parameters) {
+		// *DON'T* use getType() here! that searches up the symtab tree. we only want 
+		// the deepest level here.
+		if (param->type() == nullptr || param->type()->isVoidTy()) {
+			return true; 
+		}
+	}
+
+	return false;
+}
+
 void FunctionStmt::resolve() {
 	if (m_resolved) return; 
 	// Don't set m_resolved here; let Block::resolve do it.
@@ -183,16 +297,21 @@ void FunctionStmt::resolve() {
 	// Add us as a structure.
 	symtab()->setStructure(this);
 
+	if (isGeneric()) {
+		// We don't actually want to resolve our parameters or body since as a generic function, they will never 
+		// be used. Instead, let's just resolve our clones here.
+		for (auto clone : m_clones) {
+			clone->resolve();
+		}
+
+		m_resolved = true;
+		return; 
+	}
+
 	// Push our symtab into the stack and add our parameters to the symbol table.
 	GE::runner()->pushBlock(this);
 
-	for (auto param : m_parameters) {
-		if (param->getType()->isVoidTy()) {
-			throw CompilerMessage(*param, "Generics are not yet supported.");
-		}
-
-		param->create();
-	}
+	for (auto param : m_parameters) param->create();
 
 	GE::runner()->popBlock();
 

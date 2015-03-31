@@ -107,6 +107,12 @@ CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrE
 		} else {
 			return (signed1 || signed2) ? CmpInst::ICMP_SLE : CmpInst::ICMP_ULE;
 		}				
+	} else if (op == "!=") {
+		if (isFPOp) {
+			return CmpInst::FCMP_ONE;
+		} else {
+			return CmpInst::ICMP_NE;
+		}
 	}
 
 	throw CompilerMessage(op, "Unhandled compare operation " + op);

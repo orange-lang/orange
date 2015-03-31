@@ -11,11 +11,23 @@
 
 Value* FuncCall::Codegen() {
 	SymTable *curTab = GE::runner()->symtab();
+	
 	FunctionStmt* function = (FunctionStmt*)curTab->find(m_name); 
+
+	if (function == nullptr) {
+		throw CompilerMessage(*this, "No function " + m_name + " found!");
+	}
+
 	Function* llvmFunction = (Function*) function->getValue();
 
-	if (llvmFunction->arg_size() != m_arguments.size()) {
+	if (llvmFunction == nullptr) {
+		throw CompilerMessage(*this, "No function " + m_name + " generated!");
+	}
+
+	if (llvmFunction->isVarArg() == false && llvmFunction->arg_size() != m_arguments.size()) {
 		throw CompilerMessage(*this, "Invalid number of arguments");
+	} else if (llvmFunction->isVarArg() && m_arguments.size() == 0) {
+		throw CompilerMessage(*this, "Must have at least one argument in a variable argument call!");		
 	}
 
 	if (m_arguments.size()) {
@@ -24,12 +36,29 @@ Value* FuncCall::Codegen() {
 		auto arg_it = llvmFunction->arg_begin();
 		for (unsigned int i = 0; i < llvmFunction->arg_size(); i++, arg_it++) {
 			Value *vArg = m_arguments[i]->Codegen();
+
+			if (m_arguments[i]->returnsPtr()) {
+				vArg = GE::builder()->CreateLoad(vArg);
+			}
+
 			AnyType* anyType = new AnyType(arg_it->getType());
 			CastingEngine::CastValueToType(&vArg, anyType, m_arguments[i]->isSigned(), true);
 			delete anyType;
 			Args.push_back(vArg);
 		}
 
+		// If we're calling a variable argument function, add our other arguments.
+		if (llvmFunction->isVarArg()) {
+			for (unsigned int i = llvmFunction->arg_size(); i < m_arguments.size(); i++) {
+				Value *vArg = m_arguments[i]->Codegen();
+
+				if (m_arguments[i]->returnsPtr()) {
+					vArg = GE::builder()->CreateLoad(vArg);
+				}
+
+				Args.push_back(vArg);			
+			}
+		}
 
 		return GE::builder()->CreateCall(llvmFunction, Args);
 	} else {
@@ -40,6 +69,11 @@ Value* FuncCall::Codegen() {
 
 ASTNode* FuncCall::clone() {
 	FuncCall* cloned = new FuncCall(m_name);
+
+	for (auto arg : m_arguments) {
+		cloned->m_arguments.push_back((Expression*)arg->clone());
+	}
+
 	return cloned; 
 }
 
@@ -59,14 +93,23 @@ std::string FuncCall::string() {
 }
 
 AnyType* FuncCall::getType() {
-	SymTable *curTab = GE::runner()->symtab();
-	FunctionStmt* function = (FunctionStmt*)curTab->find(m_name); 
-
-	if (function == nullptr) {
-		throw CompilerMessage(*this, "Function does not exist!");
+	SymTable* curTab = GE::runner()->symtab();
+    ASTNode* node = curTab->find(m_name);
+    
+    if (node == nullptr) {
+        throw CompilerMessage(*this, m_name + " does not exist!");
+    }
+    
+    if ((node->getClass() != "FunctionStmt" &&
+         node->getClass() != "ExternFunction")) {
+        throw CompilerMessage(*this, m_name + " is not a function!");
+    }
+    
+	if (node->getClass() == "FunctionStmt" && ((FunctionStmt*)node)->isGeneric()) {
+		throw CompilerMessage(*this, "Getting the type of a generic function is NYI!");
 	}
 
-	return function->getType();
+	return node->getType();
 }
 
 void FuncCall::resolve() {
@@ -89,6 +132,15 @@ void FuncCall::resolve() {
 	for (auto arg : m_arguments) arg->resolve();
 
 	// TODO: create clone of function if needed (for generics).
+	// Call resolve on the clone, since we're the one that creates it. 
+	if (function->getClass() == "FunctionStmt") {
+		FunctionStmt* fstmt = (FunctionStmt*)function;
+		if (fstmt->isGeneric()) {
+			FunctionStmt* clone = fstmt->createGenericClone(m_arguments);
+			m_name = clone->name();
+			clone->resolve();
+		}
+	}
 }
 
 bool FuncCall::isSigned() {

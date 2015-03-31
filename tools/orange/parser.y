@@ -129,7 +129,11 @@ function
 			$<stmt>$ = new FunctionStmt(*$2, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$$);
 		} statements END { $$ = $<stmt>7; GE::runner()->popBlock(); SET_LOCATION($$); }
-	;
+	| DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN ARROW any_type term {
+			SymTable *tab = new SymTable(GE::runner()->topBlock()->symtab());
+			$<stmt>$ = new FunctionStmt(*$2, $7, *$4, tab);
+			GE::runner()->pushBlock((FunctionStmt *)$$);			
+		} statements END { $$ = $<stmt>9; GE::runner()->popBlock(); SET_LOCATION($$); }
 
 opt_func_params
 	: func_params { $$ = $1; } 
@@ -139,6 +143,7 @@ opt_func_params
 func_params
 	: func_params COMMA any_type TYPE_ID { $1->push_back(new VarExpr(*$4, $3)); }
 	| func_params COMMA TYPE_ID { $1->push_back(new VarExpr(*$3)); }
+	| func_params COMMA VARARG { $1->setVarArg(true); }
 	| any_type TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$2, $1)); } 
 	| TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$1)); }
 	;

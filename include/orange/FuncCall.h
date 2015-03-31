@@ -11,8 +11,6 @@
 
 #include "AST.h"
 
-typedef std::vector<Expression *> ArgList; 
-
 class FuncCall : public Expression {
 private:
 	std::string m_name; 
