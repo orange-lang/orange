@@ -14,7 +14,10 @@ public:
 
 
 	virtual std::string string() {
-		return "RETURN " + expr->string();
+		if (expr) 
+			return "RETURN " + expr->string();
+		else 
+			return "RETURN";
 	}
 
 	ReturnExpr(Expression *expr) : expr(expr) {}
