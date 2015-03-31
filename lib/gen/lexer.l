@@ -87,6 +87,9 @@
 "++"										return INCREMENT; 
 "--"										return DECREMENT; 
 
+"!="										return NEQUALS;
+"=="										return EQUALS;
+
 "="											return ASSIGN;
 "+="										return PLUS_ASSIGN;
 "-="										return MINUS_ASSIGN;

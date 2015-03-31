@@ -35,7 +35,7 @@
 %token RETURN CLASS USING PUBLIC SHARED PRIVATE OPEN_BRACE CLOSE_BRACE 
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
-%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG;
+%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS
 
 %type <block> statements
 %type <stmt> statement extern
@@ -126,6 +126,8 @@ expr_eq 		:			expr_eq COMP_LT expr2 { $$ = new BinOpExpr($1, "<", $3); }
 						|			expr_eq COMP_GT expr2 { $$ = new BinOpExpr($1, ">", $3); }
 						|			expr_eq LEQ expr2	{ $$ = new BinOpExpr($1, "<=", $3); }
 						|			expr_eq GEQ expr2 { $$ = new BinOpExpr($1, ">=", $3); }
+						|			expr_eq EQUALS expr2 { $$ = new BinOpExpr($1, "==", $3); }
+						|			expr_eq NEQUALS expr2 { $$ = new BinOpExpr($1, "!=", $3); }
 						|			expr2 { $$ = $1; }
 
 expr2 			:			expr2 PLUS expr3 { $$ = new BinOpExpr($1, "+", $3); }

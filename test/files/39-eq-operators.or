@@ -1,0 +1,2 @@
+int a = 0 != (0 == 1)
+return a

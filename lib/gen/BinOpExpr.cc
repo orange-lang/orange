@@ -4,6 +4,11 @@
 #include "gen/Values.h"
 #include "gen/CastingEngine.h"
 
+bool isCmpOperator(std::string op) {
+	return op == ">" || op == ">=" || op == "<" ||
+		op == "<=" || op == "==" || op == "!=";
+}
+
 bool isSigned(Expression *e) {
 	if (dynamic_cast<IntVal*>(e)) {
 		return true;
@@ -16,8 +21,7 @@ bool isSigned(Expression *e) {
 	} else if (e->getClass() == "BinOpExpr") {
 		BinOpExpr *BOE = (BinOpExpr *)e; 
 
-		if (BOE->op == ">" || BOE->op == ">=" || BOE->op == "<" ||
-			BOE->op == "<=" || BOE->op == "==") {
+		if (isCmpOperator(BOE->op)) {
 			return false;
 		}
 
@@ -47,8 +51,8 @@ BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 Type *BinOpExpr::getType() { 
 	DEBUG_MSG("GETTING TYPE OF " << LHS->string() << " " << op << " " << RHS->string());
 
-	if (op == "<" || op == ">" || op == "<=" || op == ">=") {
-		return Type::getInt1Ty(getGlobalContext());
+	if (isCmpOperator(op)) {
+		return Type::getInt8Ty(getGlobalContext());
 	} 
 
 	return GetFittingType(LHS->getType(), RHS->getType());
@@ -192,40 +196,72 @@ Value* BinOpExpr::Codegen() {
 		return CG::Builder.CreateStore(R, L);
 	} 
 	else if (op == "<") {
+		Value *v = nullptr;
 		if (FPOperation) {
-			return CG::Builder.CreateFCmpOLT(L, R);
+			v = CG::Builder.CreateFCmpOLT(L, R);
 		} else if (isSigned(LHS) || isSigned(RHS)) {
-			return CG::Builder.CreateICmpSLT(L, R);
+			v = CG::Builder.CreateICmpSLT(L, R);
 		} else {
-			return CG::Builder.CreateICmpULT(L, R);
+			v = CG::Builder.CreateICmpULT(L, R);
 		}
+
+		return v;
 	} 
 	else if (op == "<=") {
+		Value *v = nullptr;
 		if (FPOperation) {
-			return CG::Builder.CreateFCmpOLE(L, R);
+			v = CG::Builder.CreateFCmpOLE(L, R);
 		} else if (isSigned(LHS) || isSigned(RHS)) {
-			return CG::Builder.CreateICmpSLE(L, R);
+			v = CG::Builder.CreateICmpSLE(L, R);
 		} else {
-			return CG::Builder.CreateICmpULE(L, R);
+			v = CG::Builder.CreateICmpULE(L, R);
 		}
+
+		return v;
 	}
 	else if (op == ">") {
+		Value *v = nullptr;
 		if (FPOperation) {
-			return CG::Builder.CreateFCmpOGT(L, R);
+			v = CG::Builder.CreateFCmpOGT(L, R);
 		} else if (isSigned(LHS) || isSigned(RHS)) {
-			return CG::Builder.CreateICmpSGT(L, R);
+			v = CG::Builder.CreateICmpSGT(L, R);
 		} else {
-			return CG::Builder.CreateICmpUGT(L, R);
+			v = CG::Builder.CreateICmpUGT(L, R);
 		}
+
+		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
 	}
 	else if (op == ">=") {
+		Value *v = nullptr;
 		if (FPOperation) {
-			return CG::Builder.CreateFCmpOGE(L, R);
+			v = CG::Builder.CreateFCmpOGE(L, R);
 		} else if (isSigned(LHS) || isSigned(RHS)) {
-			return CG::Builder.CreateICmpSGE(L, R);
+			v = CG::Builder.CreateICmpSGE(L, R);
 		} else {
-			return CG::Builder.CreateICmpUGE(L, R);
+			v = CG::Builder.CreateICmpUGE(L, R);
 		}
+
+		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
+	}
+	else if (op == "==") {
+		Value *v = nullptr;
+		if (FPOperation) {
+			v = CG::Builder.CreateFCmpOEQ(L, R);
+		} else {
+			v = CG::Builder.CreateICmpEQ(L, R);
+		}		
+
+		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
+	}
+	else if (op == "!=") {
+		Value *v = nullptr;
+		if (FPOperation) {
+			v = CG::Builder.CreateFCmpONE(L, R);
+		} else {
+			v = CG::Builder.CreateICmpNE(L, R);
+		}			
+
+		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);	
 	}
 	else {
 		std::cerr << "fatal: operation " << op << " does not have a generation case.";
