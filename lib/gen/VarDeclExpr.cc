@@ -10,7 +10,7 @@ Value* VarDeclExpr::Codegen() {
 	if (value != nullptr) {
 		Value *store = value->Codegen();
 
-		if (value->getClass() == "VarExpr") {
+		if (value->getClass() == "VarExpr" || value->getClass() == "IfStatement") {
 			// If it's a variable load it in. 
 			store = CG::Builder.CreateLoad(store);
 		}
