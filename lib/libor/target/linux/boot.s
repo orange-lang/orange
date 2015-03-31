@@ -8,6 +8,6 @@ _start:
 	pop rbp
 	mov rdi, rax
 	
-	mov rax, 60 ; syscalls on m
+	mov rax, 60
 	syscall
 	jmp $

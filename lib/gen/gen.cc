@@ -24,7 +24,13 @@ Module *CodeGenerator::TheModule;
 IRBuilder<> CodeGenerator::Builder(getGlobalContext());
 SymTable* CodeGenerator::Symtab = nullptr;
 FunctionPassManager* CodeGenerator::TheFPM;
-std::string CodeGenerator::outputFile = "a.out";
+
+#if defined(__linux__) || defined(__APPLE__)
+	std::string CodeGenerator::outputFile = "a.out";
+#elif defined(_WIN32)
+	std::string CodeGenerator::outputFile = "out.exe";
+#endif 
+
 bool CodeGenerator::outputAssembly = false;
 bool CodeGenerator::verboseOutput = false;
 bool CodeGenerator::doLink = true;
@@ -69,6 +75,15 @@ void CodeGenerator::init() {
 	TheFPM = OurFPM;
 }
 
+const char *MainFunctionName() {
+#if defined(__linux__) || defined(__APPLE__)
+	return "@main";
+#elif defined(_WIN32) 
+	return "__INTERNAL_main";
+#endif 
+	return "@main";
+}
+
 
 // linking on mac: 
 // ld -arch x86_64 -macosx_version_min 10.10 a.out -lSystem -o a 
@@ -86,7 +101,7 @@ void CodeGenerator::Generate(Block *globalBlock) {
 
 	std::vector<Type*> Args;
 	FunctionType *FT = FunctionType::get(retType, Args, false);
-	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, "@main", TheModule);
+	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, MainFunctionName(), TheModule);
 
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
 	Builder.SetInsertPoint(BB);
@@ -166,7 +181,11 @@ void CodeGenerator::GenerateObject() {
 	if (outputAssembly == true) {
 		loutput += ".s";
 	} else {
+#if defined(__linux__) || defined(__APPLE__)
 		loutput += ".o";
+#elif defined(_WIN32)
+		loutput += ".obj";
+#endif 
 	}
 
 	std::string ec = "";
@@ -222,6 +241,16 @@ void CodeGenerator::GenerateObject() {
 		options.push_back("-lc");
 		options.push_back("-o");
 		options.push_back(outputFile.c_str()); // final output. defaults to a.out
+#elif defined(_WIN32) 
+		std::string root = "\"";
+		root += INSTALL_LOCATION;
+		root += "/lib/libor/boot.obj\"";
+
+		options.push_back(root.c_str());
+
+		options.push_back("-LC:/Windows/System32");
+		options.push_back("-lkernel32");
+		options.push_back("-lmsvcrt");
 #endif 
 
 		// local output 

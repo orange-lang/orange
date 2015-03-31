@@ -2,18 +2,26 @@
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
-#include <unistd.h>
-#include <strings.h>
 #include <string.h>
 #include <vector>
 #include <algorithm>
 #include <iterator>
+
+#if defined(__linux__) || defined(__APPLE__)
+#include <unistd.h>
+#include <strings.h>
 #include <dirent.h>
+#endif 
 
 #ifdef __linux__
 	#include <sys/types.h>
 	#include <sys/wait.h>
 #endif
+
+#ifdef _WIN32
+#include <windows.h>
+#include <process.h>
+#endif 
 
 void invokeLinkerWithOptions(std::vector<const char *> options) {
 	const char *linker = linkerPath();
@@ -22,11 +30,11 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 		exit(1);
 	} 
 
-#if defined(__APPLE__) || defined(__linux__)
 	std::vector<const char *> coptions(options);
-	coptions.insert(coptions.begin(), "ld");
+	coptions.insert(coptions.begin(), linker);
 	coptions.push_back(nullptr);
-	
+
+#if defined(__APPLE__) || defined(__linux__)
 	pid_t pid = fork(); 
 
 	if (pid == -1) {
@@ -41,9 +49,23 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 	}
 
 #elif defined(_WIN32) 
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
 
-	std::cerr << "Fatal: invokeLinkerWithOptions is not implemented on this platform.\n"; 
-	exit(1);
+	std::string optionsStr = "";
+	for (auto s : coptions) {
+		if (s == nullptr) continue;
+		optionsStr += s;
+		optionsStr += " ";
+	}
+
+	//CreateProcess(linker, (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
+	//WaitForSingleObject(pi.hProcess, INFINITE);
+
+	//CloseHandle(pi.hProcess);
+	//CloseHandle(pi.hThread);
+
+	_execvp(linker, (char **)&coptions[0]);
 
 #endif 
 }
@@ -58,6 +80,11 @@ const char *linkerPath() {
 	char *ret = nullptr;
 
 	std::string toFind = "ld";
+
+#if defined(_WIN32) 
+	toFind += ".exe";
+#endif 
+
 	std::stringstream ss(getenv("PATH"));
 	std::vector<std::string> tokens;
 
@@ -66,10 +93,12 @@ const char *linkerPath() {
 		tokens.push_back(item);
 	}
 
+
 	for (std::string path : tokens) {
 		if (ret != nullptr) 
 			break;
 
+#if defined(__linux__) || defined(__APPLE__) 
 		DIR *dir;
 		struct dirent *ent;
 
@@ -89,6 +118,43 @@ const char *linkerPath() {
 
 			closedir(dir);
 		}
+#elif defined(_WIN32) 
+		const char *pathName = (path + "\\*").c_str();
+
+		WIN32_FIND_DATA FindFileData;
+		HANDLE hFind = nullptr;
+
+
+		hFind = FindFirstFile(pathName, &FindFileData); 
+		if (hFind != INVALID_HANDLE_VALUE) {
+			if (toFind == FindFileData.cFileName) {
+				std::string fullPath = path + "\\" + FindFileData.cFileName;
+
+				ret = new char[fullPath.length() + 1];
+				for (int i = 0; i < fullPath.length(); i++)
+					ret[i] = 0;
+				strcpy(ret, fullPath.c_str());
+				FindClose(hFind);
+				break;
+			}
+
+			while (FindNextFile(hFind, &FindFileData)) {
+				if (hFind == INVALID_HANDLE_VALUE)
+					break;
+
+				if (toFind == FindFileData.cFileName) {
+					std::string fullPath = path + "\\" + FindFileData.cFileName;
+
+					ret = new char[fullPath.length() + 1];
+					for (int i = 0; i < fullPath.length(); i++)
+						ret[i] = 0;
+					strcpy(ret, fullPath.c_str());
+					FindClose(hFind);
+					break;
+				}
+			}
+		}
+#endif 
 	}
 
 	return (const char *)ret;

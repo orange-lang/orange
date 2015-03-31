@@ -17,6 +17,7 @@ extern int yyparse();
 #include <string>
 
 int main(int argc, char **argv) {
+
 	InitializeAllTargets();
 	InitializeAllTargetMCs();
 	InitializeAllAsmPrinters();
