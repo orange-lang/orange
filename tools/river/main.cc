@@ -12,6 +12,8 @@
 using namespace boost::filesystem;
 using namespace boost;
 
+#define RIVER_SETTINGS "river.settings.json"
+
 void testFiles(std::vector<path> paths);
 void runFailed();
 
@@ -66,7 +68,7 @@ int main(int argc, char **argv) {
 			RiverConfig rc; 
 
 			{
-				std::ifstream is("settings.json");
+				std::ifstream is(RIVER_SETTINGS);
 				if (is.is_open() == true) {
 					cereal::JSONInputArchive ar(is);
 					ar(rc);					
@@ -76,7 +78,7 @@ int main(int argc, char **argv) {
 			rc.settings[setting] = value;
 
 			{
-				std::ofstream os("settings.json");
+				std::ofstream os(RIVER_SETTINGS);
 				cereal::JSONOutputArchive ar(os);
 				ar(rc);
 			}
@@ -85,7 +87,7 @@ int main(int argc, char **argv) {
 		} else {
 			// get it from settings class.
 			{
-				std::ifstream is("settings.json");
+				std::ifstream is(RIVER_SETTINGS);
 				if (is.is_open() == false) {
 					std::cerr << "fatal: no settings file exists yet.\n";
 					exit(1);
@@ -201,7 +203,7 @@ void testFiles(std::vector<path> paths) {
 	RiverConfig rc; 
 
 	{
-		std::ifstream is("settings.json");
+		std::ifstream is(RIVER_SETTINGS);
 		if (is.is_open() == true) {
 			cereal::JSONInputArchive ar(is);
 			ar(rc);					

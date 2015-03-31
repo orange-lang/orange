@@ -154,5 +154,7 @@ int main(int argc, char **argv) {
 
 	fclose(yyin);
 
+	delete globalBlock;
+
 	return 0;
 }

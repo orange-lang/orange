@@ -29,6 +29,8 @@ public:
 	}
 
 	FuncCallExpr(std::string name, ExprList *args);
+
+	~FuncCallExpr();
 };
 
 #endif

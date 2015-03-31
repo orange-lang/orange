@@ -181,3 +181,8 @@ Value* FunctionStatement::Codegen() {
 	DEBUG_MSG("FINISHED CODEGEN FOR FunctionStatement");
 	return TheFunction;
 }
+
+FunctionStatement::~FunctionStatement() {
+	delete args;
+	delete body;
+}

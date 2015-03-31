@@ -29,6 +29,8 @@ public:
 	Symobj() { };
 	Symobj(Value *v) { setValue(v); }
 	Symobj(Type *t) { setType(t); }
+
+	~Symobj();
 }; 
 
 class SymTable {

@@ -157,3 +157,7 @@ Type *IfStatement::getType() {
 	return ret;
 }	
 
+IfStatement::~IfStatement() {
+	for (auto b : blocks) delete b;
+}
+

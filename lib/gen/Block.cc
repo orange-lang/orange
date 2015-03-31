@@ -143,3 +143,11 @@ Value* Block::Codegen() {
 
 	return ret;
 }
+
+Block::~Block() {
+	for (auto stmt : statements) {
+		delete stmt; 
+	}
+
+	delete symtab;
+}

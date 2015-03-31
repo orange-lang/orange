@@ -21,6 +21,11 @@ void Symobj::setType(Type *t) {
 	m_type = t;
 }
 
+Symobj::~Symobj() {
+	if (m_value) 
+		delete m_value;
+}
+
 //// Symtab
 Value *SymTable::getRetVal() {
 	SymTable* ptr = this;

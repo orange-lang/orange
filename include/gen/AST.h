@@ -58,7 +58,10 @@ public:
 			return; 
 		resolved = true; 
 	};
+
+	virtual ~Statement() { };
 };
+
 
 class Expression : public Statement { 
 public:

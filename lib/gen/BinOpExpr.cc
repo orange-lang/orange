@@ -343,3 +343,8 @@ Value* BinOpExpr::Codegen() {
 	exit(1);
 	return nullptr;
 }
+
+BinOpExpr::~BinOpExpr() {
+	delete LHS;
+	delete RHS;
+}

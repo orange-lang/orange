@@ -26,6 +26,8 @@ public:
 	}
 
 	BinOpExpr(Expression *LHS, std::string op, Expression *RHS);
+
+	~BinOpExpr();
 };
 
 #endif

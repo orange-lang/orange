@@ -12,3 +12,8 @@ Value* CastExpr::Codegen() {
 	CastValueToType(&v, type->getType(), type->isSigned(), true);
 	return v;
 }
+
+CastExpr::~CastExpr() {
+	delete type;
+	delete expr;
+}

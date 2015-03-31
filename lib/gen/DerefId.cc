@@ -46,3 +46,7 @@ Value* DerefId::Codegen() {
 	}
 	return ret; 
 }
+
+DerefId::~DerefId() {
+	delete id;
+}

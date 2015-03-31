@@ -182,3 +182,7 @@ Value* FuncCallExpr::Codegen() {
 	Value *v = CG::Builder.CreateCall(o->getValue(), Args);
 	return v;
 }
+
+FuncCallExpr::~FuncCallExpr() {
+	delete args;
+}

@@ -41,3 +41,7 @@ Value* ReturnExpr::Codegen() {
 		return r;
 	}
 }
+
+ReturnExpr::~ReturnExpr() {
+	delete expr;
+}

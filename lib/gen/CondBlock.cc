@@ -11,3 +11,7 @@ CondBlock::CondBlock(Expression *cond, Block *block) {
 
 	this->symtab = block->symtab; 
 }
+
+CondBlock::~CondBlock() {
+	delete condition;
+}

@@ -20,6 +20,8 @@ public:
 	SymTable *symtab;
 
 	virtual std::string string();
+
+	virtual ~Block();
 };
 
 #endif 

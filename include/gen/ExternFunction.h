@@ -17,6 +17,8 @@ public:
 	Value* Codegen();
 
 	ExternFunction(AnyType *returnType, std::string name, ArgList *args);
+
+	~ExternFunction();
 };
 
 #endif 

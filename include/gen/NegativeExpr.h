@@ -12,6 +12,8 @@ public:
 	virtual std::string string() { return "-" + expr->string(); }
 
 	NegativeExpr(Expression *expr) : expr(expr) {}
+
+	~NegativeExpr();
 };
 
 #endif 

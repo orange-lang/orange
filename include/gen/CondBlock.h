@@ -10,6 +10,8 @@ public:
 
 	CondBlock(Expression *cond) : condition(cond) { } 
 	CondBlock(Expression *cond, Block *block);
+
+	~CondBlock();
 };
 
 #endif 

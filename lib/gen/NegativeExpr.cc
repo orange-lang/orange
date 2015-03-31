@@ -15,3 +15,7 @@ Value* NegativeExpr::Codegen() {
 		return CG::Builder.CreateNeg(v);
 	}
 }
+
+NegativeExpr::~NegativeExpr() {
+	delete expr;
+}

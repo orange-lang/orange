@@ -20,6 +20,8 @@ public:
 	void resolve();
 
 	IfStatement() { }
+
+	~IfStatement();
 };
 
 #endif 

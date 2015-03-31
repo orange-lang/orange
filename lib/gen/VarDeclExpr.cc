@@ -52,3 +52,8 @@ VarDeclExpr::VarDeclExpr(AnyType *type, std::string *name, Expression *value) {
 	CG::Symtabs.top()->objs[this->name]->setType(getType()->getPointerTo());
 	CG::Symtabs.top()->objs[this->name]->isSigned = isSigned();
 }
+
+VarDeclExpr::~VarDeclExpr() {
+	delete type;
+	delete value;
+}

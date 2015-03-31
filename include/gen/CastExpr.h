@@ -21,6 +21,8 @@ public:
 	}
 
 	CastExpr(AnyType *type, Expression *expr) : type(type), expr(expr) {}
+
+	~CastExpr();
 };
 
 #endif 

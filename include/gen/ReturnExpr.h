@@ -22,6 +22,8 @@ public:
 	}
 
 	ReturnExpr(Expression *expr) : expr(expr) {}
+
+	~ReturnExpr();
 };
 
 #endif

@@ -38,3 +38,7 @@ Value* ExternFunction::Codegen() {
 	return TheFunction; 
 }
 
+ExternFunction::~ExternFunction() {
+	delete returnType;
+	delete args;
+}

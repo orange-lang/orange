@@ -20,6 +20,8 @@ public:
 	virtual std::string string();
 
 	FunctionStatement(std::string* name, ArgList *args, Block *body);
+
+	~FunctionStatement();
 };
 
 #endif 

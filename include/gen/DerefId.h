@@ -16,6 +16,8 @@ public:
 	virtual Type* getType();
 
 	DerefId(VarExpr *id) : id(id) { }
+
+	~DerefId();
 }; 
 
 #endif 
