@@ -50,6 +50,11 @@ protected:
 	bool resolved = false;
 
 	/**
+	 * The internal value returned by Codegen() and getValue().
+	 */
+	Value *m_value = nullptr; 
+
+	/**
 	 * Indicates where the code is located in a file.
 	 */
 	CodeLocation m_location;
@@ -68,6 +73,14 @@ public:
 	 * @return Returns a Value if the class is a child of Expression, nullptr otherwise.
 	 */
 	virtual Value* Codegen() { return nullptr; }	
+
+	/**
+	 * Gets the value attributed to this object. This will usually be the value created 
+	 * by Codegen().
+	 *
+	 * @return The Value attributed to this object.
+	 */ 
+	virtual Value* getValue() { return m_value; }
 
 	/**
 	 * Creates a allocated clone of this object. The result of this function call must be cleaned up
