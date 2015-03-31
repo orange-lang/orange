@@ -65,6 +65,11 @@ ExternFunction::ExternFunction(AnyType *returnType, std::string name, ArgList *a
 	this->returnType = returnType;
 	this->name = name;
 	this->args = args;
+
+	CG::Symtab->create(this->name);
+	CG::Symtab->objs[this->name]->isFunction = true; 
+	CG::Symtab->objs[this->name]->setType(returnType->getType()); 
+	CG::Symtab->objs[this->name]->reference = (void *)this; 
 }
 
 FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *body) {

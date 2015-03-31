@@ -6,6 +6,7 @@ typedef CodeGenerator CG;
 Type *VarExpr::getType() {
 	Symobj *o = CG::Symtab->find(name);
 	if (o == nullptr) {
+		std::cerr << "Error: couldn't find " << name << " in symtab\n";
 		return nullptr;
 	}
 	
@@ -14,24 +15,32 @@ Type *VarExpr::getType() {
 
 Type *FuncCallExpr::getType() {
 	Symobj *o = CG::Symtab->find(name);
-	if (o == nullptr) return nullptr; 
+	if (o == nullptr) {
+		std::cerr << "Error: couldn't find " << name << " in symtab\n";
+		return nullptr; 
+	}
 
-	// we found it. do reference 
-	FunctionStatement *ref = (FunctionStatement *)(o->reference);
-	if (ref == nullptr) {
-		std::cerr << "fatal: symtab for " << name << " has no reference to object.\n";
-		exit(1); 
-	}	
+	if (o->reference == nullptr) {
+		std::cerr << "Fatal: no reference for function object\n";
+		return nullptr; 
+	}
 
-	return ref->body->getReturnType(); 
+	Expression *e = (Expression *)o->reference;
+	if (dynamic_cast<FunctionStatement*>(e)) {
+		FunctionStatement *ref = (FunctionStatement *)(e);
+		return ref->body->getReturnType();		
+	} else if (o->getType()) {
+		return o->getType();
+	}
+
+	std::cerr << "Error: couldn't return anything for FuncCallExpr\n"; 
+	return nullptr; 
 }
 
 Value* StrVal::Codegen() {
 	Value *v = CG::Builder.CreateGlobalString(value);
 	return CG::Builder.CreateConstGEP2_32(v, 0, 0); 
 }
-
-
 
 Value* VarExpr::Codegen() {
 	Symobj *o = CG::Symtab->find(name);
@@ -98,6 +107,28 @@ Value* FuncCallExpr::Codegen() {
 		return nullptr;
 	}
 
+	if (isa<Function>(o->getValue())) {
+		Function *f = cast<Function>(o->getValue());
+		// const auto fargs = f->getArgumentList();
+		if (f->arg_size() != args->size()) {
+			std::cerr << "Fatal: function arguments do not match number of arguments in callee\n";
+			exit(1);
+		}
+
+		int i = 0;
+		for (auto it = f->arg_begin(); it != f->arg_end(); ++it, ++i) {
+			Value *arg = it;
+			auto larg = (*args)[i];
+
+			bool isSigned = false; 
+			if (dynamic_cast<IntVal *>(larg)) {
+				isSigned = true;
+			}
+
+			Args[i] = CG::Builder.CreateIntCast(Args[i], arg->getType(), isSigned);
+		}
+	}
+
 	return CG::Builder.CreateCall(o->getValue(), Args, name);
 }
 
@@ -137,7 +168,6 @@ Value* BinOpExpr::Codegen() {
 	if (op == '=' && L == nullptr) {
 		printf("((TODO: CREATE VARIABLE. FATAL.))\n");
 	}
-
 
 	Value *R = RHS->Codegen();
   if (dynamic_cast<VarExpr*>(RHS)) {

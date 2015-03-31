@@ -1,0 +1,6 @@
+def test(float a)
+	a -= 1.5
+end
+
+test(2.3)
+return 0
