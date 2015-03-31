@@ -1,0 +1,13 @@
+enum Status
+	PENDING = 0x1
+	RUNNING = 0x2
+	STOPPED = 0x4 
+	EXITED = 0x8 
+end
+
+flags = Status.PENDING | Status.STOPPED 
+return 1 if flags & Status.PENDING == 0 
+return 1 if flags & Status.STOPPED == 0 
+return 1 if flags & Status.RUNNING != 0 
+return 1 if flags & Status.EXITED != 0 
+return 0  

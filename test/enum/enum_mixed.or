@@ -1,0 +1,12 @@
+enum Status
+	PENDING = 4
+	RUNNING
+	STOPPED = 9
+	EXITED
+end
+
+return 1 if Status.PENDING != 4
+return 1 if Status.RUNNING != 5
+return 1 if Status.STOPPED != 9
+return 1 if Status.EXITED != 10
+return 0 
