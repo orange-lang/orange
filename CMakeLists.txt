@@ -25,6 +25,8 @@ if(${WIN32})
 	list(APPEND C_DEFINES "${CMAKE_C_DEFINES} -DYY_NO_UNISTD_H")
 endif(${WIN32})
 
+include_directories(etc/cereal/include)
+
 add_subdirectory(lib/libor)
 add_subdirectory(lib/helper)
 add_subdirectory(lib/gen)

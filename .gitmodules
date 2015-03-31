@@ -1,0 +1,3 @@
+[submodule "etc/cereal"]
+	path = etc/cereal
+	url = https://github.com/USCiLab/cereal.git
