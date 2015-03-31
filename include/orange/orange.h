@@ -8,3 +8,5 @@
 
 #include "AST.h"
 #include "Values.h"
+#include "Block.h"
+#include "generator.h"

@@ -50,6 +50,21 @@ ASTNode* Block::clone() {
 	return clonedBlock;
 }
 
+std::string Block::string() {
+	std::stringstream ss;
+
+	Runner* curRunner = GeneratingEngine::sharedEngine()->active();
+	curRunner->pushSymtab(m_symtab);
+
+	for (ASTNode *s : m_statements) {
+		if (s == nullptr) continue;
+		ss << s->string() << std::endl;
+	}
+
+	curRunner->popSymtab();
+	return ss.str();
+}
+
 void Block::resolve() {
 	if (m_resolved) return;
 	m_resolved = true;

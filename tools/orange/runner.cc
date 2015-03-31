@@ -94,5 +94,15 @@ SymTable* Runner::makeSymtab() {
 }
 
 SymTable* Runner::topSymtab() {
+	if (m_symtabs.empty()) return nullptr;
+
 	return m_symtabs.top();
+}
+
+Block* Runner::block() const {
+	return m_block;
+}
+
+void Runner::setBlock(Block* block) {
+	m_block = block;
 }

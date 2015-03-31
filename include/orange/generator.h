@@ -53,6 +53,15 @@ public:
 	 * @return A shared instance of GeneratingEngine.
 	 */
 	static GeneratingEngine *sharedEngine();
+
+	/**
+	 * Returns the active runner for the shared engine.
+	 *
+	 * @return The active runner of the shared instance.
+	 */
+	static Runner* runner();
 };
+
+typedef GeneratingEngine GE;
 
 #endif

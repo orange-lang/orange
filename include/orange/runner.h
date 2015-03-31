@@ -10,9 +10,10 @@
 
 #include "run.h"
 #include "SymTable.h"
+#include "Block.h"
 
 /**
- * Runner is a class that will run or build a file or project. It starts with the name 
+ * Runner is a class that will run or build a file. It starts with the name 
  * of the path being built. It contains a list of messages that have been 
  * generated during this run. Calling the run() method will compile the code
  * and run it as JIT. Calling the build() method will build the code to 
@@ -35,6 +36,11 @@ private:
 	 * pushed and popped at will by the parser.
 	 */ 
 	std::stack<SymTable *> m_symtabs;
+
+	/**
+	 * The global block for this runner.
+	 */
+	Block* m_block = nullptr;
 public:
 	/**
 	 * Returns whether or not there is at least one error in the run.
@@ -98,6 +104,20 @@ public:
 	 * @return The symbol table on the top of the stack.
 	 */
 	SymTable* topSymtab();
+
+	/**
+	 * Gets the global block for this runner.
+	 *
+	 * @return The global block.
+	 */
+	Block* block() const;
+
+	/**
+	 * Sets the global block for this runner.
+	 *
+	 * @param block The global block.
+	 */
+	void setBlock(Block* block);
 
 	/**
 	 * Creates an instance of Runner and registers it inside of the GeneratingEngine.

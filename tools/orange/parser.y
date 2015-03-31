@@ -9,6 +9,8 @@
 %{
 	#include <iostream>
 	#include <orange/orange.h>
+	#include <orange/generator.h>
+	#include <orange/Block.h>
 
 	extern int yylex();
 	extern struct YYLTYPE yyloc;
@@ -20,6 +22,8 @@
 
 %union {
 	Expression *expr;
+	ASTNode *node;
+	Block *block;
 	std::string *str;
 	int token; 
 	int number;
@@ -39,19 +43,23 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE 
 %token CONST
 
+%type <block> statements
+%type <node> statement
+
 %%
 	
 start
-	:	statements 
+	:	statements { GE::runner()->setBlock($1); }
 	;
 
+/* Create our list of statements. Create our block first and then add statements to it. */
 statements 		
-	: statements statement 
-	| statement
+	: statements statement { $1->addStatement($2); }
+	| statement { $$ = new Block(GE::runner()->makeSymtab()); $$->addStatement($1); }
 	;
 
 statement 		
-	:	term
+	:	term { $$ = nullptr; }
 	;
 
 term 

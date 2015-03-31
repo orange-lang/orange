@@ -15,6 +15,10 @@ GeneratingEngine* GeneratingEngine::sharedEngine() {
 	return ge;
 }
 
+Runner* GeneratingEngine::runner() {
+	return sharedEngine()->active();
+}
+
 bool GeneratingEngine::addRunner(Runner *runner) {
 	// If a runner by this pathname already exists, return false.
 	if (m_runners.find(runner->pathname()) != m_runners.end())
