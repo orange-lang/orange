@@ -1,6 +1,6 @@
 # a.or 
 def test(a)
-	a = 11b / 0x1 + 5 * 2u8
+	a = 3 / 1 + 5 * 2
 	return a
 end
 

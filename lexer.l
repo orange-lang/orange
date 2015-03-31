@@ -14,7 +14,6 @@
 %option noyywrap
 
 %x COMMENT 
-%x INT
 %x BINARY 
 %x HEX 
 
@@ -25,11 +24,7 @@
 "#"[^\r\n]*							;
 
 
-[0|1]+									MKFACTORY(); BEGIN(BINARY); 
-<BINARY>{
-	"b"										DOFACTORY("b"); BEGIN(INITIAL); return VALUE;
-	.											BEGIN(INT);
-}							
+[0|1]+"b"								MKFACTORY(); DOFACTORY("b"); return VALUE;
 
 "0x"										MKFACTORY(); BEGIN(HEX); 
 <HEX>{
@@ -37,23 +32,18 @@
 	.											printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
 }
 
-"-"?[1-9][0-9]*\.[0-9]+	MKFACTORY(); DOFACTORY("d"); return VALUE;
 
-"-"?[1-9][0-9]*					MKFACTORY(); BEGIN(INT);
-
-<INT>{
-	"u64"									DOFACTORY("u64"); BEGIN(INITIAL); return VALUE; 
-	"i64"									DOFACTORY("i64"); BEGIN(INITIAL); return VALUE; 
-	"u32"									DOFACTORY("u32"); BEGIN(INITIAL); return VALUE; 
-	"i32"									DOFACTORY("i32"); BEGIN(INITIAL); return VALUE; 
-	"u16"									DOFACTORY("u16"); BEGIN(INITIAL); return VALUE; 
-	"i16"									DOFACTORY("i16"); BEGIN(INITIAL); return VALUE; 
-	"u8"									DOFACTORY("u8"); BEGIN(INITIAL); return VALUE; 
-	"i8"									DOFACTORY("i8"); BEGIN(INITIAL); return VALUE; 
-	"u"										DOFACTORY("u"); BEGIN(INITIAL); return VALUE; 
-	"i"										DOFACTORY("i"); BEGIN(INITIAL); return VALUE;
-	.											DOFACTORY("i"); BEGIN(INITIAL); yyless(0); return VALUE; 
-}
+"-"?[1-9][0-9]*"u8"			MKFACTORY(); DOFACTORY("u8"); return VALUE;
+"-"?[1-9][0-9]*"i8"			MKFACTORY(); DOFACTORY("i8"); return VALUE;
+"-"?[1-9][0-9]*"u16"		MKFACTORY(); DOFACTORY("u16"); return VALUE;
+"-"?[1-9][0-9]*"i16"		MKFACTORY(); DOFACTORY("i16"); return VALUE;
+"-"?[1-9][0-9]*"u32"		MKFACTORY(); DOFACTORY("u32"); return VALUE;
+"-"?[1-9][0-9]*"i32"		MKFACTORY(); DOFACTORY("i32"); return VALUE;
+"-"?[1-9][0-9]*"u64"		MKFACTORY(); DOFACTORY("u64"); return VALUE;
+"-"?[1-9][0-9]*"i64"		MKFACTORY(); DOFACTORY("i64"); return VALUE;
+"-"?[1-9][0-9]*"u"			MKFACTORY(); DOFACTORY("u"); return VALUE;
+"-"?[1-9][0-9]*"i"			MKFACTORY(); DOFACTORY("i"); return VALUE;
+"-"?[1-9][0-9]*					MKFACTORY(); DOFACTORY("i"); return VALUE;
 
 "def"										printf("def "); return DEF; 
 "return"								printf("return "); return RETURN;
