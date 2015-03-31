@@ -11,7 +11,7 @@ bool isCmpOperator(std::string op) {
 
 bool isAssignOperator(std::string op) {
 	return op == "=" || op == "+=" || op == "-=" || 
-		op == "*=" || op == "/=";
+		op == "*=" || op == "/=" || op == "<-";
 }
 
 bool returnsPtr(std::string className) {
@@ -44,6 +44,12 @@ BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 			CG::Symtab->create(L->name);
 			CG::Symtab->objs[L->name]->setType(RHS->getType()->getPointerTo());
 		}
+	} else if (op == "<-" && LHS->getClass() == "VarExpr") {
+		VarExpr *L = (VarExpr *)LHS;
+
+		// Create it, regardless of whether it exists in a parent scope.		
+		CG::Symtab->create(L->name);
+		CG::Symtab->objs[L->name]->setType(RHS->getType()->getPointerTo());
 	}
 
 	DEBUG_MSG("COMPLETED BinOpExpr");
@@ -76,7 +82,7 @@ Value* BinOpExpr::Codegen() {
 
 	// We want to create the variable here instead of in LHS->Codegen,
 	// since LHS->Codegen would create a nonexistant variable on the RHS potentially 
-	if (op == "=" && L == nullptr) {
+	if ((op == "=" || op == "<-") && L == nullptr) {
 		L = CG::Builder.CreateAlloca(LHS->getType());
 		CG::Symtab->objs[((VarExpr*)LHS)->name]->setValue(L);
 	}
@@ -87,7 +93,7 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	Value *OrigL = L;
-	if (op != "=" && LHS->getClass() == "VarExpr") {
+	if ((op != "=" && op != "<-") && LHS->getClass() == "VarExpr") {
 		// If it's a variable load it in. 
 		L = CG::Builder.CreateLoad(L, ((VarExpr*)LHS)->name);
 	}
@@ -209,7 +215,7 @@ Value* BinOpExpr::Codegen() {
 		return CG::Builder.CreateStore(v, OrigL);		
 	}
 
-	else if (op == "=") {
+	else if (op == "=" || op == "<-") {
 		Value *v = CG::Builder.CreateStore(R, L);
 		return CG::Builder.CreateLoad(L);
 	} 
