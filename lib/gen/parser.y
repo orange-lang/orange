@@ -7,6 +7,7 @@
 	void yyerror(const char *s) { std::cerr << s << std::endl; }
 
 	Block *globalBlock = nullptr; 
+	typedef CodeGenerator CG;
 %}
 
 %union {
@@ -15,6 +16,7 @@
 	ArgList *arglist;
 	ExprList *exprlist;
 	ArgExpr *argexpr;
+	Symtab *symtab;
 	FunctionStatement *fstmt;
 	Expression *expr;
 	std::string *str;
@@ -47,8 +49,11 @@
 
 
 %%
+// we need to start populating symtab...
 	
-start 			:			statements { globalBlock = $1; } 
+start 			:			{ $<symtab>$ = CodeGenerator::Symtab; } { auto s = new Symtab(); CG::Symtab = s; $<symtab>$ = s; } 
+									statements 
+									{ globalBlock = $3; globalBlock->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; } 
 						;
 
 statements	: 		statements statement { if ($2) $1->statements.push_back($2); } 
@@ -63,7 +68,11 @@ statement 	: 		function term { $$ = $1; }
 
 term 				:			NEWLINE | SEMICOLON ;
 
-function		:	 		DEF opt_id term statements END { $$ = $2; $$->body = $4; };
+function		:	 		{ $<symtab>$ = CodeGenerator::Symtab; } 
+									{ auto s = new Symtab(); CG::Symtab = s; $<symtab>$ = s; }
+									DEF opt_id term statements END 
+									{ $$ = $4; $$->body = $6; $$->body->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; };
+
 opt_id			:			TYPE_ID opt_parens { $$ = new FunctionStatement($1, $2, nullptr); } 
 						| 		opt_parens { $$ = new FunctionStatement(nullptr, $1, nullptr) } ;
 
@@ -95,7 +104,6 @@ primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 						| 		TYPE_ID OPEN_PAREN expr_list CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
 						|			TYPE_ID { $$ = new VarExpr(*$1); }
 						;
-
 
 expr_list		:			expr_list COMMA expression { $1->push_back($3); }
 						|			expression { $$ = new ExprList(); $$->push_back($1); }

@@ -4,8 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
-
-#include <sstream>
+#include <stack>
+#include <map>
 
 #include "llvm/Analysis/Passes.h"
 #include "llvm/IR/DataLayout.h"
@@ -19,6 +19,38 @@
 #include "llvm/Transforms/Scalar.h"
 using namespace llvm;
 
+Type *getType(std::string typeStr);
+
+class Symobj {
+private:
+	Value *m_value = nullptr;
+	Type *m_type = nullptr; 
+public:
+	Value *getValue() const;
+	Type *getType() const;  
+
+	// Set value with a non-null object will 
+	// also set type to the type of value. 
+	void setValue(Value *v);
+
+	// If m_value is not null, then calling this will have no effect.  
+	void setType(Type *t);
+
+	Symobj() { };
+	Symobj(Value *v) { setValue(v); }
+	Symobj(Type *t) { setType(t); }
+}; 
+
+class Symtab {
+public:
+	Symtab *parent = nullptr; 
+	std::map< std::string, Symobj* > objs;
+	
+	// If Symobj doesn't exist, creates one. 
+	void create(std::string name);
+	
+	Symobj* find(std::string name);
+};
 
 class ArgExpr;
 class Expression;
@@ -46,6 +78,8 @@ public:
 	Value* Codegen();
 
 	std::vector<Statement *> statements;
+
+	Symtab *symtab;
 
 	std::string string() {
 		std::stringstream ss;
@@ -268,18 +302,13 @@ public:
 	BaseVal *produce();
 };
 
-
-#include <stack>
-#include <map>
-
 class CodeGenerator {
 public:
 	static Module *TheModule;
 	static IRBuilder<> Builder;
-	static std::stack< std::map<std::string, Value*>* > Context;
-
-	static Value* getValue(std::string name);
-
+	
+	static Symtab* Symtab;
+	
 	static void init();
 	static void Generate(Block *globalBlock);
 };

@@ -18,8 +18,10 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 aux_source_directory(${gen_SOURCE_DIR} GEN_SOURCES)
 
+file(GLOB_RECURSE INCLUDES "${CMAKE_SOURCE_DIR}/*.h")
+
 add_library (gen 
-	${GEN_SOURCES} ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS}
+	${GEN_SOURCES} ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS} ${INCLUDES}
 )
 
 target_link_libraries(gen ${llvm_libs})

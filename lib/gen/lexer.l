@@ -48,67 +48,67 @@
 "-"?[1-9][0-9]*"i"			MKFACTORY(); DOFACTORY("i"); return VALUE;
 "-"?[1-9][0-9]*					MKFACTORY(); DOFACTORY("i"); return VALUE;
 
-"def"										printf("def "); return DEF; 
-"return"								printf("return "); return RETURN;
-"end"										printf("end "); return END; 
-"class"									printf("class "); return CLASS; 
-"using"									printf("using "); return USING; 
-"public"								printf("public "); return PUBLIC; 
-"private"								printf("private "); return PRIVATE; 
-"shared"								printf("shared "); return SHARED; 
+"def"										return DEF; 
+"return"								return RETURN;
+"end"										return END; 
+"class"									return CLASS; 
+"using"									return USING; 
+"public"								return PUBLIC; 
+"private"								return PRIVATE; 
+"shared"								return SHARED; 
 
-"int"										printf("int "); SAVESTR(); return TYPE_INT; 
-"float"									printf("float "); SAVESTR();  return TYPE_FLOAT; 
-"double"								printf("double "); SAVESTR();  return TYPE_DOUBLE; 
-"int8"									printf("int8 "); SAVESTR();  return TYPE_INT8; 
-"uint8"									printf("uint8 "); SAVESTR();  return TYPE_UINT8;
-"int16"									printf("int16 "); SAVESTR();  return TYPE_INT16; 
-"uint16"								printf("uint16 "); SAVESTR();  return TYPE_UINT16; 
-"int32"									printf("int32 "); SAVESTR();  return TYPE_INT32; 
-"uint32"								printf("uint32 "); SAVESTR();  return TYPE_UINT32; 
-"int64"									printf("int64 "); SAVESTR();  return TYPE_INT64; 
-"uint64"								printf("uint64 "); SAVESTR();  return TYPE_UINT64;
+"int"										SAVESTR(); return TYPE_INT; 
+"float"									SAVESTR(); return TYPE_FLOAT; 
+"double"								SAVESTR(); return TYPE_DOUBLE; 
+"int8"									SAVESTR(); return TYPE_INT8; 
+"uint8"									SAVESTR(); return TYPE_UINT8;
+"int16"									SAVESTR(); return TYPE_INT16; 
+"uint16"								SAVESTR(); return TYPE_UINT16; 
+"int32"									SAVESTR(); return TYPE_INT32; 
+"uint32"								SAVESTR(); return TYPE_UINT32; 
+"int64"									SAVESTR(); return TYPE_INT64; 
+"uint64"								SAVESTR(); return TYPE_UINT64;
 
-"("											printf("( "); return OPEN_PAREN; 
-")"											printf(") "); return CLOSE_PAREN; 
-"{"											printf("{ "); return OPEN_BRACE; 
-"}"											printf("} "); return CLOSE_BRACE;
-"["											printf("[ "); return OPEN_BRACKET; 
-"]"											printf("] "); return CLOSE_BRACKET; 
+"("											return OPEN_PAREN; 
+")"											return CLOSE_PAREN; 
+"{"											return OPEN_BRACE; 
+"}"											return CLOSE_BRACE;
+"["											return OPEN_BRACKET; 
+"]"											return CLOSE_BRACKET; 
 
 
-"++"										printf("++ "); return INCREMENT; 
-"--"										printf("-- "); return DECREMENT; 
+"++"										return INCREMENT; 
+"--"										return DECREMENT; 
 
-"="											printf("= "); return ASSIGN;
-"+="										printf("+= "); return PLUS_ASSIGN;
-"-="										printf("-= "); return MINUS_ASSIGN;
-"*="										printf("*= "); return TIMES_ASSIGN;
-"/="										printf("/= "); return DIVIDE_ASSIGN; 
-"%="										printf("%%= "); return MOD_ASSIGN;
+"="											return ASSIGN;
+"+="										return PLUS_ASSIGN;
+"-="										return MINUS_ASSIGN;
+"*="										return TIMES_ASSIGN;
+"/="										return DIVIDE_ASSIGN; 
+"%="										return MOD_ASSIGN;
 
-"->"										printf("-> "); return ARROW;
-"<-"										printf("<- "); return ARROW_LEFT;
-"."											printf(". "); return DOT;
-";"											printf("; "); return SEMICOLON; 
+"->"										return ARROW;
+"<-"										return ARROW_LEFT;
+"."											return DOT;
+";"											return SEMICOLON; 
 \n 											return NEWLINE;
-","											printf(", "); return COMMA;
+","											return COMMA;
 	
-"<="										printf("<= "); return LEQ;
-">="										printf(">= "); return GEQ; 
+"<="										return LEQ;
+">="										return GEQ; 
 
-"<"											printf("< "); return COMP_LT; 
-">"											printf("> "); return COMP_GT;
+"<"											return COMP_LT; 
+">"											return COMP_GT;
 
-"+"											printf("+ "); return PLUS;
-"-"											printf("- "); return MINUS;
-"*"											printf("* "); return TIMES; 
-"/"											printf("/ "); return DIVIDE; 
-"%"											printf("%% "); return MOD; 
+"+"											return PLUS;
+"-"											return MINUS;
+"*"											return TIMES; 
+"/"											return DIVIDE; 
+"%"											return MOD; 
 
-[A-Za-z][A-Za-z0-9_]* 	printf("%%%s ", yytext); SAVESTR(); return TYPE_ID;
+[A-Za-z][A-Za-z0-9_]* 	SAVESTR(); return TYPE_ID;
 
-.												printf("Unhandled: %s\n", yytext);
+.												printf("ERROR: Unhandled token: %s\n", yytext);
 
 <<EOF>> { static int once = 0; return once++ ? 0 : NEWLINE; }
 

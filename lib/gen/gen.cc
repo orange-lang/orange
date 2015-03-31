@@ -2,25 +2,9 @@
 
 Module *CodeGenerator::TheModule;
 IRBuilder<> CodeGenerator::Builder(getGlobalContext());
-std::stack< std::map<std::string, Value*> *> CodeGenerator::Context;
+Symtab* CodeGenerator::Symtab = nullptr;
 
 typedef CodeGenerator CG;
-
-Value* CodeGenerator::getValue(std::string name) {
-	// search up the stack...
-	auto copy = std::stack< std::map<std::string, Value*> *>(Context);
-	while (copy.empty() == false) {
-		auto top = copy.top();
-		auto it = top->find(name);
-		if (it != top->end()) {
-			return it->second;
-		}
-		copy.pop();
-	}
-
-	return nullptr;
-}
-
 
 void CodeGenerator::init() {
 	TheModule = new Module("orange", getGlobalContext());
@@ -35,9 +19,8 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
 	Builder.SetInsertPoint(BB);
 
-	std::map<std::string, Value*> *CurCtx = new std::map<std::string, Value*>();
-	CG::Context.push(CurCtx);
-
+	CG::Symtab = globalBlock->symtab;
+	
 	globalBlock->Codegen();
 
 	printf("((TODO: CODE OPTIMIZATION))\n");
@@ -46,17 +29,22 @@ void CodeGenerator::Generate(Block *globalBlock) {
 }
 
 Type *VarExpr::getType() {
-	Value *v = CG::getValue(name);
-	if (v == nullptr) return nullptr; 
-	return v->getType();
+	Symobj *o = CG::Symtab->find(name);
+	if (o == nullptr) {
+		return nullptr;
+	}
+	
+	return o->getType();
 }
 
 Value* VarExpr::Codegen() {
-	// search up the stack for the variable. if it doesn't exist, return null.
-	Value *v = CG::getValue(name);
-	return v;
+	Symobj *o = CG::Symtab->find(name);
+	if (o == nullptr) {
+		std::cerr << "Fatal: no symbol " << name << " found.\n";
+		return nullptr;
+	}
 
-	// Value *v = new AllocaInst(IntegerType::get(getGlobalContext(), 64), name, CG::Builder.GetInsertBlock());
+	return o->getValue();
 }
 
 Value* IntVal::Codegen() {
@@ -80,7 +68,13 @@ Value* FuncCallExpr::Codegen() {
 		Args[i] = arg->Codegen();
 	}
 
-	return CG::Builder.CreateCall(CG::getValue(name), Args, name);
+	Symobj *o = CG::Symtab->find(name);
+	if (o == nullptr || o->getValue() == nullptr) {
+		std::cerr << "Error: no function called " << name << " found.";
+		return nullptr;
+	}
+
+	return CG::Builder.CreateCall(o->getValue(), Args, name);
 }
 
 
@@ -131,12 +125,20 @@ Value* BinOpExpr::Codegen() {
 }
 
 Type* FunctionStatement::getReturnType() {
+	Type *ret; 
+
+	auto oldSymtab = CG::Symtab;
+	CG::Symtab = body->symtab;
+
 	for (auto stmt : body->statements) {
 	  if (dynamic_cast<ReturnExpr*>(stmt)) {
-	  	return ((ReturnExpr *)stmt)->expr->getType();
+	  	ret = ((ReturnExpr *)stmt)->expr->getType();
+			CG::Symtab = oldSymtab;	  	
+	  	return ret; 
 	  }
 	}
 
+	CG::Symtab = oldSymtab;
 	return nullptr;
 }
 
@@ -170,22 +172,25 @@ Value* FunctionStatement::Codegen() {
 		}
 	}
 
-	printf("((TODO: DETERMINE FUNCTION RETURN TYPE. SYMTAB SHOULD INCLUDE MORE THAN JUST VALUE, FILL AS CALCULATED))\n");
-	Type *retType = getReturnType();
-
-	FunctionType *FT = FunctionType::get(Type::getInt64Ty(getGlobalContext()), Args, false);
+	FunctionType *FT = FunctionType::get(getReturnType(), Args, false);
 	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);
 
-	(*CG::Context.top())[name] = TheFunction;
+	// Set function for the PARENT symtab (the one that could call this function)
+	CG::Symtab->create(name);
+	CG::Symtab->objs[name]->setValue(TheFunction);
 
-	std::map<std::string, Value*> *CurCtx = new std::map<std::string, Value*>();
+	// Set new symtab
+	auto oldSymtab = CG::Symtab;
+	CG::Symtab = body->symtab;
+
+	// Set function for the CURRENT symtab (for recursion)
+	CG::Symtab->create(name);
+	CG::Symtab->objs[name]->setValue(TheFunction);
 
 	auto arg_it = TheFunction->arg_begin();
 	for (int i = 0; i < args->size(); i++, arg_it++) {
 		arg_it->setName((*args)[i]->name);
 	}
-
-	CG::Context.push(CurCtx);
 
 	auto IP = CG::Builder.GetInsertBlock();
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
@@ -195,15 +200,16 @@ Value* FunctionStatement::Codegen() {
 	for (int i = 0; i < args->size(); i++, arg_it++) {
 		Value *v = CG::Builder.CreateAlloca(arg_it->getType());
 		CG::Builder.CreateStore(arg_it, v);
-		(*CurCtx)[(*args)[i]->name] = v;
+		CG::Symtab->create((*args)[i]->name);
+		CG::Symtab->objs[(*args)[i]->name]->setValue(v);
 	}
 
 	body->Codegen();
 
 	// IF VOID, CREATE RET VOID HERE
 
-	CG::Context.pop();
-
+	CG::Symtab = oldSymtab;
+	
 	if (IP != nullptr)
 		CG::Builder.SetInsertPoint(IP);
 
