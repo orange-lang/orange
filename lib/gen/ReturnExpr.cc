@@ -14,14 +14,14 @@ void ReturnExpr::resolve() {
 }
 
 Value* ReturnExpr::Codegen() {
-	BasicBlock *bb = CG::Symtab->getFunctionEnd();
+	BasicBlock *bb = CG::Symtabs.top()->getFunctionEnd();
 	if (bb == nullptr) {
 		std::cerr << "fatal: no Function End found!\n";
 		exit(1);
 	}
 
-	if (expr && CG::Symtab->getRetVal() == nullptr) {
-		std::cerr << "fatal: no return value found (symtab " << CG::Symtab->ID << ") !\n"; 
+	if (expr && CG::Symtabs.top()->getRetVal() == nullptr) {
+		std::cerr << "fatal: no return value found (symtab " << CG::Symtabs.top()->ID << ") !\n"; 
 		exit(1);
 	}
 
@@ -33,7 +33,7 @@ Value* ReturnExpr::Codegen() {
 			v = CG::Builder.CreateLoad(v);
 		}
 		
-		CG::Builder.CreateStore(v, CG::Symtab->getRetVal());
+		CG::Builder.CreateStore(v, CG::Symtabs.top()->getRetVal());
 		Value *r = CG::Builder.CreateBr(bb);
 		return r; 
 	} else {

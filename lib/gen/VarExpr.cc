@@ -2,7 +2,7 @@
 #include "gen/generator.h"
 
 Type *VarExpr::getType() {
-	Symobj *o = CG::Symtab->find(name);
+	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr || o->getType() == nullptr) { 
 		return nullptr;
 	}
@@ -16,7 +16,7 @@ Type *VarExpr::getType() {
 }
 
 bool VarExpr::isSigned() {
-	Symobj *o = CG::Symtab->find(name);
+	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr) {
 		std::cerr << "Error: couldn't find " << name << " in symtab\n";
 		exit(1);
@@ -26,7 +26,7 @@ bool VarExpr::isSigned() {
 }
 
 Value* VarExpr::Codegen() {
-	Symobj *o = CG::Symtab->find(name);
+	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr) {
 		std::cerr << "Fatal: no symbol " << name << " found.\n";
 		return nullptr;

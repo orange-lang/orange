@@ -7,16 +7,14 @@
 std::string Block::string() {
 	std::stringstream ss;
 
-	auto oldSymtab = CG::Symtab;
-	CG::Symtab = symtab;
+	CG::Symtabs.push(symtab);
 
 	for (Statement *s : statements) {
 		if (s == nullptr) continue;
 		ss << s->string() << std::endl;
 	}
 
-	if (oldSymtab)
-		CG::Symtab = oldSymtab;
+	CG::Symtabs.pop();
 
 	return ss.str();
 }
@@ -33,14 +31,13 @@ bool Block::hasReturnStatement() {
 Type* Block::getLastStatementType() {
 	Type *ret = nullptr; 
 
-	auto oldSymtab = CG::Symtab;
-	CG::Symtab = symtab;
+	CG::Symtabs.push(symtab);
 
 	if (statements.size() > 0) {
 		ret = statements.back()->getType();
 	}
 
-	CG::Symtab = oldSymtab;
+	CG::Symtabs.pop();
 	return ret;
 }
 
@@ -48,16 +45,14 @@ Type* Block::getLastStatementType() {
 Type* Block::getReturnType() {
 	Type *ret; 
 
-	auto oldSymtab = CG::Symtab;
-	CG::Symtab = symtab;
-
-	std::string currFunction = CG::Symtab->getFunctionName();
+	CG::Symtabs.push(symtab);
+	std::string currFunction = CG::Symtabs.top()->getFunctionName();
 
 	for (auto stmt : statements) {
 		if (stmt->getClass() == "ReturnExpr") {
 	  	ReturnExpr *RE = (ReturnExpr *)stmt;
 	  	if (RE->expr == nullptr) {
-				CG::Symtab = oldSymtab;
+				CG::Symtabs.pop();
 	  		return nullptr;
 	  	}
 
@@ -65,7 +60,7 @@ Type* Block::getReturnType() {
 	  	ret = expr->getType();
 
 	  	if (ret) {
-				CG::Symtab = oldSymtab;	  	
+	  		CG::Symtabs.pop();
 		  	return ret; 
 	  	}
 		}
@@ -76,14 +71,14 @@ Type* Block::getReturnType() {
 			for (Block *b : ifstmt->blocks) {
 				Type *t = b->getReturnType();
 				if (t) {
-					CG::Symtab = oldSymtab;	  	
+					CG::Symtabs.pop();
 					return t; 
 				}
 			}
 		}
 	}
 
-	CG::Symtab = oldSymtab;
+	CG::Symtabs.pop();
 	return nullptr;
 }
 
@@ -93,8 +88,7 @@ void Block::resolve() {
 
 	resolved = true;
 
-	auto oldSymtab = CG::Symtab;
-	CG::Symtab = symtab;
+	CG::Symtabs.push(symtab);
 
 	std::vector<FunctionStatement*> functions;
 
@@ -123,7 +117,7 @@ void Block::resolve() {
 		fstmt->resolve();
 	}
 
-	CG::Symtab = oldSymtab;
+	CG::Symtabs.pop();
 }
 
 Value* Block::Codegen() {

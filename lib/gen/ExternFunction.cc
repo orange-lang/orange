@@ -7,10 +7,10 @@ ExternFunction::ExternFunction(AnyType *returnType, std::string name, ArgList *a
 	this->name = name;
 	this->args = args;
 
-	CG::Symtab->create(this->name);
-	CG::Symtab->objs[this->name]->isFunction = true; 
-	CG::Symtab->objs[this->name]->setType(returnType->getType()); 
-	CG::Symtab->objs[this->name]->reference = (Statement *)this; 
+	CG::Symtabs.top()->create(this->name);
+	CG::Symtabs.top()->objs[this->name]->isFunction = true; 
+	CG::Symtabs.top()->objs[this->name]->setType(returnType->getType()); 
+	CG::Symtabs.top()->objs[this->name]->reference = (Statement *)this; 
 }
 
 void ExternFunction::resolve() {
@@ -32,8 +32,8 @@ Value* ExternFunction::Codegen() {
 	FunctionType *FT = FunctionType::get(returnType->getType(), Args, args->isVarArg);
 	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);
 
-	CG::Symtab->create(name);
-	CG::Symtab->objs[name]->setValue(TheFunction);
+	CG::Symtabs.top()->create(name);
+	CG::Symtabs.top()->objs[name]->setValue(TheFunction);
 
 	return TheFunction; 
 }

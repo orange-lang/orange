@@ -3,6 +3,7 @@
 
 #include "AST.h"
 #include "Symtab.h"
+#include <stack>
 
 class CodeGenerator {
 private:
@@ -18,7 +19,7 @@ public:
 	static IRBuilder<> Builder;
 	static FunctionPassManager *TheFPM;
 	
-	static SymTable* Symtab;
+	static std::stack<SymTable *> Symtabs;
 	
 	static void init();
 	static void Generate(Block *globalBlock);

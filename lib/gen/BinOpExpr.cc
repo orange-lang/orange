@@ -36,16 +36,16 @@ void BinOpExpr::resolve() {
 		VarExpr *L = (VarExpr *)LHS;
 
 		// If it doesn't exist, then create it 
-		if (CG::Symtab->find(L->name) == nullptr) {
-			CG::Symtab->create(L->name);
-			CG::Symtab->objs[L->name]->setType(RHS->getType()->getPointerTo());
+		if (CG::Symtabs.top()->find(L->name) == nullptr) {
+			CG::Symtabs.top()->create(L->name);
+			CG::Symtabs.top()->objs[L->name]->setType(RHS->getType()->getPointerTo());
 		}
 	} else if (op == "<-" && LHS->getClass() == "VarExpr") {
 		VarExpr *L = (VarExpr *)LHS;
 
 		// Create it, regardless of whether it exists in a parent scope.		
-		CG::Symtab->create(L->name);
-		CG::Symtab->objs[L->name]->setType(RHS->getType()->getPointerTo());
+		CG::Symtabs.top()->create(L->name);
+		CG::Symtabs.top()->objs[L->name]->setType(RHS->getType()->getPointerTo());
 	}
 
 	Type *LType = LHS->getType();
@@ -54,7 +54,7 @@ void BinOpExpr::resolve() {
 	// Do data morphing on unlocked variables here.
 	if (isAssignOperator(op) && LHS->getClass() == "VarExpr") {
 		VarExpr *L = (VarExpr *)LHS;
-		Symobj *obj = CG::Symtab->find(L->name);
+		Symobj *obj = CG::Symtabs.top()->find(L->name);
 
 		if (obj->isLocked == false && ShouldTypesMorph(LType, RType)) {
 			obj->setType(RType->getPointerTo());
@@ -80,7 +80,7 @@ Type *BinOpExpr::getType() {
 	// If LHS or RHS is a call to the function we're currently inside, return nullptr, hoping we'll 
 	// be resolved later. 
 	if (LHS->getClass() == "FuncCallExpr") {
-		std::string currFunction = CG::Symtab->getFunctionName();
+		std::string currFunction = CG::Symtabs.top()->getFunctionName();
 
 		FuncCallExpr *fexpr = (FuncCallExpr *)LHS; 
 		if (fexpr->name == currFunction) 
@@ -88,7 +88,7 @@ Type *BinOpExpr::getType() {
 	}
 
 	if (RHS->getClass() == "FuncCallExpr") {
-		std::string currFunction = CG::Symtab->getFunctionName();
+		std::string currFunction = CG::Symtabs.top()->getFunctionName();
 	
 		FuncCallExpr *fexpr = (FuncCallExpr *)RHS; 
 		if (fexpr->name == currFunction) 
@@ -123,7 +123,7 @@ Value* BinOpExpr::Codegen() {
 	// since LHS->Codegen would create a nonexistant variable on the RHS potentially 
 	if ((op == "=" || op == "<-") && L == nullptr) {
 		L = CG::Builder.CreateAlloca(LHS->getType());
-		CG::Symtab->objs[((VarExpr*)LHS)->name]->setValue(L);
+		CG::Symtabs.top()->objs[((VarExpr*)LHS)->name]->setValue(L);
 	}
 
 	if (L == nullptr) {

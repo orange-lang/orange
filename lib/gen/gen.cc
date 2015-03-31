@@ -24,7 +24,7 @@ using namespace llvm::sys::fs;
 
 Module *CodeGenerator::TheModule;
 IRBuilder<> CodeGenerator::Builder(getGlobalContext());
-SymTable* CodeGenerator::Symtab = nullptr;
+std::stack<SymTable *> CodeGenerator::Symtabs;
 FunctionPassManager* CodeGenerator::TheFPM;
 
 #if defined(__linux__) || defined(__APPLE__)
@@ -86,11 +86,11 @@ const char *MainFunctionName() {
 // linking on mac: 
 // ld -arch x86_64 -macosx_version_min 10.10 a.out -lSystem -o a 
 void CodeGenerator::Generate(Block *globalBlock) {
-	CG::Symtab = globalBlock->symtab;
-	CG::Symtab->FunctionName = new std::string(MainFunctionName());
+	CG::Symtabs.push(globalBlock->symtab);
+	CG::Symtabs.top()->FunctionName = new std::string(MainFunctionName());
 
 	// Create the global block as a function so we don't have to repeat the code here.
-	FunctionStatement *fstmt = new FunctionStatement(CG::Symtab->FunctionName, nullptr, globalBlock);
+	FunctionStatement *fstmt = new FunctionStatement(CG::Symtabs.top()->FunctionName, nullptr, globalBlock);
 	fstmt->Codegen();
 
 	GenerateObject();

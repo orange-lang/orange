@@ -63,9 +63,9 @@
 %%
 	
 start
-	:	{ $<symtab>$ = CodeGenerator::Symtab; } { auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; } 
+	:	{ auto s = new SymTable(); CG::Symtabs.push(s); } 
 		statements 
-		{ globalBlock = $3; globalBlock->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; } 
+		{ globalBlock = $2; globalBlock->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); } 
 	;
 
 statements 		
@@ -97,10 +97,8 @@ extern
 	;
 
 function
-	:	{ $<symtab>$ = CodeGenerator::Symtab; } 
-		{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
-		DEF opt_id term statements END 
-		{ $$ = $4; $$->body = $6; $$->body->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; }
+	:	block_create DEF opt_id term statements END 
+		{ $$ = $3; $$->body = $5; $$->body->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
 	;
 
 opt_id			
@@ -210,21 +208,15 @@ dereference
 	;
 
 if_statement
-	:	{ $<symtab>$ = CodeGenerator::Symtab; } 
-		{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
-		IF expression term statements opt_else 
-		{ $$ = $7; CondBlock *b = new CondBlock($4, $6); $$->blocks.insert($$->blocks.begin(), b); b->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; }
+	:	block_create IF expression term statements opt_else 
+		{ $$ = $6; CondBlock *b = new CondBlock($3, $5); $$->blocks.insert($$->blocks.begin(), b); b->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
 	;
 
 opt_else
-	:	{ $<symtab>$ = CodeGenerator::Symtab; } 
-		{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
-		ELIF expression term statements opt_else 
-		{ $$ = $7; CondBlock *b = new CondBlock($4, $6); $$->blocks.insert($$->blocks.begin(), b); b->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; }
-	|	{ $<symtab>$ = CodeGenerator::Symtab; } 
-		{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
-		ELSE term statements END
-		{ $$ = new IfStatement; $$->blocks.insert($$->blocks.begin(), $5); $5->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; }
+	:	block_create ELIF expression term statements opt_else 
+		{ $$ = $6; CondBlock *b = new CondBlock($3, $5); $$->blocks.insert($$->blocks.begin(), b); b->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
+	|	block_create ELSE term statements END
+		{ $$ = new IfStatement; $$->blocks.insert($$->blocks.begin(), $4); $4->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
 	|	END { $$ = new IfStatement; }
 	;
 
@@ -236,6 +228,10 @@ optexprlist
 expr_list		
 	:	expr_list COMMA expression { $1->push_back($3); }	
 	|	expression { $$ = new ExprList(); $$->push_back($1); }
+	;
+
+block_create
+	:	{ auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s); }
 	;
 						 
 %%

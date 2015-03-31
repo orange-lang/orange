@@ -14,7 +14,7 @@ FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
 	// try to find function in symbol table 
 	// go through its arguments. get their types. 
 	// if the types don't exist, create them here.
-	Symobj *func = CG::Symtab->find(name);
+	Symobj *func = CG::Symtabs.top()->find(name);
 	if (func == nullptr) {
 		std::cerr << "fatal: calling function that hasn't been declared.\n";
 		exit(1);
@@ -25,7 +25,7 @@ void FuncCallExpr::resolve() {
 	if (resolved)
 		return;
 
-	Symobj *o = CG::Symtab->find(name);
+	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr) {
 		std::cerr << "Error: couldn't find " << name << " in symtab\n";
 		exit(1);
@@ -90,11 +90,11 @@ void FuncCallExpr::resolve() {
 Type *FuncCallExpr::getType() {
 	DEBUG_MSG("((FuncCallExpr) GETTING TYPE OF " << this->string());
 
-	std::string currFunction = CG::Symtab->getFunctionName();
+	std::string currFunction = CG::Symtabs.top()->getFunctionName();
 	if (name == currFunction) 
 		return nullptr; 		
 
-	Symobj *o = CG::Symtab->find(name);
+	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr) {
 		std::cerr << "Error: couldn't find " << name << " in symtab\n";
 		return nullptr; 
@@ -142,7 +142,7 @@ Value* FuncCallExpr::Codegen() {
 		}
 	}
 
-	Symobj *o = CG::Symtab->find(name);
+	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr || o->getValue() == nullptr) {
 		std::cerr << "Error: no function called " << name << " found.";
 		return nullptr;

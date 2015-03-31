@@ -17,8 +17,8 @@ Value* VarDeclExpr::Codegen() {
 		CG::Builder.CreateStore(store, v);
 	}
 
-	CG::Symtab->objs[name]->setValue(v);
-	CG::Symtab->objs[name]->isLocked = true;
+	CG::Symtabs.top()->objs[name]->setValue(v);
+	CG::Symtabs.top()->objs[name]->isLocked = true;
 
 	return v; 
 }
@@ -48,7 +48,7 @@ VarDeclExpr::VarDeclExpr(AnyType *type, std::string *name, Expression *value) {
 	this->name = *name; 
 	this->value = value;
 
-	CG::Symtab->create(this->name);
-	CG::Symtab->objs[this->name]->setType(getType()->getPointerTo());
-	CG::Symtab->objs[this->name]->isSigned = isSigned();
+	CG::Symtabs.top()->create(this->name);
+	CG::Symtabs.top()->objs[this->name]->setType(getType()->getPointerTo());
+	CG::Symtabs.top()->objs[this->name]->isSigned = isSigned();
 }

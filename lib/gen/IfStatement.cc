@@ -24,12 +24,12 @@ Value* IfStatement::Codegen() {
 	// first, create blocks for all the blocks 
 	std::vector<BasicBlock *> BBs;
 	for (Block *b : blocks) {
-		BBs.push_back(BasicBlock::Create(getGlobalContext(), "check", CG::Symtab->getFunction(), CG::Symtab->getFunctionEnd()));
-		BBs.push_back(BasicBlock::Create(getGlobalContext(), "truebr", CG::Symtab->getFunction(), CG::Symtab->getFunctionEnd()));
+		BBs.push_back(BasicBlock::Create(getGlobalContext(), "check", CG::Symtabs.top()->getFunction(), CG::Symtabs.top()->getFunctionEnd()));
+		BBs.push_back(BasicBlock::Create(getGlobalContext(), "truebr", CG::Symtabs.top()->getFunction(), CG::Symtabs.top()->getFunctionEnd()));
 	} 
 
 	// create a block that all blocks continue to (including the main block)
-	BBs.push_back(BasicBlock::Create(getGlobalContext(), "continue", CG::Symtab->getFunction(), CG::Symtab->getFunctionEnd()));
+	BBs.push_back(BasicBlock::Create(getGlobalContext(), "continue", CG::Symtabs.top()->getFunction(), CG::Symtabs.top()->getFunctionEnd()));
 
 	// allocate a variable for this to return to, IF this has a type.
 	Value *retVal = nullptr; 
@@ -77,8 +77,7 @@ Value* IfStatement::Codegen() {
 		CG::Builder.SetInsertPoint(BBs[BBi]);
 
 		// 2. set up scope for that block
-		auto oldSymtab = CG::Symtab;
-		CG::Symtab = blocks[i]->symtab;
+		CG::Symtabs.push(blocks[i]->symtab);
 
 		// 3. codegen that block.
 		Value *blockRet = blocks[i]->Codegen();
@@ -101,7 +100,7 @@ Value* IfStatement::Codegen() {
 			CG::Builder.CreateBr(BBs[BBs.size()-1]);
 
 		// 6. Restore symtab
-		CG::Symtab = oldSymtab;
+		CG::Symtabs.pop();
 	}
 
 	// set insert point to continue block

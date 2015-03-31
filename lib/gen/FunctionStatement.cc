@@ -12,24 +12,24 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 	}
 
 	// Create this as a symbol in our parent.
-	if (CG::Symtab->parent) {
-		CG::Symtab->parent->create(this->name);
-		CG::Symtab->parent->objs[this->name]->isFunction = true; 
-		CG::Symtab->parent->objs[this->name]->reference = (Statement *)this; 
+	if (CG::Symtabs.top()->parent) {
+		CG::Symtabs.top()->parent->create(this->name);
+		CG::Symtabs.top()->parent->objs[this->name]->isFunction = true; 
+		CG::Symtabs.top()->parent->objs[this->name]->reference = (Statement *)this; 
 	}
 
 	// Add arguments to symbol table
 	for (ArgExpr *expr : *(this->args)) {	
-		CG::Symtab->create(expr->name);
+		CG::Symtabs.top()->create(expr->name);
 
 		if (expr->type == nullptr) {
 			continue;
 		}
 
 		if (expr->type) {
-			CG::Symtab->objs[expr->name]->setType(expr->type->getType()->getPointerTo());
+			CG::Symtabs.top()->objs[expr->name]->setType(expr->type->getType()->getPointerTo());
 		}
-		CG::Symtab->objs[expr->name]->isSigned = expr->type->isSigned();
+		CG::Symtabs.top()->objs[expr->name]->isSigned = expr->type->isSigned();
 	}
 }
 
@@ -44,8 +44,7 @@ void FunctionStatement::resolve() {
 
 Value* FunctionStatement::Codegen() {
 	// Set new symtab
-	auto oldSymtab = CG::Symtab;
-	CG::Symtab = body->symtab;
+	CG::Symtabs.push(body->symtab);
 
 	bool hasReturn = body->hasReturnStatement();
 
@@ -81,15 +80,15 @@ Value* FunctionStatement::Codegen() {
 	FunctionType *FT = FunctionType::get(retType, Args, false);
 	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);
 
-	if (CG::Symtab->parent) {
+	if (CG::Symtabs.top()->parent) {
 		// Set function for the PARENT symtab (the one that could call this function)
-		CG::Symtab->parent->create(name);
-		CG::Symtab->parent->objs[name]->setValue(TheFunction);
+		CG::Symtabs.top()->parent->create(name);
+		CG::Symtabs.top()->parent->objs[name]->setValue(TheFunction);
 	}
 
 	// Set function for the CURRENT symtab (for recursion)
-	CG::Symtab->create(name);
-	CG::Symtab->objs[name]->setValue(TheFunction);
+	CG::Symtabs.top()->create(name);
+	CG::Symtabs.top()->objs[name]->setValue(TheFunction);
 
 	auto arg_it = TheFunction->arg_begin();
 	for (unsigned int i = 0; i < args->size(); i++, arg_it++) {
@@ -99,33 +98,33 @@ Value* FunctionStatement::Codegen() {
 	auto IP = CG::Builder.GetInsertBlock();
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
 	BasicBlock *ExitBB = BasicBlock::Create(getGlobalContext(), "", TheFunction);
-	CG::Symtab->TheFunction = TheFunction;
-	CG::Symtab->FunctionName = new std::string(name);
+	CG::Symtabs.top()->TheFunction = TheFunction;
+	CG::Symtabs.top()->FunctionName = new std::string(name);
 
-	CG::Symtab->FunctionEnd = ExitBB;
+	CG::Symtabs.top()->FunctionEnd = ExitBB;
 
 	CG::Builder.SetInsertPoint(BB);
 
 	Value *v = nullptr;  
 	if (noRet == false) {
-		DEBUG_MSG("SETTING UP RETVAL FOR SYMTAB " << CG::Symtab->ID);
+		DEBUG_MSG("SETTING UP RETVAL FOR SYMTAB " << CG::Symtabs.top()->ID);
 		v = CG::Builder.CreateAlloca(retType, nullptr, "");
-		CG::Symtab->retVal = v;
+		CG::Symtabs.top()->retVal = v;
 	}
 
 	arg_it = TheFunction->arg_begin();
 	for (unsigned int i = 0; i < args->size(); i++, arg_it++) {
 		Value *v = CG::Builder.CreateAlloca(arg_it->getType());
 		CG::Builder.CreateStore(arg_it, v);
-		CG::Symtab->create((*args)[i]->name);
-		CG::Symtab->objs[(*args)[i]->name]->setValue(v);
+		CG::Symtabs.top()->create((*args)[i]->name);
+		CG::Symtabs.top()->objs[(*args)[i]->name]->setValue(v);
 	}
 
 	Value *finalV = body->Codegen();
 	DEBUG_MSG("COMPLETED CODEGEN FUNCTION BLOCK");
 
 	if (hasReturn == false && finalV) {
-		BasicBlock *bb = CG::Symtab->getFunctionEnd();
+		BasicBlock *bb = CG::Symtabs.top()->getFunctionEnd();
 		if (bb == nullptr) {
 			std::cerr << "fatal: no Function End found!\n";
 			exit(1);
@@ -136,7 +135,7 @@ Value* FunctionStatement::Codegen() {
 			finalV = CG::Builder.CreateLoad(finalV);
 		}
 
-		CG::Builder.CreateStore(finalV, CG::Symtab->getRetVal());
+		CG::Builder.CreateStore(finalV, CG::Symtabs.top()->getRetVal());
 		finalV = CG::Builder.CreateBr(bb);
 	} else if (finalV == nullptr || retType == nullptr) {
 		CG::Builder.CreateBr(ExitBB);		
@@ -152,7 +151,7 @@ Value* FunctionStatement::Codegen() {
 		CG::Builder.CreateRet(r);
 	}
 
-	CG::Symtab = oldSymtab;
+	CG::Symtabs.pop();
 	
 	if (IP != nullptr)
 		CG::Builder.SetInsertPoint(IP);
