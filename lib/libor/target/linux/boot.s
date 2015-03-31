@@ -3,9 +3,8 @@
 [global _start]
 [extern @main]
 _start:
-	and esp, 0xfff8
 	push rbp
-	call _@main
+	call @main
 	pop rbp
 	mov rdi, rax
 	
