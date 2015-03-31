@@ -21,6 +21,9 @@ class RunResult {
 private:
 	bool m_pass;
 	std::vector<CompilerMessage> m_messages;
+	unsigned long long m_runtime;
+
+	boost::posix_time::ptime startTime, endTime;
 public:
 	/**
 	 * Determines whether or not the run passed.
@@ -52,6 +55,27 @@ public:
 	 * @return The list of warnings, which may be empty.
 	 */
 	std::vector<CompilerMessage> warnings() const;
+
+	/**
+	 * Starts the run, starting a timer to detect how long the run took.
+	 */
+	void start();
+
+	/**
+	 * Finishes the run, ending the timer.
+	 *
+	 * @param pass Whether or not the test passed.
+	 * @param messages The list of messages the occured during the run.
+	 */
+	void finish(bool pass, CompilerMessage message);
+	void finish(bool pass, std::vector<CompilerMessage> messages);
+
+	/**
+	 * Gets the amount of time in milliseconds that this run took.
+	 *
+	 * @return The number of milliseconds that this run was running for.
+	 */
+	unsigned long long runtime() const; 
 
 	RunResult() {}
 	RunResult(bool pass, CompilerMessage message);

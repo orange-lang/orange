@@ -38,14 +38,41 @@ std::vector<CompilerMessage> RunResult::warnings() const {
 	return retList; 
 }
 
+void RunResult::start() {
+	// Get the current time in microsecs from the clock.
+  startTime = boost::posix_time::microsec_clock::local_time();
+}
+
+void RunResult::finish(bool pass, CompilerMessage message) {
+	// First, calculate the run time.
+	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration diff = endTime - startTime;
+  m_runtime = diff.total_milliseconds();
+
+	m_pass = pass;
+	m_messages.push_back(message);		
+}
+
+void RunResult::finish(bool pass, std::vector<CompilerMessage> messages) {
+	// First, calculate the run time.
+	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration diff = endTime - startTime;
+  m_runtime = diff.total_milliseconds();
+
+	m_pass = pass;
+	m_messages = messages;
+}
+
+unsigned long long RunResult::runtime() const { return m_runtime; }
+
 RunResult::RunResult(bool pass, CompilerMessage message) {
-	m_pass = pass; 
-	m_messages.push_back(message);
+	start();
+	finish(pass, message);
 }
 
 RunResult::RunResult(bool pass, std::vector<CompilerMessage> messages) {
-	m_pass = pass;
-	m_messages = messages;
+	start();
+	finish(pass, messages);
 }
 
 RunResult runFile(std::string filename) {
