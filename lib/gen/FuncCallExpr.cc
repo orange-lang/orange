@@ -141,7 +141,7 @@ Value* FuncCallExpr::Codegen() {
 		auto arg = (*args)[i];
 		Args[i] = arg->Codegen();
 
-		if (arg->getClass() == "VarExpr") {
+		if (arg->returnsPtr()) {
 			Args[i] = CG::Builder.CreateLoad(Args[i]);
 		}
 	}
