@@ -4,6 +4,8 @@
 
 class UIntVal : public BaseVal {
 public:
+	virtual std::string getClass() { return "UIntVal"; }
+
 	Value* Codegen();
 
 	uint64_t value;
@@ -26,6 +28,8 @@ public:
 
 class IntVal : public BaseVal {
 public:
+	virtual std::string getClass() { return "IntVal"; }
+
 	Value* Codegen();
 
 	int64_t value;
@@ -48,6 +52,8 @@ public:
 
 class FloatVal : public BaseVal {
 public:
+	virtual std::string getClass() { return "FloatVal"; }
+
 	Value* Codegen() {
 		printf("FloatVal::Codegen()\n");
 		return nullptr;
@@ -68,6 +74,8 @@ public:
 
 class DoubleVal : public BaseVal {
 public:
+	virtual std::string getClass() { return "DoubleVal"; }
+
 	Value* Codegen() {
 		printf("DoubleVal::Codegen()\n");
 		return nullptr;

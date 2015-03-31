@@ -5,13 +5,15 @@
 
 class BinOpExpr : public Expression {
 public:
+	virtual std::string getClass() { return "BinOpExpr"; }
+
 	Value* Codegen();
 
 	Type *getType();
 
 
 	Expression *LHS;
-	char op;
+	std::string op;
 	Expression *RHS;
 
 	virtual std::string string() {
@@ -20,7 +22,7 @@ public:
 		return ss.str();
 	}
 
-	BinOpExpr(Expression *LHS, char op, Expression *RHS);
+	BinOpExpr(Expression *LHS, std::string op, Expression *RHS);
 };
 
 #endif

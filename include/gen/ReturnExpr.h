@@ -4,6 +4,8 @@
 
 class ReturnExpr : public Expression {
 public:
+	virtual std::string getClass() { return "ReturnExpr"; }
+
 	Value* Codegen();
 
 	Expression *expr;

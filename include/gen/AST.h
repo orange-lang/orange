@@ -37,12 +37,14 @@ class Block;
 // Base
 class Statement {
 public:
+	virtual std::string getClass() { return "Statement"; }
 	virtual Value* Codegen() { return nullptr; }
 	virtual std::string string() { return ""; }
 };
 
 class Expression : public Statement { 
 public:
+	virtual std::string getClass() { return "Expression"; }
 	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 };
 
@@ -59,6 +61,7 @@ public:
 
 class StrVal : public Expression {
 public:
+	virtual std::string getClass() { return "StrVal"; }
 	std::string value; 
 
 	virtual Type *getType() { return Type::getInt8PtrTy(getGlobalContext()); }

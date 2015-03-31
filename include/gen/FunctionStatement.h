@@ -6,6 +6,8 @@
 
 class FunctionStatement : public Statement {
 public:
+	virtual std::string getClass() { return "FunctionStatement"; }
+
 	Value* Codegen();
 
 	std::string name;

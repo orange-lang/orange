@@ -20,7 +20,7 @@ bool isSigned(Expression *e) {
 }
 
 
-BinOpExpr::BinOpExpr(Expression *LHS, char op, Expression *RHS) {
+BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 	this->LHS = LHS;
 	this->op = op;
 	this->RHS = RHS;
@@ -38,54 +38,71 @@ Type *BinOpExpr::getType() {
 	return nullptr; 
 }
 
-
 Value* BinOpExpr::Codegen() {
 	Value *L = LHS->Codegen();
 
-	if (op == '=' && L == nullptr) {
+	// We want to create the variable here instead of in LHS->Codegen,
+	// since LHS->Codegen would create a nonexistant variable on the RHS potentially 
+	if (op == "=" && L == nullptr) {
 		printf("((TODO: CREATE VARIABLE. FATAL.))\n");
 	}
 
+	if (L == nullptr) {
+		std::cerr << "fatal: LHS of expression has returned null!\n";
+		exit(1);
+	}
+
+	if (op != "=" && LHS->getClass() == "VarExpr") {
+		// If it's a variable load it in. 
+		L = CG::Builder.CreateLoad(L, ((VarExpr*)LHS)->name);
+	}
+
 	Value *R = RHS->Codegen();
-  if (dynamic_cast<VarExpr*>(RHS)) {
-  	R = CG::Builder.CreateLoad(R, ((VarExpr*)RHS)->name);
-  }
-
-	if (!L || !R) return nullptr;
-
-	switch (op) {
-		case '+':
-	 	case '-':
-	 	case '*':
-	 	case '/':
-		  if (dynamic_cast<VarExpr*>(LHS)) {
-		  	L = CG::Builder.CreateLoad(L, ((VarExpr*)LHS)->name);
-		  }
-		  break;
+	if (R == nullptr) {
+		std::cerr << "fatal: RHS of expression has returned null!\n";
+		exit(1);
 	}
 
-	switch (op) {
-		case '+':
-			return CG::Builder.CreateAdd(L, R);
-		case '-':
-			return CG::Builder.CreateSub(L, R);
-		case '*':
-			return CG::Builder.CreateMul(L, R);
-		case '/':
-			// if one of them is signed, they're both signed.
-			if (isSigned(LHS) || isSigned(RHS)) {
-				return CG::Builder.CreateSDiv(L, R);
-			} else {
-				return CG::Builder.CreateUDiv(L, R);
-			}
-			
+	if (RHS->getClass() == "VarExpr") {
+		// If it's a variable load it in. 
+		R = CG::Builder.CreateLoad(R, ((VarExpr*)RHS)->name);
+	}
+
+	if (!L || !R) {
+		std::cerr << "fatal: generating BinOpExpr failed.\n";
+		exit(1);
+	}
+
+	// TODO: do casting of LHS and RHS.
+
+	if (op == "+") {
+		return CG::Builder.CreateAdd(L, R);
+	}
+	else if (op == "-") {
+		return CG::Builder.CreateSub(L, R);
+	}
+	else if (op == "*") {
+		return CG::Builder.CreateMul(L, R);
+	}
+	else if (op == "/") {
+		// if one of them is signed, they're both signed.
+		if (isSigned(LHS) || isSigned(RHS)) {
 			return CG::Builder.CreateSDiv(L, R);
-		case '=':
-			return CG::Builder.CreateStore(R, L);
-		default:
-			printf("Unhandled: %c\n", op);
-			return nullptr;
+		} else {
+			return CG::Builder.CreateUDiv(L, R);
+		}
+			
+		return CG::Builder.CreateSDiv(L, R);
+	}
+	else if (op == "=") {
+		return CG::Builder.CreateStore(R, L);
+	}
+	else {
+		std::cerr << "fatal: operation " << op << " does not have a generation case.";
+		exit(1);
 	}
 
+	std::cerr << "fatal: incorrectly reached end of BinOpExpr generation.\n";
+	exit(1);
 	return nullptr;
 }

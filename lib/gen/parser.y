@@ -101,15 +101,15 @@ var_ptrs 		: 		var_ptrs TIMES { $$ = $1 + 1; }
 basic_type  :			TYPE_INT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
 						|			TYPE_INT32 | TYPE_INT64 | TYPE_UINT8 | TYPE_UINT16 | TYPE_UINT32 | TYPE_UINT64 | TYPE_CHAR				
 
-expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, '=', $3); }
+expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, "=", $3); }
 						|			expr2 { $$ = $1; }
 
-expr2 			:			expr2 PLUS expr3 { $$ = new BinOpExpr($1, '+', $3); }
-						| 		expr2 MINUS expr3 { $$ = new BinOpExpr($1, '-', $3); }
+expr2 			:			expr2 PLUS expr3 { $$ = new BinOpExpr($1, "+", $3); }
+						| 		expr2 MINUS expr3 { $$ = new BinOpExpr($1, "-", $3); }
 						|			expr3 { $$ = $1; }
 
-expr3 			:			expr3 TIMES primary { $$ = new BinOpExpr($1, '*', $3); } 
-						| 		expr3 DIVIDE primary { $$ = new BinOpExpr($1, '/', $3); }
+expr3 			:			expr3 TIMES primary { $$ = new BinOpExpr($1, "*", $3); } 
+						| 		expr3 DIVIDE primary { $$ = new BinOpExpr($1, "/", $3); }
 						|			primary { $$ = $1; }
 
 primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; } 

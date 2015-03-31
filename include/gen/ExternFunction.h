@@ -4,6 +4,8 @@
 
 class ExternFunction : public Statement {
 public:
+	virtual std::string getClass() { return "ExternFunction"; }
+
 	AnyType *returnType; 
 	std::string name; 
 	ArgList *args;	

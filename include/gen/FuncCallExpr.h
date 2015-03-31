@@ -4,6 +4,8 @@
 
 class FuncCallExpr : public Expression {
 public:
+	virtual std::string getClass() { return "FuncCallExpr"; }
+
 	Value* Codegen();
 
 	Type *getType();
