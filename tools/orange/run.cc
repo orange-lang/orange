@@ -43,17 +43,18 @@ void RunResult::start() {
   startTime = boost::posix_time::microsec_clock::local_time();
 }
 
-void RunResult::finish(bool pass, CompilerMessage message) {
+void RunResult::finish(bool pass, int code, CompilerMessage message) {
 	// First, calculate the run time.
 	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration diff = endTime - startTime;
   m_runtime = diff.total_milliseconds();
 
 	m_pass = pass;
-	m_messages.push_back(message);		
+	m_messages.push_back(message);	
+	m_retcode = code;	
 }
 
-void RunResult::finish(bool pass, std::vector<CompilerMessage> messages) {
+void RunResult::finish(bool pass, int code, std::vector<CompilerMessage> messages) {
 	// First, calculate the run time.
 	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
   boost::posix_time::time_duration diff = endTime - startTime;
@@ -61,18 +62,25 @@ void RunResult::finish(bool pass, std::vector<CompilerMessage> messages) {
 
 	m_pass = pass;
 	m_messages = messages;
+	m_retcode = code;
 }
 
 unsigned long long RunResult::runtime() const { return m_runtime; }
+int RunResult::returnCode() const { return m_retcode; }
+std::string RunResult::filename() const { return m_filename; }
 
-RunResult::RunResult(bool pass, CompilerMessage message) {
+
+
+RunResult::RunResult(std::string filename, bool pass, int code, CompilerMessage message) {
+	m_filename = filename;
 	start();
-	finish(pass, message);
+	finish(pass, code, message);
 }
 
-RunResult::RunResult(bool pass, std::vector<CompilerMessage> messages) {
+RunResult::RunResult(std::string filename, bool pass, int code, std::vector<CompilerMessage> messages) {
+	m_filename = filename;
 	start();
-	finish(pass, messages);
+	finish(pass, code, messages);
 }
 
 RunResult runFile(std::string filename) {
@@ -80,7 +88,7 @@ RunResult runFile(std::string filename) {
 	FILE *file = fopen(filename.c_str(), "r");
 	if (file == nullptr) {
 		CompilerMessage msg(NO_FILE, "file " + filename + " not found.", filename, -1, -1, -1, -1);
-		return RunResult(false, msg);
+		return RunResult(filename, false, 1, msg);
 	}
 
 	// TODO: parse it.
@@ -88,14 +96,14 @@ RunResult runFile(std::string filename) {
 	fclose(file);
 
 	// for now, temporarily return that we didn't run it.
-	CompilerMessage msg(NO_COMPILE, "file " + filename + " was not run.", filename, -1, -1, -1, -1);
-	return RunResult(false, msg);
+	CompilerMessage msg(NO_COMPILE, "file was not run.", filename, -1, -1, -1, -1);
+	return RunResult(filename, false, 1, msg);
 }
 
 RunResult runProject(path projectPath) {
 	// for now, temporarily return that we didn't run it.
-	CompilerMessage msg(NO_COMPILE, "project " + projectPath.string() + " was not run.", projectPath.string(), -1, -1, -1, -1);
-	return RunResult(false, msg);
+	CompilerMessage msg(NO_COMPILE, "project was not run.", projectPath.string(), -1, -1, -1, -1);
+	return RunResult(projectPath.string(), false, 1, msg);
 }
 
 void doRunCommand(cOptionsState run) {

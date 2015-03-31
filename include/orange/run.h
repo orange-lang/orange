@@ -21,7 +21,9 @@ class RunResult {
 private:
 	bool m_pass;
 	std::vector<CompilerMessage> m_messages;
+	std::string m_filename;
 	unsigned long long m_runtime;
+	unsigned m_retcode;
 
 	boost::posix_time::ptime startTime, endTime;
 public:
@@ -66,8 +68,8 @@ public:
 	 * @param pass Whether or not the test passed.
 	 * @param messages The list of messages the occured during the run.
 	 */
-	void finish(bool pass, CompilerMessage message);
-	void finish(bool pass, std::vector<CompilerMessage> messages);
+	void finish(bool pass, int code, CompilerMessage message);
+	void finish(bool pass, int code, std::vector<CompilerMessage> messages);
 
 	/**
 	 * Gets the amount of time in milliseconds that this run took.
@@ -76,9 +78,25 @@ public:
 	 */
 	unsigned long long runtime() const; 
 
-	RunResult() {}
-	RunResult(bool pass, CompilerMessage message);
-	RunResult(bool pass, std::vector<CompilerMessage> messages);
+	/**
+	 * Gets the return code from the run. This value is meaningless if 
+	 * pass is false.
+	 *
+	 * @return Return code from the run.
+	 */
+	int returnCode() const;
+
+	/**
+	 * Gets the filename from this run.
+	 *
+	 * @return The filename from this run.
+	 */
+	std::string filename() const;
+
+	RunResult() { }
+	RunResult(std::string filename) { m_filename = filename; }
+	RunResult(std::string filename, bool pass, int code, CompilerMessage message);
+	RunResult(std::string filename, bool pass, int code, std::vector<CompilerMessage> messages);
 };
 
 /**

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <fstream>
+#include <sstream>
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/archives/json.hpp>
@@ -15,11 +16,7 @@
 #include <helper/link.h>
 #include <orange/file.h>
 #include <orange/run.h>
-
-using namespace boost::filesystem;
-using namespace boost;
-
-void doTestCommand(cOptionsState test);
+#include <orange/test.h>
 
 int main(int argc, char** argv) {
 	cOptions options("Orange WIP"); 
@@ -53,31 +50,3 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-void doTestCommand(cOptionsState test) {
-	try {
-		current_path(findProjectDirectory());
-		current_path(current_path() += "/test");
-	} catch (std::runtime_error& e) {
-		std::cerr << e.what() << std::endl;
-		return;
-	}
-
-	// If the user didn't enter anything, we'll just test everything in the test/ folder.
-	if (test.unparsed().size() == 0) {
-		return; 
-	}
-
-	for (auto& str : test.unparsed()) {
-		path p(str);
-		if (exists(p) == false) {
-			std::cerr << "error: " << p << " doesn't exist.\n"; 
-			continue;
-		}
-
-		if (is_directory(p)) {
-			// Run it on the directory 
-		} else {
-			// Run a single test 
-		}	
-	}
-}
