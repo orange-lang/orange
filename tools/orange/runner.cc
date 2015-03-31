@@ -1,3 +1,10 @@
+/*
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** directory of this distribution.
+**
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** may not be copied, modified, or distributed except according to those terms.
+*/ 
 #include <orange/runner.h>
 #include <orange/generator.h>
 
@@ -64,4 +71,28 @@ void Runner::log(CompilerMessage message) {
 
 std::string Runner::pathname() const {
 	return m_pathname; 
+}
+
+void Runner::pushSymtab(SymTable* symtab) {
+	// We don't want to push anything if it's nullptr.
+	if (symtab == nullptr) return;
+
+	m_symtabs.push(symtab);
+}
+
+SymTable* Runner::popSymtab() {
+	SymTable* top = m_symtabs.top();
+	m_symtabs.pop();
+	return top;
+}
+
+SymTable* Runner::makeSymtab() {
+	SymTable* top = topSymtab();
+	SymTable* newSymtab = new SymTable(top);
+	pushSymtab(newSymtab);
+	return newSymtab;
+}
+
+SymTable* Runner::topSymtab() {
+	return m_symtabs.top();
 }

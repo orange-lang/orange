@@ -9,6 +9,7 @@
 #define __ORANGE_RUNER_H__
 
 #include "run.h"
+#include "SymTable.h"
 
 /**
  * Runner is a class that will run or build a file or project. It starts with the name 
@@ -28,6 +29,12 @@ private:
 	 * Halts the run. Does shut down stuff.
 	 */
 	void haltRun();
+
+	/**
+	 * The symbol table stack; these are
+	 * pushed and popped at will by the parser.
+	 */ 
+	std::stack<SymTable *> m_symtabs;
 public:
 	/**
 	 * Returns whether or not there is at least one error in the run.
@@ -60,6 +67,37 @@ public:
 	 * @return The pathname registered to this runner.
 	 */
 	std::string pathname() const; 
+
+	/**
+	 * Pushes a symbol table to the stack for this Runner.
+	 * If symtab is null, nothing will happen.
+	 *
+	 * @param symtab The symbol table to push.
+	 */
+	void pushSymtab(SymTable* symtab);
+
+	/**
+	 * Pops a symbol table from the stack for this Runner.
+	 *
+	 * @return The symbol table that was just popped.
+	 */
+	SymTable* popSymtab();
+
+	/**
+	 * Creates a symbol table and adds it to the stack.
+	 * The symbol table created will be parented to the top of the 
+	 * stack.
+	 *
+	 * @return The symbol table that was just created.
+	 */
+	SymTable* makeSymtab();
+
+	/**
+	 * Returns the top symbol table on the stack.
+	 *
+	 * @return The symbol table on the top of the stack.
+	 */
+	SymTable* topSymtab();
 
 	/**
 	 * Creates an instance of Runner and registers it inside of the GeneratingEngine.

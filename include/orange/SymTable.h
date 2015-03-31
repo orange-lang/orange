@@ -43,7 +43,7 @@ public:
 	 *
 	 * @return true if it was created, false if one by that name exists.
 	 */
-	bool create(std::string name, ASTNode *node);
+	bool create(std::string name, ASTNode* node);
 
 	/**
 	 * Find a ASTNode in this tree by name, if it exists.
@@ -62,6 +62,13 @@ public:
 	ASTNode* findStructure(std::string className);
 
 	/**
+	 * Sets the structure for this SymTable.
+	 *
+	 * @param structure The structure to set.
+	 */
+	void setStructure(ASTNode* structure);
+
+	/**
 	 * Creates a clone of this symbol table. 
 	 *
 	 * @return A clone of this symbol table.
@@ -76,6 +83,7 @@ public:
 	int ID() const; 
 
 	SymTable();
+	SymTable(SymTable *parent);
 };
 
 #endif 
