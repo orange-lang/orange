@@ -9,6 +9,10 @@
 #include <orange/generator.h>
 #include <orange/AnyType.h>
 
+#include <llvm/ExecutionEngine/ExecutionEngine.h>
+#include <llvm/ExecutionEngine/GenericValue.h>
+#include <llvm/ExecutionEngine/MCJIT.h>
+
 Runner::Runner(std::string pathname) {
 	m_pathname = pathname;
 
@@ -24,6 +28,8 @@ Runner::Runner(std::string pathname) {
 
 	// Create LLVM stuff; module, builder, etc
 	m_module = new Module("orange", getGlobalContext());
+	m_module->setTargetTriple(sys::getProcessTriple());
+
 	m_builder = new IRBuilder<>(getGlobalContext());
 
 	m_functionOptimizer = new FunctionPassManager(m_module);
@@ -75,13 +81,14 @@ RunResult Runner::run() {
 		if (debug())
 			std::cout << mainFunction()->string() << std::endl;
 
-		// TODO: run the generated module.
-		mainFunction()->Codegen();
+		Value *function = mainFunction()->Codegen();
+
+		// TODO: do module optimization.
 
 		if (debug())
 			m_module->dump();
 
-		int retCode = 0;
+		int retCode = hasError() == false ? runModule((Function *)function) : 1;
 
 		// Do cleanup.
 		fclose(file);
@@ -96,6 +103,26 @@ RunResult Runner::run() {
 		std::cerr << "fatal: " << e.what() << std::endl;
 		exit(1);
 	}
+}
+
+int Runner::runModule(Function *function) {
+	// MCJIT requires the target & asm printer to be initalized 
+  InitializeNativeTarget();
+  InitializeNativeTargetAsmPrinter();
+
+  // Create our builder & engine to run the function 
+	EngineBuilder builder((std::unique_ptr<Module>(m_module)));
+
+	ExecutionEngine* engine = builder
+		.setVerifyModules(true)
+		.create();
+
+	// MCJIT requires the engine to be finalized before running it.
+	engine->finalizeObject();
+
+	std::vector<GenericValue> args;
+	return engine->runFunction((Function *)function, args).IntVal.getSExtValue();
+
 }
 
 void Runner::log(CompilerMessage message) {

@@ -4,7 +4,7 @@ find_package(Boost REQUIRED)
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-llvm_map_components_to_libnames(llvm_libs native core ipo)
+llvm_map_components_to_libnames(llvm_libs native core ipo ExecutionEngine MCJIT)
 
 find_package(BISON REQUIRED)
 bison_target(BisonOutput ${CMAKE_SOURCE_DIR}/tools/orange/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cc COMPILE_FLAGS "-d")

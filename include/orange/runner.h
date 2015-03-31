@@ -62,6 +62,8 @@ private:
 	 * Whether or not we are in debug mode.
 	 */
 	bool m_debug = false; 
+
+	int runModule(Function *function);
 public:
 	/**
 	 * Returns whether or not there is at least one error in the run.
