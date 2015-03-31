@@ -19,7 +19,7 @@ int testLexer(int argc, char **argv){
 		return 1;
 	}
 
-	std::string baselineDir = argc >= 3 ? argv[2] + (std::string)"\\" : "";
+	std::string baselineDir = argc >= 3 ? argv[2] : "";
 	std::string file = argv[1];
 	std::vector<std::string> outputV;
 
