@@ -19,11 +19,11 @@ Type* DerefId::getType() {
 	if (newPtrs < 0) {
 		std::stringstream myStr; 
 		for (int i = 0; i < pointers; i++) myStr << "*";
-		myStr << at->type; 
+		myStr << at->getTypeStr(); 
 
 		std::stringstream theirStr;
-		for (int i = 0; i < at->numPointers; i++) theirStr << "*";		 
-		theirStr << at->type;
+		for (int i = 0; i < at->getNumPointers(); i++) theirStr << "*";		 
+		theirStr << at->getTypeStr();
 
 		std::cerr << "fatal: trying to dereference a pointer of " << theirStr.str() << " to invalid type " 
 			<< myStr.str() << " (pointer mismatch!)" << std::endl;
@@ -31,7 +31,7 @@ Type* DerefId::getType() {
 		exit(1);
 	}
 
-	std::string *name = new std::string(at->type);
+	std::string *name = new std::string(at->getTypeStr());
 	AnyType *ret = new AnyType(name, newPtrs, nullptr);
 
 	delete name; 

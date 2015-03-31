@@ -33,7 +33,8 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 
 		if (expr->type && expr->getType()->isArrayTy()) {
 			// change to be a pointer, since all array arguments for a function are passed by reference 
-			expr->type = new AnyType(&expr->type->type, expr->type->arrays_size(), nullptr);
+			std::string typeStr = expr->type->getTypeStr();
+			expr->type = new AnyType(&typeStr, expr->type->arrays_size(), nullptr);
 		}
 
 		if (expr->type) {

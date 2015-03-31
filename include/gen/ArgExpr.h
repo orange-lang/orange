@@ -23,8 +23,8 @@ public:
 
 	virtual std::string string() {
 		std::stringstream ss;
-		if (type && type->type != "") {
-			ss << type->type << " ";
+		if (type && type->getTypeStr() != "") {
+			ss << type->getTypeStr() << " ";
 		}
 		ss << name;
 		return ss.str();

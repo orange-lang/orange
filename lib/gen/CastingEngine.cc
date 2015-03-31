@@ -65,7 +65,7 @@ bool CastValueToType(Value **v, Type *t, bool isSigned, bool force) {
 			AnyType *a = AnyType::Create(changeType);
 			AnyType *b = AnyType::Create(t);
 
-			if (a->type == b->type && a->isSigned() == b->isSigned() && a->numPointers == b->numPointers) {
+			if (a->getTypeStr() == b->getTypeStr() && a->isSigned() == b->isSigned() && a->getNumPointers() == b->getNumPointers()) {
 				// don't worry about not being able to force, since they're the same.
 				return false;
 			}

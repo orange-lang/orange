@@ -15,8 +15,8 @@ public:
 	virtual Value* Codegen();
 
 	virtual std::string string() {
-		std::string type_str = type->type;
-		for (int i = 0; i < type->numPointers; i++) 
+		std::string type_str = type->getTypeStr();
+		for (int i = 0; i < type->getNumPointers(); i++) 
 			type_str += "*";
 		return "(" + type_str + ")" + expr->string(); 
 	}
