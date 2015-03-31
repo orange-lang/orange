@@ -43,6 +43,8 @@ private:
 	std::vector<cCommandOption*> options;
 	std::vector<cOptionsState*> states; 
 	std::vector<std::string> m_unparsed;
+	std::string customUsage = "";
+	std::string customInfo = "";
 
 	cOptionsState() { }
 public:
@@ -53,12 +55,15 @@ public:
 
 	std::vector<std::string> unparsed() const;
 
-	cOptionsState(std::string name, std::string description);
+	cOptionsState(std::string name, std::string description, std::string usage = "", std::string info = "");
 };
 
 class cOptions {
 private:
 	std::string name;
+	cOptionsState *curState;
+
+	void printHelp();
 public:
 	cOptionsState mainState;
 

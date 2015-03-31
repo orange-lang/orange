@@ -63,9 +63,57 @@ void cOptionsState::add(cCommandOption* option) { options.push_back(option); }
 void cOptionsState::addState(cOptionsState* state) { states.push_back(state); }
 std::vector<std::string> cOptionsState::unparsed() const { return m_unparsed; }
 
-cOptionsState::cOptionsState(std::string name, std::string description) {
+cOptionsState::cOptionsState(std::string name, std::string description, std::string usage, std::string info) {
 	this->name = name;
 	this->description = description;
+	this->customUsage = usage;
+	this->customInfo = info;
+}
+
+void cOptions::printHelp() {
+	std::string helpStr = "";
+	if (curState->name != "") {
+		helpStr = " for " + curState->name; 
+	}
+
+	std::cerr << name << std::endl << std::endl;
+
+	if (curState->customUsage != "") {
+		std::cout << "Usage: " << std::endl << "\t" << curState->customUsage << std::endl << std::endl;
+	}
+
+	if (curState->customInfo != "") {
+		std::cout << curState->customInfo << std::endl << std::endl;		
+	}
+
+	std::cerr << "Available options" << helpStr << ":" << std::endl;
+
+	for (cCommandOption* option : curState->options) {
+		std::cerr << "\t";
+
+		for (int i = 0; i < option->names.size(); i++) {
+			if (option->names[i].length() == 1) {
+				std::cerr << "-"; 
+			} else std::cerr << "--";
+
+			std::cerr << option->names[i];
+
+			if (i + 1 < option->names.size()) std::cerr << " | ";
+		}
+
+		std::cerr << "\t\t" << option->description << std::endl; 
+	}
+
+	std::cerr << "\t-h | --help\t\tPrints this message\n";
+
+	if (curState->states.size() > 0) {
+		std::cerr << "\nAvailable commands" << helpStr << ":" << std::endl;
+		for (cOptionsState* state : curState->states) {
+			std::cerr << "\t" << state->name << "\t\t\t" << state->description << std::endl;
+		}
+	}
+
+	exit(1);
 }
 
 void cOptions::parse(int argc, char **argv) {
@@ -73,8 +121,13 @@ void cOptions::parse(int argc, char **argv) {
 	// if it's an option, see if it matches any of the ones we've registered in this state 
 	// if the option has an argument, get the next parameter. if it's another option, throw an error and quit. 
 	// if the parameter matches a new state, switch to that state and continue.
-	cOptionsState* curState = &mainState;
+	curState = &mainState;
 	curState->mActive = true;
+
+	if (argc == 1) {
+		// We passed no options to the command line, so print out the help.
+		printHelp(); 
+	}
 
 	for (int i = 1; i < argc; i++) {
 		std::string arg = argv[i];
@@ -111,40 +164,7 @@ void cOptions::parse(int argc, char **argv) {
 		}
 
 		if (param == "h" || param == "help") {
-			std::string helpStr = "";
-			if (curState->name != "") {
-				helpStr = " for " + curState->name; 
-			}
-
-			std::cerr << name << std::endl << std::endl;
-			std::cerr << "Available options" << helpStr << ":" << std::endl;
-
-			for (cCommandOption* option : curState->options) {
-				std::cerr << "\t";
-
-				for (int i = 0; i < option->names.size(); i++) {
-					if (option->names[i].length() == 1) {
-						std::cerr << "-"; 
-					} else std::cerr << "--";
-
-					std::cerr << option->names[i];
-
-					if (i + 1 < option->names.size()) std::cerr << " | ";
-				}
-
-				std::cerr << "\t\t" << option->description << std::endl; 
-			}
-
-			std::cerr << "\t-h | --help\t\tPrints this message\n";
-
-			if (curState->states.size() > 0) {
-				std::cerr << "\nAvailable commands" << helpStr << ":" << std::endl;
-				for (cOptionsState* state : curState->states) {
-					std::cerr << "\t" << state->name << "\t\t\t" << state->description << std::endl;
-				}
-			}
-
-			exit(1);
+			printHelp();
 		}
 
 		// find param 
