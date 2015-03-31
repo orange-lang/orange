@@ -3,4 +3,4 @@
 	url = https://github.com/USCiLab/cereal.git
 [submodule "etc/llvm"]
 	path = etc/llvm
-	url = https://github.com/llvm-mirror/llvm.git
+	url = git://llvm.org/git/llvm
