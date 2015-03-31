@@ -155,7 +155,8 @@ Value* FunctionStatement::Codegen() {
 			finalV = CG::Builder.CreateLoad(finalV);
 		}
 
-		CG::Builder.CreateStore(finalV, CG::Symtabs.top()->getRetVal());
+		if (CG::Symtabs.top()->getRetVal())
+			CG::Builder.CreateStore(finalV, CG::Symtabs.top()->getRetVal());
 		finalV = CG::Builder.CreateBr(bb);
 	} else if (finalV == nullptr || retType == nullptr) {
 		CG::Builder.CreateBr(ExitBB);		

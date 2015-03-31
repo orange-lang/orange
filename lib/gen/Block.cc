@@ -33,7 +33,8 @@ Type* Block::getLastStatementType() {
 
 	CG::Symtabs.push(symtab);
 
-	if (statements.size() > 0) {
+	if (statements.size() > 0 && statements.back()->getClass() != "FunctionStatement" &&
+		statements.back()->getClass() != "ExternFunction") {
 		ret = statements.back()->getType();
 	}
 

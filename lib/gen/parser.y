@@ -41,7 +41,7 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 
 %type <ifstmt> if_statement opt_else inline_if
-%type <block> statements
+%type <block> statements opt_statements
 %type <stmt> statement extern return_stmt expr_or_ret
 %type <expr> expression primary VALUE opt_expr declaration opt_eq
 %type <did> dereference
@@ -75,6 +75,10 @@ statements
 	:	statements statement { if ($2) $1->statements.push_back($2); } 
 	|	statement { $$ = new Block(); if ($1) $$->statements.push_back($1); }
 	;
+
+opt_statements
+	: statements { $$ = $1; }
+	| { $$ = new Block(); }
 
 statement 		
 	:	function term { $$ = $1; }
@@ -124,7 +128,7 @@ extern
 	;
 
 function
-	:	DEF opt_id term statements END 
+	:	DEF opt_id term opt_statements END 
 		{ $$ = $2; $$->body = $4; $$->body->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
 	;
 
@@ -243,7 +247,7 @@ dereference
 	;
 
 if_statement
-	: IF expression term statements opt_else 
+	: IF expression term opt_statements opt_else 
 		{ 
 			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
 
@@ -256,7 +260,7 @@ if_statement
 	;
 
 opt_else
-	:	ELIF expression term statements opt_else 
+	:	ELIF expression term opt_statements opt_else 
 		{ 
 			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
 
@@ -266,7 +270,7 @@ opt_else
 			b->symtab = CG::Symtabs.top(); 
 			CG::Symtabs.pop(); 
 		}	
-	|	ELSE term statements END
+	|	ELSE term opt_statements END
 		{ 
 			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
 
