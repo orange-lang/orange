@@ -35,6 +35,10 @@ Value* FuncCallExpr::Codegen() {
 	for (unsigned int i = 0; i < args->size(); i++) {
 		auto arg = (*args)[i];
 		Args[i] = arg->Codegen();
+
+		if (arg->getClass() == "VarExpr") {
+			Args[i] = CG::Builder.CreateLoad(Args[i]);
+		}
 	}
 
 	Symobj *o = CG::Symtab->find(name);
