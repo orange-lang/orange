@@ -21,11 +21,6 @@ extern int yyparse();
 int main(int argc, char **argv) {
 	DEBUG_MSG("OC STARTED");
 
-	InitializeAllTargets();
-	InitializeAllTargetMCs();
-	InitializeAllAsmPrinters();
-	InitializeAllAsmParsers();
-
 	if (linkerPath() == nullptr) {
 		std::cerr << "fatal: linker not found in $PATH.\n"; 
 		return 1;

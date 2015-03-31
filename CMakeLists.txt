@@ -22,9 +22,11 @@ add_definitions( -DINSTALL_LOCATION="${CMAKE_INSTALL_PREFIX}" )
 # unix specific flags 
 if(${APPLE})
 	message(STATUS "Detected OS X...")
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -fexceptions -O3 -Wno-unused -Wno-deprecated-register")
+	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Wall -fexceptions -O3 -Wno-unused -Wno-deprecated-register -fdata-sections -ffunction-sections ")
+	SET(CMAKE_EXE_LINKER_FLAGS "-Wl,-dead_strip -Wl,-dead_strip_dylibs")
 elseif(${UNIX}) 
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -fexceptions -O3 -Wno-unused")
+	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Wall -fexceptions -O3 -Wno-unused -fdata-sections -ffunction-sections")
+	SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections")
 endif()
 
 # windows only... 
