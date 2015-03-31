@@ -279,6 +279,29 @@ Value* BinOpExpr::Codegen() {
 		return CG::Builder.CreateLoad(OrigL);	
 	}
 
+
+	else if (op == "%") {
+		if (FPOperation) {
+			return CG::Builder.CreateFRem(L, R);
+		} else {
+			if (isSigned()) {
+				return CG::Builder.CreateSRem(L, R);
+			} else {
+				return CG::Builder.CreateURem(L, R);
+			}
+		}		
+	}
+	else if (op == "&") {
+		return CG::Builder.CreateAnd(L, R);
+	} 
+	else if (op == "|") {
+		return CG::Builder.CreateOr(L, R);
+	}
+	else if (op == "^") {
+		return CG::Builder.CreateXor(L, R);
+	}
+
+
 	else if (op == "=" || op == "<-") {
 		CastValueToType(&R, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 

@@ -110,6 +110,8 @@
 "or"										return LOGICAL_OR;
 
 "&"											return BITWISE_AND;
+"|"											return BITWISE_OR;
+"^"											return BITWISE_XOR;
 
 "="											return ASSIGN;
 "+="										return PLUS_ASSIGN;
@@ -136,6 +138,8 @@
 "*"											return TIMES; 
 "/"											return DIVIDE; 
 "%"											return MOD; 
+
+"mod"										return MOD;
 
 \"(\\.|[^\\"])*\"				SAVESTR(); return STRING;
 [A-Za-z][A-Za-z0-9_]* 	SAVESTR(); return TYPE_ID;

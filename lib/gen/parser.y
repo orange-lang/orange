@@ -44,7 +44,7 @@
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
-%token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND 
+%token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE 
 
 %type <ifstmt> if_statement opt_else inline_if inline_unless unless 
@@ -74,6 +74,10 @@
 %left TIMES DIVIDE
 %left OPEN_PAREN CLOSE_PAREN
 %left OPEN_BRACKET
+
+%left MOD 
+
+%left BITWISE_XOR BITWISE_AND BITWISE_OR
 
 %right IF
 
@@ -368,6 +372,11 @@ expression
 
 	|	expression TIMES expression { $$ = new BinOpExpr($1, "*" , $3); } 
 	|	expression DIVIDE expression { $$ = new BinOpExpr($1, "/" , $3); }
+
+	| expression MOD expression { $$ = new BinOpExpr($1, "%", $3); }
+	| expression BITWISE_AND expression { $$ = new BinOpExpr($1, "&", $3); }
+	| expression BITWISE_XOR expression { $$ = new BinOpExpr($1, "^", $3); }
+	| expression BITWISE_OR expression { $$ = new BinOpExpr($1, "|", $3); }
 
 	|	primary_high { $$ = $1; }
 	;
