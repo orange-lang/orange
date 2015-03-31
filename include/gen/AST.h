@@ -132,7 +132,7 @@ public:
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << name << "( ";
-		for (int i = 0; i < args->size(); i++) {
+		for (unsigned int i = 0; i < args->size(); i++) {
 			ss << (*args)[i]->string() << " ";
 			if (i + 1 != args->size())
 				ss << ", ";
@@ -197,7 +197,7 @@ public:
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << name << "( ";
-		for (int i = 0; i < args->size(); i++) {
+		for (unsigned int i = 0; i < args->size(); i++) {
 			ss << (*args)[i]->string() << " ";
 			if (i + 1 != args->size())
 				ss << ", ";

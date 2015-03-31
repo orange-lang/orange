@@ -160,7 +160,11 @@ void CodeGenerator::GenerateObject() {
 		root += "/lib/libor/boot.o";
 
 		options.push_back(root.c_str());
+
+#ifdef __APPLE__
 		options.push_back("-w");
+#endif
+
 		options.push_back("-o");
 		options.push_back(outputFile.c_str()); // final output. defaults to a.out
 #endif 

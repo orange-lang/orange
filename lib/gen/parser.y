@@ -75,7 +75,7 @@ function		:	 		{ $<symtab>$ = CodeGenerator::Symtab; }
 									{ $$ = $4; $$->body = $6; $$->body->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; };
 
 opt_id			:			TYPE_ID opt_parens { $$ = new FunctionStatement($1, $2, nullptr); } 
-						| 		opt_parens { $$ = new FunctionStatement(nullptr, $1, nullptr) } ;
+						| 		opt_parens { $$ = new FunctionStatement(nullptr, $1, nullptr); } ;
 
 opt_parens 	: 		OPEN_PAREN opt_args CLOSE_PAREN { $$ = $2; } 
 						| 		{ $$ = nullptr; };

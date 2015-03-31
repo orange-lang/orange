@@ -66,7 +66,7 @@ BaseVal *ValFactory::produce() {
 	if (size == "?") {
 		std::string newSize = "";
 		// read value until it's no longer a number or decimal.
-		int ptr = 0;
+		unsigned int ptr = 0;
 		for (; ptr < value.length(); ptr++) {
 			if (value[ptr] != '.' && isdigit(value[ptr]) == false)
 				continue;

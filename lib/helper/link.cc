@@ -4,10 +4,16 @@
 #include <sstream>
 #include <unistd.h>
 #include <strings.h>
+#include <string.h>
 #include <vector>
 #include <algorithm>
 #include <iterator>
 #include <dirent.h>
+
+#ifdef __linux__
+	#include <sys/types.h>
+	#include <sys/wait.h>
+#endif
 
 void invokeLinkerWithOptions(std::vector<const char *> options) {
 	const char *linker = linkerPath();

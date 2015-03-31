@@ -42,7 +42,7 @@ Value* ReturnExpr::Codegen() {
 
 Value* FuncCallExpr::Codegen() {
 	std::vector<Value*> Args(args->size());
-	for (int i = 0; i < args->size(); i++) {
+	for (unsigned int i = 0; i < args->size(); i++) {
 		auto arg = (*args)[i];
 		Args[i] = arg->Codegen();
 	}
@@ -147,7 +147,7 @@ Type* FunctionStatement::getReturnType() {
 
 Value* FunctionStatement::Codegen() {
 	std::vector<Type*> Args(args->size());
-	for (int i = 0; i < args->size(); i++) {
+	for (unsigned int i = 0; i < args->size(); i++) {
 		ArgExpr *arg = (*args)[i];
 		Args[i] = getType(arg->type);
 	}
@@ -168,7 +168,7 @@ Value* FunctionStatement::Codegen() {
 	CG::Symtab->objs[name]->setValue(TheFunction);
 
 	auto arg_it = TheFunction->arg_begin();
-	for (int i = 0; i < args->size(); i++, arg_it++) {
+	for (unsigned int i = 0; i < args->size(); i++, arg_it++) {
 		arg_it->setName((*args)[i]->name);
 	}
 
@@ -177,7 +177,7 @@ Value* FunctionStatement::Codegen() {
 	CG::Builder.SetInsertPoint(BB);
 
 	arg_it = TheFunction->arg_begin();
-	for (int i = 0; i < args->size(); i++, arg_it++) {
+	for (unsigned int i = 0; i < args->size(); i++, arg_it++) {
 		Value *v = CG::Builder.CreateAlloca(arg_it->getType());
 		CG::Builder.CreateStore(arg_it, v);
 		CG::Symtab->create((*args)[i]->name);
