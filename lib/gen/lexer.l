@@ -53,7 +53,10 @@
 
 "def"										return DEF; 
 "return"								return RETURN;
+"elif"									return ELIF;
+"else"									return ELSE;
 "end"										return END; 
+"if"										return IF;
 "class"									return CLASS; 
 "using"									return USING; 
 "public"								return PUBLIC; 

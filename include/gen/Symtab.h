@@ -2,8 +2,11 @@
 #define __SYMTAB_H__
 #include "AST.h"
 
+class SymTable;
+
 class Symobj {
 private:
+	friend class SymTable;
 	Value *m_value = nullptr;
 	Type *m_type = nullptr; 
 public:
@@ -33,6 +36,7 @@ public:
 	std::map< std::string, Symobj* > objs;
 
 	Value *retVal = nullptr;
+	Function *TheFunction = nullptr; 
 	BasicBlock *FunctionEnd = nullptr; 
 	BasicBlock *BlockEnd = nullptr; 
 	
@@ -41,6 +45,12 @@ public:
 	
 	Symobj* find(std::string name);
 
+	void dump(); 
+
+	// Searched up symtable until finding TheFunction != nullptr, returns retVal.
+	Value *getRetVal();
+
+	Function* getFunction();
 	BasicBlock* getFunctionEnd();
 };
 

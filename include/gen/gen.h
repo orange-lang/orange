@@ -15,5 +15,7 @@
 #include "Values.h"
 #include "VarExpr.h"
 #include "VarDeclExpr.h"
+#include "IfStatement.h"
+#include "CondBlock.h"
 
 #endif

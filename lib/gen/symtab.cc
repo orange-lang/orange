@@ -21,6 +21,28 @@ void Symobj::setType(Type *t) {
 }
 
 //// Symtab
+Value *SymTable::getRetVal() {
+	SymTable* ptr = this;
+	while (ptr != nullptr) {
+		if (ptr->TheFunction)
+			return ptr->retVal;
+		ptr = ptr->parent; 
+	} 
+
+	return nullptr; 	
+}
+
+Function *SymTable::getFunction() {
+	SymTable* ptr = this;
+	while (ptr != nullptr) {
+		if (ptr->TheFunction)
+			return ptr->TheFunction;
+		ptr = ptr->parent; 
+	} 
+
+	return nullptr; 
+}
+
 BasicBlock* SymTable::getFunctionEnd() {
 	SymTable* ptr = this;
 	while (ptr != nullptr) {
@@ -50,4 +72,19 @@ void SymTable::create(std::string name) {
 	if (objs.find(name) == objs.end()) {
 		objs[name] = new Symobj();
 	}
+}
+
+void SymTable::dump() {
+	SymTable* ptr = this;
+	while (ptr != nullptr) {
+		printf("Symtab %p:\n", ptr);
+		for (auto obj : objs) {
+			printf("\t%s (value: %d, type: %d)\n", obj.first.c_str(), 
+				obj.second->m_value != nullptr, obj.second->m_type != nullptr);
+		}	
+
+		ptr = ptr->parent;
+	}
+
+	printf("end.\n");
 }

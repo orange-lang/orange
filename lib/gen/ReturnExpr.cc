@@ -12,14 +12,23 @@ Value* ReturnExpr::Codegen() {
 		exit(1);
 	}
 
-	if (expr) {
-		Value *v = expr->Codegen();
+	if (expr && CG::Symtab->getRetVal() == nullptr) {
+		std::cerr << "fatal: no return value found!\n"; 
+		exit(1);
+	}
 
-		if (expr->getClass() == "VarExpr") {
+	if (expr) {
+		DEBUG_MSG("ReturnExpr: STARTING CODEGEN FOR EXPR");
+		Value *v = expr->Codegen();
+		DEBUG_MSG("ReturnExpr: COMPLETED CODEGEN FOR EXPR");
+
+		if (expr->getClass() == "VarExpr" || expr->getClass() == "IfStatement") {
+			DEBUG_MSG("ReturnExpr: LOADING PTR");
+
 			v = CG::Builder.CreateLoad(v);
 		}
 		
-		CG::Builder.CreateStore(v, CG::Symtab->retVal);
+		CG::Builder.CreateStore(v, CG::Symtab->getRetVal());
 		Value *r = CG::Builder.CreateBr(bb);
 		return r; 
 	} else {

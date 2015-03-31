@@ -8,7 +8,7 @@ Type *VarExpr::getType() {
 		return nullptr;
 	}
 	
-	return o->getType();
+	return o->getType()->getPointerElementType();
 }
 
 bool VarExpr::isSigned() {

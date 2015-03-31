@@ -25,13 +25,15 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 		}
 
 		if (expr->type) {
-			CG::Symtab->objs[expr->name]->setType(expr->type->getType());
+			CG::Symtab->objs[expr->name]->setType(expr->type->getType()->getPointerTo());
 		}
 		CG::Symtab->objs[expr->name]->isSigned = expr->type->isSigned();
 	}
 }
 
 Value* FunctionStatement::Codegen() {
+	DEBUG_MSG("STARTING CODEGEN FOR FunctionStatement");
+
 	std::vector<Type*> Args(args->size());
 	for (unsigned int i = 0; i < args->size(); i++) {
 		ArgExpr *arg = (*args)[i];
@@ -69,6 +71,7 @@ Value* FunctionStatement::Codegen() {
 	auto IP = CG::Builder.GetInsertBlock();
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
 	BasicBlock *ExitBB = BasicBlock::Create(getGlobalContext(), "", TheFunction);
+	CG::Symtab->TheFunction = TheFunction;
 	CG::Symtab->FunctionEnd = ExitBB;
 
 	CG::Builder.SetInsertPoint(BB);
@@ -89,18 +92,19 @@ Value* FunctionStatement::Codegen() {
 
 	body->Codegen();
 
-	if (noRet == true) {
-		bool hasReturn = false; 
-		for (Statement *stmt : body->statements) {
-			if (stmt->getClass() == "ReturnExpr") {
-				hasReturn = true; 
-				break; 
-			}
+	bool hasReturn = false; 
+	for (Statement *stmt : body->statements) {
+		if (stmt->getClass() == "ReturnExpr") {
+			hasReturn = true; 
+			break; 
 		}
+	}
 
-		if (hasReturn == false) 
-			CG::Builder.CreateBr(ExitBB);
+	if (hasReturn == false) 
+		CG::Builder.CreateBr(ExitBB);
 
+
+	if (noRet == true) {
 		CG::Builder.SetInsertPoint(ExitBB);
 		CG::Builder.CreateRetVoid();
 	} else {
@@ -117,5 +121,6 @@ Value* FunctionStatement::Codegen() {
 	
 	CG::TheFPM->run(*TheFunction);
 
+	DEBUG_MSG("FINISHED CODEGEN FOR FunctionStatement");
 	return TheFunction;
 }

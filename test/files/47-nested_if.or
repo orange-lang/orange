@@ -1,0 +1,13 @@
+if 1 < 2 
+	if 2 < 3 
+		if 3 < 4
+			return 0
+		else
+			return 1
+		end 
+	else 
+		return 1
+	end 
+else 
+	return 1
+end

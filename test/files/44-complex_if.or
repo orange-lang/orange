@@ -1,0 +1,7 @@
+extern int32 printf(char *s, ...)
+
+if printf("44\n") == 3
+	return 0
+else 
+	return 1
+end

@@ -12,6 +12,8 @@
 %}
 
 %union {
+	IfStatement *ifstmt;
+	CondBlock *cblock;
 	Block *block; 
 	Statement *stmt; 
 	ArgList *arglist;
@@ -28,7 +30,7 @@
 
 %start start 
 
-%token DEF END TYPE_ID OPEN_PAREN CLOSE_PAREN TYPE COMMA
+%token DEF END IF ELIF ELSE TYPE_ID OPEN_PAREN CLOSE_PAREN TYPE COMMA
 %token TIMES NUMBER DIVIDE MINUS PLUS NEWLINE SEMICOLON
 %token TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %token TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR
@@ -37,6 +39,7 @@
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS
 
+%type <ifstmt> if_statement opt_else
 %type <block> statements
 %type <stmt> statement extern
 %type <expr> expression expr_eq expr2 expr3 primary VALUE opt_expr declaration opt_eq
@@ -143,7 +146,23 @@ primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 						| 		TYPE_ID OPEN_PAREN optexprlist CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
 						|			TYPE_ID { $$ = new VarExpr(*$1); }
 						|			STRING { $$ = new StrVal(*$1); }
+						|			if_statement { $$ = $1; }
 						;
+
+if_statement: 		{ $<symtab>$ = CodeGenerator::Symtab; } 
+									{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
+									IF expression term statements opt_else 
+									{ $$ = $7; CondBlock *b = new CondBlock($4, $6); $$->blocks.insert($$->blocks.begin(), b); b->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; }
+
+opt_else		: 		{ $<symtab>$ = CodeGenerator::Symtab; } 
+									{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
+									ELIF expression term statements opt_else 
+									{ $$ = $7; CondBlock *b = new CondBlock($4, $6); $$->blocks.insert($$->blocks.begin(), b); b->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; }
+						|			{ $<symtab>$ = CodeGenerator::Symtab; } 
+									{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
+									ELSE term statements END
+									{ $$ = new IfStatement; $$->blocks.insert($$->blocks.begin(), $5); $5->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; }
+						|			END { $$ = new IfStatement; }
 
 optexprlist :			expr_list { $$ = $1; }
 						|			{ $$ = new ExprList(); }

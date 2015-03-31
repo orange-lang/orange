@@ -59,6 +59,7 @@ void CodeGenerator::init() {
 	FunctionPassManager *OurFPM = new FunctionPassManager(TheModule);
 	TheModule->setTargetTriple(sys::getProcessTriple());
 
+	OurFPM->add(createVerifierPass(true));
 	OurFPM->add(createBasicAliasAnalysisPass());
 	OurFPM->add(createInstructionCombiningPass());
 	OurFPM->add(createInstructionSimplifierPass());
@@ -70,7 +71,7 @@ void CodeGenerator::init() {
 	OurFPM->add(createDeadStoreEliminationPass());
 	OurFPM->add(createCodeGenPreparePass());
 	OurFPM->add(createUnifyFunctionExitNodesPass());
-	OurFPM->add(createVerifierPass(false));
+	OurFPM->add(createVerifierPass(true));
 	OurFPM->doInitialization();
 	
 	TheFPM = OurFPM;
@@ -87,17 +88,23 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	CG::Symtab = globalBlock->symtab;
 
 	// Get return type of globalBlock
+	DEBUG_MSG("GETTING RETURN TYPE FOR GLOBAL BLOCK");
 	bool noRet = false; 
 	Type *retType = globalBlock->getReturnType();
 
 	if (retType == nullptr) {
+		DEBUG_MSG("DETERMINED NO RETURN FOR MAIN FUNCTION");
+
 		noRet = true; 
 		retType = Type::getVoidTy(getGlobalContext());
 	}
 
+	DEBUG_MSG("GOT RETURN TYPE FOR GLOBAL BLOCK");
+
 	std::vector<Type*> Args;
 	FunctionType *FT = FunctionType::get(retType, Args, false);
 	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, MainFunctionName(), TheModule);
+	CG::Symtab->TheFunction = TheFunction;
 
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
 	Builder.SetInsertPoint(BB);
@@ -113,18 +120,19 @@ void CodeGenerator::Generate(Block *globalBlock) {
 
 	globalBlock->Codegen();
 
-	if (noRet == true) {
-		// does the body /have/ a return statement?
-		bool hasReturn = false; 
-		for (Statement *stmt : globalBlock->statements) {
-			if (stmt->getClass() == "ReturnExpr") {
-				hasReturn = true; 
-				break; 
-			}
+	// does the body /have/ a return statement?
+	bool hasReturn = false; 
+	for (Statement *stmt : globalBlock->statements) {
+		if (stmt->getClass() == "ReturnExpr") {
+			hasReturn = true; 
+			break; 
 		}
+	}
 
-		if (hasReturn == false) 
-			Builder.CreateBr(ExitBB);
+	if (hasReturn == false) 
+		Builder.CreateBr(ExitBB);
+
+	if (noRet == true) {
 		Builder.SetInsertPoint(ExitBB);
 		CG::Builder.CreateRetVoid();
 	} else {
@@ -133,7 +141,9 @@ void CodeGenerator::Generate(Block *globalBlock) {
 		CG::Builder.CreateRet(r);
 	}
 
+	DEBUG_MSG("OPTIMIZING CODE...\n");
 	TheFPM->run(*TheFunction);
+
 
 	GenerateObject();
 }
@@ -252,10 +262,6 @@ void CodeGenerator::GenerateObject() {
 		root += "/lib/libor/boot.obj\"";
 
 		options.push_back(root.c_str());
-
-		//options.push_back("-LC:/Windows/System32");
-		//options.push_back("-lkernel32");
-		//options.push_back("-lmsvcrt");
 
 		options.push_back("-o");
 		options.push_back(outputFile.c_str());

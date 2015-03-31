@@ -49,6 +49,7 @@ class Statement {
 public:
 	virtual std::string getClass() { return "Statement"; }
 	virtual Value* Codegen() { return nullptr; }
+	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 	virtual std::string string() { return ""; }
 };
 

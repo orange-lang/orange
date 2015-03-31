@@ -14,6 +14,10 @@ bool isAssignOperator(std::string op) {
 		op == "*=" || op == "/=";
 }
 
+bool returnsPtr(std::string className) {
+	return className == "VarExpr" || className == "IfStatement";
+}
+
 bool BinOpExpr::isSigned() {
 	if (isCmpOperator(op)) {
 		return false; 
@@ -35,8 +39,11 @@ BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 	if (op == "=" && LHS->getClass() == "VarExpr") {
 		VarExpr *L = (VarExpr *)LHS;
 
-		CG::Symtab->create(L->name);
-		CG::Symtab->objs[L->name]->setType(RHS->getType());
+		// If it doesn't exist, then create it 
+		if (CG::Symtab->find(L->name) == nullptr) {
+			CG::Symtab->create(L->name);
+			CG::Symtab->objs[L->name]->setType(RHS->getType()->getPointerTo());
+		}
 	}
 
 	DEBUG_MSG("COMPLETED BinOpExpr");
@@ -56,7 +63,10 @@ Type *BinOpExpr::getType() {
 		return t; 
 	}
 
-	return GetFittingType(LHS->getType(), RHS->getType());
+	Type *L = LHS->getType();
+	Type *R = RHS->getType();
+
+	return GetFittingType(L, R);
 }
 
 Value* BinOpExpr::Codegen() {
@@ -90,9 +100,9 @@ Value* BinOpExpr::Codegen() {
 		exit(1);
 	}
 
-	if (RHS->getClass() == "VarExpr") {
+	if (returnsPtr(RHS->getClass())) {
 		// If it's a variable load it in. 
-		R = CG::Builder.CreateLoad(R, ((VarExpr*)RHS)->name);
+		R = CG::Builder.CreateLoad(R);
 	}
 
 	if (!L || !R) {
