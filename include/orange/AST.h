@@ -47,7 +47,7 @@ protected:
 	/** 
 	 * Indicates whether or not this object has been resolved in the analysis pass.
 	 */
-	bool resolved = false;
+	bool m_resolved = false;
 
 	/**
 	 * The internal value returned by Codegen() and getValue().
@@ -133,9 +133,9 @@ public:
 	 * will only ever excecute once, to avoid unnecessary duplication of code.
 	 */
 	virtual void resolve() { 
-		if (resolved)
+		if (m_resolved)
 			return; 
-		resolved = true; 
+		m_resolved = true; 
 	};
 
 	virtual ~ASTNode() { };
