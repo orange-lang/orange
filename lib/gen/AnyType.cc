@@ -4,8 +4,6 @@
 AnyType* AnyType::clone() {
 	AnyType* ret = new AnyType;
 	for (auto n : arrays) ret->arrays.push_back(n);
-	ret->mArrayType = mArrayType;
-	ret->mArraySize = mArraySize;
 	ret->type = type;
 	ret->numPointers = numPointers;
 	return ret;
@@ -19,29 +17,14 @@ std::string AnyType::string(bool no_brackets) {
 		ss << "*";
 	}
 
-	// this code is a disaster
-	if (no_brackets == false) {
-		if (mArrayType == true) {
-			if (mArraySize != 0)
-				ss << "[" << mArraySize << "]";
-			else 
-				ss << "[]";
-		} else if (arrays.size() > 0) {
-			for (auto sz : arrays) {
-				ss << "[" << sz << "]";
+	if (arrays.size() > 0) {
+		for (auto sz : arrays) {
+			if (no_brackets == false) {
+				ss << "[" << sz << "]"; 
+			} else {
+				ss << "_" << sz; 
 			}
 		}
-	} else {
-		if (mArrayType == true) {
-			if (mArraySize != 0)
-				ss << "_" << mArraySize;
-			else 
-				ss << "_ARRAY";
-		} else if (arrays.size() > 0) {
-			for (auto sz : arrays) {
-				ss << "_" << sz;
-			}
-		}		
 	}
 
 	return ss.str();
@@ -72,11 +55,12 @@ AnyType *AnyType::Create(Type *t) {
 		ret->type = "void";
 	}
 
-	if (t->isArrayTy()) {
+	Type *t_ptr = t; 
+
+	while (t_ptr->isArrayTy()) {
 		ArrayType *at = (ArrayType *)t;
-		ret = AnyType::Create(at->getElementType());
-		ret->mArrayType = true; 
-		ret->mArraySize = (int)at->getNumElements();
+		ret->arrays.push_back((int)at->getNumElements());
+		t_ptr = t_ptr->getArrayElementType();		
 	}
 
 	return ret;
@@ -88,7 +72,7 @@ bool AnyType::isSigned() {
 
 int AnyType::absoluteNumPtrs() {
 	int ret = numPointers + arrays.size();
-	if (mArrayType) ret++;
+	ret += arrays.size();
 	return ret;
 }
 
@@ -97,12 +81,6 @@ Type *AnyType::getType() {
 	Type *initial = ::getType(type);
 
 	for (int i = 0; i < numPointers; i++) {
-		initial = initial->getPointerTo(0);
-	}
-
-	if (mArrayType && mArraySize) {
-		initial = ArrayType::get(initial, mArraySize);
-	} else if (mArrayType && mArraySize == 0) {
 		initial = initial->getPointerTo(0);
 	}
 

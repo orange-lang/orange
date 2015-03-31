@@ -6,8 +6,6 @@ class AnyType {
 private:
 	std::vector<uint64_t> arrays;
 
-	bool mArrayType = false;
-	int mArraySize = 0;
 	AnyType() { }
 public:
 	int arrays_size() const { return arrays.size(); }
@@ -15,8 +13,6 @@ public:
 	std::string type; 
 	bool isSigned();
 	int numPointers = 0; 
-	bool arrayType() const { return mArrayType; }  
-	int arraySize() const { return mArraySize; }
 	int absoluteNumPtrs();
 
 	std::string string(bool no_brackets = false);
