@@ -6,9 +6,12 @@ set(gen_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/gen)
 
 
 # unix specific flags 
-if(${UNIX}) 
+if(${APPLE})
+	message(STATUS "Detected OS X...")
 	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -fexceptions -O3 -Wno-unused -Wno-deprecated-register")
-endif(${UNIX})
+elseif(${UNIX}) 
+	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -fexceptions -O3 -Wno-unused")
+endif()
 
 # windows only... 
 if(${WIN32})

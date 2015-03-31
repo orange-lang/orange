@@ -47,9 +47,9 @@ public:
 	Symobj(Type *t) { setType(t); }
 }; 
 
-class Symtab {
+class SymTable {
 public:
-	Symtab *parent = nullptr; 
+	SymTable *parent = nullptr; 
 	std::map< std::string, Symobj* > objs;
 	
 	// If Symobj doesn't exist, creates one. 
@@ -85,7 +85,7 @@ public:
 
 	std::vector<Statement *> statements;
 
-	Symtab *symtab;
+	SymTable *symtab;
 
 	std::string string() {
 		std::stringstream ss;
@@ -315,7 +315,7 @@ public:
 	static IRBuilder<> Builder;
 	static FunctionPassManager *TheFPM;
 	
-	static Symtab* Symtab;
+	static SymTable* Symtab;
 	
 	static void init();
 	static void Generate(Block *globalBlock);

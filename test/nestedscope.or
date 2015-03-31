@@ -1,0 +1,13 @@
+a = 5 
+
+# should expand to test(a, b)
+def test(b)
+	# should expand to subtest(a, b, c)
+	def subtest(c)
+		return a + b + c
+	end  
+
+	return test(b * 2)
+end 
+
+test(7)

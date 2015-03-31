@@ -16,7 +16,7 @@
 	ArgList *arglist;
 	ExprList *exprlist;
 	ArgExpr *argexpr;
-	Symtab *symtab;
+	SymTable *symtab;
 	FunctionStatement *fstmt;
 	Expression *expr;
 	std::string *str;
@@ -51,7 +51,7 @@
 %%
 // we need to start populating symtab...
 	
-start 			:			{ $<symtab>$ = CodeGenerator::Symtab; } { auto s = new Symtab(); CG::Symtab = s; $<symtab>$ = s; } 
+start 			:			{ $<symtab>$ = CodeGenerator::Symtab; } { auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; } 
 									statements 
 									{ globalBlock = $3; globalBlock->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; } 
 						;
@@ -69,7 +69,7 @@ statement 	: 		function term { $$ = $1; }
 term 				:			NEWLINE | SEMICOLON ;
 
 function		:	 		{ $<symtab>$ = CodeGenerator::Symtab; } 
-									{ auto s = new Symtab(); CG::Symtab = s; $<symtab>$ = s; }
+									{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; }
 									DEF opt_id term statements END 
 									{ $$ = $4; $$->body = $6; $$->body->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; };
 

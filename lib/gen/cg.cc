@@ -15,7 +15,7 @@ using namespace llvm::sys::fs;
 
 Module *CodeGenerator::TheModule;
 IRBuilder<> CodeGenerator::Builder(getGlobalContext());
-Symtab* CodeGenerator::Symtab = nullptr;
+SymTable* CodeGenerator::Symtab = nullptr;
 FunctionPassManager* CodeGenerator::TheFPM;
 std::string CodeGenerator::outputFile = "a.out";
 bool CodeGenerator::outputAssembly = false;
