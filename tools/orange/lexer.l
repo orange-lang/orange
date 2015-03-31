@@ -24,6 +24,7 @@
 	#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = yycolumn; yylloc.last_column = yycolumn+yyleng-1; \
     yycolumn += yyleng;
 
+  extern void yyerror(const char *);
 %}
 
 %option noyywrap
@@ -161,7 +162,7 @@
 
 [A-Za-z][A-Za-z0-9_]* 	SAVESTR(); return TYPE_ID;
 
-.												printf("ERROR: Unhandled token: %s\n", yytext);
+.												yyerror("invalid token");
 
 <<EOF>> { static int once = 0; return once++ ? 0 : NEWLINE; }
 

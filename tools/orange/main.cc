@@ -46,6 +46,8 @@ int main(int argc, char** argv) {
 		doRunCommand(run);
 	} else if (test.isActive()) {
 		doTestCommand(test);
+	} else {
+		doRunCommand(options.mainState);
 	}
 
 	return 0;
