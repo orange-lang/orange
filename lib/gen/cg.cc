@@ -17,7 +17,7 @@ Module *CodeGenerator::TheModule;
 IRBuilder<> CodeGenerator::Builder(getGlobalContext());
 SymTable* CodeGenerator::Symtab = nullptr;
 FunctionPassManager* CodeGenerator::TheFPM;
-std::string CodeGenerator::outputFile = "a.out";
+std::string CodeGenerator::outputFile = "a.o";
 bool CodeGenerator::outputAssembly = false;
 
 typedef CodeGenerator CG;
@@ -60,7 +60,7 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	std::vector<Type*> Args;
 	FunctionType *FT = FunctionType::get(Type::getVoidTy(getGlobalContext()),
 		Args, false);
-	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, "main", TheModule);
+	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, "start", TheModule);
 
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
 	Builder.SetInsertPoint(BB);
