@@ -128,21 +128,21 @@ public:
  *
  * @param run The run state from the command line parser.
  */ 
-void doRunCommand(cOptionsState run);
+void doRunCommand(cOptionsState run, bool doDebug);
 
 /**
  * Runs a file directly without compiling it.
  *
  * @return A RunResult, with a list of errors, if any.
  */
-RunResult runFile(std::string filename);
+RunResult runFile(std::string filename, bool doDebug);
 
 /**
  * Runs a project directly without compiling it.
  *
  * @return A RunResult that will contain if it succeeded with a list of errors, if any.
  */
-RunResult runProject(path projectPath);
+RunResult runProject(path projectPath, bool doDebug);
 
 
 #endif

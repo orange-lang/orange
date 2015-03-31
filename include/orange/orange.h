@@ -10,3 +10,5 @@
 #include "Values.h"
 #include "Block.h"
 #include "generator.h"
+#include "VarExpr.h"
+#include "BinOpExpr.h"

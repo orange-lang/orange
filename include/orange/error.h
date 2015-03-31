@@ -9,6 +9,7 @@
 #define __ORANGE_ERROR_H__
 
 #include "file.h"
+#include "AST.h"
 
 enum CMessageType {
 	ERROR,
@@ -98,6 +99,7 @@ public:
 	int column_end() const;
 
 	CompilerMessage(CMessageType type, std::string what, path filePath, int lineBegin, int lineEnd, int colBegin, int colEnd);
+	CompilerMessage(CodeElement element, std::string what);
 };
 
 #endif

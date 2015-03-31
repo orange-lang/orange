@@ -30,6 +30,8 @@
 
   // defining this in here for C++
   void yyflushbuffer() { YY_FLUSH_BUFFER; }
+
+	#define STR_ELEMENT yylval.strele = new StrElement(yytext); yylval.strele->setLocation({ yylloc.first_line, yylloc.last_line, yylloc.first_column, yylloc.last_column });
 %}
 
 %option noyywrap
@@ -113,57 +115,57 @@
 "uint64"								SAVESTR(); return TYPE_UINT64;
 "void"									SAVESTR(); return TYPE_VOID;
 
-"("											return OPEN_PAREN; 
-")"											return CLOSE_PAREN; 
-"{"											return OPEN_BRACE; 
-"}"											return CLOSE_BRACE;
-"["											return OPEN_BRACKET; 
-"]"											return CLOSE_BRACKET; 
+"("											STR_ELEMENT; return OPEN_PAREN; 
+")"											STR_ELEMENT; return CLOSE_PAREN; 
+"{"											STR_ELEMENT; return OPEN_BRACE; 
+"}"											STR_ELEMENT; return CLOSE_BRACE;
+"["											STR_ELEMENT; return OPEN_BRACKET; 
+"]"											STR_ELEMENT; return CLOSE_BRACKET; 
 
-"..."										return VARARG;
+"..."										STR_ELEMENT; return VARARG;
 
-"++"										return INCREMENT; 
-"--"										return DECREMENT; 
+"++"										STR_ELEMENT; return INCREMENT; 
+"--"										STR_ELEMENT; return DECREMENT; 
 
-"!="										return NEQUALS;
-"=="										return EQUALS;
+"!="										STR_ELEMENT; return NEQUALS;
+"=="										STR_ELEMENT; return EQUALS;
 
-"&&"										return LOGICAL_AND; 
-"||"										return LOGICAL_OR;
-"and"										return LOGICAL_AND;
-"or"										return LOGICAL_OR;
+"&&"										STR_ELEMENT; return LOGICAL_AND; 
+"||"										STR_ELEMENT; return LOGICAL_OR;
+"and"										STR_ELEMENT; return LOGICAL_AND;
+"or"										STR_ELEMENT; return LOGICAL_OR;
 
-"&"											return BITWISE_AND;
-"|"											return BITWISE_OR;
-"^"											return BITWISE_XOR;
+"&"											STR_ELEMENT; return BITWISE_AND;
+"|"											STR_ELEMENT; return BITWISE_OR;
+"^"											STR_ELEMENT; return BITWISE_XOR;
 
-"="											return ASSIGN;
-"+="										return PLUS_ASSIGN;
-"-="										return MINUS_ASSIGN;
-"*="										return TIMES_ASSIGN;
-"/="										return DIVIDE_ASSIGN; 
-"%="										return MOD_ASSIGN;
+"="											STR_ELEMENT; return ASSIGN;
+"+="										STR_ELEMENT; return PLUS_ASSIGN;
+"-="										STR_ELEMENT; return MINUS_ASSIGN;
+"*="										STR_ELEMENT; return TIMES_ASSIGN;
+"/="										STR_ELEMENT; return DIVIDE_ASSIGN; 
+"%="										STR_ELEMENT; return MOD_ASSIGN;
 
-"->"										return ARROW;
-"<-"										return ARROW_LEFT;
-"."											return DOT;
-";"											return SEMICOLON; 
+"->"										STR_ELEMENT; return ARROW;
+"<-"										STR_ELEMENT; return ARROW_LEFT;
+"."											STR_ELEMENT; return DOT;
+";"											STR_ELEMENT; return SEMICOLON; 
 \n 											yycolumn = 1; return NEWLINE; // Reset column as we're on a new line.
-","											return COMMA;
+","											STR_ELEMENT; return COMMA;
 	
-"<="										return LEQ;
-">="										return GEQ; 
+"<="										STR_ELEMENT; return LEQ;
+">="										STR_ELEMENT; return GEQ; 
 
-"<"											return COMP_LT; 
-">"											return COMP_GT;
+"<"											STR_ELEMENT; return COMP_LT; 
+">"											STR_ELEMENT; return COMP_GT;
 
-"+"											return PLUS;
-"-"											return MINUS;
-"*"											return TIMES; 
-"/"											return DIVIDE; 
-"%"											return MOD; 
+"+"											STR_ELEMENT; return PLUS;
+"-"											STR_ELEMENT; return MINUS;
+"*"											STR_ELEMENT; return TIMES; 
+"/"											STR_ELEMENT; return DIVIDE; 
+"%"											STR_ELEMENT; return MOD; 
 
-"mod"										return MOD;
+"mod"										STR_ELEMENT; return MOD;
 
 [A-Za-z][A-Za-z0-9_]* 	SAVESTR(); return TYPE_ID;
 

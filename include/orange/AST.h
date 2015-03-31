@@ -30,19 +30,51 @@
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/Transforms/Scalar.h>
 
+// Include the casting engine so any class inheriting from AST has access to it.
+#include "CastingEngine.h"
+
 using namespace llvm;
 
 class CodeLocation {
 public:
 	int row_begin = 0, row_end = 0;
 	int col_begin = 0, col_end = 0;
+
+	CodeLocation() {};
+	CodeLocation(int row_begin, int row_end, int col_begin, int col_end) : row_begin(row_begin), row_end(row_end), 
+		col_begin(col_begin), col_end(col_end) { }
+};
+
+/**
+ * Code element is the root class that contains information about code location.
+ */
+class CodeElement {
+protected:
+	/**
+	 * Indicates where the code is located in a file.
+	 */
+	CodeLocation m_location;
+public:
+	/**
+	 * Gets the current code location
+	 *
+	 * @return The location where this fragment of code resides.
+	 */
+	CodeLocation location() const { return m_location; }
+
+	/**
+	 * Sets the code location
+	 *
+	 * @param location The new location to use.
+	 */
+	void setLocation(CodeLocation location) { m_location = location; }  
 };
 
 /**
  * ASTNode is the base class for all structures in the AST. It provides some methods for pseudo-reflection and 
  * general features used throughout the project.
  */
-class ASTNode {
+class ASTNode : public CodeElement {
 protected:
 	/** 
 	 * Indicates whether or not this object has been resolved in the analysis pass.
@@ -53,11 +85,6 @@ protected:
 	 * The internal value returned by Codegen() and getValue().
 	 */
 	Value *m_value = nullptr; 
-
-	/**
-	 * Indicates where the code is located in a file.
-	 */
-	CodeLocation m_location;
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 
@@ -115,20 +142,6 @@ public:
 	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 
 	/**
-	 * Gets the current code location
-	 *
-	 * @return The location where this fragment of code resides.
-	 */
-	CodeLocation location() const { return m_location; }
-
-	/**
-	 * Sets the code location
-	 *
-	 * @param location The new location to use.
-	 */
-	void setLocation(CodeLocation location) { m_location = location; }  
-	
-	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 
 	 * will only ever excecute once, to avoid unnecessary duplication of code.
 	 */
@@ -167,7 +180,7 @@ public:
 
 	/**
 	 * Indicates whether or not the result of this expression is constant and is not 
-	 * affected by other code. (e.g., does not load in any varaibles).
+	 * affected by other code. (e.g., does not load in any variables).
 	 *
 	 * @return True if Codegen would return a constant, false otherwise.
 	 */

@@ -8,6 +8,14 @@
 
 #include <orange/Values.h>
 
+StrElement operator+(const char *s, StrElement& element) {
+	return StrElement(s + element.m_str);
+}
+
+std::ostream& operator<< (std::ostream& stream, const StrElement& element) {
+	return stream << element.m_str;
+}
+
 Value* UIntVal::Codegen() {
 	return ConstantInt::get(getGlobalContext(), APInt(size, value));
 }

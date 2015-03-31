@@ -57,6 +57,11 @@ private:
 	 * The PassManager used to optimize functions.
 	 */
 	FunctionPassManager *m_functionOptimizer;
+
+	/**
+	 * Whether or not we are in debug mode.
+	 */
+	bool m_debug = false; 
 public:
 	/**
 	 * Returns whether or not there is at least one error in the run.
@@ -148,6 +153,20 @@ public:
 	 * @return The FunctionPassManager assigned to this runner.
 	 */
 	FunctionPassManager* functionOptimizer() const;
+
+	/**
+	 * Gets whether or not we are in debug mode.
+	 *
+	 * @return True if we are in debug mode, false otherwise.
+	 */
+	bool debug() const { return m_debug; }
+
+	/**
+	 * Sets whether or not we are in debug mode.
+	 *
+	 * @set inDebug Whether or not we are in debug mode.
+	 */
+	void setDebug(bool inDebug) { m_debug = inDebug; }
 
 	/**
 	 * Creates an instance of Runner and registers it inside of the GeneratingEngine.

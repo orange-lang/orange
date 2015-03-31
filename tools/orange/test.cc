@@ -17,7 +17,7 @@ std::vector<RunResult> runTest(path p) {
 	// If it's a directory _with_ a ORANGE_SETTINGS file, run the project only.
 	if (is_directory(p) && exists(p / "orange.settings.json")) {
 		// Run the project.
-		RunResult testRun = runProject(p);
+		RunResult testRun = runProject(p, false);
 
 		// Add a . if it passed, F otherwise. After printing a multiple 
 		// of MAX_CHARACTERS_PER_LINE notices, print a newline.
@@ -34,7 +34,7 @@ std::vector<RunResult> runTest(path p) {
     }
 	} else {
 		// Otherwise just run the single file  
-		RunResult testRun = runFile(p.string());
+		RunResult testRun = runFile(p.string(), false);
 
 		// Add a . if it passed, F otherwise. After printing a multiple 
 		// of MAX_CHARACTERS_PER_LINE notices, print a newline.

@@ -15,6 +15,8 @@
 	extern int yylex();
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(const char *s);
+
+	#define SET_LOCATION(x) CodeLocation loc = { yylloc.first_line, yylloc.last_line, yylloc.first_column, yylloc.last_column }; x->setLocation(loc);
 %}
 
 %locations
@@ -22,6 +24,7 @@
 
 %union {
 	Expression *expr;
+	StrElement *strele;
 	ASTNode *node;
 	Block *block;
 	std::string *str;
@@ -45,6 +48,18 @@
 
 %type <block> statements
 %type <node> statement
+%type <expr> expression primary VALUE
+%type <str> TYPE_ID 
+%type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE
+
+%right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
+
+%left COMP_LT COMP_GT LEQ GEQ
+%left EQUALS NEQUALS 
+
+%left PLUS MINUS
+%left TIMES DIVIDE
+%left OPEN_PAREN CLOSE_PAREN
 
 %%
 	
@@ -60,7 +75,39 @@ statements
 
 statement 		
 	:	term { $$ = nullptr; }
+	| expression term { $$ = $1; SET_LOCATION($$); }
 	;
+
+expression
+	: expression ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression PLUS_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression MINUS_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression TIMES_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression DIVIDE_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); }
+
+	|	expression COMP_LT expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression COMP_GT expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression LEQ expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression GEQ expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression EQUALS expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression NEQUALS expression { $$ = new BinOpExpr($1, *$2, $3); }
+
+	|	expression PLUS expression { $$ = new BinOpExpr($1, *$2, $3); }
+	|	expression MINUS expression { $$ = new BinOpExpr($1, *$2, $3); }
+
+	|	expression TIMES expression { $$ = new BinOpExpr($1, *$2, $3); } 
+	|	expression DIVIDE expression { $$ = new BinOpExpr($1, *$2, $3); }
+
+	| primary { $$ = $1; }
+	;
+
+primary
+	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; SET_LOCATION($$); } 
+	|	VALUE { $$ = $1; SET_LOCATION($$); }
+	|	TYPE_ID { $$ = new VarExpr(*$1); SET_LOCATION($$); }
+	;
+
+
 
 term 
 	: NEWLINE

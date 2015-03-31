@@ -31,6 +31,10 @@ void Block::generateStatements() {
 			stmt->Codegen();
 		} catch (CompilerMessage& e) {
 			curRunner->log(e);
+		} catch (std::runtime_error& e) {
+			CodeLocation loc = stmt->location();
+			CompilerMessage msg(ERROR, e.what(), curRunner->pathname(), loc.row_begin, loc.row_end, loc.col_begin, loc.col_end);
+			curRunner->log(msg);
 		}
 	}
 }
@@ -73,9 +77,19 @@ void Block::resolve() {
 	m_resolved = true;
 	m_locked = true;
 
+	Runner* curRunner = GeneratingEngine::sharedEngine()->active();
+
 	// Resolve all of our statements.
 	for (auto stmt : m_statements) {
-		stmt->resolve();
+		try {
+			stmt->resolve();
+		} catch (CompilerMessage& e) {
+			curRunner->log(e);
+		} catch (std::runtime_error& e) {
+			CodeLocation loc = stmt->location();
+			CompilerMessage msg(ERROR, e.what(), curRunner->pathname(), loc.row_begin, loc.row_end, loc.col_begin, loc.col_end);
+			curRunner->log(msg);
+		}
 	}
 }
 

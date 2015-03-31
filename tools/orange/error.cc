@@ -54,6 +54,17 @@ CompilerMessage::CompilerMessage(CMessageType type, std::string what, path fileP
 	m_column_end = colEnd; 
 }
 
+CompilerMessage::CompilerMessage(CodeElement element, std::string what) {
+	m_type = ERROR; 
+	m_what = what; 
+	m_file_path = GE::runner()->pathname(); 
+	m_line_begin = element.location().row_begin;
+	m_line_end = element.location().row_end;
+	m_column_begin = element.location().col_begin;
+	m_column_end = element.location().col_end;
+}
+
+
 #include <orange/orange.h>
 #include <parser.hh>
 

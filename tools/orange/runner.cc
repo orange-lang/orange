@@ -39,7 +39,7 @@ bool Runner::hasError() {
 	}
 
 	return false;
-}
+	}
 
 RunResult Runner::run() {
 	// First, set us to running and activate us as the current runner.
@@ -70,7 +70,14 @@ RunResult Runner::run() {
 	// Now that we've parsed everything, let's analyze and resolve code...
 	mainFunction()->resolve();
 
+	if (debug())
+		std::cout << mainFunction()->string() << std::endl;
+
 	// TODO: run the generated module.
+	mainFunction()->Codegen();
+
+	if (debug())
+		m_module->dump();
 
 	int retCode = 0;
 

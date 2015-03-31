@@ -28,6 +28,11 @@ int main(int argc, char** argv) {
 	cOptionsState run("run", "Runs a single file or a project.", "run [filename]", "The run command will\
  either run a file or a project directly. Entering run without a filename will run a project, if it exists.\
   If you are not in a project, an error will be displayed. Running a file does not require you to be in an Orange project.");
+
+  cCommandOption debug({"debug", "D"}, "Print debugging info", false);
+ 	run.add(&debug);
+ 	options.mainState.add(&debug);
+
 	options.mainState.addState(&run); 
 
 	/*
@@ -39,15 +44,17 @@ int main(int argc, char** argv) {
   individual program.");
   options.mainState.addState(&test);
 
+
+
 	// Parse our options
 	options.parse(argc, argv);
 
 	if (run.isActive()) {
-		doRunCommand(run);
+		doRunCommand(run, debug.isSet());
 	} else if (test.isActive()) {
 		doTestCommand(test);
 	} else {
-		doRunCommand(options.mainState);
+		doRunCommand(options.mainState, debug.isSet());
 	}
 
 	return 0;

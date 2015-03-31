@@ -14,6 +14,28 @@ class BaseVal : public Expression {
 
 };
 
+class StrElement : public CodeElement {
+private:
+	std::string m_str; 
+public:
+	bool operator==(std::string RHS) {
+		return m_str == RHS; 
+	} 
+
+	bool operator==(StrElement& RHS) {
+		return m_str == RHS.m_str;
+	}
+
+
+	friend StrElement operator+(const char *s, StrElement& element);
+	friend std::ostream& operator<< (std::ostream& stream, const StrElement& element);
+
+	operator std::string() const { return m_str; }
+
+	StrElement(std::string str) : m_str(str) {}
+	StrElement(const char *str) : m_str(str) {}
+};
+
 class ValFactory {
 public:
 	std::string value;

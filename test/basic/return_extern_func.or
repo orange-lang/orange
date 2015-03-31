@@ -4,6 +4,5 @@ def foo()
 	return puts("foo")
 end
 
-
 foo()
 return 0

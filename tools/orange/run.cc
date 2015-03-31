@@ -117,27 +117,28 @@ RunResult::RunResult(std::string filename, bool pass, int code, std::vector<Comp
 	finish(pass, code, messages);
 }
 
-RunResult runFile(std::string filename) {
+RunResult runFile(std::string filename, bool doDebug) {
 	Runner *runner = new Runner(filename);
+	runner->setDebug(doDebug);
 	RunResult res = runner->run();
 	delete runner;
 	return res; 
 }
 
-RunResult runProject(path projectPath) {
+RunResult runProject(path projectPath, bool doDebug) {
 	// for now, temporarily return that we didn't run it.
 	CompilerMessage msg(NO_COMPILE, "project was not run.", projectPath.string(), -1, -1, -1, -1);
 	return RunResult(projectPath.string(), false, 1, msg);
 }
 
-void doRunCommand(cOptionsState run) {
+void doRunCommand(cOptionsState run, bool doDebug) {
 	// If the user didn't enter anything, then we're going to run a project.
 	if (run.unparsed().size() == 0) {
 		RunResult res; 
 
 		// Try to find the project directory and run it. 
 		try {
-			res = runProject(findProjectDirectory());
+			res = runProject(findProjectDirectory(), doDebug);
 		} catch (std::runtime_error& e) {
 			// we're probably not in a project. what happened?
 			std::cerr << e.what() << std::endl;
@@ -161,7 +162,7 @@ void doRunCommand(cOptionsState run) {
 	} 
 
 	// Run the file and see what happened.
-	RunResult res = runFile(run.unparsed().at(0));
+	RunResult res = runFile(run.unparsed().at(0), doDebug);
 
 	if (res.passed() == false) {
 		for (auto msg : res.errors()) {

@@ -1,3 +1,11 @@
+/*
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** directory of this distribution.
+**
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** may not be copied, modified, or distributed except according to those terms.
+*/ 
+
 #include <orange/FunctionStmt.h>
 #include <orange/generator.h>
 
@@ -69,8 +77,7 @@ std::string FunctionStmt::string() {
 
 void FunctionStmt::resolve() {
 	if (m_resolved) return; 
-	m_resolved = true; 
-
+	
 	Block::resolve();
 
 	// If we don't exist in the parent symtab, add us as a reference.
