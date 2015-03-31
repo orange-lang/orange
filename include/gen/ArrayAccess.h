@@ -16,6 +16,11 @@ public:
 
 	Expression *array, *idx; 
 
+	virtual Statement* clone() { 
+		ArrayAccess *ret = new ArrayAccess((Expression *)array->clone(), (Expression *)idx->clone());
+		return ret;
+	}
+
 	ArrayAccess(Expression *array, Expression *idx);
 }; 
 

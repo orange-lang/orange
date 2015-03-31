@@ -22,6 +22,13 @@ public:
 
 	void resolve();
 
+	virtual Statement* clone() { 
+		IfStatement *ret = new IfStatement();
+		for (Block *b : blocks)
+			ret->blocks.push_back(b->clone());
+		return ret; 
+	}
+
 	IfStatement() { }
 
 	~IfStatement();

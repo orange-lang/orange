@@ -1,7 +1,16 @@
 #include "gen/AST.h"
 #include "gen/generator.h"
 #include "gen/Values.h"
+#include "gen/ArgExpr.h"
 typedef CodeGenerator CG;
+
+ArgList* ArgList::clone() {
+	ArgList *ret = new ArgList; 
+	for (ArgExpr *expr : *this) {
+		ret->push_back((ArgExpr *)expr->clone());
+	}
+	return ret;
+}
 
 Value *replace(Value *del, Value *v) {
 	delete del; 
@@ -36,7 +45,17 @@ Type *getType(std::string typeStr) {
 	return nullptr;
 }
 
-std::string AnyType::string() {
+AnyType* AnyType::clone() {
+	AnyType* ret = new AnyType;
+	for (auto n : arrays) ret->arrays.push_back(n);
+	ret->mArrayType = mArrayType;
+	ret->mArraySize = mArraySize;
+	ret->type = type;
+	ret->numPointers = numPointers;
+	return ret;
+}
+
+std::string AnyType::string(bool no_brackets) {
 	std::stringstream ss;
 	ss << type;
 
@@ -44,15 +63,29 @@ std::string AnyType::string() {
 		ss << "*";
 	}
 
-	if (mArrayType == true) {
-		if (mArraySize != 0)
-			ss << "[" << mArraySize << "]";
-		else 
-			ss << "[]";
-	} else if (arrays.size() > 0) {
-		for (auto sz : arrays) {
-			ss << "[" << sz << "]";
+	// this code is a disaster
+	if (no_brackets == false) {
+		if (mArrayType == true) {
+			if (mArraySize != 0)
+				ss << "[" << mArraySize << "]";
+			else 
+				ss << "[]";
+		} else if (arrays.size() > 0) {
+			for (auto sz : arrays) {
+				ss << "[" << sz << "]";
+			}
 		}
+	} else {
+		if (mArrayType == true) {
+			if (mArraySize != 0)
+				ss << "_" << mArraySize;
+			else 
+				ss << "_ARRAY";
+		} else if (arrays.size() > 0) {
+			for (auto sz : arrays) {
+				ss << "_" << sz;
+			}
+		}		
 	}
 
 	return ss.str();

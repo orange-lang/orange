@@ -22,6 +22,13 @@ public:
 		return name;
 	}
 
+	virtual Statement* clone() { 
+		std::string* name_p = new std::string(name); 
+		VarDeclExpr* ret = new VarDeclExpr((AnyType *)type->clone(), name_p, (Expression*)value->clone());
+		delete name_p; 
+		return ret;
+	}
+
 	virtual bool returnsPtr() { return true; }
 
 

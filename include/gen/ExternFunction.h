@@ -16,6 +16,11 @@ public:
 
 	Value* Codegen();
 
+	virtual Statement* clone() { 
+		ExternFunction *ret = new ExternFunction(returnType->clone(), name, args->clone());
+		return ret;
+	}
+
 	ExternFunction(AnyType *returnType, std::string name, ArgList *args);
 
 	~ExternFunction();

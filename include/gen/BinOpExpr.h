@@ -21,6 +21,10 @@ public:
 
 	virtual bool isConstant() { return LHS->isConstant() && RHS->isConstant(); }
 
+	virtual Statement* clone() { 
+		BinOpExpr *ret = new BinOpExpr((Expression *)LHS->clone(), op, (Expression *)RHS->clone());
+		return ret;
+	}
 
 	virtual std::string string() {
 		std::stringstream ss;

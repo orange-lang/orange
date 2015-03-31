@@ -24,6 +24,11 @@ public:
 			return "RETURN";
 	}
 
+	virtual Statement* clone() { 
+		ReturnExpr* ret = new ReturnExpr((Expression *)expr->clone());
+		return ret; 
+	}
+
 	ReturnExpr(Expression *expr) : expr(expr) {}
 
 	~ReturnExpr();

@@ -31,6 +31,11 @@ public:
 		return ss.str();
 	}
 
+	virtual Statement* clone() { 
+		VarExpr* ret = new VarExpr(name);
+		return ret;
+	}
+
 	VarExpr(std::string name) : name(name) { }
 };
 

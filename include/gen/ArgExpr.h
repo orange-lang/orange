@@ -13,6 +13,10 @@ public:
 	std::string name;
 	bool isLocked = false;
 
+	Type *getType();
+
+	Statement *clone();
+
 	virtual bool isSigned() { return type->isSigned(); }
 	virtual bool isConstant() { return false; }
 

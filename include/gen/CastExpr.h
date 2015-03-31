@@ -22,6 +22,11 @@ public:
 
 	virtual bool isConstant() { return expr->isConstant(); }
 
+	virtual Statement* clone() { 
+		CastExpr *ret = new CastExpr((AnyType *)type->clone(), (Expression *)expr->clone());
+		return ret;
+	}
+
 
 	CastExpr(AnyType *type, Expression *expr) : type(type), expr(expr) {}
 

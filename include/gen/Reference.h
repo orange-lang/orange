@@ -16,6 +16,11 @@ public:
 
 	Expression *value; 
 
+	virtual Statement* clone() { 
+		Reference* ret = new Reference((Expression *)value->clone());
+		return ret;
+	}
+
 	Reference(Expression *value) : value(value) {};
 };
 

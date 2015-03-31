@@ -26,6 +26,17 @@ public:
 	// If m_value is not null, then calling this will have no effect.  
 	void setType(Type *t);
 
+	Symobj* clone() { 
+		Symobj* ret = new Symobj();
+		ret->m_value = m_value;
+		ret->m_type = m_type; 
+		ret->isSigned = isSigned;
+		ret->isFunction = isFunction;
+		ret->isLocked = isLocked; 
+		ret->reference = reference; 
+		return ret;
+	}
+
 	Symobj() { };
 	Symobj(Value *v) { setValue(v); }
 	Symobj(Type *t) { setType(t); }
@@ -51,6 +62,20 @@ public:
 	Symobj* find(std::string name);
 
 	void dump(); 
+
+	SymTable* clone() {
+		SymTable* ret = new SymTable();
+		ret->parent = parent; 
+		for (auto& kv : objs) {
+			ret->objs[kv.first] = kv.second->clone();
+		}
+		ret->retVal = retVal; 
+		ret->TheFunction = TheFunction; 
+		ret->FunctionName = FunctionName;
+		ret->FunctionEnd = FunctionEnd; 
+		ret->BlockEnd = BlockEnd; 
+		return ret;
+	}
 
 	// Searched up symtable until finding TheFunction != nullptr, returns retVal.
 	Value *getRetVal();

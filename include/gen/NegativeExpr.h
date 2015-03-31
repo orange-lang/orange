@@ -13,6 +13,10 @@ public:
 
 	virtual bool isConstant() { return expr->isConstant(); }
 
+	virtual Statement* clone() { 
+		NegativeExpr* ret = new NegativeExpr((Expression *)expr->clone());
+		return ret;
+	}
 
 	NegativeExpr(Expression *expr) : expr(expr) {}
 

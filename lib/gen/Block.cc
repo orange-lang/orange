@@ -19,6 +19,16 @@ std::string Block::string() {
 	return ss.str();
 }
 
+Block* Block::clone() { 
+	Block* ret = new Block();
+	ret->symtab = symtab->clone();
+	CG::Symtabs.push(ret->symtab);
+	for (Statement *stmt : statements) 
+		ret->statements.push_back((Statement *)stmt->clone());
+	CG::Symtabs.pop();
+	return ret;
+}
+
 bool Block::hasReturnStatement() {
 	for (auto stmt : statements) {
 		if (stmt->getClass() == "ReturnExpr") 

@@ -106,6 +106,23 @@ bool CastValuesToFit(Value **v1, Value **v2, bool isV1Signed, bool isV2Signed) {
 	return b;
 }
 
+bool CanTypeBeCasted(Type *src, Type *dest) {
+	if (src == nullptr || dest == nullptr) {
+		return false; 
+	}
+
+	if (src->getTypeID() == dest->getTypeID()) 
+		return true; 
+
+	if (dest->isIntegerTy() || dest->isFloatingPointTy()) {
+		if (src->isIntegerTy()) return true; 
+		else if (src->isFloatingPointTy()) return true; 
+		else return false; 
+	}
+
+	return false;
+}
+
 Type *GetFittingType(Type *v1, Type *v2) {
 	if (v1 == nullptr || v2 == nullptr) {
 		return nullptr;

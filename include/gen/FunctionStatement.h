@@ -6,10 +6,14 @@
 #include "Symtab.h"
 
 class FunctionStatement : public Statement {
+private:
+	std::vector<FunctionStatement *> clones;
 public:
 	virtual std::string getClass() { return "FunctionStatement"; }
 
 	Value* Codegen();
+
+	std::vector<FunctionStatement *> templated; 
 
 	std::string name;
 	ArgList *args;
@@ -18,6 +22,15 @@ public:
 	void resolve();
 
 	virtual std::string string();
+
+	virtual Statement* clone() { 
+		std::string* cloned_name = new std::string(name);
+		FunctionStatement* ret = new FunctionStatement(cloned_name, args->clone(), body->clone());
+		delete cloned_name; 
+		return ret; 
+	}
+
+	std::string getTemplatedInstance(ExprList *callArgs);
 
 	FunctionStatement(std::string* name, ArgList *args, Block *body);
 

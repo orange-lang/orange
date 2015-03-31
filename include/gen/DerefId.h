@@ -1,8 +1,7 @@
 #ifndef __DEREFID_H__
 #define __DEREFID_H__
 #include "AST.h"
-
-class VarExpr; 
+#include "VarExpr.h"
 
 class DerefId : public Expression {
 public:
@@ -17,6 +16,12 @@ public:
 
 	virtual bool isConstant() { return false; }
 	virtual bool returnsPtr() { return true; }
+
+	virtual Statement* clone() { 
+		DerefId *ret = new DerefId((VarExpr *)id->clone());
+		ret->pointers = pointers;
+		return ret; 
+	}
 
 
 	DerefId(VarExpr *id) : id(id) { }

@@ -30,6 +30,15 @@ public:
 		return ss.str();
 	}
 
+	virtual Statement* clone() { 
+		ExprList *args_clone = new ExprList();
+		for (auto a : *args) {
+			args_clone->push_back((Expression *)a->clone());
+		}
+		FuncCallExpr* ret = new FuncCallExpr(name, args_clone);
+		return ret;
+	}
+
 	FuncCallExpr(std::string name, ExprList *args);
 
 	~FuncCallExpr();

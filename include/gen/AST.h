@@ -43,6 +43,8 @@ class BaseVal;
 class ArgList : public std::vector<ArgExpr *>  {
 public:
 	bool isVarArg = false;
+
+	ArgList *clone();
 };
 
 // Base
@@ -55,6 +57,8 @@ public:
 	virtual bool returnsPtr() { return false; }
 
 	bool resolved = false;
+
+	virtual Statement* clone() { return new Statement(); }
 	
 	// any function that implements resolve can only 
 	// be resolved once 
@@ -74,6 +78,8 @@ public:
 	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 	virtual bool isSigned() { return false; }
 	virtual bool isConstant() { return true; } 
+
+	virtual Statement* clone() { return new Expression(); }
 };
 
 class AnyType {
@@ -90,11 +96,12 @@ public:
 	bool arrayType() const { return mArrayType; }  
 	int arraySize() const { return mArraySize; }
 
-	std::string string();
+	std::string string(bool no_brackets = false);
 
 	Type *getType();
 
 	static AnyType *Create(Type *t);
+	AnyType* clone();
 
 	AnyType(std::string *type, int numPointers, std::vector<BaseVal *> *arrays);
 };
@@ -114,6 +121,11 @@ public:
 	virtual Type *getType() { return Type::getInt8PtrTy(getGlobalContext()); }
 
 	Value* Codegen();
+
+	virtual Statement* clone() { 
+		StrVal *ret = new StrVal(value); 
+		return ret; 
+	}
 
 	StrVal(std::string v);
 };

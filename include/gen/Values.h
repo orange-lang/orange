@@ -23,6 +23,11 @@ public:
 		return Type::getIntNTy(getGlobalContext(), size); 
 	}
 
+	virtual Statement* clone() { 
+		UIntVal *ret = new UIntVal(value, size); 
+		return ret;
+	}
+
 
 	UIntVal() { }
 	UIntVal(uint64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
@@ -49,6 +54,10 @@ public:
 		return Type::getIntNTy(getGlobalContext(), size); 
 	}
 
+	virtual Statement* clone() { 
+		IntVal* ret = new IntVal(value, size);
+		return ret;
+	}
 
 	IntVal() { }
 	IntVal(int64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
@@ -72,6 +81,11 @@ public:
 		return Type::getFloatTy(getGlobalContext()); 
 	}
 
+	virtual Statement* clone() { 
+		FloatVal* ret = new FloatVal(value);
+		return ret;
+	}
+
 	FloatVal();
 	FloatVal(float val) : value(val) {} // parses a string into its value.
 };
@@ -92,6 +106,11 @@ public:
 
 	virtual Type *getType() { 
 		return Type::getDoubleTy(getGlobalContext()); 
+	}
+
+	virtual Statement* clone() { 
+		DoubleVal* ret = new DoubleVal(value);
+		return ret;
 	}
 
 	DoubleVal();

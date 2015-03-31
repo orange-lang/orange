@@ -23,7 +23,6 @@ bool BinOpExpr::isSigned() {
 	if (op == "&&" || op == "||") {
 		return false;
 	}
-	// std::cout << LHS->string() << " " << op << " " << RHS->string();
 
 	return LHS->isSigned() && RHS->isSigned();
 }
@@ -126,13 +125,15 @@ Value* BinOpExpr::Codegen() {
 	// since LHS->Codegen would create a nonexistant variable on the RHS potentially 
 	if ((op == "=" || op == "<-") && L == nullptr) {
 		L = CG::Builder.CreateAlloca(LHS->getType());
-		CG::Symtabs.top()->objs[((VarExpr*)LHS)->name]->setValue(L);
+		VarExpr *vLHS = (VarExpr *)LHS;
+		CG::Symtabs.top()->objs[vLHS->name]->setValue(L);
 	}
 
 	if (L == nullptr) {
 		std::cerr << "fatal: LHS of expression has returned null!\n";
 		exit(1);
 	}
+
 
 	Value *OrigL = L;
 	if ((op != "=" && op != "<-") && LHS->returnsPtr()) {

@@ -24,6 +24,7 @@ FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
 void FuncCallExpr::resolve() {
 	if (resolved)
 		return;
+	resolved = true;
 
 	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr) {
@@ -36,55 +37,36 @@ void FuncCallExpr::resolve() {
 		exit(1); 
 	}
 
-	resolved = true;
+	// First, resolve all of our arguments.
+	// We're going to be handling stuff with the functions 
+	// so if it's a FunctionStatement, we need to have the types 
+	// resolved. 
+	for (int i = 0; i < args->size(); i++) {
+		args->at(i)->resolve();
+	}
 
 	if (o->reference->getClass() == "FunctionStatement") {
-		// First, we want to get the function and go through its arguments
-		FunctionStatement *fstmt = (FunctionStatement *)o->reference;
- 	
- 		// If that function is resolved, we don't want to resolve it again. 
+		FunctionStatement *fstmt = (FunctionStatement *)o->reference; 
 
- 		int totalResolved = 0; 
-
-		// Look at our arguments. Get the type of each argument, and if 
-		// the function is missing it, snag it. 
-		for (unsigned int i = 0; i < fstmt->args->size(); i++, totalResolved++) {
-			// First, we want to resolve our argument
-			args->at(i)->resolve();
-
-			// Next, we want to check the arg for the function.
-			ArgExpr *arg = fstmt->args->at(i);
-
-			if (arg->type != nullptr) {
-				Type *src = arg->type->getType(); 
-				Type *test = args->at(i)->getType();				
-
-				if (ShouldTypesMorph(src, test) == false || arg->isLocked == true) 
-					continue;
-			}
-
-			std::string argName = arg->name;
-
-			// Now, in the symtab for the function, we want to set the type for the arg 
-			fstmt->body->symtab->objs[argName]->setType(args->at(i)->getType()->getPointerTo());
-			arg->type = AnyType::Create(args->at(i)->getType());
-		}
-
-		// Resolve any other arguments we might have 
-		for (int i = totalResolved; i < args->size(); i++) {
-			args->at(i)->resolve();
+		// We want to know what generic (templated) function we will be calling.
+		// getTemplatedInstance() may return the original name of the function,
+		// in which case a templated has not been created.
+		// On error, getTemplatedInstance() will throw an exception.
+		// 
+		// getTemplatedInstance will create a unique duplicate function with the 
+		// arguments that are being called. If the function with that specific 
+		// number of arguments already exists, it will not be created. The name 
+		// is then returned. 
+		try {
+			name = fstmt->getTemplatedInstance(args);	
+		} catch (std::runtime_error& e) {
+			std::cerr << "fatal: could not created generic function for " << name << std::endl; 
+			std::cerr << "reason: " << e.what() << std::endl;
+			exit(1);
 		}
 
 		fstmt->resolve();
-	} else if (o->reference->getClass() == "ExternFunction") {
-		// Resolve arguments in external function calls.
-
-		for (int i = 0; i < args->size(); i++) {
-			args->at(i)->resolve();
-		}
-
-	}
-
+	} 
 }
 
 Type *FuncCallExpr::getType() {
@@ -144,7 +126,10 @@ Value* FuncCallExpr::Codegen() {
 
 	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr || o->getValue() == nullptr) {
-		std::cerr << "Error: no function called " << name << " found.";
+		std::cerr << "fatal: no function called " << name << " found.\n";
+		std::cerr << o << std::endl;
+		if (o) std::cerr << o->getValue() << std::endl;
+		exit(1);
 		return nullptr;
 	}
 

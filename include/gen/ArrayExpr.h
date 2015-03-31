@@ -16,6 +16,16 @@ public:
 
 	virtual bool isConstant();
 
+	virtual Statement* clone() { 
+		ExprList *elements_clone = new ExprList();
+		for (auto v : *elements) {
+			elements_clone->push_back((Expression *)v->clone());			
+		}
+
+		ArrayExpr *ret = new ArrayExpr(elements_clone);
+		return ret;
+	}
+
 	ArrayExpr(ExprList *list) : elements(list) { }
 };
 
