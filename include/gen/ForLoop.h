@@ -16,7 +16,7 @@ private:
 
 	BasicBlock *ConditionBB, *BodyBB, *AfterthoughtBB, *ContinueBB;
 public:
-	Statement *initializer;
+	ASTNode *initializer;
 	Expression *condition, *afterthought; 
 	Block *body;
 
@@ -35,16 +35,16 @@ public:
 
 	void resolve();
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		ForLoop *ret = new ForLoop(
-				initializer ? (Expression *)initializer->clone() : nullptr, 
+				initializer ? (ASTNode *)initializer->clone() : nullptr, 
 				condition ? (Expression *)condition->clone() : nullptr, 
 				afterthought ? (Expression *)afterthought->clone() : nullptr, 
 				body->clone());
 		return ret; 
 	}
 
-	ForLoop(Statement *initializer, Expression *condition, Expression *afterthought, Block *body, LoopAttributes attribs = NONE);
+	ForLoop(ASTNode *initializer, Expression *condition, Expression *afterthought, Block *body, LoopAttributes attribs = NONE);
 
 	~ForLoop();
 };

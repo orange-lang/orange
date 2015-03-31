@@ -17,7 +17,7 @@ public:
 	std::string op; 
 	bool prefixIncrement = false; 
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		IncrementExpr *ret = new IncrementExpr((Expression *)expr->clone(), op, prefixIncrement);
 		return ret; 
 	}

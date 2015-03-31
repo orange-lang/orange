@@ -2,6 +2,7 @@
 #define __CASTING_ENGINE_H__
 
 #include "AST.h"
+#include "AnyType.h"
 
 // Casts Value *v to type t, if compatible. 
 // v will change if a cast occured.

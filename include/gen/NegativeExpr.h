@@ -13,7 +13,7 @@ public:
 
 	virtual bool isConstant() { return expr->isConstant(); }
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		NegativeExpr* ret = new NegativeExpr((Expression *)expr->clone());
 		return ret;
 	}

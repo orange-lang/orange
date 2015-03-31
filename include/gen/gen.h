@@ -28,5 +28,6 @@
 #include "BreakStatement.h"
 #include "ContinueStatement.h"
 #include "ConstVarExpr.h"
+#include "AnyType.h"
 
 #endif

@@ -15,7 +15,7 @@ public:
 
 	void resolve();
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		return new BreakStatement(); 
 	}
 };

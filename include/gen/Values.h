@@ -2,6 +2,43 @@
 #define __VALUES_H__
 #include "AST.h"
 
+class StrVal : public Expression {
+public:
+	virtual std::string getClass() { return "StrVal"; }
+	std::string value; 
+
+	virtual std::string string() {  
+		std::stringstream ss;
+		ss << "\"" << value << "\"";
+		return ss.str();
+	}
+
+	virtual Type *getType() { return Type::getInt8PtrTy(getGlobalContext()); }
+
+	Value* Codegen();
+
+	virtual ASTNode* clone() { 
+		StrVal *ret = new StrVal("\"\"");
+		ret->value = value; 
+		return ret; 
+	}
+
+	StrVal(std::string v);
+};
+
+class BaseVal : public Expression { 
+
+};
+
+class ValFactory {
+public:
+	std::string value;
+	std::string size;
+
+	BaseVal *produce();
+};
+
+
 class UIntVal : public BaseVal {
 public:
 	virtual std::string getClass() { return "UIntVal"; }
@@ -23,7 +60,7 @@ public:
 		return Type::getIntNTy(getGlobalContext(), size); 
 	}
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		UIntVal *ret = new UIntVal(value, size); 
 		return ret;
 	}
@@ -54,7 +91,7 @@ public:
 		return Type::getIntNTy(getGlobalContext(), size); 
 	}
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		IntVal* ret = new IntVal(value, size);
 		return ret;
 	}
@@ -81,7 +118,7 @@ public:
 		return Type::getFloatTy(getGlobalContext()); 
 	}
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		FloatVal* ret = new FloatVal(value);
 		return ret;
 	}
@@ -108,7 +145,7 @@ public:
 		return Type::getDoubleTy(getGlobalContext()); 
 	}
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		DoubleVal* ret = new DoubleVal(value);
 		return ret;
 	}

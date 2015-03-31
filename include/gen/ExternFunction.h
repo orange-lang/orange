@@ -1,6 +1,7 @@
 #ifndef __EXTERN_FUNCTION_H__
 #define __EXTERN_FUNCTION_H__
 #include "AST.h"
+#include "AnyType.h"
 
 class ExternFunction : public Statement {
 public:

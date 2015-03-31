@@ -10,7 +10,7 @@ std::string Block::string() {
 
 	CG::Symtabs.push(symtab);
 
-	for (Statement *s : statements) {
+	for (ASTNode *s : statements) {
 		if (s == nullptr) continue;
 		ss << s->string() << std::endl;
 	}
@@ -25,8 +25,8 @@ Block* Block::clone() {
 	ret->symtab = symtab->clone();
 	ret->symtab->parent = CG::Symtab();
 	CG::Symtabs.push(ret->symtab);
-	for (Statement *stmt : statements) 
-		ret->statements.push_back((Statement *)stmt->clone());
+	for (ASTNode *stmt : statements) 
+		ret->statements.push_back(stmt->clone());
 	CG::Symtabs.pop();
 	return ret;
 }
@@ -130,7 +130,7 @@ void Block::resolve() {
 
 	std::vector<FunctionStatement*> functions;
 
-	for (Statement *stmt : statements) {
+	for (ASTNode *stmt : statements) {
 		if (stmt == nullptr) {
 			std::cerr << "fatal: can't perform semantic analysis on null statement\n"; 
 			exit(1); 
@@ -158,7 +158,7 @@ void Block::resolve() {
 }
 
 Value* Block::Codegen() {
-	for (Statement *stmt : statements) {
+	for (ASTNode *stmt : statements) {
 		if (stmt == nullptr) {
 			std::cerr << "fatal: generating a null statement\n";
 			exit(1);

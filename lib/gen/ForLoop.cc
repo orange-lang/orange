@@ -113,7 +113,7 @@ Value* ForLoop::Codegen() {
 	return nullptr; 
 }
 
-ForLoop::ForLoop(Statement *initializer, Expression *condition, Expression *afterthought, Block *body, LoopAttributes attribs) { 
+ForLoop::ForLoop(ASTNode *initializer, Expression *condition, Expression *afterthought, Block *body, LoopAttributes attribs) { 
 	this->initializer = initializer; 
 	this->condition = condition; 
 	this->afterthought = afterthought; 

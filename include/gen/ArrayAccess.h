@@ -16,7 +16,7 @@ public:
 
 	Expression *array, *idx; 
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		ArrayAccess *ret = new ArrayAccess((Expression *)array->clone(), (Expression *)idx->clone());
 		return ret;
 	}

@@ -1,6 +1,7 @@
 #ifndef __VAR_EXPR_H__
 #define __VAR_EXPR_H__
 #include "AST.h"
+#include "AnyType.h"
 
 class VarExpr : public Expression {
 public:
@@ -31,7 +32,7 @@ public:
 		return ss.str();
 	}
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		VarExpr* ret = new VarExpr(name);
 		return ret;
 	}

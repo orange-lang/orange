@@ -16,7 +16,7 @@ public:
 
 	virtual bool isConstant();
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		ExprList *elements_clone = new ExprList();
 		for (auto v : *elements) {
 			elements_clone->push_back((Expression *)v->clone());			

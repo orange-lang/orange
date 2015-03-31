@@ -20,7 +20,7 @@
 	CondBlock *cblock;
 	DerefId *did;
 	Block *block; 
-	Statement *stmt; 
+	ASTNode *stmt; 
 	ArgList *arglist;
 	AnyType *anytype;
 	ExprList *exprlist;

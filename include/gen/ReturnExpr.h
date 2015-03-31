@@ -24,7 +24,7 @@ public:
 			return "RETURN";
 	}
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		ReturnExpr* ret = new ReturnExpr((Expression *)expr->clone());
 		return ret; 
 	}

@@ -6,7 +6,7 @@ CondBlock::CondBlock(Expression *cond, Block *block, int inverted) {
 	condition = cond; 
 
 	// Copy block 
-	for (Statement *stmt : block->statements) {
+	for (ASTNode *stmt : block->statements) {
 		statements.push_back(stmt);
 	}
 
@@ -19,8 +19,8 @@ Block* CondBlock::clone() {
 	ret->symtab = symtab->clone();
 	ret->symtab->parent = CG::Symtabs.top();
 	CG::Symtabs.push(ret->symtab);
-	for (Statement *stmt : statements) 
-		ret->statements.push_back((Statement *)stmt->clone());
+	for (ASTNode *stmt : statements) 
+		ret->statements.push_back(stmt->clone());
 	CG::Symtabs.pop();
 	return ret;
 }

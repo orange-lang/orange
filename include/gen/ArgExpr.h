@@ -1,6 +1,7 @@
 #ifndef __ARG_EXPR_H__
 #define __ARG_EXPR_H__
 #include "AST.h"
+#include "AnyType.h"
 
 class ArgExpr : public Statement {
 public:

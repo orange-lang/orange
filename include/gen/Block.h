@@ -9,7 +9,7 @@ class Block {
 public:
 	Value* Codegen();
 
-	std::vector<Statement *> statements;
+	std::vector<ASTNode *> statements;
 	Type* getReturnType();
 	Type* getLastStatementType();
 

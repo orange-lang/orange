@@ -30,7 +30,7 @@ public:
 		return ss.str();
 	}
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		ExprList *args_clone = new ExprList();
 		for (auto a : *args) {
 			args_clone->push_back((Expression *)a->clone());

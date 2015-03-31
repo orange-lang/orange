@@ -1,6 +1,7 @@
 #ifndef __CASTEXPR_H__ 
 #define __CASTEXPR_H__
 #include "AST.h"
+#include "AnyType.h"
 
 class CastExpr : public Expression {
 public:
@@ -22,7 +23,7 @@ public:
 
 	virtual bool isConstant() { return expr->isConstant(); }
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		CastExpr *ret = new CastExpr((AnyType *)type->clone(), (Expression *)expr->clone());
 		return ret;
 	}

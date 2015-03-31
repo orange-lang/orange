@@ -17,7 +17,7 @@ public:
 	virtual bool isConstant() { return false; }
 	virtual bool returnsPtr() { return true; }
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		DerefId *ret = new DerefId((VarExpr *)id->clone());
 		ret->pointers = pointers;
 		return ret; 

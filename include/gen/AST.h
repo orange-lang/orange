@@ -48,18 +48,16 @@ public:
 	ArgList *clone();
 };
 
-// Base
-class Statement {
+class ASTNode {
 public:
-	virtual std::string getClass() { return "Statement"; }
-	virtual Value* Codegen() { return nullptr; }
-	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
+	virtual std::string getClass() { return "Root"; }
+	virtual Value* Codegen() { return nullptr; }	
+	virtual ASTNode* clone() { return new ASTNode(); }
 	virtual std::string string() { return ""; }
+	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 	virtual bool returnsPtr() { return false; }
 
 	bool resolved = false;
-
-	virtual Statement* clone() { return new Statement(); }
 	
 	// any function that implements resolve can only 
 	// be resolved once 
@@ -69,85 +67,23 @@ public:
 		resolved = true; 
 	};
 
-	virtual ~Statement() { };
+	virtual ~ASTNode() { };
+};
+
+// Base
+class Statement : public ASTNode {
+public:
+	virtual std::string getClass() { return "Statement"; }
 };
 
 
-class Expression : public Statement { 
+class Expression : public ASTNode { 
 public:
 	virtual std::string getClass() { return "Expression"; }
-	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 	virtual bool isSigned() { return false; }
 	virtual bool isConstant() { return true; } 
-
-	virtual Statement* clone() { return new Expression(); }
-};
-
-class AnyType {
-private:
-	std::vector<uint64_t> arrays;
-
-	bool mArrayType = false;
-	int mArraySize = 0;
-	AnyType() { }
-public:
-	int arrays_size() const { return arrays.size(); }
-
-	std::string type; 
-	bool isSigned();
-	int numPointers = 0; 
-	bool arrayType() const { return mArrayType; }  
-	int arraySize() const { return mArraySize; }
-	int absoluteNumPtrs();
-
-	std::string string(bool no_brackets = false);
-
-	Type *getType();
-
-	static AnyType *Create(Type *t);
-	AnyType* clone();
-
-	AnyType(std::string *type, int numPointers, std::vector<BaseVal *> *arrays);
-};
-
-
-class StrVal : public Expression {
-public:
-	virtual std::string getClass() { return "StrVal"; }
-	std::string value; 
-
-	virtual std::string string() {  
-		std::stringstream ss;
-		ss << "\"" << value << "\"";
-		return ss.str();
-	}
-
-	virtual Type *getType() { return Type::getInt8PtrTy(getGlobalContext()); }
-
-	Value* Codegen();
-
-	virtual Statement* clone() { 
-		StrVal *ret = new StrVal("\"\"");
-		ret->value = value; 
-		return ret; 
-	}
-
-	StrVal(std::string v);
-};
-
-class BaseVal : public Expression { 
-
-};
-
-class ValFactory {
-public:
-	std::string value;
-	std::string size;
-
-	BaseVal *produce();
 };
 
 Value *replace(Value *del, Value *v);
-
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef __VARDECL_EXPR_H__
 #define __VARDECL_EXPR_H__
 #include "AST.h"
+#include "AnyType.h"
 
 class VarDeclExpr : public Expression {
 public:
@@ -22,7 +23,7 @@ public:
 		return name;
 	}
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		std::string* name_p = new std::string(name); 
 		VarDeclExpr* ret = new VarDeclExpr((AnyType *)type->clone(), name_p, (Expression*)value->clone());
 		delete name_p; 

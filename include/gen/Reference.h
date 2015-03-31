@@ -16,7 +16,7 @@ public:
 
 	Expression *value; 
 
-	virtual Statement* clone() { 
+	virtual ASTNode* clone() { 
 		Reference* ret = new Reference((Expression *)value->clone());
 		return ret;
 	}
