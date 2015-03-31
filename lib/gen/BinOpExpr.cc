@@ -67,6 +67,11 @@ void BinOpExpr::resolve() {
 		VarExpr *L = (VarExpr *)LHS;
 		Symobj *obj = CG::Symtabs.top()->find(L->name);
 
+		if (obj->isConst == true) {
+			std::cerr << "error: trying to assign to constant variable " << L->name << std::endl;
+			exit(1);
+		}
+
 		if (obj->isLocked == false && ShouldTypesMorph(LType, RType)) {
 			obj->setType(RType->getPointerTo());
 		}

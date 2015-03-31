@@ -46,12 +46,13 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE 
+%token CONST
 
 %type <ifstmt> if_statement opt_else inline_if inline_unless unless 
 %type <block> statements opt_statements statements_internal opt_statements_internal
 %type <stmt> statement extern return_stmt expr_or_ret loop inline_for expr_or_decl opt_expr_or_decl
 %type <expr> primary_high
-%type <expr> expression primary VALUE opt_expr declaration opt_eq opt_num 
+%type <expr> expression primary VALUE opt_expr declaration opt_eq opt_num const_decl
 %type <did> dereference
 %type <fstmt> function opt_id 
 %type <argexpr> opt_arg arg_end
@@ -59,7 +60,7 @@
 %type <exprlist> expr_list optexprlist
 %type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR basic_type STRING
-%type <anytype> type
+%type <anytype> type opt_type
 %type <number> var_ptrs
 %type <values> arrays
 
@@ -122,6 +123,7 @@ statement
 expr_or_decl
 	: expression { $$ = $1; }
 	| declaration { $$ = $1; }
+	| const_decl { $$ = $1; }
 	;
 
 opt_expr_or_decl
@@ -335,6 +337,15 @@ basic_type
 
 declaration	
 	:	type TYPE_ID opt_eq { $$ = new VarDeclExpr($1, $2, $3); }
+	;
+
+const_decl
+	: CONST opt_type TYPE_ID ASSIGN expression { $$ = new ConstVarExpr($2, $3, $5); } 
+	;
+
+opt_type
+	: type { $$ = $1; }
+	| { $$ = nullptr; }
 	;
 
 opt_eq 

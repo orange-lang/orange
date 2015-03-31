@@ -74,6 +74,7 @@
 "private"								return PRIVATE; 
 "shared"								return SHARED; 
 "extern"								return EXTERN;
+"const"									return CONST;
 
 "char"									SAVESTR(); return TYPE_CHAR; 
 "int"										SAVESTR(); return TYPE_INT; 

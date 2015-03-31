@@ -27,5 +27,6 @@
 #include "ForLoop.h"
 #include "BreakStatement.h"
 #include "ContinueStatement.h"
+#include "ConstVarExpr.h"
 
 #endif

@@ -14,6 +14,7 @@ public:
 	bool isSigned = false;
 	bool isFunction = false;
 	bool isLocked = false;
+	bool isConst = false;
 
 	Statement *reference = nullptr;
 	

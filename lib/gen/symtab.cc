@@ -100,7 +100,6 @@ Symobj* SymTable::find(std::string name) {
 }
 
 void SymTable::create(std::string name) {
-	std::cout << "Creating " << name << std::endl;
 	if (objs.find(name) == objs.end()) {
 		objs[name] = new Symobj();
 	}
