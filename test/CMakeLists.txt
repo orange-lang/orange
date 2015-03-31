@@ -2,7 +2,6 @@ add_executable(oc_tester oc_tester.cc)
 add_executable(test_lexer test_lexer.cc)
 
 target_link_libraries(test_lexer gen helper)
-message(STATUS "something ${CMAKE_CURRENT_SOURCE_DIR}/baselines/" )
 
 file(GLOB files "files/*.or")
 foreach(file ${files})

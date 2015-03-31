@@ -54,18 +54,18 @@ class FloatVal : public BaseVal {
 public:
 	virtual std::string getClass() { return "FloatVal"; }
 
-	Value* Codegen() {
-		printf("FloatVal::Codegen()\n");
-		return nullptr;
-	}
+	Value* Codegen();
 
 	float value;
 
 	virtual std::string string() {
 		std::stringstream ss;
-		ss << value;
 		ss << "(float)" << value;
 		return ss.str();
+	}
+
+	virtual Type *getType() { 
+		return Type::getFloatTy(getGlobalContext()); 
 	}
 
 	FloatVal();
@@ -76,10 +76,7 @@ class DoubleVal : public BaseVal {
 public:
 	virtual std::string getClass() { return "DoubleVal"; }
 
-	Value* Codegen() {
-		printf("DoubleVal::Codegen()\n");
-		return nullptr;
-	}
+	Value* Codegen();
 
 	double value;
 
@@ -87,6 +84,10 @@ public:
 		std::stringstream ss;
 		ss << "(double)" << value;
 		return ss.str();
+	}
+
+	virtual Type *getType() { 
+		return Type::getDoubleTy(getGlobalContext()); 
 	}
 
 	DoubleVal();

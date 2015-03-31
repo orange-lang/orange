@@ -20,6 +20,15 @@ Value* IntVal::Codegen() {
 	return ConstantInt::get(getGlobalContext(), APInt(size, value));
 }
 
+Value* FloatVal::Codegen() {
+	return ConstantFP::get(getType(), value);
+}
+
+Value* DoubleVal::Codegen() {
+	return ConstantFP::get(getType(), value);
+}
+
+
 StrVal::StrVal(std::string v) {
 	value = v.substr(1, v.length()-2);
 	replaceAll(value, "\\n", "\n");

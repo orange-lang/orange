@@ -23,8 +23,9 @@ bool isSigned(Expression *e) {
 	return false;
 }
 
-
 BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
+	DEBUG_MSG("STARTING BinOpExpr");
+
 	this->LHS = LHS;
 	this->op = op;
 	this->RHS = RHS;
@@ -35,28 +36,33 @@ BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 		CG::Symtab->create(L->name);
 		CG::Symtab->objs[L->name]->setType(RHS->getType());
 	}
+
+	DEBUG_MSG("COMPLETED BinOpExpr");
 }
 
 Type *BinOpExpr::getType() { 
-	if (LHS->getType() == RHS->getType()) {
-		if (op == "<" || op == ">" || op == "<=" || op == ">=") {
-			return Type::getInt1Ty(getGlobalContext());
-		} 
+	DEBUG_MSG("GETTING TYPE OF " << LHS->string() << " " << op << " " << RHS->string());
 
+	if (op == "<" || op == ">" || op == "<=" || op == ">=") {
+		return Type::getInt1Ty(getGlobalContext());
+	} 
 
-		return LHS->getType(); 
-	} else {
+	if (LHS->getType()->isIntegerTy() && RHS->getType()->isIntegerTy()) {
 		if (LHS->getType()->getIntegerBitWidth() > RHS->getType()->getIntegerBitWidth()) {
 			return LHS->getType(); 
 		} else {
 			return RHS->getType();
 		}
-	}
+	} else if (LHS->getType()->getTypeID() == RHS->getType()->getTypeID()) {
+		return LHS->getType(); 
+	} 
 
 	return nullptr; 
 }
 
 Value* BinOpExpr::Codegen() {
+	DEBUG_MSG("GENERATING BinOpExpr for " << LHS->string() << " " << op << " " << RHS->string());
+
 	Value *L = LHS->Codegen();
 
 	// We want to create the variable here instead of in LHS->Codegen,
@@ -71,6 +77,7 @@ Value* BinOpExpr::Codegen() {
 		exit(1);
 	}
 
+	Value *OrigL = L;
 	if (op != "=" && LHS->getClass() == "VarExpr") {
 		// If it's a variable load it in. 
 		L = CG::Builder.CreateLoad(L, ((VarExpr*)LHS)->name);
@@ -78,6 +85,8 @@ Value* BinOpExpr::Codegen() {
 
 
 	Value *R = RHS->Codegen();
+	Value *OrigR = R;
+
 	if (R == nullptr) {
 		std::cerr << "fatal: RHS of expression has returned null!\n";
 		exit(1);
@@ -107,68 +116,193 @@ Value* BinOpExpr::Codegen() {
 		}
 	}
 
+	if (L->getType()->isFloatingPointTy() && R->getType()->isIntegerTy()) {
+		// make R a float 
+		if (isSigned(RHS)) {
+			R = CG::Builder.CreateSIToFP(R, L->getType());
+		} else {
+			R = CG::Builder.CreateUIToFP(R, L->getType());
+		}
+	}
+
+	if (R->getType()->isFloatingPointTy() && L->getType()->isIntegerTy()) {
+		// make L a float
+		if (isSigned(LHS)) {
+			L = CG::Builder.CreateSIToFP(L, R->getType());
+		} else {
+			L = CG::Builder.CreateUIToFP(L, R->getType());
+		}
+	}
+
+	if (L->getType()->isFloatTy() && R->getType()->isDoubleTy()) {
+		L = CG::Builder.CreateFPCast(L, R->getType());
+	} else if (L->getType()->isDoubleTy() && R->getType()->isDoubleTy()) {
+		R = CG::Builder.CreateFPCast(R, L->getType());
+	}
+
+	bool FPOperation = false;
+	if (L->getType()->isFloatingPointTy() && R->getType()->isFloatingPointTy()) {
+		FPOperation = true;
+	}
 
 	if (op == "+") {
-		return CG::Builder.CreateAdd(L, R);
+		if (FPOperation) {
+			return CG::Builder.CreateFAdd(L, R);
+		} else {
+			return CG::Builder.CreateAdd(L, R);
+		}
+	}
+	else if (op == "+=") {
+		Value *v;
+		if (FPOperation) {
+			v = CG::Builder.CreateFAdd(L, R);
+		} else {
+			v = CG::Builder.CreateAdd(L, R);
+		}	
+
+		Type *t = OrigL->getType()->getPointerElementType();
+
+		if (v->getType()->getTypeID() != t->getTypeID()) {
+			if (t->isIntegerTy()) {
+				v = CG::Builder.CreateIntCast(v, t, isSigned(LHS) || isSigned(RHS)); 
+			} else if (t->isFloatingPointTy()) {
+				v = CG::Builder.CreateFPCast(v, t);
+			} 
+		}
+
+
+		return CG::Builder.CreateStore(v, OrigL);		
 	}
 	else if (op == "-") {
-		return CG::Builder.CreateSub(L, R);
+		if (FPOperation) {
+			return CG::Builder.CreateFSub(L, R);
+		} else {
+			return CG::Builder.CreateSub(L, R);
+		}
 	}
+	else if (op == "-=") {
+		Value *v;
+		if (FPOperation) {
+			v = CG::Builder.CreateFSub(L, R);
+		} else {
+			v = CG::Builder.CreateSub(L, R);
+		}
+
+		Type *t = OrigL->getType()->getPointerElementType();
+
+		if (v->getType()->getTypeID() != t->getTypeID()) {
+			if (t->isIntegerTy()) {
+				v = CG::Builder.CreateIntCast(v, t, isSigned(LHS) || isSigned(RHS)); 
+			} else if (t->isFloatingPointTy()) {
+				v = CG::Builder.CreateFPCast(v, t);
+			} 
+		}
+
+		return CG::Builder.CreateStore(v, OrigL);		
+	}	
 	else if (op == "*") {
-		return CG::Builder.CreateMul(L, R);
+		if (FPOperation) {
+			return CG::Builder.CreateFMul(L, R);
+		} else {
+			return CG::Builder.CreateMul(L, R);			
+		}
 	}
+	else if (op == "*=") {
+		Value *v; 
+		if (FPOperation) {
+			v = CG::Builder.CreateFMul(L, R);
+		} else {
+			v = CG::Builder.CreateMul(L, R);			
+		}
+
+		Type *t = OrigL->getType()->getPointerElementType();
+
+		if (v->getType()->getTypeID() != t->getTypeID()) {
+			if (t->isIntegerTy()) {
+				v = CG::Builder.CreateIntCast(v, t, isSigned(LHS) || isSigned(RHS)); 
+			} else if (t->isFloatingPointTy()) {
+				v = CG::Builder.CreateFPCast(v, t);
+			} 
+		}
+
+
+		return CG::Builder.CreateStore(v, OrigL);		
+	}	
 	else if (op == "/") {
 		// if one of them is signed, they're both signed.
-		if (isSigned(LHS) || isSigned(RHS)) {
-			return CG::Builder.CreateSDiv(L, R);
+		if (FPOperation) {
+			return CG::Builder.CreateFDiv(L, R);
 		} else {
-			return CG::Builder.CreateUDiv(L, R);
+			if (isSigned(LHS) || isSigned(RHS)) {
+				return CG::Builder.CreateSDiv(L, R);
+			} else {
+				return CG::Builder.CreateUDiv(L, R);
+			}
 		}
-			
-		return CG::Builder.CreateSDiv(L, R);
 	}
+	else if (op == "/=") {
+		Value *v;
+
+		// if one of them is signed, they're both signed.
+		if (FPOperation) {
+			v = CG::Builder.CreateFDiv(L, R);
+		} else if (isSigned(LHS) || isSigned(RHS)) {
+			v = CG::Builder.CreateSDiv(L, R);
+		} else {
+			v = CG::Builder.CreateUDiv(L, R);
+		}
+
+		Type *t = OrigL->getType()->getPointerElementType();
+
+		if (v->getType()->getTypeID() != t->getTypeID()) {
+			if (t->isIntegerTy()) {
+				v = CG::Builder.CreateIntCast(v, t, isSigned(LHS) || isSigned(RHS)); 
+			} else if (t->isFloatingPointTy()) {
+				v = CG::Builder.CreateFPCast(v, t);
+			} 
+		}
+
+		return CG::Builder.CreateStore(v, OrigL);		
+	}
+
 	else if (op == "=") {
 		return CG::Builder.CreateStore(R, L);
 	} 
 	else if (op == "<") {
-		Value *v;
-		if (isSigned(LHS) || isSigned(RHS)) {
-			v = CG::Builder.CreateICmpSLT(L, R);
+		if (FPOperation) {
+			return CG::Builder.CreateFCmpOLT(L, R);
+		} else if (isSigned(LHS) || isSigned(RHS)) {
+			return CG::Builder.CreateICmpSLT(L, R);
 		} else {
-			v = CG::Builder.CreateICmpULT(L, R);
+			return CG::Builder.CreateICmpULT(L, R);
 		}
-
-		return v;
 	} 
 	else if (op == "<=") {
-		Value *v;
-		if (isSigned(LHS) || isSigned(RHS)) {
-			v = CG::Builder.CreateICmpSLE(L, R);
+		if (FPOperation) {
+			return CG::Builder.CreateFCmpOLE(L, R);
+		} else if (isSigned(LHS) || isSigned(RHS)) {
+			return CG::Builder.CreateICmpSLE(L, R);
 		} else {
-			v = CG::Builder.CreateICmpULE(L, R);
+			return CG::Builder.CreateICmpULE(L, R);
 		}
-
-		return v;
 	}
 	else if (op == ">") {
-		Value *v;
-		if (isSigned(LHS) || isSigned(RHS)) {
-			v = CG::Builder.CreateICmpSGT(L, R);
+		if (FPOperation) {
+			return CG::Builder.CreateFCmpOGT(L, R);
+		} else if (isSigned(LHS) || isSigned(RHS)) {
+			return CG::Builder.CreateICmpSGT(L, R);
 		} else {
-			v = CG::Builder.CreateICmpUGT(L, R);
+			return CG::Builder.CreateICmpUGT(L, R);
 		}
-
-		return v;
 	}
 	else if (op == ">=") {
-		Value *v;
-		if (isSigned(LHS) || isSigned(RHS)) {
-			v = CG::Builder.CreateICmpSGE(L, R);
+		if (FPOperation) {
+			return CG::Builder.CreateFCmpOGE(L, R);
+		} else if (isSigned(LHS) || isSigned(RHS)) {
+			return CG::Builder.CreateICmpSGE(L, R);
 		} else {
-			v = CG::Builder.CreateICmpUGE(L, R);
+			return CG::Builder.CreateICmpUGE(L, R);
 		}
-
-		return v;
 	}
 	else {
 		std::cerr << "fatal: operation " << op << " does not have a generation case.";

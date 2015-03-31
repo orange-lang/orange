@@ -34,7 +34,10 @@
 	.											printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
 }
 
-"-"?[0-9][0-9]*\.[0-9]+	MKFACTORY(); DOFACTORY("d"); return VALUE;
+"-"?[0-9][0-9]*\.[0-9]+"f"	MKFACTORY(); DOFACTORY("f"); return VALUE;
+"-"?[0-9][0-9]*\.[0-9]+"d"	MKFACTORY(); DOFACTORY("d"); return VALUE;
+"-"?[0-9][0-9]*\.[0-9]+			MKFACTORY(); DOFACTORY("d"); return VALUE;
+
 
 "-"?[0-9][0-9]*"u8"			MKFACTORY(); DOFACTORY("u8"); return VALUE;
 "-"?[0-9][0-9]*"i8"			MKFACTORY(); DOFACTORY("i8"); return VALUE;

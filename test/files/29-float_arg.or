@@ -1,5 +1,5 @@
 def foo(float a)
-	return a + 0.5
+	return a + 0.5f
 end 
 
-return foo(0.6) < 1.0
+return foo(0.6f) < 1.0f

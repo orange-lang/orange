@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <ostream>
 #include <sstream>
 #include <stdexcept>
 #include <helper/link.h> 
@@ -18,6 +19,7 @@ extern int yyparse();
 #include <string>
 
 int main(int argc, char **argv) {
+	DEBUG_MSG("OC STARTED");
 
 	InitializeAllTargets();
 	InitializeAllTargetMCs();
@@ -116,7 +118,6 @@ int main(int argc, char **argv) {
 		std::cerr << "fatal: file " << file << " not found.\n";
 		return 1;
 	}
-	// while (yylex() != 0);
 
 	// get file base 
 	std::string stripped = file; 
@@ -132,6 +133,8 @@ int main(int argc, char **argv) {
 		CodeGenerator::fileBase = stripped.substr(0, loc);
 	}
 
+	DEBUG_MSG("STARTING PARSE");
+
 	yyparse();
 
 	if (globalBlock == nullptr) {
@@ -139,11 +142,13 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	printf("Generating code...\n");
+	DEBUG_MSG("PRINTING AST");
 
 	if (CodeGenerator::verboseOutput) {
 		std::cout << globalBlock->string() << std::endl;
 	}
+
+	DEBUG_MSG("STARTING CODE GENERATION");
 
 	CodeGenerator::init();
 	CodeGenerator::Generate(globalBlock);

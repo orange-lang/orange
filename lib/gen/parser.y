@@ -116,6 +116,10 @@ opt_eq 			:			ASSIGN expression { $$ = $2; }
 						|			{ $$ = nullptr; }
 
 expression  :			expr_eq ASSIGN expression { $$ = new BinOpExpr($1, "=", $3); }
+						|			expr_eq PLUS_ASSIGN expression { $$ = new BinOpExpr($1, "+=", $3); }
+						|			expr_eq MINUS_ASSIGN expression { $$ = new BinOpExpr($1, "-=", $3); }
+						|			expr_eq TIMES_ASSIGN expression { $$ = new BinOpExpr($1, "*=", $3); }
+						|			expr_eq DIVIDE_ASSIGN expression { $$ = new BinOpExpr($1, "/=", $3); }		
 						|			expr_eq { $$ = $1; }
 
 expr_eq 		:			expr_eq COMP_LT expr2 { $$ = new BinOpExpr($1, "<", $3); }

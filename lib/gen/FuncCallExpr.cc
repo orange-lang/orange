@@ -118,6 +118,15 @@ Value* FuncCallExpr::Codegen() {
 
 			Args[i] = CG::Builder.CreateIntCast(Args[i], arg->getType(), isSigned);
 		}
+
+		if (f->isVarArg() == true) {
+			// C functions require that if a float is used as a variable arugment, it must be promoted to double.  
+			for (auto it = args->begin() + i; it != args->end(); i++, it++) {
+				if (Args[i]->getType()->isFloatTy()) {
+					Args[i] = CG::Builder.CreateFPCast(Args[i], Type::getDoubleTy(getGlobalContext()));
+				}
+			}
+		}
 	}
 
 	Value *v = CG::Builder.CreateCall(o->getValue(), Args);

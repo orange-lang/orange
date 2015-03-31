@@ -2,6 +2,8 @@
 #include <gen/generator.h>
 
 Value* VarDeclExpr::Codegen() {
+	DEBUG_MSG("GENERATING VarDeclExpr");
+
 	Value *v = CG::Builder.CreateAlloca(getType());
 
 
@@ -14,6 +16,24 @@ Value* VarDeclExpr::Codegen() {
 			}
 		}
 
+		if (getType()->getTypeID() != store->getType()->getTypeID()) {
+			// cast store to getType 
+			if (getType()->isIntegerTy()) {
+				if (store->getType()->isFloatingPointTy()) {
+					if (type->isSigned()) {
+						store = CG::Builder.CreateFPToSI(store, getType());						
+					} else {
+						store = CG::Builder.CreateFPToUI(store, getType());
+					}
+				} else {
+					store = CG::Builder.CreateIntCast(store, getType(), type->isSigned()); 
+				}
+			} else if (getType()->isFloatingPointTy()) {
+				store = CG::Builder.CreateFPCast(store, getType());				
+			} 
+
+		}
+
 		CG::Builder.CreateStore(store, v);
 	}
 
@@ -23,6 +43,8 @@ Value* VarDeclExpr::Codegen() {
 }
 
 VarDeclExpr::VarDeclExpr(AnyType *type, std::string *name, Expression *value) {
+	DEBUG_MSG("STARTING VarDeclExpr");
+
 	if (type == nullptr) {
 		std::cerr << "fatal: explicitly created variables require a type.\n";
 		exit(1);
@@ -39,4 +61,6 @@ VarDeclExpr::VarDeclExpr(AnyType *type, std::string *name, Expression *value) {
 
 	CG::Symtab->create(this->name);
 	CG::Symtab->objs[this->name]->setType(getType());
+
+	DEBUG_MSG("COMPLETED VarDeclExpr");
 }

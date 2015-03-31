@@ -14,24 +14,33 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/bin)
 
+SET(CMAKE_BUILD_TYPE Release
+		CACHE STRING CMAKE_BUILD_TYPE)
+
 add_definitions( -DINSTALL_LOCATION="${CMAKE_INSTALL_PREFIX}" )
 
 # unix specific flags 
 if(${APPLE})
 	message(STATUS "Detected OS X...")
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -g -Wall -fexceptions -O3 -Wno-unused -Wno-deprecated-register")
+	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -fexceptions -O3 -Wno-unused -Wno-deprecated-register")
 elseif(${UNIX}) 
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -g -Wall -fexceptions -O3 -Wno-unused")
+	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -g -Wall -fexceptions -O3 -Wno-unused")
 endif()
 
 # windows only... 
 if(${WIN32})
 	message(STATUS "Detected WIN32...")
 
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -Z7 -w -Ox")
-	list(APPEND CXX_DEFINES "${CMAKE_CXX_DEFINES} -DYY_NO_UNISTD_H")
-	list(APPEND C_DEFINES "${CMAKE_C_DEFINES} -DYY_NO_UNISTD_H")
+	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Z7 -w -Ox")
+	list(APPEND CXX_DEFINES "-DYY_NO_UNISTD_H")
+	list(APPEND C_DEFINES "-DYY_NO_UNISTD_H")
 endif(${WIN32})
+
+if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+	message(STATUS "Setting DEBUG mode...")
+  ADD_DEFINITIONS(-DDEBUG)
+endif()
+
 
 include_directories(etc/cereal/include)
 

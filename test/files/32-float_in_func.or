@@ -1,9 +1,9 @@
 def foo()
-	float a = 3.5 
+	float a = 3.5
 	a += 5.0f 
 	return a
 end 
 
 b = foo()
 b -= 8.5 
-return b > 0.1  
+return b > 0.1

@@ -21,6 +21,12 @@
 #include "llvm/Target/TargetOptions.h"
 #include "llvm/Transforms/Scalar.h"
 
+#ifdef DEBUG
+#define DEBUG_MSG(str) std::cout << "DEBUG: " << str << std::endl;
+#else 
+#define DEBUG_MSG(str) ;
+#endif 
+
 using namespace llvm;
 
 Type *getType(std::string typeStr);
