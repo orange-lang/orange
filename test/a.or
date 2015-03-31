@@ -1,0 +1,7 @@
+# a.or 
+def test(a)
+	a.add(2)
+end
+
+int n = +0		# statically typed 
+a = [0,-1,2] # dynamically typed
