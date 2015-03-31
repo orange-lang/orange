@@ -2,6 +2,33 @@
 #include "gen/Block.h"
 #include "gen/CondBlock.h"
 #include "gen/generator.h"
+#include <helper/string.h>
+
+std::string IfStatement::string() {  
+	std::stringstream ss;
+
+	bool didIf = false; 
+	for (Block *b : blocks) {
+		if (dynamic_cast<CondBlock*>(b)) {
+			if (didIf) ss << "el";
+			ss << "if ";
+			CondBlock *cb = (CondBlock*)b; 
+			ss << cb->condition->string() << ":\n";
+
+			didIf = true; 
+		} else {
+			ss << "else:\n";
+		}
+
+		std::vector<std::string> lines = split(b->string(), '\n');
+		for (std::string line : lines) {
+			ss << "\t" << line << std::endl;
+		}
+	}
+
+	return ss.str();
+}
+
 
 void IfStatement::resolve() {
 	if (resolved)

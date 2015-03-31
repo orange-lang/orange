@@ -9,4 +9,54 @@
 void getArgs(int argc, char **argv, std::function<void(std::vector<std::string> arg, int loc)> cb);
 const char* getParameter(std::vector<std::string> a, int argc, char **argv, int loc);
 
+class cOptionsState;
+class cOptions;
+
+class cCommandOption {
+friend cOptions;
+private:
+	bool m_set = false;
+	std::vector<std::string> names; 
+	std::string description;
+	std::string arg_value;
+	bool hasArg;
+public:
+	bool isSet() const;
+
+	cCommandOption(std::vector<std::string> names, std::string description, bool arg);
+};
+
+class cOptionsState {
+friend cOptions;
+private:
+	bool mActive = false;
+	std::string name = "";
+	std::string description;
+	std::vector<cCommandOption*> options;
+	std::vector<cOptionsState*> states; 
+	std::vector<std::string> m_unparsed;
+
+	cOptionsState() { }
+public:
+	bool isActive() const { return mActive; }
+
+	void add(cCommandOption* option);
+	void addState(cOptionsState* state);
+
+	std::vector<std::string> unparsed() const;
+
+	cOptionsState(std::string name, std::string description);
+};
+
+class cOptions {
+private:
+	std::string name;
+public:
+	cOptionsState mainState;
+
+	void parse(int argc, char **argv);
+
+	cOptions(std::string name) : name(name) {}
+};
+
 #endif 

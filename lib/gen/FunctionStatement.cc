@@ -1,6 +1,26 @@
 #include "gen/FunctionStatement.h"
 #include "gen/Block.h"
 #include "gen/generator.h"
+#include <helper/string.h>
+
+std::string FunctionStatement::string() {
+		std::stringstream ss;
+		ss << "[ID: " << body->symtab->ID << "] " << name << "( ";
+		for (unsigned int i = 0; i < args->size(); i++) {
+			ss << (*args)[i]->string() << " ";
+			if (i + 1 != args->size())
+				ss << ", ";
+		}
+		ss << "):\n";
+
+		std::vector<std::string> lines = split(body->string(), '\n');
+		for (std::string line : lines) {
+			ss << "\t" << line << std::endl;
+		}
+
+		return ss.str();
+	}
+
 
 FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *body) {
 	this->name = name ? *name : "";

@@ -15,16 +15,7 @@ public:
 
 	virtual std::string getClass() { return "IfStatement"; }
 
-	virtual std::string string() {  
-		std::stringstream ss;
-
-		for (Block *b : blocks) {
-			ss << "\tifblock: " << std::endl;
-			ss << "\t\t" << b->string() << std::endl;
-		}
-
-		return ss.str();
-	}
+	virtual std::string string();
 
 	void resolve();
 

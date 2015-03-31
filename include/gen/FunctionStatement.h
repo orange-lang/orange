@@ -17,20 +17,7 @@ public:
 
 	void resolve();
 
-	virtual std::string string() {
-		std::stringstream ss;
-		ss << "[ID: " << body->symtab->ID << "] " << name << "( ";
-		for (unsigned int i = 0; i < args->size(); i++) {
-			ss << (*args)[i]->string() << " ";
-			if (i + 1 != args->size())
-				ss << ", ";
-		}
-		ss << "):\n";
-
-		ss << body->string();
-
-		return ss.str();
-	}
+	virtual std::string string();
 
 	FunctionStatement(std::string* name, ArgList *args, Block *body);
 };
