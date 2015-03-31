@@ -29,6 +29,11 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 			continue;
 		}
 
+		if (expr->type && expr->getType()->isArrayTy()) {
+			// change to be a pointer, since all array arguments for a function are passed by reference 
+			expr->type = new AnyType(&expr->type->type, expr->type->arrays_size(), nullptr);
+		}
+
 		if (expr->type) {
 			CG::Symtabs.top()->objs[expr->name]->setType(expr->type->getType()->getPointerTo());
 		}
@@ -80,7 +85,6 @@ std::string FunctionStatement::getTemplatedInstance(ExprList *callArgs) {
 		// throw an error.  
 		if (newArgs->at(i)->type == nullptr) {
 			newArgs->at(i)->type = AnyType::Create(callType);
-
 			requires_templating = true;
 		} else if (CanTypeBeCasted(callType, newArgs->at(i)->getType()) == false) {
 			// we can't cast callType to newArgs[i] type, so an exception should be thrown. 

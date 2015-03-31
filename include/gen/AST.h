@@ -90,6 +90,8 @@ private:
 	int mArraySize = 0;
 	AnyType() { }
 public:
+	int arrays_size() const { return arrays.size(); }
+
 	std::string type; 
 	bool isSigned();
 	int numPointers = 0; 

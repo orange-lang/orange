@@ -8,6 +8,11 @@ std::string Reference::string() {
 }
 
 Type* Reference::getType() {
+	Type *vType = value->getType();
+	if (vType->isArrayTy()) {
+		return vType->getArrayElementType()->getPointerTo();
+	}
+
 	return value->getType()->getPointerTo();
 }
 

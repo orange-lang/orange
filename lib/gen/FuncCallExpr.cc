@@ -6,6 +6,7 @@
 #include "gen/FunctionStatement.h"
 #include "gen/FuncCallExpr.h"
 #include "gen/CastingEngine.h"
+#include "gen/Reference.h"
 
 FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
 	this->name = name;
@@ -42,6 +43,13 @@ void FuncCallExpr::resolve() {
 	// so if it's a FunctionStatement, we need to have the types 
 	// resolved. 
 	for (int i = 0; i < args->size(); i++) {
+ 		// If arg(i) is a varexpr with a type of array, then 
+ 		// change it to passing in the reference. 
+ 		Type *argType = args->at(i)->getType();
+ 		if (argType && argType->isArrayTy()) {
+ 			args->at(i) = new Reference(args->at(i)); 
+ 		}
+
 		args->at(i)->resolve();
 	}
 
@@ -66,8 +74,9 @@ void FuncCallExpr::resolve() {
 		}
 
 		fstmt->resolve();
-	} 
+	}
 }
+
 
 Type *FuncCallExpr::getType() {
 	DEBUG_MSG("((FuncCallExpr) GETTING TYPE OF " << this->string());

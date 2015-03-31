@@ -120,6 +120,8 @@ bool CanTypeBeCasted(Type *src, Type *dest) {
 		else return false; 
 	}
 
+	if (src->isArrayTy() && dest->isPointerTy()) return true; 
+
 	return false;
 }
 
