@@ -16,19 +16,24 @@ Value* ReturnStmt::Codegen() {
 
 	Value* retVal = containingFunc->getRetVal();
 
-	if (retVal == nullptr) {
+	if (retVal == nullptr && containingFunc->getType()->isVoidTy() == false) {
 		throw std::runtime_error("Internal compiler error: ret val is nullptr when it should not be!");
 	}
 
+	Value* retExpr = nullptr;
+
 	// Cast our return value to the return type of the function, if needed.
-	Value* retExpr = m_expr->Codegen();
+	if (m_expr) {
+		retExpr = m_expr->Codegen();
 
-	if (m_expr->returnsPtr()) retExpr = GE::builder()->CreateLoad(retExpr);
+		if (m_expr->returnsPtr()) retExpr = GE::builder()->CreateLoad(retExpr);
 
-	CastingEngine::CastValueToType(&retExpr, containingFunc->getType(), m_expr->isSigned(), true);
+		CastingEngine::CastValueToType(&retExpr, containingFunc->getType(), m_expr->isSigned(), true);
 
-	// Store it and jump to the end block.
-	GE::builder()->CreateStore(retExpr, retVal);
+		// Store it and jump to the end block.
+		GE::builder()->CreateStore(retExpr, retVal);
+	}
+
 	GE::builder()->CreateBr(containingFunc->getBlockEnd());
 
 	return retExpr; 

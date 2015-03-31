@@ -34,6 +34,8 @@ protected:
 public:
 	virtual std::string getClass() { return "Block"; }
 
+	virtual bool isBlock() { return true; }
+
 	/**
 	 * Gets the symbol table tied to this block.
 	 *
@@ -78,9 +80,17 @@ public:
 	 * Gets the return type from the body, if it exists.
 	 * Does not check for nested bodies (e.g., if statements)
 	 *
-	 * @return A type if a return type exists, false otherwise.
+	 * @return A type if a return type exists, nullptr otherwise.
 	 */ 
 	Type* returnType();
+
+	/**
+	 * Gets the return type from the body, checking for all nested 
+	 * bodies. 
+	 *
+	 * @return A type if a return type exists, nullptr otherwise.
+	 */
+	Type* searchForReturn();
 
 	virtual ASTNode* clone();
 

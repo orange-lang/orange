@@ -50,7 +50,7 @@
 %type <block> statements
 %type <node> statement
 %type <expr> expression primary VALUE
-%type <stmt> return
+%type <stmt> return function
 %type <str> TYPE_ID 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE
 
@@ -78,6 +78,7 @@ statements
 statement 		
 	:	term { $$ = nullptr; }
 	| expression term { $$ = $1; SET_LOCATION($$); }
+	| function term { $$ = $1; SET_LOCATION($$); }
 	| return term { $$ = $1; SET_LOCATION($$); }
 	;
 
@@ -108,6 +109,14 @@ primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; SET_LOCATION($$); } 
 	|	VALUE { $$ = $1; SET_LOCATION($$); }
 	|	TYPE_ID { $$ = new VarExpr(*$1); SET_LOCATION($$); }
+	;
+
+function
+	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN term { 
+			SymTable *tab = new SymTable(GE::runner()->topBlock()->symtab());
+			$<stmt>$ = new FunctionStmt(*$2, tab);
+			GE::runner()->pushBlock((FunctionStmt *)$$);
+		} statements END { $$ = $<stmt>6; GE::runner()->popBlock(); }
 	;
 
 return

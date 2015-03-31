@@ -3,4 +3,4 @@ def a()
 end 
 
 a()
-return
+return 0

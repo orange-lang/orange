@@ -68,6 +68,32 @@ Type* Block::returnType() {
 	return nullptr;
 }
 
+Type* Block::searchForReturn() {
+	Type* retType = nullptr; 
+
+	for (ASTNode *s : m_statements) {
+		if (s->getClass() == "ReturnStmt") {
+			if (retType == nullptr) {
+				retType = s->getType(); 
+			} else {
+				// We want to change retType to be the highest precedence return type.
+				retType = CastingEngine::GetFittingType(retType, s->getType());
+			}
+		} else if (s->isBlock() && s->getClass() != "FunctionStmt") {
+			// If we're a block (and not a function, since that shouldn't affect this), look for returns.
+			Block* block = (Block*)s; 
+			Type* innerRetType = block->searchForReturn();
+
+			if (innerRetType) {
+				retType = CastingEngine::GetFittingType(retType, innerRetType);				
+			} 
+		}
+	}
+
+	return retType;
+}
+
+
 ASTNode* Block::clone() {
 	Block* clonedBlock = new Block(m_symtab->clone());
 	for (auto stmt : m_statements) {

@@ -133,6 +133,14 @@ public:
 	 */
 	virtual bool returnsPtr() { return false; }
 
+	/** 
+	 * Indicates whether or not this statement is a Block. 
+	 * Returns false except for any class inheriting from Block.
+	 *
+	 * @return True if this statement is a Block, false otherwise.
+	 */
+	virtual bool isBlock() { return false; }
+
 	/**
 	 * Gets the LLVM type of this object. For classes inheriting from Statement, the type will 
 	 * be void, as getType() only returns a value if it is to be used as part of an expression.

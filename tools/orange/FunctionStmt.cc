@@ -20,8 +20,9 @@ FunctionStmt::FunctionStmt(std::string name, AnyType* type, SymTable* symtab) : 
 
 Type* FunctionStmt::getType() {
 	if (m_type == nullptr) {
-		// TODO: If we don't have an explicit type set, we have to determine it from our body.
-		throw CompilerMessage(*this, "Unhandled FunctionStmt::getType case: m_type == nullptr");
+		// If we don't have an explicit type set, we have to determine it from our body and nested bodies.
+		Type* foundRet = searchForReturn();
+		return foundRet ? foundRet : ASTNode::getType();
 	} 
 
 	return m_type->getType();

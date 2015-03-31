@@ -13,7 +13,7 @@
 
 class ReturnStmt : public Statement {
 private:
-	Expression* m_expr; 
+	Expression* m_expr = nullptr; 
 public:
 	virtual std::string getClass() { return "ReturnStmt"; }
 

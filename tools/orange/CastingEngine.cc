@@ -46,6 +46,7 @@ bool CastingEngine::CastValueToType(Value** v, Type* t, bool isSigned, bool forc
 
 	if (t->isFloatingPointTy() && srcType->isFloatingPointTy()) {
 		*v = GE::builder()->CreateFPCast(*v, t);
+		return true;
 	}
 
 	if (t->isFloatingPointTy() && srcType->isIntegerTy()) {
@@ -72,6 +73,7 @@ bool CastingEngine::CastValueToType(Value** v, Type* t, bool isSigned, bool forc
 		*v = GE::builder()->CreateIntToPtr(*v, t); 
 		return true;
 	}
+
 
 	throw std::runtime_error("could not determine type to cast.");
 	return false;
