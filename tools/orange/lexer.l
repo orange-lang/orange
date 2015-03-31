@@ -25,6 +25,11 @@
     yycolumn += yyleng;
 
   extern void yyerror(const char *);
+
+  int yyonce = 0;
+
+  // defining this in here for C++
+  void yyflushbuffer() { YY_FLUSH_BUFFER; }
 %}
 
 %option noyywrap
@@ -164,6 +169,6 @@
 
 .												yyerror("invalid token");
 
-<<EOF>> { static int once = 0; return once++ ? 0 : NEWLINE; }
+<<EOF>> { return yyonce++ ? 0 : NEWLINE; }
 
 %%

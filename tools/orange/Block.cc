@@ -10,6 +10,11 @@
 #include <orange/Runner.h>
 #include <orange/generator.h>
 
+SymTable* Block::symtab() const {
+	return m_symtab;
+}
+
+
 void Block::addStatement(ASTNode* statement) {
 	// After we're locked, we can't add any more statements.
 	// The user also shouldn't be able to add nullptr as a statement.
@@ -33,12 +38,11 @@ void Block::generateStatements() {
 Value* Block::Codegen() {
 	m_locked = true;
 
-	Runner* curRunner = GeneratingEngine::sharedEngine()->active();
-	curRunner->pushSymtab(m_symtab);
+	GE::runner()->pushBlock(this);
 
 	generateStatements();
 
-	curRunner->popSymtab();
+	GE::runner()->popBlock();
 	return nullptr;
 }
 
@@ -53,15 +57,14 @@ ASTNode* Block::clone() {
 std::string Block::string() {
 	std::stringstream ss;
 
-	Runner* curRunner = GeneratingEngine::sharedEngine()->active();
-	curRunner->pushSymtab(m_symtab);
+	GE::runner()->pushBlock(this);
 
 	for (ASTNode *s : m_statements) {
 		if (s == nullptr) continue;
 		ss << s->string() << std::endl;
 	}
 
-	curRunner->popSymtab();
+	GE::runner()->popBlock();
 	return ss.str();
 }
 

@@ -49,13 +49,13 @@
 %%
 	
 start
-	:	statements { GE::runner()->setBlock($1); }
+	:	statements
 	;
 
-/* Create our list of statements. Create our block first and then add statements to it. */
+/* Create our list of statements. Find our top block and add statements to it. */
 statements 		
 	: statements statement { $1->addStatement($2); }
-	| statement { $$ = new Block(GE::runner()->makeSymtab()); $$->addStatement($1); }
+	| statement { $$ = GE::runner()->topBlock(); $$->addStatement($1); }
 	;
 
 statement 		

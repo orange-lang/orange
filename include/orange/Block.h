@@ -35,6 +35,13 @@ public:
 	virtual std::string getClass() { return "Block"; }
 
 	/**
+	 * Gets the symbol table tied to this block.
+	 *
+	 * @return The symbol table tied to this block.
+	 */
+	SymTable* symtab() const;
+
+	/**
 	 * Adds a statement to the list of statements for this block.
 	 * After Codegen has been called, no more statements can be 
 	 * added and this function will do nothing.

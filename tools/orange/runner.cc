@@ -15,6 +15,11 @@ Runner::Runner(std::string pathname) {
 	if (added == false) {
 		throw std::runtime_error("File cannot be added as an entity twice.");
 	}
+
+	// Create the global block
+	SymTable *globalSymtab = new SymTable(nullptr);
+	m_block = new Block(globalSymtab);
+	pushBlock(m_block);
 }
 
 void Runner::haltRun() {
@@ -47,9 +52,13 @@ RunResult Runner::run() {
 	// Parse the file. get yyin and yyparse and use them
 	extern FILE* yyin;
 	extern int yyparse();
+	extern int yyonce; // used to get the endline
+	extern void yyflushbuffer();
 
-	yyin = file;
-	yyparse();
+	yyflushbuffer(); // reset buffer 
+	yyonce = 0; // reset yyonce 
+	yyin = file; // give flex the file 
+	yyparse(); // and do our parse.
 
 	// TODO: run the code.
 	int retCode = 0;
@@ -73,36 +82,38 @@ std::string Runner::pathname() const {
 	return m_pathname; 
 }
 
-void Runner::pushSymtab(SymTable* symtab) {
+void Runner::pushBlock(Block* block) {
 	// We don't want to push anything if it's nullptr.
-	if (symtab == nullptr) return;
+	if (block == nullptr) return;
 
-	m_symtabs.push(symtab);
+	m_blocks.push(block);
 }
 
-SymTable* Runner::popSymtab() {
-	SymTable* top = m_symtabs.top();
-	m_symtabs.pop();
+Block* Runner::popBlock() {
+	if (m_blocks.empty()) return nullptr;
+	Block* top = m_blocks.top();
+	m_blocks.pop();
 	return top;
 }
 
-SymTable* Runner::makeSymtab() {
-	SymTable* top = topSymtab();
-	SymTable* newSymtab = new SymTable(top);
-	pushSymtab(newSymtab);
-	return newSymtab;
+Block* Runner::makeBlock() {
+	// First, get the top block 
+	Block* top = topBlock();
+
+	// Create a new block with a new symtable, linked to the top block. 
+	SymTable *newSymtab = new SymTable(top->symtab());
+	Block* newBlock = new Block(new SymTable(newSymtab));
+
+	pushBlock(newBlock); 
+	return newBlock;
 }
 
-SymTable* Runner::topSymtab() {
-	if (m_symtabs.empty()) return nullptr;
+Block* Runner::topBlock() {
+	if (m_blocks.empty()) return nullptr;
 
-	return m_symtabs.top();
+	return m_blocks.top();
 }
 
-Block* Runner::block() const {
+Block* Runner::mainBlock() const {
 	return m_block;
-}
-
-void Runner::setBlock(Block* block) {
-	m_block = block;
 }

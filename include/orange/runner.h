@@ -35,7 +35,7 @@ private:
 	 * The symbol table stack; these are
 	 * pushed and popped at will by the parser.
 	 */ 
-	std::stack<SymTable *> m_symtabs;
+	std::stack<Block *> m_blocks;
 
 	/**
 	 * The global block for this runner.
@@ -75,49 +75,42 @@ public:
 	std::string pathname() const; 
 
 	/**
-	 * Pushes a symbol table to the stack for this Runner.
-	 * If symtab is null, nothing will happen.
+	 * Pushes a block to the stack for this Runner.
+	 * If block is null, nothing will happen.
 	 *
-	 * @param symtab The symbol table to push.
+	 * @param bloc The block to push.
 	 */
-	void pushSymtab(SymTable* symtab);
+	void pushBlock(Block* block);
 
 	/**
-	 * Pops a symbol table from the stack for this Runner.
+	 * Pops a block from the stack for this Runner.
 	 *
-	 * @return The symbol table that was just popped.
+	 * @return The block that was just popped.
 	 */
-	SymTable* popSymtab();
+	Block* popBlock();
 
 	/**
-	 * Creates a symbol table and adds it to the stack.
-	 * The symbol table created will be parented to the top of the 
+	 * Creates a block and adds it to the stack.
+	 * The block created will be parented to the top of the 
 	 * stack.
 	 *
-	 * @return The symbol table that was just created.
+	 * @return The block that was just created.
 	 */
-	SymTable* makeSymtab();
+	Block* makeBlock();
 
 	/**
-	 * Returns the top symbol table on the stack.
+	 * Returns the top block on the stack.
 	 *
-	 * @return The symbol table on the top of the stack.
+	 * @return The block on the top of the stack.
 	 */
-	SymTable* topSymtab();
+	Block* topBlock();
 
 	/**
 	 * Gets the global block for this runner.
 	 *
 	 * @return The global block.
 	 */
-	Block* block() const;
-
-	/**
-	 * Sets the global block for this runner.
-	 *
-	 * @param block The global block.
-	 */
-	void setBlock(Block* block);
+	Block* mainBlock() const;
 
 	/**
 	 * Creates an instance of Runner and registers it inside of the GeneratingEngine.

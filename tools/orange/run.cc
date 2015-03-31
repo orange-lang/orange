@@ -119,7 +119,9 @@ RunResult::RunResult(std::string filename, bool pass, int code, std::vector<Comp
 
 RunResult runFile(std::string filename) {
 	Runner *runner = new Runner(filename);
-	return runner->run();
+	RunResult res = runner->run();
+	delete runner;
+	return res; 
 }
 
 RunResult runProject(path projectPath) {
