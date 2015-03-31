@@ -1,0 +1,3 @@
+i = 0
+loop while i++ < 10
+return i - 11

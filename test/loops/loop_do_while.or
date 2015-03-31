@@ -1,0 +1,7 @@
+i = 0
+
+do
+	i++
+end while i < 0
+
+return i - 1

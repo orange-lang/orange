@@ -1,4 +1,5 @@
 #include "gen/Symtab.h"
+#include "gen/ForLoop.h"
 
 static int lastID = 0;
 
@@ -69,6 +70,17 @@ BasicBlock* SymTable::getFunctionEnd() {
 	}
 	
 	return nullptr;
+}
+
+ForLoop* SymTable::getLoop() {
+	SymTable* ptr = this;
+	while (ptr != nullptr) {
+		if (ptr->Loop)
+			return ptr->Loop; 
+		ptr = ptr->parent;
+	}
+	
+	return nullptr;	
 }
 
 Symobj* SymTable::find(std::string name) {

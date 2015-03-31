@@ -222,6 +222,11 @@ Value* FunctionStatement::Codegen() {
 		retType = body->getLastStatementType();
 	}
 
+	if (retType && retType->isVoidTy()) {
+		DEBUG_MSG("NO RET FOR FUNCTION " << name << " (VOID TY)");
+		noRet = true;
+	}
+
 	if (retType == nullptr) {
 		DEBUG_MSG("NO RET FOR FUNCTION " << name);
 

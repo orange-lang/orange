@@ -1,0 +1,7 @@
+forever do
+	if 3 < 5
+		return 0
+	end
+end
+
+return 1

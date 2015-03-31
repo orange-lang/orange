@@ -78,12 +78,21 @@ const char *MainFunctionName() {
 // linking on mac: 
 // ld -arch x86_64 -macosx_version_min 10.10 a.out -lSystem -o a 
 void CodeGenerator::Generate(Block *globalBlock) {
+	if (globalBlock->symtab == nullptr) {
+		std::cerr << "fatal: no symbol table for global.\n";
+		exit(1);
+	} else {
+		DEBUG_MSG("Using symtab ID " << globalBlock->symtab->ID);
+	}
+
 	CG::Symtabs.push(globalBlock->symtab);
 	CG::Symtabs.top()->FunctionName = new std::string(MainFunctionName());
 
 	// Create the global block as a function so we don't have to repeat the code here.
 	FunctionStatement *fstmt = new FunctionStatement(CG::Symtabs.top()->FunctionName, nullptr, globalBlock);
 	fstmt->Codegen();
+
+	// CG::TheModule->dump();
 
 	PassManager MPM;
 	MPM.add(createVerifierPass(true));

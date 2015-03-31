@@ -59,6 +59,13 @@
 "else"									return ELSE;
 "end"										return END; 
 "if"										return IF;
+"for"										return FOR;
+"forever"								return FOREVER; 
+"loop"									return LOOP;
+"continue"							return CONTINUE;
+"break"									return BREAK;
+"do"										return DO;
+"while"									return WHILE;
 "when"									return WHEN;
 "unless"								return UNLESS;
 "class"									return CLASS; 

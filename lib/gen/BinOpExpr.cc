@@ -135,6 +135,12 @@ Value* BinOpExpr::Codegen() {
 	if ((op == "=" || op == "<-") && L == nullptr) {
 		L = CG::Builder.CreateAlloca(LHS->getType());
 		VarExpr *vLHS = (VarExpr *)LHS;
+
+		if (CG::Symtab()->objs[vLHS->name] == nullptr) {
+			std::cerr << "fatal: variable " << vLHS->name << " is not in the symtab.\n";
+			exit(1);
+		}
+
 		CG::Symtabs.top()->objs[vLHS->name]->setValue(L);
 	}
 

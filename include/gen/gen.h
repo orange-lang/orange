@@ -24,5 +24,8 @@
 #include "ArrayAccess.h"
 #include "IncrementExpr.h"
 #include "Reference.h" 
+#include "ForLoop.h"
+#include "BreakStatement.h"
+#include "ContinueStatement.h"
 
 #endif

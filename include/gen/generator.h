@@ -20,6 +20,8 @@ public:
 	static FunctionPassManager *TheFPM;
 	
 	static std::stack<SymTable *> Symtabs;
+
+	static SymTable* Symtab() { return Symtabs.top(); }
 	
 	static void init();
 	static void Generate(Block *globalBlock);

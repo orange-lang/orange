@@ -8,6 +8,8 @@
 	void yyerror(const char *s) { std::cerr << s << std::endl; exit(1); }
 
 	Block *globalBlock = nullptr; 
+	static SymTable* globalSymtab = nullptr;
+
 	typedef CodeGenerator CG;
 
 	#define CREATE_SYMTAB() { auto s = new SymTable(); if (CG::Symtabs.size() > 0) { s->parent = CG::Symtabs.top(); } CG::Symtabs.push(s); }
@@ -42,11 +44,12 @@
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
-%token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND
+%token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND 
+%token FOR FOREVER LOOP CONTINUE BREAK DO WHILE 
 
 %type <ifstmt> if_statement opt_else inline_if inline_unless unless 
 %type <block> statements opt_statements statements_internal opt_statements_internal
-%type <stmt> statement extern return_stmt expr_or_ret
+%type <stmt> statement extern return_stmt expr_or_ret loop inline_for expr_or_decl opt_expr_or_decl
 %type <expr> primary_high
 %type <expr> expression primary VALUE opt_expr declaration opt_eq opt_num 
 %type <did> dereference
@@ -102,14 +105,90 @@ opt_statements_internal
 statement 		
 	:	function term { $$ = $1; }
 	|	extern term { $$ = (Statement *)$1; }
-	|	expression term { $$ = (Statement *)$1; } 
 	| inline_if term { $$ = $1; }
+	| inline_for term { $$ = $1; }
 	| inline_unless term { $$ = $1; }
 	| unless term { $$ = $1; }
-	|	declaration term { $$ = (Statement *)$1; }
+	| loop term { $$ = $1; }
+	|	expr_or_decl term { $$ = (Statement *)$1; }
 	| return_stmt term { $$ = $1; }
 	| term { $$ = nullptr; }
 	;
+
+expr_or_decl
+	: expression { $$ = $1; }
+	| declaration { $$ = $1; }
+	;
+
+opt_expr_or_decl
+	: expr_or_decl { $$ = $1; }
+	| { $$ = nullptr; }
+	;
+
+inline_for
+	: expr_or_ret FOR OPEN_PAREN opt_expr_or_decl SEMICOLON opt_expr SEMICOLON opt_expr CLOSE_PAREN
+		{
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+
+			Block *b = new Block(); 
+			b->statements.push_back($1); 
+			b->symtab = CG::Symtabs.top(); 
+
+			ForLoop *forLoop = new ForLoop($4, $6, $8, b);
+
+			$$ = forLoop;
+			CG::Symtabs.pop();			
+		} 
+	| expr_or_ret WHILE expression 
+		{
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+
+			Block *b = new Block(); 
+			b->statements.push_back($1); 
+			b->symtab = CG::Symtabs.top(); 
+
+			ForLoop *forLoop = new ForLoop(nullptr, $3, nullptr, b);
+
+			$$ = forLoop;
+			CG::Symtabs.pop();			
+		} 
+	| expr_or_ret FOREVER
+		{
+			CREATE_SYMTAB();
+
+			Block *b = new Block();
+			b->statements.push_back($1);
+			b->symtab = CG::Symtabs.top();
+
+			ForLoop *forLoop = new ForLoop(nullptr, nullptr, nullptr, b, INFINITE_LOOP);
+
+			$$ = forLoop;
+			CG::Symtabs.pop();
+		}
+	;
+
+loop
+	: FOR OPEN_PAREN opt_expr_or_decl SEMICOLON opt_expr SEMICOLON opt_expr CLOSE_PAREN term opt_statements END
+		{
+			ForLoop *forLoop = new ForLoop($3, $5, $7, $10);
+			$$ = forLoop; 
+		}
+	| WHILE expression term opt_statements END
+		{
+			ForLoop *forLoop = new ForLoop(nullptr, $2, nullptr, $4);
+			$$ = forLoop; 
+		}
+	|	DO term opt_statements END WHILE expression
+		{
+			ForLoop *forLoop = new ForLoop(nullptr, $6, nullptr, $3, POST_TEST);
+			$$ = forLoop; 			
+		}
+	| FOREVER DO term opt_statements END
+		{
+			ForLoop *forLoop = new ForLoop(nullptr, nullptr, nullptr, $4, INFINITE_LOOP);
+			$$ = forLoop; 					
+		}
+//	| DO NEWLINE opt_statements WHILE expr END
 
 return_stmt
 	: RETURN opt_expr { $$ = (Statement *)(new ReturnExpr($2)); }
@@ -260,7 +339,10 @@ opt_eq
 	;
 
 expression 	
-	:	expression ASSIGN expression { $$ = new BinOpExpr($1, "=" , $3); } 
+	: BREAK { $$ = new BreakStatement(); }
+	| CONTINUE { $$ = new ContinueStatement(); }
+	| LOOP { $$ = new ContinueStatement(); }
+	|	expression ASSIGN expression { $$ = new BinOpExpr($1, "=" , $3); } 
 	|	expression ARROW_LEFT expression { $$ = new BinOpExpr($1, "<-", $3); }
 	|	expression PLUS_ASSIGN expression { $$ = new BinOpExpr($1, "+=", $3); }
 	|	expression MINUS_ASSIGN expression { $$ = new BinOpExpr($1, "-=", $3); }

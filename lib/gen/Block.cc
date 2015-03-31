@@ -3,6 +3,7 @@
 #include "gen/IfStatement.h"
 #include "gen/FunctionStatement.h"
 #include "gen/ReturnExpr.h"
+#include "gen/ForLoop.h"
 
 std::string Block::string() {
 	std::stringstream ss;
@@ -36,6 +37,18 @@ bool Block::hasReturnStatement() {
 	}
 	
 	return false; 
+}
+
+bool Block::hasJmpInstr() {
+	for (auto stmt : statements) {
+		if (stmt->getClass() == "ReturnExpr" || stmt->getClass() == "BreakStatement" ||
+				stmt->getClass() == "ContinueStatement") 
+		{ 
+			return true; 
+		}
+	}
+	
+	return false; 	
 }
 
 Type* Block::getLastStatementType() {
@@ -87,6 +100,15 @@ Type* Block::getReturnType() {
 				}
 			}
 		}
+
+		if (stmt->getClass() == "ForLoop") {
+			ForLoop *loop = (ForLoop*)stmt;
+			Type *t = loop->body->getReturnType();
+			if (t) {
+				CG::Symtabs.pop();
+				return t;
+			}
+		}
 	}
 
 	CG::Symtabs.pop();
@@ -99,7 +121,7 @@ void Block::resolve() {
 	resolved = true;
 
 	if (symtab == nullptr) {
-		std::cerr << "Fatal: block is lacking a symbol table.\n";
+		std::cerr << "fatal: block does not have an assigned symbol table.\n";
 		exit(1);
 	}
 
@@ -117,7 +139,7 @@ void Block::resolve() {
 			FunctionStatement *fstmt = (FunctionStatement *)stmt; 
 			functions.push_back(fstmt);
 			continue;
-		} 
+		}
 
 		stmt->resolve();
 	}

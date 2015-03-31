@@ -14,6 +14,7 @@ public:
 	Type* getLastStatementType();
 
 	bool hasReturnStatement();
+	bool hasJmpInstr();
 
 	bool resolved = false;
 	void resolve();

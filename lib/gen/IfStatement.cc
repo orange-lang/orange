@@ -10,6 +10,8 @@ std::string IfStatement::string() {
 	bool didIf = false; 
 	for (Block *b : blocks) {
 		if (dynamic_cast<CondBlock*>(b)) {
+			ss << "[ ID " << b->symtab->ID << " , PARENT: " << (b->symtab->parent ? b->symtab->parent->ID : -1) << " ] ";
+
 			if (didIf) ss << "el";
 			ss << "if ";
 			CondBlock *cb = (CondBlock*)b; 
@@ -116,20 +118,11 @@ Value* IfStatement::Codegen() {
 			CG::Builder.CreateStore(blockRet, retVal);
 		}
 
-		// 4. does the block contain a return statement?
-		bool hasReturn = false; 
-		for (Statement *stmt : blocks[i]->statements) {
-			if (stmt->getClass() == "ReturnExpr") {
-				hasReturn = true; 
-				break; 
-			}
-		}
-
-		// 5. set up jump to continue block if there's no return
-		if (hasReturn == false) 
+		// 4. set up jump to continue block if there's no return
+		if (blocks[i]->hasJmpInstr() == false) 
 			CG::Builder.CreateBr(BBs[BBs.size()-1]);
 
-		// 6. Restore symtab
+		// 5. Restore symtab
 		CG::Symtabs.pop();
 	}
 

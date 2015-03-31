@@ -3,6 +3,7 @@
 #include "AST.h"
 
 class SymTable;
+class ForLoop;
 
 class Symobj {
 private:
@@ -54,6 +55,8 @@ public:
 	std::string* FunctionName = nullptr;
 	BasicBlock *FunctionEnd = nullptr; 
 	BasicBlock *BlockEnd = nullptr; 
+	ForLoop *Loop = nullptr;
+
 	int ID = 0;
 	
 	// If Symobj doesn't exist, creates one. 
@@ -83,6 +86,7 @@ public:
 	std::string getFunctionName();
 	Function* getFunction();
 	BasicBlock* getFunctionEnd();
+	ForLoop* getLoop();
 
 	SymTable();
 };
