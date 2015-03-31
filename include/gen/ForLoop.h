@@ -37,9 +37,9 @@ public:
 
 	virtual Statement* clone() { 
 		ForLoop *ret = new ForLoop(
-				(Expression *)initializer->clone(), 
-				(Expression *)condition->clone(), 
-				(Expression *)afterthought->clone(), 
+				initializer ? (Expression *)initializer->clone() : nullptr, 
+				condition ? (Expression *)condition->clone() : nullptr, 
+				afterthought ? (Expression *)afterthought->clone() : nullptr, 
 				body->clone());
 		return ret; 
 	}

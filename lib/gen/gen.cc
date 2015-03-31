@@ -92,7 +92,7 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	FunctionStatement *fstmt = new FunctionStatement(CG::Symtabs.top()->FunctionName, nullptr, globalBlock);
 	fstmt->Codegen();
 
-	// CG::TheModule->dump();
+	//CG::TheModule->dump();
 
 	PassManager MPM;
 	MPM.add(createVerifierPass(true));

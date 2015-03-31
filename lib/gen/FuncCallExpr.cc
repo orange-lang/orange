@@ -59,6 +59,7 @@ void FuncCallExpr::resolve() {
 		args->at(i)->resolve();
 	}
 
+
 	if (o->reference->getClass() == "FunctionStatement") {
 		FunctionStatement *fstmt = (FunctionStatement *)o->reference; 
 

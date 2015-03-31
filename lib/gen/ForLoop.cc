@@ -39,7 +39,6 @@ void ForLoop::resolve() {
 		exit(1);
 	}
 
-
 	CG::Symtabs.push(body->symtab);
 
 	if (initializer) initializer->resolve();

@@ -23,6 +23,7 @@ std::string Block::string() {
 Block* Block::clone() { 
 	Block* ret = new Block();
 	ret->symtab = symtab->clone();
+	ret->symtab->parent = CG::Symtab();
 	CG::Symtabs.push(ret->symtab);
 	for (Statement *stmt : statements) 
 		ret->statements.push_back((Statement *)stmt->clone());
