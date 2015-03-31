@@ -126,7 +126,8 @@ public:
 	Value* Codegen();
 
 	virtual Statement* clone() { 
-		StrVal *ret = new StrVal(value); 
+		StrVal *ret = new StrVal("\"\"");
+		ret->value = value; 
 		return ret; 
 	}
 
