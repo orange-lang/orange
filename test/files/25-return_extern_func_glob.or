@@ -1,0 +1,3 @@
+extern int32 puts(char *s)
+
+return puts("foo") - puts("foo")

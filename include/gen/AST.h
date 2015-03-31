@@ -64,6 +64,13 @@ public:
 	virtual std::string getClass() { return "StrVal"; }
 	std::string value; 
 
+	virtual std::string string() {  
+		std::stringstream ss;
+		ss << "\"" << value << "\"";
+		return ss.str();
+	}
+
+
 	virtual Type *getType() { return Type::getInt8PtrTy(getGlobalContext()); }
 
 	Value* Codegen();

@@ -14,7 +14,7 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 	// Create this as a symbol in our parent.
 	CG::Symtab->parent->create(this->name);
 	CG::Symtab->parent->objs[this->name]->isFunction = true; 
-	CG::Symtab->parent->objs[this->name]->reference = (void *)this; 
+	CG::Symtab->parent->objs[this->name]->reference = (Statement *)this; 
 }
 
 Value* FunctionStatement::Codegen() {

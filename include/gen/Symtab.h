@@ -10,7 +10,7 @@ public:
 	bool isSigned = false;
 	bool isFunction = false;
 
-	void *reference = nullptr;
+	Statement *reference = nullptr;
 	
 	Value *getValue() const;
 	Type *getType() const;  

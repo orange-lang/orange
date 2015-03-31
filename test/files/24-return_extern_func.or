@@ -1,0 +1,8 @@
+extern int32 puts(char *s)
+
+def foo() 
+	return puts("foo")
+end
+
+foo()
+return 0

@@ -13,7 +13,7 @@ Value* ReturnExpr::Codegen() {
 	if (expr) {
 		Value *v = expr->Codegen();
 
-		if (dynamic_cast<VarExpr*>(expr)) {
+		if (expr->getClass() == "VarExpr") {
 			v = CG::Builder.CreateLoad(v);
 		}
 

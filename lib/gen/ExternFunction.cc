@@ -10,7 +10,7 @@ ExternFunction::ExternFunction(AnyType *returnType, std::string name, ArgList *a
 	CG::Symtab->create(this->name);
 	CG::Symtab->objs[this->name]->isFunction = true; 
 	CG::Symtab->objs[this->name]->setType(returnType->getType()); 
-	CG::Symtab->objs[this->name]->reference = (void *)this; 
+	CG::Symtab->objs[this->name]->reference = (Statement *)this; 
 }
 
 Value* ExternFunction::Codegen() { 

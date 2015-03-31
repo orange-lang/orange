@@ -18,11 +18,21 @@ Type *FuncCallExpr::getType() {
 		return nullptr; 
 	}
 
-	Expression *e = (Expression *)o->reference;
-	if (e->getClass() == "FunctionStatement") {
-		FunctionStatement *ref = (FunctionStatement *)(e);
-		return ref->body->getReturnType();		
-	} else if (o->getType()) {
+	for (auto obj : CG::Symtab->objs) {
+		std::cout << obj.first << std::endl;
+	}
+
+	if (o->getValue() && isa<Function>(o->getValue())) {
+		Function *f = (Function *)o->getValue();
+		return f->getReturnType();
+	}
+
+	if (o->getValue() == nullptr && o->reference->getClass() == "FunctionStatement") { 
+		FunctionStatement *fstmt = (FunctionStatement *)o->reference;
+		return fstmt->body->getReturnType();
+	}
+
+	if (o->getType()) {
 		return o->getType();
 	}
 
