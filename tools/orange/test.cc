@@ -29,6 +29,10 @@ std::vector<RunResult> runTest(path p) {
 	} else if (is_directory(p)) {
 		// Go through each item in the directory recursively
 		for(auto& entry : boost::make_iterator_range(directory_iterator(p), directory_iterator())) {
+			if (is_directory(entry) == false) {
+				if (entry.path().extension().string() != ".or") continue;
+			}
+
     	for(auto& res : runTest(entry)) {
     		results.push_back(res);
     	}	
