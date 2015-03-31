@@ -14,8 +14,12 @@
 #include <helper/args.h>
 #include <helper/link.h>
 #include <orange/file.h>
+#include <orange/run.h>
 
-void doRunCommand(cOptionsState run);
+using namespace boost::filesystem;
+using namespace boost;
+
+void doTestCommand(cOptionsState test);
 
 int main(int argc, char** argv) {
 	cOptions options("Orange WIP"); 
@@ -24,42 +28,56 @@ int main(int argc, char** argv) {
 	 * Set up our "run" state to run files.
 	 */
 	cOptionsState run("run", "Runs a single file or a project.", "run [filename]", "The run command will\
- either run a file or a project directly.\nEntering run without a filename will run a project, if it exists.\
-  \nIf you are not in a project, an error will be displayed.\nRunning a file does not require you to be in an Orange project.");
+ either run a file or a project directly. Entering run without a filename will run a project, if it exists.\
+  If you are not in a project, an error will be displayed. Running a file does not require you to be in an Orange project.");
 	options.mainState.addState(&run); 
+
+	/*
+	 * Set up our "test" state to test files.
+	 */
+	cOptionsState test("test", "Tests files and projects in the test/ directory.", "test [folder|filename|project]", "The test command\
+ is used to test every file and project inside of the test/ folder. It will run recursively, through each subdirectory. If a subdirectory\
+ contains a orange.settings.json file, it is treated as a sub project. Otherwise, every file inside of the directory will be ran as its own\
+  individual program.");
+  options.mainState.addState(&test);
 
 	// Parse our options
 	options.parse(argc, argv);
 
 	if (run.isActive()) {
 		doRunCommand(run);
+	} else if (test.isActive()) {
+		doTestCommand(test);
 	}
-
 
 	return 0;
 }
 
-void doRunCommand(cOptionsState run) {
-	// If the user didn't enter anything, then we're going to run a project.
-	if (run.unparsed().size() == 0) {
-		std::cerr << "fatal: running a project is not yet supported.\n";
+void doTestCommand(cOptionsState test) {
+	try {
+		current_path(findProjectDirectory());
+		current_path(current_path() += "/test");
+	} catch (std::runtime_error& e) {
+		std::cerr << e.what() << std::endl;
 		return;
 	}
 
-	if (run.unparsed().size() > 1) {
-		std::cerr << "fatal: running more than one file is not yet supported.\n";
-		return;
-	} 
-
-	// try to find our file.
-	std::string fileName = run.unparsed()[0];
-	FILE *file = fopen(fileName.c_str(), "r");
-	if (file == nullptr) {
-		std::cerr << "fatal: file " << fileName << " not found.\n";
+	// If the user didn't enter anything, we'll just test everything in the test/ folder.
+	if (test.unparsed().size() == 0) {
 		return; 
 	}
 
-	// TODO: parse it.
+	for (auto& str : test.unparsed()) {
+		path p(str);
+		if (exists(p) == false) {
+			std::cerr << "error: " << p << " doesn't exist.\n"; 
+			continue;
+		}
 
-	fclose(file);
+		if (is_directory(p)) {
+			// Run it on the directory 
+		} else {
+			// Run a single test 
+		}	
+	}
 }
