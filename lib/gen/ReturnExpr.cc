@@ -14,8 +14,6 @@ void ReturnExpr::resolve() {
 }
 
 Value* ReturnExpr::Codegen() {
-	DEBUG_MSG("GENERATING ReturnExpr");
-
 	BasicBlock *bb = CG::Symtab->getFunctionEnd();
 	if (bb == nullptr) {
 		std::cerr << "fatal: no Function End found!\n";
@@ -23,18 +21,15 @@ Value* ReturnExpr::Codegen() {
 	}
 
 	if (expr && CG::Symtab->getRetVal() == nullptr) {
-		std::cerr << "fatal: no return value found!\n"; 
+		std::cerr << "fatal: no return value found (symtab " << CG::Symtab->ID << ") !\n"; 
 		exit(1);
 	}
 
 	if (expr) {
 		DEBUG_MSG("ReturnExpr: STARTING CODEGEN FOR EXPR");
 		Value *v = expr->Codegen();
-		DEBUG_MSG("ReturnExpr: COMPLETED CODEGEN FOR EXPR");
 
 		if (returnsPtr(expr->getClass())) {
-			DEBUG_MSG("ReturnExpr: LOADING PTR");
-
 			v = CG::Builder.CreateLoad(v);
 		}
 		

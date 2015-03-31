@@ -20,9 +20,7 @@ public:
 
 		for (Block *b : blocks) {
 			ss << "\tifblock: " << std::endl;
-			for (Statement *s : b->statements) {
-				ss << "\t\t" << s->string() << std::endl;
-			}
+			ss << "\t\t" << b->string() << std::endl;
 		}
 
 		return ss.str();

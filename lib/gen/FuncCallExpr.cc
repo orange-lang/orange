@@ -8,8 +8,6 @@
 #include "gen/CastingEngine.h"
 
 FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
-	DEBUG_MSG("STARTING FuncCallExpr " << name << " CTOR");
-
 	this->name = name;
 	this->args = args;
 
@@ -21,19 +19,11 @@ FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
 		std::cerr << "fatal: calling function that hasn't been declared.\n";
 		exit(1);
 	}
-
-	// we're not going to through an error if it's null, since that is the 
-	// case for external functions 
-	DEBUG_MSG("FINISHED FuncCallExpr CTOR");
 }
 
 void FuncCallExpr::resolve() {
 	if (resolved)
 		return;
-
-	// Look at our arguments. Get the type of each argument, and if 
-	// the function is missing it, snag it. 
-	DEBUG_MSG("RESOLVE ARGUMENTS IN FUNCTION " << name);
 
 	Symobj *o = CG::Symtab->find(name);
 	if (o == nullptr) {
@@ -49,35 +39,43 @@ void FuncCallExpr::resolve() {
 	resolved = true;
 
 	if (o->reference->getClass() == "FunctionStatement") {
+		// First, we want to get the function and go through its arguments
 		FunctionStatement *fstmt = (FunctionStatement *)o->reference;
-		for (int i = 0; i < fstmt->args->size(); i++) {
-			if (fstmt->args->at(i)->type != nullptr) continue;
-			std::string argName = fstmt->args->at(i)->name;
-			DEBUG_MSG("RESOLVE ARGUMENT " << argName << " WITH " << args->at(i)->string() << 
-				" (" << args->at(i)->getClass() << ")");
+ 	
+ 		// If that function is resolved, we don't want to resolve it again. 
 
-			fstmt->args->at(i)->type = AnyType::Create(args->at(i)->getType());
+ 		int totalResolved = 0; 
 
-			// Set the type of the argument inside the symbol table too, since that's not updated.
-			Symobj *arg = fstmt->body->symtab->find(argName);
-			if (arg->getType() == nullptr) {
-				arg->setType(args->at(i)->getType()->getPointerTo());
-			}
+		// Look at our arguments. Get the type of each argument, and if 
+		// the function is missing it, snag it. 
+		for (unsigned int i = 0; i < fstmt->args->size(); i++, totalResolved++) {
+			// First, we want to resolve our argument
+			args->at(i)->resolve();
+
+			// Next, we want to check the arg for the function.
+			ArgExpr *arg = fstmt->args->at(i);
+
+			// Replace this with type morphing 
+			if (arg->type != nullptr) continue; 
+
+			std::string argName = arg->name;
+
+			// Now, in the symtab for the function, we want to set the type for the arg 
+			fstmt->body->symtab->objs[argName]->setType(args->at(i)->getType()->getPointerTo());
+			arg->type = AnyType::Create(args->at(i)->getType());
 		}
 
-		for (int i = fstmt->args->size(); i < args->size(); i++) {
+		// Resolve any other arguments we might have 
+		for (int i = totalResolved; i < args->size(); i++) {
 			args->at(i)->resolve();
 		}
 
-		extern Block *globalBlock;
-		std::cout << globalBlock->string() << std::endl;
-
+		// Probably don't resolve the function, let that be handled later. 
 		fstmt->resolve();
 	} else if (o->reference->getClass() == "ExternFunction") {
 		// Resolve arguments in external function calls.
 
 		for (int i = 0; i < args->size(); i++) {
-			DEBUG_MSG("RESOLVE ARGUMENT " << args->at(i)->string());
 			args->at(i)->resolve();
 		}
 
@@ -87,6 +85,10 @@ void FuncCallExpr::resolve() {
 
 Type *FuncCallExpr::getType() {
 	DEBUG_MSG("((FuncCallExpr) GETTING TYPE OF " << this->string());
+
+	std::string currFunction = CG::Symtab->getFunctionName();
+	if (name == currFunction) 
+		return nullptr; 		
 
 	Symobj *o = CG::Symtab->find(name);
 	if (o == nullptr) {
@@ -126,8 +128,6 @@ Type *FuncCallExpr::getType() {
 }
 
 Value* FuncCallExpr::Codegen() {
-	DEBUG_MSG("GENERATING FuncCallExpr");
-
 	std::vector<Value*> Args(args->size());
 	for (unsigned int i = 0; i < args->size(); i++) {
 		auto arg = (*args)[i];

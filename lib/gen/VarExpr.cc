@@ -3,12 +3,12 @@
 
 Type *VarExpr::getType() {
 	Symobj *o = CG::Symtab->find(name);
+
 	if (o == nullptr) {
-		std::cerr << "Error: couldn't find " << name << " in symtab\n";
-		return nullptr;
+		std::cerr << "warning: " << name << " was not found in the symbol table " << CG::Symtab->ID << std::endl; 		
 	}
-	
-	if (o->getType() == nullptr) { 
+
+	if (o == nullptr || o->getType() == nullptr) { 
 		return nullptr;
 	}
 

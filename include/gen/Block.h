@@ -18,13 +18,7 @@ public:
 
 	SymTable *symtab;
 
-	virtual std::string string() {
-		std::stringstream ss;
-		for (Statement *s : statements) {
-			ss << s->string() << std::endl;
-		}
-		return ss.str();
-	}
+	virtual std::string string();
 };
 
 #endif 

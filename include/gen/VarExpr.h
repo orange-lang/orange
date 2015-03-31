@@ -14,7 +14,17 @@ public:
 	virtual bool isSigned();
 
 	virtual std::string string() {
-		return name;
+		std::stringstream ss;
+
+		if (getType()) {
+			auto a = AnyType::Create(getType()); 
+			ss << "(" << a->type << ")";
+			delete a;
+		} else {
+			ss << "(id)";
+		}
+		ss << name; 
+		return ss.str();
 	}
 
 	VarExpr(std::string name) : name(name) { }

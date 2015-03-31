@@ -1,5 +1,6 @@
 #include "gen/Symtab.h"
 
+static int lastID = 0;
 
 //// Symobj
 Value *Symobj::getValue() const { return m_value; }
@@ -14,7 +15,7 @@ void Symobj::setValue(Value *v) {
 }
 
 void Symobj::setType(Type *t) {
-	if (m_value != nullptr)
+	if (m_value != nullptr || isLocked == true)
 		return;
 	
 	m_type = t;
@@ -88,7 +89,7 @@ void SymTable::create(std::string name) {
 void SymTable::dump() {
 	SymTable* ptr = this;
 	while (ptr != nullptr) {
-		printf("Symtab %p:\n", ptr);
+		printf("Symtab (%d) %p:\n", ptr->ID, ptr);
 		for (auto obj : objs) {
 			printf("\t%s (value: %d, type: %d)\n", obj.first.c_str(), 
 				obj.second->m_value != nullptr, obj.second->m_type != nullptr);
@@ -98,4 +99,8 @@ void SymTable::dump() {
 	}
 
 	printf("end.\n");
+}
+
+SymTable::SymTable() {
+	ID = lastID++;
 }

@@ -13,8 +13,6 @@ std::string DerefId::string() {
 }
 
 Type* DerefId::getType() {
-	DEBUG_MSG("((DerefId)) GETTING TYPE OF " << id->string() << " using " << pointers << " pointers!");
-
 	AnyType *at = AnyType::Create(id->getType());
 
 	int newPtrs = at->numPointers - pointers; 

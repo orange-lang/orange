@@ -4,6 +4,23 @@
 #include "gen/FunctionStatement.h"
 #include "gen/ReturnExpr.h"
 
+std::string Block::string() {
+	std::stringstream ss;
+
+	auto oldSymtab = CG::Symtab;
+	CG::Symtab = symtab;
+
+	for (Statement *s : statements) {
+		if (s == nullptr) continue;
+		ss << s->string() << std::endl;
+	}
+
+	if (oldSymtab)
+		CG::Symtab = oldSymtab;
+
+	return ss.str();
+}
+
 bool Block::hasReturnStatement() {
 	for (auto stmt : statements) {
 		if (stmt->getClass() == "ReturnExpr") 
@@ -59,6 +76,8 @@ void Block::resolve() {
 	if (resolved) 
 		return;
 
+	resolved = true;
+
 	auto oldSymtab = CG::Symtab;
 	CG::Symtab = symtab;
 
@@ -79,7 +98,6 @@ void Block::resolve() {
 		stmt->resolve();
 	}
 
-	resolved = true;
 
 	for (FunctionStatement *fstmt : functions) {
 		if (fstmt == nullptr) {

@@ -3,8 +3,6 @@
 #include <gen/CastingEngine.h>
 
 Value* VarDeclExpr::Codegen() {
-	DEBUG_MSG("GENERATING VarDeclExpr");
-
 	Value *v = CG::Builder.CreateAlloca(getType());
 
 	if (value != nullptr) {
@@ -20,8 +18,8 @@ Value* VarDeclExpr::Codegen() {
 	}
 
 	CG::Symtab->objs[name]->setValue(v);
+	CG::Symtab->objs[name]->isLocked = true;
 
-	DEBUG_MSG("COMPLETED VarDeclExpr");
 	return v; 
 }
 
@@ -36,8 +34,6 @@ void VarDeclExpr::resolve() {
 }
 
 VarDeclExpr::VarDeclExpr(AnyType *type, std::string *name, Expression *value) {
-	DEBUG_MSG("STARTING VarDeclExpr");
-
 	if (type == nullptr) {
 		std::cerr << "fatal: explicitly created variables require a type.\n";
 		exit(1);
@@ -55,6 +51,4 @@ VarDeclExpr::VarDeclExpr(AnyType *type, std::string *name, Expression *value) {
 	CG::Symtab->create(this->name);
 	CG::Symtab->objs[this->name]->setType(getType()->getPointerTo());
 	CG::Symtab->objs[this->name]->isSigned = isSigned();
-
-	DEBUG_MSG("COMPLETED VarDeclExpr");
 }

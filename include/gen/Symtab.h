@@ -12,6 +12,7 @@ private:
 public:
 	bool isSigned = false;
 	bool isFunction = false;
+	bool isLocked = false;
 
 	Statement *reference = nullptr;
 	
@@ -40,6 +41,7 @@ public:
 	std::string* FunctionName = nullptr;
 	BasicBlock *FunctionEnd = nullptr; 
 	BasicBlock *BlockEnd = nullptr; 
+	int ID = 0;
 	
 	// If Symobj doesn't exist, creates one. 
 	void create(std::string name);
@@ -54,6 +56,8 @@ public:
 	std::string getFunctionName();
 	Function* getFunction();
 	BasicBlock* getFunctionEnd();
+
+	SymTable();
 };
 
 #endif

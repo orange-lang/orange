@@ -37,14 +37,15 @@ void FunctionStatement::resolve() {
 	if (resolved)
 		return; 
 
-	DEBUG_MSG("RESOLVING FUNCTION " << name);
-	body->resolve();
-
 	resolved = true;
+
+	body->resolve();
 }
 
 Value* FunctionStatement::Codegen() {
-	DEBUG_MSG("STARTING CODEGEN FOR FunctionStatement");
+	// Set new symtab
+	auto oldSymtab = CG::Symtab;
+	CG::Symtab = body->symtab;
 
 	bool hasReturn = body->hasReturnStatement();
 
@@ -69,6 +70,8 @@ Value* FunctionStatement::Codegen() {
 	}
 
 	if (retType == nullptr) {
+		DEBUG_MSG("NO RET FOR FUNCTION " << name);
+
 		noRet = true; 
 		retType = Type::getVoidTy(getGlobalContext());
 	}
@@ -78,13 +81,11 @@ Value* FunctionStatement::Codegen() {
 	FunctionType *FT = FunctionType::get(retType, Args, false);
 	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);
 
-	// Set function for the PARENT symtab (the one that could call this function)
-	CG::Symtab->create(name);
-	CG::Symtab->objs[name]->setValue(TheFunction);
-
-	// Set new symtab
-	auto oldSymtab = CG::Symtab;
-	CG::Symtab = body->symtab;
+	if (CG::Symtab->parent) {
+		// Set function for the PARENT symtab (the one that could call this function)
+		CG::Symtab->parent->create(name);
+		CG::Symtab->parent->objs[name]->setValue(TheFunction);
+	}
 
 	// Set function for the CURRENT symtab (for recursion)
 	CG::Symtab->create(name);
@@ -107,6 +108,7 @@ Value* FunctionStatement::Codegen() {
 
 	Value *v = nullptr;  
 	if (noRet == false) {
+		DEBUG_MSG("SETTING UP RETVAL FOR SYMTAB " << CG::Symtab->ID);
 		v = CG::Builder.CreateAlloca(retType, nullptr, "");
 		CG::Symtab->retVal = v;
 	}
@@ -130,7 +132,6 @@ Value* FunctionStatement::Codegen() {
 
 		std::string className = body->statements.back()->getClass();
 		if (returnsPtr(className) && finalV->getType()->isPointerTy()) {
-			DEBUG_MSG("Block: LOADING PTR");
 			finalV = CG::Builder.CreateLoad(finalV);
 		}
 

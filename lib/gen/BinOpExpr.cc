@@ -28,10 +28,10 @@ bool BinOpExpr::isSigned() {
 void BinOpExpr::resolve() {
 	if (resolved)
 		return;
-	
+
 	LHS->resolve();
 	RHS->resolve();
-
+	
 	if (op == "=" && LHS->getClass() == "VarExpr") {
 		VarExpr *L = (VarExpr *)LHS;
 
@@ -48,17 +48,26 @@ void BinOpExpr::resolve() {
 		CG::Symtab->objs[L->name]->setType(RHS->getType()->getPointerTo());
 	}
 
+	Type *LType = LHS->getType();
+	Type *RType = RHS->getType();
+
+	// Do data morphing on unlocked variables here.
+	if (isAssignOperator(op) && LHS->getClass() == "VarExpr") {
+		VarExpr *L = (VarExpr *)LHS;
+		Symobj *obj = CG::Symtab->find(L->name);
+
+		if (obj->isLocked == false && ShouldTypesMorph(LType, RType)) {
+			obj->setType(RType->getPointerTo());
+		}
+	} 
+
 	resolved = true;
 }
 
 BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
-	DEBUG_MSG("STARTING BinOpExpr");
-
 	this->LHS = LHS;
 	this->op = op;
 	this->RHS = RHS;
-
-	DEBUG_MSG("COMPLETED BinOpExpr");
 }
 
 Type *BinOpExpr::getType() { 
@@ -79,8 +88,6 @@ Type *BinOpExpr::getType() {
 	}
 
 	if (RHS->getClass() == "FuncCallExpr") {
-		printf("Trying to call a function...\n");
-
 		std::string currFunction = CG::Symtab->getFunctionName();
 	
 		FuncCallExpr *fexpr = (FuncCallExpr *)RHS; 
@@ -110,8 +117,6 @@ Type *BinOpExpr::getType() {
 }
 
 Value* BinOpExpr::Codegen() {
-	DEBUG_MSG("GENERATING BinOpExpr for " << LHS->string() << " " << op << " " << RHS->string());
-
 	Value *L = LHS->Codegen();
 
 	// We want to create the variable here instead of in LHS->Codegen,
@@ -129,7 +134,7 @@ Value* BinOpExpr::Codegen() {
 	Value *OrigL = L;
 	if ((op != "=" && op != "<-") && (LHS->getClass() == "VarExpr" || LHS->getClass() == "DerefId")) {
 		// If it's a variable load it in. 
-		L = CG::Builder.CreateLoad(L);
+		L = CG::Builder.CreateLoad(L, "var");
 	}
 
 	Value *R = RHS->Codegen();
@@ -151,6 +156,8 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	CastValuesToFit(&L, &R, LHS->isSigned(), RHS->isSigned());
+
+
 
 	bool FPOperation = false;
 	if (L->getType()->isFloatingPointTy() && R->getType()->isFloatingPointTy()) {
@@ -254,6 +261,8 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	else if (op == "=" || op == "<-") {
+		CastValueToType(&R, OrigL->getType()->getPointerElementType(), LHS->isSigned());
+
 		Value *v = CG::Builder.CreateStore(R, L);
 		return CG::Builder.CreateLoad(L);
 	} 

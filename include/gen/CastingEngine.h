@@ -25,6 +25,8 @@ bool CastValueToType(Value **v, Type *t, bool isSigned, bool force = false);
 // false otherwise. 
 bool CastValuesToFit(Value **v1, Value **v2, bool isV1Signed, bool isV2Signed);
 
+bool ShouldTypesMorph(Type *src, Type *dest);
+
 Type *GetFittingType(Type *v1, Type *v2);
 
 #endif

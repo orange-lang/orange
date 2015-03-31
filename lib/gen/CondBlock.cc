@@ -8,5 +8,5 @@ CondBlock::CondBlock(Expression *cond, Block *block) {
 		statements.push_back(stmt);
 	}
 
-	symtab = block->symtab; 
+	this->symtab = block->symtab; 
 }

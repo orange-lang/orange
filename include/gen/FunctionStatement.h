@@ -3,6 +3,7 @@
 #include "AST.h"
 #include "ArgExpr.h"
 #include "Block.h"
+#include "Symtab.h"
 
 class FunctionStatement : public Statement {
 public:
@@ -18,7 +19,7 @@ public:
 
 	virtual std::string string() {
 		std::stringstream ss;
-		ss << name << "( ";
+		ss << "[ID: " << body->symtab->ID << "] " << name << "( ";
 		for (unsigned int i = 0; i < args->size(); i++) {
 			ss << (*args)[i]->string() << " ";
 			if (i + 1 != args->size())
@@ -26,9 +27,7 @@ public:
 		}
 		ss << "):\n";
 
-		for (Statement *s : body->statements) {
-			ss << "\t" << s->string() << std::endl;
-		}
+		ss << body->string();
 
 		return ss.str();
 	}

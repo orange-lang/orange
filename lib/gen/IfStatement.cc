@@ -7,9 +7,9 @@ void IfStatement::resolve() {
 	if (resolved)
 		return;
 
-	for (Block *b : blocks) {
-		if (b->resolved) continue; 
+	resolved = true;
 
+	for (Block *b : blocks) {
 		if (dynamic_cast<CondBlock*>(b)) {
 			CondBlock *cb = (CondBlock *)b;
 			cb->condition->resolve();
@@ -18,11 +18,9 @@ void IfStatement::resolve() {
 		b->resolve();
 	}
 
-	resolved = true;
 }
 
 Value* IfStatement::Codegen() {
-	DEBUG_MSG("STARTING CODEGEN FOR IfStatement");
 	// first, create blocks for all the blocks 
 	std::vector<BasicBlock *> BBs;
 	for (Block *b : blocks) {
@@ -109,7 +107,6 @@ Value* IfStatement::Codegen() {
 	// set insert point to continue block
 	CG::Builder.SetInsertPoint(BBs[BBs.size()-1]);
 
-	DEBUG_MSG("COMPLETED CODEGEN FOR IfStatement");
 	return retVal; 
 }
 

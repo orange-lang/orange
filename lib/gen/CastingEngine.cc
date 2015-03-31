@@ -1,6 +1,27 @@
 #include "gen/CastingEngine.h"
 #include "gen/generator.h"
 
+bool ShouldTypesMorph(Type *src, Type *dest) {
+	if (src == nullptr || dest == nullptr) {
+		return false; 
+	}
+
+	if (src->isDoubleTy()) {
+		return false; 
+	}
+
+	if (src->isFloatingPointTy() && dest->isDoubleTy()) {
+		return true; 
+	}
+
+	if (src->isIntegerTy() && dest->isFloatingPointTy()) {
+		return true; 
+	}
+
+	return false;
+}
+
+
 bool CastValueToType(Value **v, Type *t, bool isSigned, bool force) {
 	if (v == nullptr || t == nullptr) {
 		return false;
