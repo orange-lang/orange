@@ -1,0 +1,4 @@
+# external function test 
+extern int32 puts(char *s)
+puts("puts print test")
+return 0

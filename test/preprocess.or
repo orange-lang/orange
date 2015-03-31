@@ -1,3 +1,0 @@
-@ifdef HELLO
-	INVALID CODE
-@endif 

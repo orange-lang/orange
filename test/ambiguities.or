@@ -1,6 +1,0 @@
-# should be a function call 
-f(3 + 5)
-
-# should /not/ parse to a = 3 + b(6 + 3)
-a = 3 + b 
-(6 + 3)

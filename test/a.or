@@ -1,6 +1,0 @@
-# basic test
-def square(int64 a)
-	return 1099511627775
-end
-
-return square(5)

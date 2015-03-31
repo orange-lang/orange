@@ -1,0 +1,5 @@
+@if true
+	return 0
+@endif 
+
+return 1

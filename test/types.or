@@ -1,8 +1,0 @@
-# a.or 
-def test(a)
-	# a should be a float now 
-	a = 3 / 1 + 5.0 * 2
-	return a
-end
-
-test(5)

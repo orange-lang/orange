@@ -1,0 +1,10 @@
+# nested functions test 
+def foo(int a)
+	def bar(int b)
+		return b * b
+	end
+
+	return bar(a * 2)
+end
+
+return foo(2)

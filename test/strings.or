@@ -1,2 +1,0 @@
-extern int32 puts(char *s)
-puts("Hello, orange world!")

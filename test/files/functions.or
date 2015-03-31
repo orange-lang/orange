@@ -1,0 +1,6 @@
+# test functions 
+def foo(int32 a) 
+	return a * a
+end 
+
+return foo(0xF)

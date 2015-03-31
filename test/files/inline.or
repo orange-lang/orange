@@ -4,7 +4,7 @@
 	$mov rax, 0x2000001
 @elif defined(linux)
 	$mov rax, 60
-@endif 
+@end 
 
 $mov rdi, 0
 $syscall

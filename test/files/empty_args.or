@@ -1,0 +1,8 @@
+extern int32 puts(char* s)
+
+def foo()
+	puts("empty_args.or")
+end
+
+foo()
+return 0

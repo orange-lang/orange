@@ -1,0 +1,9 @@
+def square(n)
+	return n * n
+end
+
+if square(5) == 25
+	return 0
+else 
+	return 1
+end

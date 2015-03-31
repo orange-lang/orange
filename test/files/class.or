@@ -1,0 +1,19 @@
+class Foo
+	var a
+
+	def Foo(int a)
+		this->a = a
+	end 
+
+	def Foo()
+		this->a = 15
+	end
+end 
+
+foo = Foo(15)
+
+if (Foo().a == foo.a) 
+	return 0
+else 
+	return 1
+end 
