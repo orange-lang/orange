@@ -87,6 +87,16 @@ public:
 	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 };
 
+class AnyType {
+public:
+	std::string type; 
+	int numPointers = 0; 
+
+	Type *getType();
+
+	AnyType(std::string *type, int numPointers) : type(*type), numPointers(numPointers) {}
+};
+
 class Block {
 public:
 	Value* Codegen();
@@ -112,20 +122,31 @@ public:
 		return nullptr;
 	}
 
-	std::string type;
+	AnyType *type;
 	std::string name;
 	bool isSigned = false;
 
 	virtual std::string string() {
 		std::stringstream ss;
-		if (type != "") {
-			ss << type << " ";
+		if (type->type != "") {
+			ss << type->type << " ";
 		}
 		ss << name;
 		return ss.str();
 	}
 
-	ArgExpr(std::string* type, std::string* name);
+	ArgExpr(AnyType* type, std::string* name);
+};
+
+class ExternFunction : public Statement {
+public:
+	AnyType *returnType; 
+	std::string name; 
+	ArgList *args;	
+
+	Value* Codegen();
+
+	ExternFunction(AnyType *returnType, std::string name, ArgList *args);
 };
 
 class FunctionStatement : public Statement {
@@ -228,6 +249,17 @@ public:
 	}
 
 	ReturnExpr(Expression *expr) : expr(expr) {}
+};
+
+class StrVal : public Expression {
+public:
+	std::string value; 
+
+	virtual Type *getType() { return Type::getInt8PtrTy(getGlobalContext()); }
+
+	Value* Codegen();
+
+	StrVal(std::string v);
 };
 
 class BaseVal : public Expression { };

@@ -6,7 +6,7 @@ typedef CodeGenerator CG;
 Type *getType(std::string typeStr) {
 	if (typeStr == "int" || typeStr == "int64") {
 		return Type::getInt64Ty(getGlobalContext());
-	} else if (typeStr == "int8") {
+	} else if (typeStr == "int8" || typeStr == "char") {
 		return Type::getInt8Ty(getGlobalContext());
 	} else if (typeStr == "int16") {
 		return Type::getInt16Ty(getGlobalContext());
@@ -31,20 +31,40 @@ Type *getType(std::string typeStr) {
 	return nullptr;
 }
 
-ArgExpr::ArgExpr(std::string* type, std::string* name) {
-	this->type = type ? *type : "";
+Type *AnyType::getType() {
+	Type *initial = ::getType(type);
+
+	for (int i = 0; i < numPointers; i++) {
+		initial = initial->getPointerTo(0);
+	}
+
+	return initial;
+}
+
+StrVal::StrVal(std::string v) {
+	value = v.substr(1, v.length()-2);
+}
+
+ArgExpr::ArgExpr(AnyType* type, std::string* name) {
+	this->type = type;
 	this->name = name ? *name : "";
 	
 	// if it's not u, then it's signed
-	if (this->type != "" && (this->type)[0] == 'u') {
+	if (this->type && (this->type->type)[0] == 'u') {
 		isSigned = false;
 	} else isSigned = true;
 
 	CG::Symtab->create(this->name);
-	if (this->type != "") {
-		CG::Symtab->objs[this->name]->setType(getType(this->type));
+	if (this->type) {
+		CG::Symtab->objs[this->name]->setType(this->type->getType());
 	}
 	CG::Symtab->objs[this->name]->isSigned = isSigned;
+}
+
+ExternFunction::ExternFunction(AnyType *returnType, std::string name, ArgList *args) {
+	this->returnType = returnType;
+	this->name = name;
+	this->args = args;
 }
 
 FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *body) {

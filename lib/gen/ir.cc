@@ -24,8 +24,13 @@ Type *FuncCallExpr::getType() {
 	}	
 
 	return ref->body->getReturnType(); 
-	// return o->getType();
 }
+
+Value* StrVal::Codegen() {
+	Value *v = CG::Builder.CreateGlobalString(value);
+	return CG::Builder.CreateConstGEP2_32(v, 0, 0); 
+}
+
 
 
 Value* VarExpr::Codegen() {
@@ -62,6 +67,23 @@ Value* ReturnExpr::Codegen() {
 		return CG::Builder.CreateBr(bb);
 	}
 }
+
+Value* ExternFunction::Codegen() { 
+	std::vector<Type*> Args(args->size());
+	for (unsigned int i = 0; i < args->size(); i++) {
+		ArgExpr *arg = (*args)[i];
+		Args[i] = arg->type->getType();
+	}
+
+	FunctionType *FT = FunctionType::get(returnType->getType(), Args, false);
+	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);
+
+	CG::Symtab->create(name);
+	CG::Symtab->objs[name]->setValue(TheFunction);
+
+	return TheFunction; 
+}
+
 
 Value* FuncCallExpr::Codegen() {
 	std::vector<Value*> Args(args->size());
@@ -184,7 +206,7 @@ Value* FunctionStatement::Codegen() {
 	std::vector<Type*> Args(args->size());
 	for (unsigned int i = 0; i < args->size(); i++) {
 		ArgExpr *arg = (*args)[i];
-		Args[i] = getType(arg->type);
+		Args[i] = arg->type->getType();
 	}
 
 	bool noRet = false; 

@@ -56,7 +56,9 @@
 "public"								return PUBLIC; 
 "private"								return PRIVATE; 
 "shared"								return SHARED; 
+"extern"								return EXTERN;
 
+"char"									SAVESTR(); return TYPE_CHAR; 
 "int"										SAVESTR(); return TYPE_INT; 
 "float"									SAVESTR(); return TYPE_FLOAT; 
 "double"								SAVESTR(); return TYPE_DOUBLE; 
@@ -106,6 +108,7 @@
 "/"											return DIVIDE; 
 "%"											return MOD; 
 
+\"(\\.|[^\\"])*\"				SAVESTR(); return STRING;
 [A-Za-z][A-Za-z0-9_]* 	SAVESTR(); return TYPE_ID;
 
 .												printf("ERROR: Unhandled token: %s\n", yytext);

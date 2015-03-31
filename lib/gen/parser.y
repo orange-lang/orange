@@ -15,6 +15,7 @@
 	Block *block; 
 	Statement *stmt; 
 	ArgList *arglist;
+	AnyType *anytype;
 	ExprList *exprlist;
 	ArgExpr *argexpr;
 	SymTable *symtab;
@@ -22,6 +23,7 @@
 	Expression *expr;
 	std::string *str;
 	int token; 
+	int number;
 }
 
 %start start 
@@ -29,21 +31,23 @@
 %token DEF END TYPE_ID OPEN_PAREN CLOSE_PAREN TYPE COMMA
 %token TIMES NUMBER DIVIDE MINUS PLUS NEWLINE SEMICOLON
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
-%token TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64
+%token TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR
 %token RETURN CLASS USING PUBLIC SHARED PRIVATE OPEN_BRACE CLOSE_BRACE 
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
-%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE
+%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN
 
 %type <block> statements
-%type <stmt> statement
+%type <stmt> statement extern
 %type <expr> expression expr2 expr3 primary VALUE
-%type <fstmt> function opt_id
+%type <fstmt> function opt_id 
 %type <argexpr> opt_arg
 %type <arglist> opt_args opt_parens
 %type <exprlist> expr_list
 %type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
-%type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 type
+%type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR basic_type STRING
+%type <anytype> type
+%type <number> var_ptrs
 
 %left ASSIGN 
 %right PLUS MINUS TIMES DIVIDE COMMA
@@ -62,12 +66,15 @@ statements	: 		statements statement { if ($2) $1->statements.push_back($2); }
 						;
 
 statement 	: 		function term { $$ = $1; } 
+						|			extern term { $$ = (Statement *)$1; }
 						| 		expression term { $$ = (Statement *)$1; } 
 						|			RETURN expression term { $$ = (Statement *)(new ReturnExpr($2)); }
 						| 		term { $$ = nullptr; } 
 						;
 
 term 				:			NEWLINE | SEMICOLON ;
+
+extern 			:			EXTERN type TYPE_ID OPEN_PAREN opt_args CLOSE_PAREN { $$ = new ExternFunction($2, *$3, $5); }
 
 function		:	 		{ $<symtab>$ = CodeGenerator::Symtab; } 
 									{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
@@ -86,8 +93,13 @@ opt_args 		:			opt_args COMMA opt_arg { $1->push_back($3); }
 opt_arg 		:			type TYPE_ID { $$ = new ArgExpr($1, $2); } 
 						| 		TYPE_ID { $$ = new ArgExpr(nullptr, $1); } ; 
 
-type  			:			TYPE_INT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
-						|			TYPE_INT32 | TYPE_INT64 | TYPE_UINT8 | TYPE_UINT16 | TYPE_UINT32 | TYPE_UINT64				
+// type: get any number of TIMES for pointers 
+type 				: 		basic_type var_ptrs { $$ = new AnyType($1, $2); }
+var_ptrs 		: 		var_ptrs TIMES { $$ = $1 + 1; }
+						|			{ $$ = 0; };
+
+basic_type  :			TYPE_INT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
+						|			TYPE_INT32 | TYPE_INT64 | TYPE_UINT8 | TYPE_UINT16 | TYPE_UINT32 | TYPE_UINT64 | TYPE_CHAR				
 
 expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, '=', $3); }
 						|			expr2 { $$ = $1; }
@@ -104,6 +116,7 @@ primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 						| 		VALUE { $$ = $1; }
 						| 		TYPE_ID OPEN_PAREN expr_list CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
 						|			TYPE_ID { $$ = new VarExpr(*$1); }
+						|			STRING { $$ = new StrVal(*$1); }
 						;
 
 expr_list		:			expr_list COMMA expression { $1->push_back($3); }

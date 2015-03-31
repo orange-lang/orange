@@ -99,10 +99,13 @@ void CodeGenerator::Generate(Block *globalBlock) {
 		v = CG::Builder.CreateAlloca(retType, nullptr, "");
 		CG::Symtab->retVal = v;
 	}
-	
+
 	globalBlock->Codegen();
 
+
 	if (noRet == true) {
+		Builder.CreateBr(ExitBB);
+		Builder.SetInsertPoint(ExitBB);
 		CG::Builder.CreateRetVoid();
 	} else {
 		Builder.SetInsertPoint(ExitBB);
@@ -127,11 +130,22 @@ void CodeGenerator::GenerateObject() {
 	StringRef name = sys::getHostCPUName();
 
   SubtargetFeatures Features;
+
+	Features.getDefaultSubtargetFeatures(triple);
   Features.AddFeature("64bit");
-  Features.AddFeature("64bit-mode");
+  // Features.AddFeature("64bit-mode");
 	std::string FeaturesStr = Features.getString();
 
 	TargetOptions options;
+	options.NoFramePointerElim = true;
+
+	options.MCOptions.MCRelaxAll = 1;
+	options.MCOptions.SanitizeAddress = 1;
+	options.MCOptions.MCNoExecStack = 1;
+	options.MCOptions.ShowMCEncoding = 1;
+	options.MCOptions.ShowMCInst = 1;
+	options.DataSections = true;
+	options.PositionIndependentExecutable = 1;
 
 	if (verboseOutput == true) {
 		std::cout << "Detected CPU " << name.str() << std::endl; 
@@ -177,7 +191,7 @@ void CodeGenerator::GenerateObject() {
 
 	LLVMTargetMachine::CodeGenFileType genType = outputAssembly ? LLVMTargetMachine::CGFT_AssemblyFile : LLVMTargetMachine::CGFT_ObjectFile;
 
-	bool b = tm->addPassesToEmitFile(*ThePM, strm, genType, true);
+	bool b = tm->addPassesToEmitFile(*ThePM, strm, genType, false);
 	if (b == true) {
 		std::cerr << "fatal: emission is not supported.\n";
 		exit(1);
@@ -201,6 +215,7 @@ void CodeGenerator::GenerateObject() {
 		options.push_back("-w");
 #endif
 
+		options.push_back("-lc");
 		options.push_back("-o");
 		options.push_back(outputFile.c_str()); // final output. defaults to a.out
 #endif 

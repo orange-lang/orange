@@ -3,7 +3,10 @@
 [global start]
 [extern _@main]
 start:
+	and esp, 0xfff8
+	push rbp
 	call _@main
+	pop rbp
 	mov rdi, rax
 	
 	; syscall number: rax + 0x2000000 (+ 0x2000000 is a mac thing) 
