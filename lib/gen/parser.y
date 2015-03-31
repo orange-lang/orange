@@ -42,7 +42,7 @@
 
 %type <ifstmt> if_statement opt_else
 %type <block> statements
-%type <stmt> statement extern
+%type <stmt> statement extern return_stmt
 %type <expr> expression primary VALUE opt_expr declaration opt_eq
 %type <did> dereference
 %type <fstmt> function opt_id 
@@ -59,6 +59,9 @@
 %left COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS 
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left OPEN_PAREN CLOSE_PAREN
+
+%nonassoc IF
 
 %%
 	
@@ -74,13 +77,17 @@ statements
 	;
 
 statement 		
-	:	function term { $$ = $1; } 
+	:	function term { $$ = $1; }
 	|	extern term { $$ = (Statement *)$1; }
 	|	expression term { $$ = (Statement *)$1; } 
 	|	declaration term { $$ = (Statement *)$1; }
-	|	RETURN opt_expr term { $$ = (Statement *)(new ReturnExpr($2)); }
-	|	term { $$ = nullptr; } 
+	| return_stmt term { $$ = $1; }
+	| term { $$ = nullptr; }
 	;
+
+return_stmt
+	: RETURN opt_expr { $$ = (Statement *)(new ReturnExpr($2)); }
+
 
 opt_expr			
 	:	expression { $$ = $1; }
@@ -97,13 +104,21 @@ extern
 	;
 
 function
-	:	block_create DEF opt_id term statements END 
-		{ $$ = $3; $$->body = $5; $$->body->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
+	:	DEF opt_id term statements END 
+		{ $$ = $2; $$->body = $4; $$->body->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
 	;
 
 opt_id			
-	:	TYPE_ID opt_parens { $$ = new FunctionStatement($1, $2, nullptr); } 
-	|	opt_parens { $$ = new FunctionStatement(nullptr, $1, nullptr); } ;
+	:	TYPE_ID opt_parens 
+		{ 
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+			$$ = new FunctionStatement($1, $2, nullptr); 
+		} 
+	|	opt_parens 
+		{ 
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+			$$ = new FunctionStatement(nullptr, $1, nullptr); 
+		} 
 	;
 
 opt_parens
@@ -208,15 +223,39 @@ dereference
 	;
 
 if_statement
-	:	block_create IF expression term statements opt_else 
-		{ $$ = $6; CondBlock *b = new CondBlock($3, $5); $$->blocks.insert($$->blocks.begin(), b); b->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
+	:	IF expression term statements opt_else 
+		{ 
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+
+			$$ = $5; 
+			CondBlock *b = new CondBlock($2, $4); 
+			$$->blocks.insert($$->blocks.begin(), b);
+			b->symtab = CG::Symtabs.top(); 
+			CG::Symtabs.pop(); 
+		}
 	;
 
 opt_else
-	:	block_create ELIF expression term statements opt_else 
-		{ $$ = $6; CondBlock *b = new CondBlock($3, $5); $$->blocks.insert($$->blocks.begin(), b); b->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
-	|	block_create ELSE term statements END
-		{ $$ = new IfStatement; $$->blocks.insert($$->blocks.begin(), $4); $4->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
+	:	ELIF expression term statements opt_else 
+		{ 
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+
+			$$ = $5; 
+			CondBlock *b = new CondBlock($2, $4); 
+			$$->blocks.insert($$->blocks.begin(), b);
+			b->symtab = CG::Symtabs.top(); 
+			CG::Symtabs.pop(); 
+		}	
+	|	ELSE term statements END
+		{ 
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+
+			$$ = new IfStatement; 
+			$$->blocks.insert($$->blocks.begin(), $3); 
+			
+			$3->symtab = CG::Symtabs.top(); 
+			CG::Symtabs.pop(); 
+		}
 	|	END { $$ = new IfStatement; }
 	;
 
@@ -228,10 +267,6 @@ optexprlist
 expr_list		
 	:	expr_list COMMA expression { $1->push_back($3); }	
 	|	expression { $$ = new ExprList(); $$->push_back($1); }
-	;
-
-block_create
-	:	{ auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s); }
 	;
 						 
 %%
