@@ -11,6 +11,7 @@
 #include "run.h"
 #include "SymTable.h"
 #include "Block.h"
+#include "FunctionStmt.h"
 
 /**
  * Runner is a class that will run or build a file. It starts with the name 
@@ -40,7 +41,22 @@ private:
 	/**
 	 * The global block for this runner.
 	 */
-	Block* m_block = nullptr;
+	FunctionStmt* m_function = nullptr;
+
+	/**
+	 * The module for this runner.
+	 */
+	Module* m_module = nullptr;
+
+	/**
+	 * The builder for this runner.
+	 */
+	IRBuilder<>* m_builder = nullptr;
+
+	/**
+	 * The PassManager used to optimize functions.
+	 */
+	FunctionPassManager *m_functionOptimizer;
 public:
 	/**
 	 * Returns whether or not there is at least one error in the run.
@@ -110,7 +126,28 @@ public:
 	 *
 	 * @return The global block.
 	 */
-	Block* mainBlock() const;
+	FunctionStmt* mainFunction() const;
+
+	/**
+	 * Gets the LLVM module assigned to this runner.
+	 *
+	 * @return The module assigned to this runner.
+	 */
+	Module* module() const;
+
+	/**
+	 * Gets the LLVM builder assigned to this rnuner.
+	 *
+	 * @return The LLVM builder assigned to this runner.
+	 */
+	IRBuilder<>* builder() const;
+
+	/**
+	 * Gets the FunctionPassManager assigned to this runner.
+	 *
+	 * @return The FunctionPassManager assigned to this runner.
+	 */
+	FunctionPassManager* functionOptimizer() const;
 
 	/**
 	 * Creates an instance of Runner and registers it inside of the GeneratingEngine.

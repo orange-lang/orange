@@ -59,7 +59,28 @@ public:
 	 *
 	 * @return The active runner of the shared instance.
 	 */
-	static Runner* runner();
+	static Runner* runner(); 
+
+	/**
+	 * Returns the builder in the active runner.
+	 *
+	 * @return The builder of the active runner.
+	 */
+	static IRBuilder<>* builder();
+
+	/**
+	 * Returns the module in the active runner.
+	 *
+	 * @return The module of the active runner.
+	 */
+	 static Module* module();
+
+	 /**
+	  * Returns the function optimizer in the active runner.
+	  *
+	  * @return The function optimizer of the active runner.
+	  */
+	 static FunctionPassManager* functionOptimizer();
 };
 
 typedef GeneratingEngine GE;

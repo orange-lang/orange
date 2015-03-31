@@ -35,3 +35,15 @@ Runner* GeneratingEngine::active() const {
 void GeneratingEngine::setActive(Runner *runner) {
 	m_active = runner; 
 }
+
+IRBuilder<>* GeneratingEngine::builder() {
+	return runner()->builder();
+}
+
+Module* GeneratingEngine::module() {
+	return runner()->module();
+}
+
+FunctionPassManager* GeneratingEngine::functionOptimizer() {
+	return runner()->functionOptimizer();
+}

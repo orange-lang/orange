@@ -18,7 +18,7 @@
 %}
 
 %locations
-
+// %error-verbose
 
 %union {
 	Expression *expr;

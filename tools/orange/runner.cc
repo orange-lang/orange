@@ -18,8 +18,15 @@ Runner::Runner(std::string pathname) {
 
 	// Create the global block
 	SymTable *globalSymtab = new SymTable(nullptr);
-	m_block = new Block(globalSymtab);
-	pushBlock(m_block);
+	m_function = new FunctionStmt("__INTERNAL_main", globalSymtab);
+	pushBlock(m_function);
+
+	// Create LLVM stuff; module, builder, etc
+	m_module = new Module("orange", getGlobalContext());
+	m_builder = new IRBuilder<>(getGlobalContext());
+
+	m_functionOptimizer = new FunctionPassManager(m_module);
+	m_functionOptimizer->doInitialization();
 }
 
 void Runner::haltRun() {
@@ -60,7 +67,11 @@ RunResult Runner::run() {
 	yyin = file; // give flex the file 
 	yyparse(); // and do our parse.
 
-	// TODO: run the code.
+	// Now that we've parsed everything, let's analyze and resolve code...
+	mainFunction()->resolve();
+
+	// TODO: run the generated module.
+
 	int retCode = 0;
 
 	// Do cleanup.
@@ -114,6 +125,18 @@ Block* Runner::topBlock() {
 	return m_blocks.top();
 }
 
-Block* Runner::mainBlock() const {
-	return m_block;
+FunctionStmt* Runner::mainFunction() const {
+	return m_function;
+}
+
+Module* Runner::module() const {
+	return m_module;
+}
+
+IRBuilder<>* Runner::builder() const {
+	return m_builder;
+}
+
+FunctionPassManager* Runner::functionOptimizer() const {
+	return m_functionOptimizer;
 }

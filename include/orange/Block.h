@@ -18,14 +18,14 @@ private:
 	 * The symbol table for this Block.
 	 */
 	SymTable *m_symtab;
-
-	std::vector<ASTNode *> m_statements;
 protected:
 	/**
 	 * Determines whether or not this block is locked,
 	 * which will happen upon calling Codegen().
 	 */
 	bool m_locked = false;
+
+	std::vector<ASTNode *> m_statements;
 
 	/**
 	 * Generates all of the statements.
