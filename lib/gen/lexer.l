@@ -91,6 +91,7 @@
 "uint32"								SAVESTR(); return TYPE_UINT32; 
 "int64"									SAVESTR(); return TYPE_INT64; 
 "uint64"								SAVESTR(); return TYPE_UINT64;
+"void"									SAVESTR(); return TYPE_VOID;
 
 "("											return OPEN_PAREN; 
 ")"											return CLOSE_PAREN; 

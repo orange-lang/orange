@@ -154,7 +154,6 @@ Value* BinOpExpr::Codegen() {
 		exit(1);
 	}
 
-
 	Value *OrigL = L;
 	if ((op != "=" && op != "<-") && LHS->returnsPtr()) {
 		// If it's a variable load it in. 
@@ -168,7 +167,7 @@ Value* BinOpExpr::Codegen() {
 		std::cerr << "fatal: RHS of expression has returned null!\n";
 		exit(1);
 	}
-
+	
 	if (RHS->returnsPtr()) {
 		// If it's a variable load it in. 
 		R = CG::Builder.CreateLoad(R);
@@ -181,17 +180,75 @@ Value* BinOpExpr::Codegen() {
 
 	CastValuesToFit(&L, &R, LHS->isSigned(), RHS->isSigned());
 
-
-
-	bool FPOperation = false;
-	if (L->getType()->isFloatingPointTy() && R->getType()->isFloatingPointTy()) {
-		FPOperation = true;
-	}
+	bool FPOperation = L->getType()->isFloatingPointTy() && R->getType()->isFloatingPointTy();
+	bool isPtrOperation = L->getType()->isPointerTy() || R->getType()->isPointerTy(); 
 
 	if (op == "/" && L->getType()->isFloatingPointTy() != R->getType()->isFloatingPointTy()) {
 		std::cerr << "fatal: trying to perform operation " << op 
 			<< " with only one of the operands being a floating point value.\n";
 		exit(1);
+	}
+
+	if (isPtrOperation && op != "=" && op != "<-") {
+
+		if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+			std::cerr << "error: trying to perform binary operation with a pointer and float.\n";
+			exit(1); 
+		}
+
+		if (isAssignOperator(op) && L->getType()->isPointerTy() == false) {
+			std::cerr << "error: cannot assign pointer to non-pointer.\n";
+			exit(1);
+		} 
+
+		if (op == "+") {
+			// turn the pointer into an integer 
+			Type *ptrType = L->getType()->isPointerTy() ? L->getType() : R->getType(); 
+
+			if (L->getType()->isPointerTy()) 
+				L = CG::Builder.CreatePointerCast(L, IntegerType::get(getGlobalContext(), 64));
+			else 
+				R = CG::Builder.CreatePointerCast(R, IntegerType::get(getGlobalContext(), 64));
+
+			Value *sum = CG::Builder.CreateAdd(L, R);
+			sum = CG::Builder.CreateIntToPtr(sum, ptrType);
+			return sum;
+		} else if (op == "-") {
+			// turn the pointer into an integer 
+			Type *ptrType = L->getType()->isPointerTy() ? L->getType() : R->getType(); 
+
+			if (L->getType()->isPointerTy()) 
+				L = CG::Builder.CreatePointerCast(L, IntegerType::get(getGlobalContext(), 64));
+			else 
+				R = CG::Builder.CreatePointerCast(R, IntegerType::get(getGlobalContext(), 64));
+
+			Value *difference = CG::Builder.CreateSub(L, R);
+			difference = CG::Builder.CreateIntToPtr(difference, ptrType);
+			return difference;
+		} else if (op == "+=") {
+			if (L->getType()->isPointerTy()) 
+				L = CG::Builder.CreatePointerCast(L, IntegerType::get(getGlobalContext(), 64));
+			else 
+				R = CG::Builder.CreatePointerCast(R, IntegerType::get(getGlobalContext(), 64));
+
+			Value *sum = CG::Builder.CreateAdd(L, R);
+			sum = CG::Builder.CreateIntToPtr(sum, OrigL->getType()->getPointerElementType());
+			CG::Builder.CreateStore(sum, OrigL);		
+			return CG::Builder.CreateLoad(OrigL);	
+		} else if (op == "-=") {
+			if (L->getType()->isPointerTy()) 
+				L = CG::Builder.CreatePointerCast(L, IntegerType::get(getGlobalContext(), 64));
+			else 
+				R = CG::Builder.CreatePointerCast(R, IntegerType::get(getGlobalContext(), 64));
+
+			Value *difference = CG::Builder.CreateSub(L, R);
+			difference = CG::Builder.CreateIntToPtr(difference, OrigL->getType()->getPointerElementType());
+			CG::Builder.CreateStore(difference, OrigL);		
+			return CG::Builder.CreateLoad(OrigL);	
+		} else {
+			std::cerr << "fatal: trying to perform invalid binary operation " << op << " on a pointer\n";
+			exit(1);
+		}
 	}
 
 	if (op == "+") {

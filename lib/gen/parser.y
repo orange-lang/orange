@@ -39,7 +39,7 @@
 %token DEF END IF ELIF ELSE TYPE_ID OPEN_PAREN CLOSE_PAREN TYPE COMMA
 %token TIMES NUMBER DIVIDE MINUS PLUS NEWLINE SEMICOLON
 %token TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
-%token TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR
+%token TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR TYPE_VOID
 %token RETURN CLASS USING PUBLIC SHARED PRIVATE OPEN_BRACE CLOSE_BRACE 
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
@@ -58,9 +58,9 @@
 %type <argexpr> opt_arg arg_end
 %type <arglist> opt_args arg_list opt_parens
 %type <exprlist> expr_list optexprlist
-%type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
+%type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16 TYPE_VOID
 %type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR basic_type STRING
-%type <anytype> type opt_type
+%type <anytype> type opt_type opt_retType
 %type <number> var_ptrs
 %type <values> arrays
 
@@ -194,7 +194,6 @@ loop
 			ForLoop *forLoop = new ForLoop(nullptr, nullptr, nullptr, $4, INFINITE_LOOP);
 			$$ = forLoop; 					
 		}
-//	| DO NEWLINE opt_statements WHILE expr END
 
 return_stmt
 	: RETURN opt_expr { $$ = (Statement *)(new ReturnExpr($2)); }
@@ -259,9 +258,13 @@ unless
 		}
 
 function
-	:	DEF opt_id term opt_statements_internal END 
-		{ $$ = $2; $$->body = $4; $$->body->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
+	:	DEF opt_id opt_retType term opt_statements_internal END 
+		{ $$ = $2; $$->body = $5; $$->returnType = $3; $$->body->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
 	;
+
+opt_retType
+	: ARROW type { $$ = $2; }
+	| { $$ = nullptr; } 
 
 opt_id			
 	:	TYPE_ID opt_parens 
@@ -333,6 +336,7 @@ basic_type
 	|	TYPE_UINT32 
 	|	TYPE_UINT64 
 	|	TYPE_CHAR
+	| TYPE_VOID
 	;
 
 declaration	

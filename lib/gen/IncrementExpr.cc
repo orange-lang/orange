@@ -30,7 +30,17 @@ Value* IncrementExpr::Codegen() {
 
 	Value *oper;
 
-	if (isFP) {
+	if (pre_v->getType()->isPointerTy()) {
+		Value *origV = pre_v; 
+
+		uint64_t delta = (op == "++") ? 1 : -1;  
+		Value *newV = CG::Builder.CreatePointerCast(pre_v, IntegerType::get(getGlobalContext(), 64));
+		oper = CG::Builder.CreateAdd(newV, ConstantInt::get(newV->getType(), delta, true));
+
+		oper = CG::Builder.CreateIntToPtr(oper, origV->getType());
+		CG::Builder.CreateStore(oper, e);
+		return e; 
+	} else if (isFP) {
 		double delta = (op == "++") ? 1.0 : -1.0;  
 		oper = CG::Builder.CreateFAdd(pre_v, ConstantFP::get(pre_v->getType(), delta));
 	} else {

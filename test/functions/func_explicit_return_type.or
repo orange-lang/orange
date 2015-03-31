@@ -1,0 +1,27 @@
+def fooFloatFloat() -> float 
+	return 0.0f
+end 
+
+def fooFloatInt() -> float  
+	return 0
+end 
+
+def fooIntInt() -> int 
+	return 0
+end 
+
+def fooIntFloat() -> int 
+	return 0.0f
+end 
+
+def fooVoid() -> void 
+	return
+end
+
+fooFloatFloat()
+fooFloatInt()
+fooIntInt()
+fooIntFloat()
+fooVoid()
+
+return 0

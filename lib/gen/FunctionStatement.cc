@@ -216,7 +216,13 @@ Value* FunctionStatement::Codegen() {
 
 	DEBUG_MSG("GETTING RETURN TYPE FOR FUNCTION BLOCK");
 	bool noRet = false; 
-	Type *retType = body->getReturnType();
+	Type *retType = nullptr;
+
+	if (returnType != nullptr) {
+		retType = returnType->getType(); 
+	} else {
+		retType = body->getReturnType(); 
+	}
 
 	if (hasReturn == false && retType == nullptr && body->statements.size() > 0) {
 		retType = body->getLastStatementType();

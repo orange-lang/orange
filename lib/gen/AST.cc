@@ -38,6 +38,8 @@ Type *getType(std::string typeStr) {
 		return Type::getFloatTy(getGlobalContext());
 	} else if (typeStr == "double") {
 		return Type::getDoubleTy(getGlobalContext());
+	} else if (typeStr == "void") {
+		return Type::getVoidTy(getGlobalContext());
 	} else {
 		std::cerr << "FATAL: unknown type " << typeStr << "!\n";
 	}
@@ -112,6 +114,8 @@ AnyType *AnyType::Create(Type *t) {
 		ret->type = "int32";
 	} else if (t->isIntegerTy(64)) {
 		ret->type = "int64";
+	} else if (t->isVoidTy()) {
+		ret->type = "void";
 	}
 
 	if (t->isArrayTy()) {

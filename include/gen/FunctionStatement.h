@@ -19,6 +19,7 @@ public:
 	std::string name;
 	ArgList *args;
 	Block *body;
+	AnyType *returnType = nullptr;
 
 	void resolve();
 
