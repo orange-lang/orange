@@ -12,6 +12,8 @@
 %}
 
 %option noyywrap
+%option nounistd
+%option never-interactive
 
 %x COMMENT 
 %x BINARY 

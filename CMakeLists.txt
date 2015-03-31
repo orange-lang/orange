@@ -2,7 +2,18 @@ cmake_minimum_required (VERSION 2.8.8)
 project (oc)
 set(oc_SOURCE_DIR ${CMAKE_SOURCE_DIR}/tools/oc)
 
-list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -fexceptions -Wno-unused -O3 -Wno-deprecated-register")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -fexceptions -O3")
+
+if(${UNIX}) 
+	list(APPEND CMAKE_CXX_FLAGS "-Wno-unused -Wno-deprecated-register")
+endif(${UNIX})
+
+if(${WIN32})
+	message(STATUS "Detected WIN32...")
+
+	list(APPEND CXX_DEFINES "${CMAKE_CXX_DEFINES} -DYY_NO_UNISTD_H")
+	list(APPEND CXX_DEFINES "${CMAKE_C_DEFINES} -DYY_NO_UNISTD_H")
+endif(${WIN32})
 
 # LLVM stuff
 find_package(LLVM REQUIRED CONFIG)
