@@ -56,6 +56,7 @@
 "else"									return ELSE;
 "end"										return END; 
 "if"										return IF;
+"when"									return WHEN;
 "class"									return CLASS; 
 "using"									return USING; 
 "public"								return PUBLIC; 

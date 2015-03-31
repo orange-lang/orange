@@ -38,11 +38,11 @@
 %token RETURN CLASS USING PUBLIC SHARED PRIVATE OPEN_BRACE CLOSE_BRACE 
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
-%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS
+%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 
-%type <ifstmt> if_statement opt_else
+%type <ifstmt> if_statement opt_else inline_if
 %type <block> statements
-%type <stmt> statement extern return_stmt
+%type <stmt> statement extern return_stmt expr_or_ret
 %type <expr> expression primary VALUE opt_expr declaration opt_eq
 %type <did> dereference
 %type <fstmt> function opt_id 
@@ -80,6 +80,7 @@ statement
 	:	function term { $$ = $1; }
 	|	extern term { $$ = (Statement *)$1; }
 	|	expression term { $$ = (Statement *)$1; } 
+	| inline_if term { $$ = $1; }
 	|	declaration term { $$ = (Statement *)$1; }
 	| return_stmt term { $$ = $1; }
 	| term { $$ = nullptr; }
@@ -88,6 +89,25 @@ statement
 return_stmt
 	: RETURN opt_expr { $$ = (Statement *)(new ReturnExpr($2)); }
 
+inline_if
+	:	expr_or_ret WHEN expression
+		{ 
+			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+
+			CondBlock *b = new CondBlock($3); 
+			b->statements.push_back($1); 
+			b->symtab = CG::Symtabs.top(); 
+
+			CG::Symtabs.pop();
+
+			$$ = new IfStatement;
+			$$->blocks.push_back(b);
+		} 
+	;
+
+expr_or_ret
+	: expression { $$ = $1; }
+	|	return_stmt { $$ = $1; }
 
 opt_expr			
 	:	expression { $$ = $1; }

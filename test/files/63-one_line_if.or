@@ -1,0 +1,4 @@
+a = 5 
+a = 0 when 5 > 3 
+a += 1 when 5 < 3
+return a
