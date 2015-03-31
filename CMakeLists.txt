@@ -48,6 +48,4 @@ include_directories(etc/cereal/include)
 
 add_subdirectory(lib/libor)
 add_subdirectory(lib/helper)
-add_subdirectory(lib/gen)
-add_subdirectory(tools/oc)
-add_subdirectory(tools/river)
+add_subdirectory(tools/orange)
