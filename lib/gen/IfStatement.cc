@@ -60,14 +60,6 @@ Value* IfStatement::Codegen() {
 	// create a block that all blocks continue to (including the main block)
 	BBs.push_back(BasicBlock::Create(getGlobalContext(), "continue", CG::Symtabs.top()->getFunction(), CG::Symtabs.top()->getFunctionEnd()));
 
-	// allocate a variable for this to return to, IF this has a type.
-	Value *retVal = nullptr; 
-	Type *ty = getType();
-
-	if (ty->isVoidTy() == false) {
-		retVal = CG::Builder.CreateAlloca(ty);
-	}
-
 	// then, for each block:
 	//		- if it's a conditional block, check for conditional, and do conditional jump to corresponding block
 	// 		- if it's not a conditional block (else), do jump to corresponding block 
@@ -114,10 +106,6 @@ Value* IfStatement::Codegen() {
 		// 3. codegen that block.
 		Value *blockRet = blocks[i]->Codegen();
 
-		if (retVal != nullptr) {
-			CG::Builder.CreateStore(blockRet, retVal);
-		}
-
 		// 4. set up jump to continue block if there's no return
 		if (blocks[i]->hasJmpInstr() == false) 
 			CG::Builder.CreateBr(BBs[BBs.size()-1]);
@@ -129,7 +117,7 @@ Value* IfStatement::Codegen() {
 	// set insert point to continue block
 	CG::Builder.SetInsertPoint(BBs[BBs.size()-1]);
 
-	return retVal; 
+	return nullptr; 
 }
 
 Type *IfStatement::getType() {

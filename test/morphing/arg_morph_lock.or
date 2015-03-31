@@ -1,12 +1,12 @@
 def foo(int n)
-	n + 3
+	return n + 3
 end 
 
 foo(3)
 a = foo(3.9) - 6.0
 
 if a > 0.5
-	1
+	return 1
 else 
-	0
+	return 0
 end

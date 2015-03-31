@@ -223,11 +223,7 @@ Value* FunctionStatement::Codegen() {
 	} else {
 		retType = body->getReturnType(); 
 	}
-
-	if (hasReturn == false && retType == nullptr && body->statements.size() > 0) {
-		retType = body->getLastStatementType();
-	}
-
+	
 	if (retType && retType->isVoidTy()) {
 		DEBUG_MSG("NO RET FOR FUNCTION " << name << " (VOID TY)");
 		noRet = true;

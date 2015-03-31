@@ -3,11 +3,11 @@ def fib(n)
 		return fib(n - 1) + fib(n - 2)
 	end 
 
-	n
+	return n
 end	
 
 if fib(8) != 21 
-	1
+	return 1
 else 
-	0
+	return 0
 end

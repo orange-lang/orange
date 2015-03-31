@@ -1,5 +1,5 @@
 def foo()
-	5
+	return 5
 end
 
-foo() - foo()
+return foo() - foo()

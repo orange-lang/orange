@@ -3,4 +3,4 @@ b = 0
 arr = [&a, &b]
 *arr[0] = 1
 *arr[1] = 2
-b - a - a
+return b - a - a

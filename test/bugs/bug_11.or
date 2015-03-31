@@ -3,11 +3,11 @@ def foo(n)
 		return foo(n - 1)
 	end 
 
-	n
+	return n
 end	
 
 if foo(8) != 1
-	1
+	return 1
 else 
-	0
+	return 0
 end

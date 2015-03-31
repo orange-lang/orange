@@ -3,7 +3,7 @@ def fib(n)
 		return n
 	end 
 
-	fib(n - 1) + fib(n - 2)
+	return fib(n - 1) + fib(n - 2)
 end
 
 def fib2(n)
@@ -11,7 +11,7 @@ def fib2(n)
 		return fib2(n - 1) + fib2(n - 2)
 	end 
 
-	n
+	return n
 end	
 
 def fib3(n)
@@ -21,15 +21,15 @@ def fib3(n)
 		return 1
 	end 
 
-	fib3(n - 1) + fib3(n - 2)
+	return fib3(n - 1) + fib3(n - 2)
 end
 
 if fib(8) != 21
-	1
+	return 1
 elif fib2(8) != 21
-	1
+	return 1
 elif fib3(8) != 21
-	1
+	return 1
 else 
-	0
+	return 0
 end

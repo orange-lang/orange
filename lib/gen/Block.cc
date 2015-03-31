@@ -145,7 +145,6 @@ void Block::resolve() {
 		stmt->resolve();
 	}
 
-
 	for (FunctionStatement *fstmt : functions) {
 		if (fstmt == nullptr) {
 			std::cerr << "fatal: can't perform semantic analysis on null function statement\n"; 
@@ -159,27 +158,22 @@ void Block::resolve() {
 }
 
 Value* Block::Codegen() {
-	Value *ret = nullptr; 
-
 	for (Statement *stmt : statements) {
 		if (stmt == nullptr) {
 			std::cerr << "fatal: generating a null statement\n";
+			exit(1);
 		}
 
 		DEBUG_MSG("(BLOCK) CALLING CODEGEN FOR " << stmt->getClass() << " ( " << stmt->string() << " )");
-		ret = stmt->Codegen();
+		Value *v = stmt->Codegen();
+		DEBUG_MSG("(BLOCK) FINISHED " << stmt->getClass());
 
-		if (stmt->getClass() == "VarExpr" || stmt->getClass() == "IfStatement") {
-			if (ret) ret = CG::Builder.CreateLoad(ret);
-		} 
-		
 	  if (dynamic_cast<ReturnExpr*>(stmt)) {
-	  	break; // only process one return statement per block. 
-	  	// anything else is unreachable.
+	  	return v; 
 	  }
 	}
 
-	return ret;
+	return nullptr;
 }
 
 Block::~Block() {
