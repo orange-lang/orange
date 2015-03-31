@@ -26,6 +26,9 @@ private:
 	Value *m_value = nullptr;
 	Type *m_type = nullptr; 
 public:
+	bool isSigned = false;
+	bool isFunction = false;
+	
 	Value *getValue() const;
 	Type *getType() const;  
 
@@ -99,6 +102,7 @@ public:
 
 	std::string type;
 	std::string name;
+	bool isSigned = false;
 
 	virtual std::string string() {
 		std::stringstream ss;
@@ -220,10 +224,7 @@ class BaseVal : public Expression { };
 
 class UIntVal : public BaseVal {
 public:
-	Value* Codegen() {
-		printf("UIntVal::Codegen()\n");
-		return nullptr;
-	}
+	Value* Codegen();
 
 	uint64_t value;
 	uint8_t size;
@@ -306,6 +307,7 @@ class CodeGenerator {
 public:
 	static Module *TheModule;
 	static IRBuilder<> Builder;
+	static FunctionPassManager *TheFPM;
 	
 	static Symtab* Symtab;
 	

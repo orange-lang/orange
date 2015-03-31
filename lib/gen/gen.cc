@@ -3,11 +3,24 @@
 Module *CodeGenerator::TheModule;
 IRBuilder<> CodeGenerator::Builder(getGlobalContext());
 Symtab* CodeGenerator::Symtab = nullptr;
+FunctionPassManager* CodeGenerator::TheFPM;
 
 typedef CodeGenerator CG;
 
 void CodeGenerator::init() {
 	TheModule = new Module("orange", getGlobalContext());
+	
+	FunctionPassManager *OurFPM = new FunctionPassManager(TheModule);
+	TheModule->setDataLayout("");
+	
+	OurFPM->add(createBasicAliasAnalysisPass());
+	OurFPM->add(createInstructionCombiningPass());
+	OurFPM->add(createReassociatePass());
+	OurFPM->add(createGVNPass());
+	OurFPM->add(createCFGSimplificationPass());
+	OurFPM->add(createDeadCodeEliminationPass());
+	OurFPM->doInitialization();
+	TheFPM = OurFPM;
 }
 
 void CodeGenerator::Generate(Block *globalBlock) {
@@ -22,8 +35,6 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	CG::Symtab = globalBlock->symtab;
 	
 	globalBlock->Codegen();
-
-	printf("((TODO: CODE OPTIMIZATION))\n");
 
 	TheModule->dump();
 }
@@ -48,6 +59,10 @@ Value* VarExpr::Codegen() {
 }
 
 Value* IntVal::Codegen() {
+	return ConstantInt::get(getGlobalContext(), APInt(size, value));
+}
+
+Value* UIntVal::Codegen() {
 	return ConstantInt::get(getGlobalContext(), APInt(size, value));
 }
 
@@ -77,6 +92,23 @@ Value* FuncCallExpr::Codegen() {
 	return CG::Builder.CreateCall(o->getValue(), Args, name);
 }
 
+
+bool isSigned(Expression *e) {
+	if (dynamic_cast<IntVal*>(e)) {
+		return true;
+	} else if (dynamic_cast<UIntVal*>(e)) {
+		return false;
+	} else if (dynamic_cast<VarExpr*>(e)) {
+		VarExpr *ve = (VarExpr *)e;
+		Symobj* p = CG::Symtab->find(ve->name);
+		std::cout << ve->name << " signed: " << p->isSigned << std::endl;
+		return p->isSigned;
+	} else {
+		std::cerr << "Fatal: can't determined if expression is signed!\n";
+	}
+	
+	return false;
+}
 
 Value* BinOpExpr::Codegen() {
 	Value *L = LHS->Codegen();
@@ -112,7 +144,13 @@ Value* BinOpExpr::Codegen() {
 		case '*':
 			return CG::Builder.CreateMul(L, R, "multmp");
 		case '/':
-			printf("((TODO: NEED TO KNOW TYPE FOR DIVISION))\n");
+			// if one of them is signed, they're both signed.
+			if (isSigned(LHS) || isSigned(RHS)) {
+				return CG::Builder.CreateSDiv(L, R, "divtmp");
+			} else {
+				return CG::Builder.CreateUDiv(L, R, "divtmp");
+			}
+			
 			return CG::Builder.CreateSDiv(L, R, "divtmp");
 		case '=':
 			return CG::Builder.CreateStore(R, L);
@@ -147,29 +185,7 @@ Value* FunctionStatement::Codegen() {
 	std::vector<Type*> Args(args->size());
 	for (int i = 0; i < args->size(); i++) {
 		ArgExpr *arg = (*args)[i];
-		if (arg->type == "int" || arg->type == "int64") {
-			Args[i] = Type::getInt64Ty(getGlobalContext());
-		} else if (arg->type == "int8") {
-			Args[i] = Type::getInt8Ty(getGlobalContext());
-		} else if (arg->type == "int16") {
-			Args[i] = Type::getInt16Ty(getGlobalContext());
-		} else if (arg->type == "int32") {
-			Args[i] = Type::getInt32Ty(getGlobalContext());
-		} else if (arg->type == "uint8") {
-			Args[i] = Type::getInt8Ty(getGlobalContext());
-		} else if (arg->type == "uint16") {
-			Args[i] = Type::getInt16Ty(getGlobalContext());
-		} else if (arg->type == "uint32") {
-			Args[i] = Type::getInt32Ty(getGlobalContext());
-		} else if (arg->type == "uint" || arg->type == "uint64") {
-			Args[i] = Type::getInt64Ty(getGlobalContext());
-		} else if (arg->type == "float") {
-			Args[i] = Type::getFloatTy(getGlobalContext());
-		} else if (arg->type == "double") {
-			Args[i] = Type::getDoubleTy(getGlobalContext());
-		} else {
-			printf("FunctionStatement: unknown type %s!\n", arg->type.c_str());
-		}
+		Args[i] = getType(arg->type);
 	}
 
 	FunctionType *FT = FunctionType::get(getReturnType(), Args, false);
@@ -212,6 +228,8 @@ Value* FunctionStatement::Codegen() {
 	
 	if (IP != nullptr)
 		CG::Builder.SetInsertPoint(IP);
+	
+	CG::TheFPM->run(*TheFunction);
 
 	return TheFunction;
 }

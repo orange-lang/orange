@@ -34,11 +34,17 @@ Type *getType(std::string typeStr) {
 ArgExpr::ArgExpr(std::string* type, std::string* name) {
 	this->type = type ? *type : "";
 	this->name = name ? *name : "";
+	
+	// if it's not u, then it's signed
+	if (this->type != "" && (this->type)[0] == 'u') {
+		isSigned = false;
+	} else isSigned = true;
 
 	CG::Symtab->create(this->name);
 	if (this->type != "") {
 		CG::Symtab->objs[this->name]->setType(getType(this->type));
 	}
+	CG::Symtab->objs[this->name]->isSigned = isSigned;
 }
 
 FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *body) {
