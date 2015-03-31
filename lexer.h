@@ -87,8 +87,11 @@ private:
 public:
 	LexemeType type; 
 	Value value;
+
+	std::string string() const;
 };
 
+int Precedence(LexemeType type); 
 std::vector<Lexeme *> Lex(std::string source);
 void PrintLexemes(std::vector<Lexeme*> lexemes);
 

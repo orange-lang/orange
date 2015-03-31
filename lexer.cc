@@ -1,11 +1,40 @@
 #include <iostream>
 #include <cctype>
+#include <sstream>
+#include <map>
 #include "lexer.h"
 
 #define LEX_SINGLE(c, s, t) if(source[idx] == c) {\
  	Lexeme *lex = new Lexeme();\
  	lex->value.string = s; lex->type = t;\
  	ret.push_back(lex); idx++;}
+
+static std::map<LexemeType, int> *PrecedenceTable = nullptr;
+
+int Precedence(LexemeType type) {
+	if (PrecedenceTable == nullptr) {
+		// initialize table 
+		PrecedenceTable = new std::map<LexemeType, int>();
+		(*PrecedenceTable)[EQUALS] = 1; 
+		(*PrecedenceTable)[PLUS_ASSIGN] = 1; 
+		(*PrecedenceTable)[MINUS_ASSIGN] = 1;
+		(*PrecedenceTable)[TIMES_ASSIGN] = 1;
+		(*PrecedenceTable)[DIVIDE_ASSIGN] = 1;
+		(*PrecedenceTable)[MODULUS_ASSIGN] = 1;
+		(*PrecedenceTable)[PLUS] = 2;
+		(*PrecedenceTable)[MINUS] = 2; 
+		(*PrecedenceTable)[TIMES] = 3; 
+		(*PrecedenceTable)[DIVIDE] = 4;  
+	}
+
+	auto it = PrecedenceTable->find(type);
+	if (it == PrecedenceTable->end()) {
+		return -1; 
+	}
+
+	return it->second;
+}
+
 
 LexemeType TypeForKeyword(std::string id) {
 	if (id == "def") 
@@ -370,6 +399,36 @@ std::vector<Lexeme *> Lex(std::string source) {
 	}
 
 	return ret;
+}
+
+std::string Lexeme::string() const {
+	std::stringstream ss; 
+	switch (type) {
+		case TYPE_FLOAT:
+			ss << value.floatVal; 
+			return ss.str();
+			break; 
+		case TYPE_DOUBLE:
+			ss << value.doubleVal; 
+			return ss.str();
+			break;
+		case TYPE_INT8:
+		case TYPE_INT16:
+		case TYPE_INT32:
+		case TYPE_INT64:
+			ss << value.int64;
+			return ss.str();
+			break; 
+		case TYPE_UINT8:
+		case TYPE_UINT16:
+		case TYPE_UINT32:
+		case TYPE_UINT64:
+			ss << value.uint64;
+			return ss.str();
+			break; 
+		default:
+			return value.string;
+	}
 }
 
 void PrintLexemes(std::vector<Lexeme*> lexemes) {

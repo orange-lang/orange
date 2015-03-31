@@ -3,6 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 #include "Lexer.h"
+#include "Parser.h"
 
 std::string getFileContents(std::string fileName) {
 	std::ifstream file(fileName);
@@ -24,8 +25,11 @@ int main(int argc, char **argv) {
 	}
 
 	std::string fileContents = getFileContents(argv[1]);
-	std::vector<Lexeme*> lexemes = Lex(fileContents); 
+	std::vector<Lexeme*> lexemes = Lex(fileContents);
 	PrintLexemes(lexemes);
 
+	Parser parser(lexemes);
+	parser.Parse(); 
+	
 	return 0;
 }

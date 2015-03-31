@@ -12,6 +12,9 @@ test: oc
 %.o: %.cc %.h
 	clang++ $(CXXFLAGS) -c $<
 
+main.o: main.cc
+	clang++ $(CXXFLAGS) -c $<
+
 clean:
 	rm -f *.o oc
 
