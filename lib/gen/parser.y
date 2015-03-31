@@ -5,7 +5,7 @@
 	#include <gen/generator.h>
 
 	extern int yylex();
-	void yyerror(const char *s) { std::cerr << s << std::endl; }
+	void yyerror(const char *s) { std::cerr << s << std::endl; exit(1); }
 
 	Block *globalBlock = nullptr; 
 	typedef CodeGenerator CG;
