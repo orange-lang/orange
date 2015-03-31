@@ -14,6 +14,7 @@ public:
 	Type *getType();
 
 	virtual std::string getClass() { return "IfStatement"; }
+	virtual bool returnsPtr() { return true; }
 
 	virtual std::string string();
 

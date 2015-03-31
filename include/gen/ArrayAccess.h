@@ -7,6 +7,7 @@ public:
 	virtual std::string getClass() { return "ArrayAccess"; }
 
 	virtual bool isConstant() { return false; }
+	virtual bool returnsPtr() { return true; }
 
 	virtual std::string string();
 	virtual Type* getType();

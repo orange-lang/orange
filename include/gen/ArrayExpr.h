@@ -12,6 +12,7 @@ public:
 	virtual Type *getType();
 	virtual std::string string();
 	virtual void resolve();
+	virtual bool returnsPtr() { return true; }
 
 	virtual bool isConstant();
 

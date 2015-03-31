@@ -53,7 +53,7 @@ std::string ArrayExpr::string() {
 
 bool ArrayExpr::isConstant() {
 	for (Expression *e : *elements) {
-		if (returnsPtr(e->getClass())) {
+		if (e->returnsPtr()) {
 			return false;
 		}
 
@@ -106,7 +106,7 @@ Value* ArrayExpr::Codegen() {
 		Value *gep = CG::Builder.CreateConstInBoundsGEP2_64(ret, 0, i);
 		Value *sta = expr->Codegen();
 
-		if (returnsPtr(expr->getClass())) {
+		if (expr->returnsPtr()) {
 			sta = CG::Builder.CreateLoad(sta);
 		}
 

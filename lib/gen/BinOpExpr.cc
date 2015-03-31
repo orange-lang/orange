@@ -135,7 +135,7 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	Value *OrigL = L;
-	if ((op != "=" && op != "<-") && returnsPtr(LHS->getClass())) {
+	if ((op != "=" && op != "<-") && LHS->returnsPtr()) {
 		// If it's a variable load it in. 
 		L = CG::Builder.CreateLoad(L, "var");
 	}
@@ -148,7 +148,7 @@ Value* BinOpExpr::Codegen() {
 		exit(1);
 	}
 
-	if (returnsPtr(RHS->getClass())) {
+	if (RHS->returnsPtr()) {
 		// If it's a variable load it in. 
 		R = CG::Builder.CreateLoad(R);
 	}

@@ -22,6 +22,9 @@ public:
 		return name;
 	}
 
+	virtual bool returnsPtr() { return true; }
+
+
 	virtual bool isConstant() { return false; }
 
 	virtual void resolve();

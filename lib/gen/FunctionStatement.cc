@@ -150,8 +150,7 @@ Value* FunctionStatement::Codegen() {
 			exit(1);
 		}
 
-		std::string className = body->statements.back()->getClass();
-		if (returnsPtr(className) && finalV->getType()->isPointerTy()) {
+		if (body->statements.back()->returnsPtr() && finalV->getType()->isPointerTy()) {
 			finalV = CG::Builder.CreateLoad(finalV);
 		}
 

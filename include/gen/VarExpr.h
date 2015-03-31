@@ -15,6 +15,8 @@ public:
 
 	virtual bool isConstant() { return false; }
 
+	virtual bool returnsPtr() { return true; }
+
 	virtual std::string string() {
 		std::stringstream ss;
 

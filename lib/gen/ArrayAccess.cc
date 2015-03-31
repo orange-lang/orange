@@ -48,7 +48,7 @@ Value* ArrayAccess::Codegen() {
 
 	// If we're not a constant value, we need to 
 	// be loaded in
-	if (returnsPtr(idx->getClass())) {
+	if (idx->returnsPtr()) {
 		idxV = CG::Builder.CreateLoad(idxV);
 	}
 

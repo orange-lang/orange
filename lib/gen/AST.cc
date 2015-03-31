@@ -8,13 +8,6 @@ Value *replace(Value *del, Value *v) {
 	return v; 
 }
 
-
-bool returnsPtr(std::string className) {
-	return className == "VarExpr" || className == "IfStatement" || className == "DerefId" || className == "VarDeclExpr" 
-		|| className == "ArrayAccess" || className == "ArrayExpr";
-}
-
-
 Type *getType(std::string typeStr) {
 	if (typeStr == "int" || typeStr == "int64") {
 		return Type::getInt64Ty(getGlobalContext());

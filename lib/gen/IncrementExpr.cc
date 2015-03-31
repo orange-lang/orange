@@ -20,7 +20,7 @@ void IncrementExpr::resolve() {
 Value* IncrementExpr::Codegen() {
 	Value *e = expr->Codegen();
 
-	if (returnsPtr(expr->getClass()) == false) {
+	if (expr->returnsPtr() == false) {
 		std::cerr << "fatal: trying to increment an invalid expression\n";
 		exit(1);
 	}

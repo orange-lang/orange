@@ -4,7 +4,7 @@
 Value* NegativeExpr::Codegen() {
 	Value *v = expr->Codegen();
 
-	if (returnsPtr(expr->getClass())) {
+	if (expr->returnsPtr()) {
 		v = CG::Builder.CreateLoad(v);
 	}
 

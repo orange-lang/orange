@@ -16,6 +16,8 @@ public:
 	virtual Type* getType();
 
 	virtual bool isConstant() { return false; }
+	virtual bool returnsPtr() { return true; }
+
 
 	DerefId(VarExpr *id) : id(id) { }
 

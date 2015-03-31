@@ -52,6 +52,8 @@ public:
 	virtual Value* Codegen() { return nullptr; }
 	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 	virtual std::string string() { return ""; }
+	virtual bool returnsPtr() { return false; }
+
 	bool resolved = false;
 	
 	// any function that implements resolve can only 
@@ -127,8 +129,6 @@ public:
 
 	BaseVal *produce();
 };
-
-bool returnsPtr(std::string className);
 
 Value *replace(Value *del, Value *v);
 

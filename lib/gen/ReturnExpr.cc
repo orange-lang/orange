@@ -29,7 +29,7 @@ Value* ReturnExpr::Codegen() {
 		DEBUG_MSG("ReturnExpr: STARTING CODEGEN FOR EXPR");
 		Value *v = expr->Codegen();
 
-		if (returnsPtr(expr->getClass())) {
+		if (expr->returnsPtr()) {
 			v = CG::Builder.CreateLoad(v);
 		}
 		
