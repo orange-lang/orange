@@ -4,6 +4,9 @@
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/archives/json.hpp>
 #include <boost/regex.hpp>
 #include <fstream>
 using namespace boost::filesystem;
@@ -12,12 +15,24 @@ using namespace boost;
 void testFiles(std::vector<path> paths);
 void runFailed();
 
+class RiverConfig {
+public:
+	std::unordered_map<std::string, std::string> settings;
+
+	template <class Archive>
+	void serialize(Archive& ar) {
+		ar(settings);
+	}
+};
+
 int main(int argc, char **argv) {
 	cOptions options("River version 0.1"); 
 
+	// main state 
 	cCommandOption version({"v", "version"}, "Prints version", false);
 	options.mainState.add(&version);
 
+	// test state 
 	cOptionsState test("test", "Tests your orange project");
 
 	cCommandOption testFailed({"f", "failed"}, "Only test tests that failed on the last run", false);
@@ -25,11 +40,67 @@ int main(int argc, char **argv) {
 
 	options.mainState.addState(&test); 
 
+	// settings state 
+	cOptionsState settings("settings", "Sets or gets setting from orange");
+	options.mainState.addState(&settings);
+
+	// Parse command line 
 	options.parse(argc, argv);
 
 	if (version.isSet()) {
 		std::cout << "River version 0.1" << std::endl;
 		exit(0);
+	}
+
+	if (settings.isActive()) {
+		if (settings.unparsed().size() == 0) {
+			std::cout << "Usage: " << argv[0] << "settings [settingName]|[settingName settingValue]\n";
+			return 0;
+		}
+
+		std::string setting = settings.unparsed()[0];
+		if (settings.unparsed().size() > 1) {
+			std::string value = settings.unparsed()[1];
+
+			// change it in settings class. save settings class to file. 
+			RiverConfig rc; 
+
+			{
+				std::ifstream is("settings.json");
+				if (is.is_open() == true) {
+					cereal::JSONInputArchive ar(is);
+					ar(rc);					
+				}
+			}
+
+			rc.settings[setting] = value;
+
+			{
+				std::ofstream os("settings.json");
+				cereal::JSONOutputArchive ar(os);
+				ar(rc);
+			}
+
+			return 0; 
+		} else {
+			// get it from settings class.
+			{
+				std::ifstream is("settings.json");
+				if (is.is_open() == false) {
+					std::cerr << "fatal: no settings file exists yet.\n";
+					exit(1);
+				}
+
+				cereal::JSONInputArchive ar(is);
+
+				RiverConfig rc; 
+				ar(rc);
+
+				std::cout << rc.settings[setting] << std::endl;
+			}
+		}
+
+		return 0;
 	}
 
 	if (test.isActive() && testFailed.isSet()) {
@@ -126,11 +197,33 @@ void testFiles(std::vector<path> paths) {
 
 	std::vector<TestError> errors;
 
+
+	RiverConfig rc; 
+
+	{
+		std::ifstream is("settings.json");
+		if (is.is_open() == true) {
+			cereal::JSONInputArchive ar(is);
+			ar(rc);					
+		}
+	}
+
 	const char *ocPath = programPath("oc");
-	if (ocPath == nullptr) {
+	auto oc_path_it = rc.settings.find("oc_path");
+	if (oc_path_it != rc.settings.end()) {
+		ocPath = oc_path_it->second.c_str();
+	} else if (ocPath == nullptr) {
 		std::cerr << "fatal: could not find oc in $PATH.\n";
 		exit(1);
 	}
+
+	path oc_p(ocPath);
+	if (!exists(oc_p)) {
+		std::cerr << "fatal: oc does not exist at " << ocPath << std::endl;
+		exit(1);
+	}
+
+
 
 	try {
 		boost::filesystem::create_directories("build/test");	
