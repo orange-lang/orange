@@ -3,6 +3,7 @@
 
 #include "AST.h"
 #include "Symtab.h"
+#include <llvm/Support/CodeGen.h>
 #include <stack>
 
 class CodeGenerator {
@@ -14,6 +15,9 @@ public:
 	static bool outputAssembly;
 	static bool verboseOutput;
 	static bool doLink;
+	static bool bits32;
+	static std::string tripleName;
+	static llvm::CodeModel::Model model;
 
 	static Module *TheModule;
 	static IRBuilder<> Builder;

@@ -41,7 +41,10 @@ FunctionPassManager* CodeGenerator::TheFPM;
 bool CodeGenerator::outputAssembly = false;
 bool CodeGenerator::verboseOutput = false;
 bool CodeGenerator::doLink = true;
+bool CodeGenerator::bits32 = false;
+std::string CodeGenerator::tripleName = sys::getProcessTriple();
 std::string CodeGenerator::fileBase = "";
+llvm::CodeModel::Model CodeGenerator::model = CodeModel::Default;
 
 typedef CodeGenerator CG;
 PassManager *ThePM = nullptr;
@@ -63,7 +66,7 @@ void CodeGenerator::init() {
 	TheModule = new Module("orange", getGlobalContext());
 	
 	FunctionPassManager *OurFPM = new FunctionPassManager(TheModule);
-	TheModule->setTargetTriple(sys::getProcessTriple());
+	TheModule->setTargetTriple(tripleName);
 
 	OurFPM->doInitialization();
 	
@@ -143,8 +146,13 @@ void CodeGenerator::Generate(Block *globalBlock) {
 
 void CodeGenerator::GenerateObject() {
 	std::string err; 
-	Triple triple = Triple(sys::getProcessTriple());
-	const Target *target = TargetRegistry::lookupTarget("x86-64", triple, err);
+	Triple triple = Triple(tripleName);
+
+	std::string targetStr = "x86-64";
+	if (bits32) {
+		targetStr = "x86";
+	}
+	const Target *target = TargetRegistry::lookupTarget(targetStr, triple, err);
 	if (target == nullptr) {
 		std::cerr << "fatal: " << err << std::endl;
 		exit(1);
@@ -155,7 +163,11 @@ void CodeGenerator::GenerateObject() {
   SubtargetFeatures Features;
 
 	Features.getDefaultSubtargetFeatures(triple);
-  Features.AddFeature("64bit");
+
+	if (bits32 == false) {
+	  Features.AddFeature("64bit");
+	} 
+
   // Features.AddFeature("64bit-mode");
 	std::string FeaturesStr = Features.getString();
 
@@ -178,7 +190,9 @@ void CodeGenerator::GenerateObject() {
 		TheModule->dump();
 	}
 
-	TargetMachine *tm = target->createTargetMachine(triple.getTriple(), name, FeaturesStr, options);
+
+	TargetMachine *tm = target->createTargetMachine(triple.getTriple(), name, FeaturesStr, options, Reloc::Default, model);
+
 	if (tm == nullptr) {
 		std::cerr << "fatal: could not create target machine\n";
 		exit(1);
@@ -213,6 +227,7 @@ void CodeGenerator::GenerateObject() {
   TheModule->setDataLayout(DL);
 
   ThePM = new PassManager();
+	ThePM->add(createVerifierPass(true));
 	ThePM->add(TLI);
 	ThePM->add(new DataLayoutPass(TheModule));
 

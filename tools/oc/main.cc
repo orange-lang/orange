@@ -72,9 +72,12 @@ int main(int argc, char **argv) {
 			std::cerr << "\t-c\t\t\tOnly output an .o file (do not link)\n";
 			std::cerr << "\t-o <file>\t\tWrite output to <file>\n";
 			std::cerr << "\t-S\t\t\tWrite output as assembly (implies -c)\n";
+			std::cerr << "\t-32\t\t\tCompile in 32 bits\n";
 			std::cerr << "\t-masm\t\t\tSets an assembly style (defaults to intel)\n";
 			std::cerr << "\t\t=intel\t\tSets style to intel (default)\n";
 			std::cerr << "\t\t=att\t\tSets style to AT&T\n";
+			std::cerr << "\t--triple\t\t\tSets triple type (defaults to host)\n";
+			std::cerr << "\t--model\t\t\tSets code model (default, kernel, large, etc)\n";
 			std::cerr << "\t-v | --version\t\tPrints version\n";
 			std::cerr << "\t-V | --verbose\t\tEnable verbose output\n";
 			std::cerr << "\t-h | --help\t\tGet this help message\n";
@@ -87,7 +90,32 @@ int main(int argc, char **argv) {
 				assemblySet = "att";
 				forced_args.push_back("-x86-asm-syntax=att");
 			} 
-		} else {
+		} else if (a[0] == "--triple") {
+			if (loc + 1 >= argc) {
+				std::cerr << "fatal: missing triple tyoe.\n";
+				exit(1);
+			}
+			CodeGenerator::tripleName = argv[loc + 1];
+		}	else if (a[0] == "--model") {
+			if (loc + 1 >= argc) {
+				std::cerr << "fatal: missing model tyoe.\n";
+				exit(1);
+			}
+
+			std::string setModel = argv[loc + 1];
+
+			if (setModel == "default") CodeGenerator::model = llvm::CodeModel::Default;
+			else if (setModel == "small") CodeGenerator::model = llvm::CodeModel::Small;
+			else if (setModel == "kernel") CodeGenerator::model = llvm::CodeModel::Kernel;
+			else if (setModel == "medium") CodeGenerator::model = llvm::CodeModel::Medium;
+			else if (setModel == "large") CodeGenerator::model = llvm::CodeModel::Large;
+			else {
+				std::cerr << "fatal: unknown code model " << setModel << std::endl;
+				exit(1);
+			}
+		}	 else if (a[0] == "--32") {
+			CodeGenerator::bits32 = true;
+		}	else {
 			std::cerr << "fatal: option " << a[0] << " is not recognized.\n";
 			exit(1);
 		}
