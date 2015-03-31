@@ -56,6 +56,33 @@ BaseVal *ValFactory::produce() {
 		size = newSize;
 	}
 
+	// handle characters 
+	if (value.length() == 3 && value[0] == '\'' && value[2] == '\'') {
+		if (size == "u") {
+			ret = new UIntVal(value[1], 64);
+		} else if (size == "i" || size == "") {
+			ret = new IntVal(value[1], 64);
+		} else if (size == "i8") {
+			ret = new UIntVal((int8_t)value[1], 8);
+		} else if (size == "u8") {
+			ret = new UIntVal((uint8_t)value[1], 8);
+		} else if (size == "i16") {
+			ret = new UIntVal((int16_t)value[1], 16);
+		} else if (size == "u16") {
+			ret = new UIntVal((uint16_t)value[1], 16);
+		} else if (size == "i32") {
+			ret = new UIntVal((int32_t)value[1], 32);
+		} else if (size == "u32") {
+			ret = new UIntVal((uint32_t)value[1], 32);
+		} else if (size == "i64") {
+			ret = new UIntVal((int32_t)value[1], 32);
+		} else if (size == "u64") {
+			ret = new UIntVal((uint64_t)value[1], 64);
+		}  
+
+		return ret;
+	}
+
 	if (size == "u") {
 		uint64_t v = std::stoull(value);
 		ret = new UIntVal(v, 64);

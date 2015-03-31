@@ -50,6 +50,8 @@
 [0-9][0-9]*"i"			MKFACTORY(); DOFACTORY("i"); return VALUE;
 [0-9][0-9]*					MKFACTORY(); DOFACTORY("i"); return VALUE;
 
+'.'									MKFACTORY(); DOFACTORY("i8"); return VALUE;
+
 "false"							MKFACTORY(); factory->value = "0"; DOFACTORY("u8"); return VALUE;
 "true"							MKFACTORY(); factory->value = "1"; DOFACTORY("u8"); return VALUE;
 
