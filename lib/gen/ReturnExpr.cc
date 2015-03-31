@@ -4,6 +4,8 @@
 
 
 Value* ReturnExpr::Codegen() {
+	DEBUG_MSG("GENERATING ReturnExpr");
+
 	BasicBlock *bb = CG::Symtab->getFunctionEnd();
 	if (bb == nullptr) {
 		std::cerr << "fatal: no Function End found!\n";

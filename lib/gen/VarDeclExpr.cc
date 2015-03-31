@@ -1,39 +1,21 @@
 #include <gen/VarDeclExpr.h>
 #include <gen/generator.h>
+#include <gen/CastingEngine.h>
 
 Value* VarDeclExpr::Codegen() {
 	DEBUG_MSG("GENERATING VarDeclExpr");
 
 	Value *v = CG::Builder.CreateAlloca(getType());
 
-
 	if (value != nullptr) {
 		Value *store = value->Codegen();
 
-		if (getType()->isIntegerTy() && store->getType()->isIntegerTy()) {
-			if (getType()->getIntegerBitWidth() != store->getType()->getIntegerBitWidth()) {
-				store = CG::Builder.CreateIntCast(store, getType(), type->isSigned());
-			}
+		if (value->getClass() == "VarExpr") {
+			// If it's a variable load it in. 
+			store = CG::Builder.CreateLoad(store);
 		}
 
-		if (getType()->getTypeID() != store->getType()->getTypeID()) {
-			// cast store to getType 
-			if (getType()->isIntegerTy()) {
-				if (store->getType()->isFloatingPointTy()) {
-					if (type->isSigned()) {
-						store = CG::Builder.CreateFPToSI(store, getType());						
-					} else {
-						store = CG::Builder.CreateFPToUI(store, getType());
-					}
-				} else {
-					store = CG::Builder.CreateIntCast(store, getType(), type->isSigned()); 
-				}
-			} else if (getType()->isFloatingPointTy()) {
-				store = CG::Builder.CreateFPCast(store, getType());				
-			} 
-
-		}
-
+		CastValueToType(&store, getType(), type->isSigned(), true);
 		CG::Builder.CreateStore(store, v);
 	}
 

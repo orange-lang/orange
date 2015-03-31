@@ -2,6 +2,7 @@
 #include "gen/generator.h"
 #include "gen/VarExpr.h"
 #include "gen/Values.h"
+#include "gen/CastingEngine.h"
 
 bool isSigned(Expression *e) {
 	if (dynamic_cast<IntVal*>(e)) {
@@ -14,13 +15,16 @@ bool isSigned(Expression *e) {
 		return p->isSigned;
 	} else if (e->getClass() == "BinOpExpr") {
 		BinOpExpr *BOE = (BinOpExpr *)e; 
+
+		if (BOE->op == ">" || BOE->op == ">=" || BOE->op == "<" ||
+			BOE->op == "<=" || BOE->op == "==") {
+			return false;
+		}
+
 		return isSigned(BOE->LHS) || isSigned(BOE->RHS);  
-	} else {
-		std::cerr << "Fatal: can't determined if expression is signed!\n";
-		exit(1);
 	}
 	
-	return false;
+	return true;
 }
 
 BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
@@ -47,17 +51,7 @@ Type *BinOpExpr::getType() {
 		return Type::getInt1Ty(getGlobalContext());
 	} 
 
-	if (LHS->getType()->isIntegerTy() && RHS->getType()->isIntegerTy()) {
-		if (LHS->getType()->getIntegerBitWidth() > RHS->getType()->getIntegerBitWidth()) {
-			return LHS->getType(); 
-		} else {
-			return RHS->getType();
-		}
-	} else if (LHS->getType()->getTypeID() == RHS->getType()->getTypeID()) {
-		return LHS->getType(); 
-	} 
-
-	return nullptr; 
+	return GetFittingType(LHS->getType(), RHS->getType());
 }
 
 Value* BinOpExpr::Codegen() {
@@ -83,7 +77,6 @@ Value* BinOpExpr::Codegen() {
 		L = CG::Builder.CreateLoad(L, ((VarExpr*)LHS)->name);
 	}
 
-
 	Value *R = RHS->Codegen();
 	Value *OrigR = R;
 
@@ -102,43 +95,7 @@ Value* BinOpExpr::Codegen() {
 		exit(1);
 	}
 
-	if (L->getType()->isIntegerTy() && R->getType()->isIntegerTy()) {
-		if (L->getType()->getIntegerBitWidth() != R->getType()->getIntegerBitWidth()) {
-
-			// cast to highest 
-			if (L->getType()->getIntegerBitWidth() > R->getType()->getIntegerBitWidth()) {
-				// cast R to L 
-				R = CG::Builder.CreateIntCast(R, L->getType(), false);
-			} else {
-				// cast L to R 
-				L = CG::Builder.CreateIntCast(L, R->getType(), false);
-			}
-		}
-	}
-
-	if (L->getType()->isFloatingPointTy() && R->getType()->isIntegerTy()) {
-		// make R a float 
-		if (isSigned(RHS)) {
-			R = CG::Builder.CreateSIToFP(R, L->getType());
-		} else {
-			R = CG::Builder.CreateUIToFP(R, L->getType());
-		}
-	}
-
-	if (R->getType()->isFloatingPointTy() && L->getType()->isIntegerTy()) {
-		// make L a float
-		if (isSigned(LHS)) {
-			L = CG::Builder.CreateSIToFP(L, R->getType());
-		} else {
-			L = CG::Builder.CreateUIToFP(L, R->getType());
-		}
-	}
-
-	if (L->getType()->isFloatTy() && R->getType()->isDoubleTy()) {
-		L = CG::Builder.CreateFPCast(L, R->getType());
-	} else if (L->getType()->isDoubleTy() && R->getType()->isDoubleTy()) {
-		R = CG::Builder.CreateFPCast(R, L->getType());
-	}
+	CastValuesToFit(&L, &R, isSigned(LHS), isSigned(RHS));
 
 	bool FPOperation = false;
 	if (L->getType()->isFloatingPointTy() && R->getType()->isFloatingPointTy()) {
@@ -160,16 +117,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateAdd(L, R);
 		}	
 
-		Type *t = OrigL->getType()->getPointerElementType();
-
-		if (v->getType()->getTypeID() != t->getTypeID()) {
-			if (t->isIntegerTy()) {
-				v = CG::Builder.CreateIntCast(v, t, isSigned(LHS) || isSigned(RHS)); 
-			} else if (t->isFloatingPointTy()) {
-				v = CG::Builder.CreateFPCast(v, t);
-			} 
-		}
-
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), isSigned(LHS) || isSigned(RHS));
 
 		return CG::Builder.CreateStore(v, OrigL);		
 	}
@@ -188,15 +136,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateSub(L, R);
 		}
 
-		Type *t = OrigL->getType()->getPointerElementType();
-
-		if (v->getType()->getTypeID() != t->getTypeID()) {
-			if (t->isIntegerTy()) {
-				v = CG::Builder.CreateIntCast(v, t, isSigned(LHS) || isSigned(RHS)); 
-			} else if (t->isFloatingPointTy()) {
-				v = CG::Builder.CreateFPCast(v, t);
-			} 
-		}
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), isSigned(LHS) || isSigned(RHS));
 
 		return CG::Builder.CreateStore(v, OrigL);		
 	}	
@@ -215,16 +155,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateMul(L, R);			
 		}
 
-		Type *t = OrigL->getType()->getPointerElementType();
-
-		if (v->getType()->getTypeID() != t->getTypeID()) {
-			if (t->isIntegerTy()) {
-				v = CG::Builder.CreateIntCast(v, t, isSigned(LHS) || isSigned(RHS)); 
-			} else if (t->isFloatingPointTy()) {
-				v = CG::Builder.CreateFPCast(v, t);
-			} 
-		}
-
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), isSigned(LHS) || isSigned(RHS));
 
 		return CG::Builder.CreateStore(v, OrigL);		
 	}	
@@ -252,15 +183,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateUDiv(L, R);
 		}
 
-		Type *t = OrigL->getType()->getPointerElementType();
-
-		if (v->getType()->getTypeID() != t->getTypeID()) {
-			if (t->isIntegerTy()) {
-				v = CG::Builder.CreateIntCast(v, t, isSigned(LHS) || isSigned(RHS)); 
-			} else if (t->isFloatingPointTy()) {
-				v = CG::Builder.CreateFPCast(v, t);
-			} 
-		}
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), isSigned(LHS) || isSigned(RHS));
 
 		return CG::Builder.CreateStore(v, OrigL);		
 	}

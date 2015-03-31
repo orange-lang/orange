@@ -5,6 +5,7 @@
 #include "gen/Values.h"
 #include "gen/FunctionStatement.h"
 #include "gen/FuncCallExpr.h"
+#include "gen/CastingEngine.h"
 
 FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
 	this->name = name;
@@ -82,6 +83,8 @@ Type *FuncCallExpr::getType() {
 }
 
 Value* FuncCallExpr::Codegen() {
+	DEBUG_MSG("GENERATING FuncCallExpr");
+
 	std::vector<Value*> Args(args->size());
 	for (unsigned int i = 0; i < args->size(); i++) {
 		auto arg = (*args)[i];
@@ -116,14 +119,14 @@ Value* FuncCallExpr::Codegen() {
 				isSigned = true;
 			}
 
-			Args[i] = CG::Builder.CreateIntCast(Args[i], arg->getType(), isSigned);
+			CastValueToType(&Args[i], arg->getType(), isSigned);
 		}
 
 		if (f->isVarArg() == true) {
 			// C functions require that if a float is used as a variable arugment, it must be promoted to double.  
 			for (auto it = args->begin() + i; it != args->end(); i++, it++) {
 				if (Args[i]->getType()->isFloatTy()) {
-					Args[i] = CG::Builder.CreateFPCast(Args[i], Type::getDoubleTy(getGlobalContext()));
+					CastValueToType(&Args[i], Type::getDoubleTy(getGlobalContext()), false);
 				}
 			}
 		}

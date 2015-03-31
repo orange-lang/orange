@@ -1,0 +1,6 @@
+def foo(float a)
+	return a + 2.0
+end 
+
+foo(3)
+return 0
