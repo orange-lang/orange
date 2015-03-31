@@ -12,6 +12,7 @@ public:
 
 	virtual bool isSigned() { return expr->isSigned(); }
 
+	void resolve();
 
 	virtual std::string string() {
 		if (expr) 

@@ -1,0 +1,9 @@
+def a(int n)
+	return n + 5
+end 
+
+if a(5.0) != 10 
+	return 1
+else 
+	return 0
+end

@@ -13,6 +13,15 @@ ExternFunction::ExternFunction(AnyType *returnType, std::string name, ArgList *a
 	CG::Symtab->objs[this->name]->reference = (Statement *)this; 
 }
 
+void ExternFunction::resolve() {
+	if (resolved == true)	
+		return;
+
+	// Nothing to do for ExternFunction::resolve.
+
+	resolved = true; 
+}
+
 Value* ExternFunction::Codegen() { 
 	std::vector<Type*> Args(args->size());
 	for (unsigned int i = 0; i < args->size(); i++) {

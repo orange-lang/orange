@@ -12,6 +12,7 @@ public:
 
 	virtual bool isSigned() { return returnType->isSigned(); }
 
+	void resolve();
 
 	Value* Codegen();
 

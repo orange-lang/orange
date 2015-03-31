@@ -2,6 +2,7 @@
 #include "gen/generator.h"
 #include "gen/VarExpr.h"
 #include "gen/Values.h"
+#include "gen/FuncCallExpr.h"
 #include "gen/CastingEngine.h"
 
 bool isCmpOperator(std::string op) {
@@ -28,6 +29,15 @@ bool BinOpExpr::isSigned() {
 	return LHS->isSigned() && RHS->isSigned();
 }
 
+void BinOpExpr::resolve() {
+	if (resolved)
+		return;
+	
+	LHS->resolve();
+	RHS->resolve();
+
+	resolved = true;
+}
 
 BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 	DEBUG_MSG("STARTING BinOpExpr");
@@ -56,11 +66,33 @@ BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 }
 
 Type *BinOpExpr::getType() { 
-	DEBUG_MSG("GETTING TYPE OF " << LHS->string() << " " << op << " " << RHS->string());
+	DEBUG_MSG("((BinOpExpr)) GETTING TYPE OF " << LHS->string() << " " << op << " " << RHS->string());
 
 	if (isCmpOperator(op)) {
 		return Type::getInt1Ty(getGlobalContext());
-	} else if (isAssignOperator(op)) {
+	} 
+
+	// If LHS or RHS is a call to the function we're currently inside, return nullptr, hoping we'll 
+	// be resolved later. 
+	if (LHS->getClass() == "FuncCallExpr") {
+		std::string currFunction = CG::Symtab->getFunctionName();
+
+		FuncCallExpr *fexpr = (FuncCallExpr *)LHS; 
+		if (fexpr->name == currFunction) 
+			return nullptr; 		
+	}
+
+	if (RHS->getClass() == "FuncCallExpr") {
+		printf("Trying to call a function...\n");
+
+		std::string currFunction = CG::Symtab->getFunctionName();
+	
+		FuncCallExpr *fexpr = (FuncCallExpr *)RHS; 
+		if (fexpr->name == currFunction) 
+			return nullptr; 				
+	}
+
+	if (isAssignOperator(op)) {
 		Type *t = LHS->getType(); 
 		if (t == nullptr) {
 			return RHS->getType();
@@ -71,6 +103,11 @@ Type *BinOpExpr::getType() {
 
 	Type *L = LHS->getType();
 	Type *R = RHS->getType();
+
+	if (!L || !R) {
+		// Return null, hoping this will be resolved later.
+		return nullptr; 
+	}
 
 	Type *T = GetFittingType(L, R);
 	return T;

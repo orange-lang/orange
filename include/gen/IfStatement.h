@@ -28,6 +28,7 @@ public:
 		return ss.str();
 	}
 
+	void resolve();
 
 	IfStatement() { }
 };

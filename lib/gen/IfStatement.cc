@@ -3,6 +3,24 @@
 #include "gen/CondBlock.h"
 #include "gen/generator.h"
 
+void IfStatement::resolve() {
+	if (resolved)
+		return;
+
+	for (Block *b : blocks) {
+		if (b->resolved) continue; 
+
+		if (dynamic_cast<CondBlock*>(b)) {
+			CondBlock *cb = (CondBlock *)b;
+			cb->condition->resolve();
+		}
+
+		b->resolve();
+	}
+
+	resolved = true;
+}
+
 Value* IfStatement::Codegen() {
 	DEBUG_MSG("STARTING CODEGEN FOR IfStatement");
 	// first, create blocks for all the blocks 

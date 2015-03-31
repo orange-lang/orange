@@ -142,6 +142,10 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
+	DEBUG_MSG("PERFORMING SEMANTIC ANALYSIS");
+
+	globalBlock->resolve();
+
 	DEBUG_MSG("PRINTING AST");
 
 	if (CodeGenerator::verboseOutput) {

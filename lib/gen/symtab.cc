@@ -32,6 +32,17 @@ Value *SymTable::getRetVal() {
 	return nullptr; 	
 }
 
+std::string SymTable::getFunctionName() {
+	SymTable* ptr = this;
+	while (ptr != nullptr) {
+		if (ptr->FunctionName)
+			return *(ptr->FunctionName);
+		ptr = ptr->parent; 
+	} 
+
+	return ""; 
+}
+
 Function *SymTable::getFunction() {
 	SymTable* ptr = this;
 	while (ptr != nullptr) {

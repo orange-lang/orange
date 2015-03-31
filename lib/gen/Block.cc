@@ -1,6 +1,7 @@
 #include "gen/Block.h"
 #include "gen/generator.h"
 #include "gen/IfStatement.h"
+#include "gen/FunctionStatement.h"
 #include "gen/ReturnExpr.h"
 
 Type* Block::getReturnType() {
@@ -8,6 +9,8 @@ Type* Block::getReturnType() {
 
 	auto oldSymtab = CG::Symtab;
 	CG::Symtab = symtab;
+
+	std::string currFunction = CG::Symtab->getFunctionName();
 
 	for (auto stmt : statements) {
 		if (stmt->getClass() == "ReturnExpr") {
@@ -20,8 +23,10 @@ Type* Block::getReturnType() {
 	  	Expression *expr = ((ReturnExpr *)stmt)->expr;
 	  	ret = expr->getType();
 
-			CG::Symtab = oldSymtab;	  	
-	  	return ret; 
+	  	if (ret) {
+				CG::Symtab = oldSymtab;	  	
+		  	return ret; 
+	  	}
 		}
 
 		if (stmt->getClass() == "IfStatement") {
@@ -39,6 +44,44 @@ Type* Block::getReturnType() {
 
 	CG::Symtab = oldSymtab;
 	return nullptr;
+}
+
+void Block::resolve() {
+	if (resolved) 
+		return;
+
+	auto oldSymtab = CG::Symtab;
+	CG::Symtab = symtab;
+
+	std::vector<FunctionStatement*> functions;
+
+	for (Statement *stmt : statements) {
+		if (stmt == nullptr) {
+			std::cerr << "fatal: can't perform semantic analysis on null statement\n"; 
+			exit(1); 
+		}
+
+		if (stmt->getClass() == "FunctionStatement") {
+			FunctionStatement *fstmt = (FunctionStatement *)stmt; 
+			functions.push_back(fstmt);
+			continue;
+		} 
+
+		stmt->resolve();
+	}
+
+	resolved = true;
+
+	for (FunctionStatement *fstmt : functions) {
+		if (fstmt == nullptr) {
+			std::cerr << "fatal: can't perform semantic analysis on null function statement\n"; 
+			exit(1); 
+		}
+
+		fstmt->resolve();
+	}
+
+	CG::Symtab = oldSymtab;
 }
 
 Value* Block::Codegen() {

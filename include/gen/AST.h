@@ -51,6 +51,13 @@ public:
 	virtual Value* Codegen() { return nullptr; }
 	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 	virtual std::string string() { return ""; }
+	bool resolved = false;
+	
+	virtual void resolve() { 
+		if (resolved)
+			return; 
+		resolved = true; 
+	};
 };
 
 class Expression : public Statement { 

@@ -31,6 +31,16 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 	}
 }
 
+void FunctionStatement::resolve() {
+	if (resolved)
+		return; 
+
+	DEBUG_MSG("RESOLVING FUNCTION " << name);
+	body->resolve();
+
+	resolved = true;
+}
+
 Value* FunctionStatement::Codegen() {
 	DEBUG_MSG("STARTING CODEGEN FOR FunctionStatement");
 
@@ -75,6 +85,8 @@ Value* FunctionStatement::Codegen() {
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
 	BasicBlock *ExitBB = BasicBlock::Create(getGlobalContext(), "", TheFunction);
 	CG::Symtab->TheFunction = TheFunction;
+	CG::Symtab->FunctionName = new std::string(name);
+
 	CG::Symtab->FunctionEnd = ExitBB;
 
 	CG::Builder.SetInsertPoint(BB);

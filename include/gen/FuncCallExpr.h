@@ -13,6 +13,8 @@ public:
 	std::string name;
 	ExprList *args;
 
+	void resolve();
+
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << name << "( ";

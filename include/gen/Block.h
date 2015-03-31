@@ -11,6 +11,9 @@ public:
 	std::vector<Statement *> statements;
 	Type* getReturnType();
 
+	bool resolved = false;
+	void resolve();
+
 	SymTable *symtab;
 
 	virtual std::string string() {

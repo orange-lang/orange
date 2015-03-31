@@ -14,6 +14,8 @@ public:
 	ArgList *args;
 	Block *body;
 
+	void resolve();
+
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << name << "( ";

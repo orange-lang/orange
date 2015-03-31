@@ -17,6 +17,8 @@ public:
 
 	virtual bool isSigned();
 
+	virtual void resolve();
+
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << "( " << LHS->string() << " " << op << " " << RHS->string() << " )";

@@ -37,6 +37,7 @@ public:
 
 	Value *retVal = nullptr;
 	Function *TheFunction = nullptr; 
+	std::string* FunctionName = nullptr;
 	BasicBlock *FunctionEnd = nullptr; 
 	BasicBlock *BlockEnd = nullptr; 
 	
@@ -50,6 +51,7 @@ public:
 	// Searched up symtable until finding TheFunction != nullptr, returns retVal.
 	Value *getRetVal();
 
+	std::string getFunctionName();
 	Function* getFunction();
 	BasicBlock* getFunctionEnd();
 };

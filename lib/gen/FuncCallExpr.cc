@@ -8,6 +8,8 @@
 #include "gen/CastingEngine.h"
 
 FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
+	DEBUG_MSG("STARTING FuncCallExpr " << name << " CTOR");
+
 	this->name = name;
 	this->args = args;
 
@@ -22,33 +24,58 @@ FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
 
 	// we're not going to through an error if it's null, since that is the 
 	// case for external functions 
-	if (func->reference->getClass() == "FunctionStatement") {
-		FunctionStatement *fstmt = (FunctionStatement *)func->reference;
+	DEBUG_MSG("FINISHED FuncCallExpr CTOR");
+}
 
-		if (fstmt->args == nullptr) {
-			std::cerr << "args for " << fstmt->name << " is null!\n";
-			exit(1);
-		}
+void FuncCallExpr::resolve() {
+	if (resolved)
+		return;
 
+	// Look at our arguments. Get the type of each argument, and if 
+	// the function is missing it, snag it. 
+	DEBUG_MSG("RESOLVE ARGUMENTS IN FUNCTION " << name);
+
+	Symobj *o = CG::Symtab->find(name);
+	if (o == nullptr) {
+		std::cerr << "Error: couldn't find " << name << " in symtab\n";
+		exit(1);
+	}
+
+	if (o->reference == nullptr) {
+		std::cerr << "Fatal: no reference for function object\n";
+		exit(1); 
+	}
+
+	resolved = true;
+
+	if (o->reference->getClass() == "FunctionStatement") {
+		FunctionStatement *fstmt = (FunctionStatement *)o->reference;
 		for (int i = 0; i < fstmt->args->size(); i++) {
-			ArgExpr *expr = (*fstmt->args)[i];
+			if (fstmt->args->at(i)->type != nullptr) continue;
+			std::string argName = fstmt->args->at(i)->name;
+			DEBUG_MSG("RESOLVE ARGUMENT " << argName << " WITH " << args->at(i)->string() << 
+				" (" << args->at(i)->getClass() << ")");
 
-			if (expr->type == nullptr) {
-				expr->type = AnyType::Create(((*args)[i])->getType());
-			}
-			
-			// we need to find 
-			Symobj *arg = fstmt->body->symtab->find(expr->name);
+			fstmt->args->at(i)->type = AnyType::Create(args->at(i)->getType());
+
+			// Set the type of the argument inside the symbol table too, since that's not updated.
+			Symobj *arg = fstmt->body->symtab->find(argName);
 			if (arg->getType() == nullptr) {
-				arg->setType(((*args)[i])->getType()->getPointerTo());
+				arg->setType(args->at(i)->getType()->getPointerTo());
 			}
 		}
-	} 
+
+		extern Block *globalBlock;
+		std::cout << globalBlock->string() << std::endl;
+
+		fstmt->resolve();
+	}
 
 }
 
-
 Type *FuncCallExpr::getType() {
+	DEBUG_MSG("((FuncCallExpr) GETTING TYPE OF " << this->string());
+
 	Symobj *o = CG::Symtab->find(name);
 	if (o == nullptr) {
 		std::cerr << "Error: couldn't find " << name << " in symtab\n";
@@ -67,6 +94,7 @@ Type *FuncCallExpr::getType() {
 
 	if (o->getValue() == nullptr && o->reference->getClass() == "FunctionStatement") { 
 		FunctionStatement *fstmt = (FunctionStatement *)o->reference;
+		fstmt->body->symtab->FunctionName = new std::string(fstmt->name);
 		return fstmt->body->getReturnType();
 	}
 
@@ -115,7 +143,7 @@ Value* FuncCallExpr::Codegen() {
 				isSigned = true;
 			}
 
-			CastValueToType(&Args[i], arg->getType(), isSigned);
+			CastValueToType(&Args[i], arg->getType(), isSigned, true);
 		}
 
 		if (f->isVarArg() == true) {

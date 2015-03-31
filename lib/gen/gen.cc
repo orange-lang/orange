@@ -86,6 +86,7 @@ const char *MainFunctionName() {
 // ld -arch x86_64 -macosx_version_min 10.10 a.out -lSystem -o a 
 void CodeGenerator::Generate(Block *globalBlock) {
 	CG::Symtab = globalBlock->symtab;
+	CG::Symtab->FunctionName = new std::string(MainFunctionName());
 
 	// Get return type of globalBlock
 	DEBUG_MSG("GETTING RETURN TYPE FOR GLOBAL BLOCK");

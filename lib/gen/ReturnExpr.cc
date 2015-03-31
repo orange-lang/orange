@@ -2,6 +2,16 @@
 #include "gen/generator.h"
 #include "gen/VarExpr.h"
 
+void ReturnExpr::resolve() {
+	if (resolved)
+		return;
+
+	if (expr) {
+		expr->resolve();
+	}
+
+	resolved = true;
+}
 
 Value* ReturnExpr::Codegen() {
 	DEBUG_MSG("GENERATING ReturnExpr");
