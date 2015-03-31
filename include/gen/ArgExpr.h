@@ -11,6 +11,7 @@ public:
 
 	AnyType *type;
 	std::string name;
+	bool isLocked = false;
 
 	virtual bool isSigned() { return type->isSigned(); }
 

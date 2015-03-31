@@ -1,0 +1,8 @@
+def foo(n)
+	n + 3
+end 
+
+foo(3)
+a = foo(3.6) - 6.6
+foo(3)
+a

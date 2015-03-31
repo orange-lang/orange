@@ -55,8 +55,13 @@ void FuncCallExpr::resolve() {
 			// Next, we want to check the arg for the function.
 			ArgExpr *arg = fstmt->args->at(i);
 
-			// Replace this with type morphing 
-			if (arg->type != nullptr) continue; 
+			if (arg->type != nullptr) {
+				Type *src = arg->type->getType(); 
+				Type *test = args->at(i)->getType();				
+
+				if (ShouldTypesMorph(src, test) == false || arg->isLocked == true) 
+					continue;
+			}
 
 			std::string argName = arg->name;
 
@@ -70,7 +75,6 @@ void FuncCallExpr::resolve() {
 			args->at(i)->resolve();
 		}
 
-		// Probably don't resolve the function, let that be handled later. 
 		fstmt->resolve();
 	} else if (o->reference->getClass() == "ExternFunction") {
 		// Resolve arguments in external function calls.
