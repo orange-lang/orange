@@ -39,7 +39,7 @@
 
 %type <block> statements
 %type <stmt> statement extern
-%type <expr> expression expr2 expr3 primary VALUE opt_expr
+%type <expr> expression expr_eq expr2 expr3 primary VALUE opt_expr
 %type <fstmt> function opt_id 
 %type <argexpr> opt_arg
 %type <arglist> opt_args arg_list opt_parens
@@ -107,7 +107,13 @@ var_ptrs 		: 		var_ptrs TIMES { $$ = $1 + 1; }
 basic_type  :			TYPE_INT | TYPE_UINT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
 						|			TYPE_INT32 | TYPE_INT64 | TYPE_UINT8 | TYPE_UINT16 | TYPE_UINT32 | TYPE_UINT64 | TYPE_CHAR				
 
-expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, "=", $3); }
+expression  :			expr_eq ASSIGN expression { $$ = new BinOpExpr($1, "=", $3); }
+						|			expr_eq { $$ = $1; }
+
+expr_eq 		:			expr_eq COMP_LT expr2 { $$ = new BinOpExpr($1, "<", $3); }
+						|			expr_eq COMP_GT expr2 { $$ = new BinOpExpr($1, ">", $3); }
+						|			expr_eq LEQ expr2	{ $$ = new BinOpExpr($1, "<=", $3); }
+						|			expr_eq GEQ expr2 { $$ = new BinOpExpr($1, ">=", $3); }
 						|			expr2 { $$ = $1; }
 
 expr2 			:			expr2 PLUS expr3 { $$ = new BinOpExpr($1, "+", $3); }

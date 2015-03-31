@@ -12,8 +12,12 @@ bool isSigned(Expression *e) {
 		VarExpr *ve = (VarExpr *)e;
 		Symobj* p = CG::Symtab->find(ve->name);
 		return p->isSigned;
+	} else if (e->getClass() == "BinOpExpr") {
+		BinOpExpr *BOE = (BinOpExpr *)e; 
+		return isSigned(BOE->LHS) || isSigned(BOE->RHS);  
 	} else {
 		std::cerr << "Fatal: can't determined if expression is signed!\n";
+		exit(1);
 	}
 	
 	return false;
@@ -35,11 +39,18 @@ BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 
 Type *BinOpExpr::getType() { 
 	if (LHS->getType() == RHS->getType()) {
+		if (op == "<" || op == ">" || op == "<=" || op == ">=") {
+			return Type::getInt1Ty(getGlobalContext());
+		} 
+
+
 		return LHS->getType(); 
 	} else {
-		std::cerr << "fatal: binop LHS and RHS have different types.\n";
-		exit(1);
-		return nullptr; 
+		if (LHS->getType()->getIntegerBitWidth() > RHS->getType()->getIntegerBitWidth()) {
+			return LHS->getType(); 
+		} else {
+			return RHS->getType();
+		}
 	}
 
 	return nullptr; 
@@ -65,6 +76,7 @@ Value* BinOpExpr::Codegen() {
 		L = CG::Builder.CreateLoad(L, ((VarExpr*)LHS)->name);
 	}
 
+
 	Value *R = RHS->Codegen();
 	if (R == nullptr) {
 		std::cerr << "fatal: RHS of expression has returned null!\n";
@@ -81,7 +93,20 @@ Value* BinOpExpr::Codegen() {
 		exit(1);
 	}
 
-	// TODO: do casting of LHS and RHS.
+	if (L->getType()->isIntegerTy() && R->getType()->isIntegerTy()) {
+		if (L->getType()->getIntegerBitWidth() != R->getType()->getIntegerBitWidth()) {
+
+			// cast to highest 
+			if (L->getType()->getIntegerBitWidth() > R->getType()->getIntegerBitWidth()) {
+				// cast R to L 
+				R = CG::Builder.CreateIntCast(R, L->getType(), false);
+			} else {
+				// cast L to R 
+				L = CG::Builder.CreateIntCast(L, R->getType(), false);
+			}
+		}
+	}
+
 
 	if (op == "+") {
 		return CG::Builder.CreateAdd(L, R);
@@ -104,6 +129,46 @@ Value* BinOpExpr::Codegen() {
 	}
 	else if (op == "=") {
 		return CG::Builder.CreateStore(R, L);
+	} 
+	else if (op == "<") {
+		Value *v;
+		if (isSigned(LHS) || isSigned(RHS)) {
+			v = CG::Builder.CreateICmpSLT(L, R);
+		} else {
+			v = CG::Builder.CreateICmpULT(L, R);
+		}
+
+		return v;
+	} 
+	else if (op == "<=") {
+		Value *v;
+		if (isSigned(LHS) || isSigned(RHS)) {
+			v = CG::Builder.CreateICmpSLE(L, R);
+		} else {
+			v = CG::Builder.CreateICmpULE(L, R);
+		}
+
+		return v;
+	}
+	else if (op == ">") {
+		Value *v;
+		if (isSigned(LHS) || isSigned(RHS)) {
+			v = CG::Builder.CreateICmpSGT(L, R);
+		} else {
+			v = CG::Builder.CreateICmpUGT(L, R);
+		}
+
+		return v;
+	}
+	else if (op == ">=") {
+		Value *v;
+		if (isSigned(LHS) || isSigned(RHS)) {
+			v = CG::Builder.CreateICmpSGE(L, R);
+		} else {
+			v = CG::Builder.CreateICmpUGE(L, R);
+		}
+
+		return v;
 	}
 	else {
 		std::cerr << "fatal: operation " << op << " does not have a generation case.";
