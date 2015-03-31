@@ -1,0 +1,70 @@
+/*
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** directory of this distribution.
+**
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** may not be copied, modified, or distributed except according to those terms.
+*/ 
+#ifndef __ORANGE_RUNER_H__
+#define __ORANGE_RUNER_H__
+
+#include "run.h"
+
+/**
+ * Runner is a class that will run or build a file or project. It starts with the name 
+ * of the path being built. It contains a list of messages that have been 
+ * generated during this run. Calling the run() method will compile the code
+ * and run it as JIT. Calling the build() method will build the code to 
+ * native. 
+ */
+class Runner {
+private:
+	std::string m_pathname;
+	std::vector<CompilerMessage> m_messages;
+
+	bool m_isRunning;
+
+	/**
+	 * Halts the run. Does shut down stuff.
+	 */
+	void haltRun();
+public:
+	/**
+	 * Returns whether or not there is at least one error in the run.
+	 */
+	bool hasError();
+
+	/**
+	 * Starts a run. The code will be compiled and ran directly. Returns a run result.
+	 */
+	RunResult run(); 
+
+	/**
+	 * Starts a build. The code will be compiled and built into a native binary. 
+	 * Returns a run result of the build.
+	 */
+	BuildResult build();
+
+	/**
+	 * Logs a message to this run. It will be stored internally and return after 
+	 * the current run/build finishes. If this run is not currently running, 
+	 * nothing will happen.
+	 *
+	 * @param message The message to log for this run.
+	 */
+	void log(CompilerMessage message); 
+
+	/**
+	 * Gets the pathname registered to this runner.
+	 *
+	 * @return The pathname registered to this runner.
+	 */
+	std::string pathname() const; 
+
+	/**
+	 * Creates an instance of Runner and registers it inside of the GeneratingEngine.
+	 */
+	Runner(std::string pathname);
+};
+
+#endif

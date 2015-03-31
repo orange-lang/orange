@@ -14,16 +14,15 @@
 #include "error.h"
 
 /**
- * RunResult is a class to inform the user about whether or not a 
- * run or compile has succeeded. It has a list of messages from the compiler
+ * BuildResult is a class to inform the user about whether or not a 
+ * build has succeeded. It also contains a list of messages from the compiler.
  */
-class RunResult {
-private:
+class BuildResult {
+protected:
 	bool m_pass;
 	std::vector<CompilerMessage> m_messages;
 	std::string m_filename;
 	unsigned long long m_runtime;
-	unsigned m_retcode;
 
 	boost::posix_time::ptime startTime, endTime;
 public:
@@ -68,8 +67,8 @@ public:
 	 * @param pass Whether or not the test passed.
 	 * @param messages The list of messages the occured during the run.
 	 */
-	void finish(bool pass, int code, CompilerMessage message);
-	void finish(bool pass, int code, std::vector<CompilerMessage> messages);
+	void finish(bool pass, CompilerMessage message);
+	void finish(bool pass, std::vector<CompilerMessage> messages);
 
 	/**
 	 * Gets the amount of time in milliseconds that this run took.
@@ -79,19 +78,43 @@ public:
 	unsigned long long runtime() const; 
 
 	/**
+	 * Gets the filename from this run.
+	 *
+	 * @return The filename from this run.
+	 */
+	std::string filename() const;
+
+	BuildResult() { }
+	BuildResult(std::string filename) { m_filename = filename; }
+	BuildResult(std::string filename, bool pass, CompilerMessage message);
+	BuildResult(std::string filename, bool pass, std::vector<CompilerMessage> messages);
+};
+
+/**
+ * RunResult is a class to inform the user about whether or not a 
+ * run or compile has succeeded. It has a list of messages from the compiler
+ */
+class RunResult : public BuildResult {
+private:
+	unsigned m_retcode;
+public:
+	/**
+	 * Finishes the run, ending the timer.
+	 *
+	 * @param pass Whether or not the test passed.
+	 * @param code The return code from the run
+	 * @param messages The list of messages the occured during the run.
+	 */
+	void finish(bool pass, int code, CompilerMessage message);
+	void finish(bool pass, int code, std::vector<CompilerMessage> messages);
+
+	/**
 	 * Gets the return code from the run. This value is meaningless if 
 	 * pass is false.
 	 *
 	 * @return Return code from the run.
 	 */
 	int returnCode() const;
-
-	/**
-	 * Gets the filename from this run.
-	 *
-	 * @return The filename from this run.
-	 */
-	std::string filename() const;
 
 	RunResult() { }
 	RunResult(std::string filename) { m_filename = filename; }

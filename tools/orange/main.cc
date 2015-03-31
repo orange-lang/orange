@@ -17,6 +17,7 @@
 #include <orange/file.h>
 #include <orange/run.h>
 #include <orange/test.h>
+#include <orange/orange.h>
 
 int main(int argc, char** argv) {
 	cOptions options("Orange WIP"); 

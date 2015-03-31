@@ -6,12 +6,13 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */ 
 #include <orange/run.h>
+#include <orange/runner.h>
 
-bool RunResult::passed() const { return m_pass; }
+bool BuildResult::passed() const { return m_pass; }
 
-std::vector<CompilerMessage> RunResult::messages() const { return m_messages; }
+std::vector<CompilerMessage> BuildResult::messages() const { return m_messages; }
 
-std::vector<CompilerMessage> RunResult::errors() const { 
+std::vector<CompilerMessage> BuildResult::errors() const { 
 	std::vector<CompilerMessage> retList;
 
 	// add everything to retList that *is not* a warning,
@@ -25,7 +26,7 @@ std::vector<CompilerMessage> RunResult::errors() const {
 	return retList; 
 }
 
-std::vector<CompilerMessage> RunResult::warnings() const {
+std::vector<CompilerMessage> BuildResult::warnings() const {
 	std::vector<CompilerMessage> retList;
 
 	// add everything to retlist that *is* a warning.
@@ -38,10 +39,46 @@ std::vector<CompilerMessage> RunResult::warnings() const {
 	return retList; 
 }
 
-void RunResult::start() {
+void BuildResult::start() {
 	// Get the current time in microsecs from the clock.
   startTime = boost::posix_time::microsec_clock::local_time();
 }
+
+void BuildResult::finish(bool pass, CompilerMessage message) {
+	// First, calculate the run time.
+	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration diff = endTime - startTime;
+  m_runtime = diff.total_milliseconds();
+
+	m_pass = pass;
+	m_messages.push_back(message);	
+}
+
+void BuildResult::finish(bool pass, std::vector<CompilerMessage> messages) {
+	// First, calculate the run time.
+	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
+  boost::posix_time::time_duration diff = endTime - startTime;
+  m_runtime = diff.total_milliseconds();
+
+	m_pass = pass;
+	m_messages = messages;
+}
+
+
+BuildResult::BuildResult(std::string filename, bool pass, CompilerMessage message) {
+	m_filename = filename;
+	start();
+	finish(pass, message);
+}
+
+BuildResult::BuildResult(std::string filename, bool pass, std::vector<CompilerMessage> messages) {
+	m_filename = filename;
+	start();
+	finish(pass, messages);
+}
+
+unsigned long long BuildResult::runtime() const { return m_runtime; }
+std::string BuildResult::filename() const { return m_filename; }
 
 void RunResult::finish(bool pass, int code, CompilerMessage message) {
 	// First, calculate the run time.
@@ -65,11 +102,8 @@ void RunResult::finish(bool pass, int code, std::vector<CompilerMessage> message
 	m_retcode = code;
 }
 
-unsigned long long RunResult::runtime() const { return m_runtime; }
+
 int RunResult::returnCode() const { return m_retcode; }
-std::string RunResult::filename() const { return m_filename; }
-
-
 
 RunResult::RunResult(std::string filename, bool pass, int code, CompilerMessage message) {
 	m_filename = filename;
@@ -84,20 +118,8 @@ RunResult::RunResult(std::string filename, bool pass, int code, std::vector<Comp
 }
 
 RunResult runFile(std::string filename) {
-	// try to find our file.
-	FILE *file = fopen(filename.c_str(), "r");
-	if (file == nullptr) {
-		CompilerMessage msg(NO_FILE, "file " + filename + " not found.", filename, -1, -1, -1, -1);
-		return RunResult(filename, false, 1, msg);
-	}
-
-	// TODO: parse it.
-
-	fclose(file);
-
-	// for now, temporarily return that we didn't run it.
-	CompilerMessage msg(NO_COMPILE, "file was not run.", filename, -1, -1, -1, -1);
-	return RunResult(filename, false, 1, msg);
+	Runner *runner = new Runner(filename);
+	return runner->run();
 }
 
 RunResult runProject(path projectPath) {
@@ -141,7 +163,11 @@ void doRunCommand(cOptionsState run) {
 
 	if (res.passed() == false) {
 		for (auto msg : res.errors()) {
-			std::cout << "error: " << msg.what() << std::endl;
+			if (msg.hasLineInfo()) {
+				std::cout << msg.string() << std::endl;			
+			} else {
+				std::cout << "error: " << msg.what() << std::endl;			
+			}
 		}
 	}
 }

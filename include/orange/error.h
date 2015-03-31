@@ -30,6 +30,13 @@ private:
 	int m_line_begin, m_line_end; 
 	int m_column_begin, m_column_end;
 public:
+	/**
+	 * Returns whether or not there is line information in this message.
+	 *
+	 * @return True if there is line info, false otherwise.
+	 */
+	bool hasLineInfo() const;
+
 	/** 
 	 * Returns the type of compiler message. Valid types are either an error
 	 * or a warning.
