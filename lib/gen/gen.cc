@@ -215,6 +215,10 @@ void CodeGenerator::GenerateObject() {
 		options.push_back("-w");
 #endif
 
+#ifdef __linux__
+		options.push_back("-I/lib64/ld-linux-x86-64.so.2");
+#endif 
+
 		options.push_back("-lc");
 		options.push_back("-o");
 		options.push_back(outputFile.c_str()); // final output. defaults to a.out
