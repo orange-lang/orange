@@ -1,0 +1,6 @@
+def foo(int a)
+	return a
+end
+
+a = 0
+return foo(a)
