@@ -14,6 +14,8 @@ bool BinOpExpr::isSigned() {
 		return false; 
 	}
 
+	std::cout << LHS->string() << " " << op << " " << RHS->string();
+
 	return LHS->isSigned() && RHS->isSigned();
 }
 
@@ -155,7 +157,7 @@ Value* BinOpExpr::Codegen() {
 		if (FPOperation) {
 			return CG::Builder.CreateFDiv(L, R);
 		} else {
-			if (LHS->isSigned() || RHS->isSigned()) {
+			if (isSigned()) {
 				return CG::Builder.CreateSDiv(L, R);
 			} else {
 				return CG::Builder.CreateUDiv(L, R);
@@ -168,7 +170,7 @@ Value* BinOpExpr::Codegen() {
 		// if one of them is signed, they're both signed.
 		if (FPOperation) {
 			v = CG::Builder.CreateFDiv(L, R);
-		} else if (LHS->isSigned() || RHS->isSigned()) {
+		} else if (isSigned()) {
 			v = CG::Builder.CreateSDiv(L, R);
 		} else {
 			v = CG::Builder.CreateUDiv(L, R);
@@ -186,7 +188,7 @@ Value* BinOpExpr::Codegen() {
 		Value *v = nullptr;
 		if (FPOperation) {
 			v = CG::Builder.CreateFCmpOLT(L, R);
-		} else if (LHS->isSigned() || RHS->isSigned()) {
+		} else if (isSigned()) {
 			v = CG::Builder.CreateICmpSLT(L, R);
 		} else {
 			v = CG::Builder.CreateICmpULT(L, R);
@@ -198,7 +200,7 @@ Value* BinOpExpr::Codegen() {
 		Value *v = nullptr;
 		if (FPOperation) {
 			v = CG::Builder.CreateFCmpOLE(L, R);
-		} else if (LHS->isSigned() || RHS->isSigned()) {
+		} else if (isSigned()) {
 			v = CG::Builder.CreateICmpSLE(L, R);
 		} else {
 			v = CG::Builder.CreateICmpULE(L, R);
@@ -210,7 +212,7 @@ Value* BinOpExpr::Codegen() {
 		Value *v = nullptr;
 		if (FPOperation) {
 			v = CG::Builder.CreateFCmpOGT(L, R);
-		} else if (LHS->isSigned() || RHS->isSigned()) {
+		} else if (isSigned()) {
 			v = CG::Builder.CreateICmpSGT(L, R);
 		} else {
 			v = CG::Builder.CreateICmpUGT(L, R);
@@ -222,7 +224,7 @@ Value* BinOpExpr::Codegen() {
 		Value *v = nullptr;
 		if (FPOperation) {
 			v = CG::Builder.CreateFCmpOGE(L, R);
-		} else if (LHS->isSigned() || RHS->isSigned()) {
+		} else if (isSigned()) {
 			v = CG::Builder.CreateICmpSGE(L, R);
 		} else {
 			v = CG::Builder.CreateICmpUGE(L, R);

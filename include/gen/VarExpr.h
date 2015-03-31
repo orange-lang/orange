@@ -9,9 +9,9 @@ public:
 	Value* Codegen();
 	Type *getType();
 
-	virtual bool isSigned() { return false; }
-
 	std::string name;
+
+	virtual bool isSigned();
 
 	virtual std::string string() {
 		return name;

@@ -43,6 +43,7 @@ VarDeclExpr::VarDeclExpr(AnyType *type, std::string *name, Expression *value) {
 
 	CG::Symtab->create(this->name);
 	CG::Symtab->objs[this->name]->setType(getType());
+	CG::Symtab->objs[this->name]->isSigned = isSigned();
 
 	DEBUG_MSG("COMPLETED VarDeclExpr");
 }
