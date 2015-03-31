@@ -95,8 +95,8 @@
 "<="										printf("<= "); return LEQ;
 ">="										printf(">= "); return GEQ; 
 
-"<"											printf("< "); return LT; 
-">"											printf("> "); return GT;
+"<"											printf("< "); return COMP_LT; 
+">"											printf("> "); return COMP_GT;
 
 "+"											printf("+ "); return PLUS;
 "-"											printf("- "); return MINUS;
@@ -104,7 +104,7 @@
 "/"											printf("/ "); return DIVIDE; 
 "%"											printf("%% "); return MOD; 
 
-[A-Za-z][A-Za-z0-9_]* 	printf("%%%s ", yytext); SAVESTR(); return ID;
+[A-Za-z][A-Za-z0-9_]* 	printf("%%%s ", yytext); SAVESTR(); return TYPE_ID;
 
 .												printf("Unhandled: %s\n", yytext);
 

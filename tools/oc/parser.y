@@ -23,14 +23,14 @@
 
 %start start 
 
-%token DEF END ID OPEN_PAREN CLOSE_PAREN TYPE COMMA
+%token DEF END TYPE_ID OPEN_PAREN CLOSE_PAREN TYPE COMMA
 %token TIMES NUMBER DIVIDE MINUS PLUS NEWLINE SEMICOLON
 %token TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %token TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64
 %token RETURN CLASS USING PUBLIC SHARED PRIVATE OPEN_BRACE CLOSE_BRACE 
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
-%token DOT LEQ GEQ LT GT MOD VALUE
+%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE
 
 %type <block> statements
 %type <stmt> statement
@@ -39,7 +39,7 @@
 %type <argexpr> opt_arg
 %type <arglist> opt_args opt_parens
 %type <exprlist> expr_list
-%type <str> ID DEF END TYPE TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
+%type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 type
 
 %left ASSIGN 
@@ -64,7 +64,7 @@ statement 	: 		function term { $$ = $1; }
 term 				:			NEWLINE | SEMICOLON ;
 
 function		:	 		DEF opt_id term statements END { $$ = $2; $$->body = $4; };
-opt_id			:			ID opt_parens { $$ = new FunctionStatement($1, $2, nullptr); } 
+opt_id			:			TYPE_ID opt_parens { $$ = new FunctionStatement($1, $2, nullptr); } 
 						| 		opt_parens { $$ = new FunctionStatement(nullptr, $1, nullptr) } ;
 
 opt_parens 	: 		OPEN_PAREN opt_args CLOSE_PAREN { $$ = $2; } 
@@ -73,8 +73,8 @@ opt_parens 	: 		OPEN_PAREN opt_args CLOSE_PAREN { $$ = $2; }
 opt_args 		:			opt_args COMMA opt_arg { $1->push_back($3); } 	
 						| 		opt_arg { $$ = new ArgList(); $$->push_back($1); }; 
 
-opt_arg 		:			type ID { $$ = new ArgExpr($1, $2); } 
-						| 		ID { $$ = new ArgExpr(nullptr, $1); } ; 
+opt_arg 		:			type TYPE_ID { $$ = new ArgExpr($1, $2); } 
+						| 		TYPE_ID { $$ = new ArgExpr(nullptr, $1); } ; 
 
 type  			:			TYPE_INT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
 						|			TYPE_INT32 | TYPE_INT64 | TYPE_UINT8 | TYPE_UINT16 | TYPE_UINT32 | TYPE_UINT64				
@@ -92,8 +92,8 @@ expr3 			:			expr3 TIMES primary { $$ = new BinOpExpr($1, '*', $3); }
 
 primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; } 
 						| 		VALUE { $$ = $1; }
-						| 		ID OPEN_PAREN expr_list CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
-						|			ID { $$ = new VarExpr(*$1); }
+						| 		TYPE_ID OPEN_PAREN expr_list CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
+						|			TYPE_ID { $$ = new VarExpr(*$1); }
 						;
 
 

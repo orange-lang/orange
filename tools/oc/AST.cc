@@ -8,9 +8,10 @@ ArgExpr::ArgExpr(std::string* type, std::string* name) {
 }
 
 FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *body) {
-	this->name = name ? *name : ""; 
+	this->name = name ? *name : "";
 	this->args = args;
 	this->body = body;
+	
 
 	// printf("[Creating function %s...] ", this->name.c_str());
 }
@@ -23,7 +24,7 @@ BinOpExpr::BinOpExpr(Expression *LHS, char op, Expression *RHS) {
 
 
 BaseVal *ValFactory::produce() {
-	BaseVal *ret = nullptr; 
+	BaseVal *ret = nullptr;
 
 	if (size == "?") {
 		std::string newSize = "";
@@ -31,14 +32,13 @@ BaseVal *ValFactory::produce() {
 		int ptr = 0;
 		for (; ptr < value.length(); ptr++) {
 			if (value[ptr] != '.' && isdigit(value[ptr]) == false)
-				continue; 
+				continue;
 			newSize += value[ptr];
 		}
 
 		printf("Determined size: \"%s\"\n", newSize.c_str());
 		size = newSize;
 	}
-
 
 	if (size == "u") {
 		uint64_t v = std::stoull(value);
@@ -89,12 +89,12 @@ BaseVal *ValFactory::produce() {
 		ret = new DoubleVal(v);
 		std::cout << v << " ";
 	} else if (size == "x") {
-		// base 16 
+		// base 16
 		uint64_t v = std::stoull(value, nullptr, 16);
 		ret = new UIntVal(v, 64);
 		std::cout << v << " ";
 	} else if (size == "b") {
-		// base 2 
+		// base 2
 		uint64_t v = std::stoull(value, nullptr, 2);
 		ret = new UIntVal(v, 64);
 		std::cout << v << " ";

@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8.8)
 project (oc)
 set(oc_SOURCE_DIR ${CMAKE_SOURCE_DIR}/tools/oc)
 
-list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -g -O3 -Wno-deprecated-register")
+list(APPEND CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -fexceptions -Wno-unused -O3 -Wno-deprecated-register")
 
 # LLVM stuff
 find_package(LLVM REQUIRED CONFIG)
@@ -22,4 +22,11 @@ flex_target(FlexOutput ${oc_SOURCE_DIR}/lexer.l ${oc_SOURCE_DIR}/lexer.cc)
 
 include_directories(include/oc)
 
-add_executable(oc ${oc_SOURCE_DIR}/main.cc ${oc_SOURCE_DIR}/AST.cc ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS})
+AUX_SOURCE_DIRECTORY(${oc_SOURCE_DIR} OC_SOURCES) 
+
+add_executable(oc 
+	${OC_SOURCES}
+	${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS}
+)
+
+target_link_libraries(oc ${llvm_libs})

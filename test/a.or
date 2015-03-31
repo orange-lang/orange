@@ -1,9 +1,7 @@
-# a.or 
+# basic test
 def test(int64 a)
-	a = 3 / a + 5 * 2
+	a = 3/ a + 5 * 2
 	return a
 end
 
-#int a = 3 + 4 * 2
-#test(5u8 + 2u * a - 3i)
 test(5)

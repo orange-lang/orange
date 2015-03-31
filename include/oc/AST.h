@@ -5,50 +5,72 @@
 #include <vector>
 #include <sstream>
 
-class ArgExpr; 
-class Expression; 
+#include <sstream>
+#include "llvm/Analysis/Passes.h"
+#include "llvm/IR/DataLayout.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Verifier.h"
+#include "llvm/PassManager.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Transforms/Scalar.h"
+using namespace llvm;
+
+
+class ArgExpr;
+class Expression;
 
 typedef std::vector<ArgExpr *> ArgList;
-typedef std::vector<Expression *> ExprList; 
+typedef std::vector<Expression *> ExprList;
 
-class Statement; 
+class Statement;
 class Block;
 
-// Base 
-class Statement { 
+// Base
+class Statement {
 public:
-	virtual std::string string() { return ""; } 
-}; 
+	virtual Value* Codegen() { return nullptr; }
+	virtual std::string string() { return ""; }
+};
 
-class Expression { 
+class Expression : public Statement { 
 public:
-	virtual std::string string() { return ""; } 
-}; 
+	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
+};
 
-class Block { 
-public: 
-	std::vector<Statement *> statements;  
+class Block {
+public:
+	Value* Codegen();
 
-	std::string string() { 	
+	std::vector<Statement *> statements;
+
+	std::string string() {
 		std::stringstream ss;
 		for (Statement *s : statements) {
 			ss << s->string() << std::endl;
 		}
 		return ss.str();
 	}
-}; 
+};
 
 class ArgExpr : public Statement {
 public:
-	std::string type; 
-	std::string name; 
+	Value* Codegen() {
+		printf("ArgExpr::Codegen()\n");
+		return nullptr;
+	}
 
-	virtual std::string string() { 
-		std::stringstream ss; 
+	std::string type;
+	std::string name;
+
+	virtual std::string string() {
+		std::stringstream ss;
 		if (type != "") {
 			ss << type << " ";
 		}
-		ss << name; 
+		ss << name;
 		return ss.str();
 	}
 
@@ -57,37 +79,49 @@ public:
 
 class FunctionStatement : public Statement {
 public:
-	std::string name; 
+	Value* Codegen();
+
+	std::string name;
 	ArgList *args;
 	Block *body;
 
-	virtual std::string string() { 
+	Type* getReturnType();
+
+	virtual std::string string() {
 		std::stringstream ss;
 		ss << name << "( ";
 		for (int i = 0; i < args->size(); i++) {
 			ss << (*args)[i]->string() << " ";
-			if (i + 1 != args->size()) 
+			if (i + 1 != args->size())
 				ss << ", ";
-		} 
+		}
 		ss << "):\n";
-	
+
 		for (Statement *s : body->statements) {
 			ss << "\t" << s->string() << std::endl;
 		}
 
 		return ss.str();
-	} 
+	}
 
 	FunctionStatement(std::string* name, ArgList *args, Block *body);
-}; 
+};
 
-class BinOpExpr : public Expression { 
+class BinOpExpr : public Expression {
 public:
-	Expression *LHS; 
-	char op;
-	Expression *RHS; 
+	Value* Codegen();
 
-	virtual std::string string() { 
+	Type *getType() { 
+		printf("BinOpExpr::getType()\n");
+		return nullptr; 
+	}
+
+
+	Expression *LHS;
+	char op;
+	Expression *RHS;
+
+	virtual std::string string() {
 		std::stringstream ss;
 		ss << "( " << LHS->string() << " " << op << " " << RHS->string() << " )";
 		return ss.str();
@@ -96,12 +130,15 @@ public:
 	BinOpExpr(Expression *LHS, char op, Expression *RHS);
 };
 
-class VarExpr : public Expression { 
+class VarExpr : public Expression {
 public:
+	Value* Codegen();
+	Type *getType();
+
 	std::string name;
 
-	virtual std::string string() { 
-		return name; 
+	virtual std::string string() {
+		return name;
 	}
 
 
@@ -110,19 +147,21 @@ public:
 
 class FuncCallExpr : public Expression {
 public:
-	std::string name; 
+	Value* Codegen();
+
+	std::string name;
 	ExprList *args;
 
-	virtual std::string string() { 
+	virtual std::string string() {
 		std::stringstream ss;
 		ss << name << "( ";
 		for (int i = 0; i < args->size(); i++) {
 			ss << (*args)[i]->string() << " ";
-			if (i + 1 != args->size()) 
+			if (i + 1 != args->size())
 				ss << ", ";
-		} 
+		}
 		ss << ")";
-	
+
 		return ss.str();
 	}
 
@@ -131,9 +170,11 @@ public:
 
 class ReturnExpr : public Expression {
 public:
+	Value* Codegen();
+
 	Expression *expr;
 
-	virtual std::string string() { 
+	virtual std::string string() {
 		return "RETURN " + expr->string();
 	}
 
@@ -144,44 +185,56 @@ class BaseVal : public Expression { };
 
 class UIntVal : public BaseVal {
 public:
-	uint64_t value; 
-	uint8_t size; 
+	Value* Codegen() {
+		printf("UIntVal::Codegen()\n");
+		return nullptr;
+	}
 
-	virtual std::string string() { 
+	uint64_t value;
+	uint8_t size;
+
+	virtual std::string string() {
 		std::stringstream ss;
 		ss << "(uint" << (uint64_t)size << ")" << value;
 		return ss.str();
-	}	
+	}
 
 	UIntVal() { }
-	UIntVal(uint64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value. 
+	UIntVal(uint64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
 };
 
 class IntVal : public BaseVal {
 public:
-	int64_t value; 
-	uint8_t size; 
+	Value* Codegen();
 
-	virtual std::string string() { 
+	int64_t value;
+	uint8_t size;
+
+	virtual std::string string() {
 		std::stringstream ss;
 		ss << "(int" << (uint64_t)size << ")" << value;
 		return ss.str();
-	}	
+	}
 
 	IntVal() { }
-	IntVal(int64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value. 
+	IntVal(int64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
 };
 
 class FloatVal : public BaseVal {
 public:
-	float value; 
+	Value* Codegen() {
+		printf("FloatVal::Codegen()\n");
+		return nullptr;
+	}
 
-	virtual std::string string() { 
+	float value;
+
+	virtual std::string string() {
 		std::stringstream ss;
 		ss << value;
 		ss << "(float)" << value;
 		return ss.str();
-	}	
+	}
 
 	FloatVal();
 	FloatVal(float val) : value(val) {} // parses a string into its value.
@@ -189,13 +242,18 @@ public:
 
 class DoubleVal : public BaseVal {
 public:
-	double value; 
+	Value* Codegen() {
+		printf("DoubleVal::Codegen()\n");
+		return nullptr;
+	}
 
-	virtual std::string string() { 
+	double value;
+
+	virtual std::string string() {
 		std::stringstream ss;
 		ss << "(double)" << value;
 		return ss.str();
-	}	
+	}
 
 	DoubleVal();
 	DoubleVal(double val) : value(val) {} // parses a string into its value.
@@ -203,10 +261,26 @@ public:
 
 class ValFactory {
 public:
-	std::string value; 
+	std::string value;
 	std::string size;
 
-	BaseVal *produce();	
+	BaseVal *produce();
 };
 
-#endif 
+
+#include <stack>
+#include <map>
+
+class CodeGenerator {
+public:
+	static Module *TheModule;
+	static IRBuilder<> Builder;
+	static std::stack< std::map<std::string, Value*>* > Context;
+
+	static Value* getValue(std::string name);
+
+	static void init();
+	static void Generate(Block *globalBlock);
+};
+
+#endif

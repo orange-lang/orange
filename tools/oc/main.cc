@@ -22,10 +22,21 @@ int main(int argc, char **argv) {
 
 	yyparse();
 
-	printf("done.\n");
+	printf("done parsing.\n");
+
+	if (globalBlock == nullptr) {
+		printf("an issue occured during parsing...\n");
+		return 1;
+	}
 
 	// print out shit
 	std::cout << globalBlock->string() << std::endl; 
+
+	printf("generating code...\n");
+
+	CodeGenerator::init();
+	CodeGenerator::Generate(globalBlock);
+
 
 	return 0;
 }
