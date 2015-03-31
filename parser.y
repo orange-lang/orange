@@ -42,6 +42,10 @@
 %type <str> ID DEF END TYPE TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 type
 
+%left ASSIGN 
+%right PLUS MINUS TIMES DIVIDE COMMA
+
+
 %%
 	
 start 			:			statements { globalBlock = $1; } 
@@ -91,6 +95,7 @@ primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 						| 		ID OPEN_PAREN expr_list CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
 						|			ID { $$ = new VarExpr(*$1); }
 						;
+
 
 expr_list		:			expr_list COMMA expression { $1->push_back($3); }
 						|			expression { $$ = new ExprList(); $$->push_back($1); }

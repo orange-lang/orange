@@ -32,6 +32,7 @@
 	.											printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
 }
 
+"-"?[1-9][0-9]*\.[0-9]+	MKFACTORY(); DOFACTORY("d"); return VALUE;
 
 "-"?[1-9][0-9]*"u8"			MKFACTORY(); DOFACTORY("u8"); return VALUE;
 "-"?[1-9][0-9]*"i8"			MKFACTORY(); DOFACTORY("i8"); return VALUE;
@@ -54,17 +55,17 @@
 "private"								printf("private "); return PRIVATE; 
 "shared"								printf("shared "); return SHARED; 
 
-"int"										printf("int "); return TYPE_INT; 
-"float"									printf("float "); return TYPE_FLOAT; 
-"double"								printf("double "); return TYPE_DOUBLE; 
-"int8"									printf("int8 "); return TYPE_INT8; 
-"uint8"									printf("uint8 "); return TYPE_UINT8;
-"int16"									printf("int16 "); return TYPE_INT16; 
-"uint16"								printf("uint16 "); return TYPE_UINT16; 
-"int32"									printf("int32 "); return TYPE_INT32; 
-"uint32"								printf("uint32 "); return TYPE_UINT32; 
-"int64"									printf("int64 "); return TYPE_INT64; 
-"uint64"								printf("uint64 "); return TYPE_UINT64;
+"int"										printf("int "); SAVESTR(); return TYPE_INT; 
+"float"									printf("float "); SAVESTR();  return TYPE_FLOAT; 
+"double"								printf("double "); SAVESTR();  return TYPE_DOUBLE; 
+"int8"									printf("int8 "); SAVESTR();  return TYPE_INT8; 
+"uint8"									printf("uint8 "); SAVESTR();  return TYPE_UINT8;
+"int16"									printf("int16 "); SAVESTR();  return TYPE_INT16; 
+"uint16"								printf("uint16 "); SAVESTR();  return TYPE_UINT16; 
+"int32"									printf("int32 "); SAVESTR();  return TYPE_INT32; 
+"uint32"								printf("uint32 "); SAVESTR();  return TYPE_UINT32; 
+"int64"									printf("int64 "); SAVESTR();  return TYPE_INT64; 
+"uint64"								printf("uint64 "); SAVESTR();  return TYPE_UINT64;
 
 "("											printf("( "); return OPEN_PAREN; 
 ")"											printf(") "); return CLOSE_PAREN; 
