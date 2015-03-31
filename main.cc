@@ -2,9 +2,14 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include "AST.h"
 
 extern FILE* yyin;
 extern int yylex();
+
+extern Block *globalBlock;
+extern int yyparse();
+
 
 int main(int argc, char **argv) {
 	if (argc < 2) {
@@ -13,8 +18,14 @@ int main(int argc, char **argv) {
 	}
 
 	yyin = fopen(argv[1], "r");
-	while (yylex() != 0);
+	// while (yylex() != 0);
+
+	yyparse();
 
 	printf("done.\n");
+
+	// print out shit
+	std::cout << globalBlock->string() << std::endl; 
+
 	return 0;
 }

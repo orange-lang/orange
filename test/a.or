@@ -1,8 +1,9 @@
 # a.or 
 def test(a)
-	a = 11b / 0x1 + 5.0 * 2 
+	a = 11b / 0x1 + 5.0 * 2u8
 	return a
 end
 
 #int a = 3 + 4 * 2
-#test(5 + 2 * a - 3)
+#test(5u8 + 2u * a - 3i)
+test(5)

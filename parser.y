@@ -12,7 +12,12 @@
 %union {
 	Block *block; 
 	Statement *stmt; 
+	ArgList *arglist;
+	ExprList *exprlist;
+	ArgExpr *argexpr;
+	FunctionStatement *fstmt;
 	Expression *expr;
+	std::string *str;
 	int token; 
 }
 
@@ -28,43 +33,63 @@
 %token DOT LEQ GEQ LT GT MOD VALUE
 
 %type <block> statements
-%type <stmt> statement 
+%type <stmt> statement
+%type <expr> expression expr2 expr3 primary VALUE
+%type <fstmt> function opt_id
+%type <argexpr> opt_arg
+%type <arglist> opt_args opt_parens
+%type <exprlist> expr_list
+%type <str> ID DEF END TYPE
 
 %%
 	
 start 			:			statements { globalBlock = $1; } 
 						;
 
-statements	: 		statements statement { $1->statements.push_back($2); } 
-						| 		statement { $$ = new Block(); $$->statements.push_back($1); }
+statements	: 		statements statement { if ($2) $1->statements.push_back($2); } 
+						| 		statement { $$ = new Block(); if ($1) $$->statements.push_back($1); }
 						;
 
-statement 	: 		function term { $$ = nullptr; } 
-						| 		expression term { $$ = nullptr; } 
+statement 	: 		function term { $$ = $1; } 
+						| 		expression term { $$ = (Statement *)$1; } 
+						|			RETURN expression term { $$ = (Statement *)(new ReturnExpr($2)); }
 						| 		term { $$ = nullptr; } 
 						;
 
 term 				:			NEWLINE | SEMICOLON ;
 
-function		:	 		DEF opt_id term END ;
-opt_id			:			ID opt_parens | opt_parens ;
-opt_parens 	: 		OPEN_PAREN opt_args CLOSE_PAREN | ;
+function		:	 		DEF opt_id term statements END { $$ = $2; $$->body = $4; };
+opt_id			:			ID opt_parens { $$ = new FunctionStatement($1, $2, nullptr); } 
+						| 		opt_parens { $$ = new FunctionStatement(nullptr, $1, nullptr) } ;
 
-opt_args		:			opt_arg opt_comma | ;
-opt_comma  	:			COMMA opt_args | ;
-opt_arg 		:			opt_type ID ;
-opt_type 		:			TYPE | ;
+opt_parens 	: 		OPEN_PAREN opt_args CLOSE_PAREN { $$ = $2; } 
+						| 		{ $$ = nullptr; };
 
-expression 	:			expression PLUS expr2 | expression MINUS expr2 ;
-						|			expr2 
+opt_args 		:			opt_args COMMA opt_arg { $1->push_back($3); } 	
+						| 		opt_arg { $$ = new ArgList(); $$->push_back($1); }; 
 
-expr2 			:			expr2 TIMES primary | expr2 DIVIDE primary ;
-						|			primary ;
+opt_arg 		:			TYPE ID { $$ = new ArgExpr($1, $2); } 
+						| 		ID { $$ = new ArgExpr(nullptr, $1); } ; 
 
-primary			: 		OPEN_PAREN expression CLOSE_PAREN | NUMBER | ID opt_func ;
+expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, ASSIGN, $3); }
+						|			expr2 { $$ = $1; }
 
-opt_func 		:			OPEN_PAREN expr_list CLOSE_PAREN | ;
-expr_list 	: 		expression expr_comma | ; 
-expr_comma 	: 		COMMA expr_list | ;
+expr2 			:			expr2 PLUS expr3 { $$ = new BinOpExpr($1, PLUS, $3); }
+						| 		expr2 MINUS expr3 { $$ = new BinOpExpr($1, MINUS, $3); }
+						|			expr3 { $$ = $1; }
+
+expr3 			:			expr3 TIMES primary { $$ = new BinOpExpr($1, TIMES, $3); } 
+						| 		expr3 DIVIDE primary { $$ = new BinOpExpr($1, DIVIDE, $3); }
+						|			primary { $$ = $1; }
+
+primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; } 
+						| 		VALUE { $$ = $1; }
+						| 		ID OPEN_PAREN expr_list CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
+						|			ID { $$ = new VarExpr(*$1); }
+						;
+
+expr_list		:			expr_list COMMA expression { $1->push_back($3); }
+						|			expression { $$ = new ExprList(); $$->push_back($1); }
+						 
 
 %%

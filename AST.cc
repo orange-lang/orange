@@ -1,7 +1,44 @@
 #include "AST.h"
 
-Expression *ValFactory::produce() {
-	Expression *ret = nullptr; 
+ArgExpr::ArgExpr(std::string* type, std::string* name) {
+	this->type = type ? *type : "";
+	this->name = name ? *name : "";
+
+	// printf("[Creating arg %s (type: %s)...] ", this->name.c_str(), this->type.c_str());
+}
+
+FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *body) {
+	this->name = name ? *name : ""; 
+	this->args = args;
+	this->body = body;
+
+	// printf("[Creating function %s...] ", this->name.c_str());
+}
+
+BinOpExpr::BinOpExpr(Expression *LHS, int op, Expression *RHS) {
+	this->LHS = LHS;
+	this->op = op;
+	this->RHS = RHS;
+}
+
+
+BaseVal *ValFactory::produce() {
+	BaseVal *ret = nullptr; 
+
+	if (size == "?") {
+		std::string newSize = "";
+		// read value until it's no longer a number or decimal.
+		int ptr = 0;
+		for (; ptr < value.length(); ptr++) {
+			if (value[ptr] != '.' && isdigit(value[ptr]) == false)
+				continue; 
+			newSize += value[ptr];
+		}
+
+		printf("Determined size: \"%s\"\n", newSize.c_str());
+		size = newSize;
+	}
+
 
 	if (size == "u") {
 		uint64_t v = std::stoull(value);

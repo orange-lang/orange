@@ -4,6 +4,12 @@
 #include <iostream>
 #include <vector>
 
+class ArgExpr; 
+class Expression; 
+
+typedef std::vector<ArgExpr *> ArgList;
+typedef std::vector<Expression *> ExprList; 
+
 class Statement; 
 class Block;
 
@@ -14,14 +20,60 @@ class Expression { };
 class Block { 
 public: 
 	std::vector<Statement *> statements;  
+
+	std::string string() { return "BLOCK PLACEHOLDER"; }
 }; 
+
+class ArgExpr : public Statement {
+public:
+	std::string type; 
+	std::string name; 
+
+	ArgExpr(std::string* type, std::string* name);
+};
 
 class FunctionStatement : public Statement {
 public:
 	std::string name; 
+	ArgList *args;
+	Block *body;
+
+	FunctionStatement(std::string* name, ArgList *args, Block *body);
 }; 
 
-class UIntVal : public Expression {
+class BinOpExpr : public Expression { 
+public:
+	Expression *LHS; 
+	int op;
+	Expression *RHS; 
+
+	BinOpExpr(Expression *LHS, int op, Expression *RHS);
+};
+
+class VarExpr : public Expression { 
+public:
+	std::string name;
+
+	VarExpr(std::string name) : name(name) { }
+};
+
+class FuncCallExpr : public Expression {
+public:
+	std::string name; 
+	ExprList *args;
+
+	FuncCallExpr(std::string name, ExprList *args) : name(name), args(args) {}
+};
+
+class ReturnExpr : public Expression {
+public:
+	Expression *expr;
+	ReturnExpr(Expression *expr) : expr(expr) {}
+};
+
+class BaseVal : public Expression { };
+
+class UIntVal : public BaseVal {
 public:
 	uint64_t value; 
 	uint8_t size; 
@@ -30,7 +82,7 @@ public:
 	UIntVal(uint64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value. 
 };
 
-class IntVal : public Expression {
+class IntVal : public BaseVal {
 public:
 	int64_t value; 
 	uint8_t size; 
@@ -39,7 +91,7 @@ public:
 	IntVal(int64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value. 
 };
 
-class FloatVal : public Expression {
+class FloatVal : public BaseVal {
 public:
 	float value; 
 
@@ -47,7 +99,7 @@ public:
 	FloatVal(float val) : value(val) {} // parses a string into its value.
 };
 
-class DoubleVal : public Expression {
+class DoubleVal : public BaseVal {
 public:
 	double value; 
 
@@ -60,7 +112,7 @@ public:
 	std::string value; 
 	std::string size;
 
-	Expression *produce();	
+	BaseVal *produce();	
 };
 
 #endif 

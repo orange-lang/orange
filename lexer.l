@@ -8,6 +8,7 @@
 
 	#define MKFACTORY() factory = new ValFactory(); factory->value = yytext;
 	#define DOFACTORY(SZ) factory->size = SZ; yylval.expr = factory->produce(); delete factory;
+	#define SAVESTR() yylval.str = new std::string(yytext, yyleng);
 %}
 
 %option noyywrap
@@ -51,7 +52,7 @@
 	"i32"									DOFACTORY("i32"); BEGIN(INITIAL); return VALUE; 
 	"u64"									DOFACTORY("u64"); BEGIN(INITIAL); return VALUE; 
 	"i64"									DOFACTORY("i64"); BEGIN(INITIAL); return VALUE; 
-	[\ \t\r\n]						DOFACTORY("i"); BEGIN(INITIAL); return VALUE; 
+	.											DOFACTORY("i"); BEGIN(INITIAL); yyless(0); return VALUE; 
 }
 
 "def"										printf("def "); return DEF; 
@@ -112,8 +113,10 @@
 "/"											printf("/ "); return DIVIDE; 
 "%"											printf("%% "); return MOD; 
 
-[A-Za-z][A-Za-z0-9_]* 	printf("%%%s ", yytext);
+[A-Za-z][A-Za-z0-9_]* 	printf("%%%s ", yytext); SAVESTR(); return ID;
 
 .												printf("Unhandled: %s\n", yytext);
+
+<<EOF>> { static int once = 0; return once++ ? 0 : NEWLINE; }
 
 %%
