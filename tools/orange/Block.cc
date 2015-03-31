@@ -14,6 +14,10 @@ SymTable* Block::symtab() const {
 	return m_symtab;
 }
 
+bool Block::isRoot() const { 
+	// We're the root block if our symbol table doesn't have a parent.
+	return m_symtab && m_symtab->parent() == nullptr; 
+}
 
 void Block::addStatement(ASTNode* statement) {
 	// After we're locked, we can't add any more statements.
@@ -47,6 +51,18 @@ Value* Block::Codegen() {
 	generateStatements();
 
 	GE::runner()->popBlock();
+	return nullptr;
+}
+
+bool Block::hasReturn() {
+	return returnType() != nullptr; 
+}
+
+Type* Block::returnType() {
+	for (ASTNode *s : m_statements) {
+		if (s->getClass() == "ReturnStmt") return s->getType(); 
+	}
+
 	return nullptr;
 }
 

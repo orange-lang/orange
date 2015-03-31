@@ -7,6 +7,7 @@
 */ 
 #include <orange/runner.h>
 #include <orange/generator.h>
+#include <orange/AnyType.h>
 
 Runner::Runner(std::string pathname) {
 	m_pathname = pathname;
@@ -18,7 +19,7 @@ Runner::Runner(std::string pathname) {
 
 	// Create the global block
 	SymTable *globalSymtab = new SymTable(nullptr);
-	m_function = new FunctionStmt("__INTERNAL_main", globalSymtab);
+	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), globalSymtab);
 	pushBlock(m_function);
 
 	// Create LLVM stuff; module, builder, etc
@@ -62,31 +63,39 @@ RunResult Runner::run() {
 	extern int yyonce; // used to get the endline
 	extern void yyflushbuffer();
 
-	yyflushbuffer(); // reset buffer 
-	yyonce = 0; // reset yyonce 
-	yyin = file; // give flex the file 
-	yyparse(); // and do our parse.
+	try {
+		yyflushbuffer(); // reset buffer 
+		yyonce = 0; // reset yyonce 
+		yyin = file; // give flex the file 
+		yyparse(); // and do our parse.
 
-	// Now that we've parsed everything, let's analyze and resolve code...
-	mainFunction()->resolve();
+		// Now that we've parsed everything, let's analyze and resolve code...
+		mainFunction()->resolve();
 
-	if (debug())
-		std::cout << mainFunction()->string() << std::endl;
+		if (debug())
+			std::cout << mainFunction()->string() << std::endl;
 
-	// TODO: run the generated module.
-	mainFunction()->Codegen();
+		// TODO: run the generated module.
+		mainFunction()->Codegen();
 
-	if (debug())
-		m_module->dump();
+		if (debug())
+			m_module->dump();
 
-	int retCode = 0;
+		int retCode = 0;
 
-	// Do cleanup.
-	fclose(file);
-	m_isRunning = false;
+		// Do cleanup.
+		fclose(file);
+		m_isRunning = false;
 
-	bool succeeded = (retCode == 0) && (hasError() == false); 
-	return RunResult(pathname(), succeeded, retCode, m_messages);
+		bool succeeded = (retCode == 0) && (hasError() == false); 
+		return RunResult(pathname(), succeeded, retCode, m_messages);
+	} catch (CompilerMessage& e) {
+		std::cerr << "fatal: " << e.what() << std::endl;
+		exit(1);
+	} catch (std::runtime_error& e) {
+		std::cerr << "fatal: " << e.what() << std::endl;
+		exit(1);
+	}
 }
 
 void Runner::log(CompilerMessage message) {

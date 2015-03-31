@@ -42,6 +42,13 @@ public:
 	SymTable* symtab() const;
 
 	/**
+	 * Returns whether or not we are the root block.
+	 *
+	 * @return True if we are the root, false otherwise.
+	 */
+	bool isRoot() const;
+
+	/**
 	 * Adds a statement to the list of statements for this block.
 	 * After Codegen has been called, no more statements can be 
 	 * added and this function will do nothing.
@@ -58,6 +65,22 @@ public:
 	 * @return This function always returns nothing.
 	 */ 
 	Value* Codegen();
+
+	/**
+	 * Determines whether or not the body has a return stmt.
+	 * Does not check for nested bodies. 
+	 *
+	 * @return True if the body has a return statement, false otherwise.
+	 */
+	bool hasReturn();
+
+	/**
+	 * Gets the return type from the body, if it exists.
+	 * Does not check for nested bodies (e.g., if statements)
+	 *
+	 * @return A type if a return type exists, false otherwise.
+	 */ 
+	Type* returnType();
 
 	virtual ASTNode* clone();
 

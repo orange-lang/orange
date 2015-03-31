@@ -10,6 +10,7 @@
 #define __ORANGE_FUNCTION_H__
 #include "AST.h"
 #include "Block.h"
+#include "AnyType.h"
 
 class FunctionStmt : public Block {
 private:
@@ -19,6 +20,8 @@ private:
 
 	// TODO: clones of this function should be LinkOnceODRLinkage.
 	llvm::GlobalValue::LinkageTypes m_linkageType = Function::ExternalLinkage;
+
+	AnyType* m_type = nullptr;
 public:
 	virtual std::string getClass() { return "FunctionStmt"; }
 
@@ -28,6 +31,8 @@ public:
 
 	virtual std::string string();
 
+	virtual Type* getType();
+
 	/** 
 	 * Gets the parent symbol table, if there is one. 
 	 * If there is a parent symbol table, adds this to the 
@@ -36,6 +41,8 @@ public:
 	virtual void resolve();
 
 	FunctionStmt(std::string name, SymTable* symtab);
+	FunctionStmt(std::string name, AnyType* type, SymTable* symtab);
+
 };
 
 #endif 

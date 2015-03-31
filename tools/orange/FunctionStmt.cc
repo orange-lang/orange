@@ -13,6 +13,20 @@ FunctionStmt::FunctionStmt(std::string name, SymTable* symtab) : Block(symtab) {
 	m_name = name;
 }
 
+FunctionStmt::FunctionStmt(std::string name, AnyType* type, SymTable* symtab) : Block(symtab) {
+	m_name = name; 
+	m_type = type; 
+}
+
+Type* FunctionStmt::getType() {
+	if (m_type == nullptr) {
+		// TODO: If we don't have an explicit type set, we have to determine it from our body.
+		throw CompilerMessage(*this, "Unhandled FunctionStmt::getType case: m_type == nullptr");
+	} 
+
+	return m_type->getType();
+}
+
 Value* FunctionStmt::Codegen() {
 	// Push ourselves onto the stack first.
 	GE::runner()->pushBlock(this);
@@ -34,13 +48,24 @@ Value* FunctionStmt::Codegen() {
 	BasicBlock *funcBody = BasicBlock::Create(getGlobalContext(), "entry", generatedFunc);
 	GE::builder()->SetInsertPoint(funcBody);
 
+
 	// Generate the body, which will add code to our new insert block
 	generateStatements();
 
 	// If our body has a return statement, then we don't have to do anything else here.
 	// If we don't have a return statement:
 	//		- Are we a main function? If we are, force return 0.
-	//		- Are we an auto return? If not, throw an error about a missing return of type for function.
+	//		- Are we an auto return? If not, throw an error about a missing return of type for function
+	// We only want to check for a return statement in the direct body; no nested bodies. The reason for this is that 
+	// if we _need_ a return type, it _needs_ to be in the main body. 
+	if (hasReturn() == false) {
+		if (isRoot()) {
+			// TODO: We're the main block; force return a 0.
+			GE::builder()->CreateRet(ConstantInt::getSigned(funcType->getReturnType(), 0));
+		} else if (m_type != nullptr) {
+			throw CompilerMessage(*this, "Missing return type; expected a " + m_type->string());
+		}
+	} 
 
 	// Optimize our function.
 	GE::sharedEngine()->functionOptimizer()->run(*generatedFunc);
