@@ -15,6 +15,19 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 	CG::Symtab->parent->create(this->name);
 	CG::Symtab->parent->objs[this->name]->isFunction = true; 
 	CG::Symtab->parent->objs[this->name]->reference = (Statement *)this; 
+
+	// Add arguments to symbol table
+	for (ArgExpr *expr : *(this->args)) {
+		if (expr->type && (expr->type->type)[0] == 'u') {
+			expr->isSigned = false;
+		} else expr->isSigned = true;
+
+		CG::Symtab->create(expr->name);
+		if (expr->type) {
+			CG::Symtab->objs[expr->name]->setType(expr->type->getType());
+		}
+		CG::Symtab->objs[expr->name]->isSigned = expr->isSigned;
+	}
 }
 
 Value* FunctionStatement::Codegen() {
