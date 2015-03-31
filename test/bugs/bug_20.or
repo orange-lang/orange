@@ -1,0 +1,11 @@
+if 2 < 5
+a = 0 
+
+if 2 < 3 
+	a++
+end 
+
+return a - 1
+end
+
+return 1

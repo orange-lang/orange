@@ -7,6 +7,8 @@ ExternFunction::ExternFunction(AnyType *returnType, std::string name, ArgList *a
 	this->name = name;
 	this->args = args;
 
+	DEBUG_MSG("ADDING EXTERNAL FUNCTION " << name << " TO SYMTAB " << CG::Symtabs.top()->ID << " PTR: " << this);
+
 	CG::Symtabs.top()->create(this->name);
 	CG::Symtabs.top()->objs[this->name]->isFunction = true; 
 	CG::Symtabs.top()->objs[this->name]->setType(returnType->getType()); 

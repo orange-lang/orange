@@ -16,6 +16,8 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 
 	// Create this as a symbol in our parent.
 	if (CG::Symtabs.top()->parent) {
+		DEBUG_MSG("Adding " << this->name << " to parent " << CG::Symtabs.top()->parent->ID);
+
 		CG::Symtabs.top()->parent->create(this->name);
 		CG::Symtabs.top()->parent->objs[this->name]->isFunction = true; 
 		CG::Symtabs.top()->parent->objs[this->name]->reference = (Statement *)this; 
@@ -173,6 +175,7 @@ void FunctionStatement::resolve() {
 
 	if (argsResolved) {
 		DEBUG_MSG("RESOLVING " << name);
+
 		body->resolve();
 	}
 
@@ -235,8 +238,6 @@ Value* FunctionStatement::Codegen() {
 		linkage = Function::LinkOnceODRLinkage;
 
 	Function *TheFunction = Function::Create(FT, linkage, name, CG::TheModule);
-
-
 
 	if (CG::Symtabs.top()->parent) {
 		// Set function for the PARENT symtab (the one that could call this function)
@@ -320,7 +321,7 @@ Value* FunctionStatement::Codegen() {
 		clone->Codegen();
 	}
 
-	DEBUG_MSG("FINISHED CODEGEN FOR FunctionStatement " << name);
+	DEBUG_MSG("FINISHED CODEGEN FOR FunctionStatement " << name << " (SYMTAB: " << body->symtab->ID << ")");
 	return TheFunction;
 }
 

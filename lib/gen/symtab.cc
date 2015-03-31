@@ -73,12 +73,14 @@ BasicBlock* SymTable::getFunctionEnd() {
 
 Symobj* SymTable::find(std::string name) {
 	SymTable* ptr = this;
+
 	while (ptr != nullptr) {
-		auto obj = ptr->objs.find(name);
-		if (obj != ptr->objs.end()) {
-			return obj->second;
+		for (auto obj : ptr->objs) {
+			if (obj.first == name) {
+				return obj.second;
+			}
 		}
-		
+
 		ptr = ptr->parent;
 	}
 	
@@ -86,6 +88,7 @@ Symobj* SymTable::find(std::string name) {
 }
 
 void SymTable::create(std::string name) {
+	std::cout << "Creating " << name << std::endl;
 	if (objs.find(name) == objs.end()) {
 		objs[name] = new Symobj();
 	}
@@ -95,9 +98,14 @@ void SymTable::dump() {
 	SymTable* ptr = this;
 	while (ptr != nullptr) {
 		printf("Symtab (%d) %p:\n", ptr->ID, ptr);
-		for (auto obj : objs) {
-			printf("\t%s (value: %d, type: %d)\n", obj.first.c_str(), 
-				obj.second->m_value != nullptr, obj.second->m_type != nullptr);
+
+		if (ptr->objs.size() == 0) {
+			printf("\t(no members)\n");
+		}
+
+		for (auto obj : ptr->objs) {
+			printf("\t[%p] %s (value: %d, type: %d, function: %d)\n", obj.second, obj.first.c_str(), 
+				obj.second->m_value != nullptr, obj.second->m_type != nullptr, obj.second->isFunction);
 		}	
 
 		ptr = ptr->parent;

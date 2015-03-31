@@ -9,6 +9,8 @@
 
 	Block *globalBlock = nullptr; 
 	typedef CodeGenerator CG;
+
+	#define CREATE_SYMTAB() { auto s = new SymTable(); if (CG::Symtabs.size() > 0) { s->parent = CG::Symtabs.top(); } CG::Symtabs.push(s); }
 %}
 
 %union {
@@ -43,7 +45,7 @@
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND
 
 %type <ifstmt> if_statement opt_else inline_if inline_unless unless 
-%type <block> statements opt_statements
+%type <block> statements opt_statements statements_internal opt_statements_internal
 %type <stmt> statement extern return_stmt expr_or_ret
 %type <expr> primary_high
 %type <expr> expression primary VALUE opt_expr declaration opt_eq opt_num 
@@ -77,18 +79,24 @@
 %%
 	
 start
-	:	{ auto s = new SymTable(); CG::Symtabs.push(s); } 
-		statements 
-		{ globalBlock = $2; globalBlock->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); } 
+	:	statements { globalBlock = $1; } 
 	;
 
 statements 		
-	:	statements statement { if ($2) $1->statements.push_back($2); } 
+	: { CREATE_SYMTAB(); } statements_internal { $$ = $2; $$->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
+	;
+
+statements_internal
+	:	statements_internal statement { if ($2) $1->statements.push_back($2); } 
 	|	statement { $$ = new Block(); if ($1) $$->statements.push_back($1); }
 	;
 
 opt_statements
 	: statements { $$ = $1; }
+	| { CREATE_SYMTAB(); $$ = new Block(); $$->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
+
+opt_statements_internal
+	:	statements_internal { $$ = $1; }
 	| { $$ = new Block(); }
 
 statement 		
@@ -159,31 +167,26 @@ extern
 unless 
 	: UNLESS expression term opt_statements END 
 		{
-			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
-
 			CondBlock *b = new CondBlock($2, $4, true); 
-			b->symtab = CG::Symtabs.top(); 
-
-			CG::Symtabs.pop();
-
+		
 			$$ = new IfStatement;
 			$$->blocks.insert($$->blocks.begin(), b);
 		}
 
 function
-	:	DEF opt_id term opt_statements END 
+	:	DEF opt_id term opt_statements_internal END 
 		{ $$ = $2; $$->body = $4; $$->body->symtab = CG::Symtabs.top(); CG::Symtabs.pop(); }
 	;
 
 opt_id			
 	:	TYPE_ID opt_parens 
 		{ 
-			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+			CREATE_SYMTAB();
 			$$ = new FunctionStatement($1, $2, nullptr); 
 		} 
 	|	opt_parens 
 		{ 
-			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
+			CREATE_SYMTAB();
 			$$ = new FunctionStatement(nullptr, $1, nullptr); 
 		} 
 	;
@@ -314,36 +317,23 @@ dereference
 if_statement
 	: IF expression term opt_statements opt_else 
 		{ 
-			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
-
 			$$ = $5; 
 			CondBlock *b = new CondBlock($2, $4); 
 			$$->blocks.insert($$->blocks.begin(), b);
-			b->symtab = CG::Symtabs.top(); 
-			CG::Symtabs.pop(); 
 		}
 	;
 
 opt_else
 	:	ELIF expression term opt_statements opt_else 
 		{ 
-			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
-
 			$$ = $5; 
 			CondBlock *b = new CondBlock($2, $4); 
 			$$->blocks.insert($$->blocks.begin(), b);
-			b->symtab = CG::Symtabs.top(); 
-			CG::Symtabs.pop(); 
 		}	
 	|	ELSE term opt_statements END
 		{ 
-			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
-
 			$$ = new IfStatement; 
 			$$->blocks.insert($$->blocks.begin(), $3); 
-			
-			$3->symtab = CG::Symtabs.top(); 
-			CG::Symtabs.pop(); 
 		}
 	|	END { $$ = new IfStatement; }
 	;

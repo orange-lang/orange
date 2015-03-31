@@ -48,6 +48,15 @@ void BinOpExpr::resolve() {
 		// Create it, regardless of whether it exists in a parent scope.		
 		CG::Symtabs.top()->create(L->name);
 		CG::Symtabs.top()->objs[L->name]->setType(RHS->getType()->getPointerTo());
+	} else if (LHS->getClass() == "VarExpr") {
+		VarExpr *L = (VarExpr *)LHS;
+
+		if (CG::Symtabs.top()->find(L->name) == nullptr) {
+
+			std::cerr << "fatal: variable " << L->name << " not found\n";
+			exit(1);
+		}
+		
 	}
 
 	Type *LType = LHS->getType();

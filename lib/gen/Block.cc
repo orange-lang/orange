@@ -96,8 +96,12 @@ Type* Block::getReturnType() {
 void Block::resolve() {
 	if (resolved) 
 		return;
-
 	resolved = true;
+
+	if (symtab == nullptr) {
+		std::cerr << "Fatal: block is lacking a symbol table.\n";
+		exit(1);
+	}
 
 	CG::Symtabs.push(symtab);
 

@@ -17,7 +17,8 @@ FuncCallExpr::FuncCallExpr(std::string name, ExprList *args) {
 	// if the types don't exist, create them here.
 	Symobj *func = CG::Symtabs.top()->find(name);
 	if (func == nullptr) {
-		std::cerr << "fatal: calling function that hasn't been declared.\n";
+		std::cerr << "fatal: calling function " << name << " that hasn't been declared.\n";
+		CG::Symtabs.top()->dump();
 		exit(1);
 	}
 }
@@ -30,6 +31,11 @@ void FuncCallExpr::resolve() {
 	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr) {
 		std::cerr << "Error: couldn't find " << name << " in symtab\n";
+		exit(1);
+	}
+
+	if (o->isFunction == false) {
+		std::cout << "fatal: found " << name << " from symtab " << CG::Symtabs.top()->ID << ", but it's not a function!\n";
 		exit(1);
 	}
 
@@ -72,9 +78,9 @@ void FuncCallExpr::resolve() {
 			std::cerr << "reason: " << e.what() << std::endl;
 			exit(1);
 		}
+	} 
 
-		fstmt->resolve();
-	}
+	o->reference->resolve();
 }
 
 
@@ -91,8 +97,14 @@ Type *FuncCallExpr::getType() {
 		return nullptr; 
 	}
 
+	if (o->isFunction == false) {
+		std::cout << "fatal: found " << name << " from symtab " << CG::Symtabs.top()->ID << ", but it's not a function!\n";		
+		CG::Symtabs.top()->dump();
+		exit(1);
+	}
+
 	if (o->reference == nullptr) {
-		std::cerr << "Fatal: no reference for function object\n";
+		std::cerr << "Fatal: no reference for function object (symtab: " << CG::Symtabs.top()->ID << ")\n";
 		return nullptr; 
 	}
 
@@ -136,8 +148,7 @@ Value* FuncCallExpr::Codegen() {
 	Symobj *o = CG::Symtabs.top()->find(name);
 	if (o == nullptr || o->getValue() == nullptr) {
 		std::cerr << "fatal: no function called " << name << " found.\n";
-		std::cerr << o << std::endl;
-		if (o) std::cerr << o->getValue() << std::endl;
+		CG::Symtabs.top()->dump();
 		exit(1);
 		return nullptr;
 	}

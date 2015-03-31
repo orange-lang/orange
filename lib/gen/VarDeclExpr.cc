@@ -41,6 +41,9 @@ void VarDeclExpr::resolve() {
 	if (value)
 		value->resolve();
 
+	CG::Symtabs.top()->create(name);
+	CG::Symtabs.top()->objs[name]->setType(getType()->getPointerTo());
+
 	resolved = true; 
 }
 
