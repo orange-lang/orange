@@ -1,5 +1,5 @@
 /oc
-/parser.hh 
-/parser.cc 
-/lexer.cc
+lexer.cc
 *.o
+parser.cc
+parser.hh
