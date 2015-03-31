@@ -14,12 +14,5 @@ def fib3(n)
 	fib3(n - 1) + fib3(n - 2)
 end
 
-return if fib(8) != 21 
-	1 
-elif fib2(8) != 21
-	1
-elif fib3(8) != 21
-	1
-else 
-	0
-end
+return 1 if fib(8) != 21 or fib2(8) != 21 or fib3(8) != 21 
+return 0 

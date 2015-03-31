@@ -1,7 +1,0 @@
-a = if 5 < 3 
-	1 
-else 
-	0 
-end
-
-return a

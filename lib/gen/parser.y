@@ -66,10 +66,11 @@
 
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
 
-%left COMP_LT COMP_GT LEQ GEQ
-%left EQUALS NEQUALS 
 %left LOGICAL_AND
 %left LOGICAL_OR
+
+%left COMP_LT COMP_GT LEQ GEQ
+%left EQUALS NEQUALS 
 
 %left PLUS MINUS
 %left TIMES DIVIDE
@@ -117,6 +118,7 @@ statement
 	| loop term { $$ = $1; }
 	|	expr_or_decl term { $$ = (Statement *)$1; }
 	| return_stmt term { $$ = $1; }
+	| if_statement { $$ = $1; }
 	| term { $$ = nullptr; }
 	;
 
@@ -408,7 +410,6 @@ primary
 	|	TYPE_ID OPEN_PAREN optexprlist CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
 	|	TYPE_ID { $$ = new VarExpr(*$1); }
 	|	STRING { $$ = new StrVal(*$1); }
-	|	if_statement { $$ = $1; }
 	|	MINUS primary { $$ = new NegativeExpr($2); }
 	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayExpr($2); }
 	| primary OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess($1, $3); }
