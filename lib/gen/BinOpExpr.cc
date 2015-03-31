@@ -266,7 +266,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateAdd(L, R);
 		}	
 
-		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned(), true);
 
 		CG::Builder.CreateStore(v, OrigL);		
 		return CG::Builder.CreateLoad(OrigL);	
@@ -286,7 +286,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateSub(L, R);
 		}
 
-		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned(), true);
 
 		CG::Builder.CreateStore(v, OrigL);	
 		return CG::Builder.CreateLoad(OrigL);		
@@ -306,7 +306,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateMul(L, R);			
 		}
 
-		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned(), true);
 
 		CG::Builder.CreateStore(v, OrigL);		
 		return CG::Builder.CreateLoad(OrigL);	
@@ -335,7 +335,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateUDiv(L, R);
 		}
 
-		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned(), true);
 
 		CG::Builder.CreateStore(v, OrigL);	
 		return CG::Builder.CreateLoad(OrigL);	
