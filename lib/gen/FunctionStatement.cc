@@ -59,7 +59,7 @@ std::string FunctionStatement::string() {
 	return ss.str();
 }
 
-std::string FunctionStatement::getTemplatedInstance(ExprList *callArgs) {
+std::string FunctionStatement::getTemplatedInstance(ExprList *callArgs, bool forceExporting) {
 	ArgList *newArgs = args->clone();
 
 	bool requires_templating = false;
@@ -127,6 +127,12 @@ std::string FunctionStatement::getTemplatedInstance(ExprList *callArgs) {
 
 		// 3. create the new function statement (this should set the types in the symtab)
 		FunctionStatement *clone = new FunctionStatement(&templated_name_str, newArgs, cloned_body);
+
+		// this line indicates we're not calling our generic with "export foo(typeA, typeB)"
+		// and we're setting it up so that unused generics after optimization can be deleted.
+		if (forceExporting == false) { 
+			clone->isClone = true;
+		}
 
 		// 4. pop the symtab.
 		CG::Symtabs.pop();
@@ -223,7 +229,14 @@ Value* FunctionStatement::Codegen() {
 	DEBUG_MSG("GOT RETURN TYPE FOR FUNCTION BLOCK");
 
 	FunctionType *FT = FunctionType::get(retType, Args, false);
-	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);
+
+	auto linkage = Function::ExternalLinkage;
+	if (isClone)
+		linkage = Function::LinkOnceODRLinkage;
+
+	Function *TheFunction = Function::Create(FT, linkage, name, CG::TheModule);
+
+
 
 	if (CG::Symtabs.top()->parent) {
 		// Set function for the PARENT symtab (the one that could call this function)

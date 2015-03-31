@@ -1,3 +1,5 @@
+#include <llvm/PassManager.h>
+
 #include <llvm/MC/MCObjectFileInfo.h>
 #include <llvm/MC/MCContext.h>
 #include <llvm/MC/MCAsmInfo.h>
@@ -9,8 +11,11 @@
 #include <llvm/Support/TargetRegistry.h>
 #include <llvm/Target/TargetLibraryInfo.h>
 #include <llvm/Analysis/Lint.h>
+#include <llvm/Analysis/CFGPrinter.h>
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/Transforms/IPO/InlinerPass.h>
+#include <llvm/Transforms/IPO.h>
+#include <llvm/Transforms/Vectorize.h>
 #include <llvm/Transforms/Utils/UnifyFunctionExitNodes.h>
 #include <llvm/Analysis/InlineCost.h>
 
@@ -60,19 +65,6 @@ void CodeGenerator::init() {
 	FunctionPassManager *OurFPM = new FunctionPassManager(TheModule);
 	TheModule->setTargetTriple(sys::getProcessTriple());
 
-	OurFPM->add(createVerifierPass(true));
-	OurFPM->add(createBasicAliasAnalysisPass());
-	OurFPM->add(createInstructionCombiningPass());
-	OurFPM->add(createInstructionSimplifierPass());
-	OurFPM->add(createReassociatePass());
-	OurFPM->add(createGVNPass());
-	OurFPM->add(createCFGSimplificationPass());
-	OurFPM->add(createDeadInstEliminationPass());
-	OurFPM->add(createDeadCodeEliminationPass());
-	OurFPM->add(createDeadStoreEliminationPass());
-	OurFPM->add(createCodeGenPreparePass());
-	OurFPM->add(createUnifyFunctionExitNodesPass());
-	OurFPM->add(createVerifierPass(true));
 	OurFPM->doInitialization();
 	
 	TheFPM = OurFPM;
@@ -92,6 +84,50 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	// Create the global block as a function so we don't have to repeat the code here.
 	FunctionStatement *fstmt = new FunctionStatement(CG::Symtabs.top()->FunctionName, nullptr, globalBlock);
 	fstmt->Codegen();
+
+	PassManager MPM;
+	MPM.add(createVerifierPass(true));
+	MPM.add(createUnreachableBlockEliminationPass());
+	MPM.add(createGCLoweringPass());
+	MPM.add(createAlwaysInlinerPass());
+	MPM.add(createPruneEHPass());
+	MPM.add(createIPConstantPropagationPass());
+	MPM.add(createIPSCCPPass());
+	MPM.add(createMergeFunctionsPass());
+	MPM.add(createStripDeadPrototypesPass());
+	MPM.add(createConstantPropagationPass());
+	MPM.add(createAliasAnalysisCounterPass()); 
+	MPM.add(createBasicAliasAnalysisPass());
+	MPM.add(createLazyValueInfoPass());
+	MPM.add(createDependenceAnalysisPass());
+	MPM.add(createCostModelAnalysisPass());
+	MPM.add(createDelinearizationPass());
+	MPM.add(createInstCountPass());
+	MPM.add(createInstructionCombiningPass());
+	MPM.add(createInstructionSimplifierPass());
+	MPM.add(createReassociatePass());
+	MPM.add(createGVNPass());
+	MPM.add(createCFGSimplificationPass());
+	MPM.add(createBBVectorizePass());
+	MPM.add(createCodeGenPreparePass());
+	MPM.add(createGVNPass());
+	MPM.add(createSinkingPass());
+	MPM.add(createUnifyFunctionExitNodesPass());
+	MPM.add(createAggressiveDCEPass());
+	MPM.add(createDeadInstEliminationPass());
+	MPM.add(createDeadCodeEliminationPass());
+	MPM.add(createDeadStoreEliminationPass());
+	MPM.add(createGlobalsModRefPass());
+	MPM.add(createModuleDebugInfoPrinterPass());
+	MPM.add(createArgumentPromotionPass());
+	MPM.add(createGlobalOptimizerPass());
+	MPM.add(createConstantMergePass());
+	MPM.add(createGlobalsModRefPass());
+	MPM.add(createPartialInliningPass());
+	MPM.add(createFunctionInliningPass());
+	MPM.run(*TheModule);
+	MPM.run(*TheModule);
+
 
 	GenerateObject();
 }

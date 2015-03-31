@@ -6,7 +6,7 @@ message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-llvm_map_components_to_libnames(llvm_libs native core)
+llvm_map_components_to_libnames(llvm_libs native core ipo)
 
 find_package(BISON REQUIRED)
 bison_target(BisonOutput ${gen_SOURCE_DIR}/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cc COMPILE_FLAGS "-d")

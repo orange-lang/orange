@@ -8,6 +8,7 @@
 class FunctionStatement : public Statement {
 private:
 	std::vector<FunctionStatement *> clones;
+	bool isClone = false;
 public:
 	virtual std::string getClass() { return "FunctionStatement"; }
 
@@ -30,7 +31,7 @@ public:
 		return ret; 
 	}
 
-	std::string getTemplatedInstance(ExprList *callArgs);
+	std::string getTemplatedInstance(ExprList *callArgs, bool forceExporting = false);
 
 	FunctionStatement(std::string* name, ArgList *args, Block *body);
 
