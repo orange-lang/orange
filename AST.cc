@@ -46,7 +46,7 @@ BaseVal *ValFactory::produce() {
 		std::cout << v << " ";
 	} else if (size == "i" || size == "") {
 		int64_t v = std::stoll(value);
-		ret = new UIntVal(v, 64);
+		ret = new IntVal(v, 64);
 		std::cout << v << " ";
 	} else if (size == "i8") {
 		int64_t v = std::stoll(value);

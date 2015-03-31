@@ -39,7 +39,8 @@
 %type <argexpr> opt_arg
 %type <arglist> opt_args opt_parens
 %type <exprlist> expr_list
-%type <str> ID DEF END TYPE
+%type <str> ID DEF END TYPE TYPE_INT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
+%type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 type
 
 %%
 	
@@ -68,8 +69,11 @@ opt_parens 	: 		OPEN_PAREN opt_args CLOSE_PAREN { $$ = $2; }
 opt_args 		:			opt_args COMMA opt_arg { $1->push_back($3); } 	
 						| 		opt_arg { $$ = new ArgList(); $$->push_back($1); }; 
 
-opt_arg 		:			TYPE ID { $$ = new ArgExpr($1, $2); } 
+opt_arg 		:			type ID { $$ = new ArgExpr($1, $2); } 
 						| 		ID { $$ = new ArgExpr(nullptr, $1); } ; 
+
+type  			:			TYPE_INT | TYPE_FLOAT | TYPE_DOUBLE | TYPE_INT8 | TYPE_INT16 
+						|			TYPE_INT32 | TYPE_INT64 | TYPE_UINT8 | TYPE_UINT16 | TYPE_UINT32 | TYPE_UINT64				
 
 expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, '=', $3); }
 						|			expr2 { $$ = $1; }
