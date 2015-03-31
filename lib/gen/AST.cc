@@ -1,4 +1,4 @@
-#include "AST.h"
+#include "gen/AST.h"
 
 ArgExpr::ArgExpr(std::string* type, std::string* name) {
 	this->type = type ? *type : "";

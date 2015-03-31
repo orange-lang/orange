@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include "AST.h"
+#include "gen/AST.h"
 
 extern FILE* yyin;
 extern int yylex();

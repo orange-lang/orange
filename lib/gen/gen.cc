@@ -1,4 +1,4 @@
-#include "AST.h"
+#include "gen/AST.h"
 
 Module *CodeGenerator::TheModule;
 IRBuilder<> CodeGenerator::Builder(getGlobalContext());
