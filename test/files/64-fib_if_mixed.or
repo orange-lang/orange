@@ -1,0 +1,25 @@
+def fib(n)
+	return n if n < 2
+	fib(n - 1) + fib(n - 2)
+end
+
+def fib2(n)
+	return fib2(n - 1) + fib2(n - 2) if n >= 2
+	n
+end	
+
+def fib3(n)
+	return 0 if n == 0
+	return 1 if n == 1
+	fib3(n - 1) + fib3(n - 2)
+end
+
+return if fib(8) != 21 
+	1 
+elif fib2(8) != 21
+	1
+elif fib3(8) != 21
+	1
+else 
+	0
+end

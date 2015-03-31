@@ -61,7 +61,7 @@
 %left TIMES DIVIDE
 %left OPEN_PAREN CLOSE_PAREN
 
-%nonassoc IF
+%right IF
 
 %%
 	
@@ -90,7 +90,7 @@ return_stmt
 	: RETURN opt_expr { $$ = (Statement *)(new ReturnExpr($2)); }
 
 inline_if
-	:	expr_or_ret WHEN expression
+	:	expr_or_ret IF expression
 		{ 
 			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
 
@@ -107,11 +107,11 @@ inline_if
 
 expr_or_ret
 	: expression { $$ = $1; }
-	|	return_stmt { $$ = $1; }
+	| return_stmt { $$ = $1; }
 
 opt_expr			
 	:	expression { $$ = $1; }
-	|	{ $$ = nullptr; }
+	| %prec IF { $$ = nullptr; }
 
 term			
 	:	NEWLINE 
@@ -243,7 +243,7 @@ dereference
 	;
 
 if_statement
-	:	IF expression term statements opt_else 
+	: IF expression term statements opt_else 
 		{ 
 			auto s = new SymTable(); s->parent = CG::Symtabs.top(); CG::Symtabs.push(s);
 
