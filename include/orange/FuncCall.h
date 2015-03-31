@@ -11,9 +11,13 @@
 
 #include "AST.h"
 
+typedef std::vector<Expression *> ArgList; 
+
 class FuncCall : public Expression {
 private:
 	std::string m_name; 
+
+	ArgList m_arguments; 
 public:
 	virtual std::string getClass() { return "FuncCall"; }
 
@@ -36,6 +40,7 @@ public:
 	virtual bool isSigned();
 
 	FuncCall(std::string name);
+	FuncCall(std::string name, ArgList arguments);
 }; 
 
 #endif 

@@ -28,6 +28,8 @@
 	StrElement *strele;
 	ASTNode *node;
 	Block *block;
+	ParamList *paramlist;
+	AnyType *anytype;
 	ArgList *arglist;
 	std::string *str;
 	int token; 
@@ -51,11 +53,14 @@
 %type <block> statements
 %type <node> statement
 %type <expr> expression primary VALUE
-%type <stmt> return function
+%type <stmt> return function extern_function
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE
-%type <arglist> opt_func_args func_args
-%type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID
+%type <paramlist> opt_func_params func_params
+%type <arglist> opt_arg_list arg_list
+%type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
+%type <anytype> any_type 
+%type <number> var_ptrs
 
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
 
@@ -82,6 +87,7 @@ statement
 	:	term { $$ = nullptr; }
 	| expression term { $$ = $1; }
 	| function term { $$ = $1; }
+	| extern_function term { $$ = $1; }
 	| return term { $$ = $1; }
 	;
 
@@ -111,28 +117,47 @@ expression
 primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; SET_LOCATION($$); } 
 	|	VALUE { $$ = $1; SET_LOCATION($$); }
+	| STRING { $$ = new StrVal(*$1); }
 	|	TYPE_ID { $$ = new VarExpr(*$1); SET_LOCATION($$); }
-	| TYPE_ID OPEN_PAREN CLOSE_PAREN { $$ = new FuncCall(*$1); SET_LOCATION($$); }
+	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN { $$ = new FuncCall(*$1, *$3); SET_LOCATION($$); }
+	| MINUS expression { $$ = new NegativeExpr($2); }
 	;
 
 function
-	: DEF TYPE_ID OPEN_PAREN opt_func_args CLOSE_PAREN term { 
+	: DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN term { 
 			SymTable *tab = new SymTable(GE::runner()->topBlock()->symtab());
 			$<stmt>$ = new FunctionStmt(*$2, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$$);
 		} statements END { $$ = $<stmt>7; GE::runner()->popBlock(); SET_LOCATION($$); }
 	;
 
-opt_func_args 
-	: func_args { $$ = $1; } 
+opt_func_params
+	: func_params { $$ = $1; } 
+	| { $$ = new ParamList(); }
+	;
+
+func_params
+	: func_params COMMA any_type TYPE_ID { $1->push_back(new VarExpr(*$4, $3)); }
+	| func_params COMMA TYPE_ID { $1->push_back(new VarExpr(*$3)); }
+	| any_type TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$2, $1)); } 
+	| TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$1)); }
+	;
+
+extern_function
+	: EXTERN any_type TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN 
+	 	{
+	 		$$ = new ExternFunction($2, *$3, *$5);
+	 	}
+	;
+
+opt_arg_list
+	: arg_list { $$ = $1; }
 	| { $$ = new ArgList(); }
 	;
 
-func_args
-	: opt_func_args COMMA basic_type TYPE_ID { $1->push_back(new VarExpr(*$4, new AnyType(*$3))); }
-	| opt_func_args COMMA TYPE_ID { $1->push_back(new VarExpr(*$3)); }
-	| basic_type TYPE_ID { $$ = new ArgList(); $$->push_back(new VarExpr(*$2, new AnyType(*$1))); } 
-	| TYPE_ID { $$ = new ArgList(); $$->push_back(new VarExpr(*$1)); }
+arg_list
+	: arg_list COMMA expression { $1->push_back($3); }
+	| expression { $$ = new ArgList(); $$->push_back($1); }
 	;
 
 return
@@ -161,5 +186,14 @@ basic_type
 	|	TYPE_CHAR
 	| TYPE_VOID
 	;
+
+any_type
+	: basic_type var_ptrs { $$ = new AnyType(*$1, $2); }
+	;
+
+var_ptrs 
+	: var_ptrs TIMES { $$++; }
+	| { $$ = 0; }
+
 						 
 %%

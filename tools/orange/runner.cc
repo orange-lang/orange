@@ -42,7 +42,7 @@ Runner::Runner(std::string pathname) {
 
 	// Create the global block
 	SymTable *globalSymtab = new SymTable(nullptr);
-	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), ArgList(), globalSymtab);
+	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), ParamList(), globalSymtab);
 	pushBlock(m_function);
 
 	// Create LLVM stuff; module, builder, etc
@@ -65,7 +65,7 @@ bool Runner::hasError() {
 	}
 
 	return false;
-	}
+}
 
 RunResult Runner::run() {
 	// First, set us to running and activate us as the current runner.

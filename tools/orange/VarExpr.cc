@@ -35,31 +35,31 @@ Value* VarExpr::getValue() {
 }
 
 std::string VarExpr::string() {
-	return m_name; 
+	return "(" + getType()->string() + ")" + m_name; 
 }
 
 AnyType* VarExpr::getType() {
 	// If we've been assigned a value, we'll return that, otherwise 
-	// we'll return the default type from ASTNode.
-	if (getValue() && getValue()->getType()) 
-		return new AnyType(getValue()->getType()->getPointerElementType()); 
-	
+	// we'll return the default type from ASTNode.	
 	if (m_type) {
 		return m_type; 
-	} else if (GE::runner()->topBlock()->symtab()->find(m_name)) {
+	} 
+
+	if (GE::runner()->topBlock()->symtab()->find(m_name)) {
 		ASTNode* node = GE::runner()->topBlock()->symtab()->find(m_name);
 
 		if (node->getClass() != getClass()) {
 			throw std::runtime_error(node->string() + " is not a variable!");
 		}
+
 		VarExpr* nodeExpr = (VarExpr*)node;
 
-		if (nodeExpr->m_type) {
-			return nodeExpr->m_type;
+		if (nodeExpr != this) {
+			return nodeExpr->m_type ? nodeExpr->m_type : nodeExpr->getType();
 		}
-	}
+	} 
 
-	return ASTNode::getType(); 
+	return ASTNode::getType();
 }
 
 void VarExpr::resolve() {
@@ -90,6 +90,10 @@ void VarExpr::setSigned(bool signed_var) {
 void VarExpr::setValue(Value* value) {
 	m_value = GE::builder()->CreateAlloca(value->getType(), nullptr, m_name);
 	GE::builder()->CreateStore(value, m_value);
+}
+
+void VarExpr::setValueTo(Value *value) {
+	m_value = value; 
 }
 
 VarExpr::VarExpr(std::string name) : m_name(name) { 

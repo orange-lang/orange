@@ -14,3 +14,5 @@
 #include "BinOpExpr.h"
 #include "ReturnStmt.h"
 #include "FuncCall.h"
+#include "NegativeExpr.h"
+#include "ExternFunction.h"

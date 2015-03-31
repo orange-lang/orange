@@ -29,6 +29,7 @@ public:
 
 
 	friend StrElement operator+(const char *s, StrElement& element);
+	friend StrElement operator+(StrElement element, const char *s);
 	friend std::ostream& operator<< (std::ostream& stream, const StrElement& element);
 
 	operator std::string() const { return m_str; }
@@ -37,6 +38,32 @@ public:
 	StrElement(const char *str) : m_str(str) {}
 };
 
+class StrVal : public Expression {
+private:
+	StrElement m_value; 
+public:
+	virtual std::string getClass() { return "StrVal"; }
+
+	virtual std::string string() {  
+		std::stringstream ss;
+		ss << "\"" << m_value << "\"";
+		return ss.str();
+	}
+
+	virtual AnyType* getType() { return AnyType::getInt8PtrTy(); }
+
+	Value* Codegen();
+
+	virtual ASTNode* clone() { 
+		StrVal *ret = new StrVal("\"\"");
+		ret->m_value = m_value; 
+		return ret; 
+	}
+
+	StrVal(StrElement value);
+};
+
+
 class ValFactory {
 public:
 	std::string value;
@@ -44,7 +71,6 @@ public:
 
 	BaseVal *produce();
 };
-
 
 class UIntVal : public BaseVal {
 public:

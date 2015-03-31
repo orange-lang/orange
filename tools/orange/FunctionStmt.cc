@@ -9,23 +9,31 @@
 #include <orange/FunctionStmt.h>
 #include <orange/generator.h>
 
-FunctionStmt::FunctionStmt(std::string name, ArgList arguments, SymTable* symtab) : Block(symtab) {
+FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name;
+	m_parameters = parameters;
 }
 
-FunctionStmt::FunctionStmt(std::string name, AnyType* type, ArgList arguments, SymTable* symtab) : Block(symtab) {
+FunctionStmt::FunctionStmt(std::string name, AnyType* type, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name; 
 	m_type = type; 
+	m_parameters = parameters;
 }
 
 AnyType* FunctionStmt::getType() {
+	AnyType *ret = m_type; 
+
+	GE::runner()->pushBlock(this);
+
 	if (m_type == nullptr) {
 		// If we don't have an explicit type set, we have to determine it from our body and nested bodies.
 		AnyType* foundRet = searchForReturn();
-		return foundRet ? foundRet : ASTNode::getType();
+		ret = foundRet ? foundRet : ASTNode::getType();
 	} 
 
-	return m_type;
+	GE::runner()->popBlock();
+
+	return ret;
 }
 
 Value* FunctionStmt::Codegen() {
@@ -35,12 +43,21 @@ Value* FunctionStmt::Codegen() {
 	// Create a list of types that serve as our function's arguments
 	std::vector<Type*> Args;
 
+	for (auto param : m_parameters) {
+		Args.push_back(param->getLLVMType());
+	}
+
 	// Create the function itself, and set it as our AST value.
 	FunctionType* funcType = FunctionType::get(getLLVMType(), Args, m_isVarArg);
 	Function* generatedFunc = Function::Create(funcType, m_linkageType, m_name, GE::module());
 	m_value = generatedFunc;
 
 	// TODO: Set argument names, if any (generatedFunc->arg_begin, setName on iterator)
+	auto arg_it = generatedFunc->arg_begin();
+	for (unsigned int i = 0; i < Args.size(); i++, arg_it++) {
+		arg_it->setName(m_parameters[i]->getName());
+	}
+
 
 	// Before generating, we need to get the current insert block so we don't lose our place.
 	auto oldInsertBlock = GE::builder()->GetInsertBlock();
@@ -58,6 +75,14 @@ Value* FunctionStmt::Codegen() {
 	}
 
 	m_blockEnd = funcEnd;
+
+	// Create our paramters. 
+	arg_it = generatedFunc->arg_begin();
+	for (int i = 0; i < Args.size(); i++, arg_it++) {
+		Value *paramV = GE::builder()->CreateAlloca(arg_it->getType());
+		GE::builder()->CreateStore(arg_it, paramV); 
+		m_parameters[i]->setValueTo(paramV);
+	}
 
 	// Generate the body, which will add code to our new insert block
 	generateStatements();
@@ -98,18 +123,18 @@ Value* FunctionStmt::Codegen() {
 }
 
 ASTNode* FunctionStmt::clone() {
-	ArgList clonedArgs;
+	ParamList clonedParams;
 
-	for (auto arg : m_arguments) {
-		clonedArgs.push_back((VarExpr*)arg->clone());
+	for (auto param : m_parameters) {
+		clonedParams.push_back((VarExpr*)param->clone());
 	}
 
 	FunctionStmt* clonedFunc = nullptr; 
 
 	if (m_type) {
-		clonedFunc = new FunctionStmt(m_name, m_type, clonedArgs, symtab()->clone());	
+		clonedFunc = new FunctionStmt(m_name, m_type, clonedParams, symtab()->clone());	
 	} else {
-		clonedFunc = new FunctionStmt(m_name, clonedArgs, symtab()->clone());	
+		clonedFunc = new FunctionStmt(m_name, clonedParams, symtab()->clone());	
 	}
 
 	for (auto stmt : m_statements) {
@@ -137,6 +162,7 @@ std::string FunctionStmt::string() {
 
 void FunctionStmt::resolve() {
 	if (m_resolved) return; 
+	// Don't set m_resolved here; let Block::resolve do it.
 
 	// If we don't exist in the parent symtab, add us as a reference.
 	// If the parent doesn't exist, we're in the global block, so 
@@ -157,7 +183,18 @@ void FunctionStmt::resolve() {
 	// Add us as a structure.
 	symtab()->setStructure(this);
 
-	// TODO: set up our arguments, if any, into the symbol table.
+	// Push our symtab into the stack and add our parameters to the symbol table.
+	GE::runner()->pushBlock(this);
+
+	for (auto param : m_parameters) {
+		if (param->getType()->isVoidTy()) {
+			throw CompilerMessage(*param, "Generics are not yet supported.");
+		}
+
+		param->create();
+	}
+
+	GE::runner()->popBlock();
 
 	Block::resolve();
 }

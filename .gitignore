@@ -9,3 +9,4 @@ cmake_install.cmake
 Makefile
 .DS_Store
 /build
+/build*

@@ -32,7 +32,10 @@ ASTNode* SymTable::find(std::string name) {
 	auto it = m_objs.find(name); 
 
 	// return null if it doesn't exist 
-	if (it == m_objs.end()) return nullptr; 
+	if (it == m_objs.end()) {
+		return m_parent ? m_parent->find(name) : nullptr;
+	}  
+
 
 	return it->second; 
 }

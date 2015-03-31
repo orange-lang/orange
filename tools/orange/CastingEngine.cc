@@ -86,6 +86,8 @@ bool CastingEngine::CastValueToType(Value** v, AnyType* t, bool isSigned, bool f
 
 	std::cout << t->string() << std::endl;
 	std::cout << srcType->string() << std::endl;
+	t->getLLVMType()->dump();
+	srcType->getLLVMType()->dump();
 	throw std::runtime_error("could not determine type to cast.");
 	return false;
 }

@@ -6,6 +6,7 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */ 
 #include <sstream>
+#include <fcntl.h>
 #include <orange/test.h>
 
 #define MAX_CHARACTERS_PER_LINE 40
@@ -33,8 +34,20 @@ std::vector<RunResult> runTest(path p) {
     	}	
     }
 	} else {
+		// Disable output
+		int bak, newFd;
+		fflush(stdout);
+		bak = dup(1);
+		newFd = open("/dev/null", O_WRONLY);
+		dup2(newFd, 1);
+		close(newFd);
+
 		// Otherwise just run the single file  
 		RunResult testRun = runFile(p.string(), false);
+		
+		fflush(stdout);
+		dup2(bak, 1);
+		close(bak);
 
 		// Add a . if it passed, F otherwise. After printing a multiple 
 		// of MAX_CHARACTERS_PER_LINE notices, print a newline.

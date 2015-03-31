@@ -6,6 +6,7 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */ 
 
+#include <iostream>
 #include <sstream>
 
 #include <orange/AnyType.h>
@@ -18,6 +19,15 @@ AnyType::AnyType(Type* type, bool isSigned) {
 
 	m_type_str = "";
 
+	int num_ptrs = 0; 
+	while (type->isPointerTy()) {
+		type = type->getPointerElementType();
+
+		num_ptrs++;
+	}
+
+	m_ptrs = num_ptrs;
+
 	if (type->isIntegerTy()) {
 		std::stringstream ss; 
 		if (isSigned == false) ss << "u";
@@ -29,7 +39,16 @@ AnyType::AnyType(Type* type, bool isSigned) {
 		m_type_str = "double";
 	} else if (type->isVoidTy()) {
 		m_type_str = "void";
+	} else {
+		throw std::runtime_error("Cannot create AnyType!\n");
 	}
+}
+
+std::string AnyType::string() const {
+	std::stringstream ss;
+	ss << m_type_str; 
+	for (int i = 0; i < m_ptrs; i++) ss << "*";
+	return ss.str();
 }
 
 bool AnyType::isVoidTy() const {
@@ -57,7 +76,7 @@ int AnyType::getIntegerBitWidth() const {
 }
 
 
-AnyType::AnyType(std::string type) {
+AnyType::AnyType(std::string type, int ptrs) {
 	m_type_str = type; 
 	m_signed = false; 
 
@@ -91,6 +110,12 @@ AnyType::AnyType(std::string type) {
 		m_type = Type::getVoidTy(getGlobalContext());
 	} else {
 		throw std::runtime_error("Invalid type " + type);
+	}
+
+	m_ptrs = ptrs; 
+
+	for (int i = 0; i < m_ptrs; i++) {
+		m_type = m_type->getPointerTo();
 	}
 }
 
@@ -147,5 +172,15 @@ AnyType* AnyType::getDoubleTy() {
 
 	AnyType* voidTy = new AnyType("double");
 	m_defined_tyes["double"] = voidTy; 
+	return voidTy;
+}
+
+AnyType* AnyType::getInt8PtrTy() {
+	if (m_defined_tyes.find("int8*") != m_defined_tyes.end()) {
+		return m_defined_tyes.find("int8*")->second;
+	}
+
+	AnyType* voidTy = new AnyType("int8", 1);
+	m_defined_tyes["int8*"] = voidTy; 
 	return voidTy;
 }

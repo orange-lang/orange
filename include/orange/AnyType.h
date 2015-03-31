@@ -24,10 +24,11 @@ private:
 	std::string m_type_str;
 
 	bool m_signed = false;
+	int m_ptrs = 0;
 
 	static std::map<std::string, AnyType*> m_defined_tyes;
 public:
-	std::string string() const { return m_type_str; }
+	std::string string() const;
 	Type* getLLVMType() const { return m_type; }
 	bool isSigned() const { return m_signed; }
 
@@ -36,7 +37,7 @@ public:
 	bool isFloatTy() const; 
 	bool isDoubleTy() const;
 	bool isFloatingPointTy() const;
-	bool isPointerTy() const { return false; }
+	bool isPointerTy() const { return m_ptrs > 0; }
 	int getIntegerBitWidth() const;
 
 	static AnyType* getVoidTy();
@@ -44,9 +45,10 @@ public:
 	static AnyType* getIntNTy(int size);
 	static AnyType* getFloatTy();
 	static AnyType* getDoubleTy();
+	static AnyType* getInt8PtrTy();
 
 	AnyType(Type* type, bool isSigned = false);
-	AnyType(std::string type);
+	AnyType(std::string type, int ptrs = 0);
 }; 
 
 #endif 

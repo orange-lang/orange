@@ -13,7 +13,7 @@
 #include "AnyType.h"
 #include "VarExpr.h"
 
-typedef std::vector<VarExpr*> ArgList;
+typedef std::vector<VarExpr*> ParamList;
 
 class FunctionStmt : public Block {
 private:
@@ -36,7 +36,7 @@ private:
 	 */
 	Value* m_retVal = nullptr;
 
-	ArgList m_arguments;
+	ParamList m_parameters;
 public:
 	virtual std::string getClass() { return "FunctionStmt"; }
 
@@ -66,8 +66,8 @@ public:
 	 */
 	virtual void resolve();
 
-	FunctionStmt(std::string name, ArgList arguments, SymTable* symtab);
-	FunctionStmt(std::string name, AnyType* type, ArgList arguments, SymTable* symtab);
+	FunctionStmt(std::string name, ParamList parameters, SymTable* symtab);
+	FunctionStmt(std::string name, AnyType* type, ParamList parameters, SymTable* symtab);
 
 };
 

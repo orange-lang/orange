@@ -58,6 +58,8 @@ public:
 
 	virtual void setValue(Value* value);
 
+	virtual void setValueTo(Value* value);
+
 	/**
 	 * Tries to create this variable in the symbol table.
 	 */
@@ -67,6 +69,8 @@ public:
 	virtual bool isConstant() { return false; }
 
 	virtual bool returnsPtr() { return true; }
+
+	virtual std::string getName() const { return m_name; }
 
 	VarExpr(std::string name); 
 

@@ -7,13 +7,43 @@
 */ 
 
 #include <orange/Values.h>
+#include <orange/generator.h>
+#include <algorithm>
+
+void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+    if(from.empty())
+        return;
+    std::string::size_type start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+}
 
 StrElement operator+(const char *s, StrElement& element) {
 	return StrElement(s + element.m_str);
 }
 
+StrElement operator+(StrElement element, const char* s) {
+	std::string cpp_s = element;
+	cpp_s += s;
+	return StrElement(cpp_s);
+}
+
 std::ostream& operator<< (std::ostream& stream, const StrElement& element) {
 	return stream << element.m_str;
+}
+
+StrVal::StrVal(StrElement value) : m_value(value) {
+	std::string cpp_s = m_value;
+	cpp_s = cpp_s.substr(1, cpp_s.length()-2);
+	replaceAll(cpp_s, "\\n", "\n");
+	m_value = cpp_s;
+}
+
+Value* StrVal::Codegen() {
+	Value *v = GE::builder()->CreateGlobalString((std::string)m_value);
+	return GE::builder()->CreateConstGEP2_32(v, 0, 0); 
 }
 
 Value* UIntVal::Codegen() {

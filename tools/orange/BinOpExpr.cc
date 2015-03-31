@@ -68,6 +68,8 @@ Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, 
 		return isFPOp ? Instruction::FAdd : Instruction::Add;
 	} else if (op == "-") {
 		return isFPOp ? Instruction::FSub : Instruction::Sub;
+	} else if (op == "*") {
+		return isFPOp ? Instruction::FMul : Instruction::Mul;
 	}
 
 	throw CompilerMessage(op, "Unhandled operation " + op);
@@ -134,6 +136,10 @@ Value* BinOpExpr::Codegen() {
 		return GE::builder()->CreateLoad(vExpr->getValue());
 	}
 
+	// Load the LHS if it's a pointer and isn't used as an assign. Load the RHS if it's a pointer.
+	if (IsAssignOp(m_op) == false && m_LHS->returnsPtr()) LHS = GE::builder()->CreateLoad(LHS);
+	if (m_RHS->returnsPtr()) RHS = GE::builder()->CreateLoad(RHS);
+
 	// If we're assigning, we want to cast RHS to LHS (forced).
 	// Otherwise, cast them to fit.
 	if (IsAssignOp(m_op)) {
@@ -141,10 +147,6 @@ Value* BinOpExpr::Codegen() {
 	} else {
 		CastingEngine::CastValuesToFit(&LHS, &RHS, m_LHS->isSigned(), m_RHS->isSigned());
 	}
-
-	// Load the LHS if it's a pointer and isn't used as an assign. Load the RHS if it's a pointer.
-	if (IsAssignOp(m_op) == false && m_LHS->returnsPtr()) LHS = GE::builder()->CreateLoad(LHS);
-	if (m_RHS->returnsPtr()) RHS = GE::builder()->CreateLoad(RHS);
 
 	if (m_op == "=") {
 		GE::builder()->CreateStore(RHS, LHS);
@@ -176,10 +178,21 @@ AnyType* BinOpExpr::getType() {
 	if (IsAssignOp(m_op)) {
 		AnyType* t = m_LHS->getType(); 
 		return t->isVoidTy() ? m_RHS->getType() : t; 
-	} else if (IsCompareOp(m_op)) {
+	} 
+
+	AnyType *lType = m_LHS->getType();
+	AnyType *rType = m_RHS->getType();
+
+	if (lType->isVoidTy()) {
+		throw CompilerMessage(*m_LHS, m_LHS->string() + " does not exist!");
+	} else if (rType->isVoidTy()) {
+		throw CompilerMessage(*m_RHS, m_RHS->string() + " does not exist!");
+	}
+
+	if (IsCompareOp(m_op)) {
 		return AnyType::getUIntNTy(1);
 	} else {
-		return CastingEngine::GetFittingType(m_LHS->getType(), m_RHS->getType());
+		return CastingEngine::GetFittingType(lType, rType);
 	}
 }
 
