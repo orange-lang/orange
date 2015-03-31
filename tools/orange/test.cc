@@ -170,7 +170,7 @@ void doTestCommand(cOptionsState test) {
 	std::vector<RunResult> results;
 
 	for (auto& str : test.unparsed()) {
-		path p(str);
+		path p("test" / str);
 		if (exists(p) == false) {
 			std::cerr << "error: " << p << " doesn't exist.\n"; 
 			continue;
