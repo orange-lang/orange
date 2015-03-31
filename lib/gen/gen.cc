@@ -1,208 +1,218 @@
-#include "gen/AST.h"
+#include <llvm/MC/MCObjectFileInfo.h>
+#include <llvm/MC/MCContext.h>
+#include <llvm/MC/MCAsmInfo.h>
+#include <llvm/CodeGen/AsmPrinter.h>
+#include <llvm/CodeGen/Passes.h>
+#include <llvm/Support/FormattedStream.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/raw_os_ostream.h>
+#include <llvm/Support/TargetRegistry.h>
+#include <llvm/Target/TargetLibraryInfo.h>
+#include <llvm/Analysis/Lint.h>
+#include <llvm/Target/TargetMachine.h>
+#include <llvm/Transforms/IPO/InlinerPass.h>
+#include <llvm/Transforms/Utils/UnifyFunctionExitNodes.h>
+#include <llvm/Analysis/InlineCost.h>
+
+#include <gen/AST.h>
 #include <gen/generator.h>
+#include <helper/link.h>
+
+using namespace llvm::sys::fs;
+
+Module *CodeGenerator::TheModule;
+IRBuilder<> CodeGenerator::Builder(getGlobalContext());
+SymTable* CodeGenerator::Symtab = nullptr;
+FunctionPassManager* CodeGenerator::TheFPM;
+std::string CodeGenerator::outputFile = "a.out";
+bool CodeGenerator::outputAssembly = false;
+bool CodeGenerator::verboseOutput = false;
+bool CodeGenerator::doLink = true;
+std::string CodeGenerator::fileBase = "";
 
 typedef CodeGenerator CG;
+PassManager *ThePM = nullptr;
 
-Type *VarExpr::getType() {
-	Symobj *o = CG::Symtab->find(name);
-	if (o == nullptr) {
-		return nullptr;
-	}
+void CodeGenerator::init() {
+  LLVMContext &Context = getGlobalContext();
+
+  InitializeNativeTarget();
+  InitializeNativeTargetAsmPrinter();
+  InitializeNativeTargetAsmParser();
+
+  PassRegistry *Registry = PassRegistry::getPassRegistry();
+  initializeCore(*Registry);
+  initializeCodeGen(*Registry);
+  initializeLoopStrengthReducePass(*Registry);
+  initializeLowerIntrinsicsPass(*Registry);
+  initializeUnreachableBlockElimPass(*Registry);
+
+	TheModule = new Module("orange", getGlobalContext());
 	
-	return o->getType();
-}
+	FunctionPassManager *OurFPM = new FunctionPassManager(TheModule);
+	TheModule->setTargetTriple(sys::getProcessTriple());
 
-Value* VarExpr::Codegen() {
-	Symobj *o = CG::Symtab->find(name);
-	if (o == nullptr) {
-		std::cerr << "Fatal: no symbol " << name << " found.\n";
-		return nullptr;
-	}
-
-	return o->getValue();
-}
-
-Value* IntVal::Codegen() {
-	return ConstantInt::get(getGlobalContext(), APInt(size, value));
-}
-
-Value* UIntVal::Codegen() {
-	return ConstantInt::get(getGlobalContext(), APInt(size, value));
-}
-
-Value* ReturnExpr::Codegen() {
-	Value *v = expr->Codegen();
-
-	if (dynamic_cast<VarExpr*>(expr)) {
-		v = CG::Builder.CreateLoad(v);
-	}
-
-	return CG::Builder.CreateRet(v);
-}
-
-Value* FuncCallExpr::Codegen() {
-	std::vector<Value*> Args(args->size());
-	for (unsigned int i = 0; i < args->size(); i++) {
-		auto arg = (*args)[i];
-		Args[i] = arg->Codegen();
-	}
-
-	Symobj *o = CG::Symtab->find(name);
-	if (o == nullptr || o->getValue() == nullptr) {
-		std::cerr << "Error: no function called " << name << " found.";
-		return nullptr;
-	}
-
-	return CG::Builder.CreateCall(o->getValue(), Args, name);
-}
-
-
-bool isSigned(Expression *e) {
-	if (dynamic_cast<IntVal*>(e)) {
-		return true;
-	} else if (dynamic_cast<UIntVal*>(e)) {
-		return false;
-	} else if (dynamic_cast<VarExpr*>(e)) {
-		VarExpr *ve = (VarExpr *)e;
-		Symobj* p = CG::Symtab->find(ve->name);
-		std::cout << ve->name << " signed: " << p->isSigned << std::endl;
-		return p->isSigned;
-	} else {
-		std::cerr << "Fatal: can't determined if expression is signed!\n";
-	}
+	OurFPM->add(createBasicAliasAnalysisPass());
+	OurFPM->add(createInstructionCombiningPass());
+	OurFPM->add(createInstructionSimplifierPass());
+	OurFPM->add(createReassociatePass());
+	OurFPM->add(createGVNPass());
+	OurFPM->add(createCFGSimplificationPass());
+	OurFPM->add(createDeadInstEliminationPass());
+	OurFPM->add(createDeadCodeEliminationPass());
+	OurFPM->add(createDeadStoreEliminationPass());
+	OurFPM->add(createCodeGenPreparePass());
+	OurFPM->add(createUnifyFunctionExitNodesPass());
+	OurFPM->add(createVerifierPass(true));
+	OurFPM->doInitialization();
 	
-	return false;
-}
-
-Value* BinOpExpr::Codegen() {
-	Value *L = LHS->Codegen();
-
-	if (op == '=' && L == nullptr) {
-		printf("((TODO: CREATE VARIABLE. FATAL.))\n");
-	}
-
-
-	Value *R = RHS->Codegen();
-  if (dynamic_cast<VarExpr*>(RHS)) {
-  	R = CG::Builder.CreateLoad(R, ((VarExpr*)RHS)->name);
-  }
-
-	if (!L || !R) return nullptr;
-
-	switch (op) {
-		case '+':
-	 	case '-':
-	 	case '*':
-	 	case '/':
-		  if (dynamic_cast<VarExpr*>(LHS)) {
-		  	L = CG::Builder.CreateLoad(L, ((VarExpr*)LHS)->name);
-		  }
-		  break;
-	}
-
-	switch (op) {
-		case '+':
-			return CG::Builder.CreateAdd(L, R, "addtmp");
-		case '-':
-			return CG::Builder.CreateSub(L, R, "subtmp");
-		case '*':
-			return CG::Builder.CreateMul(L, R, "multmp");
-		case '/':
-			// if one of them is signed, they're both signed.
-			if (isSigned(LHS) || isSigned(RHS)) {
-				return CG::Builder.CreateSDiv(L, R, "divtmp");
-			} else {
-				return CG::Builder.CreateUDiv(L, R, "divtmp");
-			}
-			
-			return CG::Builder.CreateSDiv(L, R, "divtmp");
-		case '=':
-			return CG::Builder.CreateStore(R, L);
-		default:
-			printf("Unhandled: %c\n", op);
-			return nullptr;
-	}
-
-	return nullptr;
-}
-
-Type* FunctionStatement::getReturnType() {
-	Type *ret; 
-
-	auto oldSymtab = CG::Symtab;
-	CG::Symtab = body->symtab;
-
-	for (auto stmt : body->statements) {
-	  if (dynamic_cast<ReturnExpr*>(stmt)) {
-	  	ret = ((ReturnExpr *)stmt)->expr->getType();
-			CG::Symtab = oldSymtab;	  	
-	  	return ret; 
-	  }
-	}
-
-	CG::Symtab = oldSymtab;
-	return nullptr;
+	TheFPM = OurFPM;
 }
 
 
-Value* FunctionStatement::Codegen() {
-	std::vector<Type*> Args(args->size());
-	for (unsigned int i = 0; i < args->size(); i++) {
-		ArgExpr *arg = (*args)[i];
-		Args[i] = getType(arg->type);
+// linking on mac: 
+// ld -arch x86_64 -macosx_version_min 10.10 a.out -lSystem -o a 
+void CodeGenerator::Generate(Block *globalBlock) {
+	CG::Symtab = globalBlock->symtab;
+
+	// Get return type of globalBlock
+	bool noRet = false; 
+	Type *retType = globalBlock->getReturnType();
+
+	if (retType == nullptr) {
+		noRet = true; 
+		retType = Type::getVoidTy(getGlobalContext());
 	}
 
-	FunctionType *FT = FunctionType::get(getReturnType(), Args, false);
-	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);
+	std::vector<Type*> Args;
+	FunctionType *FT = FunctionType::get(retType, Args, false);
+	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, "@main", TheModule);
 
-	// Set function for the PARENT symtab (the one that could call this function)
-	CG::Symtab->create(name);
-	CG::Symtab->objs[name]->setValue(TheFunction);
-
-	// Set new symtab
-	auto oldSymtab = CG::Symtab;
-	CG::Symtab = body->symtab;
-
-	// Set function for the CURRENT symtab (for recursion)
-	CG::Symtab->create(name);
-	CG::Symtab->objs[name]->setValue(TheFunction);
-
-	auto arg_it = TheFunction->arg_begin();
-	for (unsigned int i = 0; i < args->size(); i++, arg_it++) {
-		arg_it->setName((*args)[i]->name);
-	}
-
-	auto IP = CG::Builder.GetInsertBlock();
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
-	CG::Builder.SetInsertPoint(BB);
+	Builder.SetInsertPoint(BB);
 
-	arg_it = TheFunction->arg_begin();
-	for (unsigned int i = 0; i < args->size(); i++, arg_it++) {
-		Value *v = CG::Builder.CreateAlloca(arg_it->getType());
-		CG::Builder.CreateStore(arg_it, v);
-		CG::Symtab->create((*args)[i]->name);
-		CG::Symtab->objs[(*args)[i]->name]->setValue(v);
+	BasicBlock *ExitBB = BasicBlock::Create(getGlobalContext(), "", TheFunction);
+	CG::Symtab->FunctionEnd = ExitBB;
+
+	Value *v = nullptr;  
+	if (noRet == false) {
+		v = CG::Builder.CreateAlloca(retType, nullptr, "");
+		CG::Symtab->retVal = v;
+	}
+	
+	globalBlock->Codegen();
+
+	if (noRet == true) {
+		CG::Builder.CreateRetVoid();
+	} else {
+		Builder.SetInsertPoint(ExitBB);
+		Value *r = CG::Builder.CreateLoad(v);
+		CG::Builder.CreateRet(r);
 	}
 
-	body->Codegen();
+	TheFPM->run(*TheFunction);
 
-	// IF VOID, CREATE RET VOID HERE
-
-	CG::Symtab = oldSymtab;
-	
-	if (IP != nullptr)
-		CG::Builder.SetInsertPoint(IP);
-	
-	CG::TheFPM->run(*TheFunction);
-
-	return TheFunction;
+	GenerateObject();
 }
 
-
-Value* Block::Codegen() {
-	for (Statement *stmt : statements) {
-		stmt->Codegen();
+void CodeGenerator::GenerateObject() {
+	std::string err; 
+	Triple triple = Triple(sys::getProcessTriple());
+	const Target *target = TargetRegistry::lookupTarget("x86-64", triple, err);
+	if (target == nullptr) {
+		std::cerr << "fatal: " << err << std::endl;
+		exit(1);
 	}
 
-	return nullptr;
+	StringRef name = sys::getHostCPUName();
+
+  SubtargetFeatures Features;
+  Features.AddFeature("64bit");
+  Features.AddFeature("64bit-mode");
+	std::string FeaturesStr = Features.getString();
+
+	TargetOptions options;
+
+	if (verboseOutput == true) {
+		std::cout << "Detected CPU " << name.str() << std::endl; 
+		std::cout << "Detected Host " << triple.getTriple() << std::endl; 
+		std::cout << "Features: " << FeaturesStr << std::endl; 
+
+		TheModule->dump();
+	}
+
+	TargetMachine *tm = target->createTargetMachine(triple.getTriple(), name, FeaturesStr, options);
+	if (tm == nullptr) {
+		std::cerr << "fatal: could not create target machine\n";
+		exit(1);
+	}
+
+	// local output file
+	std::string loutput = fileBase;
+	if (outputAssembly == true) {
+		loutput += ".s";
+	} else {
+		loutput += ".o";
+	}
+
+	std::string ec = "";
+	raw_fd_ostream raw(loutput.c_str(), ec, OpenFlags::F_RW);
+
+	if (ec != "") {
+		std::cerr << "fatal: " << ec << std::endl;
+		exit(1);
+	}
+
+	formatted_raw_ostream strm(raw);
+
+	// can i disable TLI?
+  TargetLibraryInfo *TLI = new TargetLibraryInfo(triple);
+
+  const DataLayout *DL = tm->getDataLayout();
+  TheModule->setDataLayout(DL);
+
+  ThePM = new PassManager();
+	ThePM->add(TLI);
+	ThePM->add(new DataLayoutPass(TheModule));
+
+	LLVMTargetMachine::CodeGenFileType genType = outputAssembly ? LLVMTargetMachine::CGFT_AssemblyFile : LLVMTargetMachine::CGFT_ObjectFile;
+
+	bool b = tm->addPassesToEmitFile(*ThePM, strm, genType, true);
+	if (b == true) {
+		std::cerr << "fatal: emission is not supported.\n";
+		exit(1);
+	}
+
+	ThePM->run(*TheModule);
+	strm.flush();
+	raw.flush();
+	raw.close();
+
+	if (doLink && outputAssembly == false) {
+		std::vector<const char *> options; 
+
+#if defined(__APPLE__) || defined(__linux__)
+		std::string root = INSTALL_LOCATION;
+		root += "/lib/libor/boot.o";
+
+		options.push_back(root.c_str());
+
+#ifdef __APPLE__
+		options.push_back("-w");
+#endif
+
+		options.push_back("-o");
+		options.push_back(outputFile.c_str()); // final output. defaults to a.out
+#endif 
+
+		// local output 
+		options.push_back(loutput.c_str());
+
+		invokeLinkerWithOptions(options);
+
+		remove(loutput.c_str());
+	}
+
+
 }
+

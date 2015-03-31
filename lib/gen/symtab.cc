@@ -20,6 +20,17 @@ void Symobj::setType(Type *t) {
 }
 
 //// Symtab
+BasicBlock* SymTable::getFunctionEnd() {
+	SymTable* ptr = this;
+	while (ptr != nullptr) {
+		if (ptr->FunctionEnd)
+			return ptr->FunctionEnd; 
+		ptr = ptr->parent;
+	}
+	
+	return nullptr;
+}
+
 Symobj* SymTable::find(std::string name) {
 	SymTable* ptr = this;
 	while (ptr != nullptr) {

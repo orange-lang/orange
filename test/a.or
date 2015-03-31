@@ -1,7 +1,6 @@
 # basic test
-def test(int64 a)
-	a = 3 / a + 5 * 2
-	return a
+def square(int64 a)
+	return a * a
 end
 
-test(5)
+return square(5)

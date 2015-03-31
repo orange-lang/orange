@@ -31,6 +31,8 @@ private:
 public:
 	bool isSigned = false;
 	bool isFunction = false;
+
+	void *reference = nullptr;
 	
 	Value *getValue() const;
 	Type *getType() const;  
@@ -51,11 +53,17 @@ class SymTable {
 public:
 	SymTable *parent = nullptr; 
 	std::map< std::string, Symobj* > objs;
+
+	Value *retVal = nullptr;
+	BasicBlock *FunctionEnd = nullptr; 
+	BasicBlock *BlockEnd = nullptr; 
 	
 	// If Symobj doesn't exist, creates one. 
 	void create(std::string name);
 	
 	Symobj* find(std::string name);
+
+	BasicBlock* getFunctionEnd();
 };
 
 class ArgExpr;
@@ -84,6 +92,7 @@ public:
 	Value* Codegen();
 
 	std::vector<Statement *> statements;
+	Type* getReturnType();
 
 	SymTable *symtab;
 
@@ -127,8 +136,6 @@ public:
 	ArgList *args;
 	Block *body;
 
-	Type* getReturnType();
-
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << name << "( ";
@@ -153,10 +160,7 @@ class BinOpExpr : public Expression {
 public:
 	Value* Codegen();
 
-	Type *getType() { 
-		printf("BinOpExpr::getType()\n");
-		return nullptr; 
-	}
+	Type *getType();
 
 
 	Expression *LHS;
@@ -191,6 +195,9 @@ class FuncCallExpr : public Expression {
 public:
 	Value* Codegen();
 
+	Type *getType();
+
+
 	std::string name;
 	ExprList *args;
 
@@ -207,7 +214,7 @@ public:
 		return ss.str();
 	}
 
-	FuncCallExpr(std::string name, ExprList *args) : name(name), args(args) {}
+	FuncCallExpr(std::string name, ExprList *args) : name(name), args(args) { };
 };
 
 class ReturnExpr : public Expression {
@@ -238,6 +245,11 @@ public:
 		return ss.str();
 	}
 
+	virtual Type *getType() { 
+		return Type::getIntNTy(getGlobalContext(), size); 
+	}
+
+
 	UIntVal() { }
 	UIntVal(uint64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
 };
@@ -254,6 +266,11 @@ public:
 		ss << "(int" << (uint64_t)size << ")" << value;
 		return ss.str();
 	}
+
+	virtual Type *getType() { 
+		return Type::getIntNTy(getGlobalContext(), size); 
+	}
+
 
 	IntVal() { }
 	IntVal(int64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.

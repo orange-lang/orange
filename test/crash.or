@@ -1,0 +1,23 @@
+# there was a scenario where multiple return statements in a row would 
+# cause stack issues. 
+#
+# this was fixed by stopping code generation after a return for a block 
+# this test should verify that there will not be a crash in an if statement 
+# 
+
+# basic test
+def test(int64 a)
+	a = 3 / a + 5 * 2
+	return a
+end
+
+if test(1) < test(2)
+	return 2
+	return 2 
+else 
+	return 1
+	return 1
+end
+
+return 0
+return 0

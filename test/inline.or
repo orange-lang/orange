@@ -1,0 +1,10 @@
+#testing inline assembly
+
+@ifdef apple 
+	$mov rax, 0x2000001
+@elif defined(linux)
+	$mov rax, 60
+@endif 
+
+$mov rdi, 0
+$syscall

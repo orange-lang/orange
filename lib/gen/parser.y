@@ -70,7 +70,7 @@ statement 	: 		function term { $$ = $1; }
 term 				:			NEWLINE | SEMICOLON ;
 
 function		:	 		{ $<symtab>$ = CodeGenerator::Symtab; } 
-									{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; }
+									{ auto s = new SymTable(); CG::Symtab = s; $<symtab>$ = s; s->parent = $<symtab>1; }
 									DEF opt_id term statements END 
 									{ $$ = $4; $$->body = $6; $$->body->symtab = $<symtab>2; CodeGenerator::Symtab = $<symtab>1; };
 

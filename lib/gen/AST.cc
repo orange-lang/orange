@@ -31,7 +31,6 @@ Type *getType(std::string typeStr) {
 	return nullptr;
 }
 
-
 ArgExpr::ArgExpr(std::string* type, std::string* name) {
 	this->type = type ? *type : "";
 	this->name = name ? *name : "";
@@ -52,6 +51,11 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 	this->name = name ? *name : "";
 	this->args = args;
 	this->body = body;
+
+	// Create this as a symbol in our parent.
+	CG::Symtab->parent->create(this->name);
+	CG::Symtab->parent->objs[this->name]->isFunction = true; 
+	CG::Symtab->parent->objs[this->name]->reference = (void *)this; 
 }
 
 BinOpExpr::BinOpExpr(Expression *LHS, char op, Expression *RHS) {
