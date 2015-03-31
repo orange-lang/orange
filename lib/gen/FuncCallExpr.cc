@@ -19,7 +19,7 @@ Type *FuncCallExpr::getType() {
 	}
 
 	Expression *e = (Expression *)o->reference;
-	if (dynamic_cast<FunctionStatement*>(e)) {
+	if (e->getClass() == "FunctionStatement") {
 		FunctionStatement *ref = (FunctionStatement *)(e);
 		return ref->body->getReturnType();		
 	} else if (o->getType()) {

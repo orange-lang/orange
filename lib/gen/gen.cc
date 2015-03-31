@@ -113,7 +113,6 @@ void CodeGenerator::Generate(Block *globalBlock) {
 
 	globalBlock->Codegen();
 
-
 	if (noRet == true) {
 		Builder.CreateBr(ExitBB);
 		Builder.SetInsertPoint(ExitBB);

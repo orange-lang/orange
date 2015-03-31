@@ -24,6 +24,13 @@ BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 	this->LHS = LHS;
 	this->op = op;
 	this->RHS = RHS;
+
+	if (op == "=" && LHS->getClass() == "VarExpr") {
+		VarExpr *L = (VarExpr *)LHS;
+
+		CG::Symtab->create(L->name);
+		CG::Symtab->objs[L->name]->setType(RHS->getType());
+	}
 }
 
 Type *BinOpExpr::getType() { 
@@ -44,7 +51,8 @@ Value* BinOpExpr::Codegen() {
 	// We want to create the variable here instead of in LHS->Codegen,
 	// since LHS->Codegen would create a nonexistant variable on the RHS potentially 
 	if (op == "=" && L == nullptr) {
-		printf("((TODO: CREATE VARIABLE. FATAL.))\n");
+		L = CG::Builder.CreateAlloca(LHS->getType());
+		CG::Symtab->objs[((VarExpr*)LHS)->name]->setValue(L);
 	}
 
 	if (L == nullptr) {
