@@ -14,6 +14,7 @@ public:
 	bool isLocked = false;
 
 	virtual bool isSigned() { return type->isSigned(); }
+	virtual bool isConstant() { return false; }
 
 	virtual std::string string() {
 		std::stringstream ss;

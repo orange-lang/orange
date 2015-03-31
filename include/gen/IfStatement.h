@@ -17,6 +17,8 @@ public:
 
 	virtual std::string string();
 
+	virtual bool isConstant() { return false; }
+
 	void resolve();
 
 	IfStatement() { }

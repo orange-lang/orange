@@ -15,6 +15,8 @@ public:
 	virtual Value* Codegen();
 	virtual Type* getType();
 
+	virtual bool isConstant() { return false; }
+
 	DerefId(VarExpr *id) : id(id) { }
 
 	~DerefId();

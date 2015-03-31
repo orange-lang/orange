@@ -58,6 +58,9 @@ bool CastValueToType(Value **v, Type *t, bool isSigned, bool force) {
 			}
 
 			return true;
+		} else if (t->isPointerTy() && changeType->isPointerTy()) {
+			*v = CG::Builder.CreateBitCast(*v, t);
+			return true; 
 		} else {
 			AnyType *a = AnyType::Create(changeType);
 			AnyType *b = AnyType::Create(t);

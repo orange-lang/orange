@@ -22,6 +22,8 @@ public:
 		return name;
 	}
 
+	virtual bool isConstant() { return false; }
+
 	virtual void resolve();
 
 	VarDeclExpr(AnyType *type, std::string *name, Expression *value);

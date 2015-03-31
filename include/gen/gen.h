@@ -20,5 +20,7 @@
 #include "CastExpr.h"
 #include "DerefId.h"
 #include "NegativeExpr.h"
+#include "ArrayExpr.h"
+#include "ArrayAccess.h"
 
 #endif

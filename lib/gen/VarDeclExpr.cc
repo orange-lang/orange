@@ -13,7 +13,18 @@ Value* VarDeclExpr::Codegen() {
 			store = CG::Builder.CreateLoad(store);
 		}
 
+		// If store is a pointer to an array, and v is too, store 
+		// needs to be loaded. 
+		bool storeIsPtrToArray = store->getType()->isPointerTy() && store->getType()->getPointerElementType()->isArrayTy(); 
+		bool vIsArray = getType()->isArrayTy(); 
+
+		if (vIsArray && storeIsPtrToArray) {
+			store = CG::Builder.CreateLoad(store);
+		}
+
 		CastValueToType(&store, getType(), value->isSigned(), true);
+
+		
 		CG::Builder.CreateStore(store, v);
 	}
 

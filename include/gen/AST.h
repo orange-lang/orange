@@ -38,6 +38,7 @@ typedef std::vector<Expression *> ExprList;
 
 class Statement;
 class Block;
+class BaseVal;
 
 class ArgList : public std::vector<ArgExpr *>  {
 public:
@@ -53,6 +54,8 @@ public:
 	virtual std::string string() { return ""; }
 	bool resolved = false;
 	
+	// any function that implements resolve can only 
+	// be resolved once 
 	virtual void resolve() { 
 		if (resolved)
 			return; 
@@ -68,21 +71,30 @@ public:
 	virtual std::string getClass() { return "Expression"; }
 	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
 	virtual bool isSigned() { return false; }
+	virtual bool isConstant() { return true; } 
 };
 
 class AnyType {
 private:
+	std::vector<uint64_t> arrays;
+
+	bool mArrayType = false;
+	int mArraySize = 0;
 	AnyType() { }
 public:
 	std::string type; 
 	bool isSigned();
 	int numPointers = 0; 
+	bool arrayType() const { return mArrayType; }  
+	int arraySize() const { return mArraySize; }
+
+	std::string string();
 
 	Type *getType();
 
 	static AnyType *Create(Type *t);
 
-	AnyType(std::string *type, int numPointers) : type(*type), numPointers(numPointers) {}
+	AnyType(std::string *type, int numPointers, std::vector<BaseVal *> *arrays);
 };
 
 
@@ -104,7 +116,9 @@ public:
 	StrVal(std::string v);
 };
 
-class BaseVal : public Expression { };
+class BaseVal : public Expression { 
+
+};
 
 class ValFactory {
 public:

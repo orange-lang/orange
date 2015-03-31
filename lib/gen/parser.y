@@ -1,5 +1,5 @@
 %{
-// c stuff 
+	// c stuff 
 	#include <iostream>
 	#include <gen/gen.h>
 	#include <gen/generator.h>
@@ -25,6 +25,7 @@
 	FunctionStatement *fstmt;
 	Expression *expr;
 	std::string *str;
+	std::vector<BaseVal *>* values;
 	int token; 
 	int number;
 }
@@ -44,7 +45,7 @@
 %type <ifstmt> if_statement opt_else inline_if inline_unless unless 
 %type <block> statements opt_statements
 %type <stmt> statement extern return_stmt expr_or_ret
-%type <expr> expression primary VALUE opt_expr declaration opt_eq
+%type <expr> expression primary VALUE opt_expr declaration opt_eq opt_num
 %type <did> dereference
 %type <fstmt> function opt_id 
 %type <argexpr> opt_arg arg_end
@@ -54,6 +55,7 @@
 %type <str> TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR basic_type STRING
 %type <anytype> type
 %type <number> var_ptrs
+%type <values> arrays
 
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
 
@@ -61,6 +63,7 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left OPEN_PAREN CLOSE_PAREN
+%left OPEN_BRACKET
 
 %right IF
 
@@ -204,13 +207,22 @@ opt_arg
 	;
 
 type
-	:	basic_type var_ptrs { $$ = new AnyType($1, $2); }
+	:	basic_type var_ptrs arrays { $$ = new AnyType($1, $2, $3); }
 	;
 
 var_ptrs
 	:	var_ptrs TIMES { $$ = $1 + 1; }
 	|	{ $$ = 0; }
 	;
+
+arrays
+	:	OPEN_BRACKET opt_num CLOSE_BRACKET arrays { $$ = $4; $$->insert($$->begin(), (BaseVal *)$2); } 
+	|	{ $$ = new std::vector<BaseVal *>; }
+	;
+
+opt_num
+	: VALUE { $$ = $1; }
+	| { $$ = nullptr; }
 
 basic_type
 	:	TYPE_INT 
@@ -272,6 +284,8 @@ primary
 	|	if_statement { $$ = $1; }
 	|	TIMES dereference { $$ = $2; $<did>$->pointers++; }
 	|	MINUS primary { $$ = new NegativeExpr($2); }
+	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayExpr($2); }
+	| primary OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess($1, $3); }
 	;
 
 dereference 

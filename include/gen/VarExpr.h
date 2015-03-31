@@ -13,12 +13,14 @@ public:
 
 	virtual bool isSigned();
 
+	virtual bool isConstant() { return false; }
+
 	virtual std::string string() {
 		std::stringstream ss;
 
 		if (getType()) {
 			auto a = AnyType::Create(getType()); 
-			ss << "(" << a->type << ")";
+			ss << "(" << a->string() << ")";
 			delete a;
 		} else {
 			ss << "(id)";

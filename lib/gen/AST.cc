@@ -1,5 +1,6 @@
 #include "gen/AST.h"
 #include "gen/generator.h"
+#include "gen/Values.h"
 typedef CodeGenerator CG;
 
 Value *replace(Value *del, Value *v) {
@@ -9,7 +10,8 @@ Value *replace(Value *del, Value *v) {
 
 
 bool returnsPtr(std::string className) {
-	return className == "VarExpr" || className == "IfStatement" || className == "DerefId" || className == "VarDeclExpr";
+	return className == "VarExpr" || className == "IfStatement" || className == "DerefId" || className == "VarDeclExpr" 
+		|| className == "ArrayAccess" || className == "ArrayExpr";
 }
 
 
@@ -41,6 +43,28 @@ Type *getType(std::string typeStr) {
 	return nullptr;
 }
 
+std::string AnyType::string() {
+	std::stringstream ss;
+	ss << type;
+
+	for (int i = 0; i < numPointers; i++) {
+		ss << "*";
+	}
+
+	if (mArrayType == true) {
+		if (mArraySize != 0)
+			ss << "[" << mArraySize << "]";
+		else 
+			ss << "[]";
+	} else if (arrays.size() > 0) {
+		for (auto sz : arrays) {
+			ss << "[" << sz << "]";
+		}
+	}
+
+	return ss.str();
+}
+
 AnyType *AnyType::Create(Type *t) {
 	AnyType *ret = new AnyType;
 	ret->numPointers = 0;
@@ -64,6 +88,13 @@ AnyType *AnyType::Create(Type *t) {
 		ret->type = "int64";
 	}
 
+	if (t->isArrayTy()) {
+		ArrayType *at = (ArrayType *)t;
+		ret = AnyType::Create(at->getElementType());
+		ret->mArrayType = true; 
+		ret->mArraySize = (int)at->getNumElements();
+	}
+
 	return ret;
 }
 
@@ -78,6 +109,47 @@ Type *AnyType::getType() {
 		initial = initial->getPointerTo(0);
 	}
 
+	if (mArrayType && mArraySize) {
+		initial = ArrayType::get(initial, mArraySize);
+	} else if (mArrayType && mArraySize == 0) {
+		initial = initial->getPointerTo(0);
+	}
+
+	if (arrays.size() > 0) {
+		for (int i = arrays.size() - 1; i >= 0; i--) {
+			initial = ArrayType::get(initial, arrays[i]);
+		}
+	}
+
 	return initial;
+}
+
+AnyType::AnyType(std::string *type, int numPointers, std::vector<BaseVal *> *arrays) {
+	this->type = *type;
+	this->numPointers = numPointers; 
+
+	if (arrays == nullptr) { 
+		return; 
+	}
+
+	for (BaseVal *bv : *arrays) {
+		if (bv == nullptr) {
+			this->numPointers++;
+			continue;
+		}
+
+		if (bv->getClass() != "UIntVal" && bv->getClass() != "IntVal") {
+			std::cerr << "fatal: cannot construct array with element size " << bv->string() << std::endl;
+			exit(1);
+		}
+
+		if (bv->getClass() == "UIntVal") {
+			UIntVal *uiv = (UIntVal *)bv; 
+			this->arrays.push_back(uiv->value); 
+		} else if (bv->getClass() == "IntVal") {
+			IntVal *iv = (IntVal *)bv; 
+			this->arrays.push_back((uint64_t)iv->value);
+		}
+	}
 }
 

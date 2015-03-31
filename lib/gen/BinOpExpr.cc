@@ -132,7 +132,7 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	Value *OrigL = L;
-	if ((op != "=" && op != "<-") && (LHS->getClass() == "VarExpr" || LHS->getClass() == "DerefId")) {
+	if ((op != "=" && op != "<-") && returnsPtr(LHS->getClass())) {
 		// If it's a variable load it in. 
 		L = CG::Builder.CreateLoad(L, "var");
 	}

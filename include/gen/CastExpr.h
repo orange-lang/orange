@@ -20,6 +20,9 @@ public:
 		return "(" + type_str + ")" + expr->string(); 
 	}
 
+	virtual bool isConstant() { return expr->isConstant(); }
+
+
 	CastExpr(AnyType *type, Expression *expr) : type(type), expr(expr) {}
 
 	~CastExpr();

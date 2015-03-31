@@ -33,7 +33,7 @@ Type* DerefId::getType() {
 	}
 
 	std::string *name = new std::string(at->type);
-	AnyType *ret = new AnyType(name, newPtrs);
+	AnyType *ret = new AnyType(name, newPtrs, nullptr);
 	delete name; 
 	return ret->getType();
 }

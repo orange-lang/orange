@@ -14,6 +14,9 @@ public:
 
 	void resolve();
 
+	virtual bool isConstant() { return expr->isConstant(); }
+
+
 	virtual std::string string() {
 		if (expr) 
 			return "RETURN " + expr->string();

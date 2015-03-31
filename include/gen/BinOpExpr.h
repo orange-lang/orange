@@ -19,6 +19,9 @@ public:
 
 	virtual void resolve();
 
+	virtual bool isConstant() { return LHS->isConstant() && RHS->isConstant(); }
+
+
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << "( " << LHS->string() << " " << op << " " << RHS->string() << " )";

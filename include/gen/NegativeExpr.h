@@ -11,6 +11,9 @@ public:
 	virtual Type *getType() { return expr->getType(); }
 	virtual std::string string() { return "-" + expr->string(); }
 
+	virtual bool isConstant() { return expr->isConstant(); }
+
+
 	NegativeExpr(Expression *expr) : expr(expr) {}
 
 	~NegativeExpr();

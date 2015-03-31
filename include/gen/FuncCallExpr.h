@@ -15,6 +15,8 @@ public:
 
 	void resolve();
 
+	virtual bool isConstant() { return false; }
+
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << name << "( ";
