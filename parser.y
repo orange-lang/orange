@@ -71,15 +71,15 @@ opt_args 		:			opt_args COMMA opt_arg { $1->push_back($3); }
 opt_arg 		:			TYPE ID { $$ = new ArgExpr($1, $2); } 
 						| 		ID { $$ = new ArgExpr(nullptr, $1); } ; 
 
-expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, ASSIGN, $3); }
+expression  :			expr2 ASSIGN expression { $$ = new BinOpExpr($1, '=', $3); }
 						|			expr2 { $$ = $1; }
 
-expr2 			:			expr2 PLUS expr3 { $$ = new BinOpExpr($1, PLUS, $3); }
-						| 		expr2 MINUS expr3 { $$ = new BinOpExpr($1, MINUS, $3); }
+expr2 			:			expr2 PLUS expr3 { $$ = new BinOpExpr($1, '+', $3); }
+						| 		expr2 MINUS expr3 { $$ = new BinOpExpr($1, '-', $3); }
 						|			expr3 { $$ = $1; }
 
-expr3 			:			expr3 TIMES primary { $$ = new BinOpExpr($1, TIMES, $3); } 
-						| 		expr3 DIVIDE primary { $$ = new BinOpExpr($1, DIVIDE, $3); }
+expr3 			:			expr3 TIMES primary { $$ = new BinOpExpr($1, '*', $3); } 
+						| 		expr3 DIVIDE primary { $$ = new BinOpExpr($1, '/', $3); }
 						|			primary { $$ = $1; }
 
 primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; } 

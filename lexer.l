@@ -37,21 +37,21 @@
 	.											printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
 }
 
-"-"?[1-9][0-9]*.[0-9]+	MKFACTORY(); DOFACTORY("d"); return VALUE;
+"-"?[1-9][0-9]*\.[0-9]+	MKFACTORY(); DOFACTORY("d"); return VALUE;
 
 "-"?[1-9][0-9]*					MKFACTORY(); BEGIN(INT);
 
 <INT>{
-	"u"										DOFACTORY("u"); BEGIN(INITIAL); return VALUE; 
-	"i"										DOFACTORY("i"); BEGIN(INITIAL); return VALUE;
-	"u8"									DOFACTORY("u8"); BEGIN(INITIAL); return VALUE; 
-	"i8"									DOFACTORY("i8"); BEGIN(INITIAL); return VALUE; 
-	"u16"									DOFACTORY("u16"); BEGIN(INITIAL); return VALUE; 
-	"i16"									DOFACTORY("i16"); BEGIN(INITIAL); return VALUE; 
-	"u32"									DOFACTORY("u32"); BEGIN(INITIAL); return VALUE; 
-	"i32"									DOFACTORY("i32"); BEGIN(INITIAL); return VALUE; 
 	"u64"									DOFACTORY("u64"); BEGIN(INITIAL); return VALUE; 
 	"i64"									DOFACTORY("i64"); BEGIN(INITIAL); return VALUE; 
+	"u32"									DOFACTORY("u32"); BEGIN(INITIAL); return VALUE; 
+	"i32"									DOFACTORY("i32"); BEGIN(INITIAL); return VALUE; 
+	"u16"									DOFACTORY("u16"); BEGIN(INITIAL); return VALUE; 
+	"i16"									DOFACTORY("i16"); BEGIN(INITIAL); return VALUE; 
+	"u8"									DOFACTORY("u8"); BEGIN(INITIAL); return VALUE; 
+	"i8"									DOFACTORY("i8"); BEGIN(INITIAL); return VALUE; 
+	"u"										DOFACTORY("u"); BEGIN(INITIAL); return VALUE; 
+	"i"										DOFACTORY("i"); BEGIN(INITIAL); return VALUE;
 	.											DOFACTORY("i"); BEGIN(INITIAL); yyless(0); return VALUE; 
 }
 

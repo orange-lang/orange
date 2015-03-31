@@ -1,0 +1,8 @@
+# a.or 
+def test(a)
+	# a should be a float now 
+	a = 11b / 0x1 + 5.0 * 2u8
+	return a
+end
+
+test(5)

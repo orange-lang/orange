@@ -15,7 +15,7 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 	// printf("[Creating function %s...] ", this->name.c_str());
 }
 
-BinOpExpr::BinOpExpr(Expression *LHS, int op, Expression *RHS) {
+BinOpExpr::BinOpExpr(Expression *LHS, char op, Expression *RHS) {
 	this->LHS = LHS;
 	this->op = op;
 	this->RHS = RHS;
