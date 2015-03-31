@@ -31,6 +31,10 @@ Type *getType(std::string typeStr) {
 	return nullptr;
 }
 
+bool AnyType::isSigned() {
+	return (type[0] == 'i');
+}
+
 Type *AnyType::getType() {
 	Type *initial = ::getType(type);
 

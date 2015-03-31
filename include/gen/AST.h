@@ -28,11 +28,15 @@ Type *getType(std::string typeStr);
 class ArgExpr;
 class Expression;
 
-typedef std::vector<ArgExpr *> ArgList;
 typedef std::vector<Expression *> ExprList;
 
 class Statement;
 class Block;
+
+class ArgList : public std::vector<ArgExpr *>  {
+public:
+	bool isVarArg = false;
+};
 
 // Base
 class Statement {
@@ -51,6 +55,7 @@ public:
 class AnyType {
 public:
 	std::string type; 
+	bool isSigned();
 	int numPointers = 0; 
 
 	Type *getType();

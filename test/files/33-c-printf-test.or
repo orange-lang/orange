@@ -1,0 +1,3 @@
+extern int32 printf(char *s, ...)
+printf("Number: %d\n", 12345)
+return 0

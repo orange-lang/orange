@@ -1,5 +1,16 @@
 #include "gen/Values.h"
 #include "gen/generator.h"
+#include <algorithm>
+
+void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+    if(from.empty())
+        return;
+    std::string::size_type start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+}
 
 Value* UIntVal::Codegen() {
 	return ConstantInt::get(getGlobalContext(), APInt(size, value));
@@ -11,6 +22,7 @@ Value* IntVal::Codegen() {
 
 StrVal::StrVal(std::string v) {
 	value = v.substr(1, v.length()-2);
+	replaceAll(value, "\\n", "\n");
 }
 
 Value* StrVal::Codegen() {

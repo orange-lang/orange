@@ -35,13 +35,13 @@
 %token RETURN CLASS USING PUBLIC SHARED PRIVATE OPEN_BRACE CLOSE_BRACE 
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
-%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN
+%token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG;
 
 %type <block> statements
 %type <stmt> statement extern
 %type <expr> expression expr_eq expr2 expr3 primary VALUE opt_expr declaration opt_eq
 %type <fstmt> function opt_id 
-%type <argexpr> opt_arg
+%type <argexpr> opt_arg arg_end
 %type <arglist> opt_args arg_list opt_parens
 %type <exprlist> expr_list optexprlist
 %type <str> TYPE_ID DEF END TYPE TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
@@ -94,11 +94,14 @@ opt_parens 	: 		OPEN_PAREN opt_args CLOSE_PAREN { $$ = $2; }
 opt_args 		:			arg_list { $$ = $1; }
 						|			{ $$ = nullptr; }
 
-arg_list 		:			arg_list COMMA opt_arg { $1->push_back($3); } 	
-						| 		opt_arg { $$ = new ArgList(); $$->push_back($1); }; 
+arg_list 		:			arg_list COMMA arg_end { if ($3) { $1->push_back($3); } else { $1->isVarArg = true; } } 	
+						| 		opt_arg { $$ = new ArgList(); $$->push_back($1); }
+
+arg_end			:			VARARG { $$ = nullptr; }
+						|			opt_arg { $$ = $1; }
 
 opt_arg 		:			type TYPE_ID { $$ = new ArgExpr($1, $2); } 
-						| 		TYPE_ID { $$ = new ArgExpr(nullptr, $1); } ; 
+						| 		TYPE_ID { $$ = new ArgExpr(nullptr, $1); } 
 
 // type: get any number of TIMES for pointers 
 type 				: 		basic_type var_ptrs { $$ = new AnyType($1, $2); }

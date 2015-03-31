@@ -4,8 +4,17 @@
 Value* VarDeclExpr::Codegen() {
 	Value *v = CG::Builder.CreateAlloca(getType());
 
+
 	if (value != nullptr) {
-		CG::Builder.CreateStore(value->Codegen(), v);
+		Value *store = value->Codegen();
+
+		if (getType()->isIntegerTy() && store->getType()->isIntegerTy()) {
+			if (getType()->getIntegerBitWidth() != store->getType()->getIntegerBitWidth()) {
+				store = CG::Builder.CreateIntCast(store, getType(), type->isSigned());
+			}
+		}
+
+		CG::Builder.CreateStore(store, v);
 	}
 
 	CG::Symtab->objs[name]->setValue(v);

@@ -79,6 +79,7 @@
 "["											return OPEN_BRACKET; 
 "]"											return CLOSE_BRACKET; 
 
+"..."										return VARARG;
 
 "++"										return INCREMENT; 
 "--"										return DECREMENT; 

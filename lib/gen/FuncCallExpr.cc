@@ -60,7 +60,7 @@ Value* FuncCallExpr::Codegen() {
 	if (isa<Function>(o->getValue())) {
 		Function *f = cast<Function>(o->getValue());
 		// const auto fargs = f->getArgumentList();
-		if (f->arg_size() != args->size()) {
+		if (f->isVarArg() == false && f->arg_size() != args->size()) {
 			std::cerr << "Fatal: function arguments do not match number of arguments in callee\n";
 			exit(1);
 		}

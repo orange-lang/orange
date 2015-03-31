@@ -20,7 +20,7 @@ Value* ExternFunction::Codegen() {
 		Args[i] = arg->type->getType();
 	}
 
-	FunctionType *FT = FunctionType::get(returnType->getType(), Args, false);
+	FunctionType *FT = FunctionType::get(returnType->getType(), Args, args->isVarArg);
 	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, name, CG::TheModule);
 
 	CG::Symtab->create(name);
