@@ -72,7 +72,8 @@ Type *BinOpExpr::getType() {
 	Type *L = LHS->getType();
 	Type *R = RHS->getType();
 
-	return GetFittingType(L, R);
+	Type *T = GetFittingType(L, R);
+	return T;
 }
 
 Value* BinOpExpr::Codegen() {

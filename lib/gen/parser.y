@@ -143,6 +143,7 @@ expr3 			:			expr3 TIMES primary { $$ = new BinOpExpr($1, "*", $3); }
 						|			primary { $$ = $1; }
 
 primary			: 		OPEN_PAREN expression CLOSE_PAREN { $$ = $2; } 
+						|			OPEN_PAREN type CLOSE_PAREN primary { $$ = new CastExpr($2, $4); }
 						| 		VALUE { $$ = $1; }
 						| 		TYPE_ID OPEN_PAREN optexprlist CLOSE_PAREN { $$ = new FuncCallExpr(*$1, $3); }
 						|			TYPE_ID { $$ = new VarExpr(*$1); }

@@ -17,5 +17,6 @@
 #include "VarDeclExpr.h"
 #include "IfStatement.h"
 #include "CondBlock.h"
+#include "CastExpr.h"
 
 #endif
