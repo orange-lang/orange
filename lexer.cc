@@ -2,6 +2,11 @@
 #include <cctype>
 #include "lexer.h"
 
+#define LEX_SINGLE(c, s, t) if(source[idx] == c) {\
+ 	Lexeme *lex = new Lexeme();\
+ 	lex->value.string = s; lex->type = t;\
+ 	ret.push_back(lex); idx++;}
+
 LexemeType TypeForKeyword(std::string id) {
 	if (id == "def") 
 		return KEYWORD_DEF;
@@ -43,6 +48,11 @@ LexemeType TypeForKeyword(std::string id) {
 
 typedef std::function<Lexeme*(std::string)> LexLambda;
 
+// returns true for 0->F
+bool ishex(char c) {
+	return isdigit(c) || (tolower(c) >= 'a' && tolower(c) <= 'f');
+}
+
 std::vector<Lexeme *> Lex(std::string source) {
 	std::vector<Lexeme *> ret;
 
@@ -52,23 +62,48 @@ std::vector<Lexeme *> Lex(std::string source) {
 
 	LexLambda parseNumber = [&idx, source](std::string existing) -> Lexeme* {
 		Lexeme *lex = new Lexeme();
-		lex->value = existing;
+		lex->value.string = "NUMBER";
 		lex->type = TYPE_INT64;
 
+		std::string num = existing;
+
+		bool isHex = false;
+
 		while (isdigit(source[idx])) {
-			lex->value += source[idx]; 
-			idx++;
+			num += source[idx++]; 
 		}
 
-		if (source[idx] == '.' && isdigit(source[idx+1])) {
-			lex->value += source[idx]; 
+		if (num == "0" && source[idx] == 'x' && ishex(source[idx+1])) {
+			num += source[idx++];
+
+			while (ishex(source[idx])) {
+				num += source[idx++];
+			}
+
+			isHex = true; 
+			lex->type = TYPE_UINT64;
+		} else if (source[idx] == '.' && isdigit(source[idx+1])) {
+			num += source[idx]; 
 			idx++; 
 			lex->type = TYPE_DOUBLE; 
 
 			while (isdigit(source[idx])) {
-				lex->value += source[idx]; 
+				num += source[idx]; 
 				idx++;
 			}	
+		}
+
+		switch (lex->type) {
+		case TYPE_INT64:
+			lex->value.int64 = std::stoll(num, nullptr, isHex ? 16 : 10);
+			break;
+		case TYPE_UINT64:
+			lex->value.uint64 = std::stoull(num, nullptr, isHex ? 16 : 10);
+			break;		
+		case TYPE_DOUBLE:
+			lex->value.doubleVal = std::stod(num, nullptr);		
+			break;
+		default: break;
 		}
 
 		// Now do suffixes 
@@ -92,6 +127,8 @@ std::vector<Lexeme *> Lex(std::string source) {
 			else {
 				std::cerr << "Error: unknown precision " << precision << std::endl;
 			}
+
+			lex->value.int64 = std::stoll(num, nullptr, isHex ? 16 : 10);
 		} else if (source[idx] == 'u') {
 			lex->type = TYPE_UINT64;
 			idx++;
@@ -112,13 +149,30 @@ std::vector<Lexeme *> Lex(std::string source) {
 			else {
 				std::cerr << "Error: unknown precision " << precision << std::endl;
 			}
+
+			lex->value.uint64 = std::stoull(num, nullptr, isHex ? 16 : 10);
 		} else if (source[idx] == 'f') {
-			lex->type = TYPE_FLOAT;
-			idx++;
+			if (isHex == true) {
+				std::cerr << "Error: incorrect suffix f for hex number" << std::endl;
+			} else {
+				lex->type = TYPE_FLOAT;
+				idx++;
+
+				lex->value.floatVal = std::stof(num, nullptr);
+			}
 		} else if (source[idx] == 'd') {
-			lex->type = TYPE_DOUBLE;
-			idx++;
+			if (isHex == true) {
+				std::cerr << "Error: incorrect suffix d for hex number" << std::endl;
+			} else {
+				lex->type = TYPE_DOUBLE;
+				idx++;
+
+				lex->value.doubleVal = std::stod(num, nullptr);
+			}
 		}
+
+
+		lex->value.string = num;
 
 		return lex;
 	};
@@ -145,89 +199,34 @@ std::vector<Lexeme *> Lex(std::string source) {
 			}
 			
 			Lexeme *lex = new Lexeme();
-			lex->value = id; 
+			lex->value.string = id; 
 			lex->type = TypeForKeyword(id);	
 
 			ret.push_back(lex);
 		}
 
-		if (source[idx] == '.') {
-			Lexeme *lex = new Lexeme();
-			lex->value = ".";
-			lex->type = DOT;
-			ret.push_back(lex);
-			idx++;
-		}
-
-		if (source[idx] == ',') {
-			Lexeme *lex = new Lexeme();
-			lex->value = ",";
-			lex->type = COMMA;
-			ret.push_back(lex);
-			idx++;
-		}
-
-		if (source[idx] == '(') {
-			Lexeme *lex = new Lexeme();
-			lex->value = "(";
-			lex->type = OPEN_PAREN;
-			ret.push_back(lex);
-			idx++;
-		}
-
-		if (source[idx] == ')') {
-			Lexeme *lex = new Lexeme();
-			lex->value = ")";
-			lex->type = CLOSE_PAREN;
-			ret.push_back(lex);
-			idx++;
-		}
-
-		if (source[idx] == '{') {
-			Lexeme *lex = new Lexeme();
-			lex->value = "{";
-			lex->type = OPEN_BRACE;
-			ret.push_back(lex);
-			idx++;
-		}
-
-		if (source[idx] == '}') {
-			Lexeme *lex = new Lexeme();
-			lex->value = "}";
-			lex->type = CLOSE_BRACE;
-			ret.push_back(lex);
-			idx++;
-		}
-
-		if (source[idx] == '[') {
-			Lexeme *lex = new Lexeme();
-			lex->value = "[";
-			lex->type = OPEN_BRACKET;
-			ret.push_back(lex);
-			idx++;
-		}
-
-		if (source[idx] == ']') {
-			Lexeme *lex = new Lexeme();
-			lex->value = "]";
-			lex->type = CLOSE_BRACKET;
-			ret.push_back(lex);
-			idx++;
-		}
+		LEX_SINGLE('.', ".", DOT);
+		LEX_SINGLE(',', ",", COMMA);
+		LEX_SINGLE('(', "(", OPEN_PAREN);
+		LEX_SINGLE(')', ")", CLOSE_PAREN);
+		LEX_SINGLE('{', "{", OPEN_BRACE);
+		LEX_SINGLE('}', "}", CLOSE_BRACE);
+		LEX_SINGLE('[', "[", OPEN_BRACKET);
+		LEX_SINGLE(']', "]", CLOSE_BRACKET);
 
 		if (source[idx] == '+') {
 			Lexeme *lex = new Lexeme();
-			lex->value = "+"; 
+			lex->value.string = "+"; 
 			lex->type = PLUS; 
 			idx++;
 
 			if (source[idx] == '+') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = INCREMENT;
 				idx++;
 			}
 			else if (source[idx] == '=') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = PLUS_ASSIGN;
 				idx++;
 			} else if (isdigit(source[idx])) {
@@ -242,22 +241,22 @@ std::vector<Lexeme *> Lex(std::string source) {
 
 		if (source[idx] == '-') {
 			Lexeme *lex = new Lexeme();
-			lex->value = "-"; 
+			lex->value.string = "-"; 
 			lex->type = MINUS; 
 			idx++;
 
 			if (source[idx] == '-') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = DECREMENT;
 				idx++;
 			}
 			else if (source[idx] == '>') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = ARROW;
 				idx++;
 			}
 			else if (source[idx] == '=') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = MINUS_ASSIGN;
 				idx++;
 			} 
@@ -272,12 +271,12 @@ std::vector<Lexeme *> Lex(std::string source) {
 
 		if (source[idx] == '*') {
 			Lexeme *lex = new Lexeme();
-			lex->value = "*"; 
+			lex->value.string = "*"; 
 			lex->type = TIMES; 
 			idx++;
 
 			if (source[idx] == '=') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = TIMES_ASSIGN;
 				idx++;
 			}
@@ -287,12 +286,12 @@ std::vector<Lexeme *> Lex(std::string source) {
 
 		if (source[idx] == '/') {
 			Lexeme *lex = new Lexeme();
-			lex->value = "/"; 
+			lex->value.string = "/"; 
 			lex->type = DIVIDE; 
 			idx++;
 
 			if (source[idx] == '=') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = DIVIDE_ASSIGN;
 				idx++;
 			}
@@ -302,12 +301,12 @@ std::vector<Lexeme *> Lex(std::string source) {
 
 		if (source[idx] == '%') {
 			Lexeme *lex = new Lexeme();
-			lex->value = "%"; 
+			lex->value.string = "%"; 
 			lex->type = MODULUS; 
 			idx++;
 
 			if (source[idx] == '=') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = MODULUS_ASSIGN;
 				idx++;
 			}
@@ -317,12 +316,12 @@ std::vector<Lexeme *> Lex(std::string source) {
 
 		if (source[idx] == '=') {
 			Lexeme *lex = new Lexeme();
-			lex->value = "="; 
+			lex->value.string = "="; 
 			lex->type = ASSIGN; 
 			idx++;
 
 			if (source[idx] == '=') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = EQUALS;
 				idx++;
 			}
@@ -332,12 +331,12 @@ std::vector<Lexeme *> Lex(std::string source) {
 
 		if (source[idx] == '<') {
 			Lexeme *lex = new Lexeme();
-			lex->value = "<"; 
+			lex->value.string = "<"; 
 			lex->type = LESS_THAN; 
 			idx++;
 
 			if (source[idx] == '=') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = LESS_OR_EQUAL;
 				idx++;
 			}
@@ -347,12 +346,12 @@ std::vector<Lexeme *> Lex(std::string source) {
 
 		if (source[idx] == '>') {
 			Lexeme *lex = new Lexeme();
-			lex->value = ">"; 
+			lex->value.string = ">"; 
 			lex->type = GREATER_THAN; 
 			idx++;
 
 			if (source[idx] == '=') {
-				lex->value += source[idx];
+				lex->value.string += source[idx];
 				lex->type = GREATER_OR_EQUAL;
 				idx++;
 			}
@@ -360,22 +359,39 @@ std::vector<Lexeme *> Lex(std::string source) {
 			ret.push_back(lex);
 		}
 
-		// now do numbers
-		// (-|+)?[0-9]*(\.[0-9]?)suffix
 		if (isdigit(source[idx])) {
 			Lexeme *lex = parseNumber("");
 			ret.push_back(lex);
 		}
-
 	}
-
 
 	return ret;
 }
 
 void PrintLexemes(std::vector<Lexeme*> lexemes) {
 	for (Lexeme* l : lexemes) {
-		std::cout << l->value << " ";
+		switch (l->type) {
+			case TYPE_FLOAT:
+				std::cout << l->value.floatVal << " ";
+				break;
+			case TYPE_DOUBLE:
+				std::cout << l->value.doubleVal << " ";
+				break;
+			case TYPE_INT8:
+			case TYPE_INT16:
+			case TYPE_INT32:
+			case TYPE_INT64:
+				std::cout << l->value.int64 << " ";
+				break;
+			case TYPE_UINT8:
+			case TYPE_UINT16:
+			case TYPE_UINT32:
+			case TYPE_UINT64:
+				std::cout << l->value.uint64 << " ";
+				break;
+			default: 
+				std::cout << l->value.string << " ";
+		}
 	}
 	std::cout << std::endl;
 }

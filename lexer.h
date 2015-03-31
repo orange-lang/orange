@@ -74,9 +74,18 @@ typedef enum LexemeType {
 } LexemeType;
 
 class Lexeme {
+private:
+	class Value {
+	public:
+		std::string string; 
+		uint64_t uint64; 
+		int64_t int64; 
+		float floatVal;
+		double doubleVal;
+	};
 public:
 	LexemeType type; 
-	std::string value;
+	Value value;
 };
 
 std::vector<Lexeme *> Lex(std::string source);
