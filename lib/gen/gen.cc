@@ -1,4 +1,5 @@
 #include "gen/AST.h"
+#include <gen/generator.h>
 
 typedef CodeGenerator CG;
 

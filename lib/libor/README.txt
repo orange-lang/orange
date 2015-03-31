@@ -1,0 +1,1 @@
+Contains orange standard library stuff. Main thing to note is the boot.s files for each target (osx, linux, windows). These functions do setup and then exit the program.

@@ -9,7 +9,9 @@
 #include <llvm/Target/TargetLibraryInfo.h>
 #include <llvm/Target/TargetMachine.h>
 
-#include "gen/AST.h"
+#include <gen/AST.h>
+#include <gen/generator.h>
+#include <helper/link.h>
 
 using namespace llvm::sys::fs;
 
@@ -19,6 +21,8 @@ SymTable* CodeGenerator::Symtab = nullptr;
 FunctionPassManager* CodeGenerator::TheFPM;
 std::string CodeGenerator::outputFile = "a.o";
 bool CodeGenerator::outputAssembly = false;
+bool CodeGenerator::verboseOutput = false;
+bool CodeGenerator::doLink = true;
 
 typedef CodeGenerator CG;
 PassManager *ThePM = nullptr;
@@ -60,7 +64,7 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	std::vector<Type*> Args;
 	FunctionType *FT = FunctionType::get(Type::getVoidTy(getGlobalContext()),
 		Args, false);
-	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, "start", TheModule);
+	Function *TheFunction = Function::Create(FT, Function::ExternalLinkage, "@main", TheModule);
 
 	BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
 	Builder.SetInsertPoint(BB);
@@ -70,6 +74,10 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	globalBlock->Codegen();
 	CG::Builder.CreateRetVoid();
 
+	GenerateObject();
+}
+
+void CodeGenerator::GenerateObject() {
 	std::string err; 
 	Triple triple = Triple(sys::getProcessTriple());
 	const Target *target = TargetRegistry::lookupTarget("x86-64", triple, err);
@@ -86,11 +94,15 @@ void CodeGenerator::Generate(Block *globalBlock) {
 	std::string FeaturesStr = Features.getString();
 
 	TargetOptions options;
-	// options.
 	options.PrintMachineCode = 0;
 
-	std::cout << "Creating TM " << name.str() <<  " with triple " 
-		<< triple.getTriple() << " and features " << FeaturesStr << std::endl;
+	if (verboseOutput == true) {
+		std::cout << "Detected CPU " << name.str() << std::endl; 
+		std::cout << "Detected Host " << triple.getTriple() << std::endl; 
+		std::cout << "Features: " << FeaturesStr << std::endl; 
+
+		// TheModule->dump();
+	}
 
 	TargetMachine *tm = target->createTargetMachine(triple.getTriple(), name, FeaturesStr, options);
 	if (tm == nullptr) {
@@ -98,8 +110,14 @@ void CodeGenerator::Generate(Block *globalBlock) {
 		exit(1);
 	}
 
-	std::string ec;
+	std::string ec = "";
 	raw_fd_ostream raw(outputFile.c_str(), ec, OpenFlags::F_RW);
+
+	if (ec != "") {
+		std::cerr << "fatal: " << ec << std::endl;
+		exit(1);
+	}
+
 	formatted_raw_ostream strm(raw);
 
 	// can i disable TLI?
@@ -120,8 +138,27 @@ void CodeGenerator::Generate(Block *globalBlock) {
 		exit(1);
 	}
 
-	std::cout << "added passes...\n";
-
-	// TheModule->dump();
 	ThePM->run(*TheModule);
+	strm.flush();
+	raw.flush();
+	raw.close();
+
+	if (doLink) {
+		std::vector<const char *> options; 
+
+#ifdef __APPLE__
+		std::string root = INSTALL_LOCATION;
+		root += "/lib/libor/boot.o";
+
+		options.push_back(root.c_str());
+		options.push_back("-w");
+#endif 
+
+		options.push_back(outputFile.c_str());
+
+		invokeLinkerWithOptions(options);
+	}
+
+
 }
+

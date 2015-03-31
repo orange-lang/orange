@@ -5,4 +5,5 @@ def test(a)
 end
 
 a = 3 + 4 * 2
+b <- 5
 test(5u8 + 2u * a - 3i)

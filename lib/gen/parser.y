@@ -1,7 +1,8 @@
 %{
 // c stuff 
 	#include <iostream>
-	#include "gen/AST.h"
+	#include <gen/AST.h>
+	#include <gen/generator.h>
 
 	extern int yylex();
 	void yyerror(const char *s) { std::cerr << s << std::endl; }

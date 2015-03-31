@@ -1,0 +1,5 @@
+if(${APPLE})
+	add_subdirectory(osx)
+elseif(${UNIX})
+	add_subdirectory(linux)
+endif()

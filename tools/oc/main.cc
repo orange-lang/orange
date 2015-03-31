@@ -2,8 +2,10 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include "gen/AST.h"
-#include "helper/args.h"
+#include <helper/link.h> 
+#include <gen/AST.h>
+#include <gen/generator.h>
+#include <helper/args.h>
 
 extern FILE* yyin;
 extern int yylex();
@@ -11,8 +13,12 @@ extern int yylex();
 extern Block *globalBlock;
 extern int yyparse();
 
-
 int main(int argc, char **argv) {
+	if (linkerPath() == nullptr) {
+		std::cerr << "fatal: linker not found in $PATH.\n"; 
+		return 1;
+	}
+
 	if (argc < 2) {
 		printf("fatal: no input file specified.\n");
 		return 1;
@@ -31,25 +37,29 @@ int main(int argc, char **argv) {
 
 			CodeGenerator::outputFile = param;
 			outputSet = true; 
-		}
-		
-		if (a[0] == "-S") {
+		} else if (a[0] == "-S") {
 			CodeGenerator::outputAssembly = true; 
 
 			if (outputSet == false) {
 				CodeGenerator::outputFile = "a.s";						
 			}
-		}
-
-		if (a[0] == "-h" || a[0] == "--help") {
+		} else if (a[0] == "-v" || a[0] == "--verbose") {
+			CodeGenerator::verboseOutput = true;
+		} else if (a[0] == "-c") {
+			CodeGenerator::doLink = false;
+		} else if (a[0] == "-h" || a[0] == "--help") {
 			std::cerr << "OVERVIEW: orange compiler\n\n";
 			std::cerr << "USAGE: " << argv[0] << " [options] <input>\n\n";
 			std::cerr << "OPTIONS:\n";
+			std::cerr << "\t-c\t\t\tOnly output an .o file (do not link)\n";
 			std::cerr << "\t-o <file>\t\tWrite output to <file>\n";
 			std::cerr << "\t-S\t\t\tWrite output as assembly\n";
-			std::cerr << "\t-h\t\t\tGet this help message\n";
-			std::cerr << "\t--help\t\t\tAlias of -h\n";
+			std::cerr << "\t-v | --verbose\t\tEnable verbose output\n";
+			std::cerr << "\t-h | --help\t\tGet this help message\n";
 			exit(1); 
+		} else {
+			std::cerr << "fatal: option " << a[0] << " is not recognized.\n";
+			exit(1);
 		}
 	});
 
@@ -62,6 +72,11 @@ int main(int argc, char **argv) {
 	}
 
 	yyin = fopen(file.c_str(), "r");
+
+	if (yyin == nullptr) {
+		std::cerr << "fatal: file " << file << " not found.\n";
+		return 1;
+	}
 	// while (yylex() != 0);
 
 	yyparse();
@@ -73,6 +88,8 @@ int main(int argc, char **argv) {
 
 	CodeGenerator::init();
 	CodeGenerator::Generate(globalBlock);
+
+	fclose(yyin);
 
 
 	return 0;
