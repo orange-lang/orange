@@ -40,7 +40,7 @@
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
-%token UNLESS LOGICAL_AND LOGICAL_OR
+%token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND
 
 %type <ifstmt> if_statement opt_else inline_if inline_unless unless 
 %type <block> statements opt_statements
@@ -299,6 +299,7 @@ primary
 	|	MINUS primary { $$ = new NegativeExpr($2); }
 	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayExpr($2); }
 	| primary OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess($1, $3); }
+	| BITWISE_AND TYPE_ID { $$ = new Reference(new VarExpr(*$2)); }
 	;
 
 dereference 

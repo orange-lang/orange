@@ -23,5 +23,6 @@
 #include "ArrayExpr.h"
 #include "ArrayAccess.h"
 #include "IncrementExpr.h"
+#include "Reference.h" 
 
 #endif

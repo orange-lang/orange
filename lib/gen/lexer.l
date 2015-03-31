@@ -102,6 +102,8 @@
 "and"										return LOGICAL_AND;
 "or"										return LOGICAL_OR;
 
+"&"											return BITWISE_AND;
+
 "="											return ASSIGN;
 "+="										return PLUS_ASSIGN;
 "-="										return MINUS_ASSIGN;
