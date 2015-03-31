@@ -1,9 +1,9 @@
-.globl start 
+.globl _start 
 
 .text 
-start:
+_start:
 	pushq %rbp 
-	callq $main 
+	callq __INTERNAL_main
 	popq %rbp 
 	movq %rax, %rdi 
 

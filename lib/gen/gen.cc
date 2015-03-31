@@ -76,12 +76,7 @@ void CodeGenerator::init() {
 }
 
 const char *MainFunctionName() {
-#if defined(__linux__) || defined(__APPLE__)
-	return "$main";
-#elif defined(_WIN32) 
 	return "__INTERNAL_main";
-#endif 
-	return "$main";
 }
 
 

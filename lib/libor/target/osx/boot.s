@@ -3,7 +3,7 @@
 .text 
 start:
 	andq $0xfffffffffffffff0, %rsp 
-	callq _$main
+	callq ___INTERNAL_main
 	movq %rax, %rdi 
 
 	# syscall number: rax + 0x2000000 (+ 0x2000000 is a mac thing) 
