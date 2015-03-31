@@ -3,8 +3,16 @@ project(orange)
 
 enable_testing()
 
+if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+   message(SEND_ERROR "In-source builds are not allowed.")
+endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+
 set(oc_SOURCE_DIR ${CMAKE_SOURCE_DIR}/tools/oc)
 set(gen_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/gen)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/bin)
 
 add_definitions( -DINSTALL_LOCATION="${CMAKE_INSTALL_PREFIX}" )
 

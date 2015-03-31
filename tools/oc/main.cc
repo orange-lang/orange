@@ -61,12 +61,15 @@ int main(int argc, char **argv) {
 			if (outputSet == false) {
 				CodeGenerator::outputFile = "a.s";						
 			}
-		} else if (a[0] == "-v" || a[0] == "--verbose") {
+		} else if (a[0] == "-V" || a[0] == "--verbose") {
 			CodeGenerator::verboseOutput = true;
 		} else if (a[0] == "-c") {
 			CodeGenerator::doLink = false;
+		} else if (a[0] == "-v" || a[0] == "--version") {
+			std::cout << "Orange Compiler version 0.0" << std::endl;
+			exit(0);
 		} else if (a[0] == "-h" || a[0] == "--help") {
-			std::cerr << "OVERVIEW: orange compiler\n\n";
+			std::cerr << "OVERVIEW: Orange Compiler version 0.0\n\n";
 			std::cerr << "USAGE: " << argv[0] << " [options] <input>\n\n";
 			std::cerr << "OPTIONS:\n";
 			std::cerr << "\t-c\t\t\tOnly output an .o file (do not link)\n";
@@ -75,7 +78,8 @@ int main(int argc, char **argv) {
 			std::cerr << "\t-masm\t\t\tSets an assembly style (defaults to intel)\n";
 			std::cerr << "\t\t=intel\t\tSets style to intel (default)\n";
 			std::cerr << "\t\t=att\t\tSets style to AT&T\n";
-			std::cerr << "\t-v | --verbose\t\tEnable verbose output\n";
+			std::cerr << "\t-v | --version\t\tPrints version\n";
+			std::cerr << "\t-V | --verbose\t\tEnable verbose output\n";
 			std::cerr << "\t-h | --help\t\tGet this help message\n";
 			exit(1); 
 		} else if (a[0] == "-m") {
