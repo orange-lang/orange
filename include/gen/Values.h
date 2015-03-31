@@ -11,6 +11,8 @@ public:
 	uint64_t value;
 	uint8_t size;
 
+	virtual bool isSigned() { return false; }
+
 	virtual std::string string() {
 		std::stringstream ss;
 		ss << "(uint" << (uint64_t)size << ")" << value;
@@ -34,6 +36,8 @@ public:
 
 	int64_t value;
 	uint8_t size;
+
+	virtual bool isSigned() { return true; }
 
 	virtual std::string string() {
 		std::stringstream ss;

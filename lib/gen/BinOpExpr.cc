@@ -9,27 +9,14 @@ bool isCmpOperator(std::string op) {
 		op == "<=" || op == "==" || op == "!=";
 }
 
-bool isSigned(Expression *e) {
-	if (dynamic_cast<IntVal*>(e)) {
-		return true;
-	} else if (dynamic_cast<UIntVal*>(e)) {
-		return false;
-	} else if (dynamic_cast<VarExpr*>(e)) {
-		VarExpr *ve = (VarExpr *)e;
-		Symobj* p = CG::Symtab->find(ve->name);
-		return p->isSigned;
-	} else if (e->getClass() == "BinOpExpr") {
-		BinOpExpr *BOE = (BinOpExpr *)e; 
-
-		if (isCmpOperator(BOE->op)) {
-			return false;
-		}
-
-		return isSigned(BOE->LHS) || isSigned(BOE->RHS);  
+bool BinOpExpr::isSigned() {
+	if (isCmpOperator(op)) {
+		return false; 
 	}
-	
-	return true;
+
+	return LHS->isSigned() && RHS->isSigned();
 }
+
 
 BinOpExpr::BinOpExpr(Expression *LHS, std::string op, Expression *RHS) {
 	DEBUG_MSG("STARTING BinOpExpr");
@@ -52,7 +39,7 @@ Type *BinOpExpr::getType() {
 	DEBUG_MSG("GETTING TYPE OF " << LHS->string() << " " << op << " " << RHS->string());
 
 	if (isCmpOperator(op)) {
-		return Type::getInt8Ty(getGlobalContext());
+		return Type::getInt1Ty(getGlobalContext());
 	} 
 
 	return GetFittingType(LHS->getType(), RHS->getType());
@@ -99,7 +86,7 @@ Value* BinOpExpr::Codegen() {
 		exit(1);
 	}
 
-	CastValuesToFit(&L, &R, isSigned(LHS), isSigned(RHS));
+	CastValuesToFit(&L, &R, LHS->isSigned(), RHS->isSigned());
 
 	bool FPOperation = false;
 	if (L->getType()->isFloatingPointTy() && R->getType()->isFloatingPointTy()) {
@@ -121,7 +108,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateAdd(L, R);
 		}	
 
-		CastValueToType(&v, OrigL->getType()->getPointerElementType(), isSigned(LHS) || isSigned(RHS));
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 
 		return CG::Builder.CreateStore(v, OrigL);		
 	}
@@ -140,7 +127,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateSub(L, R);
 		}
 
-		CastValueToType(&v, OrigL->getType()->getPointerElementType(), isSigned(LHS) || isSigned(RHS));
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 
 		return CG::Builder.CreateStore(v, OrigL);		
 	}	
@@ -159,7 +146,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateMul(L, R);			
 		}
 
-		CastValueToType(&v, OrigL->getType()->getPointerElementType(), isSigned(LHS) || isSigned(RHS));
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 
 		return CG::Builder.CreateStore(v, OrigL);		
 	}	
@@ -168,7 +155,7 @@ Value* BinOpExpr::Codegen() {
 		if (FPOperation) {
 			return CG::Builder.CreateFDiv(L, R);
 		} else {
-			if (isSigned(LHS) || isSigned(RHS)) {
+			if (LHS->isSigned() || RHS->isSigned()) {
 				return CG::Builder.CreateSDiv(L, R);
 			} else {
 				return CG::Builder.CreateUDiv(L, R);
@@ -181,13 +168,13 @@ Value* BinOpExpr::Codegen() {
 		// if one of them is signed, they're both signed.
 		if (FPOperation) {
 			v = CG::Builder.CreateFDiv(L, R);
-		} else if (isSigned(LHS) || isSigned(RHS)) {
+		} else if (LHS->isSigned() || RHS->isSigned()) {
 			v = CG::Builder.CreateSDiv(L, R);
 		} else {
 			v = CG::Builder.CreateUDiv(L, R);
 		}
 
-		CastValueToType(&v, OrigL->getType()->getPointerElementType(), isSigned(LHS) || isSigned(RHS));
+		CastValueToType(&v, OrigL->getType()->getPointerElementType(), LHS->isSigned());
 
 		return CG::Builder.CreateStore(v, OrigL);		
 	}
@@ -199,49 +186,49 @@ Value* BinOpExpr::Codegen() {
 		Value *v = nullptr;
 		if (FPOperation) {
 			v = CG::Builder.CreateFCmpOLT(L, R);
-		} else if (isSigned(LHS) || isSigned(RHS)) {
+		} else if (LHS->isSigned() || RHS->isSigned()) {
 			v = CG::Builder.CreateICmpSLT(L, R);
 		} else {
 			v = CG::Builder.CreateICmpULT(L, R);
 		}
 
-		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
+		return v;
 	} 
 	else if (op == "<=") {
 		Value *v = nullptr;
 		if (FPOperation) {
 			v = CG::Builder.CreateFCmpOLE(L, R);
-		} else if (isSigned(LHS) || isSigned(RHS)) {
+		} else if (LHS->isSigned() || RHS->isSigned()) {
 			v = CG::Builder.CreateICmpSLE(L, R);
 		} else {
 			v = CG::Builder.CreateICmpULE(L, R);
 		}
 
-		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
+		return v;
 	}
 	else if (op == ">") {
 		Value *v = nullptr;
 		if (FPOperation) {
 			v = CG::Builder.CreateFCmpOGT(L, R);
-		} else if (isSigned(LHS) || isSigned(RHS)) {
+		} else if (LHS->isSigned() || RHS->isSigned()) {
 			v = CG::Builder.CreateICmpSGT(L, R);
 		} else {
 			v = CG::Builder.CreateICmpUGT(L, R);
 		}
 
-		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
+		return v;
 	}
 	else if (op == ">=") {
 		Value *v = nullptr;
 		if (FPOperation) {
 			v = CG::Builder.CreateFCmpOGE(L, R);
-		} else if (isSigned(LHS) || isSigned(RHS)) {
+		} else if (LHS->isSigned() || RHS->isSigned()) {
 			v = CG::Builder.CreateICmpSGE(L, R);
 		} else {
 			v = CG::Builder.CreateICmpUGE(L, R);
 		}
 
-		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
+		return v;
 	}
 	else if (op == "==") {
 		Value *v = nullptr;
@@ -251,7 +238,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateICmpEQ(L, R);
 		}		
 
-		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);
+		return v;
 	}
 	else if (op == "!=") {
 		Value *v = nullptr;
@@ -261,7 +248,7 @@ Value* BinOpExpr::Codegen() {
 			v = CG::Builder.CreateICmpNE(L, R);
 		}			
 
-		return CG::Builder.CreateIntCast(v, Type::getInt8Ty(getGlobalContext()), false);	
+		return v;
 	}
 	else {
 		std::cerr << "fatal: operation " << op << " does not have a generation case.";

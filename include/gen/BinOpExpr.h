@@ -11,10 +11,11 @@ public:
 
 	Type *getType();
 
-
 	Expression *LHS;
 	std::string op;
 	Expression *RHS;
+
+	virtual bool isSigned();
 
 	virtual std::string string() {
 		std::stringstream ss;

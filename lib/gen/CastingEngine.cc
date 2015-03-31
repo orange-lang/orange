@@ -54,21 +54,9 @@ bool CastValuesToFit(Value **v1, Value **v2, bool isV1Signed, bool isV2Signed) {
 	Type *typeV1 = (*v1)->getType();
 	Type *typeV2 = (*v2)->getType();
 
-	if (typeV1->isIntegerTy() && typeV2->isIntegerTy()) {
-		bool ret = false;
-
-		if (isV1Signed == true && isV2Signed == false) {
-			// unsign v1 
-			ret = CastValueToType(v1, typeV1, false);
-			isV1Signed = false;
-		} else if (isV1Signed == false && isV2Signed == true) {
-			ret = CastValueToType(v2, typeV2, false);
-			isV2Signed = false;
-		}
-	}
-
 	bool b = false; 
 
+	// we only want to change the sign of V1 and V2 IF 
 	b = (CastValueToType(v1, GetFittingType(typeV1, typeV2), isV1Signed) ? true : b);
 	b = (CastValueToType(v2, GetFittingType(typeV1, typeV2), isV2Signed) ? true : b);
 

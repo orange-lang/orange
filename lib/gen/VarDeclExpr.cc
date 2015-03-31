@@ -15,7 +15,7 @@ Value* VarDeclExpr::Codegen() {
 			store = CG::Builder.CreateLoad(store);
 		}
 
-		CastValueToType(&store, getType(), type->isSigned(), true);
+		CastValueToType(&store, getType(), value->isSigned(), true);
 		CG::Builder.CreateStore(store, v);
 	}
 

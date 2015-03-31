@@ -24,12 +24,10 @@ FunctionStatement::FunctionStatement(std::string* name, ArgList *args, Block *bo
 			continue;
 		}
 
-		expr->isSigned = expr->type->isSigned();
-
 		if (expr->type) {
 			CG::Symtab->objs[expr->name]->setType(expr->type->getType());
 		}
-		CG::Symtab->objs[expr->name]->isSigned = expr->isSigned;
+		CG::Symtab->objs[expr->name]->isSigned = expr->type->isSigned();
 	}
 }
 

@@ -10,6 +10,9 @@ public:
 
 	Expression *expr;
 
+	virtual bool isSigned() { return expr->isSigned(); }
+
+
 	virtual std::string string() {
 		return "RETURN " + expr->string();
 	}

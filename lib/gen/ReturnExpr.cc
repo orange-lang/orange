@@ -19,6 +19,8 @@ Value* ReturnExpr::Codegen() {
 			v = CG::Builder.CreateLoad(v);
 		}
 		
+		CG::TheModule->dump();
+
 		CG::Builder.CreateStore(v, CG::Symtab->retVal);
 		Value *r = CG::Builder.CreateBr(bb);
 		return r; 

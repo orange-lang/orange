@@ -10,7 +10,6 @@ public:
 
 	Type *getType();
 
-
 	std::string name;
 	ExprList *args;
 

@@ -12,6 +12,8 @@ public:
 
 	Value* Codegen();
 
+	virtual bool isSigned() { return type->isSigned(); }
+
 	virtual Type* getType() {
 		return type->getType();
 	}

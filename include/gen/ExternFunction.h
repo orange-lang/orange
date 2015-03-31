@@ -10,6 +10,9 @@ public:
 	std::string name; 
 	ArgList *args;	
 
+	virtual bool isSigned() { return returnType->isSigned(); }
+
+
 	Value* Codegen();
 
 	ExternFunction(AnyType *returnType, std::string name, ArgList *args);

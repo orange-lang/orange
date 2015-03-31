@@ -56,6 +56,7 @@ class Expression : public Statement {
 public:
 	virtual std::string getClass() { return "Expression"; }
 	virtual Type *getType() { return Type::getVoidTy(getGlobalContext()); }
+	virtual bool isSigned() { return false; }
 };
 
 class AnyType {
@@ -84,7 +85,6 @@ public:
 		ss << "\"" << value << "\"";
 		return ss.str();
 	}
-
 
 	virtual Type *getType() { return Type::getInt8PtrTy(getGlobalContext()); }
 

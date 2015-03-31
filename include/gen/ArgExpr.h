@@ -11,7 +11,8 @@ public:
 
 	AnyType *type;
 	std::string name;
-	bool isSigned = false;
+
+	virtual bool isSigned() { return type->isSigned(); }
 
 	virtual std::string string() {
 		std::stringstream ss;

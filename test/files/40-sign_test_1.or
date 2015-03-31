@@ -1,0 +1,3 @@
+int8 b = 255 		# b should be -1
+int a = b + 1 	# a should be 0
+return a
