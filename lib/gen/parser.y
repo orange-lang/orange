@@ -40,7 +40,7 @@
 %token OPEN_BRACKET CLOSE_BRACKET INCREMENT DECREMENT ASSIGN PLUS_ASSIGN
 %token MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN ARROW ARROW_LEFT
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
-%token UNLESS
+%token UNLESS LOGICAL_AND LOGICAL_OR
 
 %type <ifstmt> if_statement opt_else inline_if inline_unless unless 
 %type <block> statements opt_statements
@@ -59,7 +59,11 @@
 
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
 
-%left COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS 
+%left COMP_LT COMP_GT LEQ GEQ
+%left EQUALS NEQUALS 
+%left LOGICAL_AND
+%left LOGICAL_OR
+
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left OPEN_PAREN CLOSE_PAREN
@@ -264,6 +268,9 @@ expression
 	|	expression EQUALS expression { $$ = new BinOpExpr($1, "==", $3); }
 	|	expression NEQUALS expression { $$ = new BinOpExpr($1, "!=", $3); }
 
+	| expression LOGICAL_AND expression { $$ = new BinOpExpr($1, "&&", $3); }
+	| expression LOGICAL_OR expression { $$ = new BinOpExpr($1, "||", $3); }
+	
 	|	expression PLUS expression { $$ = new BinOpExpr($1, "+" , $3); }
 	|	expression MINUS expression { $$ = new BinOpExpr($1, "-" , $3); }
 

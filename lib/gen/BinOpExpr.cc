@@ -20,6 +20,9 @@ bool BinOpExpr::isSigned() {
 		return false; 
 	}
 
+	if (op == "&&" || op == "||") {
+		return false;
+	}
 	// std::cout << LHS->string() << " " << op << " " << RHS->string();
 
 	return LHS->isSigned() && RHS->isSigned();
@@ -331,6 +334,56 @@ Value* BinOpExpr::Codegen() {
 		} else {
 			v = CG::Builder.CreateICmpNE(L, R);
 		}			
+
+		return v;
+	}
+	else if (op == "&&") {
+		Type *boolean = IntegerType::get(getGlobalContext(), 1);
+		Value *v = CG::Builder.CreateAlloca(boolean);
+		CastValueToType(&L, boolean, false, true);
+		CG::Builder.CreateStore(L, v);
+
+		auto _Function = CG::Symtabs.top()->getFunction(); 
+		auto _FunctionEnd = CG::Symtabs.top()->getFunctionEnd();		
+
+		BasicBlock *CheckBlock = BasicBlock::Create(getGlobalContext(), "check", _Function, _FunctionEnd);
+		BasicBlock *ContinueBlock = BasicBlock::Create(getGlobalContext(), "continue", _Function, _FunctionEnd);
+
+		// If LHS is false, go to continue, else go to check.
+		// in check: v = RHS
+		// continue: return v 
+		CG::Builder.CreateCondBr(L, CheckBlock, ContinueBlock);				
+		CG::Builder.SetInsertPoint(CheckBlock);
+		CastValueToType(&R, boolean, false, true);
+		CG::Builder.CreateStore(R, v);
+		CG::Builder.CreateBr(ContinueBlock);
+		CG::Builder.SetInsertPoint(ContinueBlock);
+		v = CG::Builder.CreateLoad(v);
+
+		return v;
+	}
+	else if (op == "||") {
+		Type *boolean = IntegerType::get(getGlobalContext(), 1);
+		Value *v = CG::Builder.CreateAlloca(boolean);
+		CastValueToType(&L, boolean, LHS->isSigned(), true);
+		CG::Builder.CreateStore(L, v);
+
+		auto _Function = CG::Symtabs.top()->getFunction(); 
+		auto _FunctionEnd = CG::Symtabs.top()->getFunctionEnd();		
+
+		BasicBlock *CheckBlock = BasicBlock::Create(getGlobalContext(), "check", _Function, _FunctionEnd);
+		BasicBlock *ContinueBlock = BasicBlock::Create(getGlobalContext(), "continue", _Function, _FunctionEnd);
+
+		// If LHS is false, go to continue, else go to check.
+		// in check: v = RHS
+		// continue: return v 
+		CG::Builder.CreateCondBr(L, ContinueBlock, CheckBlock);				
+		CG::Builder.SetInsertPoint(CheckBlock);
+		CastValueToType(&R, boolean, LHS->isSigned(), true);
+		CG::Builder.CreateStore(R, v);
+		CG::Builder.CreateBr(ContinueBlock);
+		CG::Builder.SetInsertPoint(ContinueBlock);
+		v = CG::Builder.CreateLoad(v);
 
 		return v;
 	}

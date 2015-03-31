@@ -1,0 +1,55 @@
+if (false && false) == true
+	return 1
+end
+
+if (false && true) == true
+	return 1
+end
+
+if (true && false) == true
+	return 1
+end
+
+if (true && true) != true
+	return 1
+end
+
+# coerce 3 and 5 to booleans
+if (3 and 5) != true
+	return 1
+end
+
+if (3 > 5) and (5 > 3) == true
+	return 1 
+end 
+
+if (false || false) == true
+	return 1
+end
+
+if (false || true) != true
+	return 1
+end
+
+if (true || false) != true
+	return 1
+end
+
+if (true || true) != true
+	return 1
+end
+
+# coerce 3 and 5 to booleans
+if (3 or 5) != true
+	return 1
+end
+
+if (3 > 5) or (2 > 3) != false
+	return 1 
+end 
+
+# inline test
+return 1 if (3 > 5) || (2 > 3) != false
+return 1 if (3 > 5) && (5 > 3) != false
+
+return 0
