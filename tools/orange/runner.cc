@@ -12,6 +12,7 @@
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/GenericValue.h>
 #include <llvm/ExecutionEngine/MCJIT.h>
+#include <llvm/ExecutionEngine/Interpreter.h>
 #include <llvm/MC/MCObjectFileInfo.h>
 #include <llvm/MC/MCContext.h>
 #include <llvm/MC/MCAsmInfo.h>
@@ -40,19 +41,24 @@ Runner::Runner(std::string pathname) {
 		throw std::runtime_error("File cannot be added as an entity twice.");
 	}
 
-	// Create the global block
+  m_context = new LLVMContext();
+  GeneratingEngine::sharedEngine()->setActive(this);
+
+  // Create the global block
 	SymTable *globalSymtab = new SymTable(nullptr);
 	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), ParamList(), globalSymtab);
 	pushBlock(m_function);
 
 	// Create LLVM stuff; module, builder, etc
-	m_module = new Module("orange", getGlobalContext());
+	m_module = new Module("orange", context());
 	m_module->setTargetTriple(sys::getProcessTriple());
 
-	m_builder = new IRBuilder<>(getGlobalContext());
+	m_builder = new IRBuilder<>(context());
 
 	m_functionOptimizer = new FunctionPassManager(m_module);
 	m_functionOptimizer->doInitialization();
+    
+  GeneratingEngine::sharedEngine()->setActive(nullptr);
 }
 
 void Runner::haltRun() {
@@ -99,7 +105,7 @@ RunResult Runner::run() {
 
 		// Now that we've parsed everything, let's analyze and resolve code...
 		mainFunction()->resolve();
-
+        
 		if (hasError()) {
 			result.finish(false, 1, m_messages);
 			return result;
@@ -115,8 +121,10 @@ RunResult Runner::run() {
 			return result;
 		}
 
-		optimizeModule();
+		// m_module->dump();
 
+		optimizeModule();
+        
 		if (debug())
 			m_module->dump();
 
@@ -143,68 +151,82 @@ RunResult Runner::run() {
 }
 
 int Runner::runModule(Function *function) {
-	// MCJIT requires the target & asm printer to be initalized 
+	// MCJIT requires the target & asm printer to be initalized
   InitializeNativeTarget();
   InitializeNativeTargetAsmPrinter();
-
+      
   // Create our builder & engine to run the function 
 	EngineBuilder builder((std::unique_ptr<Module>(m_module)));
 
+	std::string error = "";
+
 	ExecutionEngine* engine = builder
+		.setErrorStr(&error)
 		.setVerifyModules(true)
+		.setEngineKind(EngineKind::Kind::JIT)
 		.create();
 
+	if (engine == nullptr) {
+		std::cerr << "Fatal: could not create engine: " << error << std::endl;
+		exit(1);
+	}
+
 	// MCJIT requires the engine to be finalized before running it.
+	engine->clearAllGlobalMappings();
 	engine->finalizeObject();
 
-	std::vector<GenericValue> args;
-	return engine->runFunction((Function *)function, args).IntVal.getSExtValue();
-
+  std::vector<GenericValue> args;
+  return engine->runFunction((Function *)function, args).IntVal.getSExtValue();
 }
 
 void Runner::optimizeModule() {
-	PassManager MPM;
-	MPM.add(createVerifierPass(true));
-	MPM.add(createUnreachableBlockEliminationPass());
-	MPM.add(createGCLoweringPass());
-	MPM.add(createAlwaysInlinerPass());
-	MPM.add(createPruneEHPass());
-	MPM.add(createIPConstantPropagationPass());
-	MPM.add(createIPSCCPPass());
-	MPM.add(createMergeFunctionsPass());
-	MPM.add(createStripDeadPrototypesPass());
-	MPM.add(createConstantPropagationPass());
-	MPM.add(createAliasAnalysisCounterPass()); 
-	MPM.add(createBasicAliasAnalysisPass());
-	MPM.add(createLazyValueInfoPass());
-	MPM.add(createDependenceAnalysisPass());
-	MPM.add(createCostModelAnalysisPass());
-	MPM.add(createDelinearizationPass());
-	MPM.add(createInstCountPass());
-	MPM.add(createInstructionCombiningPass());
-	MPM.add(createInstructionSimplifierPass());
-	MPM.add(createReassociatePass());
-	MPM.add(createGVNPass());
-	MPM.add(createCFGSimplificationPass());
-	MPM.add(createBBVectorizePass());
-	MPM.add(createCodeGenPreparePass());
-	MPM.add(createGVNPass());
-	MPM.add(createSinkingPass());
-	MPM.add(createUnifyFunctionExitNodesPass());
-	MPM.add(createAggressiveDCEPass());
-	MPM.add(createDeadInstEliminationPass());
-	MPM.add(createDeadCodeEliminationPass());
-	MPM.add(createDeadStoreEliminationPass());
-	MPM.add(createGlobalsModRefPass());
-	MPM.add(createModuleDebugInfoPrinterPass());
-	MPM.add(createArgumentPromotionPass());
-	MPM.add(createGlobalOptimizerPass());
-	MPM.add(createConstantMergePass());
-	MPM.add(createGlobalsModRefPass());
-	MPM.add(createPartialInliningPass());
-	MPM.add(createFunctionInliningPass());
-	MPM.run(*m_module);
-	MPM.run(*m_module);
+	static PassManager* MPM = nullptr; 
+	if (MPM == nullptr) {
+		MPM = new PassManager;
+
+		MPM->add(createVerifierPass(true));
+		MPM->add(createUnreachableBlockEliminationPass());
+		MPM->add(createGCLoweringPass());
+		MPM->add(createAlwaysInlinerPass());
+		MPM->add(createPruneEHPass());
+		MPM->add(createIPConstantPropagationPass());
+		MPM->add(createIPSCCPPass());
+		MPM->add(createMergeFunctionsPass());
+		MPM->add(createStripDeadPrototypesPass());
+		MPM->add(createConstantPropagationPass());
+		MPM->add(createAliasAnalysisCounterPass()); 
+		MPM->add(createBasicAliasAnalysisPass());
+		MPM->add(createLazyValueInfoPass());
+		MPM->add(createDependenceAnalysisPass());
+		MPM->add(createCostModelAnalysisPass());
+		MPM->add(createDelinearizationPass());
+		MPM->add(createInstCountPass());
+		MPM->add(createInstructionCombiningPass());
+		MPM->add(createInstructionSimplifierPass());
+		MPM->add(createReassociatePass());
+		MPM->add(createGVNPass());
+		MPM->add(createCFGSimplificationPass());
+		MPM->add(createBBVectorizePass());
+		MPM->add(createCodeGenPreparePass());
+		MPM->add(createGVNPass());
+		MPM->add(createSinkingPass());
+		MPM->add(createUnifyFunctionExitNodesPass());
+		MPM->add(createAggressiveDCEPass());
+		MPM->add(createDeadInstEliminationPass());
+		MPM->add(createDeadCodeEliminationPass());
+		MPM->add(createDeadStoreEliminationPass());
+		MPM->add(createGlobalsModRefPass());
+		MPM->add(createModuleDebugInfoPrinterPass());
+		MPM->add(createArgumentPromotionPass());
+		MPM->add(createGlobalOptimizerPass());
+		MPM->add(createConstantMergePass());
+		MPM->add(createGlobalsModRefPass());
+		MPM->add(createPartialInliningPass());
+		MPM->add(createFunctionInliningPass());
+	}
+
+	MPM->run(*m_module);
+	MPM->run(*m_module);
 }
 
 void Runner::log(CompilerMessage message) {
@@ -252,6 +274,7 @@ Block* Runner::topBlock() const {
 
 SymTable* Runner::symtab() const {
 	if (topBlock()) return topBlock()->symtab();
+    throw std::runtime_error("No symtab!");
 	return nullptr;
 }
 
@@ -266,6 +289,11 @@ Module* Runner::module() const {
 
 IRBuilder<>* Runner::builder() const {
 	return m_builder;
+}
+
+LLVMContext& Runner::context() {
+    return getGlobalContext();
+	return *m_context;
 }
 
 FunctionPassManager* Runner::functionOptimizer() const {

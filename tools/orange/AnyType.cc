@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include <orange/AnyType.h>
+#include <orange/generator.h>
 
 std::map<std::string, AnyType*> AnyType::m_defined_tyes;
 
@@ -51,6 +52,10 @@ std::string AnyType::string() const {
 	return ss.str();
 }
 
+bool AnyType::isIDTy() const {
+	return m_type_str == "id";
+}
+
 bool AnyType::isVoidTy() const {
 	return m_type_str == "void";
 }
@@ -81,33 +86,35 @@ AnyType::AnyType(std::string type, int ptrs) {
 	m_signed = false; 
 
 	if (type == "char" || type == "int8") {
-		m_type = Type::getIntNTy(getGlobalContext(), 8);
+		m_type = Type::getIntNTy(GE::runner()->context(), 8);
 		m_signed = true;
 	} else if (type == "uchar" || type == "uint8") {
-		m_type = Type::getIntNTy(getGlobalContext(), 8);
+		m_type = Type::getIntNTy(GE::runner()->context(), 8);
 	} else if (type == "uint1") {
-		m_type = Type::getIntNTy(getGlobalContext(), 1);
+		m_type = Type::getIntNTy(GE::runner()->context(), 1);
 	} else if (type == "int16") {
-		m_type = Type::getIntNTy(getGlobalContext(), 16);
+		m_type = Type::getIntNTy(GE::runner()->context(), 16);
 		m_signed = true;
 	} else if (type == "uint16") {
-		m_type = Type::getIntNTy(getGlobalContext(), 16);
+		m_type = Type::getIntNTy(GE::runner()->context(), 16);
 	} else if (type == "int32") {
-		m_type = Type::getIntNTy(getGlobalContext(), 32);
+		m_type = Type::getIntNTy(GE::runner()->context(), 32);
 		m_signed = true;
 	} else if (type == "uint32") {
-		m_type = Type::getIntNTy(getGlobalContext(), 32);
+		m_type = Type::getIntNTy(GE::runner()->context(), 32);
 	} else if (type == "int" || type == "int64") {
-		m_type = Type::getIntNTy(getGlobalContext(), 64);
+		m_type = Type::getIntNTy(GE::runner()->context(), 64);
 		m_signed = true;
 	} else if (type == "uint" || type == "uint64") {
-		m_type = Type::getIntNTy(getGlobalContext(), 64);
+		m_type = Type::getIntNTy(GE::runner()->context(), 64);
 	} else if (type == "float") {
-		m_type = Type::getFloatTy(getGlobalContext());
+		m_type = Type::getFloatTy(GE::runner()->context());
 	} else if (type == "double") {
-		m_type = Type::getDoubleTy(getGlobalContext());
+		m_type = Type::getDoubleTy(GE::runner()->context());
 	} else if (type == "void") {
-		m_type = Type::getVoidTy(getGlobalContext());
+		m_type = Type::getVoidTy(GE::runner()->context());
+	} else if (type == "id") {
+		m_type = Type::getVoidTy(GE::runner()->context());
 	} else {
 		throw std::runtime_error("Invalid type " + type);
 	}
@@ -118,6 +125,17 @@ AnyType::AnyType(std::string type, int ptrs) {
 		m_type = m_type->getPointerTo();
 	}
 }
+
+AnyType* AnyType::getIDTy() {
+	if (m_defined_tyes.find("id") != m_defined_tyes.end()) {
+		return m_defined_tyes.find("id")->second;
+	}
+
+	AnyType* voidTy = new AnyType("id");
+	m_defined_tyes["id"] = voidTy; 
+	return voidTy;
+}
+
 
 AnyType* AnyType::getVoidTy() {
 	if (m_defined_tyes.find("void") != m_defined_tyes.end()) {

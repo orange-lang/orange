@@ -47,7 +47,7 @@ Value* FuncCall::Codegen() {
 			Args.push_back(vArg);
 		}
 
-		// If we're calling a variable argument function, add our other arguments.
+	// If we're calling a variable argument function, add our other arguments.
 		if (llvmFunction->isVarArg()) {
 			for (unsigned int i = llvmFunction->arg_size(); i < m_arguments.size(); i++) {
 				Value *vArg = m_arguments[i]->Codegen();
@@ -94,18 +94,24 @@ std::string FuncCall::string() {
 
 AnyType* FuncCall::getType() {
 	SymTable* curTab = GE::runner()->symtab();
-    ASTNode* node = curTab->find(m_name);
-    
-    if (node == nullptr) {
-        throw CompilerMessage(*this, m_name + " does not exist!");
-    }
-    
-    if ((node->getClass() != "FunctionStmt" &&
-         node->getClass() != "ExternFunction")) {
-        throw CompilerMessage(*this, m_name + " is not a function!");
-    }
+  ASTNode* node = curTab->find(m_name);
+  
+  if (node == nullptr) {
+      throw CompilerMessage(*this, m_name + " does not exist!");
+  }
+  
+  if ((node->getClass() != "FunctionStmt" &&
+       node->getClass() != "ExternFunction")) {
+      throw CompilerMessage(*this, m_name + " is not a function!");
+  }
     
 	if (node->getClass() == "FunctionStmt" && ((FunctionStmt*)node)->isGeneric()) {
+		// Try resolving...
+		if (m_resolved == false) {
+			resolve(); 
+			return getType();
+		}
+
 		throw CompilerMessage(*this, "Getting the type of a generic function is NYI!");
 	}
 

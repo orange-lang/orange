@@ -8,6 +8,7 @@
 
 #include <orange/FunctionStmt.h>
 #include <orange/generator.h>
+#include <orange/IfStmts.h>
 
 FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name;
@@ -91,6 +92,7 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 
 	// Otherwise, create that clone here, add it to the list, and return it.
 	FunctionStmt* clone;
+	
 	if (m_type) {
 		clone = new FunctionStmt(cloned_name, m_type, cloned_params, symtab()->clone());	
 	} else {
@@ -98,7 +100,22 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	}
 
 	for (auto stmt : m_statements) {
-		clone->addStatement(stmt->clone());
+		auto clonedStmt = stmt->clone();
+		clone->addStatement(clonedStmt);
+
+		// if the stmt is a block, set its parent to the clone's symtab IFF 
+		// their symtab's parent is the one for our current function statement
+		if (Block* block = dynamic_cast<Block*>(clonedStmt)) {
+			if (block->symtab()->parent()->ID() == symtab()->ID()) {
+				block->symtab()->setParent(clone->symtab());
+			}
+		}
+
+		if (IfStmts* ifStmts = dynamic_cast<IfStmts*>(clonedStmt)) {
+			for (auto block : ifStmts->blocks()) {
+				block->symtab()->setParent(clone->symtab());
+			}
+		}
 	}
 
 	m_clones.push_back(clone);
@@ -116,10 +133,17 @@ AnyType* FunctionStmt::getType() {
 
 	GE::runner()->pushBlock(this);
 
-	if (m_type == nullptr) {
+	// Here, invalid type means that it needs to be redefined for this function.
+	bool invalidType = (m_type == nullptr || m_type->isVoidTy() || m_type->isIDTy());
+	if (invalidType && m_looking == false) {
+		// Set m_looking to true so we don't recursively try to get the type of FunctionStmt
+		m_looking = true;
+		
 		// If we don't have an explicit type set, we have to determine it from our body and nested bodies.
 		AnyType* foundRet = searchForReturn();
 		ret = foundRet ? foundRet : ASTNode::getType();
+		m_type = ret;
+		m_looking = false;
 	} 
 
 	GE::runner()->popBlock();
@@ -165,8 +189,8 @@ Value* FunctionStmt::Codegen() {
 	auto oldInsertBlock = GE::builder()->GetInsertBlock();
 
 	// Create basic block and set our insertion point to it.
-	BasicBlock *funcBody = BasicBlock::Create(getGlobalContext(), "entry", generatedFunc);
-	BasicBlock *funcEnd = BasicBlock::Create(getGlobalContext(), "exit", generatedFunc);
+	BasicBlock *funcBody = BasicBlock::Create(GE::runner()->context(), "entry", generatedFunc);
+	BasicBlock *funcEnd = BasicBlock::Create(GE::runner()->context(), "exit", generatedFunc);
 	GE::builder()->SetInsertPoint(funcBody);
 
 	// Set up values for children statements to use. 
@@ -240,7 +264,22 @@ ASTNode* FunctionStmt::clone() {
 	}
 
 	for (auto stmt : m_statements) {
-		clonedFunc->addStatement(stmt->clone());
+		auto clonedStmt = stmt->clone();
+		clonedFunc->addStatement(clonedStmt);
+
+		// if the stmt is a block, set its parent to the clone's symtab IFF 
+		// their symtab's parent is the one for our current function statement
+		if (Block* block = dynamic_cast<Block*>(clonedStmt)) {
+			if (block->symtab()->parent()->ID() == symtab()->ID()) {
+				block->symtab()->setParent(clonedFunc->symtab());
+			}
+		}
+
+		if (IfStmts* ifStmts = dynamic_cast<IfStmts*>(clonedStmt)) {
+			for (auto block : ifStmts->blocks()) {
+				block->symtab()->setParent(clonedFunc->symtab());
+			}
+		}
 	}
 
 	return clonedFunc;

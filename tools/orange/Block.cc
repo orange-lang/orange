@@ -9,6 +9,7 @@
 #include <orange/Block.h>
 #include <orange/Runner.h>
 #include <orange/generator.h>
+#include <orange/IfStmts.h>
 
 SymTable* Block::symtab() const {
 	return m_symtab;
@@ -63,6 +64,15 @@ bool Block::hasReturn() {
 AnyType* Block::returnType() {
 	for (ASTNode *s : m_statements) {
 		if (s->getClass() == "ReturnStmt") return s->getType(); 
+
+		// If we have if statements, look inside of those.
+		if (s->getClass() == "IfStmts") {
+			IfStmts* ifStmts = (IfStmts*)s; 
+			for (auto block : ifStmts->blocks()) {
+				auto retTypeNestedBlock = block->returnType();
+				if (retTypeNestedBlock) return retTypeNestedBlock; 
+			}
+		}
 	}
 
 	return nullptr;
@@ -72,12 +82,18 @@ AnyType* Block::searchForReturn() {
 	AnyType* retType = nullptr; 
 
 	for (ASTNode *s : m_statements) {
+		printf("Current loop: %p\n", retType);
+		
 		if (s->getClass() == "ReturnStmt") {
+			// If we've found an ID ty, keep searching. 
+			AnyType* sReturnType = s->getType();
+			if (sReturnType->isIDTy()) continue; 
+
 			if (retType == nullptr) {
-				retType = s->getType(); 
+				retType = sReturnType; 
 			} else {
 				// We want to change retType to be the highest precedence return type.
-				retType = CastingEngine::GetFittingType(retType, s->getType());
+				retType = CastingEngine::GetFittingType(retType, sReturnType);
 			}
 		} else if (s->isBlock() && s->getClass() != "FunctionStmt") {
 			// If we're a block (and not a function, since that shouldn't affect this), look for returns.
@@ -87,6 +103,17 @@ AnyType* Block::searchForReturn() {
 			if (innerRetType) {
 				retType = CastingEngine::GetFittingType(retType, innerRetType);				
 			} 
+		} else if (s->getClass() == "IfStmts") {
+			IfStmts* ifStmts = (IfStmts *)s; 
+
+			for (auto block : ifStmts->blocks()) {
+				AnyType* innerRetType = block->searchForReturn();
+				
+				if (innerRetType == nullptr || innerRetType->isIDTy() || innerRetType->isVoidTy()) continue;
+			
+				retType = retType ? CastingEngine::GetFittingType(retType, innerRetType) : innerRetType;
+				printf("%p\n", retType);
+			}
 		}
 	}
 
@@ -97,7 +124,22 @@ AnyType* Block::searchForReturn() {
 ASTNode* Block::clone() {
 	Block* clonedBlock = new Block(m_symtab->clone());
 	for (auto stmt : m_statements) {
-		clonedBlock->addStatement(stmt->clone());
+		auto clonedStmt = stmt->clone();
+		clonedBlock->addStatement(clonedStmt);
+
+		// if the stmt is a block, set its parent to the clone's symtab IFF 
+		// their symtab's parent is the one for our current function statement
+		if (Block* block = dynamic_cast<Block*>(clonedStmt)) {
+			if (block->symtab()->parent()->ID() == symtab()->ID()) {
+				block->symtab()->setParent(clonedBlock->symtab());
+			}
+		}
+
+		if (IfStmts* ifStmts = dynamic_cast<IfStmts*>(clonedStmt)) {
+			for (auto block : ifStmts->blocks()) {
+				block->symtab()->setParent(clonedBlock->symtab());
+			}
+		}
 	}
 	return clonedBlock;
 }

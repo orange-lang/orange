@@ -32,6 +32,7 @@ public:
 	Type* getLLVMType() const { return m_type; }
 	bool isSigned() const { return m_signed; }
 
+	bool isIDTy() const;
 	bool isVoidTy() const;
 	bool isIntegerTy() const; 
 	bool isFloatTy() const; 
@@ -41,6 +42,7 @@ public:
 	int getIntegerBitWidth() const;
 	int getPointerLength() const { return m_ptrs; }
 
+	static AnyType* getIDTy();
 	static AnyType* getVoidTy();
 	static AnyType* getUIntNTy(int size);
 	static AnyType* getIntNTy(int size);

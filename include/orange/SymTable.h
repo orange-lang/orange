@@ -20,7 +20,7 @@ private:
 	 * This can either be a function, if statement, for loop,
 	 * or more. Traverse up the tree to find more.
 	 */
-	ASTNode *m_structure;
+	ASTNode *m_structure = nullptr;
 
 	std::map<std::string, ASTNode *> m_objs;
 
@@ -33,6 +33,13 @@ public:
 	 * @return The parent symbol table, if it exists. 
 	 */
 	SymTable* parent() const;
+
+	/**
+	 * Sets the parent symbol table of this one.
+	 *
+	 * @param parent The parent of this table.
+	 */
+	void setParent(SymTable* parent) { m_parent = parent; }
 
 	/**
 	 * Registers an ASTNode in this table by name, if an 

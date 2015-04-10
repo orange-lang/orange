@@ -52,6 +52,11 @@ void ReturnStmt::resolve() {
 	
 	// Find our parent function...
 	SymTable *curTab = GE::runner()->topBlock()->symtab();
+    
+	if (curTab == nullptr) {
+		std::cout << "???\n";
+	}
+    
 	FunctionStmt *containingFunc = (FunctionStmt *)curTab->findStructure("FunctionStmt");
 
 	if (m_expr && containingFunc->getType()->isVoidTy()) {

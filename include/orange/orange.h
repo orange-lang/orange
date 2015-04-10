@@ -16,3 +16,5 @@
 #include "FuncCall.h"
 #include "NegativeExpr.h"
 #include "ExternFunction.h"
+#include "CondBlock.h"
+#include "IfStmts.h"

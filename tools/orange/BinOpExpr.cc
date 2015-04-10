@@ -107,6 +107,12 @@ CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrE
 		} else {
 			return (signed1 || signed2) ? CmpInst::ICMP_SLE : CmpInst::ICMP_ULE;
 		}				
+	} else if (op == "==") {
+		if (isFPOp) {
+			return CmpInst::FCMP_OEQ;
+		} else {
+			return CmpInst::ICMP_EQ;
+		}
 	} else if (op == "!=") {
 		if (isFPOp) {
 			return CmpInst::FCMP_ONE;
@@ -120,6 +126,10 @@ CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrE
 
 
 Value* BinOpExpr::Codegen() {
+    if (m_LHS == nullptr || m_RHS == nullptr) {
+        std::runtime_error("LHS or RHS are missing!");
+    }
+    
 	// Generate the LHS side of the expression, expecting it to return a value if it needs to.
 	Value* LHS = m_LHS->Codegen();
 	Value* RHS = m_RHS->Codegen(); 
@@ -153,14 +163,14 @@ Value* BinOpExpr::Codegen() {
 	} else {
 		CastingEngine::CastValuesToFit(&LHS, &RHS, m_LHS->isSigned(), m_RHS->isSigned());
 	}
-
+    
 	if (m_op == "=") {
 		GE::builder()->CreateStore(RHS, LHS);
 		return GE::builder()->CreateLoad(LHS);
 	} // other assign ops 
 
 	if (IsCompareOp(m_op) == false) {
-		return GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);	
+		return GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);
 	} else {
 		bool isFPOp = LHS->getType()->isFloatingPointTy() && RHS->getType()->isFloatingPointTy();
 		CmpInst::Predicate pred = GetBinOpPredComp(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned());

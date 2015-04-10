@@ -47,11 +47,11 @@ Value* StrVal::Codegen() {
 }
 
 Value* UIntVal::Codegen() {
-	return ConstantInt::get(getGlobalContext(), APInt(size, value));
+	return ConstantInt::get(GE::runner()->context(), APInt(size, value));
 }
 
 Value* IntVal::Codegen() {
-	return ConstantInt::get(getGlobalContext(), APInt(size, value));
+	return ConstantInt::get(GE::runner()->context(), APInt(size, value));
 }
 
 Value* FloatVal::Codegen() {

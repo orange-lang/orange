@@ -54,6 +54,11 @@ private:
 	IRBuilder<>* m_builder = nullptr;
 
 	/**
+	 * The context for this runner.
+	 */
+	LLVMContext* m_context = nullptr;
+
+	/**
 	 * The PassManager used to optimize functions.
 	 */
 	FunctionPassManager *m_functionOptimizer;
@@ -157,6 +162,13 @@ public:
 	 * @return The LLVM builder assigned to this runner.
 	 */
 	IRBuilder<>* builder() const;
+
+	/**
+	 * Gets the LLVM context assigned to this runner.
+	 *
+	 * @return The LLVM context assigned to this runner.
+	 */
+	LLVMContext& context();
 
 	/**
 	 * Gets the FunctionPassManager assigned to this runner.

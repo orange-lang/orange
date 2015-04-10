@@ -32,6 +32,7 @@
 	AnyType *anytype;
 	ArgList *arglist;
 	std::string *str;
+	std::vector<Block*>* blocklist;
 	int token; 
 	int number;
 }
@@ -53,7 +54,7 @@
 %type <block> statements
 %type <node> statement
 %type <expr> expression primary VALUE
-%type <stmt> return function extern_function
+%type <stmt> return function extern_function if_statement
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE
 %type <paramlist> opt_func_params func_params
@@ -61,6 +62,7 @@
 %type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
 %type <anytype> any_type 
 %type <number> var_ptrs
+%type <blocklist> else_ifs_or_end
 
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
 
@@ -89,6 +91,7 @@ statement
 	| function term { $$ = $1; }
 	| extern_function term { $$ = $1; }
 	| return term { $$ = $1; }
+	| if_statement term { $$ = $1; }
 	;
 
 expression
@@ -125,12 +128,12 @@ primary
 
 function
 	: DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN term { 
-			SymTable *tab = new SymTable(GE::runner()->topBlock()->symtab());
+			SymTable *tab = new SymTable(GE::runner()->symtab());
 			$<stmt>$ = new FunctionStmt(*$2, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$$);
 		} statements END { $$ = $<stmt>7; GE::runner()->popBlock(); SET_LOCATION($$); }
 	| DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN ARROW any_type term {
-			SymTable *tab = new SymTable(GE::runner()->topBlock()->symtab());
+			SymTable *tab = new SymTable(GE::runner()->symtab());
 			$<stmt>$ = new FunctionStmt(*$2, $7, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$$);			
 		} statements END { $$ = $<stmt>9; GE::runner()->popBlock(); SET_LOCATION($$); }
@@ -163,6 +166,46 @@ opt_arg_list
 arg_list
 	: arg_list COMMA expression { $1->push_back($3); }
 	| expression { $$ = new ArgList(); $$->push_back($1); }
+	;
+
+if_statement
+	: IF expression term {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$<stmt>$ = new CondBlock($2, tab);
+		GE::runner()->pushBlock((CondBlock *)$$);
+	} statements { GE::runner()->popBlock(); } else_ifs_or_end { 		
+		$$ = new IfStmts;
+
+		$7->insert($7->begin(), (CondBlock*)$<stmt>4);
+		for (int i = 0; i < $7->size(); i++) { 
+			((IfStmts *)$$)->addBlock($7->at(i)); 
+		} 
+
+		SET_LOCATION($$);
+	}
+	;
+
+else_ifs_or_end
+	: ELIF expression term {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$<stmt>$ = new CondBlock($2, tab);
+		GE::runner()->pushBlock((CondBlock *)$$);
+	} statements { GE::runner()->popBlock(); } else_ifs_or_end { 		
+		$7->insert($7->begin(), (CondBlock*)$<stmt>4);
+		$$ = $7;
+	}
+	| ELSE term {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$<stmt>$ = new Block(tab);
+		GE::runner()->pushBlock((Block *)$$);
+	} statements END {
+		$$ = new std::vector<Block*>;
+		$$->insert($$->begin(), (Block*)$<stmt>3);
+		GE::runner()->popBlock();
+	}
+	| END {
+		$$ = new std::vector<Block*>;
+	}
 	;
 
 return

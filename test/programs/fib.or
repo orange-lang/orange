@@ -6,36 +6,8 @@ def fib(n)
 	return fib(n - 1) + fib(n - 2)
 end
 
-def fib2(n)
-	if n >= 2
-		return fib2(n - 1) + fib2(n - 2)
-	end 
-
-	return n
-end	
-
-def fib3(n)
-	if n == 0
-		return 0
-	end 
-
-	if n == 1
-		return 1
-	end 
-
-	return fib3(n - 1) + fib3(n - 2)
-end
-
 if fib(8) != 21
 	return 1
 end 
-
-if fib2(8) != 21
-	return 1
-end
-
-if fib3(8) != 21
-	return 1
-end  
 
 return 0

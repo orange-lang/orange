@@ -30,7 +30,7 @@ private:
 	// TODO: clones of this function should be LinkOnceODRLinkage.
 	llvm::GlobalValue::LinkageTypes m_linkageType = Function::ExternalLinkage;
 
-	AnyType* m_type = nullptr;
+	AnyType* m_type = AnyType::getIDTy();
 
 	/**
 	 * Indicates the exit block of the function to jump to when returning a value.
@@ -41,6 +41,12 @@ private:
 	 * Indicates the return value of the function, if any.
 	 */
 	Value* m_retVal = nullptr;
+	
+	/**
+	 * Indicates that we're currently looking in our body for a return statement.
+	 * Avoids infinite recursion.
+	 */
+	bool m_looking = false;
 
 	ParamList m_parameters;
 
