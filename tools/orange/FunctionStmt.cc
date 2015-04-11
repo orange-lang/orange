@@ -222,7 +222,7 @@ Value* FunctionStmt::Codegen() {
 	if (hasReturn() == false && GE::builder()->GetInsertBlock()->getTerminator() == nullptr) {
 		if (isRoot()) {
 			GE::builder()->CreateStore(ConstantInt::getSigned(funcType->getReturnType(), 0), m_retVal);
-		} else if (m_type != nullptr) {
+		} else if (m_type != nullptr && m_type->isVoidTy() == false) {
 			throw CompilerMessage(*this, "Missing return type; expected a " + m_type->string());
 		}
 
