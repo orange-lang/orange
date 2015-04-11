@@ -54,7 +54,7 @@
 %type <block> statements
 %type <node> statement
 %type <expr> expression primary VALUE
-%type <stmt> return function extern_function if_statement
+%type <stmt> return function extern_function if_statement inline_if
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE
 %type <paramlist> opt_func_params func_params
@@ -92,6 +92,7 @@ statement
 	| extern_function term { $$ = $1; }
 	| return term { $$ = $1; }
 	| if_statement term { $$ = $1; }
+	| inline_if term { $$ = $1; }
 	;
 
 expression
@@ -205,6 +206,16 @@ else_ifs_or_end
 	}
 	| END {
 		$$ = new std::vector<Block*>;
+	}
+	;
+
+inline_if
+	: expression IF expression {
+		SymTable* tab = GE::runner()->topBlock()->symtab();
+		CondBlock* block = new CondBlock($3, tab);
+		block->addStatement($1);
+		$$ = new IfStmts;
+		((IfStmts *)$$)->addBlock(block); 
 	}
 	;
 
