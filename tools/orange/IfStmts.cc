@@ -11,110 +11,67 @@
 #include <orange/generator.h>
 
 Value* IfStmts::Codegen() {
-	// Our first step is to generate all of the BasicBlocks 
-	// that we need. 
-	//
-	// There's always a "continue" block at the end.
-	//
-	// Each CondBlock has two BasicBlocks: 
-	//		- trueBlock
-	//		- falseBlock 
-	// 
-	std::vector<BasicBlock*> BBs; 
+	std::vector<BasicBlock*> BBs;
 
+	// Get our function to use during generation
 	auto curFunction = (FunctionStmt*)GE::runner()->symtab()->findStructure("FunctionStmt");
 	auto llvmFunction = (Function *)curFunction->getValue();
 
+	// Each block has two BasicBlocks: a check and a trueBlock. 
 	for (auto block : m_blocks) {
-		if (block->getClass() == "CondBlock") {
-			// if or elif statement
-			auto trueBlock = BasicBlock::Create(GE::runner()->context(), "trueBlock", llvmFunction, curFunction->getBlockEnd()); 
-			auto falseBlock = BasicBlock::Create(GE::runner()->context(), "falseBlock", llvmFunction, curFunction->getBlockEnd()); 
-			
-			BBs.push_back(trueBlock);
-			BBs.push_back(falseBlock);
-		} else if (block->getClass() == "Block") {
-			// else statement 
-			auto elseBlock = BasicBlock::Create(GE::runner()->context(), "elseBlock", llvmFunction, curFunction->getBlockEnd()); 
-			BBs.push_back(elseBlock);
-		}
+		BBs.push_back(BasicBlock::Create(GE::runner()->context(), "check", llvmFunction, curFunction->getBlockEnd()));
+		BBs.push_back(BasicBlock::Create(GE::runner()->context(), "trueBlock", llvmFunction, curFunction->getBlockEnd()));
 	}
 
-	auto continueBlock = BasicBlock::Create(GE::runner()->context(), "continueBlock", llvmFunction, curFunction->getBlockEnd()); 
+	// add our continue block
+	auto continueBlock = BasicBlock::Create(GE::runner()->context(), "continue", llvmFunction, curFunction->getBlockEnd());
 	BBs.push_back(continueBlock);
 
-	bool usingContinue = false; 
-	bool hasElse = false;
+	// Jump to our initial block.
+	GE::builder()->CreateBr(BBs[0]);
 
-	// Now that we have all of our BasicBlocks set up, we can generate the code now.
-	//
-	// At the end of the trueBlock:
-	//		- If there's a return statement in the CondBlock, don't do anything.
-	//		- Otherwise, jump to the continue block at the end.
-	// The false block will either generate another CondBlock or jump to an 
-	// else block, if it exists, or jump to the continue block, if nothing else.
+	// then, for each block:
+	//		- if it's a conditional block, check for conditional, and do conditional jump to corresponding block
+	// 		- if it's not a conditional block (else), do jump to corresponding block 
 	for (int i = 0; i < m_blocks.size(); i++) {
-		auto block = m_blocks[i];
+		auto checkBlock = BBs[(i * 2) + 0];
+		auto trueBlock  = BBs[(i * 2) + 1];
+		auto nextCheck  = BBs[(i * 2) + 2];
+		auto genBlock   = m_blocks[i];
 
-		// Every CondBlock has BasicBlocks at (i * 2) and (i * 2) + 1
-		// The elseBlock will always be at (i * 2). 
-		if (block->getClass() == "CondBlock") {
-			auto trueBlock = BBs[(i * 2)];
-			auto falseBlock = BBs[(i * 2) + 1];
+		GE::builder()->SetInsertPoint(checkBlock);
 
-			CondBlock* condBlock = (CondBlock*)block;
-
+		if (genBlock->getClass() == "CondBlock") {
+			CondBlock* condBlock = (CondBlock*)genBlock; 
 			auto condition = condBlock->CodegenCondition();
 
 			if (condBlock->condition()->returnsPtr()) {
 				condition = GE::builder()->CreateLoad(condition);
 			}
 
-			// The condition should always be a bool, so cast it now.
-			CastingEngine::CastValueToType(&condition, AnyType::getUIntNTy(1), condBlock->condition()->isSigned(), true);
-
-			// Next, create our jump to the blocks.
-			GE::builder()->CreateCondBr(condition, trueBlock, falseBlock);
-
-			// Go to the trueBlock and generate the body of our condition 
-			GE::builder()->SetInsertPoint(trueBlock);
-			condBlock->Codegen();
-
-			// If the condition has a return, don't do anything, otherwise, jump to continue.
-			if (condBlock->hasReturn() == false && trueBlock->getTerminator() == nullptr) {
-				GE::builder()->CreateBr(continueBlock);
-				usingContinue = true;
+			// Our condition must be a boolean, try casting it if we can...
+			if (CastingEngine::CastValueToType(&condition, AnyType::getUIntNTy(1), condBlock->condition()->isSigned(), true) == false) {
+				throw CompilerMessage(*(condBlock->condition()), "could not cast to boolean!");
 			}
 
-			GE::builder()->SetInsertPoint(falseBlock); 
+			GE::builder()->CreateCondBr(condition, trueBlock, nextCheck);
+		} else {
+			// Go right to our true block
+			GE::builder()->CreateBr(trueBlock);
+		}
 
-			// Are we going to use our falseBlock? If not,
-			// jump immediately to continue.
-			if (i + 1 >= m_blocks.size() && falseBlock->getTerminator() == nullptr) {
-				GE::builder()->CreateBr(continueBlock);
-			}
-
-		} else if (block->getClass() == "Block") {
-			hasElse = true;
-
-			auto elseBlock = BBs[(i * 2)];
-			GE::builder()->CreateBr(elseBlock);
-
-			GE::builder()->SetInsertPoint(elseBlock);
-			block->Codegen();
-
-			if (block->hasReturn() == false && elseBlock->getTerminator() == nullptr) {
-				GE::builder()->CreateBr(continueBlock);
-				usingContinue = true;
-			}
+		// Now, set our insert point to the true block and codegen it.
+		// If the Block doesn't have a return, jump to continue after wards.
+		GE::builder()->SetInsertPoint(trueBlock);
+		
+		genBlock->Codegen();
+		
+		if (genBlock->hasReturn() == false) {
+			GE::builder()->CreateBr(continueBlock);
 		}
 	}
-
-	if (hasElse == false || usingContinue == true) {
-		GE::builder()->SetInsertPoint(continueBlock);
-	} else {
-		continueBlock->eraseFromParent();
-	}
+	
+	GE::builder()->SetInsertPoint(continueBlock);
 
 	return nullptr;
 }

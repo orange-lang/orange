@@ -8,9 +8,16 @@
 
 #include <orange/CondBlock.h>
 #include <orange/IfStmts.h>
+#include <orange/generator.h>
 
 Value* CondBlock::CodegenCondition() {
-	return m_condition->Codegen();
+	GE::runner()->pushBlock(this);
+
+	Value* retVal = m_condition->Codegen();
+
+	GE::runner()->popBlock();
+	
+	return retVal;
 }
 
 ASTNode* CondBlock::clone() {
