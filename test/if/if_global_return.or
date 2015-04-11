@@ -1,0 +1,5 @@
+if 5 < 3 
+	return 1
+end
+
+return 0

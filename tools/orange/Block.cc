@@ -58,7 +58,11 @@ Value* Block::Codegen() {
 }
 
 bool Block::hasReturn() {
-	return returnType() != nullptr; 
+	for (ASTNode *s : m_statements) {
+		if (s->getClass() == "ReturnStmt") return true; 
+	}
+
+	return false;
 }
 
 AnyType* Block::returnType() {

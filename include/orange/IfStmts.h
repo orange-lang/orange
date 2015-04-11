@@ -26,7 +26,7 @@ private:
 	 * This will be set to true when resolving, Codegenning, and 
 	 * after a regular Block (not CondBlock) is added.
 	 */
-	bool m_locked;
+	bool m_locked = false;
 public:
 	virtual std::string getClass() { return "IfStmts"; }
 

@@ -17,6 +17,8 @@ private:
 public:
 	virtual std::string getClass() { return "CondBlock"; }
 
+	Expression* condition() const { return m_condition; }
+
 	/** 
 	 * Codegen the condition assigned to this block, but NOT any of the statements. 
 	 *

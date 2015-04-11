@@ -214,12 +214,12 @@ Value* FunctionStmt::Codegen() {
 	generateStatements();
 
 	// If our body has a return statement, then we don't have to do anything else here.
-	// If we don't have a return statement:
+	// If we don't have a return statement or a terminator (current block doesn't have a return):
 	//		- Are we a main function? If we are, force return 0.
 	//		- Are we an auto return? If not, throw an error about a missing return of type for function
 	// We only want to check for a return statement in the direct body; no nested bodies. The reason for this is that 
 	// if we _need_ a return type, it _needs_ to be in the main body. 
-	if (hasReturn() == false) {
+	if (hasReturn() == false && GE::builder()->GetInsertBlock()->getTerminator() == nullptr) {
 		if (isRoot()) {
 			GE::builder()->CreateStore(ConstantInt::getSigned(funcType->getReturnType(), 0), m_retVal);
 		} else if (m_type != nullptr) {

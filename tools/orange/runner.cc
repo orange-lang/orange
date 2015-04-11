@@ -121,7 +121,8 @@ RunResult Runner::run() {
 			return result;
 		}
 
-		// m_module->dump();
+		if (debug())
+			m_module->dump();
 
 		optimizeModule();
         
