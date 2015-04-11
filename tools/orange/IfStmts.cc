@@ -63,7 +63,7 @@ Value* IfStmts::Codegen() {
 		// Now, set our insert point to the true block and codegen it.
 		// If the Block doesn't have a return, jump to continue after wards.
 		GE::builder()->SetInsertPoint(trueBlock);
-		
+	
 		genBlock->Codegen();
 		
 		if (genBlock->hasReturn() == false) {

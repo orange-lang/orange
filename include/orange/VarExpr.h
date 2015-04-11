@@ -67,6 +67,11 @@ public:
 	 */
 	virtual void create(bool throwError = true); 
 
+	/**
+	 * Returns whether or not this variable exists in a parent.
+	 */
+	virtual bool existsInParent();
+
 	// variables are *never* constant expressions.
 	virtual bool isConstant() { return false; }
 

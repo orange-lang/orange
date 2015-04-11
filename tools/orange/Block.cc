@@ -85,9 +85,7 @@ AnyType* Block::returnType() {
 AnyType* Block::searchForReturn() {
 	AnyType* retType = nullptr; 
 
-	for (ASTNode *s : m_statements) {
-		printf("Current loop: %p\n", retType);
-		
+	for (ASTNode *s : m_statements) {		
 		if (s->getClass() == "ReturnStmt") {
 			// If we've found an ID ty, keep searching. 
 			AnyType* sReturnType = s->getType();

@@ -1,0 +1,9 @@
+def foo(c)
+	if 3 != 2 
+		c = 0
+	end 
+
+	return c
+end 
+
+return foo(1)

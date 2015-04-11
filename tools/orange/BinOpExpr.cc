@@ -126,10 +126,10 @@ CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrE
 
 
 Value* BinOpExpr::Codegen() {
-    if (m_LHS == nullptr || m_RHS == nullptr) {
-        std::runtime_error("LHS or RHS are missing!");
-    }
-    
+  if (m_LHS == nullptr || m_RHS == nullptr) {
+      std::runtime_error("LHS or RHS are missing!");
+  }
+  
 	// Generate the LHS side of the expression, expecting it to return a value if it needs to.
 	Value* LHS = m_LHS->Codegen();
 	Value* RHS = m_RHS->Codegen(); 
@@ -147,6 +147,7 @@ Value* BinOpExpr::Codegen() {
 	if (m_op == "=" && LHS == nullptr) {
 		VarExpr* vExpr = (VarExpr *)m_LHS; 
 		vExpr->create();
+
 		vExpr->setValue(RHS);
 		vExpr->setType(new AnyType(RHS->getType(), m_RHS->isSigned()));
 		return GE::builder()->CreateLoad(vExpr->getValue());
@@ -222,7 +223,11 @@ void BinOpExpr::resolve() {
 	if (m_op == "=" && m_LHS->getClass() == "VarExpr") {
 		// Set the type of LHS if it doesn't exist or this type has higher precedence. 
 		VarExpr* vExpr = (VarExpr *)m_LHS; 
-		vExpr->create(false);
+
+		// Only create this variable if it doesn't exist in a parent scope.
+		if (vExpr->existsInParent() == false) {
+			vExpr->create(false);
+		}
 
 		if (vExpr->getType()->isVoidTy()) {
 			vExpr->setType(m_RHS->getType());

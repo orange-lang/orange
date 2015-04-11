@@ -83,6 +83,11 @@ void VarExpr::create(bool throwError) {
 	}
 }
 
+bool VarExpr::existsInParent() {
+	SymTable* tab = GE::runner()->topBlock()->symtab();
+	return tab->find(m_name) != nullptr;
+}
+
 void VarExpr::setSigned(bool signed_var) {
 	m_signed = signed_var; 
 }
