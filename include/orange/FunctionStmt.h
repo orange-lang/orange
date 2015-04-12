@@ -64,6 +64,12 @@ public:
 
 	virtual std::string name() const { return m_name; }
 
+	/** 
+	 * FunctionStmts aren't "traditional" blocks.
+	 */
+	virtual bool isBlock() { return false; }
+
+
 	/**
 	 * Returns true if any of the functions are a void type.
 	 *
@@ -110,6 +116,13 @@ public:
 	 * if the function returns void.
 	 */
 	Value* getRetVal() const { return m_retVal; }
+
+	/**
+	 * Creates a basic block at the end of this function.
+	 * 
+	 * @param name The name of the block.
+	 */
+	BasicBlock* createBasicBlock(std::string name);
 
 	/** 
 	 * Gets the parent symbol table, if there is one. 

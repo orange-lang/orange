@@ -37,6 +37,8 @@
 
 using namespace llvm;
 
+class FunctionStmt;
+
 /**
  * ASTNode is the base class for all structures in the AST. It provides some methods for pseudo-reflection and 
  * general features used throughout the project.
@@ -122,6 +124,11 @@ public:
 	 * @return The LLVM type of this object in code.
 	 */
 	virtual Type *getLLVMType() { return getType()->getLLVMType(); }
+
+	/**
+	 * @return The function this node is contained in.
+	 */
+	virtual FunctionStmt* getContainingFunction();
 
 	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 

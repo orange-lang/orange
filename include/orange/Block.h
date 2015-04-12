@@ -31,9 +31,22 @@ protected:
 	 * Generates all of the statements.
 	 */
 	void generateStatements();	
+
+	/** 
+	 * Pushes this to the symtable.
+	 */
+	void pushBlock();
+
+	/**
+	 * Pops this from the symtable.
+	 */
+	void popBlock(); 
 public:
 	virtual std::string getClass() { return "Block"; }
 
+	/** 
+	 * Determines whether or not we are a "traditional" block.
+	 */
 	virtual bool isBlock() { return true; }
 
 	/**

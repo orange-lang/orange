@@ -52,9 +52,9 @@
 %token CONST
 
 %type <block> statements
-%type <node> statement return_or_expr const_var
-%type <expr> expression primary VALUE 
-%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl
+%type <node> statement return_or_expr const_var initializer
+%type <expr> expression primary VALUE opt_expr
+%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl for_loop inline_loop
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD 
 %type <strele> INCREMENT DECREMENT ARROW_LEFT
@@ -107,6 +107,8 @@ statement
 	| inline_unless term { $$ = $1; }
 	| variable_decl term { $$ = $1; }
 	| const_var term { $$ = $1; }
+	| for_loop term { $$ = $1; }
+	| inline_loop term { $$ = $1; }
 	;
 
 expression
@@ -268,6 +270,68 @@ inline_unless
 		((IfStmts *)$$)->addBlock(block); 
 	}
 	;
+
+for_loop
+	: FOR OPEN_PAREN initializer SEMICOLON opt_expr SEMICOLON opt_expr CLOSE_PAREN term {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$<stmt>$ = new Loop($3, $5, $7, tab);
+		GE::runner()->pushBlock((Loop *)$$);
+	} statements END {
+		$$ = (Loop *)$<stmt>10;
+		GE::runner()->popBlock();
+	}
+	| WHILE expression term {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$<stmt>$ = new Loop($2, false, tab);
+		GE::runner()->pushBlock((Loop *)$$);		
+	} statements END {
+		$$ = (Loop *)$<stmt>4;
+		GE::runner()->popBlock();
+	}
+	| FOREVER DO term {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$<stmt>$ = new Loop(tab);
+		GE::runner()->pushBlock((Loop *)$$);				
+	} statements END {
+		$$ = (Loop *)$<stmt>4;
+		GE::runner()->popBlock();
+	}
+	| DO term {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$<stmt>$ = new Loop(nullptr, true, tab);
+		GE::runner()->pushBlock((Loop *)$$);				
+	} statements END WHILE expression {
+		$$ = (Loop *)$<stmt>3;
+		((Loop *)$$)->setCondition($7);
+		GE::runner()->popBlock();
+	} 
+	;
+
+inline_loop
+	: return_or_expr FOR OPEN_PAREN initializer SEMICOLON opt_expr SEMICOLON opt_expr CLOSE_PAREN {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$$ = new Loop($4, $6, $8, tab);
+		((Loop *)$$)->addStatement($1);		
+	}
+	| return_or_expr WHILE expression {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$$ = new Loop($3, false, tab);
+		((Loop *)$$)->addStatement($1);				
+	}
+	| return_or_expr FOREVER {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$$ = new Loop(tab);
+		((Loop *)$$)->addStatement($1);
+	}
+
+initializer
+	: variable_decl { $$ = $1; } 
+	| expression { $$ = $1; }
+	;
+
+opt_expr 
+	: expression { $$ = $1; }
+	| { $$ = nullptr; }
 
 variable_decl
 	: any_type TYPE_ID { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1)); }

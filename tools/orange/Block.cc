@@ -15,6 +15,15 @@ SymTable* Block::symtab() const {
 	return m_symtab;
 }
 
+void Block::pushBlock() {
+	GE::runner()->pushBlock(this);
+}
+
+void Block::popBlock() {
+	GE::runner()->popBlock();
+}
+
+
 bool Block::isRoot() const { 
 	// We're the root block if our symbol table doesn't have a parent.
 	return m_symtab && m_symtab->parent() == nullptr; 

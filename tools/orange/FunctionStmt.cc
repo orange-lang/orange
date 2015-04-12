@@ -313,6 +313,17 @@ bool FunctionStmt::isGeneric() const {
 	return false;
 }
 
+BasicBlock* FunctionStmt::createBasicBlock(std::string name) {
+	auto llvmFunction = (Function*)getValue();
+
+	if (llvmFunction == nullptr) {
+		throw std::runtime_error("LLVM function not generated yet!");
+	}
+
+	return BasicBlock::Create(GE::runner()->context(), name, llvmFunction, getBlockEnd());
+}
+
+
 void FunctionStmt::resolve() {
 	if (m_resolved) return; 
 	// Don't set m_resolved here; let Block::resolve do it.
