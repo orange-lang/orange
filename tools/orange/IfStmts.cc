@@ -70,7 +70,7 @@ Value* IfStmts::Codegen() {
 	
 		genBlock->Codegen();
 		
-		if (genBlock->hasReturn() == false) {
+		if (genBlock->hasJump() == false) {
 			GE::builder()->CreateBr(continueBlock);
 		}
 	}

@@ -74,6 +74,14 @@ bool Block::hasReturn() {
 	return false;
 }
 
+bool Block::hasJump() {
+	for (ASTNode *s : m_statements) {
+		if (s->getClass() == "ReturnStmt" || s->getClass() == "LoopSkip") return true; 
+	}
+
+	return false;
+}
+
 AnyType* Block::returnType() {
 	for (ASTNode *s : m_statements) {
 		if (s->getClass() == "ReturnStmt") return s->getType(); 

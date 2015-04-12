@@ -54,7 +54,7 @@
 %type <block> statements
 %type <node> statement return_or_expr const_var initializer
 %type <expr> expression primary VALUE opt_expr
-%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl for_loop inline_loop
+%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl for_loop inline_loop loop_breaks
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD 
 %type <strele> INCREMENT DECREMENT ARROW_LEFT
@@ -109,6 +109,7 @@ statement
 	| const_var term { $$ = $1; }
 	| for_loop term { $$ = $1; }
 	| inline_loop term { $$ = $1; }
+	| loop_breaks term { $$ = $1; }	
 	;
 
 expression
@@ -324,6 +325,13 @@ inline_loop
 		((Loop *)$$)->addStatement($1);
 	}
 
+loop_breaks
+	: LOOP { $$ = new LoopSkip(true); }
+	| CONTINUE { $$ = new LoopSkip(true); }
+	| BREAK { $$ = new LoopSkip(false); }
+	;
+
+
 initializer
 	: variable_decl { $$ = $1; } 
 	| expression { $$ = $1; }
@@ -346,6 +354,7 @@ const_var
 return_or_expr
 	: return { $$ = $1; }
 	| expression { $$ = $1; }
+	| loop_breaks { $$ = $1; }
 	;
 
 return

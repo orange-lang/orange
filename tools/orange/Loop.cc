@@ -61,6 +61,9 @@ Value* Loop::Codegen() {
 	m_afterthought_block = getContainingFunction()->createBasicBlock("afterthought");
 	m_continue_block     = getContainingFunction()->createBasicBlock("continueLoop");
 
+	// Add us as a structure to the symbol table, so continue/break statements can find us.
+	symtab()->setStructure(this);
+
 	// Now, we do our logic. 
 	pushBlock();
 
@@ -113,7 +116,7 @@ Value* Loop::Codegen() {
 
 	// After the body is generated, if it doesn't have a return statement, 
 	// jump to the afterthought. 
-	if (hasReturn() == false) {
+	if (hasJump() == false) {
 		GE::builder()->CreateBr(m_afterthought_block);
 	}
 

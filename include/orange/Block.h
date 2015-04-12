@@ -90,6 +90,14 @@ public:
 	bool hasReturn();
 
 	/**
+	 * Determines whether or not the body will jump.
+	 * Does not check for nested bodies. 
+	 *
+	 * @return True if the body will jump, false otherwise.
+	 */
+	bool hasJump(); 
+
+	/**
 	 * Gets the return type from the body, if it exists.
 	 * Does not check for nested bodies (e.g., if statements)
 	 *
