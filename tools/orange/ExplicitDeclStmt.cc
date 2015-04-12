@@ -30,6 +30,7 @@ Value* ExplicitDeclStmt::Codegen() {
 		m_var->setValueTo(GE::builder()->CreateAlloca(m_var->getLLVMType(), nullptr, m_var->name()));
 	}
 
+	m_var->initialize();
 	return m_var->Codegen();
 }
 

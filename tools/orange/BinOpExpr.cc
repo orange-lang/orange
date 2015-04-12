@@ -193,6 +193,8 @@ Value* BinOpExpr::Codegen() {
 			vExpr->setType(new AnyType(RHS->getType(), m_RHS->isSigned()));
 		}
 		
+		vExpr->initialize();
+
 		return GE::builder()->CreateLoad(vExpr->getValue());
 	}
 

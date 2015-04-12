@@ -52,8 +52,8 @@
 %token CONST
 
 %type <block> statements
-%type <node> statement return_or_expr
-%type <expr> expression primary VALUE
+%type <node> statement return_or_expr const_var
+%type <expr> expression primary VALUE 
 %type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD 
@@ -106,6 +106,7 @@ statement
 	| inline_if term { $$ = $1; }
 	| inline_unless term { $$ = $1; }
 	| variable_decl term { $$ = $1; }
+	| const_var term { $$ = $1; }
 	;
 
 expression
@@ -271,6 +272,12 @@ inline_unless
 variable_decl
 	: any_type TYPE_ID { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1)); }
 	| any_type TYPE_ID ASSIGN expression  { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1), $4); }
+	;
+
+const_var 
+	: CONST any_type TYPE_ID ASSIGN expression { $$ = new ExplicitDeclStmt(new VarExpr(*$3, $2, true), $5); }
+	| CONST TYPE_ID ASSIGN expression { $$ = new BinOpExpr(new VarExpr(*$2, true), "=", $4); }
+	;
 
 return_or_expr
 	: return { $$ = $1; }

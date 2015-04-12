@@ -9,11 +9,27 @@
 #include <orange/VarExpr.h>
 #include <orange/generator.h>
 
+VarExpr* VarExpr::symtabVar() {
+	SymTable* tab = GE::runner()->topBlock()->symtab();
+	ASTNode* tabVar = tab->find(m_name);
+	return tabVar ? (VarExpr*)tabVar : this; 
+}
+
+
 Value* VarExpr::Codegen() {
 	// "Generating" a variable doesn't actually do anything; 
 	// its creation is handled by other classes like BinOpExpr.
-	// Instead, all this does is return its value.
 	return getValue();
+}
+
+void VarExpr::initialize() {
+	// Initialization should happen after a variable is created for the first 
+	// time. If we are a constant, we will set ourselves to "initialized,"
+	// which means that we can't have our value changed.
+	if (m_constant || symtabVar()->m_constant) {
+		m_initialized = true;
+		symtabVar()->m_initialized = true;
+	}
 }
 
 Value* VarExpr::getValue() {
@@ -88,8 +104,6 @@ bool VarExpr::isLocked() {
 	return false;
 }
 
-
-
 void VarExpr::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true; 
@@ -117,11 +131,19 @@ bool VarExpr::existsInParent() {
 }
 
 void VarExpr::setValue(Value* value) {
+	if (m_initialized || symtabVar()->m_initialized) {
+		throw CompilerMessage(*this, "cannot modify the value of a constant!");
+	}
+
 	m_value = GE::builder()->CreateAlloca(value->getType(), nullptr, m_name);
 	GE::builder()->CreateStore(value, m_value);
 }
 
 void VarExpr::setValueTo(Value *value) {
+	if (m_initialized || symtabVar()->m_initialized) {
+		throw CompilerMessage(*this, "cannot modify the value of a constant!");
+	}
+
 	m_value = value; 
 }
 
@@ -129,6 +151,15 @@ VarExpr::VarExpr(std::string name) : m_name(name) {
 
 }
 
+VarExpr::VarExpr(std::string name, bool constant) : m_name(name) {
+	m_constant = constant;
+}
+
 VarExpr::VarExpr(std::string name, AnyType* type) : m_name(name), m_type(type) {
 	m_locked = true;
+}
+
+VarExpr::VarExpr(std::string name, AnyType* type, bool constant) : m_name(name), m_type(type) {
+	m_locked = true;
+	m_constant = constant;
 }

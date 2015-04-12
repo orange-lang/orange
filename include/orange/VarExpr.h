@@ -17,6 +17,11 @@ private:
 	std::string m_name;
 
 	bool m_locked = false;
+
+	/**
+	 * @return The symtab variable if it exists, or this if it doesn't.
+	 */
+	VarExpr* symtabVar();
 protected: 
 	/** 
 	 * Indicates whether or not this variable is a signed
@@ -28,12 +33,29 @@ protected:
 	 * Determines the type of the variable.
 	 */
 	AnyType* m_type = nullptr; 
+
+	/**
+	 * Determines whether or not the variable is const.
+	 */
+	bool m_constant = false;
+
+	/**
+	 * Determines whether or not it is initialized, which will happen 
+	 * after running Codegen at least once if the variable is constant.
+	 */
+	bool m_initialized = false;
 public:
 	virtual std::string getClass() { return "VarExpr"; }
 
 	virtual bool isLocked();
 
 	virtual Value* Codegen();
+
+	/** 
+	 * Initialize our variable. If the variable is a constant, it will lock it down 
+	 * so it can no longer be modified.
+	 */
+	virtual void initialize(); 
 
 	virtual ASTNode* clone() {
 		VarExpr* ret = new VarExpr(m_name);
@@ -79,10 +101,20 @@ public:
 
 	VarExpr(std::string name); 
 
+	/*
+	 * Creates a constant variable.
+	 */
+	VarExpr(std::string name, bool constant);
+
 	/** 
 	 * Creates a variable with a locked down type.
 	 */
 	VarExpr(std::string name, AnyType* type);
+
+	/** 
+	 * Creates a variable with a locked down type and as a constant.
+	 */
+	VarExpr(std::string name, AnyType* type, bool constant);
 };
 
 #endif 
