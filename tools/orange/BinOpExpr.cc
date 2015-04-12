@@ -13,7 +13,7 @@
 bool BinOpExpr::LHSShouldNotBeNull() {
 	// Right now, = can produce a LHS with a null value if the LHS is a variable 
 	// that has yet to be created. 
-	if (m_LHS->getClass() == "VarExpr" && m_op == "=") return false;
+	if (m_LHS->getClass() == "VarExpr" && (m_op == "=" || m_op == "<-")) return false;
 	return true; 
 }
 
@@ -47,7 +47,7 @@ bool BinOpExpr::Validate(Value* LHS, Value* RHS) {
 }
 
 bool BinOpExpr::IsAssignOp(std::string op) {
-	return op == "=" || op == "+=" || op == "-=" || op == "/=" ||
+	return op == "=" || op == "<-" || op == "+=" || op == "-=" || op == "/=" ||
 		op == "*=";
 }
 
@@ -173,7 +173,7 @@ Value* BinOpExpr::Codegen() {
 	}	
 
 	// If we're assigning a variable that doesn't exist, let's create it. 
-	if (m_op == "=" && LHS == nullptr) {
+	if ((m_op == "=" || m_op == "<-") && LHS == nullptr) {
 		VarExpr* vExpr = (VarExpr *)m_LHS; 
 		vExpr->create();
 
@@ -194,7 +194,7 @@ Value* BinOpExpr::Codegen() {
 		CastingEngine::CastValuesToFit(&LHS, &RHS, m_LHS->isSigned(), m_RHS->isSigned());
 	}
     
-	if (m_op == "=") {
+	if (m_op == "=" || m_op == "<-") {
 		GE::builder()->CreateStore(RHS, LHS);
 		return GE::builder()->CreateLoad(LHS);
 	} else if (m_op == "+=") {
@@ -318,12 +318,12 @@ void BinOpExpr::resolve() {
 	m_LHS->resolve();
 	m_RHS->resolve();
 
-	if (m_op == "=" && m_LHS->getClass() == "VarExpr") {
+	if ((m_op == "=" || m_op == "<-") && m_LHS->getClass() == "VarExpr") {
 		// Set the type of LHS if it doesn't exist or this type has higher precedence. 
 		VarExpr* vExpr = (VarExpr *)m_LHS; 
 
 		// Only create this variable if it doesn't exist in a parent scope.
-		if (vExpr->existsInParent() == false) {
+		if (vExpr->existsInParent() == false || m_op == "<-") {
 			vExpr->create(false);
 		}
 
