@@ -57,6 +57,7 @@
 %type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD
+%type <strele> INCREMENT DECREMENT
 %type <paramlist> opt_func_params func_params
 %type <arglist> opt_arg_list arg_list
 %type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
@@ -80,7 +81,7 @@
 
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
-%left OPEN_PAREN CLOSE_PAREN
+%left OPEN_PAREN CLOSE_PAREN INCREMENT DECREMENT
 
 %%
 	
@@ -133,6 +134,12 @@ expression
 	| expression BITWISE_AND expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	| expression BITWISE_OR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	| expression BITWISE_XOR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+
+	| expression INCREMENT { $$ = new IncrementExpr($1, *$2, false); }
+	| INCREMENT expression { $$ = new IncrementExpr($2, *$1, true); }
+
+	| expression DECREMENT { $$ = new IncrementExpr($1, *$2, false); }
+	| DECREMENT expression { $$ = new IncrementExpr($2, *$1, true); }
 
 	| primary { $$ = $1; }
 	;
@@ -258,7 +265,6 @@ inline_unless
 		((IfStmts *)$$)->addBlock(block); 
 	}
 	;
-
 
 return_or_expr
 	: return { $$ = $1; }

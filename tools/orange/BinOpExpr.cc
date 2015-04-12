@@ -197,7 +197,28 @@ Value* BinOpExpr::Codegen() {
 	if (m_op == "=") {
 		GE::builder()->CreateStore(RHS, LHS);
 		return GE::builder()->CreateLoad(LHS);
-	} // other assign ops 
+	} else if (m_op == "+=") {
+		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
+		Value* retVal = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "+", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+		GE::builder()->CreateStore(retVal, LHS);
+		return retVal;
+	} else if (m_op == "-=") {
+		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
+		Value* retVal = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "-", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+		GE::builder()->CreateStore(retVal, LHS);
+		return retVal;		
+	} else if (m_op == "*=") {
+		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
+		Value* retVal = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "*", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+		GE::builder()->CreateStore(retVal, LHS);
+		return retVal;				
+	} else if (m_op == "/=") {
+		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
+		Value* retVal = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "/", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+		GE::builder()->CreateStore(retVal, LHS);
+		return retVal;				
+	}
+
 
 	if (IsCustomOp(m_op)) {
 		// For && and ||, we have two blocks: check and continue. 
