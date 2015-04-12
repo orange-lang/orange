@@ -62,6 +62,34 @@ AnyType* VarExpr::getType() {
 	return ASTNode::getType();
 }
 
+void VarExpr::setType(AnyType* type) {
+	m_type = type;
+	
+	// If this variable exists in the symtab, set this type for that, too.
+	SymTable* tab = GE::runner()->topBlock()->symtab();
+	ASTNode* tabVar = tab->find(m_name);
+	
+	if (tabVar && tabVar->getClass() == "VarExpr" && tabVar != this) {
+			((VarExpr *)tabVar)->setType(type);
+	}
+}
+
+bool VarExpr::isLocked() {
+	if (m_locked) return true; 
+
+	// we may not be referring to the VarExpr here; look in the symtab.
+	SymTable* tab = GE::runner()->topBlock()->symtab();
+	ASTNode* tabVar = tab->find(m_name);
+
+	if (tabVar && tabVar->getClass() == "VarExpr" && tabVar != this) {
+		return ((VarExpr *)tabVar)->isLocked();
+	}
+
+	return false;
+}
+
+
+
 void VarExpr::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true; 
@@ -86,10 +114,6 @@ void VarExpr::create(bool throwError) {
 bool VarExpr::existsInParent() {
 	SymTable* tab = GE::runner()->topBlock()->symtab();
 	return tab->find(m_name) != nullptr;
-}
-
-void VarExpr::setSigned(bool signed_var) {
-	m_signed = signed_var; 
 }
 
 void VarExpr::setValue(Value* value) {

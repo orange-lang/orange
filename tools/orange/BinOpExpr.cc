@@ -75,7 +75,13 @@ Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, 
 		return isFPOp ? Instruction::FSub : Instruction::Sub;
 	} else if (op == "*") {
 		return isFPOp ? Instruction::FMul : Instruction::Mul;
-	} else if (op == "%" || op == "mod") {
+	} else if (op == "/") {
+		if (isFPOp) {
+			return Instruction::FDiv;
+		} else {
+			return (signed1 || signed2) ? Instruction::SDiv : Instruction::UDiv;
+		}		
+	}	else if (op == "%" || op == "mod") {
 		if (isFPOp) {
 			return Instruction::FRem;
 		} else {
@@ -177,8 +183,16 @@ Value* BinOpExpr::Codegen() {
 		VarExpr* vExpr = (VarExpr *)m_LHS; 
 		vExpr->create();
 
+		if (vExpr->getType()->isVoidTy() == false) {
+			CastingEngine::CastValueToType(&RHS, vExpr->getType(), vExpr->isSigned());
+		}
+		
 		vExpr->setValue(RHS);
-		vExpr->setType(new AnyType(RHS->getType(), m_RHS->isSigned()));
+		
+		if (vExpr->getType()->isVoidTy()) {
+			vExpr->setType(new AnyType(RHS->getType(), m_RHS->isSigned()));
+		}
+		
 		return GE::builder()->CreateLoad(vExpr->getValue());
 	}
 
@@ -189,7 +203,7 @@ Value* BinOpExpr::Codegen() {
 	// If we're assigning, we want to cast RHS to LHS (forced).
 	// Otherwise, cast them to fit.
 	if (IsAssignOp(m_op)) {
-		CastingEngine::CastValueToType(&RHS, m_LHS->getType(), true);
+		CastingEngine::CastValueToType(&RHS, m_LHS->getType(), m_LHS->isSigned(), true);
 	} else {
 		CastingEngine::CastValuesToFit(&LHS, &RHS, m_LHS->isSigned(), m_RHS->isSigned());
 	}
@@ -331,6 +345,14 @@ void BinOpExpr::resolve() {
 			vExpr->setType(m_RHS->getType());
 		} else if (vExpr->isLocked() == false && CastingEngine::GetFittingType(vExpr->getType(), m_RHS->getType()) == m_RHS->getType()) {
 			vExpr->setType(m_RHS->getType());
+		}
+	}
+	
+	if (IsAssignOp(m_op) && m_LHS->getClass() == "VarExpr") {
+		VarExpr* var = (VarExpr*)m_LHS;
+		
+		if (var->isLocked() == false) {
+			var->setType(m_RHS->getType());
 		}
 	}
 }

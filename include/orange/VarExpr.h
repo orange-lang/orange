@@ -31,7 +31,7 @@ protected:
 public:
 	virtual std::string getClass() { return "VarExpr"; }
 
-	virtual bool isLocked() const { return m_locked; }
+	virtual bool isLocked();
 
 	virtual Value* Codegen();
 
@@ -48,15 +48,13 @@ public:
 
 	virtual AnyType* type() const { return m_type; }
 
-	virtual void setType(AnyType* type) { m_type = type; }
+	virtual void setType(AnyType* type);
 
 	virtual Value* getValue();
 
 	virtual void resolve();
 
-	virtual bool isSigned() { return m_signed; }
-
-	virtual void setSigned(bool signed_var); 
+	virtual bool isSigned() { return getType()->isSigned(); }
 
 	virtual void setValue(Value* value);
 

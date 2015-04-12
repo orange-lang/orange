@@ -54,7 +54,7 @@
 %type <block> statements
 %type <node> statement return_or_expr
 %type <expr> expression primary VALUE
-%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless
+%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD 
 %type <strele> INCREMENT DECREMENT ARROW_LEFT
@@ -105,6 +105,7 @@ statement
 	| unless_statement term { $$ = $1; }
 	| inline_if term { $$ = $1; }
 	| inline_unless term { $$ = $1; }
+	| variable_decl term { $$ = $1; }
 	;
 
 expression
@@ -266,6 +267,10 @@ inline_unless
 		((IfStmts *)$$)->addBlock(block); 
 	}
 	;
+
+variable_decl
+	: any_type TYPE_ID { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1)); }
+	| any_type TYPE_ID ASSIGN expression  { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1), $4); }
 
 return_or_expr
 	: return { $$ = $1; }

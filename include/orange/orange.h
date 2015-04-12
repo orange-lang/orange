@@ -19,3 +19,4 @@
 #include "CondBlock.h"
 #include "IfStmts.h"
 #include "IncrementExpr.h"
+#include "ExplicitDeclStmt.h"
