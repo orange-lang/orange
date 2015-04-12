@@ -56,6 +56,11 @@ bool BinOpExpr::IsCompareOp(std::string op) {
 		op == "==" || op == "!=";
 }
 
+bool BinOpExpr::IsCustomOp(std::string op) {
+	return op == "&&" || op == "and" || op == "||" || op == "or";
+}
+
+
 Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, StrElement op, Value* value2, bool signed2) {
 	if ((value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy() == false) || 
 		(value2->getType()->isFloatingPointTy() && value1->getType()->isFloatingPointTy() == false)) {
@@ -170,6 +175,54 @@ Value* BinOpExpr::Codegen() {
 		return GE::builder()->CreateLoad(LHS);
 	} // other assign ops 
 
+	if (IsCustomOp(m_op)) {
+		// For && and ||, we have two blocks: check and continue. 
+		// Check is always used to modify the resulting value. 
+		// The value starts initially with being LHS. 
+		// If check is called, the value changes to the value of RHS.
+		// Both LHS and RHS must be casted to booleans.
+		// The nature of when we go to check is determined by && and ||.
+		if (m_op == "&&" || m_op == "and" || m_op == "||" || m_op == "or") {
+			bool castedL = CastingEngine::CastValueToType(&LHS, AnyType::getUIntNTy(1), false, true);
+			bool castedR = CastingEngine::CastValueToType(&RHS, AnyType::getUIntNTy(1), false, true);
+
+			if (castedL == false || castedR == false) {
+				throw CompilerMessage(*this, "both LHS and RHS must be castable to a boolean!");
+			}
+
+			Value *booleanVal = GE::builder()->CreateAlloca(AnyType::getUIntNTy(1)->getLLVMType());
+			GE::builder()->CreateStore(LHS, booleanVal);
+
+			// Get the function we're in to create the blocks
+			auto curFunction   = (FunctionStmt*)GE::runner()->symtab()->findStructure("FunctionStmt");
+			auto llvmFunction  = (Function *)curFunction->getValue();
+
+			// Create our blocks 
+			auto checkBlock    = BasicBlock::Create(GE::runner()->context(), "check", llvmFunction, curFunction->getBlockEnd());
+			auto continueBlock = BasicBlock::Create(GE::runner()->context(), "continue", llvmFunction, curFunction->getBlockEnd());
+
+			if (m_op == "&&" || m_op == "and") {
+				// If LHS is true, we go to check. If it's false, we go to continue. 
+				// The reason for this is short circuiting; L && R will only ever evaluate 
+				// R if L is true, since false && x will never evaluate to true, independent of x.
+				GE::builder()->CreateCondBr(LHS, checkBlock, continueBlock);
+				GE::builder()->SetInsertPoint(checkBlock);
+				GE::builder()->CreateStore(RHS, booleanVal);
+			} else if (m_op	== "||" || m_op	== "or") {
+				// IF LHS is true, we go to continue. If it's false, we go to check.
+				// The reason for this is short circuiting; L || R will only ever evaluate R 
+				// if L is false; since true || x will always evaluate to true, independent of x.
+				GE::builder()->CreateCondBr(LHS, continueBlock, checkBlock);
+				GE::builder()->SetInsertPoint(checkBlock);
+				GE::builder()->CreateStore(RHS, booleanVal);
+			}
+
+			GE::builder()->CreateBr(continueBlock);
+			GE::builder()->SetInsertPoint(continueBlock);
+			return GE::builder()->CreateLoad(booleanVal);
+		}
+	}
+
 	if (IsCompareOp(m_op) == false) {
 		return GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);
 	} else {
@@ -239,6 +292,7 @@ void BinOpExpr::resolve() {
 
 bool BinOpExpr::isSigned() {
 	if (IsCompareOp(m_op)) return false;
+	if (IsCustomOp(m_op)) return false;
 
 	return m_LHS->isSigned() || m_RHS->isSigned();
 }

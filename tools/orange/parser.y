@@ -52,11 +52,11 @@
 %token CONST
 
 %type <block> statements
-%type <node> statement
+%type <node> statement return_or_expr
 %type <expr> expression primary VALUE
 %type <stmt> return function extern_function if_statement inline_if
 %type <str> TYPE_ID basic_type 
-%type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE
+%type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR
 %type <paramlist> opt_func_params func_params
 %type <arglist> opt_arg_list arg_list
 %type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
@@ -64,10 +64,15 @@
 %type <number> var_ptrs
 %type <blocklist> else_ifs_or_end
 
+/* lowest to highest precedence */
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
 
-%left COMP_LT COMP_GT LEQ GEQ
+%left LOGICAL_OR 
+%left LOGICAL_AND
+
 %left EQUALS NEQUALS 
+
+%left COMP_LT COMP_GT LEQ GEQ
 
 %left PLUS MINUS
 %left TIMES DIVIDE
@@ -114,6 +119,9 @@ expression
 
 	|	expression TIMES expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); } 
 	|	expression DIVIDE expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+
+	| expression LOGICAL_AND expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	| expression LOGICAL_OR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
 	| primary { $$ = $1; }
 	;
@@ -210,13 +218,18 @@ else_ifs_or_end
 	;
 
 inline_if
-	: expression IF expression {
+	: return_or_expr IF expression {
 		SymTable* tab = GE::runner()->topBlock()->symtab();
 		CondBlock* block = new CondBlock($3, tab);
 		block->addStatement($1);
 		$$ = new IfStmts;
 		((IfStmts *)$$)->addBlock(block); 
 	}
+	;
+
+return_or_expr
+	: return { $$ = $1; }
+	| expression { $$ = $1; }
 	;
 
 return

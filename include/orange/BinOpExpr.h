@@ -62,6 +62,14 @@ public:
 	static bool IsCompareOp(std::string op);
 
 	/**
+	 * Returns ture if an operator is not handled by LLVM natively and 
+	 * needs some custom logic to handle it.
+	 *
+	 * @return True if op is a custom operator, false otherwise.
+	 */
+	static bool IsCustomOp(std::string op);
+
+	/**
 	 * Gets the LLVM binary ops function from two values.
 	 *
 	 * @param value1 The first value to use.
