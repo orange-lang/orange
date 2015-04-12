@@ -113,7 +113,7 @@ Value* Loop::Codegen() {
 
 	// After the body is generated, if it doesn't have a return statement, 
 	// jump to the afterthought. 
-	if (m_body_block->getTerminator() == nullptr) {
+	if (hasReturn() == false) {
 		GE::builder()->CreateBr(m_afterthought_block);
 	}
 
