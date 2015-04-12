@@ -52,10 +52,11 @@ void CondBlock::resolve() {
 	Block::resolve();
 }
 
-CondBlock::CondBlock(Expression* condition, SymTable* tab) : Block(tab) {
+CondBlock::CondBlock(Expression* condition, SymTable* tab, bool inverted) : Block(tab) {
 	if (condition == nullptr) {
 		throw std::runtime_error("condition must not be null for CondBlock!");
 	}
 
 	m_condition = condition; 
+	m_inverted = inverted;
 }

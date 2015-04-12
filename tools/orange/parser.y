@@ -54,9 +54,9 @@
 %type <block> statements
 %type <node> statement return_or_expr
 %type <expr> expression primary VALUE
-%type <stmt> return function extern_function if_statement inline_if
+%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless
 %type <str> TYPE_ID basic_type 
-%type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR
+%type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD
 %type <paramlist> opt_func_params func_params
 %type <arglist> opt_arg_list arg_list
 %type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
@@ -71,11 +71,15 @@
 %left LOGICAL_AND
 
 %left EQUALS NEQUALS 
-
 %left COMP_LT COMP_GT LEQ GEQ
 
+%left BITWISE_OR
+%left BITWISE_XOR
+%left BITWISE_AND
+
+
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE MOD
 %left OPEN_PAREN CLOSE_PAREN
 
 %%
@@ -97,7 +101,9 @@ statement
 	| extern_function term { $$ = $1; }
 	| return term { $$ = $1; }
 	| if_statement term { $$ = $1; }
+	| unless_statement term { $$ = $1; }
 	| inline_if term { $$ = $1; }
+	| inline_unless term { $$ = $1; }
 	;
 
 expression
@@ -119,9 +125,14 @@ expression
 
 	|	expression TIMES expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); } 
 	|	expression DIVIDE expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	| expression MOD expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
 	| expression LOGICAL_AND expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	| expression LOGICAL_OR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+
+	| expression BITWISE_AND expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	| expression BITWISE_OR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+	| expression BITWISE_XOR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
 	| primary { $$ = $1; }
 	;
@@ -226,6 +237,28 @@ inline_if
 		((IfStmts *)$$)->addBlock(block); 
 	}
 	;
+
+unless_statement
+	: UNLESS expression term {
+		SymTable *tab = new SymTable(GE::runner()->symtab());
+		$<stmt>$ = new CondBlock($2, tab, true);
+		GE::runner()->pushBlock((CondBlock *)$$);
+	} statements END {
+		$$ = new IfStmts;
+		((IfStmts *)$$)->addBlock((CondBlock*)$<stmt>4); 
+		SET_LOCATION($$);
+	}
+
+inline_unless
+	: return_or_expr UNLESS expression {
+		SymTable* tab = GE::runner()->topBlock()->symtab();
+		CondBlock* block = new CondBlock($3, tab, true);
+		block->addStatement($1);
+		$$ = new IfStmts;
+		((IfStmts *)$$)->addBlock(block); 
+	}
+	;
+
 
 return_or_expr
 	: return { $$ = $1; }

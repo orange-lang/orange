@@ -14,10 +14,13 @@
 class CondBlock : public Block {
 private:
 	Expression* m_condition; 
+	bool m_inverted = false;
 public:
 	virtual std::string getClass() { return "CondBlock"; }
 
 	Expression* condition() const { return m_condition; }
+
+	bool inverted() const { return m_inverted; }
 
 	/** 
 	 * Codegen the condition assigned to this block, but NOT any of the statements. 
@@ -30,7 +33,7 @@ public:
 
 	virtual void resolve();
 
-	CondBlock(Expression* condition, SymTable* tab);
+	CondBlock(Expression* condition, SymTable* tab, bool inverted = false);
 };
 
 #endif 

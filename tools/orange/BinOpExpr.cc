@@ -75,6 +75,30 @@ Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, 
 		return isFPOp ? Instruction::FSub : Instruction::Sub;
 	} else if (op == "*") {
 		return isFPOp ? Instruction::FMul : Instruction::Mul;
+	} else if (op == "%" || op == "mod") {
+		if (isFPOp) {
+			return Instruction::FRem;
+		} else {
+			return (signed1 || signed2) ? Instruction::SRem : Instruction::URem;
+		}
+	} else if (op == "|") {
+		if (isFPOp) {
+			throw CompilerMessage(op, "Cannot do |; neither LHS or RHS can be a float!");
+		} else {
+			return Instruction::Or;
+		}
+	} else if (op == "&") {
+		if (isFPOp) {
+			throw CompilerMessage(op, "Cannot do |; neither LHS or RHS can be a float!");
+		} else {
+			return Instruction::And;
+		}
+	} else if (op == "^") {
+		if (isFPOp) {
+			throw CompilerMessage(op, "Cannot do |; neither LHS or RHS can be a float!");
+		} else {
+			return Instruction::Xor;
+		}
 	}
 
 	throw CompilerMessage(op, "Unhandled operation " + op);
@@ -124,7 +148,7 @@ CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrE
 		} else {
 			return CmpInst::ICMP_NE;
 		}
-	}
+	} 
 
 	throw CompilerMessage(op, "Unhandled compare operation " + op);
 }

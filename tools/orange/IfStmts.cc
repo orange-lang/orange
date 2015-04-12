@@ -54,6 +54,10 @@ Value* IfStmts::Codegen() {
 				throw CompilerMessage(*(condBlock->condition()), "could not cast to boolean!");
 			}
 
+			if (condBlock->inverted()) {
+				condition = GE::builder()->CreateNot(condition);
+			}
+
 			GE::builder()->CreateCondBr(condition, trueBlock, nextCheck);
 		} else {
 			// Go right to our true block
