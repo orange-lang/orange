@@ -147,6 +147,22 @@ void VarExpr::setValueTo(Value *value) {
 	m_value = value; 
 }
 
+Value* VarExpr::allocate() {
+	if (m_value != nullptr) {
+		throw CompilerMessage(*this, "variable already allocated!");
+	}
+
+	// If we're variadic array, getLLVMType() will just return type*. 
+	// However, we need to actually initialize ourselves with the number 
+	// of elements, so handle that here 
+
+	// TODO: see above 
+
+	Value* v = GE::builder()->CreateAlloca(getLLVMType(), nullptr, name());
+	setValueTo(v);
+	return v; 
+}
+
 VarExpr::VarExpr(std::string name) : m_name(name) { 
 
 }

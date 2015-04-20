@@ -80,6 +80,10 @@ int AnyType::getIntegerBitWidth() const {
 	return m_type->getIntegerBitWidth();
 }
 
+AnyType* AnyType::getPointerTo() {
+	AnyType* retType = new AnyType(m_type_str, m_ptrs + 1);
+	return retType;
+}
 
 AnyType::AnyType(std::string type, int ptrs) {
 	m_type_str = type; 

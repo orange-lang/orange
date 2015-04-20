@@ -53,7 +53,7 @@
 
 %type <block> statements
 %type <node> statement return_or_expr const_var initializer
-%type <expr> expression primary VALUE opt_expr
+%type <expr> expression primary VALUE opt_expr array_expr
 %type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl for_loop inline_loop loop_breaks
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD 
@@ -141,12 +141,6 @@ expression
 	| expression BITWISE_OR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	| expression BITWISE_XOR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
-	| expression INCREMENT { $$ = new IncrementExpr($1, *$2, false); }
-	| INCREMENT expression { $$ = new IncrementExpr($2, *$1, true); }
-
-	| expression DECREMENT { $$ = new IncrementExpr($1, *$2, false); }
-	| DECREMENT expression { $$ = new IncrementExpr($2, *$1, true); }
-
 	| primary { $$ = $1; }
 	;
 
@@ -157,6 +151,15 @@ primary
 	|	TYPE_ID { $$ = new VarExpr(*$1); SET_LOCATION($$); }
 	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN { $$ = new FuncCall(*$1, *$3); SET_LOCATION($$); }
 	| MINUS expression { $$ = new NegativeExpr($2); }
+
+	| expression INCREMENT { $$ = new IncrementExpr($1, *$2, false); }
+	| INCREMENT expression { $$ = new IncrementExpr($2, *$1, true); }
+
+	| expression DECREMENT { $$ = new IncrementExpr($1, *$2, false); }
+	| DECREMENT expression { $$ = new IncrementExpr($2, *$1, true); }
+
+	| array_expr 					 { $$ = $1; }
+
 	;
 
 function
@@ -355,6 +358,10 @@ return_or_expr
 	: return { $$ = $1; }
 	| expression { $$ = $1; }
 	| loop_breaks { $$ = $1; }
+	;
+
+array_expr
+	: OPEN_BRACKET opt_arg_list CLOSE_BRACKET { $$ = new ArrayExpr(*$2); }
 	;
 
 return

@@ -26,10 +26,11 @@ Value* ExplicitDeclStmt::Codegen() {
 
 		m_var->setValue(value);
 	} else {
-		// Otherwise, just create our variable without a value.
-		m_var->setValueTo(GE::builder()->CreateAlloca(m_var->getLLVMType(), nullptr, m_var->name()));
+		// Otherwise, just allocate the variable.
+		m_var->allocate();
 	}
 
+	// Do any initializations that we may need.
 	m_var->initialize();
 	return m_var->Codegen();
 }

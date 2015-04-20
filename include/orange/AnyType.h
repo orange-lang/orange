@@ -18,6 +18,8 @@
 
 using namespace llvm;
 
+class Expression;
+
 class AnyType : public CodeElement {
 private:
 	Type* m_type;
@@ -50,8 +52,19 @@ public:
 	static AnyType* getDoubleTy();
 	static AnyType* getInt8PtrTy();
 
+	/** 
+	 * Gets a type that's a pointer to the current type.
+	 */
+	AnyType* getPointerTo();
+
 	AnyType(Type* type, bool isSigned = false);
 	AnyType(std::string type, int ptrs = 0);
+
+	/**
+	 * Creates an array AnyType with a size that is determined at 
+	 * runtime.
+	 */ 
+	AnyType(std::string type, Expression* arrayExpr, int ptrs = 0);
 }; 
 
 #endif 

@@ -99,6 +99,11 @@ public:
 
 	virtual std::string name() const { return m_name; }
 
+	/**
+	 * Allocates this variable and sets it as its value. 
+	 */
+	virtual Value* allocate();
+
 	VarExpr(std::string name); 
 
 	/*
