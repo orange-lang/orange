@@ -28,6 +28,8 @@ private:
 	bool m_signed = false;
 	int m_ptrs = 0;
 
+	std::vector<int> m_arrays;
+
 	static std::map<std::string, AnyType*> m_defined_tyes;
 public:
 	std::string string() const;
@@ -44,6 +46,8 @@ public:
 	int getIntegerBitWidth() const;
 	int getPointerLength() const { return m_ptrs; }
 
+	AnyType* getArray(int size);
+
 	static AnyType* getIDTy();
 	static AnyType* getVoidTy();
 	static AnyType* getUIntNTy(int size);
@@ -58,7 +62,7 @@ public:
 	AnyType* getPointerTo();
 
 	AnyType(Type* type, bool isSigned = false);
-	AnyType(std::string type, int ptrs = 0);
+	AnyType(std::string type, std::vector<int> arrays = std::vector<int>(), int ptrs = 0);
 
 	/**
 	 * Creates an array AnyType with a size that is determined at 

@@ -29,7 +29,8 @@ AnyType* ArrayExpr::getType() {
 		highestType = CastingEngine::GetFittingType(highestType, m_elements[i]->getType());
 	}
 
-	return highestType->getArray(m_elements.size());
+	AnyType* ret = highestType->getArray(m_elements.size());
+	return ret; 
 }
 
 void ArrayExpr::resolve() {

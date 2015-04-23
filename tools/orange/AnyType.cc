@@ -81,13 +81,14 @@ int AnyType::getIntegerBitWidth() const {
 }
 
 AnyType* AnyType::getPointerTo() {
-	AnyType* retType = new AnyType(m_type_str, m_ptrs + 1);
+	AnyType* retType = new AnyType(m_type_str, std::vector<int>(), m_ptrs + 1);
 	return retType;
 }
 
-AnyType::AnyType(std::string type, int ptrs) {
+AnyType::AnyType(std::string type, std::vector<int> arrays, int ptrs) {
 	m_type_str = type; 
 	m_signed = false; 
+	m_arrays = arrays;
 
 	if (type == "char" || type == "int8") {
 		m_type = Type::getIntNTy(GE::runner()->context(), 8);
@@ -128,7 +129,28 @@ AnyType::AnyType(std::string type, int ptrs) {
 	for (int i = 0; i < m_ptrs; i++) {
 		m_type = m_type->getPointerTo();
 	}
+
+	for (int i = 0; i < m_arrays.size(); i++) {
+		m_type = ArrayType::get(m_type, m_arrays[i]);
+	}
 }
+
+AnyType* AnyType::getArray(int size) {
+	std::stringstream ss; 
+	ss << m_type_str << "[" << size << "]" << m_ptrs; 
+	std::string type = ss.str();
+
+	if (m_defined_tyes.find(type) != m_defined_tyes.end()) {
+		return m_defined_tyes.find(type)->second;
+	}
+
+	std::vector<int> arrays = {size};
+
+	AnyType* arrayTy = new AnyType(m_type_str, arrays, m_ptrs);
+	m_defined_tyes[type] = arrayTy;
+	return arrayTy;
+}
+
 
 AnyType* AnyType::getIDTy() {
 	if (m_defined_tyes.find("id") != m_defined_tyes.end()) {
@@ -202,7 +224,7 @@ AnyType* AnyType::getInt8PtrTy() {
 		return m_defined_tyes.find("int8*")->second;
 	}
 
-	AnyType* voidTy = new AnyType("int8", 1);
+	AnyType* voidTy = new AnyType("int8", std::vector<int>(), 1);
 	m_defined_tyes["int8*"] = voidTy; 
 	return voidTy;
 }

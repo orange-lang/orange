@@ -392,7 +392,7 @@ basic_type
 	;
 
 any_type
-	: basic_type var_ptrs { $$ = new AnyType(*$1, $2); }
+	: basic_type var_ptrs { $$ = new AnyType(*$1, std::vector<int>(), $2); }
 	;
 
 var_ptrs 
