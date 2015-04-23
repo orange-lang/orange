@@ -13,7 +13,13 @@ Value* ArrayExpr::Codegen() {
 }
 
 ASTNode* ArrayExpr::clone() {
-	throw std::runtime_error("NYI: ArrayExpr::clone()");
+	ArgList cloned_elements; 
+
+	for (auto element : m_elements) {
+		cloned_elements.push_back((Expression *)element->clone());
+	}
+
+	return new ArrayExpr(cloned_elements);
 }
 
 AnyType* ArrayExpr::getType() {
