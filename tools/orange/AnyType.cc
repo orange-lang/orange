@@ -94,6 +94,31 @@ AnyType* AnyType::getPointerTo() {
 	return retType;
 }
 
+AnyType* AnyType::getPointerElementType() {
+	if (m_ptrs == 0) {
+		throw CompilerMessage(*this, "Not a pointer!");
+	}
+
+	std::stringstream ss; 
+	ss << m_type_str; 
+
+	for (int array : m_arrays) {
+		ss << "[" << array << "]";
+	} 
+
+	ss << (m_ptrs - 1); 
+	std::string type = ss.str();
+
+	if (m_defined_tyes.find(type) != m_defined_tyes.end()) {
+		return m_defined_tyes.find(type)->second; 
+	}
+
+	AnyType* someTy = new AnyType(m_type_str, m_arrays, m_ptrs - 1);
+	m_defined_tyes[type] = someTy; 
+	return someTy; 
+}
+
+
 AnyType::AnyType(std::string type, std::vector<int> arrays, int ptrs) {
 	m_type_str = type; 
 	m_signed = false; 

@@ -15,10 +15,10 @@ Value* ExplicitDeclStmt::Codegen() {
 	if (m_expr) {
 		Value* value = m_expr->Codegen();
 
-		if (m_expr->returnsPtr()) {
+		if (m_expr->returnsPtr() && value->getType()->isArrayTy()) {
 			value = GE::builder()->CreateLoad(value);
 		}
-
+		
 		bool casted = CastingEngine::CastValueToType(&value, m_var->getType(), m_var->isSigned(), true);
 		if (casted == false) {
 			throw CompilerMessage(*m_expr, "Could not cast expression to variable type!");
@@ -48,7 +48,6 @@ AnyType* ExplicitDeclStmt::getType() {
 }
 
 bool ExplicitDeclStmt::isSigned() {
-	printf("hey<1333\n");
 	return m_var->isSigned();
 }
 

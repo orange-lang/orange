@@ -23,3 +23,4 @@
 #include "Loop.h"
 #include "LoopSkip.h"
 #include "ArrayExpr.h"
+#include "ArrayAccess.h"

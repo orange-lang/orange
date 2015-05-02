@@ -43,6 +43,7 @@ public:
 	bool isDoubleTy() const;
 	bool isFloatingPointTy() const;
 	bool isPointerTy() const { return m_ptrs > 0; }
+	bool isArrayTy() const { return m_arrays.size() > 0; }
 	int getIntegerBitWidth() const;
 	int getPointerLength() const { return m_ptrs; }
 
@@ -65,6 +66,11 @@ public:
 	 * Gets a type that's being stored by this array.
 	 */
 	AnyType* getElementType(); 
+
+	/**
+	 * Gets the type that a pointer is pointing to.
+	 */ 
+	AnyType* getPointerElementType(); 
 
 	/** 
 	 * Allocates a value of this type.

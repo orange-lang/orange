@@ -70,19 +70,25 @@ bool CastingEngine::CastValueToType(Value** v, AnyType* t, bool isSigned, bool f
 		delete srcType;
 		return true; 
 	}
-
+	
 	if (srcType->isPointerTy() && t->isIntegerTy()) {
 		*v = GE::builder()->CreatePtrToInt(*v, llvmT);
 		delete srcType;
 		return true; 
 	}
 
-	if (t->isPointerTy() && srcType->isPointerTy()) {
+	if (t->isIntegerTy() && srcType->isPointerTy()) {
 		*v = GE::builder()->CreateIntToPtr(*v, llvmT); 
 		delete srcType;
 		return true;
 	}
 
+	if (t->isPointerTy() && srcType->isArrayTy()) {
+		*v = GE::builder()->CreateBitCast(*v, llvmT);
+		delete srcType;
+		return true;
+	}
+	
 
 	throw std::runtime_error("could not determine type to cast.");
 	return false;

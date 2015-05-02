@@ -159,6 +159,7 @@ primary
 	| DECREMENT expression { $$ = new IncrementExpr($2, *$1, true); }
 
 	| array_expr 					 { $$ = $1; }
+	| TYPE_ID OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess(new VarExpr(*$1), $3); }
 
 	;
 
