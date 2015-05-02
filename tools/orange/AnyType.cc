@@ -49,6 +49,10 @@ std::string AnyType::string() const {
 	std::stringstream ss;
 	ss << m_type_str; 
 	for (int i = 0; i < m_ptrs; i++) ss << "*";
+	for (int arraysz : m_arrays) {
+		ss << "[" << arraysz << "]";
+	}
+
 	return ss.str();
 }
 

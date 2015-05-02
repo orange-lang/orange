@@ -8,6 +8,24 @@
 
 #include <orange/ArrayExpr.h>
 
+std::string ArrayExpr::string() {
+	std::stringstream ss; 
+
+	ss << "[ "; 
+
+	for (int i = 0; i < m_elements.size(); i++) {
+		ss << m_elements[i]->string();
+
+		if (i + 1 < m_elements.size()) {
+			ss << ", ";
+		}
+	}
+
+	ss << " ]";
+
+	return ss.str();
+}
+
 Value* ArrayExpr::Codegen() {
 	throw std::runtime_error("NYI: ArrayExpr::Codegen()");
 }

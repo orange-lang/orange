@@ -27,6 +27,8 @@ public:
 
 	virtual ASTNode* clone();
 
+	virtual std::string string();
+
 	virtual AnyType* getType();
 
 	virtual void resolve();
