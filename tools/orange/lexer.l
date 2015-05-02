@@ -168,7 +168,7 @@
 "mod"										STR_ELEMENT; return MOD;
 
 \"(\\.|[^\\"])*\"				SAVESTR(); return STRING;
-[A-Za-z][A-Za-z0-9_]* 	SAVESTR(); return TYPE_ID;
+[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 	SAVESTR(); return TYPE_ID;
 
 .												yyerror("invalid token");
 
