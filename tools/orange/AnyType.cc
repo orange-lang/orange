@@ -219,17 +219,49 @@ AnyType::AnyType(std::string type, std::vector<Expression*> arrayExpr, int ptrs)
 		m_type = m_type->getPointerTo();
 	}
 
-	for (int i = arrayExpr.size() - 1; i >= 0; i--) {
-		m_arrays_expr.push_back(arrayExpr[i]);
-		m_type = m_type->getPointerTo();
+	// Now we need to detect if it's a variable-sized array.
+	bool variable_sized = false;
+
+	for (auto expr : arrayExpr) {
+		if (expr->isConstant() == false) {
+			variable_sized = true; 
+			break; 
+		}
 	}
+
+	if (variable_sized == true) {
+		for (int i = arrayExpr.size() - 1; i >= 0; i--) {
+			m_arrays_expr.push_back(arrayExpr[i]);
+			m_type = m_type->getPointerTo();
+		}
+	} else {
+		// All of the expressions here are constant
+
+
+		for (int i = 0; i < arrayExpr.size(); i++) {
+			auto expr = arrayExpr[i];
+
+			if (expr->getClass() != "UIntVal" && expr->getClass() != "IntVal") {
+				throw CompilerMessage(*this, "can only use integers for the size of an array!");
+			}
+
+			if (expr->getClass() == "UIntVal") {
+				UIntVal* uintval = (UIntVal*)expr; 
+				m_arrays.push_back((int)uintval->value);			
+			} else {
+				IntVal* intval = (IntVal*)expr; 
+				m_arrays.push_back((int)intval->value);							
+			}
+		}
+
+		for (int i = m_arrays.size() - 1; i >= 0; i--) {
+			m_type = ArrayType::get(m_type, m_arrays[i]);
+		}
+	}
+
+
 }
 
-
-
-/** 
- * Gets a type that's being stored by this array.
- */
 AnyType* AnyType::getElementType() {
 	if (m_arrays.size() == 0) {
 		throw CompilerMessage(*this, "Not an array!");
@@ -255,6 +287,16 @@ AnyType* AnyType::getElementType() {
 	AnyType* someTy = new AnyType(m_type_str, arrays, m_ptrs);
 	m_defined_tyes[type] = someTy; 
 	return someTy; 
+}
+
+AnyType* AnyType::getBaseType() {
+	if (m_defined_tyes.find(m_type_str) != m_defined_tyes.end()) {
+		return m_defined_tyes.find(m_type_str)->second; 
+	}	
+
+	AnyType* someTy = new AnyType(m_type_str, std::vector<int>(), 0);
+	m_defined_tyes[m_type_str] = someTy; 
+	return someTy;
 }
 
 AnyType* AnyType::getArray(int size) {
@@ -362,3 +404,9 @@ AnyType* AnyType::getInt8PtrTy() {
 Value* AnyType::allocate() {
 	return GE::builder()->CreateAlloca(getLLVMType());
 }
+
+bool AnyType::isConstantArray() const { 
+	if (m_arrays.size() > 0 && m_arrays_expr.size() == 0) return true; 
+	return false;
+}
+

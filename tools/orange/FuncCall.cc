@@ -37,17 +37,18 @@ Value* FuncCall::Codegen() {
 		for (unsigned int i = 0; i < llvmFunction->arg_size(); i++, arg_it++) {
 			Value *vArg = m_arguments[i]->Codegen();
 
-			if (m_arguments[i]->returnsPtr()) {
+			if (m_arguments[i]->returnsPtr() && m_arguments[i]->getType()->isArrayTy() == false) {
 				vArg = GE::builder()->CreateLoad(vArg);
 			}
 
 			AnyType* anyType = new AnyType(arg_it->getType());
+
 			CastingEngine::CastValueToType(&vArg, anyType, m_arguments[i]->isSigned(), true);
 			delete anyType;
 			Args.push_back(vArg);
 		}
 
-	// If we're calling a variable argument function, add our other arguments.
+		// If we're calling a variable argument function, add our other arguments.
 		if (llvmFunction->isVarArg()) {
 			for (unsigned int i = llvmFunction->arg_size(); i < m_arguments.size(); i++) {
 				Value *vArg = m_arguments[i]->Codegen();

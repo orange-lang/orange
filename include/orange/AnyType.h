@@ -46,16 +46,22 @@ public:
 	bool isPointerTy() const { return m_ptrs > 0; }
 	bool isArrayTy() const { return (m_arrays.size() > 0) || (m_arrays_expr.size() > 0); }
 	int getIntegerBitWidth() const;
-	int getPointerLength() const { return m_ptrs; }
+	int getPointerLength() const { return m_ptrs + m_arrays_expr.size(); }
 	int getArrayElements() const { return m_arrays[0]; }
 
 	std::vector<int> getAllArrayElements() const { return m_arrays; }
 	std::vector<Expression* > getAllVariadicArrayElements() const { return m_arrays_expr; }
 
-	bool isConstantArray() const { return m_arrays.size() > 0 && m_arrays_expr.size() == 0; }
+	bool isConstantArray() const;
 	bool isVariadicArray() const { return m_arrays_expr.size() > 0; }
 
 	AnyType* getArray(int size);
+
+	/** 
+	 * Gets the base type from the current type. Removes all arrays 
+	 * and pointers.
+	 */
+	AnyType* getBaseType();
 
 	static AnyType* getIDTy();
 	static AnyType* getVoidTy();

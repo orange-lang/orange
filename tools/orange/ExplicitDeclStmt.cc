@@ -15,11 +15,16 @@ Value* ExplicitDeclStmt::Codegen() {
 	if (m_expr) {
 		Value* value = m_expr->Codegen();
 
-		if (m_expr->returnsPtr()) {
+		// If the expr returns a pointer, don't load if LHS is a pointer and RHS is an array 
+		bool doLoad = m_expr->returnsPtr();
+		if (doLoad && m_var->getType()->isPointerTy() && m_expr->getType()->isArrayTy()) {
+			doLoad = false;
+		}
+
+		if (doLoad) {
 			value = GE::builder()->CreateLoad(value);
 		}
 		
-
 		bool arrayToArray = m_expr->getType()->isArrayTy() && m_var->getType()->isArrayTy(); 
 
 		if (arrayToArray == false) {
@@ -29,7 +34,9 @@ Value* ExplicitDeclStmt::Codegen() {
 			}
 		}
 
-		m_var->setValue(value);
+
+		m_var->allocate();
+		GE::builder()->CreateStore(value, m_var->getValue());
 	} else {
 		// Otherwise, just allocate the variable.
 		m_var->allocate();
@@ -61,8 +68,11 @@ void ExplicitDeclStmt::resolve() {
 	m_resolved = true; 
 
 	m_var->resolve();
-
 	m_var->create();
+
+	if (m_var->getType()->isVariadicArray() && m_expr) {
+		throw CompilerMessage(*m_var, "Variable-sized arrays may not be initialized");
+	}
 
 	if (m_expr) m_expr->resolve();
 }

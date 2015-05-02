@@ -131,6 +131,7 @@ bool VarExpr::existsInParent() {
 }
 
 void VarExpr::setValue(Value* value) {
+
 	if (m_initialized || symtabVar()->m_initialized) {
 		throw CompilerMessage(*this, "cannot modify the value of a constant!");
 	}
@@ -179,7 +180,6 @@ Value* VarExpr::allocate() {
 			}
 
 			if (value->getType()->isIntegerTy() == false) {
-				printf("Whoops\n");
 				throw CompilerMessage(*expr, "Type is not an integer!");
 			}
 

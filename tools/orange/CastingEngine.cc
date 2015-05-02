@@ -89,6 +89,12 @@ bool CastingEngine::CastValueToType(Value** v, AnyType* t, bool isSigned, bool f
 		return true;
 	}
 
+	if (t->isArrayTy() && srcType->isArrayTy()) {
+		// Do no casting.
+		delete srcType; 
+		return false; 
+	}
+
 	throw std::runtime_error("could not determine type to cast.");
 	return false;
 }

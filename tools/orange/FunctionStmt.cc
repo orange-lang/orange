@@ -25,9 +25,10 @@ std::string FunctionStmt::getClonesFullSignature(ArgList args) {
 	std::string ret_name = m_name + "_"; 
 	for (auto arg : args) {
 		AnyType* type = arg->getType();
+		AnyType* basetype = type->getBaseType();
 
-		if (type->isIntegerTy()) {
-			int width = type->getIntegerBitWidth();
+		if (basetype->isIntegerTy()) {
+			int width = basetype->getIntegerBitWidth();
 			switch (width) {
 				case 1:
 					ret_name += "T";
@@ -48,13 +49,19 @@ std::string FunctionStmt::getClonesFullSignature(ArgList args) {
 					ret_name += "?";
 					break;
 			}
-		} else if (type->isFloatTy()) {
+		} else if (basetype->isFloatTy()) {
 			ret_name += "f";
-		} else if (type->isDoubleTy()) {
+		} else if (basetype->isDoubleTy()) {
 			ret_name += "F";
+		} else {
+			throw CompilerMessage(*this, "Unknown type for generic " + basetype->string());
 		}
 
 		for (int i = 0; i < type->getPointerLength(); i++) {
+			ret_name += "p";
+		}
+
+		for (auto e : type->getAllArrayElements()) {
 			ret_name += "p";
 		}
 	}
@@ -86,7 +93,17 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 
 	for (int i = 0; i < args.size(); i++) {
 		VarExpr* curParam = m_parameters[i];
-		VarExpr* newParam = new VarExpr(curParam->name(), args[i]->getType());
+
+		AnyType* paramType = args[i]->getType();
+
+		// Clones shouldn't accept arrays as parameters since 
+		// it would pass by copy. Turn it into a pointer. 
+		if (paramType->isArrayTy()) {
+			paramType = paramType->getElementType();
+			paramType = paramType->getPointerTo();
+		}	
+
+		VarExpr* newParam = new VarExpr(curParam->name(), paramType);
 		cloned_params.push_back(newParam);
 	}
 

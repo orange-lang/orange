@@ -62,8 +62,8 @@
 %type <paramlist> opt_func_params func_params
 %type <arglist> opt_arg_list arg_list
 %type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
-%type <anytype> any_type 
-%type <number> var_ptrs
+%type <anytype> any_type any_type_no_array
+%type <number> var_ptrs var_arrays_and_ptrs
 %type <blocklist> else_ifs_or_end
 %type <exprlist> var_arrays
 
@@ -192,10 +192,10 @@ opt_func_params
 	;
 
 func_params
-	: func_params COMMA any_type TYPE_ID { $1->push_back(new VarExpr(*$4, $3)); }
+	: func_params COMMA any_type_no_array TYPE_ID { $1->push_back(new VarExpr(*$4, $3)); }
 	| func_params COMMA TYPE_ID { $1->push_back(new VarExpr(*$3)); }
 	| func_params COMMA VARARG { $1->setVarArg(true); }
-	| any_type TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$2, $1)); } 
+	| any_type_no_array TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$2, $1)); } 
 	| TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$1)); }
 	;
 
@@ -403,6 +403,20 @@ any_type
 	: basic_type var_arrays var_ptrs { $$ = new AnyType(*$1, *$2, $3); }
 	;
 
+any_type_no_array 
+	: basic_type var_arrays_and_ptrs { $$ = new AnyType(*$1, std::vector<int>(), $2); }
+	;
+
+var_arrays_and_ptrs
+	: var_arrays_and_ptrs TIMES { $$++; }
+	| var_arrays_and_ptrs OPEN_BRACKET opt_primary CLOSE_BRACKET { $$++; }
+	| { $$ = 0; }
+	; 
+
+opt_primary
+	: primary 
+	| ;
+
 var_arrays
 	: var_arrays OPEN_BRACKET expression CLOSE_BRACKET { $1->push_back($3); }
 	| { $$ = new std::vector<Expression *>(); }
@@ -410,6 +424,7 @@ var_arrays
 var_ptrs 
 	: var_ptrs TIMES { $$++; }
 	| { $$ = 0; }
+	| OPEN_BRACKET CLOSE_BRACKET { $$ = 1; }
 
 						 
 %%

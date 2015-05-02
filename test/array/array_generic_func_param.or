@@ -1,0 +1,7 @@
+def foo(a)
+	a[0] -= 1
+end
+
+a = [1]
+foo(a)
+return a[0]
