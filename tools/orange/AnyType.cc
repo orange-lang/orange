@@ -29,6 +29,11 @@ AnyType::AnyType(Type* type, bool isSigned) {
 
 	m_ptrs = num_ptrs;
 
+	while (type->isArrayTy()) {
+		m_arrays.insert(m_arrays.begin(), type->getArrayNumElements());
+		type = type->getArrayElementType();
+	}
+
 	if (type->isIntegerTy()) {
 		std::stringstream ss; 
 		if (isSigned == false) ss << "u";
@@ -139,6 +144,37 @@ AnyType::AnyType(std::string type, std::vector<int> arrays, int ptrs) {
 	}
 }
 
+
+/** 
+ * Gets a type that's being stored by this array.
+ */
+AnyType* AnyType::getElementType() {
+	if (m_arrays.size() == 0) {
+		throw CompilerMessage(*this, "Not an array!");
+	}
+
+	std::vector<int> arrays = m_arrays; 
+	arrays.pop_back();
+
+	std::stringstream ss; 
+	ss << m_type_str; 
+
+	for (int array : arrays) {
+		ss << "[" << array << "]";
+	} 
+
+	ss << m_ptrs; 
+	std::string type = ss.str();
+
+	if (m_defined_tyes.find(type) != m_defined_tyes.end()) {
+		return m_defined_tyes.find(type)->second; 
+	}
+
+	AnyType* someTy = new AnyType(m_type_str, arrays, m_ptrs);
+	m_defined_tyes[type] = someTy; 
+	return someTy; 
+}
+
 AnyType* AnyType::getArray(int size) {
 	std::stringstream ss; 
 	ss << m_type_str << "[" << size << "]" << m_ptrs; 
@@ -231,4 +267,8 @@ AnyType* AnyType::getInt8PtrTy() {
 	AnyType* voidTy = new AnyType("int8", std::vector<int>(), 1);
 	m_defined_tyes["int8*"] = voidTy; 
 	return voidTy;
+}
+
+Value* AnyType::allocate() {
+	return GE::builder()->CreateAlloca(getLLVMType());
 }

@@ -178,6 +178,8 @@ Value* BinOpExpr::Codegen() {
 		throw std::runtime_error("The expression is not valid!");
 	}	
 
+	if (m_RHS->returnsPtr()) RHS = GE::builder()->CreateLoad(RHS);
+
 	// If we're assigning a variable that doesn't exist, let's create it. 
 	if ((m_op == "=" || m_op == "<-") && LHS == nullptr) {
 		VarExpr* vExpr = (VarExpr *)m_LHS; 
@@ -200,7 +202,6 @@ Value* BinOpExpr::Codegen() {
 
 	// Load the LHS if it's a pointer and isn't used as an assign. Load the RHS if it's a pointer.
 	if (IsAssignOp(m_op) == false && m_LHS->returnsPtr()) LHS = GE::builder()->CreateLoad(LHS);
-	if (m_RHS->returnsPtr()) RHS = GE::builder()->CreateLoad(RHS);
 
 	// If we're assigning, we want to cast RHS to LHS (forced).
 	// Otherwise, cast them to fit.

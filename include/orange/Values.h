@@ -12,7 +12,8 @@
 #include "AnyType.h"
 
 class BaseVal : public Expression { 
-
+public:
+	virtual bool isConstant() { return true; }
 };
 
 class StrElement : public CodeElement {

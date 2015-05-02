@@ -61,6 +61,16 @@ public:
 	 */
 	AnyType* getPointerTo();
 
+	/** 
+	 * Gets a type that's being stored by this array.
+	 */
+	AnyType* getElementType(); 
+
+	/** 
+	 * Allocates a value of this type.
+	 */
+	Value* allocate();
+
 	AnyType(Type* type, bool isSigned = false);
 	AnyType(std::string type, std::vector<int> arrays = std::vector<int>(), int ptrs = 0);
 

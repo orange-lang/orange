@@ -33,6 +33,15 @@ public:
 
 	virtual void resolve();
 
+	/**
+	 * Returns whether or not all the elements of the array 
+	 * are constants or not.
+	 * @return True if all the elements of the array are constant, false otherwise.
+	 */
+	virtual bool isConstant();
+
+	virtual bool returnsPtr() { return true; }
+
 	ArrayExpr(ArgList elements);
 };
 
