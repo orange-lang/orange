@@ -208,9 +208,16 @@ Value* BinOpExpr::Codegen() {
 	if (IsAssignOp(m_op)) {
 		CastingEngine::CastValueToType(&RHS, m_LHS->getType(), m_LHS->isSigned(), true);
 	} else {
+		if (IsCompareOp(m_op) == false) {
+			// If we're doing arithmetic with pointers/integers, make LHS an int 		
+			if (LHS->getType()->isPointerTy() && RHS->getType()->isIntegerTy()) {
+				LHS = GE::builder()->CreatePtrToInt(LHS, LHS->getType()->getPointerElementType());
+			}
+		}
+
 		CastingEngine::CastValuesToFit(&LHS, &RHS, m_LHS->isSigned(), m_RHS->isSigned());
 	}
-    
+
 	if (m_op == "=" || m_op == "<-") {
 		GE::builder()->CreateStore(RHS, LHS);
 		return GE::builder()->CreateLoad(LHS);
@@ -286,6 +293,7 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	if (IsCompareOp(m_op) == false) {
+
 		return GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);
 	} else {
 		bool isFPOp = LHS->getType()->isFloatingPointTy() && RHS->getType()->isFloatingPointTy();
@@ -349,12 +357,10 @@ void BinOpExpr::resolve() {
 		} else if (vExpr->isLocked() == false && CastingEngine::GetFittingType(vExpr->getType(), m_RHS->getType()) == m_RHS->getType()) {
 			vExpr->setType(m_RHS->getType());
 		}
-	}
-	
-	if (IsAssignOp(m_op) && m_LHS->getClass() == "VarExpr") {
+	} else if (IsAssignOp(m_op) && m_LHS->getClass() == "VarExpr") {
 		VarExpr* var = (VarExpr*)m_LHS;
 		
-		if (var->isLocked() == false) {
+		if (var->isLocked() == false && CastingEngine::GetFittingType(var->getType(), m_RHS->getType()) == m_RHS->getType()) {
 			var->setType(m_RHS->getType());
 		}
 	}

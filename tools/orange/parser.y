@@ -150,6 +150,7 @@ expression
 
 	| primary_high { $$ = $1; }
 	| OPEN_PAREN any_type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); }
+	| BITWISE_AND expression { $$ = new AddressOfExpr($2); }
 	;
 
 primary_high
@@ -172,6 +173,8 @@ primary
 
 	| OPEN_BRACKET opt_arg_list CLOSE_BRACKET { $$ = new ArrayExpr(*$2); }
 	| opt_array OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess($1, $3); }
+
+	| TIMES expression { $$ = new DerefExpr($2); }
 
 	;
 

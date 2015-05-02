@@ -18,21 +18,17 @@ std::map<std::string, AnyType*> AnyType::m_defined_tyes;
 AnyType::AnyType(Type* type, bool isSigned) {
 	m_type = type; 
 	m_signed = isSigned; 
-
 	m_type_str = "";
+	m_ptrs = 0;
 
-	int num_ptrs = 0; 
-	while (type->isPointerTy()) {
-		type = type->getPointerElementType();
-
-		num_ptrs++;
-	}
-
-	m_ptrs = num_ptrs;
-
-	while (type->isArrayTy()) {
-		m_arrays.insert(m_arrays.begin(), type->getArrayNumElements());
-		type = type->getArrayElementType();
+	while (type->isPointerTy() || type->isArrayTy()) {
+		if (type->isPointerTy()) {
+			type = type->getPointerElementType();
+			m_ptrs++;
+		} else if (type->isArrayTy()) {
+			m_arrays.insert(m_arrays.begin(), type->getArrayNumElements());
+			type = type->getArrayElementType();
+		}
 	}
 
 	if (type->isIntegerTy()) {

@@ -1,22 +1,4 @@
 str = "orangelang"
-
-str++
-return 1 if str[0] != 'r'
-return 1 if *str != 'r'
-
-str++
-return 1 if str[0] != 'a'
-return 1 if *str != 'a'
-
-return 1 if *(str++) != 'n'
-return 1 if *(++str) != 'g'
-
-str += 1 
-return 1 if str[0] != 'e'
-return 1 if *str != 'e'
-
 str = str + 1 
-return 1 if str[0] != 'l'
-return 1 if *str != 'l'
 
 return 0

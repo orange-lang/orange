@@ -37,6 +37,10 @@ Value* FuncCall::Codegen() {
 		for (unsigned int i = 0; i < llvmFunction->arg_size(); i++, arg_it++) {
 			Value *vArg = m_arguments[i]->Codegen();
 
+			if (vArg == nullptr) {
+				throw CompilerMessage(*m_arguments[i], "codegen returned nothing!");
+			}
+
 			if (m_arguments[i]->returnsPtr() && m_arguments[i]->getType()->isArrayTy() == false) {
 				vArg = GE::builder()->CreateLoad(vArg);
 			}

@@ -17,6 +17,8 @@ bool CastingEngine::AreTypesCompatible(AnyType* a, AnyType* b) {
 	if (a->isIntegerTy() && b->isFloatingPointTy()) return true;  
 	if (b->isIntegerTy() && a->isFloatingPointTy()) return true;  
 	if (a->isFloatingPointTy() && b->isFloatingPointTy()) return true;
+	if (a->isIntegerTy() && b->isPointerTy()) return true; 
+	if (b->isIntegerTy() && a->isPointerTy()) return true;
 	return false;
 }
 
@@ -77,7 +79,7 @@ bool CastingEngine::CastValueToType(Value** v, AnyType* t, bool isSigned, bool f
 		return true; 
 	}
 
-	if (t->isIntegerTy() && srcType->isPointerTy()) {
+	if (srcType->isIntegerTy() && t->isPointerTy()) {
 		*v = GE::builder()->CreateIntToPtr(*v, llvmT); 
 		delete srcType;
 		return true;

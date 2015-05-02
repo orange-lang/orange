@@ -74,6 +74,8 @@ void ArrayAccess::resolve() {
 
 	// m_variable must be an array or pointer! 
 	if (m_variable->getType()->isArrayTy() == false && m_variable->getType()->isPointerTy() == false) {
+		std::cout << string() << std::endl;
+
 		throw CompilerMessage(*m_variable, "variable must be an array!");
 	}
 }

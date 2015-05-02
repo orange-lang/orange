@@ -25,3 +25,5 @@
 #include "ArrayExpr.h"
 #include "ArrayAccess.h"
 #include "CastExpr.h"
+#include "DerefExpr.h"
+#include "AddressOfExpr.h"
