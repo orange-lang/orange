@@ -24,3 +24,4 @@
 #include "LoopSkip.h"
 #include "ArrayExpr.h"
 #include "ArrayAccess.h"
+#include "CastExpr.h"

@@ -52,7 +52,7 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE 
 %token CONST
 
-%type <block> statements
+%type <block> statements opt_statements
 %type <node> statement return_or_expr const_var initializer
 %type <expr> expression primary VALUE opt_expr primary_high opt_array
 %type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl for_loop inline_loop loop_breaks
@@ -95,6 +95,11 @@ start
 statements 		
 	: statements statement { $1->addStatement($2); }
 	| statement { $$ = GE::runner()->topBlock(); $$->addStatement($1); }
+	;
+
+opt_statements
+	: statements { $$ = $1; }
+	| { $$ = GE::runner()->topBlock(); }
 	;
 
 statement 		
@@ -144,6 +149,7 @@ expression
 	| expression BITWISE_XOR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
 	| primary_high { $$ = $1; }
+	| OPEN_PAREN any_type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); }
 	;
 
 primary_high
@@ -179,12 +185,12 @@ function
 			SymTable *tab = new SymTable(GE::runner()->symtab());
 			$<stmt>$ = new FunctionStmt(*$2, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$$);
-		} statements END { $$ = $<stmt>7; GE::runner()->popBlock(); SET_LOCATION($$); }
+		} opt_statements END { $$ = $<stmt>7; GE::runner()->popBlock(); SET_LOCATION($$); }
 	| DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN ARROW any_type term {
 			SymTable *tab = new SymTable(GE::runner()->symtab());
 			$<stmt>$ = new FunctionStmt(*$2, $7, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$$);			
-		} statements END { $$ = $<stmt>9; GE::runner()->popBlock(); SET_LOCATION($$); }
+		} opt_statements END { $$ = $<stmt>9; GE::runner()->popBlock(); SET_LOCATION($$); }
 
 opt_func_params
 	: func_params { $$ = $1; } 
