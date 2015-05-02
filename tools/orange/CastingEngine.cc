@@ -88,7 +88,6 @@ bool CastingEngine::CastValueToType(Value** v, AnyType* t, bool isSigned, bool f
 		delete srcType;
 		return true;
 	}
-	
 
 	throw std::runtime_error("could not determine type to cast.");
 	return false;

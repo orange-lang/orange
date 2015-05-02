@@ -33,6 +33,7 @@
 	ArgList *arglist;
 	std::string *str;
 	std::vector<Block*>* blocklist;
+	std::vector<Expression*>* exprlist;
 	int token; 
 	int number;
 }
@@ -53,7 +54,7 @@
 
 %type <block> statements
 %type <node> statement return_or_expr const_var initializer
-%type <expr> expression primary VALUE opt_expr array_expr
+%type <expr> expression primary VALUE opt_expr primary_high opt_array
 %type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl for_loop inline_loop loop_breaks
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD 
@@ -64,6 +65,7 @@
 %type <anytype> any_type 
 %type <number> var_ptrs
 %type <blocklist> else_ifs_or_end
+%type <exprlist> var_arrays
 
 /* lowest to highest precedence */
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
@@ -81,7 +83,7 @@
 
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
-%left OPEN_PAREN CLOSE_PAREN INCREMENT DECREMENT
+%left OPEN_PAREN CLOSE_PAREN INCREMENT DECREMENT OPEN_BRACKET
 
 %%
 	
@@ -141,7 +143,11 @@ expression
 	| expression BITWISE_OR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	| expression BITWISE_XOR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 
-	| primary { $$ = $1; }
+	| primary_high { $$ = $1; }
+	;
+
+primary_high
+	: primary { $$ = $1; }
 	;
 
 primary
@@ -158,9 +164,14 @@ primary
 	| expression DECREMENT { $$ = new IncrementExpr($1, *$2, false); }
 	| DECREMENT expression { $$ = new IncrementExpr($2, *$1, true); }
 
-	| array_expr 					 { $$ = $1; }
-	| TYPE_ID OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess(new VarExpr(*$1), $3); }
+	| OPEN_BRACKET opt_arg_list CLOSE_BRACKET { $$ = new ArrayExpr(*$2); }
+	| opt_array OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess($1, $3); }
 
+	;
+
+opt_array
+	: TYPE_ID { $$ = new VarExpr(*$1); }
+	| opt_array OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess($1, $3); }
 	;
 
 function
@@ -361,10 +372,6 @@ return_or_expr
 	| loop_breaks { $$ = $1; }
 	;
 
-array_expr
-	: OPEN_BRACKET opt_arg_list CLOSE_BRACKET { $$ = new ArrayExpr(*$2); }
-	;
-
 return
 	: RETURN { $$ = new ReturnStmt(); SET_LOCATION($$); }
 	| RETURN expression { $$ = new ReturnStmt($2); SET_LOCATION($$); }
@@ -393,8 +400,12 @@ basic_type
 	;
 
 any_type
-	: basic_type var_ptrs { $$ = new AnyType(*$1, std::vector<int>(), $2); }
+	: basic_type var_arrays var_ptrs { $$ = new AnyType(*$1, *$2, $3); }
 	;
+
+var_arrays
+	: var_arrays OPEN_BRACKET expression CLOSE_BRACKET { $1->push_back($3); }
+	| { $$ = new std::vector<Expression *>(); }
 
 var_ptrs 
 	: var_ptrs TIMES { $$++; }

@@ -33,7 +33,7 @@ Value* ArrayAccess::Codegen() {
 	std::vector<Value *> indicies; 
 
 	// We must push back a subindex of 0 for arrays.
-	if (m_variable->getType()->isArrayTy()) {
+	if (m_variable->getType()->isConstantArray()) {
 		IntVal subIdx(0, 64);
 		indicies.push_back(subIdx.Codegen());
 	}
@@ -45,12 +45,12 @@ Value* ArrayAccess::Codegen() {
 }
 
 ASTNode* ArrayAccess::clone() {
-	return new ArrayAccess((VarExpr *)m_variable->clone(), (Expression *)m_idx->clone());
+	return new ArrayAccess((Expression *)m_variable->clone(), (Expression *)m_idx->clone());
 }
 
 std::string ArrayAccess::string() {
 	std::stringstream ss; 
-	ss << m_variable->name() << "["; 
+	ss << m_variable->string() << "["; 
 	ss << m_idx->string() << "]";
 	return ss.str();
 }
@@ -58,12 +58,12 @@ std::string ArrayAccess::string() {
 AnyType* ArrayAccess::getType() {
 	AnyType* varType = m_variable->getType();
 
-	if (varType->isArrayTy()) {
+	if (varType->isConstantArray()) {
 		return varType->getElementType();
+	} else if (varType->isVariadicArray()) {
+		auto t = new AnyType(varType->getLLVMType()->getPointerElementType(), m_variable->isSigned());
+		return t;
 	} else {
-		// printf("Here!\n");
-		// varType->getPointerElementType()->getLLVMType()->dump();
-
 		return varType->getPointerElementType();
 	}
 }
@@ -78,7 +78,7 @@ void ArrayAccess::resolve() {
 	}
 }
 
-VarExpr* ArrayAccess::variable() const {
+Expression* ArrayAccess::variable() const {
 	return m_variable; 
 }
 
@@ -86,7 +86,7 @@ Expression* ArrayAccess::idx() const {
 	return m_idx; 
 }
 
-ArrayAccess::ArrayAccess(VarExpr* variable, Expression* idx) { 
+ArrayAccess::ArrayAccess(Expression* variable, Expression* idx) { 
 	if (variable == nullptr) {
 		throw std::runtime_error("ArrayAccess ctor: variable can not be nullptr!");
 	}

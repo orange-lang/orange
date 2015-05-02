@@ -11,6 +11,7 @@
 
 #include <orange/AnyType.h>
 #include <orange/generator.h>
+#include <orange/Values.h>
 
 std::map<std::string, AnyType*> AnyType::m_defined_tyes;
 
@@ -56,6 +57,11 @@ std::string AnyType::string() const {
 	for (int i = 0; i < m_ptrs; i++) ss << "*";
 	for (int arraysz : m_arrays) {
 		ss << "[" << arraysz << "]";
+	}
+
+	for (auto array_expr : m_arrays_expr) {
+		array_expr->resolve();
+		ss << "[" << array_expr->string() << "]";
 	}
 
 	return ss.str();
@@ -164,10 +170,61 @@ AnyType::AnyType(std::string type, std::vector<int> arrays, int ptrs) {
 		m_type = m_type->getPointerTo();
 	}
 
-	for (int i = 0; i < m_arrays.size(); i++) {
+	for (int i = m_arrays.size() - 1; i >= 0; i--) {
 		m_type = ArrayType::get(m_type, m_arrays[i]);
 	}
 }
+
+AnyType::AnyType(std::string type, std::vector<Expression*> arrayExpr, int ptrs) {
+	m_type_str = type; 
+	m_signed = false; 
+
+	if (type == "char" || type == "int8") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 8);
+		m_signed = true;
+	} else if (type == "uchar" || type == "uint8") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 8);
+	} else if (type == "uint1") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 1);
+	} else if (type == "int16") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 16);
+		m_signed = true;
+	} else if (type == "uint16") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 16);
+	} else if (type == "int32") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 32);
+		m_signed = true;
+	} else if (type == "uint32") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 32);
+	} else if (type == "int" || type == "int64") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 64);
+		m_signed = true;
+	} else if (type == "uint" || type == "uint64") {
+		m_type = Type::getIntNTy(GE::runner()->context(), 64);
+	} else if (type == "float") {
+		m_type = Type::getFloatTy(GE::runner()->context());
+	} else if (type == "double") {
+		m_type = Type::getDoubleTy(GE::runner()->context());
+	} else if (type == "void") {
+		m_type = Type::getVoidTy(GE::runner()->context());
+	} else if (type == "id") {
+		m_type = Type::getVoidTy(GE::runner()->context());
+	} else {
+		throw std::runtime_error("Invalid type " + type);
+	}
+
+	m_ptrs = ptrs; 
+
+	for (int i = 0; i < m_ptrs; i++) {
+		m_type = m_type->getPointerTo();
+	}
+
+	for (int i = arrayExpr.size() - 1; i >= 0; i--) {
+		m_arrays_expr.push_back(arrayExpr[i]);
+		m_type = m_type->getPointerTo();
+	}
+}
+
 
 
 /** 
@@ -202,14 +259,22 @@ AnyType* AnyType::getElementType() {
 
 AnyType* AnyType::getArray(int size) {
 	std::stringstream ss; 
-	ss << m_type_str << "[" << size << "]" << m_ptrs; 
+	ss << m_type_str; 
+
+	// Add on existing arrays 
+	for (auto array : m_arrays) {
+		ss << "[" << array << "]";
+	}
+
+	ss << "[" << size << "]" << m_ptrs; 
 	std::string type = ss.str();
 
 	if (m_defined_tyes.find(type) != m_defined_tyes.end()) {
 		return m_defined_tyes.find(type)->second;
 	}
 
-	std::vector<int> arrays = {size};
+	std::vector<int> arrays = m_arrays; 
+	arrays.push_back(size);
 
 	AnyType* arrayTy = new AnyType(m_type_str, arrays, m_ptrs);
 	m_defined_tyes[type] = arrayTy;

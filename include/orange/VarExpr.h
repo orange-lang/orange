@@ -95,7 +95,7 @@ public:
 	// variables are *never* constant expressions.
 	virtual bool isConstant() { return false; }
 
-	virtual bool returnsPtr() { return true; }
+	virtual bool returnsPtr();
 
 	virtual std::string name() const { return m_name; }
 

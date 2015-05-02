@@ -137,7 +137,6 @@ void FuncCall::resolve() {
 
 	for (auto arg : m_arguments) arg->resolve();
 
-	// TODO: create clone of function if needed (for generics).
 	// Call resolve on the clone, since we're the one that creates it. 
 	if (function->getClass() == "FunctionStmt") {
 		FunctionStmt* fstmt = (FunctionStmt*)function;

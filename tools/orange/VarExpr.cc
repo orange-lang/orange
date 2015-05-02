@@ -147,6 +147,11 @@ void VarExpr::setValueTo(Value *value) {
 	m_value = value; 
 }
 
+bool VarExpr::returnsPtr() {
+	return true;
+}
+
+
 Value* VarExpr::allocate() {
 	if (m_value != nullptr) {
 		throw CompilerMessage(*this, "variable already allocated!");
@@ -156,9 +161,43 @@ Value* VarExpr::allocate() {
 	// However, we need to actually initialize ourselves with the number 
 	// of elements, so handle that here 
 
-	// TODO: see above 
+	Type* llvmType = getLLVMType();
+	if (getType()->isVariadicArray()) {
+		Type* baseType = llvmType; 
+		while (baseType->isPointerTy()) {
+			baseType = baseType->getPointerElementType();
+		}
 
-	Value* v = GE::builder()->CreateAlloca(getLLVMType(), nullptr, name());
+		// Codegen all of the types into values 
+		std::vector<Value*> values; 
+
+		for (auto expr : getType()->getAllVariadicArrayElements()) {
+			auto value = expr->Codegen();
+
+			if (expr->returnsPtr() == true) {
+				value = GE::builder()->CreateLoad(value);
+			}
+
+			if (value->getType()->isIntegerTy() == false) {
+				printf("Whoops\n");
+				throw CompilerMessage(*expr, "Type is not an integer!");
+			}
+
+			values.push_back(value);
+		}
+
+		// The total size of this array is all the elements in the vector multiplied together.
+		Value *totSize = values[0]; 
+		for (int i = 1; i < values.size(); i++) {
+			totSize = GE::builder()->CreateMul(totSize, values[i]);
+		}
+
+		Value *v = GE::builder()->CreateAlloca(baseType, totSize, name());
+		setValueTo(v);
+		return v;
+	}
+
+	Value* v = GE::builder()->CreateAlloca(llvmType, nullptr, name());
 	setValueTo(v);
 	return v; 
 }

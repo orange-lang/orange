@@ -178,7 +178,6 @@ Value* FunctionStmt::Codegen() {
 	Function* generatedFunc = Function::Create(funcType, m_linkageType, m_name, GE::module());
 	m_value = generatedFunc;
 
-	// TODO: Set argument names, if any (generatedFunc->arg_begin, setName on iterator)
 	auto arg_it = generatedFunc->arg_begin();
 	for (unsigned int i = 0; i < Args.size(); i++, arg_it++) {
 		arg_it->setName(m_parameters[i]->name());

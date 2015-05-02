@@ -30,6 +30,8 @@ public:
 
 	virtual void resolve();
 
+	virtual std::string string();
+
 	ExplicitDeclStmt(VarExpr* var);
 	ExplicitDeclStmt(VarExpr* var, Expression* value);
 }; 

@@ -15,13 +15,18 @@ Value* ExplicitDeclStmt::Codegen() {
 	if (m_expr) {
 		Value* value = m_expr->Codegen();
 
-		if (m_expr->returnsPtr() && value->getType()->isArrayTy()) {
+		if (m_expr->returnsPtr()) {
 			value = GE::builder()->CreateLoad(value);
 		}
 		
-		bool casted = CastingEngine::CastValueToType(&value, m_var->getType(), m_var->isSigned(), true);
-		if (casted == false) {
-			throw CompilerMessage(*m_expr, "Could not cast expression to variable type!");
+
+		bool arrayToArray = m_expr->getType()->isArrayTy() && m_var->getType()->isArrayTy(); 
+
+		if (arrayToArray == false) {
+			bool casted = CastingEngine::CastValueToType(&value, m_var->getType(), m_var->isSigned(), true);
+			if (casted == false) {
+				throw CompilerMessage(*m_expr, "Could not cast expression to variable type!");
+			}
 		}
 
 		m_var->setValue(value);
@@ -60,6 +65,14 @@ void ExplicitDeclStmt::resolve() {
 	m_var->create();
 
 	if (m_expr) m_expr->resolve();
+}
+
+std::string ExplicitDeclStmt::string() {
+	if (m_expr) {
+		return m_var->string() + " = " + m_expr->string();
+	} else {
+		return m_var->string();
+	}
 }
 
 ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var) {

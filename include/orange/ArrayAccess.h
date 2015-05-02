@@ -14,7 +14,7 @@
 
 class ArrayAccess : public Expression {
 private:
-	VarExpr* m_variable; 
+	Expression* m_variable; 
 	Expression* m_idx; 
 public:
 	virtual std::string getClass() { return "ArrayAccess"; }
@@ -36,7 +36,7 @@ public:
 	 * For example, if the expr is a[5], the variable is a.
 	 * @return The variable component of this expression. 
 	 */
-	virtual VarExpr* variable() const; 
+	virtual Expression* variable() const; 
 
 	/**
 	 * Returns the index assigned to this ArrayAccess expr.
@@ -51,7 +51,7 @@ public:
 	 * @param variable The variable to use in the expression. It must be an array.
 	 * @param idx The index to access the element in the variable. 
 	 */
-	ArrayAccess(VarExpr* variable, Expression* idx);
+	ArrayAccess(Expression* variable, Expression* idx);
 };
 
 #endif 
