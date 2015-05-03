@@ -7,7 +7,7 @@
 */ 
 
 #include <orange/Block.h>
-#include <orange/Runner.h>
+#include <orange/runner.h>
 #include <orange/generator.h>
 #include <orange/IfStmts.h>
 

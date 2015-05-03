@@ -187,12 +187,12 @@ function
 	: DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN term { 
 			SymTable *tab = new SymTable(GE::runner()->symtab());
 			$<stmt>$ = new FunctionStmt(*$2, *$4, tab);
-			GE::runner()->pushBlock((FunctionStmt *)$$);
+			GE::runner()->pushBlock((FunctionStmt *)$<stmt>$);
 		} opt_statements END { $$ = $<stmt>7; GE::runner()->popBlock(); SET_LOCATION($$); }
 	| DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN ARROW any_type term {
 			SymTable *tab = new SymTable(GE::runner()->symtab());
 			$<stmt>$ = new FunctionStmt(*$2, $7, *$4, tab);
-			GE::runner()->pushBlock((FunctionStmt *)$$);			
+			GE::runner()->pushBlock((FunctionStmt *)$<stmt>$);			
 		} opt_statements END { $$ = $<stmt>9; GE::runner()->popBlock(); SET_LOCATION($$); }
 
 opt_func_params
@@ -229,7 +229,7 @@ if_statement
 	: IF expression term {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$<stmt>$ = new CondBlock($2, tab);
-		GE::runner()->pushBlock((CondBlock *)$$);
+		GE::runner()->pushBlock((CondBlock *)$<stmt>$);
 	} statements { GE::runner()->popBlock(); } else_ifs_or_end { 		
 		$$ = new IfStmts;
 
@@ -246,7 +246,7 @@ else_ifs_or_end
 	: ELIF expression term {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$<stmt>$ = new CondBlock($2, tab);
-		GE::runner()->pushBlock((CondBlock *)$$);
+		GE::runner()->pushBlock((CondBlock *)$<stmt>$);
 	} statements { GE::runner()->popBlock(); } else_ifs_or_end { 		
 		$7->insert($7->begin(), (CondBlock*)$<stmt>4);
 		$$ = $7;
@@ -254,7 +254,7 @@ else_ifs_or_end
 	| ELSE term {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$<stmt>$ = new Block(tab);
-		GE::runner()->pushBlock((Block *)$$);
+		GE::runner()->pushBlock((Block *)$<stmt>$);
 	} statements END {
 		$$ = new std::vector<Block*>;
 		$$->insert($$->begin(), (Block*)$<stmt>3);
@@ -283,7 +283,7 @@ unless_statement
 	: UNLESS expression term {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$<stmt>$ = new CondBlock($2, tab, true);
-		GE::runner()->pushBlock((CondBlock *)$$);
+		GE::runner()->pushBlock((CondBlock *)$<stmt>$);
 	} statements END {
 		$$ = new IfStmts;
 		((IfStmts *)$$)->addBlock((CondBlock*)$<stmt>4); 
@@ -304,7 +304,7 @@ for_loop
 	: FOR OPEN_PAREN initializer SEMICOLON opt_expr SEMICOLON opt_expr CLOSE_PAREN term {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$<stmt>$ = new Loop($3, $5, $7, tab);
-		GE::runner()->pushBlock((Loop *)$$);
+		GE::runner()->pushBlock((Loop *)$<stmt>$);
 	} statements END {
 		$$ = (Loop *)$<stmt>10;
 		GE::runner()->popBlock();
@@ -312,7 +312,7 @@ for_loop
 	| WHILE expression term {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$<stmt>$ = new Loop($2, false, tab);
-		GE::runner()->pushBlock((Loop *)$$);		
+		GE::runner()->pushBlock((Loop *)$<stmt>$);		
 	} statements END {
 		$$ = (Loop *)$<stmt>4;
 		GE::runner()->popBlock();
@@ -320,7 +320,7 @@ for_loop
 	| FOREVER DO term {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$<stmt>$ = new Loop(tab);
-		GE::runner()->pushBlock((Loop *)$$);				
+		GE::runner()->pushBlock((Loop *)$<stmt>$);				
 	} statements END {
 		$$ = (Loop *)$<stmt>4;
 		GE::runner()->popBlock();
@@ -328,7 +328,7 @@ for_loop
 	| DO term {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$<stmt>$ = new Loop(nullptr, true, tab);
-		GE::runner()->pushBlock((Loop *)$$);				
+		GE::runner()->pushBlock((Loop *)$<stmt>$);				
 	} statements END WHILE expression {
 		$$ = (Loop *)$<stmt>3;
 		((Loop *)$$)->setCondition($7);
