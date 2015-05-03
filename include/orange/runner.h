@@ -61,7 +61,7 @@ private:
 	/**
 	 * The PassManager used to optimize functions.
 	 */
-	FunctionPassManager *m_functionOptimizer;
+	FunctionPassManager* m_functionOptimizer;
 
 	/**
 	 * Whether or not we are in debug mode.
@@ -71,6 +71,7 @@ private:
 	int runModule(Function *function);
 
 	void optimizeModule();
+	void buildModule();
 public:
 	/**
 	 * Returns whether or not there is at least one error in the run.

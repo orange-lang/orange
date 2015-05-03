@@ -1,6 +1,3 @@
 [submodule "etc/cereal"]
 	path = etc/cereal
 	url = https://github.com/USCiLab/cereal.git
-[submodule "etc/llvm"]
-	path = etc/llvm
-	url = git://llvm.org/git/llvm

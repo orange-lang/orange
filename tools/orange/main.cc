@@ -16,6 +16,7 @@
 #include <helper/link.h>
 #include <orange/file.h>
 #include <orange/run.h>
+#include <orange/build.h>
 #include <orange/test.h>
 #include <orange/orange.h>
 
@@ -35,6 +36,16 @@ int main(int argc, char** argv) {
 
 	options.mainState.addState(&run); 
 
+	/**
+	 * Set up our "build" state to compile files.
+	 */
+	cOptionsState build("build", "Compiles a single file or project", "build [filename]", "The build command will\
+ either compile a file or a project directly. Entering compile without a filename will compile a project, if it exists.\
+  If you are not in a project, an error will be displayed. Building a file does not require you to be in an Orange project.");
+	build.add(&debug);
+
+	options.mainState.addState(&build);
+
 	/*
 	 * Set up our "test" state to test files.
 	 */
@@ -44,8 +55,6 @@ int main(int argc, char** argv) {
   individual program.");
   options.mainState.addState(&test);
 
-
-
 	// Parse our options
 	options.parse(argc, argv);
 
@@ -53,6 +62,8 @@ int main(int argc, char** argv) {
 		doRunCommand(run, debug.isSet());
 	} else if (test.isActive()) {
 		doTestCommand(test);
+	} else if (build.isActive()) {
+		doBuildCommand(build, debug.isSet());
 	} else {
 		doRunCommand(options.mainState, debug.isSet());
 	}
