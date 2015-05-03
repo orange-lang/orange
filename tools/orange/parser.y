@@ -267,11 +267,15 @@ else_ifs_or_end
 
 inline_if
 	: return_or_expr IF expression {
-		SymTable* tab = GE::runner()->topBlock()->symtab();
+		SymTable* tab = new SymTable(GE::runner()->symtab());
 		CondBlock* block = new CondBlock($3, tab);
+		GE::runner()->pushBlock(block);
+
 		block->addStatement($1);
 		$$ = new IfStmts;
 		((IfStmts *)$$)->addBlock(block); 
+
+		GE::runner()->popBlock();
 	}
 	;
 
@@ -288,7 +292,7 @@ unless_statement
 
 inline_unless
 	: return_or_expr UNLESS expression {
-		SymTable* tab = GE::runner()->topBlock()->symtab();
+		SymTable* tab = new SymTable(GE::runner()->symtab());
 		CondBlock* block = new CondBlock($3, tab, true);
 		block->addStatement($1);
 		$$ = new IfStmts;

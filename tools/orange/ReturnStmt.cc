@@ -54,7 +54,7 @@ void ReturnStmt::resolve() {
 	SymTable *curTab = GE::runner()->topBlock()->symtab();
     
 	FunctionStmt *containingFunc = (FunctionStmt *)curTab->findStructure("FunctionStmt");
-
+	
 	if (m_expr && containingFunc->getType()->isVoidTy()) {
 		throw CompilerMessage(*m_expr, "Returning value in a void function.");
 	} else if (containingFunc->getType()->isVoidTy() == false && m_expr == nullptr) {

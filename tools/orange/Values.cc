@@ -75,7 +75,6 @@ BaseVal *ValFactory::produce() {
 			newSize += value[ptr];
 		}
 
-		printf("Determined size: \"%s\"\n", newSize.c_str());
 		size = newSize;
 	}
 

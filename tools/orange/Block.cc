@@ -131,7 +131,6 @@ AnyType* Block::searchForReturn() {
 				if (innerRetType == nullptr || innerRetType->isIDTy() || innerRetType->isVoidTy()) continue;
 			
 				retType = retType ? CastingEngine::GetFittingType(retType, innerRetType) : innerRetType;
-				printf("%p\n", retType);
 			}
 		}
 	}

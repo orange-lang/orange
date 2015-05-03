@@ -376,7 +376,7 @@ void FunctionStmt::resolve() {
 
 	// Push our symtab into the stack and add our parameters to the symbol table.
 	GE::runner()->pushBlock(this);
-
+	
 	for (auto param : m_parameters) param->create();
 
 	GE::runner()->popBlock();
