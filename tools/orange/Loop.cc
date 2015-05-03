@@ -9,6 +9,30 @@
 #include <orange/Loop.h>
 #include <orange/FunctionStmt.h>
 #include <orange/generator.h>
+#include <helper/string.h> 
+
+std::string Loop::string() {
+	std::stringstream ss;
+	ss << "for ("; 
+
+	if (m_initializer) ss << m_initializer->string();
+	ss << "; ";
+	if (m_condition) ss << m_condition->string();
+	ss << "; ";
+	if (m_afterthought) ss << m_afterthought->string();
+	ss << "):\n";
+
+	for (ASTNode *s : m_statements) {
+		if (s == nullptr) continue;
+
+		std::vector<std::string> lines = split(s->string(), '\n');
+		for (std::string line : lines) {
+			ss << "\t" << line << std::endl;
+		}
+	}
+
+	return ss.str();	 
+}
 
 ASTNode* Loop::initilizer() const {
 	return m_initializer;

@@ -17,6 +17,8 @@ private:
 public:
 	virtual std::string getClass() { return "AddressOfExpr"; }
 
+	virtual std::string string(); 
+
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone();

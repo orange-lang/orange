@@ -9,6 +9,37 @@
 #include <orange/IfStmts.h>
 #include <orange/CondBlock.h>
 #include <orange/generator.h>
+#include <helper/string.h>
+
+std::string IfStmts::string() {
+	std::stringstream ss; 
+
+	// Very first block is always an if statement. 
+	for (int i = 0; i < m_blocks.size(); i++) {
+		auto block = m_blocks[i];
+
+		if (block->getClass() == "CondBlock") {
+			CondBlock* condBlock = (CondBlock*)block;
+
+			if (i != 0) ss << "else ";
+			ss << "if " << condBlock->condition()->string() << ":\n";
+
+			std::vector<std::string> lines = split(condBlock->string(), '\n');
+			for (std::string line : lines) {
+				ss << "\t" << line << std::endl;
+			}
+		} else {
+			ss << "else:\n"; 
+
+			std::vector<std::string> lines = split(block->string(), '\n');
+			for (std::string line : lines) {
+				ss << "\t" << line << std::endl;
+			}
+		}
+	}
+
+	return ss.str();
+}
 
 Value* IfStmts::Codegen() {
 	std::vector<BasicBlock*> BBs;

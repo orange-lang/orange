@@ -20,6 +20,8 @@ private:
 public:
 	virtual std::string getClass() { return "IncrementExpr"; }
 
+	virtual std::string string();
+
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone();

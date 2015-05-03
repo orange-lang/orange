@@ -18,6 +18,8 @@ private:
 public:
 	virtual std::string getClass() { return "CastExpr"; }
 
+	virtual std::string string();
+
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone();

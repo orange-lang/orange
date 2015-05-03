@@ -9,6 +9,10 @@
 #include <orange/DerefExpr.h>
 #include <orange/generator.h>
 
+std::string DerefExpr::string() {
+	return "*" + m_expr->string();
+}
+
 Value* DerefExpr::Codegen() {
 	Value* ret = m_expr->Codegen();
 	

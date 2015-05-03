@@ -9,6 +9,10 @@
 #include <orange/CastExpr.h>
 #include <orange/generator.h>
 
+std::string CastExpr::string() {
+	return "(" + m_type->string() + ")" + m_expr->string();
+}
+
 Value* CastExpr::Codegen() { 
 	Value* val = m_expr->Codegen();
 

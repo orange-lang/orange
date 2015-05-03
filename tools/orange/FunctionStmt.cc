@@ -9,6 +9,7 @@
 #include <orange/FunctionStmt.h>
 #include <orange/generator.h>
 #include <orange/IfStmts.h>
+#include <helper/string.h>
 
 FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name;
@@ -310,7 +311,11 @@ std::string FunctionStmt::string() {
 
 	for (ASTNode *s : m_statements) {
 		if (s == nullptr) continue;
-		ss << "\t" << s->string() << std::endl;
+
+		std::vector<std::string> lines = split(s->string(), '\n');
+		for (std::string line : lines) {
+			ss << "\t" << line << std::endl;
+		}
 	}
 
 	GE::runner()->popBlock();

@@ -9,6 +9,15 @@
 #include <orange/IncrementExpr.h>
 #include <orange/generator.h>
 
+std::string IncrementExpr::string() {
+	std::stringstream ss; 
+
+	if (m_preincrement == true) ss << m_op; 
+	ss << m_expr->string(); 
+	if (m_preincrement == false) ss << m_op;
+	return ss.str();
+}
+
 Value* IncrementExpr::Codegen() {
 	Value* origValue = m_expr->Codegen();
 	Value* loadedVal = GE::builder()->CreateLoad(origValue);

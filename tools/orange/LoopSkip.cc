@@ -10,6 +10,11 @@
 #include <orange/Loop.h>
 #include <orange/generator.h>
 
+std::string LoopSkip::string() {
+	if (m_continue) return "continue"; 
+	else return "break";
+}
+
 Value* LoopSkip::Codegen() {
  	Loop* curLoop = (Loop *)GE::runner()->symtab()->findStructure("Loop");
 

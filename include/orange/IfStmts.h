@@ -30,6 +30,8 @@ private:
 public:
 	virtual std::string getClass() { return "IfStmts"; }
 
+	virtual std::string string();
+
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone();

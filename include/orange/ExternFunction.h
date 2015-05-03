@@ -21,6 +21,8 @@ private:
 public:
 	virtual std::string getClass() { return "ExternFunction"; }
 
+	virtual std::string string();
+
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone() {

@@ -66,6 +66,8 @@ private:
 public:
 	virtual std::string getClass() { return "Loop"; }
 
+	virtual std::string string();
+
 	/** 
 	 * The initializer is an expression that is ran once before we run any code in the loop. It is only used 
 	 * in for loops. After the initializer is ran, we check the condition and then go either straight to the 

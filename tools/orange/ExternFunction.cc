@@ -9,6 +9,31 @@
 #include <orange/ExternFunction.h>
 #include <orange/generator.h>
 
+std::string ExternFunction::string() {
+	std::stringstream ss; 
+	ss << "extern " << m_type->string() << " " << m_name << "(";
+	for (int i = 0; i < m_parameters.size(); i++) {
+		VarExpr* param = m_parameters[i];
+
+		if (param->type()) {
+			ss << param->type()->string() << " "; 
+		}
+
+		ss << param->name();
+
+		if (i + 1 < m_parameters.size()) {
+			ss << ", "; 
+		}
+	}  
+
+	if (m_parameters.varArg()) {
+		ss << ", ...";
+	}
+
+	ss << ")";
+	return ss.str();
+}
+
 ExternFunction::ExternFunction(AnyType* returnType, std::string name, ParamList parameters) : m_type(returnType), m_name(name), m_parameters(parameters) {
 	if (returnType == nullptr) {
 		throw std::runtime_error("return type for an external function can not be null!");

@@ -9,6 +9,10 @@
 #include <orange/AddressOfExpr.h>
 #include <orange/generator.h>
 
+std::string AddressOfExpr::string() {
+	return "&" + m_expr->string();
+}
+
 Value* AddressOfExpr::Codegen() {
 	Value *v = m_expr->Codegen();
 	return v;

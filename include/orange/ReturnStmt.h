@@ -28,9 +28,9 @@ public:
 
 	virtual std::string string() {
 		if (m_expr)
-			return "RETURN " + m_expr->string();
+			return "return " + m_expr->string();
 		else 
-			return "RETURN";
+			return "return";
 	}
 
 	virtual void resolve();
