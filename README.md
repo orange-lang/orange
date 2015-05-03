@@ -10,7 +10,10 @@ At the moment, Orange has no standard library, so you'll need to link against C 
 complicated tasks:
 
     extern int32 printf(char *s, ...)
-    printf("Hello, world!\n")
+
+    for (i = 0; i < 10; i++) 
+        printf("Hello, world %d!\n", i)
+    end
 
 You can see more examples of Orange in the `test/` folder. 
 
