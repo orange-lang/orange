@@ -34,7 +34,7 @@ endif()
 if(${WIN32})
 	message(STATUS "Detected WIN32...")
 
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Z7 -w -Ox")
+	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Wall -fexceptions -O3 -Wno-unused -fdata-sections -ffunction-sections")
 	list(APPEND CXX_DEFINES "-DYY_NO_UNISTD_H")
 	list(APPEND C_DEFINES "-DYY_NO_UNISTD_H")
 endif(${WIN32})

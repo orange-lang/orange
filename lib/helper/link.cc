@@ -71,7 +71,7 @@ int invokeProgramWithOptions(const char *program, std::vector<const char *> opti
 		optionsStr += " ";
 	}
 
-	CreateProcess(linker, (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
+	CreateProcess(program, (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
 	WaitForSingleObject(pi.hProcess, INFINITE);
 
 	DWORD dwExitCode = 9999;

@@ -43,24 +43,32 @@ Runner::Runner(std::string pathname) {
 		throw std::runtime_error("File cannot be added as an entity twice.");
 	}
 
-  m_context = new LLVMContext();
-  GeneratingEngine::sharedEngine()->setActive(this);
+	m_context = new LLVMContext();
+	GeneratingEngine::sharedEngine()->setActive(this);
 
-  // Create the global block
+	// Create the global block
 	SymTable *globalSymtab = new SymTable(nullptr);
 	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), ParamList(), globalSymtab);
 	pushBlock(m_function);
 
 	// Create LLVM stuff; module, builder, etc
 	m_module = new Module("orange", context());
-	m_module->setTargetTriple(sys::getProcessTriple());
+
+	std::string triple = sys::getProcessTriple();
+
+	#ifdef _WIN32
+		// This is required to run JIT on windows 
+		triple += "-elf";
+	#endif 
+
+	m_module->setTargetTriple(triple);
 
 	m_builder = new IRBuilder<>(context());
 
 	m_functionOptimizer = new FunctionPassManager(m_module);
 	m_functionOptimizer->doInitialization();
     
-  GeneratingEngine::sharedEngine()->setActive(nullptr);
+	GeneratingEngine::sharedEngine()->setActive(nullptr);
 }
 
 void Runner::haltRun() {
@@ -232,9 +240,9 @@ void Runner::buildModule() {
   InitializeNativeTargetAsmPrinter();
 
 	std::string err = "";
-	Triple triple = Triple(sys::getProcessTriple());
+	Triple triple = Triple(m_module->getTargetTriple());
 
-	auto target = TargetRegistry::lookupTarget(sys::getProcessTriple(), err);
+	auto target = TargetRegistry::lookupTarget(m_module->getTargetTriple(), err);
 	if (target == nullptr) {
 		throw std::runtime_error(err);
 	}
@@ -253,7 +261,7 @@ void Runner::buildModule() {
 		throw std::runtime_error("could not create target marchine.");
 	}
 
-	std::string loutput = path(pathname()).stem().native();
+	std::string loutput = path(pathname()).stem().generic_string();
 
 #if defined(__linux__) || defined(__APPLE__)
 		loutput += ".o";

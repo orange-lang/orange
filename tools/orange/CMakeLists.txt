@@ -1,5 +1,8 @@
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_STATIC_RUNTIME ON)
+
 find_package(LLVM REQUIRED)
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem system regex)
 
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
@@ -22,7 +25,7 @@ add_executable(orange
     ${ORANGE_SOURCES} ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS} ${INCLUDES}
 )
 
-target_link_libraries(orange helper boost_filesystem boost_system boost_regex ${llvm_libs})
+target_link_libraries(orange helper ${Boost_LIBRARIES} ${llvm_libs})
 
 ADD_DEPENDENCIES(orange boot)
 

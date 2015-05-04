@@ -12,6 +12,13 @@
 #define MAX_CHARACTERS_PER_LINE 40
 int addedCharacters = 0;
 
+
+#ifdef _WIN32 
+	const char* NULLFILE = "NUL";
+#else 
+	const char* NULLFILE = "/dev/null";
+#endif 
+
 std::vector<RunResult> runTest(path p) {
 	std::vector<RunResult> results; 
 
@@ -41,16 +48,16 @@ std::vector<RunResult> runTest(path p) {
 		// Disable output
 		int bak, newFd;
 		fflush(stdout);
-		bak = dup(1);
-		newFd = open("/dev/null", O_WRONLY);
-		dup2(newFd, 1);
+		bak = dup(STDOUT_FILENO);
+		newFd = open(NULLFILE, O_WRONLY);
+		dup2(newFd, STDOUT_FILENO);
 		close(newFd);
 
 		// Otherwise just run the single file  
 		RunResult testRun = runFile(p.string(), false);
 		
 		fflush(stdout);
-		dup2(bak, 1);
+		dup2(bak, STDOUT_FILENO);
 		close(bak);
 
 		// Add a . if it passed, F otherwise. After printing a multiple 
