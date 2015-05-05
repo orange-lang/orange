@@ -149,12 +149,14 @@ ASTNode* Block::clone() {
 		if (Block* block = dynamic_cast<Block*>(clonedStmt)) {
 			if (block->symtab()->parent()->ID() == symtab()->ID()) {
 				block->symtab()->setParent(clonedBlock->symtab());
+				block->symtab()->setContainer(clonedBlock->symtab());
 			}
 		}
 
 		if (IfStmts* ifStmts = dynamic_cast<IfStmts*>(clonedStmt)) {
 			for (auto block : ifStmts->blocks()) {
 				block->symtab()->setParent(clonedBlock->symtab());
+				block->symtab()->setContainer(clonedBlock->symtab());
 			}
 		}
 	}

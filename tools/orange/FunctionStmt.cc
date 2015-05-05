@@ -126,12 +126,14 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 		if (Block* block = dynamic_cast<Block*>(clonedStmt)) {
 			if (block->symtab()->parent()->ID() == symtab()->ID()) {
 				block->symtab()->setParent(clone->symtab());
+				block->symtab()->setContainer(clone->symtab());
 			}
 		}
 
 		if (IfStmts* ifStmts = dynamic_cast<IfStmts*>(clonedStmt)) {
 			for (auto block : ifStmts->blocks()) {
 				block->symtab()->setParent(clone->symtab());
+				block->symtab()->setContainer(clone->symtab());
 			}
 		}
 	}
@@ -179,8 +181,7 @@ Value* FunctionStmt::Codegen() {
 
 		return nullptr;
 	}
-
-
+	
 	// Push ourselves onto the stack first.
 	GE::runner()->pushBlock(this);
 
@@ -289,12 +290,14 @@ ASTNode* FunctionStmt::clone() {
 		if (Block* block = dynamic_cast<Block*>(clonedStmt)) {
 			if (block->symtab()->parent()->ID() == symtab()->ID()) {
 				block->symtab()->setParent(clonedFunc->symtab());
+				block->symtab()->setContainer(clonedFunc->symtab());
 			}
 		}
 
 		if (IfStmts* ifStmts = dynamic_cast<IfStmts*>(clonedStmt)) {
 			for (auto block : ifStmts->blocks()) {
 				block->symtab()->setParent(clonedFunc->symtab());
+				block->symtab()->setContainer(clonedFunc->symtab());
 			}
 		}
 	}

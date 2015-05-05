@@ -62,6 +62,13 @@ public:
 	 */
 	void setParent(SymTable* parent) { m_parent = parent; }
 
+	/** 
+	 * Sets the containing symbol table of this one.
+	 *
+	 * @param container The containing symbol table of this one. 
+	 */
+	void setContainer(SymTable* container) { m_container = container; }
+
 	/**
 	 * Registers an ASTNode in this table by name, if an 
 	 * ASTNode by that name doesn't already exist.
@@ -81,6 +88,16 @@ public:
 	 * @return The ASTNode in this symbol table.
 	 */
 	ASTNode* find(std::string name);
+
+	/** 
+	 * Finds an ASTNode in this tree by name, if it exists.
+	 * Unlike find, findFromAny looks up the container tree.
+	 *
+	 * @param name The name of the ASTNode to find.
+	 *
+	 * @return The ASTNode in this symbol table.
+	 */
+	ASTNode* findFromAny(std::string name);
 
 	/**
 	 * Finds the closest ASTNode of a certain class.

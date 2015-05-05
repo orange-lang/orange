@@ -44,6 +44,29 @@ ASTNode* SymTable::find(std::string name) {
 	return it->second; 
 }
 
+ASTNode* SymTable::findFromAny(std::string name) {
+	auto it = m_objs.find(name); 
+
+	// return null if it doesn't exist 
+	if (it == m_objs.end()) {
+		if (m_parent) {
+			auto obj = m_parent->findFromAny(name); 
+			if (obj) return obj; 
+		}
+
+		if (m_container) {
+			auto obj = m_container->findFromAny(name);
+			if (obj) return obj; 
+		}
+
+		return nullptr;
+	}  
+
+
+	return it->second; 
+}
+
+
 ASTNode* SymTable::findStructure(std::string className) {
 	SymTable* ptr = this; 
 
@@ -66,7 +89,7 @@ void SymTable::setStructure(ASTNode* structure) {
 }
 
 SymTable* SymTable::clone() {
-	SymTable* clonedSymtab = new SymTable(m_parent);
+	SymTable* clonedSymtab = new SymTable(m_parent, m_container);
 	clonedSymtab->m_structure = m_structure; 
 	clonedSymtab->m_objs = m_objs;
 	return clonedSymtab;

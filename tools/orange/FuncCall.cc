@@ -12,7 +12,7 @@
 Value* FuncCall::Codegen() {
 	SymTable *curTab = GE::runner()->symtab();
 	
-	FunctionStmt* function = (FunctionStmt*)curTab->find(m_name); 
+	FunctionStmt* function = (FunctionStmt*)curTab->findFromAny(m_name); 
 
 	if (function == nullptr) {
 		throw CompilerMessage(*this, "No function " + m_name + " found!");
@@ -99,7 +99,7 @@ std::string FuncCall::string() {
 
 AnyType* FuncCall::getType() {
 	SymTable* curTab = GE::runner()->symtab();
-  ASTNode* node = curTab->find(m_name);
+  ASTNode* node = curTab->findFromAny(m_name);
   
   if (node == nullptr) {
       throw CompilerMessage(*this, m_name + " does not exist!");
@@ -129,7 +129,7 @@ void FuncCall::resolve() {
 
 	// Look for the function in the symbol table.
 	SymTable *curTab = GE::runner()->symtab();
-	ASTNode* function = curTab->find(m_name); 
+	ASTNode* function = curTab->findFromAny(m_name); 
 
 	if (function == nullptr) {
 		throw CompilerMessage(*this, "No function " + m_name + " found!");
