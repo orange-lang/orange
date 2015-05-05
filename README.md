@@ -17,8 +17,14 @@ complicated tasks:
 
 You can see more examples of Orange in the `test/` folder. 
 
-# Building 
-Orange currently requires Boost, Flex, Bison, CMake, and if you're on Windows, mingw-w64. Windows support is spotty at the moment and is a work in progress (running JIT *should* work.)
+# Building on OS X and Linux
+Orange currently requires Boost, Flex, Bison, and CMake. Building is as easy as:
+
+```sh 
+$ mkdir build-orange && cd build-orange 
+$ cmake ../orange
+$ make all install
+``` 
 
 # Building on Windows 
 
