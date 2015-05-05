@@ -3,7 +3,7 @@ Orange is a programming language with the goal of being able to write fast, effi
 It uses LLVM to generate native code. You can look inside the `test/` folder to get examples of how Orange works.
 
 # Status 
-Orange is still very much a work in progress. At the moment, Orange supports compiling JIT or to a native binary on OS X and Linux. Windows support is coming soon. 
+Orange is still very much a work in progress. At the moment, Orange supports compiling JIT or to a native binary with OS X, Linux, and Windows.
 
 # Hello World
 At the moment, Orange has no standard library, so you'll need to link against C library functions to do more 
@@ -18,7 +18,7 @@ complicated tasks:
 You can see more examples of Orange in the `test/` folder. 
 
 # Building on OS X and Linux
-Orange currently requires Boost, Flex, Bison, and CMake. Building is as easy as:
+Orange currently requires Boost, Flex, Bison, CMake, and LLVM, which can all be installed using your favorite package manager. Building is as easy as:
 
 ```sh 
 $ mkdir build-orange && cd build-orange 
