@@ -14,6 +14,10 @@ SymTable* SymTable::parent() const {
 	return m_parent;
 }
 
+SymTable* SymTable::container() const {
+	return m_container; 
+}
+
 bool SymTable::create(std::string name, ASTNode* node) {
 	// If it's already created, return false.
 	if (m_objs.find(name) != m_objs.end()) return false; 
@@ -85,7 +89,12 @@ SymTable::SymTable(bool isRoot) {
 
 SymTable::SymTable(SymTable* parent) {
 	m_ID = lastID++;
-	m_parent = parent;
+	m_parent = m_container = parent;
 }
 
+SymTable::SymTable(SymTable* parent, SymTable* container) {
+	m_ID = lastID++;
+	m_parent = parent; 
+	m_container = container; 
+}
 

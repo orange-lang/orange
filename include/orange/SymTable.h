@@ -13,7 +13,18 @@
 
 class SymTable {
 private:
-	SymTable *m_parent = nullptr; 
+	SymTable* m_parent = nullptr; 
+
+	/** 
+	 * Points to the table containing this one, if any.
+	 * This is different than parent: parentage is set for 
+	 * symbol tables that will inherit objects from their parents.
+	 * 
+	 * The container is just used to access the containing 
+	 * symbol table for reasons other than inheritance. 
+	 * In most castes, m_container == m_parent. 
+	 */
+	SymTable* m_container = nullptr; 
 
 	/**
 	 * Points to the structure of this symbol table.
@@ -35,6 +46,14 @@ public:
 	 * @return The parent symbol table, if it exists. 
 	 */
 	SymTable* parent() const;
+
+	/**
+	 * Gets the symbol table that this one is contained in.
+	 * Returns nullptr if there is no containing table.
+	 *
+	 * @return The containing symbol table, if any. 
+	 */
+	SymTable* container() const; 
 
 	/**
 	 * Sets the parent symbol table of this one.
@@ -96,8 +115,30 @@ public:
 	 */
 	bool root() const;
 
+	/**
+	 * Constructs a new symbol table. If this table is meant to be used as the root 
+	 * for all other tables, isRoot should be true. 
+	 *
+	 * @param isRoot Indicates whether or not this is the top-most symbol table. 
+	 */
 	SymTable(bool isRoot = false);
+
+	/**
+	 * Constructs a new symbol table, given a specific parent. Using this constructor 
+	 * will set the containing symbol table to the parameter passed in here. 
+	 *
+	 * @param parent The parent symbol table. This value also sets container. 
+	 */
 	SymTable(SymTable *parent);
+
+	/**
+	 * Constructs a new symbol table, given a specific parent and container. 
+	 * When using this constructor, both parent and container may be null. 
+	 *
+	 * @param parent The parent symbol table.
+	 * @parem container The symbol table containing this newly constructed table. 
+	 */
+	SymTable(SymTable* parent, SymTable* container);
 };
 
 #endif 

@@ -352,8 +352,8 @@ void FunctionStmt::resolve() {
 	// If we don't exist in the parent symtab, add us as a reference.
 	// If the parent doesn't exist, we're in the global block, so 
 	// nothing could call is anyway.
-	if (symtab()->parent() != nullptr) {
-		bool added = symtab()->parent()->create(m_name, this);
+	if (symtab()->container() != nullptr) {
+		bool added = symtab()->container()->create(m_name, this);
 		if (added == false) {
 			throw std::runtime_error("Can't create function " + m_name + ". Something with that name already exists!");
 		}
