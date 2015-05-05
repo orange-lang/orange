@@ -25,6 +25,8 @@ private:
 	std::map<std::string, ASTNode *> m_objs;
 
 	int m_ID = 0; 
+
+	bool m_root = false;
 public:
 	/**
 	 * Gets the parent symbol table of this one. 
@@ -89,7 +91,12 @@ public:
 	 */
 	int ID() const; 
 
-	SymTable();
+	/**
+	 * Returns whether or not this symtab is meant to be the root.
+	 */
+	bool root() const;
+
+	SymTable(bool isRoot = false);
 	SymTable(SymTable *parent);
 };
 

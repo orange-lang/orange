@@ -55,7 +55,8 @@ std::vector<RunResult> runTest(path p) {
 
 		// Otherwise just run the single file  
 		RunResult testRun = runFile(p.string(), false);
-		
+
+		// Re-enable output		
 		fflush(stdout);
 		dup2(bak, STDOUT_FILENO);
 		close(bak);

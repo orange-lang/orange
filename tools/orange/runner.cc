@@ -47,7 +47,7 @@ Runner::Runner(std::string pathname) {
 	GeneratingEngine::sharedEngine()->setActive(this);
 
 	// Create the global block
-	SymTable *globalSymtab = new SymTable(nullptr);
+	SymTable *globalSymtab = new SymTable(true); 
 	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), ParamList(), globalSymtab);
 	pushBlock(m_function);
 

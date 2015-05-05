@@ -25,8 +25,7 @@ void Block::popBlock() {
 
 
 bool Block::isRoot() const { 
-	// We're the root block if our symbol table doesn't have a parent.
-	return m_symtab && m_symtab->parent() == nullptr; 
+	return m_symtab && m_symtab->root(); 
 }
 
 void Block::addStatement(ASTNode* statement) {

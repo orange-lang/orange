@@ -72,8 +72,15 @@ int SymTable::ID() const {
 	return m_ID; 
 }
 
-SymTable::SymTable() {
+bool SymTable::root() const {
+	return m_root;
+}
+
+
+SymTable::SymTable(bool isRoot) {
 	m_ID = lastID++;
+	m_root = isRoot; 
+	m_parent = nullptr;
 }
 
 SymTable::SymTable(SymTable* parent) {
