@@ -1,3 +1,4 @@
+
 /*
 ** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
 ** directory of this distribution.
@@ -185,12 +186,12 @@ opt_array
 
 function
 	: DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN term { 
-			SymTable *tab = new SymTable(GE::runner()->symtab());
+			SymTable *tab = new SymTable();
 			$<stmt>$ = new FunctionStmt(*$2, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$<stmt>$);
 		} opt_statements END { $$ = $<stmt>7; GE::runner()->popBlock(); SET_LOCATION($$); }
 	| DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN ARROW any_type term {
-			SymTable *tab = new SymTable(GE::runner()->symtab());
+			SymTable *tab = new SymTable();
 			$<stmt>$ = new FunctionStmt(*$2, $7, *$4, tab);
 			GE::runner()->pushBlock((FunctionStmt *)$<stmt>$);			
 		} opt_statements END { $$ = $<stmt>9; GE::runner()->popBlock(); SET_LOCATION($$); }
