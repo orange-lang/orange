@@ -53,6 +53,11 @@ protected:
 	 * The internal value returned by Codegen() and getValue().
 	 */
 	Value *m_value = nullptr; 
+
+	/** 
+	 * Determines the type of the node. Used for caching. 
+	 */
+	AnyType* m_type = nullptr; 
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 

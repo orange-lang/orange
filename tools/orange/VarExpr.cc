@@ -210,11 +210,13 @@ VarExpr::VarExpr(std::string name, bool constant) : m_name(name) {
 	m_constant = constant;
 }
 
-VarExpr::VarExpr(std::string name, AnyType* type) : m_name(name), m_type(type) {
+VarExpr::VarExpr(std::string name, AnyType* type) : m_name(name) {
 	m_locked = true;
+	m_type = type; 
 }
 
-VarExpr::VarExpr(std::string name, AnyType* type, bool constant) : m_name(name), m_type(type) {
+VarExpr::VarExpr(std::string name, AnyType* type, bool constant) : m_name(name) {
 	m_locked = true;
 	m_constant = constant;
+	m_type = type; 
 }

@@ -325,16 +325,20 @@ std::string FunctionStmt::string() {
 	return ss.str();
 }
 
-bool FunctionStmt::isGeneric() const {
+bool FunctionStmt::isGeneric() {
+	GE::runner()->pushBlock(this);
+
+	bool ret = false;
+
 	for (auto param : m_parameters) {
-		// *DON'T* use getType() here! that searches up the symtab tree. we only want 
-		// the deepest level here.
-		if (param->type() == nullptr || param->type()->isVoidTy()) {
-			return true; 
+		if (param->getType()->isVoidTy()) {
+			ret = true; 
+			break; 
 		}
 	}
 
-	return false;
+	GE::runner()->popBlock();
+	return ret;
 }
 
 BasicBlock* FunctionStmt::createBasicBlock(std::string name) {

@@ -15,8 +15,8 @@ std::string ExternFunction::string() {
 	for (int i = 0; i < m_parameters.size(); i++) {
 		VarExpr* param = m_parameters[i];
 
-		if (param->type()) {
-			ss << param->type()->string() << " "; 
+		if (param->getType()->isVoidTy() == false) {
+			ss << param->getType()->string() << " "; 
 		}
 
 		ss << param->name();

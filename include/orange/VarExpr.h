@@ -29,11 +29,6 @@ protected:
 	 */
 	bool m_signed = false;
 
-	/** 
-	 * Determines the type of the variable.
-	 */
-	AnyType* m_type = nullptr; 
-
 	/**
 	 * Determines whether or not the variable is const.
 	 */
@@ -67,8 +62,6 @@ public:
 	virtual std::string string();
 
 	virtual AnyType* getType();
-
-	virtual AnyType* type() const { return m_type; }
 
 	virtual void setType(AnyType* type);
 

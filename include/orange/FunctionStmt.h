@@ -75,7 +75,7 @@ public:
 	 *
 	 * @return True if this is a generic function, false otherwise.
 	 */
-	virtual bool isGeneric() const;
+	virtual bool isGeneric();
 
 	/**
 	 * Clones are generated as separate functions and must be 
