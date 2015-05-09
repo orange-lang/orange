@@ -11,6 +11,7 @@ loops/
 array/
 morphing/
 pointers/
+ternary/
 programs/
 bugs/
 ``` 

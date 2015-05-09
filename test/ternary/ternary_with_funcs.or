@@ -1,0 +1,17 @@
+def retFalse()
+	return false 
+end 
+
+def retTrue()
+	return true 
+end 
+
+if (3 == 5 ? retFalse() : retTrue()) == false
+	return 1 
+end   
+
+if (3 != 5 ? retTrue() : retFalse()) == false
+	return 1
+end 
+
+return 0
