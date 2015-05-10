@@ -50,7 +50,7 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE 
-%token CONST
+%token CONST QUESTION COLON
 
 %type <block> statements opt_statements
 %type <node> statement return_or_expr const_var initializer
@@ -69,6 +69,8 @@
 
 /* lowest to highest precedence */
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
+
+%right QUESTION COLON
 
 %left LOGICAL_OR 
 %left LOGICAL_AND
@@ -147,6 +149,8 @@ expression
 	| expression BITWISE_AND expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	| expression BITWISE_OR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	| expression BITWISE_XOR expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
+
+	| expression QUESTION expression COLON expression { $$ = new TernaryExpr($1, $3, $5); SET_LOCATION($$); }
 
 	| primary_high { $$ = $1; }
 	| OPEN_PAREN any_type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); }

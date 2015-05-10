@@ -27,3 +27,4 @@
 #include "CastExpr.h"
 #include "DerefExpr.h"
 #include "AddressOfExpr.h"
+#include "TernaryExpr.h"

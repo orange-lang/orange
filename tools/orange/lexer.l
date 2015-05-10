@@ -165,6 +165,9 @@
 "/"											STR_ELEMENT; return DIVIDE; 
 "%"											STR_ELEMENT; return MOD; 
 
+"?"											STR_ELEMENT; return QUESTION;
+":"											STR_ELEMENT; return COLON;
+
 "mod"										STR_ELEMENT; return MOD;
 
 \"(\\.|[^\\"])*\"				SAVESTR(); return STRING;
