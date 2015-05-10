@@ -29,3 +29,4 @@
 #include "AddressOfExpr.h"
 #include "TernaryExpr.h"
 #include "AnyID.h"
+#include "EnumStmt.h"

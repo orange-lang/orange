@@ -63,6 +63,22 @@ std::string AnyType::string() const {
 	return ss.str();
 }
 
+std::string AnyType::getShortStr() const {
+	std::stringstream ss; 
+
+	if (isIntegerTy()) {
+		ss << (isSigned() ? "i" : "u");
+		ss << getIntegerBitWidth();
+		return ss.str(); 
+	} else if (isFloatTy()) {
+		return "f";
+	} else if (isDoubleTy()) {
+		return "d";
+	}
+
+	return "?";
+}
+
 bool AnyType::isIDTy() const {
 	return m_type_str == "id";
 }

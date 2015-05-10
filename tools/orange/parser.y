@@ -34,6 +34,7 @@
 	std::string *str;
 	std::vector<Block*>* blocklist;
 	std::vector<Expression*>* exprlist;
+	std::vector<EnumPair>* enumlist;
 	int token; 
 	int number;
 }
@@ -50,12 +51,12 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE 
-%token CONST QUESTION COLON
+%token CONST QUESTION COLON ENUM
 
 %type <block> statements opt_statements
 %type <node> statement return_or_expr const_var initializer
 %type <expr> expression primary VALUE opt_expr primary_high opt_array
-%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl for_loop inline_loop loop_breaks
+%type <stmt> return function extern_function if_statement inline_if unless_statement inline_unless variable_decl for_loop inline_loop loop_breaks enum_stmt
 %type <str> TYPE_ID basic_type 
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD 
 %type <strele> INCREMENT DECREMENT ARROW_LEFT
@@ -66,6 +67,7 @@
 %type <number> var_ptrs var_arrays_and_ptrs
 %type <blocklist> else_ifs_or_end
 %type <exprlist> var_arrays
+%type <enumlist> enum_members
 
 /* lowest to highest precedence */
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
@@ -119,6 +121,7 @@ statement
 	| for_loop term { $$ = $1; }
 	| inline_loop term { $$ = $1; }
 	| loop_breaks term { $$ = $1; }	
+	| enum_stmt term { $$ = $1; }
 	;
 
 expression
@@ -363,6 +366,26 @@ loop_breaks
 	| BREAK { $$ = new LoopSkip(false); }
 	;
 
+enum_stmt
+	: ENUM TYPE_ID term enum_members END {
+		EnumStmt* enumStmt = new EnumStmt(*$2);
+		for (auto pair : *$4) {
+			if (pair.value == nullptr) {
+				enumStmt->addEnum(pair.name);
+			} else {
+				enumStmt->addEnum(pair.name, pair.value);
+			}
+		}
+
+		$$ = (Statement *)enumStmt;
+	}
+
+enum_members
+	: enum_members TYPE_ID term { $1->push_back(EnumPair(*$2)); }
+	| enum_members TYPE_ID EQUALS VALUE term { $1->push_back(EnumPair(*$2, (BaseVal*)$4)); }
+	| TYPE_ID term { $$ = new std::vector<EnumPair>; $$->push_back(EnumPair(*$1)); }
+	| TYPE_ID EQUALS VALUE term { $$ = new std::vector<EnumPair>; $$->push_back(EnumPair(*$1, (BaseVal*)$3)); }
+	;
 
 initializer
 	: variable_decl { $$ = $1; } 

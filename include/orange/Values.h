@@ -14,6 +14,10 @@
 class BaseVal : public Expression { 
 public:
 	virtual bool isConstant() { return true; }
+
+	virtual BaseVal* increment() { return nullptr; }
+
+	virtual std::string valueStr() { return ""; }
 };
 
 class StrElement : public CodeElement {
@@ -27,7 +31,6 @@ public:
 	bool operator==(StrElement& RHS) {
 		return m_str == RHS.m_str;
 	}
-
 
 	friend StrElement operator+(const char *s, StrElement& element);
 	friend StrElement operator+(StrElement element, const char *s);
@@ -99,6 +102,15 @@ public:
 		return ret;
 	}
 
+	virtual BaseVal* increment() {
+		return new UIntVal(value + 1, size);
+	}
+
+	virtual std::string valueStr() { 
+		std::stringstream ss; 
+		ss << value; 
+		return ss.str();
+	}
 
 	UIntVal() { }
 	UIntVal(uint64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
@@ -130,6 +142,16 @@ public:
 		return ret;
 	}
 
+	virtual BaseVal* increment() {
+		return new IntVal(value + 1, size);
+	}
+
+	virtual std::string valueStr() { 
+		std::stringstream ss; 
+		ss << value; 
+		return ss.str();
+	}
+
 	IntVal() { }
 	IntVal(int64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
 };
@@ -157,6 +179,16 @@ public:
 		return ret;
 	}
 
+	virtual BaseVal* increment() {
+		return new FloatVal(value + 1);
+	}
+
+	virtual std::string valueStr() { 
+		std::stringstream ss; 
+		ss << value; 
+		return ss.str();
+	}
+
 	FloatVal();
 	FloatVal(float val) : value(val) {} // parses a string into its value.
 };
@@ -182,6 +214,16 @@ public:
 	virtual ASTNode* clone() { 
 		DoubleVal* ret = new DoubleVal(value);
 		return ret;
+	}
+
+	virtual BaseVal* increment() {
+		return new DoubleVal(value + 1);
+	}
+
+	virtual std::string valueStr() { 
+		std::stringstream ss; 
+		ss << value; 
+		return ss.str();
 	}
 
 	DoubleVal();

@@ -34,7 +34,16 @@ private:
 	static std::map<std::string, AnyType*> m_defined_types;
 public:
 	std::string string() const;
+
+	/** 
+	 * Returns the string appended to values to get this type.
+	 * for example, u64 in the case of creating an unsigned integer like 255u64. 
+	 * @return The short-form type string of this type.
+	 */
+	std::string getShortStr() const;
+
 	Type* getLLVMType() const { return m_type; }
+
 	bool isSigned() const { return m_signed; }
 
 	bool isIDTy() const;
