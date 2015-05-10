@@ -168,7 +168,7 @@ primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; SET_LOCATION($$); } 
 	|	VALUE { $$ = $1; SET_LOCATION($$); }
 	| STRING { $$ = new StrVal(*$1); }
-	|	TYPE_ID { $$ = new VarExpr(*$1); SET_LOCATION($$); }
+	|	TYPE_ID { $$ = new AnyID(*$1); SET_LOCATION($$); }
 	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN { $$ = new FuncCall(*$1, *$3); SET_LOCATION($$); }
 	| MINUS expression { $$ = new NegativeExpr($2); }
 

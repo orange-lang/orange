@@ -385,14 +385,9 @@ void BinOpExpr::resolve() {
 		VarExpr* vExpr = getVarExpr(m_LHS); 
 
 		// Only create this variable if it doesn't exist in a parent scope.
-		if (vExpr->existsInParent() == false || m_op == "<-") {
-			if (m_LHS->getClass() == "AnyID") {
-				AnyID* anything = (AnyID*)m_LHS; 
-				anything->newVarExpr();
-			}
-
-			vExpr->create(false);
-		}
+		if (vExpr->existsInParent() == false || m_op == "<-") {			
+	 		vExpr->create();
+	 	}
 
 		if (vExpr->getType()->isVoidTy()) {
 			vExpr->setType(m_RHS->getType());

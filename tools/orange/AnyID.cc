@@ -59,10 +59,13 @@ void AnyID::resolve() {
 	m_resolved = true; 
 
 	// If something exists in the symtab, just use that that.
+	// We don't want to use existing VarExprs since the code expects
+	// every instance of an id that is a variable to have a different 
+	// VarExpr instance.
 	SymTable* tab = GE::runner()->topBlock()->symtab();
 	ASTNode* node = tab->find(m_name);
 
-	if (node != nullptr) {
+	if (node != nullptr && node->getClass() != "VarExpr") {
 		m_any_expr = (Expression *)node; 
 	} else {
 		// Otherwise, we have to create something it should default to a VarExpr.
