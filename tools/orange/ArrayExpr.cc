@@ -62,6 +62,10 @@ Value* ArrayExpr::Codegen() {
 	} else {
 		for (int i = 0; i < m_elements.size(); i++) {
 			Value* arr_ele = m_elements[i]->Codegen();
+			
+			if (arr_ele == nullptr) {
+				throw std::runtime_error("ArrayExpr::Codegen(): arr_ele did not generate a value!");
+			}
 
 			// This is only necessary for the non-constant array since constant exprs 
 			// will never require to be loaded 

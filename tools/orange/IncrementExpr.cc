@@ -20,6 +20,11 @@ std::string IncrementExpr::string() {
 
 Value* IncrementExpr::Codegen() {
 	Value* origValue = m_expr->Codegen();
+	
+	if (origValue == nullptr) {
+		throw std::runtime_error("IncrementExpr::Codegen(): m_expr did not generate a value!");
+	}
+	
 	Value* loadedVal = GE::builder()->CreateLoad(origValue);
 
 	Value* newValue = nullptr;

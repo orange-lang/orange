@@ -50,6 +50,10 @@ Value* ReturnStmt::Codegen() {
 	// Cast our return value to the return type of the function, if needed.
 	if (m_expr) {
 		retExpr = m_expr->Codegen();
+		
+		if (retExpr == nullptr) {
+			throw std::runtime_error("ReturnStmt::Codegen(): m_expr did not generate a value!");
+		}
 
 		if (m_expr->returnsPtr()) retExpr = GE::builder()->CreateLoad(retExpr);
 

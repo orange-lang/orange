@@ -56,6 +56,10 @@ Value* FuncCall::Codegen() {
 		if (llvmFunction->isVarArg()) {
 			for (unsigned int i = llvmFunction->arg_size(); i < m_arguments.size(); i++) {
 				Value *vArg = m_arguments[i]->Codegen();
+				
+				if (vArg == nullptr) {
+					throw std::runtime_error("FuncCall::Codegen(): m_arguments[i] did not generate a value!");
+				}
 
 				if (m_arguments[i]->returnsPtr()) {
 					vArg = GE::builder()->CreateLoad(vArg);

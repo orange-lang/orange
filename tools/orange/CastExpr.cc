@@ -15,6 +15,10 @@ std::string CastExpr::string() {
 
 Value* CastExpr::Codegen() { 
 	Value* val = m_expr->Codegen();
+	
+	if (val == nullptr) {
+		throw std::runtime_error("CastExpr::Codegen(): m_expr did not generate a value!");
+	}
 
 	if (m_expr->returnsPtr()) {
 		val = GE::builder()->CreateLoad(val);
