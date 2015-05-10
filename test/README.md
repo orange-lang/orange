@@ -12,6 +12,7 @@ array/
 morphing/
 pointers/
 ternary/
+enum/
 programs/
 bugs/
 ``` 
