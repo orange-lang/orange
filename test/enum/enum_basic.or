@@ -6,7 +6,7 @@ enum Status
 end
 
 return 1 if Status.PENDING != 0
-return 1 if Status.RUNNING != 1 
-return 1 if Status.STOPPED != 2 
-return 1 if Status.EXITED != 3 
+return 2 if Status.RUNNING != 1 
+return 3 if Status.STOPPED != 2 
+return 4 if Status.EXITED != 3 
 return 0
