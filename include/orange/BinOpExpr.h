@@ -12,6 +12,8 @@
 #include "AST.h"
 #include "Values.h"
 
+class VarExpr;
+
 class BinOpExpr : public Expression {
 private:
 	Expression* m_LHS;
@@ -45,6 +47,24 @@ protected:
  	 * @return Indicates whether or not the expression is valid; i.e., without errors.
  	 */
 	bool Validate(Value* LHS, Value* RHS); 
+
+	/**
+	 * Returns true if the param expr is a VarExpr or is an AnyID wrapping 
+	 * a VarExpr.
+	 *
+	 * @param expr The expression to test. 
+	 * @return True if expr is a VarExpr or AnyID where its expression is a VarExpr
+	 */
+	bool isVarExpr(Expression* expr);
+
+	/**
+	 * Returns a VarExpr from the given expr. If expr is an AnyID wrapping
+	 * a VarExpr, it will return that.
+	 *
+	 * @param expr The expression to extract a VarExpr from.
+	 * @return The VarExpr. Returns nullptr if expr cannot be converted.
+	 */ 
+	VarExpr* getVarExpr(Expression* expr);
 public:
 	/**
 	 * Returns true if op will assign a value to the LHS.

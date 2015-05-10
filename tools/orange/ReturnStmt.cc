@@ -10,9 +10,34 @@
 #include <orange/generator.h>
 #include <orange/SymTable.h>
 
+void ReturnStmt::validate() {
+	SymTable *curTab = GE::runner()->topBlock()->symtab();
+	FunctionStmt *containingFunc = (FunctionStmt *)curTab->findStructure("FunctionStmt");
+	
+	// Do some sanity checks. These can't be done in resolve() as
+	// other parameters may not have been resolved yet.
+	if (m_expr && containingFunc->getType()->isVoidTy()) {
+		throw CompilerMessage(*m_expr, "Returning value in a void function.");
+	} else if (containingFunc->getType()->isVoidTy() == false && m_expr == nullptr) {
+		throw std::runtime_error("Returning void in a function that expects a value.");
+	}
+	
+	if (m_expr) {
+		if (m_expr->getType() == nullptr) {
+			throw CompilerMessage(*m_expr, "Compiler error: expression has no type.");
+		}
+		
+		if (CastingEngine::AreTypesCompatible(m_expr->getType(), containingFunc->getType()) == false) {
+			throw CompilerMessage(*m_expr, "Cannot convert return value to function return type.");
+		}
+	}
+}
+
 Value* ReturnStmt::Codegen() {
 	SymTable *curTab = GE::runner()->topBlock()->symtab();
 	FunctionStmt *containingFunc = (FunctionStmt *)curTab->findStructure("FunctionStmt");
+	
+	validate();
 
 	Value* retVal = containingFunc->getRetVal();
 
@@ -49,25 +74,4 @@ void ReturnStmt::resolve() {
 	m_resolved = true; 
 
 	if (m_expr) m_expr->resolve();
-	
-	// Find our parent function...
-	SymTable *curTab = GE::runner()->topBlock()->symtab();
-    
-	FunctionStmt *containingFunc = (FunctionStmt *)curTab->findStructure("FunctionStmt");
-	
-	if (m_expr && containingFunc->getType()->isVoidTy()) {
-		throw CompilerMessage(*m_expr, "Returning value in a void function.");
-	} else if (containingFunc->getType()->isVoidTy() == false && m_expr == nullptr) {
-		throw std::runtime_error("Returning void in a function that expects a value.");
-	}
-
-	if (m_expr) {
-		if (m_expr->getType() == nullptr) {
-			throw CompilerMessage(*m_expr, "Compiler error: expression has no type.");
-		}
-
-		if (CastingEngine::AreTypesCompatible(m_expr->getType(), containingFunc->getType()) == false) {
-			throw CompilerMessage(*m_expr, "Cannot convert return value to function return type.");
-		}
-	}
 }

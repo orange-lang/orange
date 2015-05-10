@@ -9,11 +9,12 @@
 #include <orange/BinOpExpr.h>
 #include <orange/VarExpr.h>
 #include <orange/generator.h>
+#include <orange/AnyID.h>
 
 bool BinOpExpr::LHSShouldNotBeNull() {
 	// Right now, = can produce a LHS with a null value if the LHS is a variable 
 	// that has yet to be created. 
-	if (m_LHS->getClass() == "VarExpr" && (m_op == "=" || m_op == "<-")) return false;
+	if (isVarExpr(m_LHS) && (m_op == "=" || m_op == "<-")) return false;
 	return true; 
 }
 
@@ -45,6 +46,36 @@ bool BinOpExpr::Validate(Value* LHS, Value* RHS) {
 
 	return true; 
 }
+
+bool BinOpExpr::isVarExpr(Expression* expr) {
+	if (expr == nullptr) return false;
+
+	if (expr->getClass() == "VarExpr") return true; 
+
+	if (expr->getClass() == "AnyID") {
+		AnyID* anything = (AnyID *)expr; 
+		return anything->expression()->getClass() == "VarExpr";
+	}
+
+	return false; 
+}
+
+VarExpr* BinOpExpr::getVarExpr(Expression* expr) {
+	if (expr == nullptr) return nullptr;
+
+	if (expr->getClass() == "VarExpr") return (VarExpr *)expr;
+
+	if (expr->getClass() == "AnyID") {
+		AnyID* anything = (AnyID *)expr; 
+
+		if (anything->expression()->getClass() == "VarExpr") {
+			return (VarExpr *)anything->expression();
+		}
+	}
+
+	return nullptr;
+}
+
 
 bool BinOpExpr::IsAssignOp(std::string op) {
 	return op == "=" || op == "<-" || op == "+=" || op == "-=" || op == "/=" ||
@@ -181,9 +212,9 @@ Value* BinOpExpr::Codegen() {
 	if (m_RHS->returnsPtr()) RHS = GE::builder()->CreateLoad(RHS);
 
 	// If we're assigning a variable that doesn't exist, let's create it. 
-	if ((m_op == "=" || m_op == "<-") && LHS == nullptr) {
+	if ((m_op == "=" || m_op == "<-") && isVarExpr(m_LHS) && LHS == nullptr) {
 		// Before we create the variable, let's see if LHS needs any last minute morphing. 
-		VarExpr* vExpr = (VarExpr *)m_LHS; 
+		VarExpr* vExpr = getVarExpr(m_LHS);
 
 		if (vExpr->isLocked() == false) {
 			if (vExpr->getType()->isVoidTy()) {
@@ -349,12 +380,17 @@ void BinOpExpr::resolve() {
 	m_LHS->resolve();
 	m_RHS->resolve();
 
-	if ((m_op == "=" || m_op == "<-") && m_LHS->getClass() == "VarExpr") {
+	if ((m_op == "=" || m_op == "<-") && isVarExpr(m_LHS)) {
 		// Set the type of LHS if it doesn't exist or this type has higher precedence. 
-		VarExpr* vExpr = (VarExpr *)m_LHS; 
+		VarExpr* vExpr = getVarExpr(m_LHS); 
 
 		// Only create this variable if it doesn't exist in a parent scope.
 		if (vExpr->existsInParent() == false || m_op == "<-") {
+			if (m_LHS->getClass() == "AnyID") {
+				AnyID* anything = (AnyID*)m_LHS; 
+				anything->newVarExpr();
+			}
+
 			vExpr->create(false);
 		}
 
@@ -363,8 +399,8 @@ void BinOpExpr::resolve() {
 		} else if (vExpr->isLocked() == false && CastingEngine::GetFittingType(vExpr->getType(), m_RHS->getType()) == m_RHS->getType()) {
 			vExpr->setType(m_RHS->getType());
 		}
-	} else if (IsAssignOp(m_op) && m_LHS->getClass() == "VarExpr") {
-		VarExpr* var = (VarExpr*)m_LHS;
+	} else if (IsAssignOp(m_op) && isVarExpr(m_LHS)) {
+		VarExpr* var = getVarExpr(m_LHS);
 		
 		if (var->isLocked() == false && CastingEngine::GetFittingType(var->getType(), m_RHS->getType()) == m_RHS->getType()) {
 			var->setType(m_RHS->getType());

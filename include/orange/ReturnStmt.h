@@ -14,6 +14,8 @@
 class ReturnStmt : public Statement {
 private:
 	Expression* m_expr = nullptr; 
+protected:
+	void validate();
 public:
 	virtual std::string getClass() { return "ReturnStmt"; }
 

@@ -108,7 +108,11 @@ void VarExpr::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true; 
 
-	// Nothing to do for now.
+	if (getType()->isVariadicArray()) {
+		for (auto expr : getType()->getAllVariadicArrayElements()) {
+			expr->resolve();
+		}
+	}
 }
 
 void VarExpr::create(bool throwError) {
@@ -174,6 +178,10 @@ Value* VarExpr::allocate() {
 
 		for (auto expr : getType()->getAllVariadicArrayElements()) {
 			auto value = expr->Codegen();
+			
+			if (value == nullptr) {
+				throw std::runtime_error("VarExpr::allocate(): expr did not generate a value!");
+			}
 
 			if (expr->returnsPtr() == true) {
 				value = GE::builder()->CreateLoad(value);
