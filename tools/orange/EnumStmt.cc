@@ -86,7 +86,12 @@ void EnumStmt::addEnum(std::string name) {
 
 	EnumPair pair; 
 	pair.name = name; 
-	pair.value = m_last_val->increment();
+
+	if (m_last_val) {
+		pair.value = m_last_val->increment();
+	} else {
+		pair.value = new IntVal(0, 8);
+	}
 
 	m_enums.push_back(pair);
 
@@ -133,5 +138,5 @@ BaseVal* EnumStmt::getEnumValue(std::string name) {
 }
 
 EnumStmt::EnumStmt(std::string name) : m_name(name) {
-	m_last_val = new UIntVal(0, 64);
+	m_last_val = nullptr;
 }
