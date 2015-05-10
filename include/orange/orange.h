@@ -30,3 +30,4 @@
 #include "TernaryExpr.h"
 #include "AnyID.h"
 #include "EnumStmt.h"
+#include "DotExpr.h"

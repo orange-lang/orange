@@ -155,6 +155,8 @@ expression
 
 	| expression QUESTION expression COLON expression { $$ = new TernaryExpr($1, $3, $5); SET_LOCATION($$); }
 
+	| TYPE_ID DOT TYPE_ID { $$ = new DotExpr(new AnyID(*$1), *$3); }
+
 	| primary_high { $$ = $1; }
 	| OPEN_PAREN any_type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); }
 	| BITWISE_AND expression { $$ = new AddressOfExpr($2); }
@@ -382,9 +384,9 @@ enum_stmt
 
 enum_members
 	: enum_members TYPE_ID term { $1->push_back(EnumPair(*$2)); }
-	| enum_members TYPE_ID EQUALS VALUE term { $1->push_back(EnumPair(*$2, (BaseVal*)$4)); }
+	| enum_members TYPE_ID ASSIGN VALUE term { $1->push_back(EnumPair(*$2, (BaseVal*)$4)); }
 	| TYPE_ID term { $$ = new std::vector<EnumPair>; $$->push_back(EnumPair(*$1)); }
-	| TYPE_ID EQUALS VALUE term { $$ = new std::vector<EnumPair>; $$->push_back(EnumPair(*$1, (BaseVal*)$3)); }
+	| TYPE_ID ASSIGN VALUE term { $$ = new std::vector<EnumPair>; $$->push_back(EnumPair(*$1, (BaseVal*)$3)); }
 	;
 
 initializer
