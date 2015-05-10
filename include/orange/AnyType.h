@@ -31,7 +31,7 @@ private:
 	std::vector<int> m_arrays;
 	std::vector<Expression *> m_arrays_expr;
 
-	static std::map<std::string, AnyType*> m_defined_tyes;
+	static std::map<std::string, AnyType*> m_defined_types;
 public:
 	std::string string() const;
 	Type* getLLVMType() const { return m_type; }
@@ -90,6 +90,12 @@ public:
 	 * Allocates a value of this type.
 	 */
 	Value* allocate();
+
+	/** 
+	 * Returns a new AnyType with the underlying type changed. Number of pointers and 
+	 * arrays will not change.
+	 */
+	AnyType* changeUnderlyingType(AnyType* newType); 
 
 	AnyType(Type* type, bool isSigned = false);
 	AnyType(std::string type, std::vector<int> arrays = std::vector<int>(), int ptrs = 0);

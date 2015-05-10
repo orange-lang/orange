@@ -13,7 +13,7 @@
 #include <orange/generator.h>
 #include <orange/Values.h>
 
-std::map<std::string, AnyType*> AnyType::m_defined_tyes;
+std::map<std::string, AnyType*> AnyType::m_defined_types;
 
 AnyType::AnyType(Type* type, bool isSigned) {
 	m_type = type; 
@@ -111,12 +111,12 @@ AnyType* AnyType::getPointerElementType() {
 	ss << (m_ptrs - 1); 
 	std::string type = ss.str();
 
-	if (m_defined_tyes.find(type) != m_defined_tyes.end()) {
-		return m_defined_tyes.find(type)->second; 
+	if (m_defined_types.find(type) != m_defined_types.end()) {
+		return m_defined_types.find(type)->second; 
 	}
 
 	AnyType* someTy = new AnyType(m_type_str, m_arrays, m_ptrs - 1);
-	m_defined_tyes[type] = someTy; 
+	m_defined_types[type] = someTy; 
 	return someTy; 
 }
 
@@ -276,22 +276,22 @@ AnyType* AnyType::getElementType() {
 	ss << m_ptrs; 
 	std::string type = ss.str();
 
-	if (m_defined_tyes.find(type) != m_defined_tyes.end()) {
-		return m_defined_tyes.find(type)->second; 
+	if (m_defined_types.find(type) != m_defined_types.end()) {
+		return m_defined_types.find(type)->second; 
 	}
 
 	AnyType* someTy = new AnyType(m_type_str, arrays, m_ptrs);
-	m_defined_tyes[type] = someTy; 
+	m_defined_types[type] = someTy; 
 	return someTy; 
 }
 
 AnyType* AnyType::getBaseType() {
-	if (m_defined_tyes.find(m_type_str) != m_defined_tyes.end()) {
-		return m_defined_tyes.find(m_type_str)->second; 
+	if (m_defined_types.find(m_type_str) != m_defined_types.end()) {
+		return m_defined_types.find(m_type_str)->second; 
 	}	
 
 	AnyType* someTy = new AnyType(m_type_str, std::vector<int>(), 0);
-	m_defined_tyes[m_type_str] = someTy; 
+	m_defined_types[m_type_str] = someTy; 
 	return someTy;
 }
 
@@ -307,37 +307,37 @@ AnyType* AnyType::getArray(int size) {
 	ss << "[" << size << "]" << m_ptrs; 
 	std::string type = ss.str();
 
-	if (m_defined_tyes.find(type) != m_defined_tyes.end()) {
-		return m_defined_tyes.find(type)->second;
+	if (m_defined_types.find(type) != m_defined_types.end()) {
+		return m_defined_types.find(type)->second;
 	}
 
 	std::vector<int> arrays = m_arrays; 
 	arrays.push_back(size);
 
 	AnyType* arrayTy = new AnyType(m_type_str, arrays, m_ptrs);
-	m_defined_tyes[type] = arrayTy;
+	m_defined_types[type] = arrayTy;
 	return arrayTy;
 }
 
 
 AnyType* AnyType::getIDTy() {
-	if (m_defined_tyes.find("id") != m_defined_tyes.end()) {
-		return m_defined_tyes.find("id")->second;
+	if (m_defined_types.find("id") != m_defined_types.end()) {
+		return m_defined_types.find("id")->second;
 	}
 
 	AnyType* voidTy = new AnyType("id");
-	m_defined_tyes["id"] = voidTy; 
+	m_defined_types["id"] = voidTy; 
 	return voidTy;
 }
 
 
 AnyType* AnyType::getVoidTy() {
-	if (m_defined_tyes.find("void") != m_defined_tyes.end()) {
-		return m_defined_tyes.find("void")->second;
+	if (m_defined_types.find("void") != m_defined_types.end()) {
+		return m_defined_types.find("void")->second;
 	}
 
 	AnyType* voidTy = new AnyType("void");
-	m_defined_tyes["void"] = voidTy; 
+	m_defined_types["void"] = voidTy; 
 	return voidTy;
 }
 
@@ -345,12 +345,12 @@ AnyType* AnyType::getUIntNTy(int size) {
 	std::stringstream ss;
 	ss << "uint" << size;
 
-	if (m_defined_tyes.find(ss.str()) != m_defined_tyes.end()) {
-		return m_defined_tyes.find(ss.str())->second;
+	if (m_defined_types.find(ss.str()) != m_defined_types.end()) {
+		return m_defined_types.find(ss.str())->second;
 	}
 
 	AnyType* voidTy = new AnyType(ss.str());
-	m_defined_tyes[ss.str()] = voidTy; 
+	m_defined_types[ss.str()] = voidTy; 
 	return voidTy;
 }
 
@@ -358,48 +358,74 @@ AnyType* AnyType::getIntNTy(int size) {
 	std::stringstream ss;
 	ss << "int" << size;
 
-	if (m_defined_tyes.find(ss.str()) != m_defined_tyes.end()) {
-		return m_defined_tyes.find(ss.str())->second;
+	if (m_defined_types.find(ss.str()) != m_defined_types.end()) {
+		return m_defined_types.find(ss.str())->second;
 	}
 
 	AnyType* voidTy = new AnyType(ss.str());
-	m_defined_tyes[ss.str()] = voidTy; 
+	m_defined_types[ss.str()] = voidTy; 
 	return voidTy;
 }
 
 AnyType* AnyType::getFloatTy() {
-	if (m_defined_tyes.find("float") != m_defined_tyes.end()) {
-		return m_defined_tyes.find("float")->second;
+	if (m_defined_types.find("float") != m_defined_types.end()) {
+		return m_defined_types.find("float")->second;
 	}
 
 	AnyType* voidTy = new AnyType("float");
-	m_defined_tyes["float"] = voidTy; 
+	m_defined_types["float"] = voidTy; 
 	return voidTy;
 }
 
 AnyType* AnyType::getDoubleTy() {
-	if (m_defined_tyes.find("double") != m_defined_tyes.end()) {
-		return m_defined_tyes.find("double")->second;
+	if (m_defined_types.find("double") != m_defined_types.end()) {
+		return m_defined_types.find("double")->second;
 	}
 
 	AnyType* voidTy = new AnyType("double");
-	m_defined_tyes["double"] = voidTy; 
+	m_defined_types["double"] = voidTy; 
 	return voidTy;
 }
 
 AnyType* AnyType::getInt8PtrTy() {
-	if (m_defined_tyes.find("int8*") != m_defined_tyes.end()) {
-		return m_defined_tyes.find("int8*")->second;
+	if (m_defined_types.find("int8*") != m_defined_types.end()) {
+		return m_defined_types.find("int8*")->second;
 	}
 
 	AnyType* voidTy = new AnyType("int8", std::vector<int>(), 1);
-	m_defined_tyes["int8*"] = voidTy; 
+	m_defined_types["int8*"] = voidTy; 
 	return voidTy;
 }
 
 Value* AnyType::allocate() {
 	return GE::builder()->CreateAlloca(getLLVMType());
 }
+
+AnyType* AnyType::changeUnderlyingType(AnyType* newType) {
+	// We need to know what the type would be first to 
+	// see if it's cached.
+
+	// The type is this type, but with newType's m_type_str.
+	std::stringstream ss; 
+	ss << newType->m_type_str; 
+
+	for (int array : m_arrays) {
+		ss << "[" << array << "]";
+	} 
+
+	ss << m_ptrs; 
+	std::string type = ss.str();
+
+	if (m_defined_types.find(type) != m_defined_types.end()) {
+		return m_defined_types.find(type)->second; 
+	}
+
+	// Create and return the new type, since it doesn't exist. 
+	AnyType* someTy = new AnyType(newType->m_type_str, m_arrays, m_ptrs);
+	m_defined_types[type] = someTy; 
+	return someTy; 	
+}
+
 
 bool AnyType::isConstantArray() const { 
 	if (m_arrays.size() > 0 && m_arrays_expr.size() == 0) return true; 
