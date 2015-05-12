@@ -51,6 +51,13 @@ private:
 	ParamList m_parameters;
 
 	std::vector<FunctionStmt*> m_clones;
+
+	std::string getShortName(AnyType* t);
+
+	/** 
+	 * Set to true when the name has been mangled.
+	 */
+	bool m_mangled = false;
 public:
 	virtual std::string getClass() { return "FunctionStmt"; }
 
@@ -91,9 +98,10 @@ public:
 	 * 	d for double.
 	 *	p for all pointers (uint8** would be Bpp)
 	 *
-	 * @returns The full name signature for a function clone.
+	 * @returns The mangled name for a function that is not a generic.
 	 */
-	std::string getClonesFullSignature(ArgList args);
+	std::string getMangledName(ArgList args);
+	std::string getMangledName(ParamList params);
 
 	/** 
 	 * Attempts to create a generic clone of this function with 
@@ -130,6 +138,11 @@ public:
 	 * table.
 	 */
 	virtual void resolve();
+
+	/** 
+	 * If set before resolve, will disable name mangling. 
+	 */
+	void disableMangle() { m_mangled = true; }
 
 	FunctionStmt(std::string name, ParamList parameters, SymTable* symtab);
 	FunctionStmt(std::string name, AnyType* type, ParamList parameters, SymTable* symtab);

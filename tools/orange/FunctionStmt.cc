@@ -22,52 +22,85 @@ FunctionStmt::FunctionStmt(std::string name, AnyType* type, ParamList parameters
 	m_parameters = parameters;
 }
 
-std::string FunctionStmt::getClonesFullSignature(ArgList args) {
-	std::string ret_name = m_name + "_"; 
+
+std::string FunctionStmt::getShortName(AnyType* t) {
+	std::stringstream ss; 
+
+	if (t->isIntegerTy()) {
+		int width = t->getIntegerBitWidth();
+		switch (width) {
+			case 1:
+				ss << "T";
+				break;
+			case 8:
+				ss << (t->isSigned() ? "b" : "B");
+				break; 
+			case 16:
+				ss << (t->isSigned() ? "s" : "S");
+				break;
+			case 32:
+				ss << (t->isSigned() ? "i" : "I");
+				break;
+			case 64:
+				ss << (t->isSigned() ? "l" : "L");
+				break;
+			default:
+				ss << "?";
+				break;
+		}
+	} else if (t->isFloatTy()) {
+		ss << "f";
+	} else if (t->isDoubleTy()) {
+		ss << "F";
+	} else {
+		throw CompilerMessage(*this, "Unknown type for generic " + t->string());
+	}
+
+	return ss.str();
+}
+
+std::string FunctionStmt::getMangledName(ParamList params) {
+	std::stringstream ss; 
+	ss << "_O" << m_name.length() << m_name << params.size(); 
+
+	for (auto param : params) {
+		AnyType* type = param->getType();
+		AnyType* basetype = type->getBaseType();
+
+		ss << getShortName(basetype);
+
+		for (int i = 0; i < type->getPointerLength(); i++) {
+			ss << "p";
+		}
+
+		for (auto e : type->getAllArrayElements()) {
+			ss << "p";
+		}
+	}
+
+	return ss.str();
+}
+
+std::string FunctionStmt::getMangledName(ArgList args) {
+	std::stringstream ss; 
+	ss << "_O" << m_name.length() << m_name << args.size(); 
+
 	for (auto arg : args) {
 		AnyType* type = arg->getType();
 		AnyType* basetype = type->getBaseType();
 
-		if (basetype->isIntegerTy()) {
-			int width = basetype->getIntegerBitWidth();
-			switch (width) {
-				case 1:
-					ret_name += "T";
-					break;
-				case 8:
-					ret_name += (type->isSigned() ? "b" : "B");
-					break; 
-				case 16:
-					ret_name += (type->isSigned() ? "s" : "S");
-					break;
-				case 32:
-					ret_name += (type->isSigned() ? "i" : "I");
-					break;
-				case 64:
-					ret_name += (type->isSigned() ? "l" : "L");
-					break;
-				default:
-					ret_name += "?";
-					break;
-			}
-		} else if (basetype->isFloatTy()) {
-			ret_name += "f";
-		} else if (basetype->isDoubleTy()) {
-			ret_name += "F";
-		} else {
-			throw CompilerMessage(*this, "Unknown type for generic " + basetype->string());
-		}
+		ss << getShortName(basetype);
 
 		for (int i = 0; i < type->getPointerLength(); i++) {
-			ret_name += "p";
+			ss << "p";
 		}
 
 		for (auto e : type->getAllArrayElements()) {
-			ret_name += "p";
+			ss << "p";
 		}
 	}
 
-	return ret_name;
+	return ss.str();
 }
 
 FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
@@ -80,7 +113,7 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 		throw CompilerMessage(*this, "Mismatched number of arguments while calling " + m_name + "!");
 	}
 
-	std::string cloned_name = getClonesFullSignature(args);
+	std::string cloned_name = getMangledName(args);
 
 	// Does a clone with that name already exist? If so, return that clone.
 	for (auto clone : m_clones) {
@@ -116,6 +149,8 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	} else {
 		clone = new FunctionStmt(cloned_name, cloned_params, symtab()->clone());
 	}
+
+	clone->m_mangled = true;
 
 	for (auto stmt : m_statements) {
 		auto clonedStmt = stmt->clone();
@@ -392,6 +427,13 @@ void FunctionStmt::resolve() {
 
 		m_resolved = true;
 		return; 
+	}
+
+	if (m_mangled == false) {
+		// Change to our mangled name 
+		m_name = getMangledName(m_parameters);
+
+		m_mangled = true; 
 	}
 
 	// Push our symtab into the stack and add our parameters to the symbol table.
