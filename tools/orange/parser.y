@@ -35,6 +35,7 @@
 	std::vector<Block*>* blocklist;
 	std::vector<Expression*>* exprlist;
 	std::vector<EnumPair>* enumlist;
+	std::vector<DeclPair>* declpairlist;
 	int token; 
 	int number;
 }
@@ -68,6 +69,7 @@
 %type <blocklist> else_ifs_or_end
 %type <exprlist> var_arrays
 %type <enumlist> enum_members
+%type <declpairlist> opt_variable_decls opt_variable_decls_impl
 
 /* lowest to highest precedence */
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
@@ -399,9 +401,20 @@ opt_expr
 	| { $$ = nullptr; }
 
 variable_decl
-	: any_type TYPE_ID { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1)); }
-	| any_type TYPE_ID ASSIGN expression  { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1), $4); }
+	: any_type TYPE_ID opt_variable_decls { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1), *$3); }
+	| any_type TYPE_ID ASSIGN expression opt_variable_decls { $$ = new ExplicitDeclStmt(new VarExpr(*$2, $1), $4, *$5); }
 	;
+
+opt_variable_decls
+	: COMMA opt_variable_decls_impl { $$ = $2; }
+	| { $$ = new std::vector<DeclPair>(); }
+	;
+
+opt_variable_decls_impl 
+	: TYPE_ID COMMA opt_variable_decls { $3->push_back(DeclPair(*$1, nullptr)); }
+	| TYPE_ID ASSIGN expression COMMA opt_variable_decls { $5->push_back(DeclPair(*$1, $3)); }
+	| TYPE_ID { $$ = new std::vector<DeclPair>(); $$->push_back(DeclPair(*$1, nullptr)); }
+	| TYPE_ID ASSIGN expression { $$ = new std::vector<DeclPair>(); $$->push_back(DeclPair(*$1, $3)); }
 
 const_var 
 	: CONST any_type TYPE_ID ASSIGN expression { $$ = new ExplicitDeclStmt(new VarExpr(*$3, $2, true), $5); }

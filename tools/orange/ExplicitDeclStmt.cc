@@ -10,14 +10,14 @@
 #include <orange/VarExpr.h>
 #include <orange/generator.h>
 
-Value* ExplicitDeclStmt::Codegen() {
+Value* ExplicitDeclStmt::CodegenPair(VarExpr* var, Expression* expr) {
 	// If we have an expression, cast it to the type of our variable and assign it.
-	if (m_expr) {
-		Value* value = m_expr->Codegen();
+	if (expr) {
+		Value* value = expr->Codegen();
 
 		// If the expr returns a pointer, don't load if LHS is a pointer and RHS is an array 
-		bool doLoad = m_expr->returnsPtr();
-		if (doLoad && m_var->getType()->isPointerTy() && m_expr->getType()->isArrayTy()) {
+		bool doLoad = expr->returnsPtr();
+		if (doLoad && var->getType()->isPointerTy() && expr->getType()->isArrayTy()) {
 			doLoad = false;
 		}
 
@@ -25,33 +25,51 @@ Value* ExplicitDeclStmt::Codegen() {
 			value = GE::builder()->CreateLoad(value);
 		}
 		
-		bool arrayToArray = m_expr->getType()->isArrayTy() && m_var->getType()->isArrayTy(); 
+		bool arrayToArray = expr->getType()->isArrayTy() && var->getType()->isArrayTy(); 
 
 		if (arrayToArray == false) {
-			bool casted = CastingEngine::CastValueToType(&value, m_var->getType(), m_var->isSigned(), true);
+			bool casted = CastingEngine::CastValueToType(&value, var->getType(), var->isSigned(), true);
 			if (casted == false) {
-				throw CompilerMessage(*m_expr, "Could not cast expression to variable type!");
+				throw CompilerMessage(*expr, "Could not cast expression to variable type!");
 			}
 		}
 
 
-		m_var->allocate();
-		GE::builder()->CreateStore(value, m_var->getValue());
+		var->allocate();
+		GE::builder()->CreateStore(value, var->getValue());
 	} else {
 		// Otherwise, just allocate the variable.
-		m_var->allocate();
+		var->allocate();
 	}
 
 	// Do any initializations that we may need.
-	m_var->initialize();
-	return m_var->Codegen();
+	var->initialize();
+	return var->Codegen();
+}
+
+Value* ExplicitDeclStmt::Codegen() {
+	auto retVal = CodegenPair(m_var, m_expr);
+
+	// Codegen our extra pairs.
+	for (auto pair : m_extras) {
+		CodegenPair(pair.var, pair.val);
+	}
+
+	// Only return the first variable.
+	return retVal;
 }
 
 ASTNode* ExplicitDeclStmt::clone() {
+	std::vector<DeclPair> extraClones;
+
+	for (auto pair : m_extras) {
+		extraClones.push_back(DeclPair(pair.var->name(), (Expression *)pair.val->clone()));
+	}
+
 	if (m_expr) {
-		return new ExplicitDeclStmt((VarExpr*)m_var->clone(), (Expression*)m_expr->clone());
+		return new ExplicitDeclStmt((VarExpr*)m_var->clone(), (Expression*)m_expr->clone(), extraClones);
 	} else {
-		return new ExplicitDeclStmt((VarExpr*)m_var->clone());
+		return new ExplicitDeclStmt((VarExpr*)m_var->clone(), extraClones);
 	}
 }
 
@@ -75,14 +93,39 @@ void ExplicitDeclStmt::resolve() {
 	}
 
 	if (m_expr) m_expr->resolve();
+
+	for (auto pair : m_extras) {
+		pair.var->resolve();
+		pair.var->create();
+
+		if (pair.var->getType()->isVariadicArray() && pair.val) {
+			throw CompilerMessage(*pair.var, "Variable-sized arrays may not be initialized");
+		}
+
+		if (pair.val) pair.val->resolve();
+	}
 }
 
 std::string ExplicitDeclStmt::string() {
+	std::stringstream ss; 
+
 	if (m_expr) {
-		return m_var->string() + " = " + m_expr->string();
+		ss << m_var->string() << " = " << m_expr->string();
 	} else {
-		return m_var->string();
+		ss << m_var->string();
 	}
+
+	for (auto pair : m_extras) {
+		ss << "\n";
+
+		if (pair.val) {
+			ss << pair.var->string() << " = " << pair.val->string(); 
+		} else {
+			ss << pair.var->string();
+		}
+	}
+	
+	return ss.str();
 }
 
 ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var) {
@@ -92,6 +135,21 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var) {
 
 	m_var = var;
 }
+
+ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, std::vector<DeclPair> extras) {
+	if (var == nullptr) {
+		throw std::runtime_error("ExplicitDeclStmt ctor: var can not be null!");
+	}
+
+	m_var = var;
+
+	auto typeForExtras = m_var->getType();
+
+	for (auto pair : extras) {
+		m_extras.push_back(DeclPairInternal(new VarExpr(pair.name, typeForExtras), pair.expression));
+	}	
+}
+
 
 ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value) {
 	if (var == nullptr) {
@@ -104,4 +162,23 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value) {
 
 	m_var = var;
 	m_expr = value; 
+}
+
+ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<DeclPair> extras) {
+	if (var == nullptr) {
+		throw std::runtime_error("ExplicitDeclStmt ctor: var can not be null!");
+	}
+
+	if (value == nullptr) {
+		throw std::runtime_error("ExplicitDeclStmt ctor: value can not be null!");
+	}
+
+	m_var = var;
+	m_expr = value; 
+
+	auto typeForExtras = m_var->getType();
+
+	for (auto pair : extras) {
+		m_extras.push_back(DeclPairInternal(new VarExpr(pair.name, typeForExtras), pair.expression));
+	}	
 }
