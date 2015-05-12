@@ -85,19 +85,19 @@ BaseVal *ValFactory::produce() {
 		} else if (size == "i" || size == "") {
 			ret = new IntVal(value[1], 64);
 		} else if (size == "i8") {
-			ret = new UIntVal((int8_t)value[1], 8);
+			ret = new IntVal((int8_t)value[1], 8);
 		} else if (size == "u8") {
 			ret = new UIntVal((uint8_t)value[1], 8);
 		} else if (size == "i16") {
-			ret = new UIntVal((int16_t)value[1], 16);
+			ret = new IntVal((int16_t)value[1], 16);
 		} else if (size == "u16") {
 			ret = new UIntVal((uint16_t)value[1], 16);
 		} else if (size == "i32") {
-			ret = new UIntVal((int32_t)value[1], 32);
+			ret = new IntVal((int32_t)value[1], 32);
 		} else if (size == "u32") {
 			ret = new UIntVal((uint32_t)value[1], 32);
 		} else if (size == "i64") {
-			ret = new UIntVal((int32_t)value[1], 32);
+			ret = new IntVal((int32_t)value[1], 32);
 		} else if (size == "u64") {
 			ret = new UIntVal((uint64_t)value[1], 64);
 		}  
@@ -113,25 +113,25 @@ BaseVal *ValFactory::produce() {
 		ret = new IntVal(v, 64);
 	} else if (size == "i8") {
 		int64_t v = std::stoll(value);
-		ret = new UIntVal((int8_t)v, 8);
+		ret = new IntVal((int8_t)v, 8);
 	} else if (size == "u8") {
 		uint64_t v = std::stoull(value);
 		ret = new UIntVal((uint8_t)v, 8);
 	} else if (size == "i16") {
 		int64_t v = std::stoll(value);
-		ret = new UIntVal((int16_t)v, 16);
+		ret = new IntVal((int16_t)v, 16);
 	} else if (size == "u16") {
 		uint64_t v = std::stoull(value);
 		ret = new UIntVal((uint16_t)v, 16);
 	} else if (size == "i32") {
 		int64_t v = std::stoll(value);
-		ret = new UIntVal((int32_t)v, 32);
+		ret = new IntVal((int32_t)v, 32);
 	} else if (size == "u32") {
 		uint64_t v = std::stoull(value);
 		ret = new UIntVal((uint32_t)v, 32);
 	} else if (size == "i64") {
 		int64_t v = std::stoll(value);
-		ret = new UIntVal((int32_t)v, 32);
+		ret = new IntVal((int32_t)v, 32);
 	} else if (size == "u64") {
 		uint64_t v = std::stoull(value);
 		ret = new UIntVal((uint64_t)v, 64);
