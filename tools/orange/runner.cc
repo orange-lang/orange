@@ -49,6 +49,7 @@ Runner::Runner(std::string pathname) {
 	// Create the global block
 	SymTable *globalSymtab = new SymTable(true); 
 	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), ParamList(), globalSymtab);
+	m_function->disableMangle();
 	pushBlock(m_function);
 
 	// Create LLVM stuff; module, builder, etc
