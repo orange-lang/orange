@@ -297,6 +297,7 @@ AnyType* AnyType::getElementType() {
 	}
 
 	AnyType* someTy = new AnyType(m_type_str, arrays, m_ptrs);
+	someTy->m_signed = m_signed;
 	m_defined_types[type] = someTy; 
 	return someTy; 
 }
@@ -307,6 +308,8 @@ AnyType* AnyType::getBaseType() {
 	}	
 
 	AnyType* someTy = new AnyType(m_type_str, std::vector<int>(), 0);
+	someTy->m_signed = m_signed;
+
 	m_defined_types[m_type_str] = someTy; 
 	return someTy;
 }
@@ -331,6 +334,8 @@ AnyType* AnyType::getArray(int size) {
 	arrays.push_back(size);
 
 	AnyType* arrayTy = new AnyType(m_type_str, arrays, m_ptrs);
+	arrayTy->m_signed = m_signed;
+
 	m_defined_types[type] = arrayTy;
 	return arrayTy;
 }
@@ -379,6 +384,7 @@ AnyType* AnyType::getIntNTy(int size) {
 	}
 
 	AnyType* voidTy = new AnyType(ss.str());
+	voidTy->m_signed = true;
 	m_defined_types[ss.str()] = voidTy; 
 	return voidTy;
 }
