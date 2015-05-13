@@ -62,7 +62,7 @@
 %type <strele> ASSIGN PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN COMP_LT COMP_GT LEQ GEQ EQUALS NEQUALS PLUS MINUS TIMES DIVIDE LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR MOD 
 %type <strele> INCREMENT DECREMENT ARROW_LEFT
 %type <paramlist> opt_func_params func_params
-%type <arglist> opt_arg_list arg_list
+%type <arglist> opt_arg_list arg_list more_exprs
 %type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
 %type <anytype> any_type any_type_no_array
 %type <number> var_ptrs var_arrays_and_ptrs
@@ -72,6 +72,8 @@
 %type <declpairlist> opt_variable_decls opt_variable_decls_impl
 
 /* lowest to highest precedence */
+%left COMMA
+
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
 
 %right QUESTION COLON
@@ -110,7 +112,14 @@ opt_statements
 
 statement 		
 	:	term { $$ = nullptr; }
-	| expression term { $$ = $1; }
+	| expression more_exprs term {
+		if ($2->size() > 0) {
+			$2->push_back($1);
+			$$ = new CommaStmt(*$2);
+		} else {
+			$$ = $1; 			
+		}
+	}
 	| function term { $$ = $1; }
 	| extern_function term { $$ = $1; }
 	| return term { $$ = $1; }
@@ -124,6 +133,11 @@ statement
 	| inline_loop term { $$ = $1; }
 	| loop_breaks term { $$ = $1; }	
 	| enum_stmt term { $$ = $1; }
+	;
+
+more_exprs
+	: COMMA expression more_exprs { $3->push_back($2); $$ = $3; }
+	| { $$ = new ArgList(); }
 	;
 
 expression

@@ -32,3 +32,4 @@
 #include "EnumStmt.h"
 #include "DotExpr.h"
 #include "DeclPair.h"
+#include "CommaStmt.h"

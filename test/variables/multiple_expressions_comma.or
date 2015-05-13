@@ -1,0 +1,2 @@
+a = 5, b = 6
+return b - a - 1
