@@ -13,11 +13,13 @@
 
 FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name;
+	m_orig_name = m_name;
 	m_parameters = parameters;
 }
 
 FunctionStmt::FunctionStmt(std::string name, AnyType* type, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name; 
+	m_orig_name = m_name;
 	m_type = type; 
 	m_parameters = parameters;
 }
@@ -207,6 +209,19 @@ AnyType* FunctionStmt::getType() {
 }
 
 Value* FunctionStmt::Codegen() {
+	// Activate ourself in the parent symtab.
+	if (symtab()->container() != nullptr) {
+		bool activated = symtab()->container()->activate(m_orig_name, this);
+		
+		if (activated == false) {
+			throw std::runtime_error("fatal: could not activate " + m_name);
+		}
+	}
+	
+	// Activate ourself.
+	// We don't want to reset the symbol table here; it is not necessary for functions.
+	symtab()->activate(m_orig_name, this);
+
 	// Check to see if we're a generic function. 
 	// If we are, we only should generate our clones since we're incomplete. 
 	if (isGeneric()) {
@@ -216,7 +231,7 @@ Value* FunctionStmt::Codegen() {
 
 		return nullptr;
 	}
-	
+
 	// Push ourselves onto the stack first.
 	GE::runner()->pushBlock(this);
 

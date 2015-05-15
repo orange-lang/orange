@@ -14,9 +14,10 @@ Value* ArrayAccess::Codegen() {
 	Value *var = m_variable->Codegen();
 	Value *idx = m_idx->Codegen();
 	
-	if (var == nullptr) {
+	if (var == nullptr || idx == nullptr) {
 		throw CompilerMessage(*m_variable, "variable never returned a value!");
 	}
+	
 	
 	if (m_variable->getType()->isArrayTy() == false && m_variable->returnsPtr()) {
 		var = GE::builder()->CreateLoad(var);

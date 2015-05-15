@@ -10,7 +10,9 @@
 #include <orange/generator.h>
 
 Value* EnumStmt::Codegen() {
-	// Nothing to do here...
+	// Reactivate us in the symbol table.
+	GE::runner()->topBlock()->symtab()->activate(m_name, this);
+
 	return nullptr; 
 }
 

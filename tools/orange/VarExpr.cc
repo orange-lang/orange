@@ -19,6 +19,7 @@ VarExpr* VarExpr::symtabVar() {
 Value* VarExpr::Codegen() {
 	// "Generating" a variable doesn't actually do anything; 
 	// its creation is handled by other classes like BinOpExpr.
+	GE::runner()->topBlock()->symtab()->activate(m_name, this);
 	return getValue();
 }
 

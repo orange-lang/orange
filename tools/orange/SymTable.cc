@@ -28,27 +28,28 @@ bool SymTable::create(std::string name, ASTNode* node) {
 	// We also require the name to not be blank
 	if (name == "") return false; 
 
-	m_objs[name] = node; 
+	m_objs[name] = new SymObj(node, true); 
 	return true; 
 }
 
-ASTNode* SymTable::find(std::string name) {
+ASTNode* SymTable::find(std::string name, bool includeInactive) {
 	auto it = m_objs.find(name); 
 
 	// return null if it doesn't exist 
-	if (it == m_objs.end()) {
+	// alternatively, if we're _not_ including inactive && we found something inactive, keep looking.
+	if (it == m_objs.end() || (includeInactive == false && it->second->active == false)) {
 		return m_parent ? m_parent->find(name) : nullptr;
 	}  
 
 
-	return it->second; 
+	return it->second->node; 
 }
 
-ASTNode* SymTable::findFromAny(std::string name) {
+ASTNode* SymTable::findFromAny(std::string name, bool includeInactive) {
 	auto it = m_objs.find(name); 
 
 	// return null if it doesn't exist 
-	if (it == m_objs.end()) {
+	if (it == m_objs.end() || (includeInactive == false && it->second->active == false)) {
 		if (m_parent) {
 			auto obj = m_parent->findFromAny(name); 
 			if (obj) return obj; 
@@ -62,10 +63,30 @@ ASTNode* SymTable::findFromAny(std::string name) {
 		return nullptr;
 	}  
 
-
-	return it->second; 
+	return it->second->node; 
 }
 
+bool SymTable::activate(std::string name, ASTNode* node) {
+	auto it = m_objs.find(name); 
+
+	if (it == m_objs.end()) {
+		return false; 
+	}
+
+	// Make sure the node matches.
+	if (it->second->node == node) {
+		it->second->active = true; 
+		return true;
+	}
+
+	return false;
+}
+
+void SymTable::reset() {
+	for (auto obj : m_objs) {
+		obj.second->active = false;
+	}
+}
 
 ASTNode* SymTable::findStructure(std::string className) {
 	SymTable* ptr = this; 

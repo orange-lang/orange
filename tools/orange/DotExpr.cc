@@ -18,7 +18,13 @@ std::string DotExpr::string() {
 Value* DotExpr::Codegen() {
 	if (m_obj->getClass() == "EnumStmt") {
 		EnumStmt* enumStmt = (EnumStmt*)m_obj;
-		return enumStmt->getEnumValue(m_RHS)->Codegen();
+		auto value = enumStmt->getEnumValue(m_RHS);
+		
+		if (value == nullptr) {
+			throw std::runtime_error("enumStmt->getEnumValue() returned nullptr!");
+		}
+		
+		return value->Codegen();
 	}
 
 	throw std::runtime_error("DotExpr::Codegen(): object is not an enum!");

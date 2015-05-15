@@ -41,6 +41,8 @@ ExternFunction::ExternFunction(AnyType* returnType, std::string name, ParamList 
 }
 
 Value* ExternFunction::Codegen() {
+	GE::runner()->symtab()->activate(m_name, this);
+
 	std::vector<Type*> Args;
 
 	for (auto param : m_parameters) {

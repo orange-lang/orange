@@ -59,6 +59,8 @@ Value* Block::Codegen() {
 
 	GE::runner()->pushBlock(this);
 
+	m_symtab->reset();
+
 	generateStatements();
 
 	GE::runner()->popBlock();
@@ -105,7 +107,8 @@ AnyType* Block::searchForReturn() {
 		if (s->getClass() == "ReturnStmt") {
 			// If we've found an ID ty, keep searching. 
 			AnyType* sReturnType = s->getType();
-			if (sReturnType->isIDTy()) continue; 
+			
+			if (sReturnType == nullptr || sReturnType->isIDTy()) continue;
 
 			if (retType == nullptr) {
 				retType = sReturnType; 

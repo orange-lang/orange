@@ -24,6 +24,7 @@ public:
 class FunctionStmt : public Block {
 private:
 	std::string m_name; 
+	std::string m_orig_name;
 
 	bool m_isVarArg = false; 
 
