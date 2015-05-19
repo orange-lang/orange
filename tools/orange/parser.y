@@ -29,7 +29,7 @@
 	ASTNode *node;
 	Block *block;
 	ParamList *paramlist;
-	AnyType *anytype;
+	OrangeTy *OrangeTy;
 	ArgList *arglist;
 	std::string *str;
 	std::vector<Block*>* blocklist;
@@ -64,7 +64,7 @@
 %type <paramlist> opt_func_params func_params
 %type <arglist> opt_arg_list arg_list more_exprs
 %type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
-%type <anytype> any_type any_type_no_array
+%type <OrangeTy> any_type any_type_no_array
 %type <number> var_ptrs var_arrays_and_ptrs
 %type <blocklist> else_ifs_or_end
 %type <exprlist> var_arrays
@@ -469,11 +469,34 @@ basic_type
 	;
 
 any_type
-	: basic_type var_arrays var_ptrs { $$ = new AnyType(*$1, *$2, $3); }
+	: basic_type var_arrays var_ptrs { 
+		$$ = OrangeTy::get(*$1);
+
+		// finally, get our pointers to the array. 
+		for (int i =0; i < $3; i++) {
+			$$ = $$->getPointerTo();
+		}
+		
+		// now, get our arrays.
+		for (auto i = $2->rbegin(); i != $2->rend(); i++) {
+			if (OrangeTy::isExpressionValidForConstArray(*i)) {
+				$$ = ArrayTy::get($$, OrangeTy::valueFromExpression(*i));
+			} else {
+				$$ = VariadicArrayTy::get($$, *i);				
+			}
+		}
+	}
 	;
 
 any_type_no_array 
-	: basic_type var_arrays_and_ptrs { $$ = new AnyType(*$1, std::vector<int>(), $2); }
+	: basic_type var_arrays_and_ptrs { 
+		$$ = OrangeTy::get(*$1);
+		
+		// get all of our pointers 
+		for (int i = 0; i < $2; i++) {
+			$$ = $$->getPointerTo();
+		}
+	}
 	;
 
 var_arrays_and_ptrs

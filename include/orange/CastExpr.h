@@ -13,7 +13,7 @@
 
 class CastExpr : public Expression {
 private:
-	AnyType* m_type; 
+	OrangeTy* m_type; 
 	Expression* m_expr;
 public:
 	virtual std::string getClass() { return "CastExpr"; }
@@ -24,13 +24,13 @@ public:
 
 	virtual ASTNode* clone();
 
-	virtual AnyType* getType();
+	virtual OrangeTy* getType();
 
 	virtual void resolve();
 
 	virtual bool isSigned();
 
-	CastExpr(AnyType* type, Expression* expr);
+	CastExpr(OrangeTy* type, Expression* expr);
 };
 
 #endif 

@@ -45,10 +45,9 @@ Value* FuncCall::Codegen() {
 				vArg = GE::builder()->CreateLoad(vArg);
 			}
 
-			AnyType* anyType = new AnyType(arg_it->getType());
+			OrangeTy* ty = OrangeTy::getFromLLVM(arg_it->getType(), m_arguments[i]->isSigned());
 
-			CastingEngine::CastValueToType(&vArg, anyType, m_arguments[i]->isSigned(), true);
-			delete anyType;
+			CastingEngine::CastValueToType(&vArg, ty, m_arguments[i]->isSigned(), true);
 			Args.push_back(vArg);
 		}
 
@@ -101,7 +100,7 @@ std::string FuncCall::string() {
 	return ss.str();
 }
 
-AnyType* FuncCall::getType() {
+OrangeTy* FuncCall::getType() {
 	SymTable* curTab = GE::runner()->symtab();
   ASTNode* node = curTab->findFromAny(m_name);
   

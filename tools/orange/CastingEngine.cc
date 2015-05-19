@@ -9,7 +9,7 @@
 #include <orange/CastingEngine.h>
 #include <orange/generator.h>
 
-bool CastingEngine::AreTypesCompatible(AnyType* a, AnyType* b) {
+bool CastingEngine::AreTypesCompatible(OrangeTy* a, OrangeTy* b) {
 	if (a == nullptr || b == nullptr) return false;
 
 	if (a->string() == b->string()) return true; 
@@ -22,15 +22,15 @@ bool CastingEngine::AreTypesCompatible(AnyType* a, AnyType* b) {
 	return false;
 }
 
-bool CastingEngine::CanTypeBeCasted(AnyType* src, AnyType* dest) {
+bool CastingEngine::CanTypeBeCasted(OrangeTy* src, OrangeTy* dest) {
 	// For now, return the order-independent AreTypesCompatible
 	return AreTypesCompatible(src, dest);
 }
 
-bool CastingEngine::CastValueToType(Value** v, AnyType* t, bool isSigned, bool force) {
+bool CastingEngine::CastValueToType(Value** v, OrangeTy* t, bool isSigned, bool force) {
 	if (v == nullptr || t == nullptr) return false; 
 
-	AnyType* srcType = new AnyType((*v)->getType(), false);
+	OrangeTy* srcType = OrangeTy::getFromLLVM((*v)->getType(), false);
 	Type* llvmT = t->getLLVMType();
 
 	// If we're not forcing, and we can't cast v to t, just return.
@@ -45,55 +45,46 @@ bool CastingEngine::CastValueToType(Value** v, AnyType* t, bool isSigned, bool f
 	// Cast v to the integer type of t; this will account for bitwidths. 
 	if (t->isIntegerTy() && srcType->isIntegerTy()) {
 		*v = GE::builder()->CreateIntCast(*v, llvmT, isSigned);
-		delete srcType;
 		return true;
 	}
 
 	if (t->isFloatingPointTy() && srcType->isFloatingPointTy()) {
 		*v = GE::builder()->CreateFPCast(*v, llvmT);
-		delete srcType;
 		return true;
 	}
 
 	if (t->isFloatingPointTy() && srcType->isIntegerTy()) {
 		*v = isSigned ? GE::builder()->CreateSIToFP(*v, llvmT) : GE::builder()->CreateUIToFP(*v, llvmT);
-		delete srcType;
 		return true; 
 	}
 
 	if (t->isIntegerTy() && srcType->isFloatingPointTy()) {
 		*v = isSigned ? GE::builder()->CreateFPToSI(*v, llvmT) : GE::builder()->CreateFPToUI(*v, llvmT);
-		delete srcType;
 		return true; 
 	}
 
 	if (t->isPointerTy() && srcType->isPointerTy()) {
 		*v = GE::builder()->CreateBitCast(*v, llvmT);
-		delete srcType;
 		return true; 
 	}
 	
 	if (srcType->isPointerTy() && t->isIntegerTy()) {
 		*v = GE::builder()->CreatePtrToInt(*v, llvmT);
-		delete srcType;
 		return true; 
 	}
 
 	if (srcType->isIntegerTy() && t->isPointerTy()) {
 		*v = GE::builder()->CreateIntToPtr(*v, llvmT); 
-		delete srcType;
 		return true;
 	}
 
 	if (t->isPointerTy() && srcType->isArrayTy()) {
 		*v = GE::builder()->CreateBitCast(*v, llvmT);
-		delete srcType;
 		return true;
 	}
 
 	if (t->isArrayTy() && srcType->isArrayTy()) {
 		// Do no casting.
-		delete srcType; 
 		return false; 
 	}
 
@@ -104,8 +95,8 @@ bool CastingEngine::CastValueToType(Value** v, AnyType* t, bool isSigned, bool f
 bool CastingEngine::CastValuesToFit(Value** v1, Value** v2, bool isV1Signed, bool isV2Signed) {
 	if (v1 == nullptr || v2 == nullptr) return false; 
 
-	AnyType* type1 = new AnyType((*v1)->getType(), isV1Signed);
-	AnyType* type2 = new AnyType((*v2)->getType(), isV2Signed);
+	OrangeTy* type1 = OrangeTy::getFromLLVM((*v1)->getType(), isV1Signed);
+	OrangeTy* type2 = OrangeTy::getFromLLVM((*v2)->getType(), isV2Signed);
 
 	if (AreTypesCompatible(type1, type2) == false) return false;
 
@@ -119,12 +110,10 @@ bool CastingEngine::CastValuesToFit(Value** v1, Value** v2, bool isV1Signed, boo
 		retVal = CastValueToType(v2, type1, isV2Signed, false);
 	}
 
-	delete type1; 
-	delete type2;
 	return retVal;
 }
 
-bool CastingEngine::ShouldTypeMorph(AnyType* src, AnyType* dest) {
+bool CastingEngine::ShouldTypeMorph(OrangeTy* src, OrangeTy* dest) {
 	if (dest->isFloatingPointTy() && src->isIntegerTy()) return true; 
 	if (dest->isDoubleTy() && src->isFloatTy()) return true;
 
@@ -135,7 +124,7 @@ bool CastingEngine::ShouldTypeMorph(AnyType* src, AnyType* dest) {
 	return false;
 }
 
-AnyType* CastingEngine::GetFittingType(AnyType* v1, AnyType* v2) {
+OrangeTy* CastingEngine::GetFittingType(OrangeTy* v1, OrangeTy* v2) {
 	if (AreTypesCompatible(v1, v2) == false) return nullptr; 
 	return ShouldTypeMorph(v1, v2) ? v2 : v1; 
 }

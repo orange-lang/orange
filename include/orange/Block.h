@@ -103,7 +103,7 @@ public:
 	 *
 	 * @return A type if a return type exists, nullptr otherwise.
 	 */ 
-	AnyType* returnType();
+	OrangeTy* returnType();
 
 	/**
 	 * Gets the return type from the body, checking for all nested 
@@ -111,7 +111,7 @@ public:
 	 *
 	 * @return A type if a return type exists, nullptr otherwise.
 	 */
-	AnyType* searchForReturn();
+	OrangeTy* searchForReturn();
 
 	virtual ASTNode* clone();
 

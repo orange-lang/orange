@@ -9,6 +9,7 @@
 #include <orange/ArrayAccess.h>
 #include <orange/generator.h>
 #include <orange/Values.h>
+#include <orange/OrangeTypes.h>
 
 Value* ArrayAccess::Codegen() {
 	Value *var = m_variable->Codegen();
@@ -17,7 +18,6 @@ Value* ArrayAccess::Codegen() {
 	if (var == nullptr || idx == nullptr) {
 		throw CompilerMessage(*m_variable, "variable never returned a value!");
 	}
-	
 	
 	if (m_variable->getType()->isArrayTy() == false && m_variable->returnsPtr()) {
 		var = GE::builder()->CreateLoad(var);
@@ -56,14 +56,11 @@ std::string ArrayAccess::string() {
 	return ss.str();
 }
 
-AnyType* ArrayAccess::getType() {
-	AnyType* varType = m_variable->getType();
+OrangeTy* ArrayAccess::getType() {
+	OrangeTy* varType = m_variable->getType();
 
-	if (varType->isConstantArray()) {
-		return varType->getElementType();
-	} else if (varType->isVariadicArray()) {
-		auto t = new AnyType(varType->getLLVMType()->getPointerElementType(), m_variable->isSigned());
-		return t;
+	if (varType->isConstantArray() || varType->isVariadicArray()) {
+		return varType->getArrayElementType();
 	} else {
 		return varType->getPointerElementType();
 	}

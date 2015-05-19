@@ -40,7 +40,7 @@ public:
 
 	virtual bool isBlock();
 
-	virtual AnyType* getType();
+	virtual OrangeTy* getType();
 
 	virtual void resolve();
 

@@ -7,7 +7,7 @@
 */ 
 #include <orange/runner.h>
 #include <orange/generator.h>
-#include <orange/AnyType.h>
+#include <orange/OrangeTypes.h>
 
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/GenericValue.h>
@@ -48,7 +48,7 @@ Runner::Runner(std::string pathname) {
 
 	// Create the global block
 	SymTable *globalSymtab = new SymTable(true); 
-	m_function = new FunctionStmt("__INTERNAL_main", new AnyType("int"), ParamList(), globalSymtab);
+	m_function = new FunctionStmt("__INTERNAL_main", IntTy::getSigned(64), ParamList(), globalSymtab);
 	m_function->disableMangle();
 	pushBlock(m_function);
 

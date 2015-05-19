@@ -41,7 +41,7 @@ Value* ArrayExpr::Codegen() {
 	//			iii. store our code generated expr into the GEP 
 	// 3. return our allocated space 
 
-	AnyType* arrType = getType();
+	OrangeTy* arrType = getType();
 	Value* space = arrType->allocate();
 
 	if (isConstant()) {
@@ -52,7 +52,7 @@ Value* ArrayExpr::Codegen() {
 
 			// Cast it to the type of the array 
 			if (element->getType()->isArrayTy() == false)
-				CastingEngine::CastValueToType(&arr_ele, arrType->getElementType(), element->isSigned(), true);
+				CastingEngine::CastValueToType(&arr_ele, arrType->getArrayElementType(), element->isSigned(), true);
 
 			consts.push_back((Constant *)arr_ele);
 		}
@@ -75,11 +75,11 @@ Value* ArrayExpr::Codegen() {
 
 			// Cast it to the type of the array 
 			if (m_elements[i]->getType()->isArrayTy() == false)
-				CastingEngine::CastValueToType(&arr_ele, arrType->getElementType(), m_elements[i]->isSigned(), true);
-
+				CastingEngine::CastValueToType(&arr_ele, arrType->getArrayElementType(), m_elements[i]->isSigned(), true);
+			
 			Value *gep = GE::builder()->CreateConstInBoundsGEP2_64(space, 0, i);
 
-			GE::builder()->CreateStore(arr_ele, gep);		
+			GE::builder()->CreateStore(arr_ele, gep);
 		}
 	}
 
@@ -96,22 +96,22 @@ ASTNode* ArrayExpr::clone() {
 	return new ArrayExpr(cloned_elements);
 }
 
-AnyType* ArrayExpr::getType() {
+OrangeTy* ArrayExpr::getType() {
 	// If we don't have any elements, we're an int*. 
 	if (m_elements.size() == 0) {
-		return AnyType::getIntNTy(64)->getPointerTo();
+		return IntTy::getSigned(64)->getPointerTo();
 	}
 	
 	// First, we need to find the highest precedence type from all of the elements.
 	// Recursively traverse the elements in our array, collecting all of the types,
 	// looking for the highest one. 
-	AnyType* highestType = nullptr;
+	OrangeTy* highestType = nullptr;
 
 	for (auto element : m_elements) {
-		AnyType* ty = element->getType();
+		OrangeTy* ty = element->getType();
 
 		while (ty->isArrayTy()) {
-			ty = ty->getElementType();
+			ty = ty->getArrayElementType();
 		}
 
 		if (highestType == nullptr) {
@@ -120,17 +120,22 @@ AnyType* ArrayExpr::getType() {
 			highestType = CastingEngine::GetFittingType(highestType, ty);
 		}
 	}
-	
-	// Next, we need to create the type of this array. We need to know if we 
-	// are an array of arrays or not. 
-	AnyType* ret = highestType->getArray(m_elements.size());
 
-	// Do our elements have a size? Only use the first element for reference;
-	// all the sizes should match.
-	AnyType* pty = m_elements[0]->getType(); 
+	// We have to work backwards to create our array.
+	std::vector<int> elementStack; 
+	elementStack.push_back(m_elements.size());
+
+	OrangeTy* pty = m_elements[0]->getType(); 
 	while (pty->isArrayTy()) {
-		ret = ret->getArray(pty->getArrayElements());
-		pty = pty->getElementType();
+		elementStack.push_back(pty->getArrayElements());
+		pty = pty->getArrayElementType();
+	}	
+
+	// Now that we know the stack of elements, we can create our type.
+	OrangeTy* ret = highestType;
+
+	for (auto i = elementStack.rbegin(); i < elementStack.rend(); i++) {
+		ret = ArrayTy::get(ret, *i);
 	}
 
 	return ret; 

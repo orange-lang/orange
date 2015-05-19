@@ -19,6 +19,7 @@ flex_target(FlexOutput ${CMAKE_SOURCE_DIR}/tools/orange/lexer.l ${CMAKE_CURRENT_
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/tools/orange)
 
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange ORANGE_SOURCES) 
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange/types ORANGE_SOURCES) 
 
 file(GLOB_RECURSE INCLUDES "${CMAKE_SOURCE_DIR}/*.h")
 

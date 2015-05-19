@@ -52,7 +52,7 @@ ASTNode* IncrementExpr::clone() {
 	return new IncrementExpr((Expression *)m_expr->clone(), m_op, m_preincrement);
 }
 
-AnyType* IncrementExpr::getType() {
+OrangeTy* IncrementExpr::getType() {
 	return m_expr->getType();
 }
 

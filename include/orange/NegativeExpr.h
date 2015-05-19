@@ -26,7 +26,7 @@ public:
 
 	virtual std::string string();
 
-	virtual AnyType* getType();
+	virtual OrangeTy* getType();
 
 	virtual void resolve();
 

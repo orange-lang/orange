@@ -22,7 +22,7 @@ ASTNode* AddressOfExpr::clone() {
 	return new AddressOfExpr((Expression *)m_expr->clone());
 }
 
-AnyType* AddressOfExpr::getType() {
+OrangeTy* AddressOfExpr::getType() {
 	return m_expr->getType()->getPointerTo();
 }
 

@@ -9,7 +9,7 @@
 #ifndef __ORANGE_VALUES_H__
 #define __ORANGE_VALUES_H__
 #include "AST.h"
-#include "AnyType.h"
+#include "OrangeTypes.h"
 
 class BaseVal : public Expression { 
 public:
@@ -54,7 +54,7 @@ public:
 		return ss.str();
 	}
 
-	virtual AnyType* getType() { return AnyType::getInt8PtrTy(); }
+	virtual OrangeTy* getType() { return PointerTy::get(IntTy::getSigned(8)); }
 
 	Value* Codegen();
 
@@ -93,8 +93,8 @@ public:
 		return ss.str();
 	}
 
-	virtual AnyType *getType() { 
-		return AnyType::getUIntNTy(size); 
+	virtual OrangeTy *getType() { 
+		return IntTy::getUnsigned(size); 
 	}
 
 	virtual ASTNode* clone() { 
@@ -133,8 +133,8 @@ public:
 		return ss.str();
 	}
 
-	virtual AnyType *getType() { 
-		return AnyType::getIntNTy(size); 
+	virtual OrangeTy *getType() { 
+		return IntTy::getSigned(size); 
 	}
 
 	virtual ASTNode* clone() { 
@@ -170,8 +170,8 @@ public:
 		return ss.str();
 	}
 
-	virtual AnyType *getType() { 
-		return AnyType::getFloatTy(); 
+	virtual OrangeTy *getType() { 
+		return FloatTy::get();
 	}
 
 	virtual ASTNode* clone() { 
@@ -207,8 +207,8 @@ public:
 		return ss.str();
 	}
 
-	virtual AnyType *getType() { 
-		return AnyType::getDoubleTy(); 
+	virtual OrangeTy *getType() { 
+		return DoubleTy::get(); 
 	}
 
 	virtual ASTNode* clone() { 

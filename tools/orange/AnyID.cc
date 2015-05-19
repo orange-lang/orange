@@ -31,7 +31,7 @@ ASTNode* AnyID::clone() {
 }
 
 std::string AnyID::string() {
-	ensureValid();
+	if (m_any_expr == nullptr) return m_name;
 	return m_any_expr->string();
 }
 
@@ -45,7 +45,7 @@ bool AnyID::isBlock() {
 	return m_any_expr->isBlock();
 }
 
-AnyType* AnyID::getType() {
+OrangeTy* AnyID::getType() {
 	ensureValid();	
 	return m_any_expr->getType();
 }

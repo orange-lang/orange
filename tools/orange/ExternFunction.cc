@@ -34,7 +34,7 @@ std::string ExternFunction::string() {
 	return ss.str();
 }
 
-ExternFunction::ExternFunction(AnyType* returnType, std::string name, ParamList parameters) : m_type(returnType), m_name(name), m_parameters(parameters) {
+ExternFunction::ExternFunction(OrangeTy* returnType, std::string name, ParamList parameters) : m_type(returnType), m_name(name), m_parameters(parameters) {
 	if (returnType == nullptr) {
 		throw std::runtime_error("return type for an external function can not be null!");
 	}

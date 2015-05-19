@@ -22,18 +22,18 @@ ASTNode* EnumStmt::clone() {
 	return clone;
 }
 
-AnyType* EnumStmt::getType() {
+OrangeTy* EnumStmt::getType() {
 	if (m_type != nullptr) {
 		return m_type;
 	}
 
 	if (m_enums.size() == 0) {
-		return AnyType::getVoidTy();
+		return VoidTy::get();
 	}
 
 	// We need to determine the highest precedence type and then 
 	// change the other enums to use that type.
-	AnyType* highestType = m_enums[0].value->getType();
+	OrangeTy* highestType = m_enums[0].value->getType();
 
 	for (unsigned int i = 1; i < m_enums.size(); i++) {
 		highestType = CastingEngine::GetFittingType(highestType, m_enums[i].value->getType());
@@ -65,7 +65,7 @@ void EnumStmt::resolve() {
 
 	for (auto pair : m_enums) {
 		ValFactory factory; 
-		factory.size = m_type->getShortStr();
+		factory.size = m_type->typeSuffix();
 		factory.value = pair.value->valueStr();
 
 		delete pair.value; // Delete our old value.

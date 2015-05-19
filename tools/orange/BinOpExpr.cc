@@ -219,7 +219,7 @@ Value* BinOpExpr::Codegen() {
 		if (vExpr->isLocked() == false) {
 			if (vExpr->getType()->isVoidTy()) {
 				// If the type is void, set it to RHS. 
-				vExpr->setType(new AnyType(RHS->getType(), m_RHS->isSigned()));	
+				vExpr->setType(m_RHS->getType());
 			} else if (CastingEngine::GetFittingType(vExpr->getType(), m_RHS->getType()) == m_RHS->getType()) {
 				// RHS has a higher precedence than LHS, set LHS's type to RHS 
 				vExpr->setType(m_RHS->getType());
@@ -289,14 +289,14 @@ Value* BinOpExpr::Codegen() {
 		// Both LHS and RHS must be casted to booleans.
 		// The nature of when we go to check is determined by && and ||.
 		if (m_op == "&&" || m_op == "and" || m_op == "||" || m_op == "or") {
-			bool castedL = CastingEngine::CastValueToType(&LHS, AnyType::getUIntNTy(1), false, true);
-			bool castedR = CastingEngine::CastValueToType(&RHS, AnyType::getUIntNTy(1), false, true);
+			bool castedL = CastingEngine::CastValueToType(&LHS, IntTy::getUnsigned(1), false, true);
+			bool castedR = CastingEngine::CastValueToType(&RHS, IntTy::getUnsigned(1), false, true);
 
 			if (castedL == false || castedR == false) {
 				throw CompilerMessage(*this, "both LHS and RHS must be castable to a boolean!");
 			}
 
-			Value *booleanVal = GE::builder()->CreateAlloca(AnyType::getUIntNTy(1)->getLLVMType());
+			Value *booleanVal = GE::builder()->CreateAlloca(IntTy::getUnsigned(1)->getLLVMType());
 			GE::builder()->CreateStore(LHS, booleanVal);
 
 			// Get the function we're in to create the blocks
@@ -351,14 +351,14 @@ std::string BinOpExpr::string() {
 	return ss.str();
 }
 
-AnyType* BinOpExpr::getType() {
+OrangeTy* BinOpExpr::getType() {
 	if (IsAssignOp(m_op)) {
-		AnyType* t = m_LHS->getType(); 
+		OrangeTy* t = m_LHS->getType(); 
 		return t->isVoidTy() ? m_RHS->getType() : t; 
 	} 
 
-	AnyType *lType = m_LHS->getType();
-	AnyType *rType = m_RHS->getType();
+	OrangeTy *lType = m_LHS->getType();
+	OrangeTy *rType = m_RHS->getType();
 
 	if (lType->isVoidTy()) {
 		throw CompilerMessage(*m_LHS, m_LHS->string() + " does not exist!");
@@ -367,7 +367,7 @@ AnyType* BinOpExpr::getType() {
 	}
 
 	if (IsCompareOp(m_op)) {
-		return AnyType::getUIntNTy(1);
+		return IntTy::getUnsigned(1);
 	} else {
 		return CastingEngine::GetFittingType(lType, rType);
 	}

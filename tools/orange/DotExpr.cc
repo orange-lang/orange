@@ -35,7 +35,7 @@ ASTNode* DotExpr::clone() {
 	return new DotExpr((AnyID*)m_LHS->clone(), m_RHS);
 }
 
-AnyType* DotExpr::getType() {
+OrangeTy* DotExpr::getType() {
 	if (m_obj->getClass() == "EnumStmt") {
 		EnumStmt* enumStmt = (EnumStmt*)m_obj;
 		return enumStmt->getType();

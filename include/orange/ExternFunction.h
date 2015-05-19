@@ -15,7 +15,7 @@
 
 class ExternFunction : public Statement {
 private:
-	AnyType* m_type;
+	OrangeTy* m_type;
 	std::string m_name;
 	ParamList m_parameters;
 public:
@@ -31,11 +31,11 @@ public:
 
 	virtual void resolve();
 
-	virtual AnyType* getType() { return m_type; }
+	virtual OrangeTy* getType() { return m_type; }
 
 	virtual bool isSigned() { return m_type->isSigned(); }
 
-	ExternFunction(AnyType* returnType, std::string name, ParamList parameters);
+	ExternFunction(OrangeTy* returnType, std::string name, ParamList parameters);
 };
 
 #endif 

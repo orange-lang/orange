@@ -25,7 +25,7 @@ public:
 
 	virtual ASTNode* clone();
 
-	virtual AnyType* getType();
+	virtual OrangeTy* getType();
 
 	virtual void resolve();
 

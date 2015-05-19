@@ -83,7 +83,7 @@ bool Block::hasJump() {
 	return false;
 }
 
-AnyType* Block::returnType() {
+OrangeTy* Block::returnType() {
 	for (ASTNode *s : m_statements) {
 		if (s->getClass() == "ReturnStmt") return s->getType(); 
 
@@ -100,13 +100,13 @@ AnyType* Block::returnType() {
 	return nullptr;
 }
 
-AnyType* Block::searchForReturn() {
-	AnyType* retType = nullptr; 
+OrangeTy* Block::searchForReturn() {
+	OrangeTy* retType = nullptr; 
 
 	for (ASTNode *s : m_statements) {		
 		if (s->getClass() == "ReturnStmt") {
 			// If we've found an ID ty, keep searching. 
-			AnyType* sReturnType = s->getType();
+			OrangeTy* sReturnType = s->getType();
 			
 			if (sReturnType == nullptr || sReturnType->isIDTy()) continue;
 
@@ -119,7 +119,7 @@ AnyType* Block::searchForReturn() {
 		} else if (s->isBlock() && s->getClass() != "FunctionStmt") {
 			// If we're a block (and not a function, since that shouldn't affect this), look for returns.
 			Block* block = (Block*)s; 
-			AnyType* innerRetType = block->searchForReturn();
+			OrangeTy* innerRetType = block->searchForReturn();
 
 			if (innerRetType) {
 				retType = CastingEngine::GetFittingType(retType, innerRetType);				
@@ -128,7 +128,7 @@ AnyType* Block::searchForReturn() {
 			IfStmts* ifStmts = (IfStmts *)s; 
 
 			for (auto block : ifStmts->blocks()) {
-				AnyType* innerRetType = block->searchForReturn();
+				OrangeTy* innerRetType = block->searchForReturn();
 				
 				if (innerRetType == nullptr || innerRetType->isIDTy() || innerRetType->isVoidTy()) continue;
 			

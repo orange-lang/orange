@@ -26,7 +26,7 @@ public:
 		return cloned; 
 	}
 
-	virtual AnyType* getType();
+	virtual OrangeTy* getType();
 
 	virtual std::string string() {
 		if (m_expr)

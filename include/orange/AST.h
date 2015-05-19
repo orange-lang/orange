@@ -32,7 +32,7 @@
 // Include the casting engine so any class inheriting from AST has access to it.
 #include "CastingEngine.h"
 #include "CodeElement.h"
-#include "AnyType.h"
+#include "OrangeTypes.h"
 
 using namespace llvm;
 
@@ -57,7 +57,7 @@ protected:
 	/** 
 	 * Determines the type of the node. Used for caching. 
 	 */
-	AnyType* m_type = nullptr; 
+	OrangeTy* m_type = nullptr; 
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 
@@ -120,7 +120,7 @@ public:
 	 *
 	 * @return The type of this object.
 	 */
-	virtual AnyType* getType() { return AnyType::getVoidTy(); }
+	virtual OrangeTy* getType() { return VoidTy::get(); }
 
 	/**
 	 * Gets the LLVM type of this object.

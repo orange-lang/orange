@@ -32,7 +32,7 @@ ASTNode* CastExpr::clone() {
 	return new CastExpr(m_type, (Expression *)m_expr->clone());
 }
 
-AnyType* CastExpr::getType() { 
+OrangeTy* CastExpr::getType() { 
 	return m_type; 
 }
 
@@ -47,7 +47,7 @@ bool CastExpr::isSigned() {
 	return m_type->isSigned();
 }
 
-CastExpr::CastExpr(AnyType* type, Expression* expr) {
+CastExpr::CastExpr(OrangeTy* type, Expression* expr) {
 	if (type == nullptr) {
 		throw std::runtime_error("CastExpr ctor: type must not be nullptr!");
 	}

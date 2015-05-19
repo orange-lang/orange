@@ -10,7 +10,6 @@
 #define __ORANGE_VAR_EXPR_H__
 
 #include "AST.h"
-#include "AnyType.h"
 
 class VarExpr : public Expression {
 private:
@@ -61,9 +60,9 @@ public:
 
 	virtual std::string string();
 
-	virtual AnyType* getType();
+	virtual OrangeTy* getType();
 
-	virtual void setType(AnyType* type);
+	virtual void setType(OrangeTy* type);
 
 	virtual Value* getValue();
 
@@ -107,12 +106,12 @@ public:
 	/** 
 	 * Creates a variable with a locked down type.
 	 */
-	VarExpr(std::string name, AnyType* type);
+	VarExpr(std::string name, OrangeTy* type);
 
 	/** 
 	 * Creates a variable with a locked down type and as a constant.
 	 */
-	VarExpr(std::string name, AnyType* type, bool constant);
+	VarExpr(std::string name, OrangeTy* type, bool constant);
 };
 
 #endif 

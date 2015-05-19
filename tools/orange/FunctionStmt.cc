@@ -17,7 +17,7 @@ FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* sym
 	m_parameters = parameters;
 }
 
-FunctionStmt::FunctionStmt(std::string name, AnyType* type, ParamList parameters, SymTable* symtab) : Block(symtab) {
+FunctionStmt::FunctionStmt(std::string name, OrangeTy* type, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name; 
 	m_orig_name = m_name;
 	m_type = type; 
@@ -25,7 +25,7 @@ FunctionStmt::FunctionStmt(std::string name, AnyType* type, ParamList parameters
 }
 
 
-std::string FunctionStmt::getShortName(AnyType* t) {
+std::string FunctionStmt::getShortName(OrangeTy* t) {
 	std::stringstream ss; 
 
 	if (t->isIntegerTy()) {
@@ -66,8 +66,8 @@ std::string FunctionStmt::getMangledName(ParamList params) {
 	ss << "_O" << m_name.length() << m_name << params.size(); 
 
 	for (auto param : params) {
-		AnyType* type = param->getType();
-		AnyType* basetype = type->getBaseType();
+		OrangeTy* type = param->getType();
+		OrangeTy* basetype = type->getBaseType();
 
 		ss << getShortName(basetype);
 
@@ -75,7 +75,7 @@ std::string FunctionStmt::getMangledName(ParamList params) {
 			ss << "p";
 		}
 
-		for (auto e : type->getAllArrayElements()) {
+		for (unsigned int i = 0; i < type->getArrayElements(); i++) {
 			ss << "p";
 		}
 	}
@@ -88,8 +88,8 @@ std::string FunctionStmt::getMangledName(ArgList args) {
 	ss << "_O" << m_name.length() << m_name << args.size(); 
 
 	for (auto arg : args) {
-		AnyType* type = arg->getType();
-		AnyType* basetype = type->getBaseType();
+		OrangeTy* type = arg->getType();
+		OrangeTy* basetype = type->getBaseType();
 
 		ss << getShortName(basetype);
 
@@ -97,7 +97,7 @@ std::string FunctionStmt::getMangledName(ArgList args) {
 			ss << "p";
 		}
 
-		for (auto e : type->getAllArrayElements()) {
+		for (unsigned int i = 0; i < type->getArrayElements(); i++) {
 			ss << "p";
 		}
 	}
@@ -130,12 +130,12 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	for (int i = 0; i < args.size(); i++) {
 		VarExpr* curParam = m_parameters[i];
 
-		AnyType* paramType = args[i]->getType();
+		OrangeTy* paramType = args[i]->getType();
 
 		// Clones shouldn't accept arrays as parameters since 
 		// it would pass by copy. Turn it into a pointer. 
 		if (paramType->isArrayTy()) {
-			paramType = paramType->getElementType();
+			paramType = paramType->getArrayElementType();
 			paramType = paramType->getPointerTo();
 		}	
 
@@ -180,8 +180,8 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 }
 
 
-AnyType* FunctionStmt::getType() {
-	AnyType *ret = m_type; 
+OrangeTy* FunctionStmt::getType() {
+	OrangeTy *ret = m_type; 
 
 	// This should not happen; getType() should only be called against clones.
 	if (isGeneric()) {
@@ -197,7 +197,7 @@ AnyType* FunctionStmt::getType() {
 		m_looking = true;
 		
 		// If we don't have an explicit type set, we have to determine it from our body and nested bodies.
-		AnyType* foundRet = searchForReturn();
+		OrangeTy* foundRet = searchForReturn();
 		ret = foundRet ? foundRet : ASTNode::getType();
 		m_type = ret;
 		m_looking = false;
@@ -243,6 +243,10 @@ Value* FunctionStmt::Codegen() {
 	}
 
 	// Create the function itself, and set it as our AST value.
+	if (getLLVMType() == nullptr) {
+		throw std::runtime_error("FunctionStmt::Codegen(): getLLVMType() returned nullptr!");
+	}
+	
 	FunctionType* funcType = FunctionType::get(getLLVMType(), Args, m_isVarArg);
 	Function* generatedFunc = Function::Create(funcType, m_linkageType, m_name, GE::module());
 	m_value = generatedFunc;

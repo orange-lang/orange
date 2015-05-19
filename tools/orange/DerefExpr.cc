@@ -31,13 +31,13 @@ ASTNode* DerefExpr::clone() {
 	return new DerefExpr((Expression*)m_expr->clone());
 }
 
-AnyType* DerefExpr::getType() {
-	AnyType* exprType = m_expr->getType();
+OrangeTy* DerefExpr::getType() {
+	OrangeTy* exprType = m_expr->getType();
 
 	if (exprType->isPointerTy()) {
 		return m_expr->getType()->getPointerElementType();
 	} else if (exprType->isArrayTy()) {
-		return m_expr->getType()->getElementType();
+		return m_expr->getType()->getArrayElementType();
 	} else {
 		throw CompilerMessage(*m_expr, "expression is not a pointer");
 	}

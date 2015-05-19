@@ -55,7 +55,7 @@ std::string VarExpr::string() {
 	return "(" + getType()->string() + ")" + m_name; 
 }
 
-AnyType* VarExpr::getType() {
+OrangeTy* VarExpr::getType() {
 	// If we've been assigned a value, we'll return that, otherwise 
 	// we'll return the default type from ASTNode.	
 	if (m_type) {
@@ -79,7 +79,7 @@ AnyType* VarExpr::getType() {
 	return ASTNode::getType();
 }
 
-void VarExpr::setType(AnyType* type) {
+void VarExpr::setType(OrangeTy* type) {
 	m_type = type;
 	
 	// If this variable exists in the symtab, set this type for that, too.
@@ -110,8 +110,16 @@ void VarExpr::resolve() {
 	m_resolved = true; 
 
 	if (getType()->isVariadicArray()) {
-		for (auto expr : getType()->getAllVariadicArrayElements()) {
-			expr->resolve();
+		std::vector<Expression *> variadicElements; 
+
+		auto ptr = getType(); 
+		while (ptr->isVariadicArray()) {
+			variadicElements.push_back(ptr->getVariadicArrayElement());
+			ptr = ptr->getArrayElementType();
+		}
+
+		for (auto expr : variadicElements) {
+			if (expr) expr->resolve();
 		}
 	}
 }
@@ -168,16 +176,29 @@ Value* VarExpr::allocate() {
 	// of elements, so handle that here 
 
 	Type* llvmType = getLLVMType();
+	
+	if (llvmType == nullptr) {
+		throw std::runtime_error("VarExpr::allocate(): getLLVMType returned nullptr!");
+	}
+	
 	if (getType()->isVariadicArray()) {
 		Type* baseType = llvmType; 
 		while (baseType->isPointerTy()) {
 			baseType = baseType->getPointerElementType();
 		}
 
+		std::vector<Expression *> variadicElements; 
+
+		auto ptr = getType(); 
+		while (ptr->isVariadicArray()) {
+			variadicElements.push_back(ptr->getVariadicArrayElement());
+			ptr = ptr->getArrayElementType();
+		}
+
 		// Codegen all of the types into values 
 		std::vector<Value*> values; 
 
-		for (auto expr : getType()->getAllVariadicArrayElements()) {
+		for (auto expr : variadicElements) {
 			auto value = expr->Codegen();
 			
 			if (value == nullptr) {
@@ -219,12 +240,12 @@ VarExpr::VarExpr(std::string name, bool constant) : m_name(name) {
 	m_constant = constant;
 }
 
-VarExpr::VarExpr(std::string name, AnyType* type) : m_name(name) {
+VarExpr::VarExpr(std::string name, OrangeTy* type) : m_name(name) {
 	m_locked = true;
 	m_type = type; 
 }
 
-VarExpr::VarExpr(std::string name, AnyType* type, bool constant) : m_name(name) {
+VarExpr::VarExpr(std::string name, OrangeTy* type, bool constant) : m_name(name) {
 	m_locked = true;
 	m_constant = constant;
 	m_type = type; 

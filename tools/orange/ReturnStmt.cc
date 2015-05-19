@@ -68,9 +68,9 @@ Value* ReturnStmt::Codegen() {
 	return retExpr; 
 }
 
-AnyType* ReturnStmt::getType() {
+OrangeTy* ReturnStmt::getType() {
 	if (m_expr) return m_expr->getType();
-	return AnyType::getVoidTy();
+	return VoidTy::get();
 }
 
 void ReturnStmt::resolve() {

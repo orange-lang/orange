@@ -37,7 +37,7 @@ std::string NegativeExpr::string() {
 	return "-" + m_expr->string();
 }
 
-AnyType* NegativeExpr::getType() {
+OrangeTy* NegativeExpr::getType() {
 	return m_expr->getType();
 }
 

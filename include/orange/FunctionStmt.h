@@ -10,7 +10,6 @@
 #define __ORANGE_FUNCTION_H__
 #include "AST.h"
 #include "Block.h"
-#include "AnyType.h"
 #include "VarExpr.h"
 
 class ParamList : public std::vector<VarExpr *> {
@@ -31,7 +30,7 @@ private:
 	// TODO: clones of this function should be LinkOnceODRLinkage.
 	llvm::GlobalValue::LinkageTypes m_linkageType = Function::ExternalLinkage;
 
-	AnyType* m_type = AnyType::getIDTy();
+	OrangeTy* m_type = IDTy::get();
 
 	/**
 	 * Indicates the exit block of the function to jump to when returning a value.
@@ -53,7 +52,7 @@ private:
 
 	std::vector<FunctionStmt*> m_clones;
 
-	std::string getShortName(AnyType* t);
+	std::string getShortName(OrangeTy* t);
 
 	/** 
 	 * Set to true when the name has been mangled.
@@ -68,7 +67,7 @@ public:
 
 	virtual std::string string();
 
-	virtual AnyType* getType();
+	virtual OrangeTy* getType();
 
 	virtual std::string name() const { return m_name; }
 
@@ -146,7 +145,7 @@ public:
 	void disableMangle() { m_mangled = true; }
 
 	FunctionStmt(std::string name, ParamList parameters, SymTable* symtab);
-	FunctionStmt(std::string name, AnyType* type, ParamList parameters, SymTable* symtab);
+	FunctionStmt(std::string name, OrangeTy* type, ParamList parameters, SymTable* symtab);
 
 };
 

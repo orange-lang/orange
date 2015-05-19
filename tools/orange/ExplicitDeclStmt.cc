@@ -34,8 +34,8 @@ Value* ExplicitDeclStmt::CodegenPair(VarExpr* var, Expression* expr) {
 			}
 		}
 
-
 		var->allocate();
+
 		GE::builder()->CreateStore(value, var->getValue());
 	} else {
 		// Otherwise, just allocate the variable.
@@ -73,7 +73,7 @@ ASTNode* ExplicitDeclStmt::clone() {
 	}
 }
 
-AnyType* ExplicitDeclStmt::getType() { 
+OrangeTy* ExplicitDeclStmt::getType() { 
 	return m_var->getType(); 
 }
 

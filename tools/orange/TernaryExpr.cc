@@ -26,7 +26,7 @@ Value* TernaryExpr::Codegen() {
 		throw std::runtime_error("TernaryExpr::Codegen(): m_condition generated no value!");
 	}
 
-	if (CastingEngine::CastValueToType(&condition, AnyType::getUIntNTy(1), m_condition->isSigned(), true) == false) {
+	if (CastingEngine::CastValueToType(&condition, IntTy::getUnsigned(1), m_condition->isSigned(), true) == false) {
 		throw CompilerMessage(*m_condition, "could not cast to a boolean!");
 	}
 
@@ -83,7 +83,7 @@ ASTNode* TernaryExpr::clone() {
 		(Expression *)m_false_expr->clone());
 }
 
-AnyType* TernaryExpr::getType() {
+OrangeTy* TernaryExpr::getType() {
 	return CastingEngine::GetFittingType(m_true_expr->getType(), m_false_expr->getType());
 }
 
