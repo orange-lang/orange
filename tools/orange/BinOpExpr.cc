@@ -226,8 +226,6 @@ Value* BinOpExpr::Codegen() {
 			}
 		} 
 
-		vExpr->create();
-
 		CastingEngine::CastValueToType(&RHS, vExpr->getType(), vExpr->isSigned());
 		
 		vExpr->setValue(RHS);
