@@ -48,7 +48,8 @@ Value* VarExpr::getValue() {
 	}
 
 	if (node == this) return nullptr;
-	return node->getValue();
+	m_value = node->getValue();
+	return m_value;
 }
 
 std::string VarExpr::string() {
