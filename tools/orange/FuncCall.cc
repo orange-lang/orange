@@ -161,5 +161,12 @@ bool FuncCall::isSigned() {
 	return false; 
 }
 
-FuncCall::FuncCall(std::string name) : m_name(name) {}
-FuncCall::FuncCall(std::string name, ArgList arguments) : m_name(name), m_arguments(arguments) {}
+FuncCall::FuncCall(std::string name) : m_name(name) {
+
+}
+
+FuncCall::FuncCall(std::string name, ArgList arguments) : m_name(name), m_arguments(arguments) {
+	for (auto& arg : m_arguments) {
+		arg->setParent(this);
+	}
+}

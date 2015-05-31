@@ -58,6 +58,11 @@ protected:
 	 * Determines the type of the node. Used for caching. 
 	 */
 	OrangeTy* m_type = nullptr; 
+
+	/**
+	 * The parent node that this node is stored inside, if any 
+	 */
+	ASTNode* m_parent = nullptr; 
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 
@@ -133,6 +138,17 @@ public:
 	 * @return The function this node is contained in.
 	 */
 	virtual FunctionStmt* getContainingFunction();
+
+	/** 
+	 * Set the parent for this node.
+	 * @param parent The new parent.
+	 */
+	virtual void setParent(ASTNode* parent) { m_parent = parent; } 
+
+	/** 
+	 * @return The parent of this node, if any.
+	 */ 
+	virtual ASTNode* parent() const { return m_parent; }
 
 	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 

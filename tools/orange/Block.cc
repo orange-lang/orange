@@ -33,6 +33,7 @@ void Block::addStatement(ASTNode* statement) {
 	// The user also shouldn't be able to add nullptr as a statement.
 	if (m_locked == true || statement == nullptr) return;
 
+	statement->setParent(this);
 	m_statements.push_back(statement);
 }
 

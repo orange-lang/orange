@@ -179,6 +179,11 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<
 	auto typeForExtras = m_var->getType();
 
 	for (auto pair : extras) {
-		m_extras.push_back(DeclPairInternal(new VarExpr(pair.name, typeForExtras), pair.expression));
+		auto newVar = new VarExpr(pair.name, typeForExtras); 
+		
+		newVar->setParent(this);
+		pair.expression->setParent(this);
+
+		m_extras.push_back(DeclPairInternal(newVar, pair.expression));
 	}	
 }

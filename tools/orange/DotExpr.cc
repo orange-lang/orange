@@ -79,4 +79,6 @@ bool DotExpr::isSigned() {
 DotExpr::DotExpr(AnyID* LHS, std::string RHS) {
 	m_LHS = LHS; 
 	m_RHS = RHS;	
+
+	m_LHS->setParent(this);
 }

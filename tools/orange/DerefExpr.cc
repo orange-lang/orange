@@ -68,4 +68,6 @@ DerefExpr::DerefExpr(Expression* expr) {
 	}
 
 	m_expr = expr;
+
+	m_expr->setParent(this);
 }

@@ -145,6 +145,7 @@ void IfStmts::addBlock(Block* block) {
 		throw std::runtime_error("addBlock: block is invalid!");
 	}
 
+	block->setParent(this);
 	m_blocks.push_back(block);
 
 	// If we're adding in a Block, this is considered an "else"

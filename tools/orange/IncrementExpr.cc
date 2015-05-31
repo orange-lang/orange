@@ -79,4 +79,6 @@ IncrementExpr::IncrementExpr(Expression* expression, StrElement op, bool preincr
 
 	m_expr = expression; 
 	m_preincrement = preincrement; 
+
+	m_expr->setParent(this);
 }

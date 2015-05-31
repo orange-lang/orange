@@ -114,6 +114,8 @@ void EnumStmt::addEnum(std::string name, BaseVal* value) {
 		throw CompilerMessage(*this, m_name + "." + name + " already exists!");
 	}
 
+	value->setParent(this);
+
 	EnumPair pair; 
 	pair.name = name; 
 	pair.value = value; 

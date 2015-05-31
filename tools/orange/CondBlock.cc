@@ -61,4 +61,6 @@ CondBlock::CondBlock(Expression* condition, SymTable* tab, bool inverted) : Bloc
 
 	m_condition = condition; 
 	m_inverted = inverted;
+
+	m_condition->setParent(this);
 }

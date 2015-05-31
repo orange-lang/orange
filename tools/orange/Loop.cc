@@ -201,12 +201,18 @@ Loop::Loop(ASTNode* initializer, Expression* condition, Expression* afterthought
 	m_initializer = initializer; 
 	m_condition = condition; 
 	m_afterthought = afterthought; 
+
+	if (m_initializer) m_initializer->setParent(this);	
+	if (m_condition) m_condition->setParent(this);	
+	if (m_afterthought) m_afterthought->setParent(this);	
 }
 
 Loop::Loop(Expression* condition, bool postCheck, SymTable* symtab) : Block(symtab) {
 	m_condition = condition; 
 	m_post_check = postCheck; 
 	m_is_a_while_loop = true;
+
+	if (m_condition) m_condition->setParent(this);
 }
 
 Loop::Loop(SymTable* symtab) : Block(symtab) {

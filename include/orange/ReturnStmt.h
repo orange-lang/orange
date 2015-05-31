@@ -38,7 +38,7 @@ public:
 	virtual void resolve();
 
 	ReturnStmt() {}
-	ReturnStmt(Expression* expr) : m_expr(expr) {};
+	ReturnStmt(Expression* expr) : m_expr(expr) { m_expr->setParent(this); }
 }; 
 
 #endif 

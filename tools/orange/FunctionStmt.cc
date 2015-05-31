@@ -15,6 +15,10 @@ FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* sym
 	m_name = name;
 	m_orig_name = m_name;
 	m_parameters = parameters;
+
+	for (auto& param : m_parameters) {
+		param->setParent(this);
+	}
 }
 
 FunctionStmt::FunctionStmt(std::string name, OrangeTy* type, ParamList parameters, SymTable* symtab) : Block(symtab) {
@@ -22,6 +26,10 @@ FunctionStmt::FunctionStmt(std::string name, OrangeTy* type, ParamList parameter
 	m_orig_name = m_name;
 	m_type = type; 
 	m_parameters = parameters;
+
+	for (auto& param : m_parameters) {
+		param->setParent(this);
+	}
 }
 
 

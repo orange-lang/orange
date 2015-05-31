@@ -124,4 +124,8 @@ TernaryExpr::TernaryExpr(Expression* condition, Expression* trueExpr, Expression
 	m_condition = condition;
 	m_true_expr = trueExpr; 
 	m_false_expr = falseExpr;
+
+	m_condition->setParent(this);
+	m_true_expr->setParent(this);
+	m_false_expr->setParent(this);
 }

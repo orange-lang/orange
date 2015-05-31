@@ -163,4 +163,8 @@ bool ArrayExpr::isConstant() {
 
 ArrayExpr::ArrayExpr(ArgList elements) {
 	m_elements = elements;
+
+	for (auto& element: m_elements) {
+		element->setParent(this);
+	}
 }

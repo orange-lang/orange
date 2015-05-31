@@ -95,4 +95,7 @@ ArrayAccess::ArrayAccess(Expression* variable, Expression* idx) {
 
 	m_variable = variable; 
 	m_idx = idx; 
+
+	m_variable->setParent(this);
+	m_idx->setParent(this);
 }

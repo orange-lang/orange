@@ -5,7 +5,6 @@
 ** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
 ** may not be copied, modified, or distributed except according to those terms.
 */ 
-
 #include <orange/BinOpExpr.h>
 #include <orange/VarExpr.h>
 #include <orange/generator.h>
@@ -413,7 +412,8 @@ bool BinOpExpr::isConstant() {
 }
 
 BinOpExpr::BinOpExpr(Expression* LHS, StrElement op, Expression* RHS) : m_LHS(LHS), m_RHS(RHS), m_op(op) {
-
+	m_LHS->setParent(this);
+	m_RHS->setParent(this);
 }
 
 

@@ -38,6 +38,10 @@ ExternFunction::ExternFunction(OrangeTy* returnType, std::string name, ParamList
 	if (returnType == nullptr) {
 		throw std::runtime_error("return type for an external function can not be null!");
 	}
+
+	for (auto& param : m_parameters) {
+		param->setParent(this);
+	}
 }
 
 Value* ExternFunction::Codegen() {

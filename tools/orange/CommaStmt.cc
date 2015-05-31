@@ -42,4 +42,8 @@ std::string CommaStmt::string() {
 
 CommaStmt::CommaStmt(std::vector<Expression*> expressions) {
 	m_exprs = expressions;
+
+	for (auto& e : m_exprs) {
+		e->setParent(this);
+	}
 }

@@ -13,6 +13,8 @@ NegativeExpr::NegativeExpr(Expression *expr) : m_expr(expr) {
 	if (expr == nullptr) {
 		throw std::runtime_error("expr in NegativeExpr must not be null!");
 	}
+
+	m_expr->setParent(this);
 }
 
 Value* NegativeExpr::Codegen() {
