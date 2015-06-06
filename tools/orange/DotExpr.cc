@@ -80,5 +80,5 @@ DotExpr::DotExpr(AnyID* LHS, std::string RHS) {
 	m_LHS = LHS; 
 	m_RHS = RHS;	
 
-	m_LHS->setParent(this);
+	addChild("m_LHS", m_LHS);
 }

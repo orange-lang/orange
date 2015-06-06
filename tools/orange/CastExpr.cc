@@ -59,5 +59,5 @@ CastExpr::CastExpr(OrangeTy* type, Expression* expr) {
 	m_type = type; 
 	m_expr = expr; 
 
-	m_expr->setParent(this);
+	addChild("m_expr", m_expr);
 }

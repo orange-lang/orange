@@ -166,7 +166,12 @@ FuncCall::FuncCall(std::string name) : m_name(name) {
 }
 
 FuncCall::FuncCall(std::string name, ArgList arguments) : m_name(name), m_arguments(arguments) {
-	for (auto& arg : m_arguments) {
-		arg->setParent(this);
+	for (unsigned int i = 0; i < m_arguments.size(); i++) {
+		auto arg = m_arguments[i];
+
+		std::stringstream ss;
+		ss << "arg" << i;
+
+		addChild(ss.str(), arg);
 	}
 }

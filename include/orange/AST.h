@@ -63,6 +63,20 @@ protected:
 	 * The parent node that this node is stored inside, if any 
 	 */
 	ASTNode* m_parent = nullptr; 
+
+	/** 
+	 * The children for this node, if any.
+	 * The key string here is the name of the variable in the node.
+	 */
+	std::map<std::string, ASTNode*> m_children;
+
+	/** 
+	 * Adds a child to the list of children.
+	 */
+	void addChild(std::string name, ASTNode* child) {
+		child->setParent(this);
+		m_children[name] = child;
+	}
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 
@@ -71,6 +85,16 @@ public:
 	 * @return The name of this class. Each instance of this class will return the same value.
 	 */ 
 	virtual std::string getClass() { return "ASTNode"; }
+
+	std::map<std::string, ASTNode*> children() const { return m_children; } 
+
+	std::map<std::string, ASTNode*> siblings() {
+		std::map<std::string, ASTNode*> copy; 
+		if (m_parent == nullptr) return copy; 
+		
+		copy = m_parent->m_children; 
+		return copy; 
+	}
 
 	/**
 	 * Generates code in the current LLVM module for use with compilation. May not return anything.

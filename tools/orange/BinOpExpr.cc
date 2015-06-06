@@ -412,8 +412,8 @@ bool BinOpExpr::isConstant() {
 }
 
 BinOpExpr::BinOpExpr(Expression* LHS, StrElement op, Expression* RHS) : m_LHS(LHS), m_RHS(RHS), m_op(op) {
-	m_LHS->setParent(this);
-	m_RHS->setParent(this);
+	addChild("m_LHS", m_LHS);
+	addChild("m_RHS", m_RHS);
 }
 
 

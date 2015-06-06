@@ -96,6 +96,6 @@ ArrayAccess::ArrayAccess(Expression* variable, Expression* idx) {
 	m_variable = variable; 
 	m_idx = idx; 
 
-	m_variable->setParent(this);
-	m_idx->setParent(this);
+	addChild("m_variable", m_variable); 
+	addChild("m_idx", m_idx);	
 }

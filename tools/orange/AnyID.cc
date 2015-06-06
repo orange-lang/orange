@@ -73,7 +73,7 @@ void AnyID::resolve() {
 	}
 
 	// We essentially transform into our any_expr here, so set its parent to our parent.
-	m_any_expr->setParent(parent()); 
+	addChild("m_any_expr", m_any_expr);
 
 	// Resolve it. If the variable already exists, this probably won't do anything.
 	m_any_expr->resolve();

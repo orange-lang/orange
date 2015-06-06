@@ -16,8 +16,13 @@ FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* sym
 	m_orig_name = m_name;
 	m_parameters = parameters;
 
-	for (auto& param : m_parameters) {
-		param->setParent(this);
+	for (unsigned int i = 0; i < m_parameters.size(); i++) {
+		auto param = m_parameters[i];
+
+		std::stringstream ss;
+		ss << "param" << i;
+
+		addChild(ss.str(), param);
 	}
 }
 
@@ -27,8 +32,13 @@ FunctionStmt::FunctionStmt(std::string name, OrangeTy* type, ParamList parameter
 	m_type = type; 
 	m_parameters = parameters;
 
-	for (auto& param : m_parameters) {
-		param->setParent(this);
+	for (unsigned int i = 0; i < m_parameters.size(); i++) {
+		auto param = m_parameters[i];
+
+		std::stringstream ss;
+		ss << "param" << i;
+
+		addChild(ss.str(), param);
 	}
 }
 

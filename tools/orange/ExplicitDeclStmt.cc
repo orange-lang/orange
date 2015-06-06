@@ -178,12 +178,24 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<
 
 	auto typeForExtras = m_var->getType();
 
-	for (auto pair : extras) {
+
+	for (unsigned int i = 0; i < extras.size(); i++) {
+		auto pair = extras[i];
+
 		auto newVar = new VarExpr(pair.name, typeForExtras); 
-		
-		newVar->setParent(this);
-		pair.expression->setParent(this);
+
+		{
+			std::stringstream ss; 
+			ss << "var" << i;
+			addChild(ss.str(), newVar);
+		}
+
+		{
+			std::stringstream ss;
+			ss << "expr" << i;
+			addChild(ss.str(), pair.expression);
+		}
 
 		m_extras.push_back(DeclPairInternal(newVar, pair.expression));
-	}	
+	}
 }

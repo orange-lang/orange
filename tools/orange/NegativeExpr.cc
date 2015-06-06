@@ -14,7 +14,7 @@ NegativeExpr::NegativeExpr(Expression *expr) : m_expr(expr) {
 		throw std::runtime_error("expr in NegativeExpr must not be null!");
 	}
 
-	m_expr->setParent(this);
+	addChild("m_expr", m_expr);
 }
 
 Value* NegativeExpr::Codegen() {
