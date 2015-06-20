@@ -50,6 +50,11 @@ protected:
 	bool m_resolved = false;
 
 	/**
+	 * Indicates whether or not this object has been fixed up in the analysis pas.
+	 */
+	bool m_fixed_up = false;
+
+	/**
 	 * The internal value returned by Codegen() and getValue().
 	 */
 	Value *m_value = nullptr; 
@@ -182,7 +187,26 @@ public:
 		if (m_resolved)
 			return; 
 		m_resolved = true; 
-	};
+
+		for (auto kvp : m_children) {
+			kvp.second->resolve(); 
+		}
+	}
+
+	/**
+	 * Fixes up the type of this object, intended for use during the analysis pass. Objects 
+	 * can look at the types of siblings and static attributes of parents to further 
+	 * determine their types.
+	 */ 
+	virtual void fixup() {
+		if (m_fixed_up) 
+			return;
+		m_fixed_up = true; 
+
+		for (auto kvp : m_children) {
+			kvp.second->fixup();
+		}
+	}
 
 	virtual ~ASTNode() { };
 };
