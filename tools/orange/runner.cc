@@ -116,6 +116,7 @@ BuildResult Runner::build() {
 
 		// Now that we've parsed everything, let's analyze and resolve code...
 		mainFunction()->resolve();
+		mainFunction()->fixup();
         
 		if (hasError()) {
 			result.finish(false, m_messages);
@@ -190,6 +191,7 @@ RunResult Runner::run() {
 
 		// Now that we've parsed everything, let's analyze and resolve code...
 		mainFunction()->resolve();
+		mainFunction()->fixup();
         
 		if (hasError()) {
 			result.finish(false, 1, m_messages);
