@@ -182,10 +182,6 @@ std::string Block::string() {
 }
 
 void Block::resolve() {
-	if (m_resolved) return;
-	m_resolved = true;
-	m_locked = true;
-
 	Runner* curRunner = GE::runner();
 
 	GE::runner()->pushBlock(this);

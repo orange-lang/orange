@@ -171,6 +171,8 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	}
 
 	clone->m_mangled = true;
+	
+	m_clones.push_back(clone);
 
 	for (auto stmt : m_statements) {
 		auto clonedStmt = stmt->clone();
@@ -193,7 +195,7 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 		}
 	}
 
-	m_clones.push_back(clone);
+	clone->resolve();
 	return clone;
 }
 
@@ -433,9 +435,6 @@ BasicBlock* FunctionStmt::createBasicBlock(std::string name) {
 
 
 void FunctionStmt::resolve() {
-	if (m_resolved) return; 
-	// Don't set m_resolved here; let Block::resolve do it.
-
 	// If we don't exist in the parent symtab, add us as a reference.
 	// If the parent doesn't exist, we're in the global block, so 
 	// nothing could call is anyway.
@@ -462,7 +461,6 @@ void FunctionStmt::resolve() {
 			clone->resolve();
 		}
 
-		m_resolved = true;
 		return; 
 	}
 

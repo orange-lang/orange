@@ -371,9 +371,6 @@ OrangeTy* BinOpExpr::getType() {
 }
 
 void BinOpExpr::resolve() {
-	if (m_resolved) return;
-	m_resolved = true; 
-
 	m_LHS->resolve();
 	m_RHS->resolve();
 

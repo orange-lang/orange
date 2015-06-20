@@ -107,9 +107,6 @@ bool VarExpr::isLocked() {
 }
 
 void VarExpr::resolve() {
-	if (m_resolved) return; 
-	m_resolved = true; 
-
 	if (getType()->isVariadicArray()) {
 		std::vector<Expression *> variadicElements; 
 

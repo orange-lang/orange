@@ -57,9 +57,6 @@ OrangeTy* IncrementExpr::getType() {
 }
 
 void IncrementExpr::resolve() {
-	if (m_resolved) return;
-	m_resolved = true;
-
 	m_expr->resolve();
 
 	if (m_expr->returnsPtr() == false) {

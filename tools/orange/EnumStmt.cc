@@ -56,9 +56,6 @@ std::string EnumStmt::string() {
 }
 
 void EnumStmt::resolve() {
-	if (m_resolved) return;
-	m_resolved = true;
-
 	// We have to do some morphing here; first; determine the highest type.
 	// We can use getType because it will calculate it until the type is cached.
 	m_type = getType();

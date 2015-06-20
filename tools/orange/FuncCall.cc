@@ -151,7 +151,6 @@ void FuncCall::resolve() {
 		if (fstmt->isGeneric()) {
 			FunctionStmt* clone = fstmt->createGenericClone(m_arguments);
 			m_name = clone->name();
-			clone->resolve();
 		}
 	}
 }

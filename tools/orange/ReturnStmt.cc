@@ -74,8 +74,5 @@ OrangeTy* ReturnStmt::getType() {
 }
 
 void ReturnStmt::resolve() {
-	if (m_resolved) return;
-	m_resolved = true; 
-
 	if (m_expr) m_expr->resolve();
 }

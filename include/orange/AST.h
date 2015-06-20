@@ -44,16 +44,6 @@ class FunctionStmt;
  */
 class ASTNode : public CodeElement {
 protected:
-	/** 
-	 * Indicates whether or not this object has been resolved in the analysis pass.
-	 */
-	bool m_resolved = false;
-
-	/**
-	 * Indicates whether or not this object has been fixed up in the analysis pas.
-	 */
-	bool m_fixed_up = false;
-
 	/**
 	 * The internal value returned by Codegen() and getValue().
 	 */
@@ -184,10 +174,6 @@ public:
 	 * will only ever excecute once, to avoid unnecessary duplication of code.
 	 */
 	virtual void resolve() { 
-		if (m_resolved)
-			return; 
-		m_resolved = true; 
-
 		for (auto kvp : m_children) {
 			kvp.second->resolve(); 
 		}
@@ -199,10 +185,6 @@ public:
 	 * determine their types.
 	 */ 
 	virtual void fixup() {
-		if (m_fixed_up) 
-			return;
-		m_fixed_up = true; 
-
 		for (auto kvp : m_children) {
 			kvp.second->fixup();
 		}

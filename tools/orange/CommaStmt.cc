@@ -21,9 +21,6 @@ ASTNode* CommaStmt::clone() {
 }
 
 void CommaStmt::resolve() {
-	if (m_resolved) return;
-	m_resolved = true; 
-
 	for (auto expr : m_exprs) {
 		expr->resolve();
 	}

@@ -55,8 +55,6 @@ void AnyID::resolve() {
 	// what object we're using. If it exists in the symbol 
 	// table, we use that one. Otherwise, we create our own 
 	// VarExpr.
-	if (m_resolved) return;
-	m_resolved = true; 
 
 	// If something exists in the symtab, just use that that.
 	// We don't want to use existing VarExprs since the code expects
@@ -70,13 +68,13 @@ void AnyID::resolve() {
 	} else {
 		// Otherwise, we have to create something it should default to a VarExpr.
 		m_any_expr = new VarExpr(m_name);
+  	m_any_expr->resolve();
 	}
 
 	// We essentially transform into our any_expr here, so set its parent to our parent.
 	addChild("m_any_expr", m_any_expr);
 
 	// Resolve it. If the variable already exists, this probably won't do anything.
-	m_any_expr->resolve();
 }
 
 bool AnyID::isSigned() {

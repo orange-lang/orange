@@ -27,9 +27,6 @@ OrangeTy* AddressOfExpr::getType() {
 }
 
 void AddressOfExpr::resolve() { 
-	if (m_resolved) return; 
-	m_resolved = true;
-
 	m_expr->resolve();
 
 	if (m_expr->returnsPtr() == false) {

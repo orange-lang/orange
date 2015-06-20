@@ -37,9 +37,6 @@ OrangeTy* CastExpr::getType() {
 }
 
 void CastExpr::resolve() {
-	if (m_resolved) return; 
-	m_resolved = true; 
-
 	m_expr->resolve();
 }
 

@@ -46,9 +46,6 @@ OrangeTy* DotExpr::getType() {
 }
 
 void DotExpr::resolve() {
-	if (m_resolved) return; 
-	m_resolved = true; 
-
 	// resolve LHS and make sure it's an enum
 	m_LHS->resolve();
 	

@@ -82,9 +82,6 @@ bool ExplicitDeclStmt::isSigned() {
 }
 
 void ExplicitDeclStmt::resolve() {
-	if (m_resolved) return;
-	m_resolved = true; 
-
 	m_var->resolve();
 	m_var->create();
 

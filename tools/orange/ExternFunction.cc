@@ -67,9 +67,6 @@ Value* ExternFunction::Codegen() {
 }
 
 void ExternFunction::resolve() {
-	if (m_resolved) return;
-	m_resolved = true;
-
 	bool added = GE::runner()->symtab()->create(m_name, this);
 	if (added == false) {
 		std::string s = "A function called " + m_name + " already exists!";

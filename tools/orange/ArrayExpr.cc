@@ -142,9 +142,6 @@ OrangeTy* ArrayExpr::getType() {
 }
 
 void ArrayExpr::resolve() {
-	if (m_resolved) return;
-	m_resolved = true ;
-
 	for (auto element : m_elements) {
 		element->resolve();
 	}

@@ -88,9 +88,6 @@ OrangeTy* TernaryExpr::getType() {
 }
 
 void TernaryExpr::resolve() { 
-	if (m_resolved) return;
-	m_resolved = true; 
-
 	m_condition->resolve();
 	m_true_expr->resolve();
 	m_false_expr->resolve();

@@ -49,7 +49,6 @@ ASTNode* CondBlock::clone() {
 
 
 void CondBlock::resolve() {
-	if (m_resolved) return; 
 	m_condition->resolve();
 	Block::resolve();
 }

@@ -44,8 +44,5 @@ OrangeTy* NegativeExpr::getType() {
 }
 
 void NegativeExpr::resolve() {
-	if (m_resolved) return;
-	m_resolved = true; 
-
 	m_expr->resolve();
 }

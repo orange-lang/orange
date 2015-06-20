@@ -13,6 +13,8 @@
 
 class FuncCall : public Expression {
 private:
+	bool m_resolved = false; 
+	
 	std::string m_name; 
 
 	ArgList m_arguments; 

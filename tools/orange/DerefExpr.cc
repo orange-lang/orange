@@ -52,9 +52,6 @@ bool DerefExpr::returnsPtr() {
 }
 
 void DerefExpr::resolve() {
-	if (m_resolved) return;
-	m_resolved = true; 
-
 	m_expr->resolve();
 }
 
