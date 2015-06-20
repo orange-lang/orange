@@ -140,11 +140,23 @@ public:
 	 */
 	virtual bool isBlock() { return false; }
 
-	virtual void setInitializer(ASTNode* initializer) { m_initializer = initializer; }
+	virtual void setInitializer(ASTNode* initializer) { 
+		if (m_initializer != nullptr) return; 
+		m_initializer = initializer; 
+		addChild("m_initializer", m_initializer);
+	}
 
-	virtual void setCondition(Expression* condition) { m_condition = condition; }
+	virtual void setCondition(Expression* condition) { 
+		if (m_condition != nullptr) return;
+		m_condition = condition; 
+		addChild("m_condition", m_condition); 
+	}
 	
-	virtual void setAfterthought(Expression* afterthought) { m_afterthought = afterthought; } 
+	virtual void setAfterthought(Expression* afterthought) { 
+		if (m_afterthought != nullptr) return;
+		m_afterthought = afterthought; 
+		addChild("m_afterthought", m_afterthought);
+	} 
 
 	virtual Value* Codegen();
 

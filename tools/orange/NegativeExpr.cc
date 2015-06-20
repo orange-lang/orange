@@ -42,7 +42,3 @@ std::string NegativeExpr::string() {
 OrangeTy* NegativeExpr::getType() {
 	return m_expr->getType();
 }
-
-void NegativeExpr::resolve() {
-	m_expr->resolve();
-}

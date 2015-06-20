@@ -88,9 +88,7 @@ OrangeTy* TernaryExpr::getType() {
 }
 
 void TernaryExpr::resolve() { 
-	m_condition->resolve();
-	m_true_expr->resolve();
-	m_false_expr->resolve();
+	ASTNode::resolve();
 
 	// If the true and false expr types aren't compatible with one another, throw an error
 	if (CastingEngine::AreTypesCompatible(m_true_expr->getType(), m_false_expr->getType()) == false) {

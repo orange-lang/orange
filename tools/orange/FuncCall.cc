@@ -115,21 +115,13 @@ OrangeTy* FuncCall::getType() {
     
 	if (node->getClass() == "FunctionStmt" && ((FunctionStmt*)node)->isGeneric()) {
 		// Try resolving...
-		if (m_resolved == false) {
-			resolve(); 
-			return getType();
-		}
-
-		throw CompilerMessage(*this, "Getting the type of a generic function is NYI!");
+		throw CompilerMessage(*this, "Can't get the type of an unresolved generic function.");
 	}
 
 	return node->getType();
 }
 
 void FuncCall::resolve() {
-	if (m_resolved) return;
-	m_resolved = true;
-
 	// Look for the function in the symbol table.
 	SymTable *curTab = GE::runner()->symtab();
 	ASTNode* function = curTab->findFromAny(m_name); 

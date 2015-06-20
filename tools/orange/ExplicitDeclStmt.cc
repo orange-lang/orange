@@ -82,24 +82,19 @@ bool ExplicitDeclStmt::isSigned() {
 }
 
 void ExplicitDeclStmt::resolve() {
-	m_var->resolve();
+	ASTNode::resolve();
 	m_var->create();
 
 	if (m_var->getType()->isVariadicArray() && m_expr) {
 		throw CompilerMessage(*m_var, "Variable-sized arrays may not be initialized");
 	}
 
-	if (m_expr) m_expr->resolve();
-
 	for (auto pair : m_extras) {
-		pair.var->resolve();
 		pair.var->create();
 
 		if (pair.var->getType()->isVariadicArray() && pair.val) {
 			throw CompilerMessage(*pair.var, "Variable-sized arrays may not be initialized");
 		}
-
-		if (pair.val) pair.val->resolve();
 	}
 }
 
@@ -172,6 +167,9 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<
 
 	m_var = var;
 	m_expr = value; 
+
+	addChild("m_var", m_var);
+	addChild("m_expr", m_expr);
 
 	auto typeForExtras = m_var->getType();
 

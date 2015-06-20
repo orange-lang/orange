@@ -31,8 +31,6 @@ public:
 
 	virtual OrangeTy* getType();
 
-	virtual void resolve();
-
 	/**
 	 * Returns whether or not all the elements of the array 
 	 * are constants or not.

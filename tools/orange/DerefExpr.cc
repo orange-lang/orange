@@ -51,10 +51,6 @@ bool DerefExpr::returnsPtr() {
 	return m_expr->getType()->isPointerTy();
 }
 
-void DerefExpr::resolve() {
-	m_expr->resolve();
-}
-
 bool DerefExpr::isSigned() {
 	return getType()->isSigned();
 }

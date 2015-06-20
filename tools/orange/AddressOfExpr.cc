@@ -27,7 +27,7 @@ OrangeTy* AddressOfExpr::getType() {
 }
 
 void AddressOfExpr::resolve() { 
-	m_expr->resolve();
+	ASTNode::resolve();
 
 	if (m_expr->returnsPtr() == false) {
 		throw CompilerMessage(*m_expr, "can not get the address of this expression"); 

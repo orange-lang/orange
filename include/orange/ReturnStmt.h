@@ -35,10 +35,8 @@ public:
 			return "return";
 	}
 
-	virtual void resolve();
-
 	ReturnStmt() {}
-	ReturnStmt(Expression* expr) : m_expr(expr) { m_expr->setParent(this); }
+	ReturnStmt(Expression* expr) : m_expr(expr) { addChild("m_expr", m_expr); }
 }; 
 
 #endif 

@@ -46,8 +46,7 @@ OrangeTy* DotExpr::getType() {
 }
 
 void DotExpr::resolve() {
-	// resolve LHS and make sure it's an enum
-	m_LHS->resolve();
+	ASTNode::resolve();
 	
 	if (m_LHS->expression()->getClass() != "EnumStmt") {
 		throw CompilerMessage(*this, ". only supports enums!");

@@ -57,7 +57,7 @@ OrangeTy* IncrementExpr::getType() {
 }
 
 void IncrementExpr::resolve() {
-	m_expr->resolve();
+	ASTNode::resolve();
 
 	if (m_expr->returnsPtr() == false) {
 		throw CompilerMessage(*m_expr, "expression must be a variable or a memory location!");

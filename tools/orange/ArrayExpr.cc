@@ -141,12 +141,6 @@ OrangeTy* ArrayExpr::getType() {
 	return ret; 
 }
 
-void ArrayExpr::resolve() {
-	for (auto element : m_elements) {
-		element->resolve();
-	}
-}
-
 bool ArrayExpr::isConstant() {
 	for (auto element : m_elements) {
 		if (element->isConstant() == false || element->getType()->isArrayTy()) 

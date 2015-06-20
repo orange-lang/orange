@@ -21,8 +21,6 @@ public:
 
 	virtual ASTNode* clone();
 
-	virtual void resolve();
-
 	virtual std::string string();
 
 	CommaStmt(std::vector<Expression*> expressions);

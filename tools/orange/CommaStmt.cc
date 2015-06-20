@@ -20,12 +20,6 @@ ASTNode* CommaStmt::clone() {
 	return new CommaStmt(clonedExprs);
 }
 
-void CommaStmt::resolve() {
-	for (auto expr : m_exprs) {
-		expr->resolve();
-	}
-}
-
 std::string CommaStmt::string() {
 	std::stringstream ss; 
 

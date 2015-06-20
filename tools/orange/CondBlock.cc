@@ -49,7 +49,7 @@ ASTNode* CondBlock::clone() {
 
 
 void CondBlock::resolve() {
-	m_condition->resolve();
+	ASTNode::resolve();
 	Block::resolve();
 }
 

@@ -25,8 +25,6 @@ public:
 
 	virtual OrangeTy* getType();
 
-	virtual void resolve();
-
 	virtual bool isSigned();
 
 	virtual bool returnsPtr();

@@ -72,7 +72,3 @@ OrangeTy* ReturnStmt::getType() {
 	if (m_expr) return m_expr->getType();
 	return VoidTy::get();
 }
-
-void ReturnStmt::resolve() {
-	if (m_expr) m_expr->resolve();
-}

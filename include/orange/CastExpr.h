@@ -26,8 +26,6 @@ public:
 
 	virtual OrangeTy* getType();
 
-	virtual void resolve();
-
 	virtual bool isSigned();
 
 	CastExpr(OrangeTy* type, Expression* expr);

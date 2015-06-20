@@ -371,8 +371,7 @@ OrangeTy* BinOpExpr::getType() {
 }
 
 void BinOpExpr::resolve() {
-	m_LHS->resolve();
-	m_RHS->resolve();
+	ASTNode::resolve();
 
 	if ((m_op == "=" || m_op == "<-") && isVarExpr(m_LHS)) {
 		// Set the type of LHS if it doesn't exist or this type has higher precedence. 

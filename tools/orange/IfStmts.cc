@@ -120,6 +120,8 @@ ASTNode* IfStmts::clone() {
 }
 
 void IfStmts::resolve() {
+	ASTNode::resolve();
+
 	// If we're not already locked, we should be locked now; 
 	// don't allow adding any more blocks.
 	m_locked = true; 

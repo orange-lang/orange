@@ -36,10 +36,6 @@ OrangeTy* CastExpr::getType() {
 	return m_type; 
 }
 
-void CastExpr::resolve() {
-	m_expr->resolve();
-}
-
 bool CastExpr::isSigned() { 
 	return m_type->isSigned();
 }

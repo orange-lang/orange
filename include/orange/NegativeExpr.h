@@ -28,8 +28,6 @@ public:
 
 	virtual OrangeTy* getType();
 
-	virtual void resolve();
-
 	virtual bool isSigned() { return true; }
 
 	NegativeExpr(Expression *expr);

@@ -67,8 +67,7 @@ OrangeTy* ArrayAccess::getType() {
 }
 
 void ArrayAccess::resolve() {
-	m_variable->resolve();
-	m_idx->resolve();
+	ASTNode::resolve();
 
 	// m_variable must be an array or pointer! 
 	if (m_variable->getType()->isArrayTy() == false && m_variable->getType()->isPointerTy() == false) {
