@@ -69,6 +69,7 @@ protected:
 	 * Adds a child to the list of children.
 	 */
 	void addChild(std::string name, ASTNode* child) {
+		if (child == nullptr) return;
 		child->setParent(this);
 		m_children[name] = child;
 	}
