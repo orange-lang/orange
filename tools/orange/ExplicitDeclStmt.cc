@@ -42,8 +42,6 @@ Value* ExplicitDeclStmt::CodegenPair(VarExpr* var, Expression* expr) {
 		var->allocate();
 	}
 
-	// Do any initializations that we may need.
-	var->initialize();
 	return var->Codegen();
 }
 

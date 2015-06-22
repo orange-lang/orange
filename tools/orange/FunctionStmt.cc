@@ -299,7 +299,7 @@ Value* FunctionStmt::Codegen() {
 	for (int i = 0; i < Args.size(); i++, arg_it++) {
 		Value *paramV = GE::builder()->CreateAlloca(arg_it->getType());
 		GE::builder()->CreateStore(arg_it, paramV); 
-		m_parameters[i]->setValueTo(paramV);
+		m_parameters[i]->setValue(paramV);
 	}
 
 	// Generate the body, which will add code to our new insert block

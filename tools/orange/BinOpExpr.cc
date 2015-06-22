@@ -212,24 +212,11 @@ Value* BinOpExpr::Codegen() {
 
 	// If we're assigning a variable that doesn't exist, let's create it. 
 	if ((m_op == "=" || m_op == "<-") && isVarExpr(m_LHS) && LHS == nullptr) {
-		// Before we create the variable, let's see if LHS needs any last minute morphing. 
 		VarExpr* vExpr = getVarExpr(m_LHS);
-
-		if (vExpr->isLocked() == false) {
-			if (vExpr->getType()->isVoidTy()) {
-				// If the type is void, set it to RHS. 
-				vExpr->setType(m_RHS->getType());
-			} else if (CastingEngine::GetFittingType(vExpr->getType(), m_RHS->getType()) == m_RHS->getType()) {
-				// RHS has a higher precedence than LHS, set LHS's type to RHS 
-				vExpr->setType(m_RHS->getType());
-			}
-		} 
-
+		
 		CastingEngine::CastValueToType(&RHS, vExpr->getType(), vExpr->isSigned());
 		
-		vExpr->setValue(RHS);
-
-		vExpr->initialize();
+		vExpr->createValue(RHS);
 
 		return GE::builder()->CreateLoad(vExpr->getValue());
 	}
