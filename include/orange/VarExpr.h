@@ -32,24 +32,12 @@ protected:
 	 * Determines whether or not the variable is const.
 	 */
 	bool m_constant = false;
-
-	/**
-	 * Determines whether or not it is initialized, which will happen 
-	 * after running Codegen at least once if the variable is constant.
-	 */
-	bool m_initialized = false;
 public:
 	virtual std::string getClass() { return "VarExpr"; }
 
 	virtual bool isLocked();
 
 	virtual Value* Codegen();
-
-	/** 
-	 * Initialize our variable. If the variable is a constant, it will lock it down 
-	 * so it can no longer be modified.
-	 */
-	virtual void initialize(); 
 
 	virtual ASTNode* clone() {
 		VarExpr* ret = new VarExpr(m_name);
@@ -70,9 +58,9 @@ public:
 
 	virtual bool isSigned() { return getType()->isSigned(); }
 
-	virtual void setValue(Value* value);
+	virtual void createValue(Value* value);
 
-	virtual void setValueTo(Value* value);
+	virtual void setValue(Value* value);
 
 	/**
 	 * Tries to create this variable in the symbol table.

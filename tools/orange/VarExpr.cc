@@ -23,16 +23,6 @@ Value* VarExpr::Codegen() {
 	return getValue();
 }
 
-void VarExpr::initialize() {
-	// Initialization should happen after a variable is created for the first 
-	// time. If we are a constant, we will set ourselves to "initialized,"
-	// which means that we can't have our value changed.
-	if (m_constant || symtabVar()->m_constant) {
-		m_initialized = true;
-		symtabVar()->m_initialized = true;
-	}
-}
-
 Value* VarExpr::getValue() {
 	// IF we have a value, just return it.
 	if (m_value) return m_value;
@@ -141,21 +131,12 @@ bool VarExpr::existsInParent() {
 	return tab->find(m_name) != nullptr;
 }
 
-void VarExpr::setValue(Value* value) {
-
-	if (m_initialized || symtabVar()->m_initialized) {
-		throw CompilerMessage(*this, "cannot modify the value of a constant!");
-	}
-
+void VarExpr::createValue(Value* value) {
 	m_value = GE::builder()->CreateAlloca(value->getType(), nullptr, m_name);
 	GE::builder()->CreateStore(value, m_value);
 }
 
-void VarExpr::setValueTo(Value *value) {
-	if (m_initialized || symtabVar()->m_initialized) {
-		throw CompilerMessage(*this, "cannot modify the value of a constant!");
-	}
-
+void VarExpr::setValue(Value *value) {
 	m_value = value; 
 }
 
@@ -221,12 +202,12 @@ Value* VarExpr::allocate() {
 		}
 
 		Value *v = GE::builder()->CreateAlloca(baseType, totSize, name());
-		setValueTo(v);
+		setValue(v);
 		return v;
 	}
 
 	Value* v = GE::builder()->CreateAlloca(llvmType, nullptr, name());
-	setValueTo(v);
+	setValue(v);
 	return v; 
 }
 
