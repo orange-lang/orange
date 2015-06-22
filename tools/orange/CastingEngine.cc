@@ -125,6 +125,8 @@ bool CastingEngine::ShouldTypeMorph(OrangeTy* src, OrangeTy* dest) {
 }
 
 OrangeTy* CastingEngine::GetFittingType(OrangeTy* v1, OrangeTy* v2) {
-	if (AreTypesCompatible(v1, v2) == false) return nullptr; 
-	return ShouldTypeMorph(v1, v2) ? v2 : v1; 
+	// If v1 and v2 are the same, always prefer the LHS.
+	if (v1 == v2) return v1;
+	if (AreTypesCompatible(v1, v2) == false) return nullptr;
+	return ShouldTypeMorph(v1, v2) ? v2 : v1;
 }
