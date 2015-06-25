@@ -1,5 +1,5 @@
 # Orange
-Orange is a systems programming language with the feel of a mixture of C# and Ruby. 
+Orange is a systems programming language made to let the user create code that's as powerful as C++ while still being fun to write. 
 
 # Hello World
 At the moment, Orange has no standard library, so you'll need to link against C library functions to do more 
