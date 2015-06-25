@@ -14,6 +14,7 @@ complicated tasks:
 # Resources
 
 * [Language Guide](https://github.com/orange-lang/orange/wiki/Language-Specification)
+* [Orange TODO features](/TODO.md)
 * [Tests](/test/)
 
 # Installing 
