@@ -2,9 +2,6 @@
 Orange is a programming language with the goal of being able to write fast, efficient code as fast as possible. 
 It uses LLVM to generate native code. You can look inside the `test/` folder to get examples of how Orange works.
 
-# Status 
-Orange is still very much a work in progress. At the moment, Orange supports compiling JIT or to a native binary with OS X, Linux, and Windows.
-
 # Hello World
 At the moment, Orange has no standard library, so you'll need to link against C library functions to do more 
 complicated tasks:
@@ -15,16 +12,22 @@ complicated tasks:
         printf("Hello, world %d!\n", i)
     end
 
-You can see more examples of Orange in the `test/` folder. 
-
-# Building on OS X and Linux
-Orange currently requires Boost, Flex, Bison, CMake, and LLVM, which can all be installed using your favorite package manager. Building is as easy as:
+# Installing 
+Installing on OS X and Linux should be pretty simple; after having all of the dependencies installed, building is as easy as:
 
 ```sh 
 $ mkdir build-orange && cd build-orange 
 $ cmake ../orange
 $ make all install
 ``` 
+
+## Dependencies 
+
+- Boost 
+- Flex
+- Bison
+- CMake
+- LLVM
 
 # Building on Windows 
 
@@ -66,4 +69,4 @@ $ cmake ../orange -G "MSYS Makefiles"
 $ make all
 ``` 
 
-At the time of writing, installing to `C:/Program Files (x86)` won't work as `orange.exe` depends on some DLLs from MSYS2 and MINGW. You'll have to run `orange.exe` from inside of the MSYS2 shell. However, any program built using Orange will work outside of the MSYS2 shell. 
+Installing to `C:/Program Files (x86)` won't work as `orange.exe` depends on some DLLs from MSYS2 and MINGW. You'll have to run `orange.exe` from inside of the MSYS2 shell. However, any program built using Orange will work outside of the MSYS2 shell. 
