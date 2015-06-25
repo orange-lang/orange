@@ -5,11 +5,14 @@ Orange is a systems programming language with the feel of a mixture of C# and Ru
 At the moment, Orange has no standard library, so you'll need to link against C library functions to do more 
 complicated tasks:
 
+    # test.or
     extern int32 printf(char *s, ...)
 
     for (i = 0; i < 10; i++) 
         printf("Hello, world %d!\n", i)
     end
+    
+Run JIT with `orange run test.or` or build a native binary with `orange build test.or` and run with `./a.out`. 
     
 # Resources
 
