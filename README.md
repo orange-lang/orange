@@ -1,6 +1,5 @@
 # Orange
-Orange is a programming language with the goal of being able to write fast, efficient code as fast as possible. 
-It uses LLVM to generate native code. You can look inside the `test/` folder to get examples of how Orange works.
+Orange is a systems programming language with the feel of a mixture of C# and Ruby. 
 
 # Hello World
 At the moment, Orange has no standard library, so you'll need to link against C library functions to do more 
@@ -11,6 +10,11 @@ complicated tasks:
     for (i = 0; i < 10; i++) 
         printf("Hello, world %d!\n", i)
     end
+    
+# Resources
+
+* [Language Guide](https://github.com/orange-lang/orange/wiki/Language-Specification)
+* [Tests](/test/)
 
 # Installing 
 Installing on OS X and Linux should be pretty simple; after having all of the dependencies installed, building is as easy as:
@@ -23,11 +27,11 @@ $ make all install
 
 ## Dependencies 
 
-- Boost 
-- Flex
-- Bison
-- CMake
-- LLVM
+* Boost 
+* Flex
+* Bison
+* CMake
+* LLVM
 
 # Building on Windows 
 
