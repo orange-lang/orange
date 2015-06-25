@@ -24,7 +24,7 @@
 
 - [ ] Compile whole projects, not just individual files 
 - [ ] Warnings 
-- [ ] `orange create` command 
+- [ ] `orange create` command to create projects in the current working directory
 
 # Standard Library 
 The implementation of the standard library depends at least on the completion of modules.
