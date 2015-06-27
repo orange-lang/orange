@@ -89,7 +89,7 @@ std::string FuncCall::string() {
 	std::stringstream ss;
 	ss << m_name << "(";
 
-	for (int i = 0; i < m_arguments.size(); i++) {
+	for (unsigned int i = 0; i < m_arguments.size(); i++) {
 		ss << " " << m_arguments[i]->string() << " ";
 		if (i+1 < m_arguments.size()) {
 			ss << ",";

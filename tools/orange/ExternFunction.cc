@@ -12,7 +12,7 @@
 std::string ExternFunction::string() {
 	std::stringstream ss; 
 	ss << "extern " << m_type->string() << " " << m_name << "(";
-	for (int i = 0; i < m_parameters.size(); i++) {
+	for (unsigned int i = 0; i < m_parameters.size(); i++) {
 		VarExpr* param = m_parameters[i];
 
 		if (param->getType()->isVoidTy() == false) {

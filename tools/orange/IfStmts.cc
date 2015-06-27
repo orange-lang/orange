@@ -15,7 +15,7 @@ std::string IfStmts::string() {
 	std::stringstream ss; 
 
 	// Very first block is always an if statement. 
-	for (int i = 0; i < m_blocks.size(); i++) {
+	for (unsigned int i = 0; i < m_blocks.size(); i++) {
 		auto block = m_blocks[i];
 
 		if (block->getClass() == "CondBlock") {
@@ -64,7 +64,7 @@ Value* IfStmts::Codegen() {
 	// then, for each block:
 	//		- if it's a conditional block, check for conditional, and do conditional jump to corresponding block
 	// 		- if it's not a conditional block (else), do jump to corresponding block 
-	for (int i = 0; i < m_blocks.size(); i++) {
+	for (unsigned int i = 0; i < m_blocks.size(); i++) {
 		auto checkBlock = BBs[(i * 2) + 0];
 		auto trueBlock  = BBs[(i * 2) + 1];
 		auto nextCheck  = BBs[(i * 2) + 2];

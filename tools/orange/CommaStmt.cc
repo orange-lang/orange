@@ -23,7 +23,7 @@ ASTNode* CommaStmt::clone() {
 std::string CommaStmt::string() {
 	std::stringstream ss; 
 
-	for (int i = 0; i < m_exprs.size(); i++) {
+	for (unsigned int i = 0; i < m_exprs.size(); i++) {
 		ss << m_exprs[i]->string(); 
 		if (i + 1 < m_exprs.size()) ss << " , ";
 	}

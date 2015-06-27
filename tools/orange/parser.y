@@ -29,7 +29,7 @@
 	ASTNode *node;
 	Block *block;
 	ParamList *paramlist;
-	OrangeTy *OrangeTy;
+	OrangeTy *orangety;
 	ArgList *arglist;
 	std::string *str;
 	std::vector<Block*>* blocklist;
@@ -64,7 +64,7 @@
 %type <paramlist> opt_func_params func_params
 %type <arglist> opt_arg_list arg_list more_exprs
 %type <str> TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_INT16 TYPE_INT32 TYPE_INT64 TYPE_UINT8 TYPE_UINT16 TYPE_UINT32 TYPE_UINT64 TYPE_CHAR TYPE_VOID STRING
-%type <OrangeTy> any_type any_type_no_array
+%type <orangety> any_type any_type_no_array
 %type <number> var_ptrs var_arrays_and_ptrs
 %type <blocklist> else_ifs_or_end
 %type <exprlist> var_arrays
@@ -259,7 +259,7 @@ if_statement
 		$$ = new IfStmts;
 
 		$7->insert($7->begin(), (CondBlock*)$<stmt>4);
-		for (int i = 0; i < $7->size(); i++) { 
+		for (unsigned int i = 0; i < $7->size(); i++) { 
 			((IfStmts *)$$)->addBlock($7->at(i)); 
 		} 
 
