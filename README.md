@@ -16,7 +16,7 @@ complicated tasks:
         printf("Hello, world %d!\n", i)
     end
     
-Run JIT with `orange run test.or` or build a native binary with `orange build test.or` and run with `./a.out`. 
+Run directly with `orange run test.or` or build a native binary with `orange build test.or` and run with `./a.out`. 
     
 # Resources
 
