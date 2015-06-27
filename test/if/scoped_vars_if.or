@@ -1,4 +1,4 @@
-c = 1
+int c = 1
 if 3 != 2 
 	c = 0
 end

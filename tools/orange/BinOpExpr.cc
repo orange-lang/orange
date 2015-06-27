@@ -11,9 +11,9 @@
 #include <orange/AnyID.h>
 
 bool BinOpExpr::LHSShouldNotBeNull() {
-	// Right now, = can produce a LHS with a null value if the LHS is a variable 
+	// Right now, only <- can produce a LHS with a null value if the LHS is a variable 
 	// that has yet to be created. 
-	if (isVarExpr(m_LHS) && (m_op == "=" || m_op == "<-")) return false;
+	if (isVarExpr(m_LHS) && m_op == "<-") return false;
 	return true; 
 }
 
@@ -202,6 +202,10 @@ Value* BinOpExpr::Codegen() {
 	Value* OrigLHS = LHS; 
 	Value* OrigRHS = RHS; 
 
+	if (m_op == "=" && LHS == nullptr) {
+		throw CompilerMessage(*m_LHS, m_LHS->string() + " doesn't exist!");
+	}
+
 	// Validate should never return false, since it throws an exception any time it encounters 
 	// something that is invalid, but let's make sure anyway.
 	if (Validate(LHS, RHS) == false) {
@@ -211,7 +215,7 @@ Value* BinOpExpr::Codegen() {
 	if (m_RHS->returnsPtr()) RHS = GE::builder()->CreateLoad(RHS);
 
 	// If we're assigning a variable that doesn't exist, let's create it. 
-	if ((m_op == "=" || m_op == "<-") && isVarExpr(m_LHS) && LHS == nullptr) {
+	if (m_op == "<-" && isVarExpr(m_LHS) && LHS == nullptr) {
 		VarExpr* vExpr = getVarExpr(m_LHS);
 		
 		CastingEngine::CastValueToType(&RHS, vExpr->getType(), vExpr->isSigned());

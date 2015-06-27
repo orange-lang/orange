@@ -2,6 +2,6 @@ def foo(int[1] a)
 	a[0] -= 1
 end
 
-a = [1]
+int[] a = [1]
 foo(a)
 return a[0]

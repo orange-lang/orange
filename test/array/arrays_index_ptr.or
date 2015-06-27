@@ -1,6 +1,6 @@
 extern int* malloc(int a)
 
-a = malloc(8 * 4)
+a <- malloc(8 * 4)
 a[0] = 5
 a[1] = 4
 a[2] = 3

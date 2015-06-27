@@ -1,4 +1,4 @@
-a = 5
+a <- 5
 int[a] arr 
 arr[i] = i for (int i = 0; i < a; i++)
 return 1 if arr[0] != 0

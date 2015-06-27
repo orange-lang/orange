@@ -2,5 +2,5 @@ def foo(n)
 	return n + 1
 end 
 
-d = foo(5) 
+int d = foo(5) 
 return 0

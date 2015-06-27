@@ -1,4 +1,4 @@
-a = 0
+int a = 0
 a++ 
 return 1 if a != 1 
 a++ 

@@ -3,7 +3,7 @@ def foo(int n)
 end 
 
 foo(3)
-a = foo(3.9) - 6.0
+double a = foo(3.9) - 6.0
 
 if a > 0.5
 	return 1

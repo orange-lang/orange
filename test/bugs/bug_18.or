@@ -6,10 +6,10 @@ def foo(arr)
 	*arr[1] += 2
 end
 
-a = 1 
-b = 2 
+int a = 1 
+int b = 2 
 
-arr = [&a, &b] 
+arr <- [&a, &b] 
 foo(arr)
 
 return b - a - a

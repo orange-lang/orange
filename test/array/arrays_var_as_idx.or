@@ -1,9 +1,9 @@
-a = 5 
-b = 6 
-c = 7 
-d = 8
+a <- 5 
+b <- 6 
+c <- 7 
+d <- 8
 
-arr = [a, b, c, d]
+int[] arr = [a, b, c, d]
 
 return 1 if arr[0] != 5 
 return 1 if arr[1] != 6

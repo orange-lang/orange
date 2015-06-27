@@ -1,4 +1,4 @@
-a = 1
+int a = 1
 
 unless 5 < 3 
 	a = 0

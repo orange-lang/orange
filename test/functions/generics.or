@@ -17,21 +17,21 @@ end
 # if statements depend on tests from functions/ being implemented first.
 
 # repeat it to ensure adding a clone twice doesn't happen  
-a = unknown_add(3, 5) != 8
-b = unknown_add(3, 5) != 8
+a <- unknown_add(3, 5) != 8
+b <- unknown_add(3, 5) != 8
 
-c = unknown_add(3, 5.0) != 8.0 
-d = unknown_add(3.0, 5) != 8.0 
-e = unknown_add(3.0, 5.0) != 8.0 
-f = unknown_add(3.0f, 5.0f) != 8.0 
+c <- unknown_add(3, 5.0) != 8.0 
+d <- unknown_add(3.0, 5) != 8.0 
+e <- unknown_add(3.0, 5.0) != 8.0 
+f <- unknown_add(3.0f, 5.0f) != 8.0 
 
-g = template_add(3, 5) != 8
-h = template_add(3, 5.0) != 8.0
-i = template_add(3.0, 5) != 8.0
-j = template_add(3.0, 5.0) != 8.0
+g <- template_add(3, 5) != 8
+h <- template_add(3, 5.0) != 8.0
+i <- template_add(3.0, 5) != 8.0
+j <- template_add(3.0, 5.0) != 8.0
 
-k = add(3, 5) != 8
-l = add(3.0, 5.0) != 8
-m = add(3.0f, 5.0f) != 8
+k <- add(3, 5) != 8
+l <- add(3.0, 5.0) != 8
+m <- add(3.0f, 5.0f) != 8
 
 return a + b + c + d + e + f + g + h + i + j + k + l + m

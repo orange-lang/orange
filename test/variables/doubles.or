@@ -1,7 +1,7 @@
 double a = 5.0
 double b = 1.0d 
-c = 1.0d
-d = 1.0
+c <- 1.0d
+d <- 1.0
 float e = a - b - c - d
 int f = e - 2
 return f
