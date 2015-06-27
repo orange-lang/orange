@@ -1,15 +1,16 @@
 extern int* malloc(int a)
+extern void free(char* p) 
 
 def swap(a, b)
-	temp = *a
+	temp <- *a
 	*a = *b
 	*b = temp
 end
 
-a = malloc(8)
+int* a = malloc(8)
 *a = 8
 
-b = malloc(8)
+int* b = malloc(8)
 *b = 5 
 
 swap(a, b)
@@ -21,5 +22,8 @@ end
 if *b != 8
 	return 1
 end
+
+free(a)
+free(b)
 
 return 0
