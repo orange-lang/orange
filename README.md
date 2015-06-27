@@ -3,7 +3,7 @@ Orange is a systems programming language made to let the user create code that's
 
 # Status 
 
-Orange is still under development; a lot of planned features are not yet implemented. Check the [TODO](/TODO.md) to see what needs to be done.
+Orange is still under development and in the design phase; a lot of planned features are not yet implemented. Check the [TODO](/TODO.md) to see what needs to be done.
 
 # Hello World
 At the moment, Orange has no standard library, so you'll need to link against C library functions to do more 
