@@ -145,7 +145,7 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	// Create paramlist from args
 	ParamList cloned_params; 
 
-	for (int i = 0; i < args.size(); i++) {
+	for (unsigned int i = 0; i < args.size(); i++) {
 		VarExpr* curParam = m_parameters[i];
 
 		OrangeTy* paramType = args[i]->getType();
@@ -296,7 +296,7 @@ Value* FunctionStmt::Codegen() {
 
 	// Create our paramters. 
 	arg_it = generatedFunc->arg_begin();
-	for (int i = 0; i < Args.size(); i++, arg_it++) {
+	for (unsigned int i = 0; i < Args.size(); i++, arg_it++) {
 		Value *paramV = GE::builder()->CreateAlloca(arg_it->getType());
 		GE::builder()->CreateStore(arg_it, paramV); 
 		m_parameters[i]->setValue(paramV);

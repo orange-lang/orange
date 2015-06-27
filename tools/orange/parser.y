@@ -259,7 +259,7 @@ if_statement
 		$$ = new IfStmts;
 
 		$7->insert($7->begin(), (CondBlock*)$<stmt>4);
-		for (int i = 0; i < $7->size(); i++) { 
+		for (unsigned int i = 0; i < $7->size(); i++) { 
 			((IfStmts *)$$)->addBlock($7->at(i)); 
 		} 
 

@@ -91,7 +91,7 @@ void cOptions::printHelp() {
 	for (cCommandOption* option : curState->options) {
 		std::cerr << "\t";
 
-		for (int i = 0; i < option->names.size(); i++) {
+		for (unsigned int i = 0; i < option->names.size(); i++) {
 			if (option->names[i].length() == 1) {
 				std::cerr << "-"; 
 			} else std::cerr << "--";

@@ -14,7 +14,7 @@ std::string ArrayExpr::string() {
 
 	ss << "[ "; 
 
-	for (int i = 0; i < m_elements.size(); i++) {
+	for (unsigned int i = 0; i < m_elements.size(); i++) {
 		ss << m_elements[i]->string();
 
 		if (i + 1 < m_elements.size()) {
@@ -60,7 +60,7 @@ Value* ArrayExpr::Codegen() {
 		Value* storeArr = ConstantArray::get((ArrayType *)arrType->getLLVMType(), consts);
 		GE::builder()->CreateStore(storeArr, space);
 	} else {
-		for (int i = 0; i < m_elements.size(); i++) {
+		for (unsigned int i = 0; i < m_elements.size(); i++) {
 			Value* arr_ele = m_elements[i]->Codegen();
 			
 			if (arr_ele == nullptr) {

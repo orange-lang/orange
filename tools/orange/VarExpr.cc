@@ -197,7 +197,7 @@ Value* VarExpr::allocate() {
 
 		// The total size of this array is all the elements in the vector multiplied together.
 		Value *totSize = values[0]; 
-		for (int i = 1; i < values.size(); i++) {
+		for (unsigned int i = 1; i < values.size(); i++) {
 			totSize = GE::builder()->CreateMul(totSize, values[i]);
 		}
 
