@@ -1,5 +1,5 @@
-int n = 0
-int[] a = [n, 1]
+n <- 0
+a <- [n, 1]
 n = 1
 return 1 if a[0] == n
 n = 0

@@ -2,6 +2,6 @@ def foo(int[] a)
 	a[0] -= 1
 end
 
-int[] a = [1]
+a <- [1]
 foo(a)
 return a[0]

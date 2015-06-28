@@ -1,11 +1,11 @@
 extern int* malloc(int a)
 
-int memory_location = (int)malloc(8)
+memory_location <- (int)malloc(8)
 
-int *n = (int *)memory_location
+n <- (int *)memory_location
 *n = 2
 
-int a = *n
+a <- *n
 *n -= 1 
 
 return a - *n - 1

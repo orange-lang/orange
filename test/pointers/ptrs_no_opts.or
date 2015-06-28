@@ -4,7 +4,7 @@ def initial_value()
 	return 2
 end 
 
-int *n = malloc(8)
+n <- malloc(8)
 *n = initial_value()
 *n -= 2 
 

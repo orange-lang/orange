@@ -1,6 +1,6 @@
-int a = 1 
+a <- 1 
 
-int* b = &a 
+b <- &a 
 *b -= 1
 
 return 1 if a == 1 

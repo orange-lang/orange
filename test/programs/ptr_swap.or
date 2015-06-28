@@ -7,10 +7,10 @@ def swap(a, b)
 	*b = temp
 end
 
-int* a = malloc(8)
+a <- malloc(8)
 *a = 8
 
-int* b = malloc(8)
+b <- malloc(8)
 *b = 5 
 
 swap(a, b)

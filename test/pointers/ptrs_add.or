@@ -1,4 +1,3 @@
-char* str = "orangelang"
+str <- "orangelang"
 str = str + 1 
-
 return 0

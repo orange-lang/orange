@@ -1,8 +1,8 @@
-int a = 8
-int[] arr = [5, 6, 7, a]
+a <- 8
+arr <- [5, 6, 7, a]
 
-int[] indices = [0, 1, 2]
-int index_hard = 3
+indices <- [0, 1, 2]
+index_hard <- 3
 
 return 1 if arr[indices[0]] != 5 
 return 1 if arr[indices[1]] != 6

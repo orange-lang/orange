@@ -3,7 +3,7 @@ b <- 6
 c <- 7 
 d <- 8
 
-int[] arr = [a, b, c, d]
+arr <- [a, b, c, d]
 
 return 1 if arr[0] != 5 
 return 1 if arr[1] != 6

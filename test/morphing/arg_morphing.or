@@ -3,6 +3,6 @@ def foo(n)
 end 
 
 foo(3)
-double a = foo(3.6) - 6.6
+a <- foo(3.6) - 6.6
 foo(3)
 return (int)a
