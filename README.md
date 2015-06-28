@@ -12,7 +12,7 @@ complicated tasks:
     # test.or
     extern int32 printf(char *s, ...)
 
-    for (int i = 0; i < 10; i++) 
+    for (var i = 0; i < 10; i++) 
         printf("Hello, world %d!\n", i)
     end
     
