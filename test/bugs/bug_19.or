@@ -1,6 +1,6 @@
 int a = 0, b = 0
 
-arr <- [&a, &b]
+var arr = [&a, &b]
 
 *arr[0] = 1
 *arr[1] = 2

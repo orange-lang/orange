@@ -9,7 +9,7 @@ end
 int a = 1 
 int b = 2 
 
-arr <- [&a, &b] 
+var arr = [&a, &b] 
 foo(arr)
 
 return b - a - a

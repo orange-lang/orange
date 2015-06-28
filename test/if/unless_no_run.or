@@ -1,4 +1,4 @@
-a <- 0
+var a = 0
 
 unless 5 > 3 
 	a = 1

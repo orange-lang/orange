@@ -5,7 +5,7 @@ enum Status
 	EXITED = 0x8 
 end
 
-flags <- Status.PENDING | Status.STOPPED 
+var flags = Status.PENDING | Status.STOPPED 
 return 1 if flags & Status.PENDING == 0 
 return 1 if flags & Status.STOPPED == 0 
 return 1 if flags & Status.RUNNING != 0 

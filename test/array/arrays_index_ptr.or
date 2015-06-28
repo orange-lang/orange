@@ -1,7 +1,7 @@
 extern int* malloc(int a)
 extern void free(char *ptr)
 
-a <- malloc(8 * 4)
+var a = malloc(8 * 4)
 a[0] = 5
 a[1] = 4
 a[2] = 3

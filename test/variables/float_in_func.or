@@ -4,6 +4,6 @@ def foo()
 	return a
 end 
 
-b <- foo()
+var b = foo()
 b -= 8.5 
 return b > 0.1

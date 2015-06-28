@@ -1,9 +1,9 @@
-a <- 5 
-b <- 6 
-c <- 7 
-d <- 8
+var a = 5 
+var b = 6 
+var c = 7 
+var d = 8
 
-arr <- [a, b, c, d]
+var arr = [a, b, c, d]
 
 return 1 if arr[0] != 5 
 return 1 if arr[1] != 6

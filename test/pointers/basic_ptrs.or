@@ -1,11 +1,11 @@
 extern int* malloc(int a)
 
-memory_location <- (int)malloc(8)
+var memory_location = (int)malloc(8)
 
-n <- (int *)memory_location
+var n = (int *)memory_location
 *n = 2
 
-a <- *n
+var a = *n
 *n -= 1 
 
 return a - *n - 1

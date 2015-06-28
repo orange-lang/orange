@@ -2,15 +2,15 @@ extern int* malloc(int a)
 extern void free(char* p) 
 
 def swap(a, b)
-	temp <- *a
+	var temp = *a
 	*a = *b
 	*b = temp
 end
 
-a <- malloc(8)
+var a = malloc(8)
 *a = 8
 
-b <- malloc(8)
+var b = malloc(8)
 *b = 5 
 
 swap(a, b)

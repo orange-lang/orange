@@ -4,7 +4,7 @@ def initial_value()
 	return 2
 end 
 
-n <- malloc(8)
+var n = malloc(8)
 *n = initial_value()
 *n -= 2 
 

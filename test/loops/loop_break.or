@@ -1,6 +1,6 @@
-a <- 0
+var a = 0
 
-for (i <- 0; i < 10; i++) 
+for (var i = 0; i < 10; i++) 
 	a++
 	break if a > 5
 end
