@@ -60,6 +60,8 @@ public:
 	 */
 	virtual bool isIDTy() const { return false; }
 
+	virtual bool isVarTy() const { return false; }
+
 	/** 
 	 * If a type is void, then it does not exist.
 	 */

@@ -57,6 +57,7 @@ OrangeTy* OrangeTy::get(std::string str) {
 	else if (str == "double")		return DoubleTy::get();
 	else if (str == "void")			return VoidTy::get();
 	else if (str == "id")				return IDTy::get();
+	else if (str == "var")			return VarTy::get();
 
 	// default case 
 	return VoidTy::get();

@@ -15,6 +15,10 @@ Value* ExplicitDeclStmt::CodegenPair(VarExpr* var, Expression* expr) {
 	if (expr) {
 		Value* value = expr->Codegen();
 
+		if (var->getType()->isVarTy()) {
+			throw std::runtime_error("compiler bug: var type never resolved");
+		}
+
 		// If the expr returns a pointer, don't load if LHS is a pointer and RHS is an array 
 		bool doLoad = expr->returnsPtr();
 		if (doLoad && var->getType()->isPointerTy() && expr->getType()->isArrayTy()) {
@@ -83,12 +87,39 @@ void ExplicitDeclStmt::resolve() {
 	ASTNode::resolve();
 	m_var->create();
 
+	if (m_var->getType()->isVoidTy()) {
+		throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");
+	}
+	
+	if (m_var->getType()->isVarTy()) {
+		if (m_expr == nullptr) {
+			throw CompilerMessage(*m_var, "keyword var cannot be used without an expression");
+		}
+	
+		std::cout << "Changing " << m_var->name() << " to " << m_expr->getType()->string() << std::endl;
+		m_var->setType(m_expr->getType());
+		m_var->resolve(); // type has changed; re-resolve the variable 
+	} 
+
 	if (m_var->getType()->isVariadicArray() && m_expr) {
 		throw CompilerMessage(*m_var, "Variable-sized arrays may not be initialized");
 	}
 
 	for (auto pair : m_extras) {
 		pair.var->create();
+		
+		if (pair.var->getType()->isVoidTy()) {
+			throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");
+		}
+
+		if (pair.var->getType()->isVarTy()) {
+			if (pair.val == nullptr) {
+				throw CompilerMessage(*m_var, "keyword var cannot be used without an expression");
+			}
+
+			pair.var->setType(pair.val->getType()); 
+			pair.var->resolve(); // type has changed; re-resolve the variable 
+		}
 
 		if (pair.var->getType()->isVariadicArray() && pair.val) {
 			throw CompilerMessage(*pair.var, "Variable-sized arrays may not be initialized");

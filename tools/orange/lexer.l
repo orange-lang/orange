@@ -101,6 +101,7 @@
 "const"									return CONST;
 "enum"									return ENUM;
 
+"var"										SAVESTR(); return TYPE_VAR;
 "char"									SAVESTR(); return TYPE_CHAR; 
 "int"										SAVESTR(); return TYPE_INT; 
 "uint"									SAVESTR(); return TYPE_UINT; 

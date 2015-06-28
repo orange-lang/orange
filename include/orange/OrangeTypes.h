@@ -7,3 +7,4 @@
 #include "types/DoubleTy.h"
 #include "types/ArrayTy.h"
 #include "types/VariadicArrayTy.h"
+#include "types/VarTy.h"
