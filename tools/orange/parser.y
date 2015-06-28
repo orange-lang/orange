@@ -142,7 +142,6 @@ more_exprs
 
 expression
 	: expression ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
-	| expression ARROW_LEFT expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	|	expression PLUS_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	|	expression MINUS_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }
 	|	expression TIMES_ASSIGN expression { $$ = new BinOpExpr($1, *$2, $3); SET_LOCATION($$); }

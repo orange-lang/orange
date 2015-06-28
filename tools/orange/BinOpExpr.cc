@@ -11,9 +11,7 @@
 #include <orange/AnyID.h>
 
 bool BinOpExpr::LHSShouldNotBeNull() {
-	// Right now, only <- can produce a LHS with a null value if the LHS is a variable 
-	// that has yet to be created. 
-	if (isVarExpr(m_LHS) && m_op == "<-") return false;
+	// For the moment, LHS should never be null.
 	return true; 
 }
 
@@ -77,7 +75,7 @@ VarExpr* BinOpExpr::getVarExpr(Expression* expr) {
 
 
 bool BinOpExpr::IsAssignOp(std::string op) {
-	return op == "=" || op == "<-" || op == "+=" || op == "-=" || op == "/=" ||
+	return op == "=" || op == "+=" || op == "-=" || op == "/=" ||
 		op == "*=";
 }
 
@@ -214,17 +212,6 @@ Value* BinOpExpr::Codegen() {
 
 	if (m_RHS->returnsPtr()) RHS = GE::builder()->CreateLoad(RHS);
 
-	// If we're assigning a variable that doesn't exist, let's create it. 
-	if (m_op == "<-" && isVarExpr(m_LHS) && LHS == nullptr) {
-		VarExpr* vExpr = getVarExpr(m_LHS);
-		
-		CastingEngine::CastValueToType(&RHS, vExpr->getType(), vExpr->isSigned());
-		
-		vExpr->createValue(RHS);
-
-		return GE::builder()->CreateLoad(vExpr->getValue());
-	}
-
 	// Load the LHS if it's a pointer and isn't used as an assign. Load the RHS if it's a pointer.
 	if (IsAssignOp(m_op) == false && m_LHS->returnsPtr()) LHS = GE::builder()->CreateLoad(LHS);
 
@@ -243,7 +230,7 @@ Value* BinOpExpr::Codegen() {
 		CastingEngine::CastValuesToFit(&LHS, &RHS, m_LHS->isSigned(), m_RHS->isSigned());
 	}
 
-	if (m_op == "=" || m_op == "<-") {
+	if (m_op == "=") {
 		GE::builder()->CreateStore(RHS, LHS);
 		return GE::builder()->CreateLoad(LHS);
 	} else if (m_op == "+=") {
@@ -364,15 +351,11 @@ OrangeTy* BinOpExpr::getType() {
 void BinOpExpr::resolve() {
 	ASTNode::resolve();
 
-	if ((m_op == "=" || m_op == "<-") && isVarExpr(m_LHS)) {
+	if (m_op == "=" && isVarExpr(m_LHS)) {
 		// Set the type of LHS if it doesn't exist or this type has higher precedence. 
 		VarExpr* vExpr = getVarExpr(m_LHS); 
 
 		// Only create this variable if it doesn't exist in a parent scope.
-		if (vExpr->existsInParent() == false || m_op == "<-") {			
-	 		vExpr->create();
-	 	}
-
 		if (vExpr->getType()->isVoidTy()) {
 			vExpr->setType(m_RHS->getType());
 		} else if (vExpr->isLocked() == false && CastingEngine::GetFittingType(vExpr->getType(), m_RHS->getType()) == m_RHS->getType()) {
