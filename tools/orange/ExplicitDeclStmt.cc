@@ -12,12 +12,12 @@
 
 Value* ExplicitDeclStmt::CodegenPair(VarExpr* var, Expression* expr) {
 	// If we have an expression, cast it to the type of our variable and assign it.
+	if (var->getType()->isVarTy()) {
+		throw CompilerMessage(*var, "var type never given a value");
+	}
+
 	if (expr) {
 		Value* value = expr->Codegen();
-
-		if (var->getType()->isVarTy()) {
-			throw std::runtime_error("compiler bug: var type never resolved");
-		}
 
 		// If the expr returns a pointer, don't load if LHS is a pointer and RHS is an array 
 		bool doLoad = expr->returnsPtr();
@@ -91,14 +91,9 @@ void ExplicitDeclStmt::resolve() {
 		throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");
 	}
 	
-	if (m_var->getType()->isVarTy()) {
-		if (m_expr == nullptr) {
-			throw CompilerMessage(*m_var, "keyword var cannot be used without an expression");
-		}
-	
-		std::cout << "Changing " << m_var->name() << " to " << m_expr->getType()->string() << std::endl;
+	if (m_var->getType()->isVarTy() && m_expr) {
 		m_var->setType(m_expr->getType());
-		m_var->resolve(); // type has changed; re-resolve the variable 
+		m_var->resolve(); 
 	} 
 
 	if (m_var->getType()->isVariadicArray() && m_expr) {
@@ -112,11 +107,7 @@ void ExplicitDeclStmt::resolve() {
 			throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");
 		}
 
-		if (pair.var->getType()->isVarTy()) {
-			if (pair.val == nullptr) {
-				throw CompilerMessage(*m_var, "keyword var cannot be used without an expression");
-			}
-
+		if (pair.var->getType()->isVarTy() && pair.val) {
 			pair.var->setType(pair.val->getType()); 
 			pair.var->resolve(); // type has changed; re-resolve the variable 
 		}
