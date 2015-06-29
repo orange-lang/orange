@@ -4,7 +4,7 @@ project(orange)
 enable_testing()
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-   message(SEND_ERROR "In-source builds are not allowed.")
+   message(FATAL_ERROR "In-source builds are not allowed.")
 endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 set(oc_SOURCE_DIR ${CMAKE_SOURCE_DIR}/tools/oc)
@@ -46,10 +46,17 @@ endif()
 
 include_directories(etc/cereal/include)
 
-
 # If we don't have LLVM installed, add the subdirectory to get it 
-find_package(LLVM QUIET)
+find_package(LLVM QUIET MODULE)
 if (NOT ${LLVM_FOUND})
+	find_path(LLVM_CMAKE README.txt PATHS ${CMAKE_SOURCE_DIR}/etc/llvm NO_DEFAULT_PATH)
+
+	message(STATUS ${LLVM_CMAKE})
+
+	if (${LLVM_CMAKE} STREQUAL "LLVM_CMAKE-NOTFOUND") 
+		message(FATAL_ERROR "You don't have LLVM installed, but llvm was not checked out to etc/llvm. If you are using a cloned repo, init and update git submodules. Otherwise, you will need to download and install LLVM.")
+	endif()
+
 	add_subdirectory(etc/llvm)
 	include_directories(${CMAKE_SOURCE_DIR}/etc/llvm/include)
 	include_directories(${CMAKE_BINARY_DIR}/etc/llvm/include)
