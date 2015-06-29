@@ -32,6 +32,7 @@ $ mkdir build-orange && cd build-orange
 $ cmake ../orange
 $ make all install
 ``` 
+CMake will try to find LLVM on your system; if it is not installed, it will build it from source. 
 
 [Building on Windows](https://github.com/orange-lang/orange/wiki/Building-on-Windows) takes a bit more effort.
 
@@ -41,4 +42,3 @@ $ make all install
 * Flex
 * Bison
 * CMake
-* LLVM
