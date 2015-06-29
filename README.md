@@ -20,7 +20,7 @@ Run directly with `orange run test.or` or build a native binary with `orange bui
     
 # Resources
 
-* [Language Guide](https://github.com/orange-lang/orange/wiki/Language-Specification)
+* [Language Guide](http://orange-lang.gitbooks.io/orange-docs/content/) ([Github](https://github.com/orange-lang/orange-docs))
 * [Orange TODO features](/TODO.md)
 * [Tests](/test/)
 
