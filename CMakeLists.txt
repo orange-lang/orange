@@ -47,7 +47,7 @@ endif()
 include_directories(etc/cereal/include)
 
 # If we don't have LLVM installed, add the subdirectory to get it 
-find_package(LLVM QUIET MODULE)
+find_package(LLVM QUIET)
 if (NOT ${LLVM_FOUND})
 	find_path(LLVM_CMAKE README.txt PATHS ${CMAKE_SOURCE_DIR}/etc/llvm NO_DEFAULT_PATH)
 
