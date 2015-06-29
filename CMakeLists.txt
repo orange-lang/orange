@@ -44,9 +44,26 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
   ADD_DEFINITIONS(-DDEBUG)
 endif()
 
-find_package(LLVM REQUIRED)
-
 include_directories(etc/cereal/include)
+
+
+# If we don't have LLVM installed, add the subdirectory to get it 
+find_package(LLVM QUIET)
+if (NOT ${LLVM_FOUND})
+	add_subdirectory(etc/llvm)
+	include_directories(${CMAKE_SOURCE_DIR}/etc/llvm/include)
+	include_directories(${CMAKE_BINARY_DIR}/etc/llvm/include)
+else()
+	# This is a cheap hack: we'd like to know if the LLVM_INCLUDE_DIRS
+	# has all the needed .h files, since it may point to the build folder here.
+	# Look for any .h file not normally found in the build folder 
+	find_path(DIE DIE.h PATHS ${LLVM_INCLUDE_DIRS} NO_DEFAULT_PATH)
+	if (${DIE} STREQUAL "DIE-NOTFOUND") 
+		include_directories(${CMAKE_SOURCE_DIR}/etc/llvm/include)
+	endif()
+
+	include_directories(${LLVM_INCLUDE_DIRS})
+endif()
 
 add_subdirectory(lib/libor)
 add_subdirectory(lib/helper)
