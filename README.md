@@ -28,10 +28,12 @@ Run directly with `orange run test.or` or build a native binary with `orange bui
 Installing on OS X and Linux should be pretty simple; after having all of the dependencies installed, building is as easy as:
 
 ```sh 
+$ git submodule init && git submodule update
 $ mkdir build-orange && cd build-orange 
 $ cmake ../orange
 $ make all install
 ``` 
+
 CMake will try to find LLVM on your system; if it is not installed, it will build it from source. 
 
 [Building on Windows](https://github.com/orange-lang/orange/wiki/Building-on-Windows) takes a bit more effort.
