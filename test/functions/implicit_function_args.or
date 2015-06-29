@@ -1,4 +1,4 @@
-extern int32 printf(char *s, ...)
+extern printf(char *s, ...) -> int32
 
 def foo(s, a)
 	return printf(s, a + 1)

@@ -1,5 +1,5 @@
-extern int* malloc(int a)
-extern void free(char *ptr)
+extern malloc(int a) -> int*
+extern free(char *ptr) -> void
 
 var a = malloc(8 * 4)
 a[0] = 5

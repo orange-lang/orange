@@ -233,9 +233,9 @@ func_params
 	;
 
 extern_function
-	: EXTERN any_type TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN 
+	: EXTERN TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN ARROW any_type 
 	 	{
-	 		$$ = new ExternFunction($2, *$3, *$5);
+	 		$$ = new ExternFunction($7, *$2, *$4);
 	 	}
 	;
 

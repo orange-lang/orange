@@ -1,4 +1,4 @@
-extern int32 puts(char* s)
+extern puts(char* s) -> int32
 
 def foo()
 	puts("hey")

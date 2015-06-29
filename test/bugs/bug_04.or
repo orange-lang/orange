@@ -2,6 +2,6 @@ def foo(n)
 	return n + 1
 end 
 
-extern int32 printf(char *s, ...)
+extern printf(char *s, ...) -> int32
 printf("%d\n", foo(5))
 return 0

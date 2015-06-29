@@ -10,7 +10,7 @@ At the moment, Orange has no standard library, so you'll need to link against C 
 complicated tasks:
 
     # test.or
-    extern int32 printf(char *s, ...)
+    extern printf(char *s, ...) -> int32
 
     for (var i = 0; i < 10; i++) 
         printf("Hello, world %d!\n", i)

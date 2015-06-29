@@ -1,4 +1,5 @@
-extern int* malloc(int a)
+extern malloc(int a) -> int*
+extern free(char *s) -> void 
 
 def initial_value()
 	return 2
