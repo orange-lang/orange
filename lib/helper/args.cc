@@ -63,6 +63,16 @@ void cOptionsState::add(cCommandOption* option) { options.push_back(option); }
 void cOptionsState::addState(cOptionsState* state) { states.push_back(state); }
 std::vector<std::string> cOptionsState::unparsed() const { return m_unparsed; }
 
+cCommandOption* cOptionsState::getOption(std::string option) {
+	for (auto o : options) {
+		for (auto name : o->names) {
+			if (name == option) return o; 
+		}
+	}
+
+	return nullptr;
+}
+
 cOptionsState::cOptionsState(std::string name, std::string description, std::string usage, std::string info) {
 	this->name = name;
 	this->description = description;

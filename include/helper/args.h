@@ -22,6 +22,7 @@ class cOptions;
 
 class cCommandOption {
 friend cOptions;
+friend cOptionsState;
 private:
 	bool m_set = false;
 	std::vector<std::string> names; 
@@ -46,9 +47,14 @@ private:
 	std::string customUsage = "";
 	std::string customInfo = "";
 
+protected:
 	cOptionsState() { }
 public:
 	bool isActive() const { return mActive; }
+
+	cCommandOption* getOption(std::string option);
+
+	virtual void run() { } 
 
 	void add(cCommandOption* option);
 	void addState(cOptionsState* state);

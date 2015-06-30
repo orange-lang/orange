@@ -62,6 +62,7 @@ void BuildResult::finish(bool pass, std::vector<CompilerMessage> messages) {
 
 	m_pass = pass;
 	m_messages = messages;
+	m_finished = true;
 }
 
 
@@ -88,7 +89,8 @@ void RunResult::finish(bool pass, int code, CompilerMessage message) {
 
 	m_pass = pass;
 	m_messages.push_back(message);	
-	m_retcode = code;	
+	m_retcode = code;
+	m_finished = true;
 }
 
 void RunResult::finish(bool pass, int code, std::vector<CompilerMessage> messages) {
@@ -105,6 +107,16 @@ void RunResult::finish(bool pass, int code, std::vector<CompilerMessage> message
 
 int RunResult::returnCode() const { return m_retcode; }
 
+RunResult::RunResult(BuildResult result) {
+	m_pass = result.m_pass;
+	m_messages = result.messages();
+	m_filename = result.m_filename;
+	m_runtime = result.m_runtime;
+	startTime = result.startTime;
+	endTime = result.endTime;
+	m_finished = result.m_finished;
+}
+
 RunResult::RunResult(std::string filename, bool pass, int code, CompilerMessage message) {
 	m_filename = filename;
 	start();
@@ -115,62 +127,4 @@ RunResult::RunResult(std::string filename, bool pass, int code, std::vector<Comp
 	m_filename = filename;
 	start();
 	finish(pass, code, messages);
-}
-
-RunResult runFile(std::string filename, bool doDebug) {
-	Runner *runner = new Runner(filename);
-	runner->setDebug(doDebug);
-	RunResult res = runner->run();
-	delete runner;
-	return res; 
-}
-
-RunResult runProject(path projectPath, bool doDebug) {
-	// for now, temporarily return that we didn't run it.
-	CompilerMessage msg(NO_COMPILE, "project was not run.", projectPath.string(), -1, -1, -1, -1);
-	return RunResult(projectPath.string(), false, 1, msg);
-}
-
-void doRunCommand(cOptionsState run, bool doDebug) {
-	// If the user didn't enter anything, then we're going to run a project.
-	if (run.unparsed().size() == 0) {
-		RunResult res; 
-
-		// Try to find the project directory and run it. 
-		try {
-			res = runProject(findProjectDirectory(), doDebug);
-		} catch (std::runtime_error& e) {
-			// we're probably not in a project. what happened?
-			std::cerr << e.what() << std::endl;
-			exit(1);
-		}
-
-		// show list of errors.
-		if (res.passed() == false) {
-			for (auto msg : res.errors()) {
-				std::cout << "error: " << msg.what() << std::endl;
-			}
-		}
-
-		return;
-	}
-
-	// for now, don't allow the user to run more than one file at once.
-	if (run.unparsed().size() > 1) {
-		std::cerr << "fatal: running more than one file is not yet supported.\n";
-		return;
-	} 
-
-	// Run the file and see what happened.
-	RunResult res = runFile(run.unparsed().at(0), doDebug);
-
-	if (res.passed() == false) {
-		for (auto msg : res.errors()) {
-			if (msg.hasLineInfo()) {
-				std::cout << msg.string() << std::endl;			
-			} else {
-				std::cout << "error: " << msg.what() << std::endl;			
-			}
-		}
-	}
 }

@@ -84,7 +84,7 @@ bool Runner::hasError() {
 	return false;
 }
 
-BuildResult Runner::build() {
+void Runner::compile() {
 	// First, set us to running and activate us as the current runner.
 	m_isRunning = true;
 	GeneratingEngine::sharedEngine()->setActive(this);
@@ -96,8 +96,9 @@ BuildResult Runner::build() {
 		haltRun();
 
 		CompilerMessage msg(NO_FILE, "file " + pathname() + " not found.", pathname(), -1, -1, -1, -1);
-		return BuildResult(pathname(), false, msg);
-	}		
+		m_result = new RunResult(pathname(), false, 1, msg);
+		return;
+	}
 
 	// Parse the file. get yyin and yyparse and use them
 	extern FILE* yyin;
@@ -105,8 +106,8 @@ BuildResult Runner::build() {
 	extern int yyonce; // used to get the endline
 	extern void yyflushbuffer();
 
-	BuildResult result(pathname());
-	result.start(); 
+	m_result = new BuildResult(pathname());
+	m_result->start(); 
 
 	try {
 		yyflushbuffer(); // reset buffer 
@@ -119,18 +120,18 @@ BuildResult Runner::build() {
 		mainFunction()->fixup();
         
 		if (hasError()) {
-			result.finish(false, m_messages);
-			return result;
+			m_result->finish(false, m_messages);
+			return;
 		}
 
 		if (debug())
 			std::cout << mainFunction()->string() << std::endl;
 
-		Value *function = mainFunction()->Codegen();
+		mainFunction()->Codegen();
 
 		if (hasError()) {
-			result.finish(false, m_messages);
-			return result;
+			m_result->finish(false, m_messages);
+			return;
 		}
 
 		if (debug())
@@ -141,15 +142,7 @@ BuildResult Runner::build() {
 		if (debug())
 			m_module->dump();
 
-		// Compile the module here.
-		buildModule();
-
-		// Do cleanup.
 		fclose(file);
-		m_isRunning = false;
-
-		result.finish(hasError() == false, m_messages);
-		return result;
 	} catch (CompilerMessage& e) {
 		std::cerr << "fatal: " << e.what() << std::endl;
 		exit(1);
@@ -159,83 +152,45 @@ BuildResult Runner::build() {
 	}
 }
 
-RunResult Runner::run() {
-	// First, set us to running and activate us as the current runner.
-	m_isRunning = true;
-	GeneratingEngine::sharedEngine()->setActive(this);
-
-	// Try to find our file...
-	FILE *file = fopen(pathname().c_str(), "r");
-	if (file == nullptr) {
-		// Halt our current run and return an error.
-		haltRun();
-
-		CompilerMessage msg(NO_FILE, "file " + pathname() + " not found.", pathname(), -1, -1, -1, -1);
-		return RunResult(pathname(), false, 1, msg);
-	}
-
-	// Parse the file. get yyin and yyparse and use them
-	extern FILE* yyin;
-	extern int yyparse();
-	extern int yyonce; // used to get the endline
-	extern void yyflushbuffer();
-
-	RunResult result(pathname());
-	result.start(); 
-
-	try {
-		yyflushbuffer(); // reset buffer 
-		yyonce = 0; // reset yyonce 
-		yyin = file; // give flex the file 
-		yyparse(); // and do our parse.
-
-		// Now that we've parsed everything, let's analyze and resolve code...
-		mainFunction()->resolve();
-		mainFunction()->fixup();
-        
-		if (hasError()) {
-			result.finish(false, 1, m_messages);
-			return result;
-		}
-
-		if (debug())
-			std::cout << mainFunction()->string() << std::endl;
-
-		Value *function = mainFunction()->Codegen();
-
-		if (hasError()) {
-			result.finish(false, 1, m_messages);
-			return result;
-		}
-
-		if (debug())
-			m_module->dump();
-
-		optimizeModule();
-        
-		if (debug())
-			m_module->dump();
-
-		int retCode = hasError() == false ? runModule((Function *)function) : 1;
-
-		// Do cleanup.
-		fclose(file);
-		m_isRunning = false;
-
-		if (debug() && hasError() == false) 
-			std::cout << "Program returned " << retCode << std::endl;
-
-		bool succeeded = (retCode == 0) && (hasError() == false); 
-
-		result.finish(succeeded, retCode, m_messages);
-		return result;
-	} catch (CompilerMessage& e) {
-		std::cerr << "fatal: " << e.what() << std::endl;
-		exit(1);
-	} catch (std::runtime_error& e) {
-		std::cerr << "fatal: " << e.what() << std::endl;
+void Runner::build() {
+	if (m_result == nullptr) {
+		std::cerr << "fatal: program not compiled.\n";
 		exit(1);
 	}
+
+	if (m_result->finished() == true) return;
+
+	buildModule();
+
+	m_isRunning = false;
+
+	m_result->finish(hasError() == false, m_messages);
+}
+
+void Runner::run() {
+	if (m_result == nullptr) {
+		std::cerr << "fatal: program not compiled.\n";
+		exit(1);
+	}
+
+	RunResult* new_result = new RunResult(*m_result); 
+
+	delete m_result; 
+	m_result = new_result;
+
+	if (m_result->finished() == true) return;
+
+	int retCode = hasError() == false ? runModule((Function *)mainFunction()->getValue()) : 1;
+
+	// Do cleanup.
+	m_isRunning = false;
+
+	if (debug() && hasError() == false) 
+		std::cout << "Program returned " << retCode << std::endl;
+
+	bool succeeded = (retCode == 0) && (hasError() == false); 
+
+	new_result->finish(succeeded, retCode, m_messages);
 }
 
 void Runner::buildModule() {

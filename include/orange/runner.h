@@ -68,26 +68,34 @@ private:
 	 */
 	bool m_debug = false; 
 
+	BuildResult* m_result = nullptr;
+
 	int runModule(Function *function);
 
 	void optimizeModule();
 	void buildModule();
 public:
+	BuildResult* result() const { return m_result; }
+
+	/** 
+	 * Compile the code. Results in LLVM IR.
+	 */
+	void compile(); 
+
 	/**
 	 * Returns whether or not there is at least one error in the run.
 	 */
 	bool hasError();
 
 	/**
-	 * Starts a run. The code will be compiled and ran directly. Returns a run result.
+	 * Starts a run. The code will be compiled and ran directly.
 	 */
-	RunResult run(); 
+	void run(); 
 
 	/**
 	 * Starts a build. The code will be compiled and built into a native binary. 
-	 * Returns a run result of the build.
 	 */
-	BuildResult build();
+	void build();
 
 	/**
 	 * Logs a message to this run. It will be stored internally and return after 

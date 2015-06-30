@@ -13,13 +13,18 @@
 #include "file.h"
 #include "error.h"
 
+class BuildResult;
+class RunResult;
+
 /**
  * BuildResult is a class to inform the user about whether or not a 
  * build has succeeded. It also contains a list of messages from the compiler.
  */
 class BuildResult {
+	friend RunResult;
 protected:
 	bool m_pass;
+	bool m_finished = false;
 	std::vector<CompilerMessage> m_messages;
 	std::string m_filename;
 	unsigned long long m_runtime;
@@ -32,6 +37,13 @@ public:
 	 * @return True if the run passed, false otherwise.
 	 */
 	bool passed() const;
+	
+	/**
+	 * Indicates whether or not a run has finished.
+	 * 
+	 * @return True if the run finished, false otherwise.
+	 */
+	bool finished() const { return m_finished; }
 
 	/**
 	 * Get the list of messages from the run, if any. 
@@ -96,7 +108,7 @@ public:
  */
 class RunResult : public BuildResult {
 private:
-	unsigned m_retcode;
+	unsigned m_retcode = 1;
 public:
 	/**
 	 * Finishes the run, ending the timer.
@@ -117,32 +129,11 @@ public:
 	int returnCode() const;
 
 	RunResult() { }
+	RunResult(BuildResult res);
 	RunResult(std::string filename) { m_filename = filename; }
 	RunResult(std::string filename, bool pass, int code, CompilerMessage message);
 	RunResult(std::string filename, bool pass, int code, std::vector<CompilerMessage> messages);
 };
-
-/**
- * Invoked from the command line parser, this will run a file or project as 
- * invoked. 
- *
- * @param run The run state from the command line parser.
- */ 
-void doRunCommand(cOptionsState run, bool doDebug);
-
-/**
- * Runs a file directly without compiling it.
- *
- * @return A RunResult, with a list of errors, if any.
- */
-RunResult runFile(std::string filename, bool doDebug);
-
-/**
- * Runs a project directly without compiling it.
- *
- * @return A RunResult that will contain if it succeeded with a list of errors, if any.
- */
-RunResult runProject(path projectPath, bool doDebug);
 
 
 #endif
