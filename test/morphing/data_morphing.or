@@ -1,5 +1,0 @@
-extern printf(char *s, ...) -> int32
-var a = 3 
-a += 3.5
-printf("%f\n", a)
-return 0
