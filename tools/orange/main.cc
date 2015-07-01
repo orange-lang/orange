@@ -27,14 +27,14 @@ int main(int argc, char** argv) {
 
 	cOptions options("Orange WIP"); 
 
-  cCommandOption debug({"debug", "D"}, "Print debugging info", false);
+  cCommandOption* debug = new cCommandOption({"debug", "D"}, "Print debugging info", false);
 
 	RunCommand* runCommand = new RunCommand();
- 	runCommand->add(&debug);
+ 	runCommand->add(debug);
 	options.mainState.addState(runCommand); 
 
 	BuildCommand* buildCommand = new BuildCommand();
-	buildCommand->add(&debug);
+	buildCommand->add(debug);
 	options.mainState.addState(buildCommand);
 
 	TestCommand* testCommand = new TestCommand();
@@ -43,13 +43,12 @@ int main(int argc, char** argv) {
 	// Parse our options
 	options.parse(argc, argv);
 
-	if (runCommand->isActive()) {
-		runCommand->run();
-	} else if (buildCommand->isActive()) {
-		buildCommand->run();
-	} else if (testCommand->isActive()) {
-		testCommand->run();
-	} 
+	options.currentState()->run();
+
+	delete testCommand; 
+	delete buildCommand; 
+	delete runCommand; 
+	delete debug;
 
 	return 0;
 }

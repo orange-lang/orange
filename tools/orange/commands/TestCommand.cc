@@ -213,6 +213,4 @@ void TestCommand::run() {
 	std::cout << "\n"; 
 }
 
-TestCommand::~TestCommand() {
-	for (auto res : m_results) delete res; 
-}
+TestCommand::~TestCommand() { }

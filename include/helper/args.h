@@ -73,6 +73,8 @@ private:
 public:
 	cOptionsState mainState;
 
+	cOptionsState* currentState() const { return curState; } 
+
 	void parse(int argc, char **argv);
 
 	cOptions(std::string name) : name(name) {}
