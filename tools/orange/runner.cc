@@ -72,6 +72,14 @@ Runner::Runner(std::string pathname) {
 	GeneratingEngine::sharedEngine()->setActive(nullptr);
 }
 
+Runner::~Runner() {
+	delete m_function;
+	delete m_module;
+	delete m_builder;
+	delete m_context; 
+	delete m_functionOptimizer;
+}
+
 void Runner::haltRun() {
 	m_isRunning = false;
 }
@@ -431,7 +439,7 @@ IRBuilder<>* Runner::builder() const {
 }
 
 LLVMContext& Runner::context() {
-    return getGlobalContext();
+	return getGlobalContext();
 	return *m_context;
 }
 

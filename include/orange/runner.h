@@ -204,6 +204,7 @@ public:
 	 * Creates an instance of Runner and registers it inside of the GeneratingEngine.
 	 */
 	Runner(std::string pathname);
+	~Runner();
 };
 
 #endif
