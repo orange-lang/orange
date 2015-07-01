@@ -9,11 +9,15 @@ add_definitions(${LLVM_DEFINITIONS})
 
 llvm_map_components_to_libnames(llvm_libs native core ipo ExecutionEngine Interpreter MCJIT)
 
-find_package(BISON REQUIRED)
-bison_target(BisonOutput ${CMAKE_SOURCE_DIR}/tools/orange/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cc COMPILE_FLAGS "-d")
+find_package(BISON)
+if (${BISON_FOUND})
+    bison_target(BisonOutput ${CMAKE_SOURCE_DIR}/tools/orange/parser.y ${CMAKE_SOURCE_DIR}/tools/orange/parser.cc)
+endif()
 
-find_package(FLEX REQUIRED)
-flex_target(FlexOutput ${CMAKE_SOURCE_DIR}/tools/orange/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc)
+find_package(FLEX)
+if (${FLEX_FOUND}) 
+    flex_target(FlexOutput ${CMAKE_SOURCE_DIR}/tools/orange/lexer.l ${CMAKE_SOURCE_DIR}/tools/orange/lexer.cc)
+endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/tools/orange)
 

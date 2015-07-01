@@ -41,6 +41,4 @@ CMake will try to find LLVM on your system; if it is not installed, it will buil
 ## Dependencies 
 
 * Boost 
-* Flex
-* Bison
 * CMake

@@ -1,8 +1,5 @@
 /oc
-lexer.cc
 *.o
-parser.cc
-parser.hh
 CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
