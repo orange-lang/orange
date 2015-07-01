@@ -5,14 +5,10 @@
 ** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
 ** may not be copied, modified, or distributed except according to those terms.
 */ 
+
 #include <sstream>
 #include <fcntl.h>
-#include <orange/test.h>
-#include <orange/commands/CodeExecutor.h>
-
-#define MAX_CHARACTERS_PER_LINE 40
-int addedCharacters = 0;
-
+#include <orange/commands/TestCommand.h>
 
 #ifdef _WIN32 
 	const char* NULLFILE = "NUL";
@@ -20,24 +16,32 @@ int addedCharacters = 0;
 	const char* NULLFILE = "/dev/null";
 #endif 
 
-std::vector<RunResult *> runTest(path p) {
-	std::vector<RunResult *> results; 
+TestCommand::TestCommand() : CodeExecutor("test", 
+	"Tests files and projects in the test/ directory.", 
+	"test [folder|filename|project]", 
+	"The test command is used to test every file and project inside of the test/ folder. \
+It will run recursively, through each subdirectory. If a subdirectory contains a orange.settings.json \
+file, it is treated as a sub project. Otherwise, every file inside of the directory will be ran \
+as its own individual program.") 
+{
 
-	CodeExecutor* executor = new CodeExecutor(); 
+}
 
+void TestCommand::runOnPath(path p) {
 	// If it's a directory _with_ a ORANGE_SETTINGS file, run the project only.
 	if (is_directory(p) && exists(p / "orange.settings.json")) {
 		// Run the project.
-		executor->compileProject(p.string()); 
-		executor->runCompiled();
-		RunResult* testRun = (RunResult *)executor->result();
+		compileProject(p.string()); 
+		runCompiled();
+
+		RunResult* testRun = (RunResult *)result();
 
 		// Add a . if it passed, F otherwise. After printing a multiple 
 		// of MAX_CHARACTERS_PER_LINE notices, print a newline.
 		std::cout << (testRun->passed() ? "." : "F") << std::flush;
-		if ((++addedCharacters % MAX_CHARACTERS_PER_LINE) == 0) std::cout << std::endl;
+		if ((++m_added_characters % MAX_CHARACTERS_PER_LINE) == 0) std::cout << std::endl;
 
-		results.push_back(testRun);
+		m_results.push_back(testRun);
 	} else if (is_directory(p)) {
 		// Go through each item in the directory recursively
 		for(auto& entry : boost::make_iterator_range(directory_iterator(p), directory_iterator())) {
@@ -45,9 +49,7 @@ std::vector<RunResult *> runTest(path p) {
 				if (entry.path().extension().string() != ".or") continue;
 			}
 
-    	for(auto res : runTest(entry)) {
-    		results.push_back(res);
-    	}	
+			runOnPath(entry);
     }
 	} else {
 		// Disable output
@@ -58,10 +60,10 @@ std::vector<RunResult *> runTest(path p) {
 		dup2(newFd, STDOUT_FILENO);
 		close(newFd);
 
-		// Otherwise just run the single file  
-		executor->compileFile(p.string()); 
-		executor->runCompiled();
-		RunResult* testRun = (RunResult *)executor->result();
+		// run a single file  
+		compileFile(p.string()); 
+		runCompiled();
+		RunResult* testRun = (RunResult *)result();
 
 		// Re-enable output		
 		fflush(stdout);
@@ -71,64 +73,62 @@ std::vector<RunResult *> runTest(path p) {
 		// Add a . if it passed, F otherwise. After printing a multiple 
 		// of MAX_CHARACTERS_PER_LINE notices, print a newline.
 		std::cout << (testRun->passed() ? "." : "F") << std::flush;
-		if ((++addedCharacters % MAX_CHARACTERS_PER_LINE) == 0) std::cout << std::endl;
+		if ((++m_added_characters % MAX_CHARACTERS_PER_LINE) == 0) std::cout << std::endl;
 
-		results.push_back(testRun);
+		m_results.push_back(testRun);
 	} 
-
-	return results;
 }
 
-float totalTestTime(std::vector<RunResult*> results) {
+float TestCommand::totalTestTime() {
 	unsigned long long totTimeMS = 0;
-	for (auto res : results) {
+	for (auto res : m_results) {
 		totTimeMS += res->runtime();
 	}
 	return totTimeMS / 1000.0f;
 }
 
-float avgTestTime(std::vector<RunResult*> results) {
+float TestCommand::avgTestTime() {
 	// Prevent a divide by zero here.
-	if (results.size() == 0) return 0;
+	if (m_results.size() == 0) return 0;
 
 	unsigned long long totTimeMS = 0;
-	for (auto res : results) {
+	for (auto res : m_results) {
 		totTimeMS += res->runtime();
 	}
 
-	return (totTimeMS / results.size()) / 1000.0f;	
+	return (totTimeMS / m_results.size()) / 1000.0f;	
 }
 
-int numPassedTests(std::vector<RunResult*> results) {
+int TestCommand::numPassedTests() {
 	int numPassed = 0;
 
-	for (auto res : results) {
+	for (auto res : m_results) {
 		if (res->passed()) numPassed++;
 	}
 
 	return numPassed; 
 }
 
-int numFailedTests(std::vector<RunResult*> results) {
+int TestCommand::numFailedTests() {
 	int numFailed = 0;
 
-	for (auto res : results) {
+	for (auto res : m_results) {
 		if (res->passed() == false) numFailed++;
 	}
 
 	return numFailed; 
 }
 
-std::string getLongestTest(std::vector<RunResult*> results) {
-	if (results.size() == 0) {
+std::string TestCommand::longestTest() {
+	if (m_results.size() == 0) {
 		return "(No tests have been ran)\n";
 	}
 
 	// The longest test, initially, is the first one.
-	RunResult* longestTest = results[0]; 
+	RunResult* longestTest = m_results[0]; 
 
 	// For each result, if its runtime is longer, that one is the new longest.
-	for (auto res : results) {
+	for (auto res : m_results) {
 		if (res->runtime() > longestTest->runtime()) {
 			longestTest = res; 
 		}
@@ -140,25 +140,25 @@ std::string getLongestTest(std::vector<RunResult*> results) {
 	return ss.str();
 }
 
-void showTestResults(std::vector<RunResult*> results) {
+void TestCommand::displayResults() {
 	// Print a newline, since calling runTest() doesn't add one at the end.
 	std::cout << std::endl;
 
 	// Print out a line break
 	std::cout << std::endl;
 
-	int percPassed = ((float)numPassedTests(results)/(float)results.size()) * 100;
+	int percPassed = ((float)numPassedTests()/(float)m_results.size()) * 100;
 
-	std::cout << "Test results (" << totalTestTime(results) << " seconds):\n";
-	std::cout << "\t" << numPassedTests(results) << "/" << results.size() << " tests passed (" << percPassed << "%).\n";
-		if (avgTestTime(results) > 0.00001f)
-		std::cout << "\t" << avgTestTime(results) << " seconds to run on average.\n";
-	std::cout << "\tLongest test was: " << getLongestTest(results) << "\n";
+	std::cout << "Test results (" << totalTestTime() << " seconds):\n";
+	std::cout << "\t" << numPassedTests() << "/" << m_results.size() << " tests passed (" << percPassed << "%).\n";
+	if (avgTestTime() > 0.00001f)
+		std::cout << "\t" << avgTestTime() << " seconds to run on average.\n";
+	std::cout << "\tLongest test was: " << longestTest() << "\n";
 
 	// Print out the number of failed tests if we have any
-	if (numFailedTests(results) > 0) {
+	if (numFailedTests() > 0) {
 		std::cout << "\nErrors:\n";
-		for (auto res : results) {
+		for (auto res : m_results) {
 			// Skip over anything that passed; only get fails.
 			if (res->passed()) continue; 
 
@@ -181,9 +181,8 @@ void showTestResults(std::vector<RunResult*> results) {
 	}
 }
 
-void doTestCommand(cOptionsState test) {
-	addedCharacters = 0; 
-
+void TestCommand::run() {
+	// What are we going to do here? 
 	try {
 		current_path(findProjectDirectory());
 	} catch (std::runtime_error& e) {
@@ -192,38 +191,28 @@ void doTestCommand(cOptionsState test) {
 	}
 
 	// If the user didn't enter anything, we'll just test everything in the test/ folder.
-	if (test.unparsed().size() == 0) {
-		auto results = runTest(path("test"));
+	if (unparsed().size() == 0) {
+		runOnPath(path("test"));
+	} else {
+		for (auto& str : unparsed()) {
+			path p("test" / str);
 
-		showTestResults(results);
-		
-		// Cleanup results
-  	for (auto res : results) delete res;
-		
-		return;
-	}
+			if (exists(p) == false) {
+				std::cerr << "error: " << p << " doesn't exist.\n"; 
+				continue;
+			}
 
-	// Create a results list for our multiple files.
-	std::vector<RunResult*> results;
-
-	for (auto& str : test.unparsed()) {
-		path p("test" / str);
-		if (exists(p) == false) {
-			std::cerr << "error: " << p << " doesn't exist.\n"; 
-			continue;
-		}
-
-		// Add each result from every run to our results.
-		for (auto res : runTest(p)) {
-			results.push_back(res);
+			// Add each result from every run to our results.
+			runOnPath(p);
 		}
 	}
 
-	showTestResults(results);
+	displayResults();
 
-	// Cleanup results 
-	for (auto res : results) delete res; 
-
-	// Print a newline, since our runTest() wouldn't have.
+	// Print a newline, since our runOnPath() wouldn't have.
 	std::cout << "\n"; 
+}
+
+TestCommand::~TestCommand() {
+	for (auto res : m_results) delete res; 
 }

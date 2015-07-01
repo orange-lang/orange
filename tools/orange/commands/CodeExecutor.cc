@@ -28,8 +28,7 @@ void CodeExecutor::compileProject(std::string path) {
 
 void CodeExecutor::compileFile(std::string file) {
 	if (m_runner != nullptr) {
-		std::cerr << "fatal: cannot construct more than one runner.\n";
-		exit(1);
+		delete m_runner; 
 	}
 	
 	m_runner = new Runner(file);
