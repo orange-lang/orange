@@ -1,4 +1,4 @@
-def foo(n)
+def foo(var n)
 	return n + 1
 end 
 

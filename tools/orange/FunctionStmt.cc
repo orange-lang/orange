@@ -413,7 +413,7 @@ bool FunctionStmt::isGeneric() {
 	bool ret = false;
 
 	for (auto param : m_parameters) {
-		if (param->getType()->isVoidTy()) {
+		if (param->getType()->isVarTy()) {
 			ret = true; 
 			break; 
 		}

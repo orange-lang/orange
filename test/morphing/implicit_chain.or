@@ -1,12 +1,12 @@
-def a(n)
+def a(var n)
 	return n + 1
 end 
 
-def b(n)
+def b(var n)
 	return a(n) + 1
 end 
 
-def c(n)
+def c(var n)
 	return b(n) + 1
 end
 

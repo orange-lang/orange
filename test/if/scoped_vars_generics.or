@@ -1,4 +1,4 @@
-def foo(c)
+def foo(var c)
 	if 3 != 2 
 		c = 0
 	end 

@@ -226,10 +226,8 @@ opt_func_params
 
 func_params
 	: func_params COMMA any_type_no_array TYPE_ID { $1->push_back(new VarExpr(*$4, $3)); }
-	| func_params COMMA TYPE_ID { $1->push_back(new VarExpr(*$3)); }
 	| func_params COMMA VARARG { $1->setVarArg(true); }
 	| any_type_no_array TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$2, $1)); } 
-	| TYPE_ID { $$ = new ParamList(); $$->push_back(new VarExpr(*$1)); }
 	;
 
 extern_function

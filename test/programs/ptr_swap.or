@@ -1,7 +1,7 @@
 extern malloc(int a) -> int*
 extern free(char* p) -> void
 
-def swap(a, b)
+def swap(var a, var b)
 	var temp = *a
 	*a = *b
 	*b = temp

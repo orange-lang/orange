@@ -1,6 +1,6 @@
 extern printf(char *s, ...) -> int32
 
-def foo(s, a)
+def foo(var s, var a)
 	return printf(s, a + 1)
 end 
 

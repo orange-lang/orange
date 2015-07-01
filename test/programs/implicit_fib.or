@@ -1,4 +1,4 @@
-def fib(n)
+def fib(var n)
 	if n < 2 
 		return n
 	end 
@@ -6,7 +6,7 @@ def fib(n)
 	return fib(n - 1) + fib(n - 2)
 end
 
-def fib2(n)
+def fib2(var n)
 	if n >= 2
 		return fib2(n - 1) + fib2(n - 2)
 	end 
@@ -14,7 +14,7 @@ def fib2(n)
 	return n
 end	
 
-def fib3(n)
+def fib3(var n)
 	if n == 0
 		return 0
 	elif n == 1

@@ -1,4 +1,4 @@
-def square(n)
+def square(var n)
 	return n * n
 end
 

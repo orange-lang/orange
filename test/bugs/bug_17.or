@@ -1,4 +1,4 @@
-def foo(a)
+def foo(var a)
 	a[0] -= 1
 end
 

@@ -1,6 +1,6 @@
 extern printf(char *s, ...) -> int32
 
-def foo(arr) 
+def foo(var arr) 
 	printf("%d\n", *arr[0])
 	*arr[0] = 2
 	*arr[1] += 2

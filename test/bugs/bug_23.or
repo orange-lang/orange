@@ -1,6 +1,6 @@
 int[] arr = [0, 0]
 
-def foo(a) 
+def foo(var a) 
 	return a != 0
 end
 

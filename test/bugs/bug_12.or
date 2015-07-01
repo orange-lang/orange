@@ -1,4 +1,4 @@
-def foo(n)
+def foo(var n)
 	n + 5
 end
 

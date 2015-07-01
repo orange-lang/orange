@@ -1,10 +1,10 @@
 # 0% determined variables
-def unknown_add(a, b)
+def unknown_add(var a, var b)
 	return a + b
 end 
 
 # 50% determined variables 
-def template_add(a, int b) 
+def template_add(var a, int b) 
 	return a + b
 end 
 

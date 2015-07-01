@@ -1,5 +1,5 @@
 # the bug is that the cloned while loop has the wrong parent.
-def puts(str)
+def puts(var str)
 	var idx = 0 
 	continue while str[idx++] != 0
 end
