@@ -8,7 +8,7 @@
 #ifndef __ORANGE_GENERATOR_H__
 #define __ORANGE_GENERATOR_H__
 
-#include <map>
+#include <vector>
 #include "runner.h"
 
 /**
@@ -17,7 +17,7 @@
  */
 class GeneratingEngine {
 private:
-	std::map<std::string, Runner *> m_runners; 
+	std::vector<Runner *> m_runners;
 	Runner* m_active;
 
 	// We want to prevent the user from creating their own instance;

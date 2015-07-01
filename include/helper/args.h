@@ -28,9 +28,11 @@ private:
 	std::vector<std::string> names; 
 	std::string description;
 	std::string arg_value;
-	bool hasArg;
+	bool m_hasArg;
 public:
 	bool isSet() const;
+	bool hasArg() const { return m_hasArg; }
+	std::string argValue() const { return arg_value; }
 
 	cCommandOption(std::vector<std::string> names, std::string description, bool arg);
 };

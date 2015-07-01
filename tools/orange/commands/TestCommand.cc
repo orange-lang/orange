@@ -31,6 +31,7 @@ void TestCommand::runOnPath(path p) {
 	// If it's a directory _with_ a ORANGE_SETTINGS file, run the project only.
 	if (is_directory(p) && exists(p / "orange.settings.json")) {
 		// Run the project.
+		reset();
 		compileProject(p.string()); 
 		runCompiled();
 
@@ -61,6 +62,7 @@ void TestCommand::runOnPath(path p) {
 		close(newFd);
 
 		// run a single file  
+		reset();
 		compileFile(p.string()); 
 		runCompiled();
 		RunResult* testRun = (RunResult *)result();

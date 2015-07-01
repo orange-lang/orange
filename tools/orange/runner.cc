@@ -35,13 +35,8 @@
 #include <llvm/IR/IRPrintingPasses.h>
 #include <llvm/Analysis/Passes.h>
 
-Runner::Runner(std::string pathname) {
-	m_pathname = pathname;
-
+void Runner::init() {
 	bool added = GeneratingEngine::sharedEngine()->addRunner(this);
-	if (added == false) {
-		throw std::runtime_error("File cannot be added as an entity twice.");
-	}
 
 	m_context = new LLVMContext();
 	GeneratingEngine::sharedEngine()->setActive(this);
@@ -69,7 +64,17 @@ Runner::Runner(std::string pathname) {
 	m_functionOptimizer = new FunctionPassManager(m_module);
 	m_functionOptimizer->doInitialization();
     
-	GeneratingEngine::sharedEngine()->setActive(nullptr);
+	GeneratingEngine::sharedEngine()->setActive(nullptr);	
+}
+
+Runner::Runner() {
+	init();
+}
+
+Runner::Runner(std::string pathname) {
+	m_pathname = pathname;
+
+	init();
 }
 
 Runner::~Runner() {
@@ -78,6 +83,10 @@ Runner::~Runner() {
 	delete m_builder;
 	delete m_context; 
 	delete m_functionOptimizer;
+}
+
+void Runner::setTarget(std::string filename) {
+	m_pathname = filename;
 }
 
 void Runner::haltRun() {
@@ -276,7 +285,7 @@ void Runner::buildModule() {
 
 		voptions.push_back("-lc");
 		voptions.push_back("-o");
-		voptions.push_back("a.out"); 
+		voptions.push_back(m_output_name.c_str()); 
 
 #elif defined(_WIN32) 
 		// This code needs some work
@@ -287,7 +296,7 @@ void Runner::buildModule() {
 		voptions.push_back(root.c_str());
 
 		voptions.push_back("-o");
-		voptions.push_back("a.exe");
+		voptions.push_back(m_output_name.c_str());
 #endif 
 
 		voptions.push_back(loutput.c_str());

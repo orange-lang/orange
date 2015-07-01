@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
 	cOptions options("Orange WIP"); 
 
   cCommandOption* debug = new cCommandOption({"debug", "D"}, "Print debugging info", false);
+  cCommandOption* output = new cCommandOption({"o", "output"}, "Specify output name", true);
 
 	RunCommand* runCommand = new RunCommand();
  	runCommand->add(debug);
@@ -35,6 +36,7 @@ int main(int argc, char** argv) {
 
 	BuildCommand* buildCommand = new BuildCommand();
 	buildCommand->add(debug);
+	buildCommand->add(output);
 	options.mainState.addState(buildCommand);
 
 	TestCommand* testCommand = new TestCommand();
@@ -49,6 +51,7 @@ int main(int argc, char** argv) {
 	delete buildCommand; 
 	delete runCommand; 
 	delete debug;
+	delete output;
 
 	return 0;
 }

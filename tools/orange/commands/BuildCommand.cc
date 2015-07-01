@@ -7,6 +7,7 @@
 */ 
 
 #include <orange/commands/BuildCommand.h>
+#include <orange/runner.h>
 
 BuildCommand::BuildCommand() : CodeExecutor("build", 
 	"Compiles a single file or project", 
@@ -20,6 +21,11 @@ If you are not in a project, an error will be displayed. Building a file does no
 
 void BuildCommand::run() {
 	CodeExecutor::run();
+
+	auto outputOption = getOption("o");
+	if (outputOption->isSet()) {
+  	m_runner->setOutputName(outputOption->argValue());
+	}
 
 	buildCompiled();
 	handleErrors();

@@ -68,12 +68,23 @@ private:
 	 */
 	bool m_debug = false; 
 
+	/**
+	 * The output name, if building.
+	 */
+#if defined(_WIN32) 
+	std::string m_output_name = "a.exe";
+#else 
+	std::string m_output_name = "a.out";
+#endif 
+
 	BuildResult* m_result = nullptr;
 
 	int runModule(Function *function);
 
 	void optimizeModule();
 	void buildModule();
+
+	void init();
 public:
 	BuildResult* result() const { return m_result; }
 
@@ -187,6 +198,13 @@ public:
 	FunctionPassManager* functionOptimizer() const;
 
 	/**
+	 * Sets the output name of the binary if building.
+	 * 
+	 * @param name The name of the program to output.
+	 */
+	void setOutputName(std::string name) { m_output_name = name; }
+
+	/**
 	 * Gets whether or not we are in debug mode.
 	 *
 	 * @return True if we are in debug mode, false otherwise.
@@ -199,6 +217,10 @@ public:
 	 * @set inDebug Whether or not we are in debug mode.
 	 */
 	void setDebug(bool inDebug) { m_debug = inDebug; }
+
+	void setTarget(std::string filename);
+
+	Runner(); 
 
 	/**
 	 * Creates an instance of Runner and registers it inside of the GeneratingEngine.

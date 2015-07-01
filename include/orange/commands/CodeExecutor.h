@@ -21,6 +21,8 @@ protected:
 	Runner* m_runner = nullptr;
 
 	int m_ret_code = 0;
+
+	void reset();
 public:
 	BuildResult* result() const { return m_result; }
 	int retCode() const { return m_ret_code; }

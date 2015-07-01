@@ -20,11 +20,7 @@ Runner* GeneratingEngine::runner() {
 }
 
 bool GeneratingEngine::addRunner(Runner *runner) {
-	// If a runner by this pathname already exists, return false.
-	if (m_runners.find(runner->pathname()) != m_runners.end())
-		return false;
-
-	m_runners[runner->pathname()] = runner;
+	m_runners.push_back(runner);
 	return true;
 }
 

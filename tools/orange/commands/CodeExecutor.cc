@@ -26,27 +26,28 @@ void CodeExecutor::compileProject(std::string path) {
 	m_result = new RunResult(path, false, 1, msg);
 }
 
-void CodeExecutor::compileFile(std::string file) {
+void CodeExecutor::reset() {
 	if (m_runner != nullptr) {
 		delete m_runner; 
 	}
 	
-	m_runner = new Runner(file);
-	
+	m_runner = new Runner();	
+}
+
+void CodeExecutor::compileFile(std::string file) {
+	m_runner->setTarget(file);
+
 	auto debugOption = getOption("debug");
 	if (debugOption != nullptr) {
   	m_runner->setDebug(debugOption->isSet());
 	}
-	
+
 	m_runner->compile();
 	m_result = m_runner->result();
 }
 
 void CodeExecutor::runCompiled() {
-	if (m_result == nullptr) {
-		std::cerr << "fatal: project was never compiled.\n";
-		exit(1);
-	}
+	if (m_result->finished()) return;
 
 	m_runner->run();
 	m_result = m_runner->result();
@@ -54,10 +55,7 @@ void CodeExecutor::runCompiled() {
 }
 
 void CodeExecutor::buildCompiled() {
-	if (m_result == nullptr) {
-		std::cerr << "fatal: project was never compiled.\n";
-		exit(1);
-	}
+	if (m_result->finished()) return;
 
 	m_runner->build();
 	m_result = m_runner->result();
@@ -87,11 +85,15 @@ void CodeExecutor::run() {
 }
 
 CodeExecutor::CodeExecutor(std::string name, std::string description, std::string usage, std::string info) : 
-	cOptionsState(name, description, usage, info) {
+	cOptionsState(name, description, usage, info) 
+{
+	reset();
 }
 
 
-CodeExecutor::CodeExecutor() { }
+CodeExecutor::CodeExecutor() { 
+	reset();
+}
 
 CodeExecutor::~CodeExecutor() {
 	if (m_result) delete m_result;

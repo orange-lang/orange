@@ -56,7 +56,7 @@ bool cCommandOption::isSet() const { return m_set; }
 cCommandOption::cCommandOption(std::vector<std::string> names, std::string description, bool arg) {
 	this->names = names;
 	this->description = description;
-	this->hasArg = arg;
+	this->m_hasArg = arg;
 }
 
 void cOptionsState::add(cCommandOption* option) { options.push_back(option); }
@@ -190,13 +190,13 @@ void cOptions::parse(int argc, char **argv) {
 			if (foundOption) {
 				option->m_set = true;
 
-				if (option->hasArg == false && param_arg != "") {
+				if (option->m_hasArg == false && param_arg != "") {
 					std::cerr << "error: unknown recognized argument " << param_arg << "for " << param << std::endl;
 					exit(1);
-				} else if (option->hasArg == true && param_arg != "") {
+				} else if (option->m_hasArg == true && param_arg != "") {
 					option->arg_value = param_arg;
 					break; 
-				} else if (option->hasArg == true) {
+				} else if (option->m_hasArg == true) {
 					i++;
 
 					if (i >= argc) {
