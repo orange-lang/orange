@@ -3,7 +3,7 @@
 - [ ] Classes
 - [ ] Modules 
 - [ ] Array type morphing 
-- [ ] sizeof operator 
+- [x] sizeof operator 
 - [ ] Preprocessor macros 
 - [ ] Inline assembly 
 - [ ] Operator overloading
