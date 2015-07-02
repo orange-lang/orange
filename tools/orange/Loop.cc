@@ -185,8 +185,6 @@ void Loop::resolve() {
 	// As with all things that inherit from block, we need to push our symtab first.
 	GE::runner()->pushBlock(this);
 	
-	std::cout << "Resolving our " << m_children.size() << " children\n";
-
 	ASTNode::resolve();
 
 	GE::runner()->popBlock();
