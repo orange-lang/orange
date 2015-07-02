@@ -1,0 +1,62 @@
+# Check basic types
+var integer = 1 
+var integer_64_bits = 1i64 
+var integer_32_bits = 1i32
+var integer_16_bits = 1i16 
+var integer_08_bits = 1i8 
+
+var uinteger = 1u  
+var uinteger_64_bits = 1
+var uinteger_32_bits = 1u32
+var uinteger_16_bits = 1u16
+var uinteger_08_bits = 1u8
+
+var float_number = 1.0f 
+var double_number = 1.0 
+
+return 1 if sizeof(integer) != 8 
+return 1 if sizeof(integer_64_bits) != 8 
+return 1 if sizeof(integer_32_bits) != 4 
+return 1 if sizeof(integer_16_bits) != 2 
+return 1 if sizeof(integer_08_bits) != 1
+
+return 1 if sizeof(int) != 8
+return 1 if sizeof(int64) != 8
+return 1 if sizeof(int32) != 4 
+return 1 if sizeof(int16) != 2 
+return 1 if sizeof(int8) != 1
+
+return 1 if sizeof(uinteger) != 8 
+return 1 if sizeof(uinteger_64_bits) != 8 
+return 1 if sizeof(uinteger_32_bits) != 4 
+return 1 if sizeof(uinteger_16_bits) != 2 
+return 1 if sizeof(uinteger_08_bits) != 1
+
+return 1 if sizeof(uint) != 8
+return 1 if sizeof(uint64) != 8
+return 1 if sizeof(uint32) != 4 
+return 1 if sizeof(uint16) != 2 
+return 1 if sizeof(uint8) != 1
+ 
+return 1 if sizeof(float_number) != 4 
+return 1 if sizeof(double_number) != 8
+
+return 1 if sizeof(float) != 4 
+return 1 if sizeof(double) != 8
+
+# Some pointer types 
+return 1 if sizeof(float*) != 8 
+return 1 if sizeof(int8*) != 8
+
+# Check array types 
+return 1 if sizeof(int[50]) != sizeof(int) * 50
+
+var n = 25 
+return 1 if sizeof(int[n]) != sizeof(int) * 25
+
+return 1 if sizeof(int8[50]*) != sizeof(int8*) * 50 
+
+# Check expressions 
+return 1 if sizeof(3 + 5.0) != 8  # should be sizeof double 
+
+return 0

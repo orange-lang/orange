@@ -19,6 +19,7 @@ morphing/
 pointers/
 ternary/
 enum/
+sizeof/
 programs/
 bugs/
 ``` 
