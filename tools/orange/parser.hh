@@ -126,7 +126,8 @@ extern int yydebug;
     CONST = 336,
     QUESTION = 337,
     COLON = 338,
-    ENUM = 339
+    ENUM = 339,
+    SIZEOF = 340
   };
 #endif
 
@@ -153,7 +154,7 @@ union YYSTYPE
 	int token; 
 	int number;
 
-#line 157 "/Users/robert/dev/orange/tools/orange/parser.hh" /* yacc.c:1915  */
+#line 158 "/Users/robert/dev/orange/tools/orange/parser.hh" /* yacc.c:1915  */
 };
 
 typedef union YYSTYPE YYSTYPE;

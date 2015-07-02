@@ -172,6 +172,8 @@
 
 "mod"										STR_ELEMENT; return MOD;
 
+"sizeof"								STR_ELEMENT; return SIZEOF;
+
 \"(\\.|[^\\"])*\"				SAVESTR(); return STRING;
 [A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 	SAVESTR(); return TYPE_ID;
 

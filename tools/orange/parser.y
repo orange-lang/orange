@@ -52,7 +52,7 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE 
-%token CONST QUESTION COLON ENUM
+%token CONST QUESTION COLON ENUM SIZEOF
 
 %type <block> statements opt_statements
 %type <node> statement return_or_expr const_var initializer
@@ -92,6 +92,8 @@
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
 %left OPEN_PAREN CLOSE_PAREN INCREMENT DECREMENT OPEN_BRACKET
+%right SIZEOF
+
 
 %%
 	
@@ -187,6 +189,8 @@ primary
 	| STRING { $$ = new StrVal(*$1); }
 	|	TYPE_ID { $$ = new AnyID(*$1); SET_LOCATION($$); }
 	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN { $$ = new FuncCall(*$1, *$3); SET_LOCATION($$); }
+	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeOfExpr($3); }
+	| SIZEOF OPEN_PAREN any_type CLOSE_PAREN { $$ = new SizeOfExpr($3); } 
 	| MINUS expression { $$ = new NegativeExpr($2); }
 
 	| expression INCREMENT { $$ = new IncrementExpr($1, *$2, false); }

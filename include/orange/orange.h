@@ -33,3 +33,4 @@
 #include "DotExpr.h"
 #include "DeclPair.h"
 #include "CommaStmt.h"
+#include "SizeOfExpr.h"
