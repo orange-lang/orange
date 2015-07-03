@@ -48,8 +48,6 @@ endif(${WIN32})
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
 
-include_directories(etc/cereal/include)
-
 # If we don't have LLVM installed, add the subdirectory to get it 
 find_package(LLVM QUIET)
 if (NOT ${LLVM_FOUND})
