@@ -334,8 +334,9 @@ Value* FunctionStmt::Codegen() {
 	// Optimize our function.
 	GE::sharedEngine()->functionOptimizer()->run(*generatedFunc);
 
-	// Finally, restore our insert block, pop our block and return our function 
-	GE::builder()->SetInsertPoint(oldInsertBlock);
+	// Finally, restore our insert block, pop our block and return our function
+	if (oldInsertBlock != nullptr)
+		GE::builder()->SetInsertPoint(oldInsertBlock);
 	GE::runner()->popBlock();
 	return m_value;
 }

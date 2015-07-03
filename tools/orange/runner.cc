@@ -79,7 +79,6 @@ Runner::Runner(std::string pathname) {
 
 Runner::~Runner() {
 	delete m_function;
-	delete m_module;
 	delete m_builder;
 	delete m_context; 
 	delete m_functionOptimizer;
