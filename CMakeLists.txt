@@ -19,30 +19,34 @@ SET(CMAKE_BUILD_TYPE Release
 
 add_definitions( -DINSTALL_LOCATION="${CMAKE_INSTALL_PREFIX}" )
 
+if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+	message(STATUS "Setting DEBUG mode...")
+	ADD_DEFINITIONS(-DDEBUG)
+endif()
+
+
 # unix specific flags 
 if(${APPLE})
-	message(STATUS "Detected OS X...")
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Wall -fexceptions -O3 -Wno-unused -Wno-deprecated-register -fdata-sections -ffunction-sections -g ")
+	MESSAGE(STATUS "Detected OS X...")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -fexceptions -Wno-unused -Wno-deprecated-register -g")
+	SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "-Wl,-dead_strip -Wl,-dead_strip_dylibs")
 	LINK_DIRECTORIES(/usr/local/lib)
 	SET(CMAKE_EXE_LINKER_FLAGS "-Wl,-dead_strip -Wl,-dead_strip_dylibs")
 elseif(${UNIX}) 
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Wall -fexceptions -O3 -Wno-unused -fdata-sections -ffunction-sections")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -fexceptions -Wno-unused -g")
 	SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections")
 endif()
 
 # windows only... 
 if(${WIN32})
-	message(STATUS "Detected WIN32...")
+	SET(STATUS "Detected WIN32...")
 
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Wall -fexceptions -O3 -Wno-unused -fdata-sections -ffunction-sections")
-	list(APPEND CXX_DEFINES "-DYY_NO_UNISTD_H")
-	list(APPEND C_DEFINES "-DYY_NO_UNISTD_H")
+	SET(APPEND CMAKE_CXX_FLAGS "-std=c++11 -Wall -fexceptions -Wno-unused ")
+	SET(APPEND CXX_DEFINES "-DYY_NO_UNISTD_H")
+	SET(APPEND C_DEFINES "-DYY_NO_UNISTD_H")
 endif(${WIN32})
 
-if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
-	message(STATUS "Setting DEBUG mode...")
-  ADD_DEFINITIONS(-DDEBUG)
-endif()
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
 
 include_directories(etc/cereal/include)
 
