@@ -82,6 +82,7 @@ Runner::~Runner() {
 	delete m_builder;
 	delete m_context; 
 	delete m_functionOptimizer;
+	delete m_module;
 }
 
 void Runner::setTarget(std::string filename) {
