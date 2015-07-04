@@ -8,7 +8,11 @@
 
 #include <sstream>
 #include <fcntl.h>
+#include <unistd.h>
 #include <orange/commands/TestCommand.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
+#include <orange/config.h>
 
 #ifdef _WIN32 
 	const char* NULLFILE = "NUL";
@@ -27,12 +31,24 @@ as its own individual program.")
 
 }
 
-void TestCommand::runOnPath(path p) {
+using namespace llvm::sys;
+
+std::string appendPath(std::string a, std::string b) {
+	llvm::SmallString<50> p_s; 
+	Twine(a).toVector(p_s);
+	path::append(p_s, b);
+	return Twine(p_s).str();
+}
+
+void TestCommand::runOnPath(std::string p) {
 	// If it's a directory _with_ a ORANGE_SETTINGS file, run the project only.
-	if (is_directory(p) && exists(p / "orange.settings.json")) {
+	// We need to know the path that's p + ORANGE_SETTINGS...
+	std::string settingsPath = appendPath(p, ORANGE_SETTINGS);
+
+	if (fs::is_directory(p) && fs::exists(Twine(settingsPath))) {
 		// Run the project.
 		reset();
-		compileProject(p.string()); 
+		compileProject(p); 
 		runCompiled();
 
 		RunResult* testRun = (RunResult *)result();
@@ -43,15 +59,18 @@ void TestCommand::runOnPath(path p) {
 		if ((++m_added_characters % MAX_CHARACTERS_PER_LINE) == 0) std::cout << std::endl;
 
 		m_results.push_back(testRun);
-	} else if (is_directory(p)) {
+	} else if (fs::is_directory(p)) {
 		// Go through each item in the directory recursively
-		for(auto& entry : boost::make_iterator_range(directory_iterator(p), directory_iterator())) {
-			if (is_directory(entry) == false) {
-				if (entry.path().extension().string() != ".or") continue;
-			}
+		std::error_code err; 
 
-			runOnPath(entry);
-    }
+		auto end = fs::recursive_directory_iterator();
+		for (auto it = fs::recursive_directory_iterator(Twine(p), err); it != end; it.increment(err)) {
+			if (fs::is_directory(it->path()) == true) continue;
+			if (path::extension(it->path()).str() != ".or") continue; 
+
+			runOnPath(it->path());
+		}
+
 	} else {
 		// Disable output
 		int bak, newFd;
@@ -63,7 +82,7 @@ void TestCommand::runOnPath(path p) {
 
 		// run a single file  
 		reset();
-		compileFile(p.string()); 
+		compileFile(p); 
 		runCompiled();
 		RunResult* testRun = (RunResult *)result();
 
@@ -165,8 +184,7 @@ void TestCommand::displayResults() {
 			if (res->passed()) continue; 
 
 			// Get only the filename itself, not the full path
-			path p(res->filename()); 
-			std::cout << "\t" << p.relative_path().string(); 
+			std::cout << "\t" << sys::path::relative_path(res->filename()).str(); 
 
 			// If we only have one error, print on same line and continue.
 			if (res->errors().size() == 1) {
@@ -185,27 +203,31 @@ void TestCommand::displayResults() {
 
 void TestCommand::run() {
 	// What are we going to do here? 
+	std::string basePath;
+
 	try {
-		current_path(findProjectDirectory());
+		basePath = findProjectDirectory();
 	} catch (std::runtime_error& e) {
 		std::cerr << e.what() << std::endl;
 		return;
 	}
 
+	auto testFolder = appendPath(basePath, "test");
+
 	// If the user didn't enter anything, we'll just test everything in the test/ folder.
 	if (unparsed().size() == 0) {
-		runOnPath(path("test"));
+		runOnPath(testFolder);
 	} else {
 		for (auto& str : unparsed()) {
-			path p("test" / str);
+			std::string subPath = appendPath(testFolder, str);
 
-			if (exists(p) == false) {
-				std::cerr << "error: " << p << " doesn't exist.\n"; 
+			if (fs::exists(Twine(subPath)) == false) {
+				std::cerr << "error: " << subPath << " doesn't exist.\n"; 
 				continue;
 			}
 
 			// Add each result from every run to our results.
-			runOnPath(p);
+			runOnPath(subPath);
 		}
 	}
 

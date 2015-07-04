@@ -73,7 +73,7 @@ void CodeExecutor::run() {
 
 		try {
 			auto dir = findProjectDirectory(); 
-			compileProject(dir.string());
+			compileProject(dir);
 		} catch (std::runtime_error& e) {
 			std::cerr << e.what() << std::endl;
 			exit(1);

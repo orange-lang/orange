@@ -14,7 +14,7 @@ CMessageType CompilerMessage::type() const { return m_type; }
 
 std::string CompilerMessage::what() const { return m_what; }
 
-path CompilerMessage::file_path() const { return m_file_path; }
+std::string CompilerMessage::file_path() const { return m_file_path; }
 
 int CompilerMessage::line_begin() const { return m_line_begin; }
 
@@ -32,7 +32,7 @@ bool CompilerMessage::hasLineInfo() const {
 std::string CompilerMessage::string() const {
 	std::stringstream ss;
 
-	ss << m_file_path.filename().string() << ":";
+	ss << m_file_path << ":";
 
 	if (hasLineInfo()) {
 		ss << m_line_begin << ":" << m_column_begin << ":"; 
@@ -44,7 +44,7 @@ std::string CompilerMessage::string() const {
 }
 
 
-CompilerMessage::CompilerMessage(CMessageType type, std::string what, path filePath, int lineBegin, int lineEnd, int colBegin, int colEnd) {
+CompilerMessage::CompilerMessage(CMessageType type, std::string what, std::string filePath, int lineBegin, int lineEnd, int colBegin, int colEnd) {
 	m_type = type;
 	m_what = what;
 	m_file_path = filePath; 
@@ -66,7 +66,7 @@ CompilerMessage::CompilerMessage(CodeElement element, std::string what) {
 
 
 #include <orange/orange.h>
-#include <parser.hh>
+#include "parser.hh"
 
 void yyerror(const char *s) { 
 	Runner *activeRunner = GeneratingEngine::sharedEngine()->active();

@@ -27,7 +27,7 @@ class CompilerMessage {
 private:
 	CMessageType m_type;
 	std::string m_what;
-	path m_file_path;
+	std::string m_file_path;
 	int m_line_begin, m_line_end; 
 	int m_column_begin, m_column_end;
 public:
@@ -66,7 +66,7 @@ public:
 	 *
 	 * @return File this message occured on.
 	 */
-	path file_path() const;
+	std::string file_path() const;
 
 	/**
 	 * Returns the first line that this message occured on in the file.
@@ -98,7 +98,7 @@ public:
 	 */
 	int column_end() const;
 
-	CompilerMessage(CMessageType type, std::string what, path filePath, int lineBegin, int lineEnd, int colBegin, int colEnd);
+	CompilerMessage(CMessageType type, std::string what, std::string filePath, int lineBegin, int lineEnd, int colBegin, int colEnd);
 	CompilerMessage(CodeElement element, std::string what);
 };
 

@@ -9,15 +9,8 @@
 #ifndef __ORANGE_FILE_H__ 
 #define __ORANGE_FILE_H__
 
-#include <boost/filesystem.hpp>
-#include <boost/range/iterator_range.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/regex.hpp>
-
+#include <iostream>
 #include "config.h"
-
-using namespace boost::filesystem;
-using namespace boost;
 
 /**
  * Finds the project directory by looking for a project settings file in the current 
@@ -25,6 +18,6 @@ using namespace boost;
  *
  * @return The path of the project directory.
  */
-boost::filesystem::path findProjectDirectory();
+std::string findProjectDirectory();
 
 #endif 

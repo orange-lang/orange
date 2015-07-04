@@ -41,14 +41,14 @@ std::vector<CompilerMessage> BuildResult::warnings() const {
 
 void BuildResult::start() {
 	// Get the current time in microsecs from the clock.
-  startTime = boost::posix_time::microsec_clock::local_time();
+	startTime = llvm::sys::TimeValue::now();
 }
 
 void BuildResult::finish(bool pass, CompilerMessage message) {
 	// First, calculate the run time.
-	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
-  boost::posix_time::time_duration diff = endTime - startTime;
-  m_runtime = diff.total_milliseconds();
+	endTime = llvm::sys::TimeValue::now();
+  auto diff = endTime - startTime;
+  m_runtime = diff.milliseconds();
 
 	m_pass = pass;
 	m_messages.push_back(message);	
@@ -56,9 +56,9 @@ void BuildResult::finish(bool pass, CompilerMessage message) {
 
 void BuildResult::finish(bool pass, std::vector<CompilerMessage> messages) {
 	// First, calculate the run time.
-	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
-  boost::posix_time::time_duration diff = endTime - startTime;
-  m_runtime = diff.total_milliseconds();
+	endTime = llvm::sys::TimeValue::now();
+  auto diff = endTime - startTime;
+  m_runtime = diff.milliseconds();
 
 	m_pass = pass;
 	m_messages = messages;
@@ -83,9 +83,9 @@ std::string BuildResult::filename() const { return m_filename; }
 
 void RunResult::finish(bool pass, int code, CompilerMessage message) {
 	// First, calculate the run time.
-	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
-  boost::posix_time::time_duration diff = endTime - startTime;
-  m_runtime = diff.total_milliseconds();
+	endTime = llvm::sys::TimeValue::now();
+  auto diff = endTime - startTime;
+  m_runtime = diff.milliseconds();
 
 	m_pass = pass;
 	m_messages.push_back(message);	
@@ -95,9 +95,10 @@ void RunResult::finish(bool pass, int code, CompilerMessage message) {
 
 void RunResult::finish(bool pass, int code, std::vector<CompilerMessage> messages) {
 	// First, calculate the run time.
-	boost::posix_time::ptime endTime = boost::posix_time::microsec_clock::local_time();
-  boost::posix_time::time_duration diff = endTime - startTime;
-  m_runtime = diff.total_milliseconds();
+	endTime = llvm::sys::TimeValue::now();
+  auto diff = endTime - startTime;
+  m_runtime = diff.milliseconds();
+
 
 	m_pass = pass;
 	m_messages = messages;

@@ -1,13 +1,13 @@
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_STATIC_RUNTIME ON)
-
 find_package(LLVM REQUIRED HINTS ${CMAKE_BINARY_DIR}/etc/llvm/cmake/modules/CMakeFiles)
-find_package(Boost REQUIRED COMPONENTS filesystem system regex)
 
-include_directories(${Boost_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
-llvm_map_components_to_libnames(llvm_libs native core ipo ExecutionEngine Interpreter MCJIT)
+# llvm_map_components_to_libnames(llvm_libs native core ipo ExecutionEngine Interpreter MCJIT)
+
+llvm_map_components_to_libnames(llvm_libs X86 ipo MCJIT)
+
+set(FLEX_FlexOutput_OUTPUTS "")
+set(BISON_BisonOutput_OUTPUTS "")
 
 find_package(BISON)
 if (${BISON_FOUND})
@@ -31,7 +31,7 @@ add_executable(orange
     ${ORANGE_SOURCES} ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS} ${INCLUDES}
 )
 
-target_link_libraries(orange helper ${Boost_LIBRARIES} ${llvm_libs})
+target_link_libraries(orange helper ${llvm_libs})
 
 ADD_DEPENDENCIES(orange boot)
 

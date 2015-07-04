@@ -8,23 +8,33 @@
 
 #include <orange/file.h>
 #include <orange/config.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
 
-path findProjectDirectory() {
-	path p = current_path(); 
+using namespace llvm::sys;
+using namespace llvm;
+
+std::string findProjectDirectory() {
+	llvm::SmallString<50> current_path_s; 
+	fs::current_path(current_path_s); 
+	std::string current_path = Twine(current_path_s).str();
+	bool exists = true; 
 
 	// While our current directory exists, try to find ORANGE_SETTINGS
-	while (exists(p)) {
-		for (auto& entry : make_iterator_range(directory_iterator(p), directory_iterator())) {
-			// if we found it, return it.
-			if (entry.path().filename().string() == ORANGE_SETTINGS) {
-				return p; 
-			}
-		}
+	while (exists) {
+		auto path_twine = Twine(current_path);
 
-		// it wasn't in this directory, so move up to the parent.
-		// if p is currently the root directory, p.parent_path does not exist, which will
-		// end our loop.
-		p = p.parent_path(); 
+		std::error_code ec;
+
+		auto end = fs::directory_iterator();
+		for (auto it = fs::directory_iterator(path_twine, ec); it != end; it.increment(ec)) {
+			if (path::filename(it->path()).str() == ORANGE_SETTINGS) {
+				return current_path; 
+			}
+		}		
+
+		current_path = path::parent_path(current_path);
+		exists = fs::exists(Twine(current_path));
 	}
 
 	// we didn't find the path, so throw our exception here.

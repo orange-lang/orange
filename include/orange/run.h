@@ -10,11 +10,13 @@
 
 #include <helper/args.h>
 #include <helper/link.h>
+#include <llvm/Support/TimeValue.h>
 #include "file.h"
 #include "error.h"
 
 class BuildResult;
 class RunResult;
+
 
 /**
  * BuildResult is a class to inform the user about whether or not a 
@@ -29,7 +31,7 @@ protected:
 	std::string m_filename;
 	unsigned long long m_runtime;
 
-	boost::posix_time::ptime startTime, endTime;
+	llvm::sys::TimeValue startTime, endTime;
 public:
 	/**
 	 * Determines whether or not the run passed.

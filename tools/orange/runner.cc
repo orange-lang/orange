@@ -9,30 +9,15 @@
 #include <orange/generator.h>
 #include <orange/OrangeTypes.h>
 
-#include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/GenericValue.h>
 #include <llvm/ExecutionEngine/MCJIT.h>
-#include <llvm/ExecutionEngine/Interpreter.h>
-#include <llvm/MC/MCObjectFileInfo.h>
-#include <llvm/MC/MCContext.h>
-#include <llvm/MC/MCAsmInfo.h>
 #include <llvm/MC/SubtargetFeature.h>
-#include <llvm/CodeGen/AsmPrinter.h>
 #include <llvm/CodeGen/Passes.h>
 #include <llvm/Support/FormattedStream.h>
-#include <llvm/Support/FileSystem.h>
-#include <llvm/Support/raw_os_ostream.h>
-#include <llvm/Support/TargetRegistry.h>
-#include <llvm/Target/TargetLibraryInfo.h>
-#include <llvm/Analysis/Lint.h>
-#include <llvm/Analysis/CFGPrinter.h>
-#include <llvm/Target/TargetMachine.h>
 #include <llvm/Transforms/IPO/InlinerPass.h>
 #include <llvm/Transforms/IPO.h>
 #include <llvm/Transforms/Vectorize.h>
 #include <llvm/Transforms/Utils/UnifyFunctionExitNodes.h>
-#include <llvm/Analysis/InlineCost.h>
-#include <llvm/IR/IRPrintingPasses.h>
 #include <llvm/Analysis/Passes.h>
 
 void Runner::init() {
@@ -236,7 +221,7 @@ void Runner::buildModule() {
 		throw std::runtime_error("could not create target marchine.");
 	}
 
-	std::string loutput = path(pathname()).stem().generic_string();
+	std::string loutput = sys::fs::directory_entry(pathname()).path();
 
 #if defined(__linux__) || defined(__APPLE__)
 		loutput += ".o";
