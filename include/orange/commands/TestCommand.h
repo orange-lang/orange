@@ -21,6 +21,9 @@ private:
 	std::vector<RunResult *> m_results;
 	int m_added_characters = 0;
 
+	std::string base_path = "";
+	std::string makeRelative(std::string p);
+
 	void runOnPath(std::string p);
 public:
 	float totalTestTime();

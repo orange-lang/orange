@@ -140,6 +140,12 @@ int TestCommand::numFailedTests() {
 	return numFailed; 
 }
 
+std::string TestCommand::makeRelative(std::string p) {
+	StringRef path = StringRef(p);
+	return path.substr(base_path.length() + 1).str();
+}
+
+
 std::string TestCommand::longestTest() {
 	if (m_results.size() == 0) {
 		return "(No tests have been ran)\n";
@@ -157,7 +163,7 @@ std::string TestCommand::longestTest() {
 
 	// build a string from the test and return.
 	std::stringstream ss; 
-	ss << longestTest->filename() << " (" << (longestTest->runtime() / 1000.0f) << " seconds)"; 
+	ss << makeRelative(longestTest->filename()) << " (" << (longestTest->runtime() / 1000.0f) << " seconds)"; 
 	return ss.str();
 }
 
@@ -184,7 +190,7 @@ void TestCommand::displayResults() {
 			if (res->passed()) continue; 
 
 			// Get only the filename itself, not the full path
-			std::cout << "\t" << sys::path::relative_path(res->filename()).str(); 
+			std::cout << "\t" << makeRelative(res->filename());
 
 			// If we only have one error, print on same line and continue.
 			if (res->errors().size() == 1) {
@@ -207,6 +213,7 @@ void TestCommand::run() {
 
 	try {
 		basePath = findProjectDirectory();
+		base_path = basePath;
 	} catch (std::runtime_error& e) {
 		std::cerr << e.what() << std::endl;
 		return;
