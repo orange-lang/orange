@@ -19,7 +19,7 @@ SET(CMAKE_BUILD_TYPE Release
 
 add_definitions( -DINSTALL_LOCATION="${CMAKE_INSTALL_PREFIX}" )
 
-if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	message(STATUS "Setting DEBUG mode...")
 	ADD_DEFINITIONS(-DDEBUG)
 endif()
