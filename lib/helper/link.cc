@@ -1,10 +1,10 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 
 #include <helper/link.h>
 #include <iostream>
@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <strings.h>
 #include <dirent.h>
-#endif 
+#endif
 
 #ifdef __linux__
 	#include <sys/types.h>
@@ -29,7 +29,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <process.h>
-#endif 
+#endif
 
 int invokeProgramWithOptions(const char *program, std::vector<const char *> options, bool do_close) {
 	std::vector<const char *> coptions(options);
@@ -37,7 +37,7 @@ int invokeProgramWithOptions(const char *program, std::vector<const char *> opti
 	coptions.push_back(nullptr);
 
 #if defined(__APPLE__) || defined(__linux__)
-	pid_t pid = fork(); 
+	pid_t pid = fork();
 
 	if (pid == -1) {
 		std::cerr << "fatal: failed to create new process\n";
@@ -56,7 +56,7 @@ int invokeProgramWithOptions(const char *program, std::vector<const char *> opti
 		exit(1); // should never reach this
 	}
 
-#elif defined(_WIN32) 
+#elif defined(_WIN32)
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 
@@ -81,7 +81,7 @@ int invokeProgramWithOptions(const char *program, std::vector<const char *> opti
 	CloseHandle(pi.hThread);
 
 	return (int)dwExitCode;
-#endif 
+#endif
 }
 
 void invokeLinkerWithOptions(std::vector<const char *> options) {
@@ -89,7 +89,7 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 	if (linker == nullptr) {
 		std::cerr << "Error: a linker could not be found on this machine." << std::endl;
 		exit(1);
-	} 
+	}
 
 	invokeProgramWithOptions(linker, options);
 }
@@ -98,7 +98,7 @@ void invokeLinkerWithOptions(std::vector<const char *> options) {
 	const char pathDelimiter = ':';
 #elif defined(_WIN32)
 	const char pathDelimiter = ';';
-#endif 
+#endif
 
 const char *programPath(std::string programName) {
 	char *ret = nullptr;
@@ -107,9 +107,9 @@ const char *programPath(std::string programName) {
 
 #if defined(_WIN32)
 	// On Win32, we want to use gcc as a linker instead.
-	// Using ld.exe directly is a little iffy. 
+	// Using ld.exe directly is a little iffy.
 	toFind = "gcc.exe";
-#endif 
+#endif
 
 	std::stringstream ss(getenv("PATH"));
 	std::vector<std::string> tokens;
@@ -121,10 +121,10 @@ const char *programPath(std::string programName) {
 
 
 	for (std::string path : tokens) {
-		if (ret != nullptr) 
+		if (ret != nullptr)
 			break;
 
-#if defined(__linux__) || defined(__APPLE__) 
+#if defined(__linux__) || defined(__APPLE__)
 		DIR *dir;
 		struct dirent *ent;
 
@@ -144,20 +144,20 @@ const char *programPath(std::string programName) {
 
 			closedir(dir);
 		}
-#elif defined(_WIN32) 
+#elif defined(_WIN32)
 		const char *pathName = (path + "\\*").c_str();
 
 		WIN32_FIND_DATA FindFileData;
 		HANDLE hFind = nullptr;
 
 
-		hFind = FindFirstFile(pathName, &FindFileData); 
+		hFind = FindFirstFile(pathName, &FindFileData);
 		if (hFind != INVALID_HANDLE_VALUE) {
 			if (toFind == FindFileData.cFileName) {
 				std::string fullPath = path + "\\" + FindFileData.cFileName;
 
 				ret = new char[fullPath.length() + 1];
-				for (int i = 0; i < fullPath.length(); i++)
+				for (unsigned int i = 0; i < fullPath.length(); i++)
 					ret[i] = 0;
 				strcpy(ret, fullPath.c_str());
 				FindClose(hFind);
@@ -172,7 +172,7 @@ const char *programPath(std::string programName) {
 					std::string fullPath = path + "\\" + FindFileData.cFileName;
 
 					ret = new char[fullPath.length() + 1];
-					for (int i = 0; i < fullPath.length(); i++)
+					for (unsigned int i = 0; i < fullPath.length(); i++)
 						ret[i] = 0;
 					strcpy(ret, fullPath.c_str());
 					FindClose(hFind);
@@ -180,7 +180,7 @@ const char *programPath(std::string programName) {
 				}
 			}
 		}
-#endif 
+#endif
 	}
 
 	return (const char *)ret;
