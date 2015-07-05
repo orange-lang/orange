@@ -78,8 +78,6 @@ int invokeProgramWithOptions(const char *program, std::vector<const char *> opti
 		optionsStr += " ";
 	}
 
-	std::cout << program << " " << optionsStr.c_str() << std::endl;
-
 	CreateProcess(program, (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
 	WaitForSingleObject(pi.hProcess, INFINITE);
 
