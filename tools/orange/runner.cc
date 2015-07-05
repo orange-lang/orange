@@ -1,10 +1,10 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 #include <orange/runner.h>
 #include <orange/generator.h>
 #include <orange/OrangeTypes.h>
@@ -27,7 +27,7 @@ void Runner::init() {
 	GeneratingEngine::sharedEngine()->setActive(this);
 
 	// Create the global block
-	SymTable *globalSymtab = new SymTable(true); 
+	SymTable *globalSymtab = new SymTable(true);
 	m_function = new FunctionStmt("__INTERNAL_main", IntTy::getSigned(64), ParamList(), globalSymtab);
 	m_function->disableMangle();
 	pushBlock(m_function);
@@ -38,9 +38,9 @@ void Runner::init() {
 	std::string triple = sys::getProcessTriple();
 
 	#ifdef _WIN32
-		// This is required to run JIT on windows 
+		// This is required to run JIT on windows
 		triple += "-elf";
-	#endif 
+	#endif
 
 	m_module->setTargetTriple(triple);
 
@@ -48,8 +48,8 @@ void Runner::init() {
 
 	m_functionOptimizer = new FunctionPassManager(m_module);
 	m_functionOptimizer->doInitialization();
-    
-	GeneratingEngine::sharedEngine()->setActive(nullptr);	
+
+	GeneratingEngine::sharedEngine()->setActive(nullptr);
 }
 
 Runner::Runner() {
@@ -65,7 +65,7 @@ Runner::Runner(std::string pathname) {
 Runner::~Runner() {
 	delete m_function;
 	delete m_builder;
-	delete m_context; 
+	delete m_context;
 	delete m_functionOptimizer;
 	delete m_module;
 }
@@ -80,7 +80,7 @@ void Runner::haltRun() {
 
 bool Runner::hasError() {
 	for (auto msg : m_messages) {
-		if (msg.type() == ERROR) return true; 
+		if (msg.type() == ERROR) return true;
 	}
 
 	return false;
@@ -109,18 +109,18 @@ void Runner::compile() {
 	extern void yyflushbuffer();
 
 	m_result = new BuildResult(pathname());
-	m_result->start(); 
+	m_result->start();
 
 	try {
-		yyflushbuffer(); // reset buffer 
-		yyonce = 0; // reset yyonce 
-		yyin = file; // give flex the file 
+		yyflushbuffer(); // reset buffer
+		yyonce = 0; // reset yyonce
+		yyin = file; // give flex the file
 		yyparse(); // and do our parse.
 
 		// Now that we've parsed everything, let's analyze and resolve code...
 		mainFunction()->resolve();
 		mainFunction()->fixup();
-        
+
 		if (hasError()) {
 			m_result->finish(false, m_messages);
 			return;
@@ -140,7 +140,7 @@ void Runner::compile() {
 			m_module->dump();
 
 		optimizeModule();
-        
+
 		if (debug())
 			m_module->dump();
 
@@ -175,9 +175,9 @@ void Runner::run() {
 		exit(1);
 	}
 
-	RunResult* new_result = new RunResult(*m_result); 
+	RunResult* new_result = new RunResult(*m_result);
 
-	delete m_result; 
+	delete m_result;
 	m_result = new_result;
 
 	if (m_result->finished() == true) return;
@@ -187,10 +187,10 @@ void Runner::run() {
 	// Do cleanup.
 	m_isRunning = false;
 
-	if (debug() && hasError() == false) 
+	if (debug() && hasError() == false)
 		std::cout << "Program returned " << retCode << std::endl;
 
-	bool succeeded = (retCode == 0) && (hasError() == false); 
+	bool succeeded = (retCode == 0) && (hasError() == false);
 
 	new_result->finish(succeeded, retCode, m_messages);
 }
@@ -227,7 +227,7 @@ void Runner::buildModule() {
 		loutput += ".o";
 #elif defined(_WIN32)
 		loutput += ".obj";
-#endif 
+#endif
 
 	std::error_code ec;
 	raw_fd_ostream raw(loutput.c_str(), ec, llvm::sys::fs::OpenFlags::F_RW);
@@ -252,7 +252,7 @@ void Runner::buildModule() {
 	raw.flush();
 	raw.close();
 
-	std::vector<const char *> voptions; 
+	std::vector<const char *> voptions;
 
 #if defined(__APPLE__) || defined(__linux__)
 		std::string root = INSTALL_LOCATION;
@@ -266,14 +266,17 @@ void Runner::buildModule() {
 
 #ifdef __linux__
 		voptions.push_back("-I/lib64/ld-linux-x86-64.so.2");
-#endif 
+#endif
 
 		voptions.push_back("-lc");
 		voptions.push_back("-o");
-		voptions.push_back(m_output_name.c_str()); 
+		voptions.push_back(m_output_name.c_str());
 
-#elif defined(_WIN32) 
+#elif defined(_WIN32)
 		// This code needs some work
+		voptions.push_back("-LC:/Windows/System32");
+		voptions.push_back("-lmsvcrt");
+
 		std::string root = "\"";
 		root += INSTALL_LOCATION;
 		root += "/lib/libor/boot.obj\"";
@@ -282,7 +285,7 @@ void Runner::buildModule() {
 
 		voptions.push_back("-o");
 		voptions.push_back(m_output_name.c_str());
-#endif 
+#endif
 
 		voptions.push_back(loutput.c_str());
 
@@ -295,8 +298,8 @@ int Runner::runModule(Function *function) {
 	// MCJIT requires the target & asm printer to be initalized
   InitializeNativeTarget();
   InitializeNativeTargetAsmPrinter();
-      
-  // Create our builder & engine to run the function 
+
+  // Create our builder & engine to run the function
 	EngineBuilder builder((std::unique_ptr<Module>(m_module)));
 
 	std::string error = "";
@@ -321,7 +324,7 @@ int Runner::runModule(Function *function) {
 }
 
 void Runner::optimizeModule() {
-	static PassManager* MPM = nullptr; 
+	static PassManager* MPM = nullptr;
 	if (MPM == nullptr) {
 		MPM = new PassManager;
 
@@ -335,7 +338,7 @@ void Runner::optimizeModule() {
 		MPM->add(createMergeFunctionsPass());
 		MPM->add(createStripDeadPrototypesPass());
 		MPM->add(createConstantPropagationPass());
-		MPM->add(createAliasAnalysisCounterPass()); 
+		MPM->add(createAliasAnalysisCounterPass());
 		MPM->add(createBasicAliasAnalysisPass());
 		MPM->add(createLazyValueInfoPass());
 		MPM->add(createDependenceAnalysisPass());
@@ -378,7 +381,7 @@ void Runner::log(CompilerMessage message) {
 }
 
 std::string Runner::pathname() const {
-	return m_pathname; 
+	return m_pathname;
 }
 
 void Runner::pushBlock(Block* block) {
@@ -396,14 +399,14 @@ Block* Runner::popBlock() {
 }
 
 Block* Runner::makeBlock() {
-	// First, get the top block 
+	// First, get the top block
 	Block* top = topBlock();
 
-	// Create a new block with a new symtable, linked to the top block. 
+	// Create a new block with a new symtable, linked to the top block.
 	SymTable *newSymtab = new SymTable(top->symtab());
 	Block* newBlock = new Block(new SymTable(newSymtab));
 
-	pushBlock(newBlock); 
+	pushBlock(newBlock);
 	return newBlock;
 }
 

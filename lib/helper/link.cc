@@ -33,7 +33,14 @@
 
 int invokeProgramWithOptions(const char *program, std::vector<const char *> options, bool do_close) {
 	std::vector<const char *> coptions(options);
+
+#ifndef _WIN32
 	coptions.insert(coptions.begin(), program);
+#else
+	std::string escapedProgram = "\"" + (std::string)program + "\"";
+	coptions.insert(coptions.begin(), escapedProgram.c_str());
+#endif
+
 	coptions.push_back(nullptr);
 
 #if defined(__APPLE__) || defined(__linux__)
@@ -71,6 +78,8 @@ int invokeProgramWithOptions(const char *program, std::vector<const char *> opti
 		optionsStr += " ";
 	}
 
+	std::cout << program << " " << optionsStr.c_str() << std::endl;
+
 	CreateProcess(program, (LPSTR)optionsStr.c_str(), nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi);
 	WaitForSingleObject(pi.hProcess, INFINITE);
 
@@ -105,12 +114,6 @@ const char *programPath(std::string programName) {
 
 	std::string toFind = programName;
 
-#if defined(_WIN32)
-	// On Win32, we want to use gcc as a linker instead.
-	// Using ld.exe directly is a little iffy.
-	toFind = "gcc.exe";
-#endif
-
 	std::stringstream ss(getenv("PATH"));
 	std::vector<std::string> tokens;
 
@@ -118,7 +121,6 @@ const char *programPath(std::string programName) {
 	while (std::getline(ss, item, pathDelimiter)) {
 		tokens.push_back(item);
 	}
-
 
 	for (std::string path : tokens) {
 		if (ret != nullptr)
@@ -145,7 +147,8 @@ const char *programPath(std::string programName) {
 			closedir(dir);
 		}
 #elif defined(_WIN32)
-		const char *pathName = (path + "\\*").c_str();
+		std::string extendedPath = path + "\\*";
+		const char *pathName = extendedPath.c_str();
 
 		WIN32_FIND_DATA FindFileData;
 		HANDLE hFind = nullptr;
@@ -187,5 +190,11 @@ const char *programPath(std::string programName) {
 }
 
 const char *linkerPath() {
-	return programPath("ld");
+	std::string programName = "ld";
+
+	#ifdef _WIN32
+		programName += ".exe";
+	#endif
+
+	return programPath(programName);
 }
