@@ -1,10 +1,10 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 
 #include <orange/DotExpr.h>
 #include <orange/AnyID.h>
@@ -19,16 +19,16 @@ Value* DotExpr::Codegen() {
 	if (m_obj->getClass() == "EnumStmt") {
 		EnumStmt* enumStmt = (EnumStmt*)m_obj;
 		auto value = enumStmt->getEnumValue(m_RHS);
-		
+
 		if (value == nullptr) {
 			throw std::runtime_error("enumStmt->getEnumValue() returned nullptr!");
 		}
-		
+
 		return value->Codegen();
 	}
 
 	throw std::runtime_error("DotExpr::Codegen(): object is not an enum!");
-	return nullptr; 
+	return nullptr;
 }
 
 ASTNode* DotExpr::clone() {
@@ -47,10 +47,10 @@ OrangeTy* DotExpr::getType() {
 
 void DotExpr::resolve() {
 	ASTNode::resolve();
-	
+
 	if (m_LHS->expression()->getClass() != "EnumStmt") {
 		throw CompilerMessage(*this, ". only supports enums!");
-	} 
+	}
 
 	EnumStmt* enumStmt = (EnumStmt *)m_LHS->expression();
 
@@ -59,7 +59,7 @@ void DotExpr::resolve() {
 		throw CompilerMessage(*this, enumStmt->name() + "." + m_RHS + " doesn't exist!");
 	}
 
-	m_obj = enumStmt; 
+	m_obj = enumStmt;
 }
 
 bool DotExpr::isSigned() {
@@ -69,12 +69,12 @@ bool DotExpr::isSigned() {
 	}
 
 	throw std::runtime_error("DotExpr::getType(): object is not an enum!");
-	return nullptr;
+	return false;
 }
 
 DotExpr::DotExpr(AnyID* LHS, std::string RHS) {
-	m_LHS = LHS; 
-	m_RHS = RHS;	
+	m_LHS = LHS;
+	m_RHS = RHS;
 
 	addChild("m_LHS", m_LHS);
 }
