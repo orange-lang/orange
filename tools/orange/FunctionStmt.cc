@@ -148,7 +148,8 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	for (unsigned int i = 0; i < args.size(); i++) {
 		VarExpr* curParam = m_parameters[i];
 
-		OrangeTy* paramType = args[i]->getType();
+		OrangeTy* paramType = m_parameters[i]->getType();
+		if (paramType->isVarTy()) paramType = args[i]->getType();
 
 		// Clones shouldn't accept arrays as parameters since 
 		// it would pass by copy. Turn it into a pointer. 
