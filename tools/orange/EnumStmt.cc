@@ -1,10 +1,10 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 
 #include <orange/EnumStmt.h>
 #include <orange/generator.h>
@@ -13,12 +13,12 @@ Value* EnumStmt::Codegen() {
 	// Reactivate us in the symbol table.
 	GE::runner()->topBlock()->symtab()->activate(m_name, this);
 
-	return nullptr; 
+	return nullptr;
 }
 
 ASTNode* EnumStmt::clone() {
 	EnumStmt* clone = new EnumStmt(m_name);
-	clone->m_enums = m_enums; 
+	clone->m_enums = m_enums;
 	return clone;
 }
 
@@ -31,7 +31,7 @@ OrangeTy* EnumStmt::getType() {
 		return VoidTy::get();
 	}
 
-	// We need to determine the highest precedence type and then 
+	// We need to determine the highest precedence type and then
 	// change the other enums to use that type.
 	OrangeTy* highestType = m_enums[0].value->getType();
 
@@ -39,11 +39,11 @@ OrangeTy* EnumStmt::getType() {
 		highestType = CastingEngine::GetFittingType(highestType, m_enums[i].value->getType());
 	}
 
-	return highestType; 
+	return highestType;
 }
 
 std::string EnumStmt::string() {
-	std::stringstream ss; 
+	std::stringstream ss;
 	ss << "enum " << m_name << std::endl;
 
 	for (auto pair : m_enums) {
@@ -60,13 +60,13 @@ void EnumStmt::resolve() {
 	// We can use getType because it will calculate it until the type is cached.
 	m_type = getType();
 
-	for (auto pair : m_enums) {
-		ValFactory factory; 
+	for (auto& pair : m_enums) {
+		ValFactory factory;
 		factory.size = m_type->typeSuffix();
 		factory.value = pair.value->valueStr();
 
 		delete pair.value; // Delete our old value.
-		pair.value = factory.produce(); 
+		pair.value = factory.produce();
 	}
 
 	// Now that everything is the same type, let's add the EnumStmt to the symbol table.
@@ -83,8 +83,8 @@ void EnumStmt::addEnum(std::string name) {
 		throw CompilerMessage(*this, m_name + "." + name + " already exists!");
 	}
 
-	EnumPair pair; 
-	pair.name = name; 
+	EnumPair pair;
+	pair.name = name;
 
 	if (m_last_val) {
 		pair.value = m_last_val->increment();
@@ -101,7 +101,7 @@ void EnumStmt::addEnum(std::string name, BaseVal* value) {
 	if (value == nullptr) {
 		throw std::runtime_error("EnumStmt::addEnum(): value can not be nullptr!");
 	}
-	
+
 	if (value->getType()->isFloatingPointTy()) {
 		throw CompilerMessage(*this, "floating-point values are not valid for enums!");
 	}
@@ -113,13 +113,13 @@ void EnumStmt::addEnum(std::string name, BaseVal* value) {
 
 	value->setParent(this);
 
-	EnumPair pair; 
-	pair.name = name; 
-	pair.value = value; 
+	EnumPair pair;
+	pair.name = name;
+	pair.value = value;
 
 	m_enums.push_back(pair);
 
-	m_last_val = pair.value; 
+	m_last_val = pair.value;
 }
 
 bool EnumStmt::isSigned() {
