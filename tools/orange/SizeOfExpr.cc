@@ -82,7 +82,8 @@ Value* SizeOfExpr::Codegen() {
 		curSize = GE::builder()->CreateMul(curSize, v);
 	}
 
-	return curSize;
+	m_value = curSize; 
+	return m_value;
 }
 
 ASTNode* SizeOfExpr::clone() {

@@ -20,7 +20,13 @@ Value* VarExpr::Codegen() {
 	// "Generating" a variable doesn't actually do anything; 
 	// its creation is handled by other classes like BinOpExpr.
 	GE::runner()->topBlock()->symtab()->activate(m_name, this);
-	return getValue();
+	m_value = getValue();
+
+	if (m_value == nullptr) {
+		throw CompilerMessage(*this, m_name + " doesn't exist!");
+	}
+
+	return m_value; 
 }
 
 Value* VarExpr::getValue() {

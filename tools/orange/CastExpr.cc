@@ -14,18 +14,18 @@ std::string CastExpr::string() {
 }
 
 Value* CastExpr::Codegen() { 
-	Value* val = m_expr->Codegen();
+	m_value = m_expr->Codegen();
 	
-	if (val == nullptr) {
+	if (m_value == nullptr) {
 		throw std::runtime_error("CastExpr::Codegen(): m_expr did not generate a value!");
 	}
 
 	if (m_expr->returnsPtr()) {
-		val = GE::builder()->CreateLoad(val);
+		m_value = GE::builder()->CreateLoad(m_value);
 	}
 
-	CastingEngine::CastValueToType(&val, m_type, isSigned(), true);
-	return val;
+	CastingEngine::CastValueToType(&m_value, m_type, isSigned(), true);
+	return m_value;
 }
 
 ASTNode* CastExpr::clone() {

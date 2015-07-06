@@ -68,11 +68,12 @@ Value* FuncCall::Codegen() {
 			}
 		}
 
-		return GE::builder()->CreateCall(llvmFunction, Args);
+		m_value = GE::builder()->CreateCall(llvmFunction, Args);
 	} else {
-		return GE::builder()->CreateCall(llvmFunction);
+		m_value = GE::builder()->CreateCall(llvmFunction);
 	}
 
+	return m_value;
 }
 
 ASTNode* FuncCall::clone() {

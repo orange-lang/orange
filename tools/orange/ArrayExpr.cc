@@ -83,7 +83,8 @@ Value* ArrayExpr::Codegen() {
 		}
 	}
 
-	return space;
+	m_value = space; 
+	return m_value;
 }
 
 ASTNode* ArrayExpr::clone() {

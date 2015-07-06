@@ -18,7 +18,8 @@ void AnyID::ensureValid() {
 
 Value* AnyID::Codegen() {
 	ensureValid();
-	return m_any_expr->Codegen();
+	m_value = m_any_expr->Codegen();
+	return m_value;
 }
 
 Value* AnyID::getValue() {

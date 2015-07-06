@@ -13,11 +13,11 @@
 Value* CondBlock::CodegenCondition() {
 	GE::runner()->pushBlock(this);
 
-	Value* retVal = m_condition->Codegen();
+	m_value = m_condition->Codegen();
 
 	GE::runner()->popBlock();
 	
-	return retVal;
+	return m_value;
 }
 
 ASTNode* CondBlock::clone() {

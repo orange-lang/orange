@@ -46,7 +46,8 @@ Value* ExplicitDeclStmt::CodegenPair(VarExpr* var, Expression* expr) {
 		var->allocate();
 	}
 
-	return var->Codegen();
+	m_value = var->Codegen();
+	return m_value;
 }
 
 Value* ExplicitDeclStmt::Codegen() {

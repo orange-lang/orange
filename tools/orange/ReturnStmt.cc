@@ -65,7 +65,8 @@ Value* ReturnStmt::Codegen() {
 
 	GE::builder()->CreateBr(containingFunc->getBlockEnd());
 
-	return retExpr; 
+	m_value = retExpr; 
+	return m_value;
 }
 
 OrangeTy* ReturnStmt::getType() {

@@ -75,7 +75,9 @@ Value* TernaryExpr::Codegen() {
 
 	// Now, set the current insert point to continue, load up our result variable and return that.
 	GE::builder()->SetInsertPoint(continueBB);
-	return GE::builder()->CreateLoad(result);
+	
+	m_value = GE::builder()->CreateLoad(result);
+	return m_value;
 }
 
 ASTNode* TernaryExpr::clone() { 

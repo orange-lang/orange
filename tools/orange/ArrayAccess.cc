@@ -41,8 +41,8 @@ Value* ArrayAccess::Codegen() {
 
 	indicies.push_back(idx);
 
-	auto ret = GE::builder()->CreateInBoundsGEP(var, indicies);	
-	return ret;
+	m_value = GE::builder()->CreateInBoundsGEP(var, indicies);	
+	return m_value;
 }
 
 ASTNode* ArrayAccess::clone() {

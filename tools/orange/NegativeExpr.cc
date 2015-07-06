@@ -29,10 +29,12 @@ Value* NegativeExpr::Codegen() {
 	}
 
 	if (getType()->isFloatingPointTy()) {
-		return GE::builder()->CreateFNeg(negateVal);
+		m_value = GE::builder()->CreateFNeg(negateVal);
 	} else {
-		return GE::builder()->CreateNeg(negateVal);
+		m_value = GE::builder()->CreateNeg(negateVal);
 	}
+
+	return m_value;
 }
 
 std::string NegativeExpr::string() {

@@ -24,7 +24,8 @@ Value* DerefExpr::Codegen() {
 		throw CompilerMessage(*m_expr, "expression is not a pointer.");
 	} 
 
-	return GE::builder()->CreateLoad(ret);
+	m_value = GE::builder()->CreateLoad(ret);
+	return m_value;
 }
 
 ASTNode* DerefExpr::clone() {

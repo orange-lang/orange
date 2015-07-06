@@ -14,8 +14,8 @@ std::string AddressOfExpr::string() {
 }
 
 Value* AddressOfExpr::Codegen() {
-	Value *v = m_expr->Codegen();
-	return v;
+	m_value = m_expr->Codegen();
+	return m_value;
 }
 
 ASTNode* AddressOfExpr::clone() {

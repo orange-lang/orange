@@ -232,27 +232,28 @@ Value* BinOpExpr::Codegen() {
 
 	if (m_op == "=") {
 		GE::builder()->CreateStore(RHS, LHS);
-		return GE::builder()->CreateLoad(LHS);
+		m_value = GE::builder()->CreateLoad(LHS);
+		return m_value;
 	} else if (m_op == "+=") {
 		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
-		Value* retVal = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "+", RHS, m_RHS->isSigned()), loadedLHS, RHS);
-		GE::builder()->CreateStore(retVal, LHS);
-		return retVal;
+		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "+", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+		GE::builder()->CreateStore(m_value, LHS);
+		return m_value;
 	} else if (m_op == "-=") {
 		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
-		Value* retVal = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "-", RHS, m_RHS->isSigned()), loadedLHS, RHS);
-		GE::builder()->CreateStore(retVal, LHS);
-		return retVal;		
+		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "-", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+		GE::builder()->CreateStore(m_value, LHS);
+		return m_value;		
 	} else if (m_op == "*=") {
 		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
-		Value* retVal = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "*", RHS, m_RHS->isSigned()), loadedLHS, RHS);
-		GE::builder()->CreateStore(retVal, LHS);
-		return retVal;				
+		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "*", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+		GE::builder()->CreateStore(m_value, LHS);
+		return m_value;				
 	} else if (m_op == "/=") {
 		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
-		Value* retVal = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "/", RHS, m_RHS->isSigned()), loadedLHS, RHS);
-		GE::builder()->CreateStore(retVal, LHS);
-		return retVal;				
+		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "/", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+		GE::builder()->CreateStore(m_value, LHS);
+		return m_value;				
 	}
 
 
@@ -300,23 +301,25 @@ Value* BinOpExpr::Codegen() {
 
 			GE::builder()->CreateBr(continueBlock);
 			GE::builder()->SetInsertPoint(continueBlock);
-			return GE::builder()->CreateLoad(booleanVal);
+			m_value = GE::builder()->CreateLoad(booleanVal);
+			return m_value;
 		}
 	}
 
 	if (IsCompareOp(m_op) == false) {
-
-		return GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);
+		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);
+		return m_value;
 	} else {
 		bool isFPOp = LHS->getType()->isFloatingPointTy() && RHS->getType()->isFloatingPointTy();
 		CmpInst::Predicate pred = GetBinOpPredComp(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned());
 
 		if (isFPOp) {
-			return GE::builder()->CreateFCmp(pred, LHS, RHS); 
+			m_value = GE::builder()->CreateFCmp(pred, LHS, RHS); 
 		} else {
-			return GE::builder()->CreateICmp(pred, LHS, RHS);
+			m_value = GE::builder()->CreateICmp(pred, LHS, RHS);
 		}
 
+		return m_value;
 	}
 }
 

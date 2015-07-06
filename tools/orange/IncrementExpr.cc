@@ -42,10 +42,12 @@ Value* IncrementExpr::Codegen() {
 	GE::builder()->CreateStore(newValue, origValue);
 
 	if (m_preincrement) {
-		return GE::builder()->CreateLoad(origValue);
+		m_value = GE::builder()->CreateLoad(origValue);
 	} else {
-		return loadedVal;
+		m_value = loadedVal;
 	}
+
+	return m_value;
 }
 
 ASTNode* IncrementExpr::clone() {
