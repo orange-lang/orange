@@ -40,7 +40,7 @@ CMake will try to find LLVM on your system; if it is not installed, it will buil
 
 # Community
 
-Orange has an IRC channel on [irc.freenode.net](irc.freenode.net) at #orange-lang. Come say hi! Feel free to open any issues on Github about questions, suggestions, or bugs. 
+Orange has an IRC channel on [irc.freenode.net](irc.freenode.net) at #orange-lang. Come say hi! Feel free to open any issues on Github about questions, suggestions, or bugs. We also have a [Google Group](https://groups.google.com/forum/#!forum/orange-lang) open to the public. 
 
 # Dependencies 
 
