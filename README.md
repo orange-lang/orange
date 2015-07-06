@@ -38,6 +38,10 @@ CMake will try to find LLVM on your system; if it is not installed, it will buil
 
 [Building on Windows](http://docs.orange-lang.org/installation/installing_on_windows.html) takes a bit more effort.
 
-## Dependencies 
+# Community
+
+Orange has an IRC channel on [irc.freenode.net](irc.freenode.net) at #orange-lang. Come say hi! Feel free to open any issues on Github about questions, suggestions, or bugs. 
+
+# Dependencies 
 
 * CMake
