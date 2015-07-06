@@ -10,6 +10,7 @@
 #include <orange/FunctionStmt.h>
 #include <orange/generator.h>
 #include <helper/string.h> 
+#include <orange/IfStmts.h>
 
 std::string Loop::string() {
 	std::stringstream ss;
@@ -166,19 +167,44 @@ Value* Loop::Codegen() {
 }
 
 ASTNode* Loop::clone() {
+	Loop* cloneLoop = nullptr; 
+
 	if (isForLoop()) {
 		Expression* initializer  = m_initializer  ? (Expression*)m_initializer->clone()  : nullptr;
 		Expression* condition    = m_condition    ? (Expression*)m_condition->clone()    : nullptr;
 		Expression* afterthought = m_afterthought ? (Expression*)m_afterthought->clone() : nullptr;
 
-		return new Loop(initializer, condition, afterthought, symtab()->clone());
+		cloneLoop = new Loop(initializer, condition, afterthought, symtab()->clone());
 	} else if (isWhileLoop() || isDoWhileLoop()) {
 		Expression* condition    = m_condition    ? (Expression*)m_condition->clone()    : nullptr;
 
-		return new Loop(condition, m_post_check, symtab()->clone());		
+		cloneLoop = new Loop(condition, m_post_check, symtab()->clone());		
 	} else {
-		return new Loop(symtab()->clone());
+		cloneLoop = new Loop(symtab()->clone());
 	}
+
+	for (auto stmt : m_statements) {
+		auto clonedStmt = stmt->clone();
+		cloneLoop->addStatement(clonedStmt);
+
+		// if the stmt is a block, set its parent to the clone's symtab IFF 
+		// their symtab's parent is the one for our current function statement
+		if (Block* block = dynamic_cast<Block*>(clonedStmt)) {
+			if (block->symtab()->parent()->ID() == symtab()->ID()) {
+				block->symtab()->setParent(cloneLoop->symtab());
+				block->symtab()->setContainer(cloneLoop->symtab());
+			}
+		}
+
+		if (IfStmts* ifStmts = dynamic_cast<IfStmts*>(clonedStmt)) {
+			for (auto block : ifStmts->blocks()) {
+				block->symtab()->setParent(cloneLoop->symtab());
+				block->symtab()->setContainer(cloneLoop->symtab());
+			}
+		}
+	}
+
+	return cloneLoop;
 }
 
 void Loop::resolve() {

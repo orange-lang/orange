@@ -10,6 +10,7 @@
 #include <orange/generator.h>
 #include <orange/IfStmts.h>
 #include <helper/string.h>
+#include <orange/Loop.h>
 
 FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name;
@@ -193,6 +194,10 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 				block->symtab()->setParent(clone->symtab());
 				block->symtab()->setContainer(clone->symtab());
 			}
+		}
+
+		if (Loop* loop = dynamic_cast<Loop*>(clonedStmt)) {
+			loop->symtab()->setParent(clone->symtab());
 		}
 	}
 
