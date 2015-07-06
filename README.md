@@ -24,24 +24,21 @@ Run directly with `orange run test.or` or build a native binary with `orange bui
 * [Orange TODO features](/TODO.md)
 * [Tests](/test/)
 
-# Installing 
-Installing on OS X and Linux should be pretty simple; after having all of the dependencies installed, building is as easy as:
+# Building 
+Building on OS X and Linux should be pretty simple; first install CMake from source or using a package manager like [homebrew](http://brew.sh) for OS X. After CMake is installed, building is as easy as:
 
 ```sh 
+$ # cd to the orange source folder 
 $ git submodule init && git submodule update
 $ mkdir build-orange && cd build-orange 
-$ cmake ../orange
+$ cmake ..
 $ make all install
 ``` 
 
-CMake will try to find LLVM on your system; if it is not installed, it will build it from source. 
+CMake will try to find LLVM 3.6 on your system; if it is not installed, it will build it from source. 
 
 [Building on Windows](http://docs.orange-lang.org/installation/installing_on_windows.html) takes a bit more effort.
 
 # Community
 
 Orange has an IRC channel on [irc.freenode.net](irc.freenode.net) at #orange-lang. Come say hi! Feel free to open any issues on Github about questions, suggestions, or bugs. We also have a [Google Group](https://groups.google.com/forum/#!forum/orange-lang) open to the public. 
-
-# Dependencies 
-
-* CMake
