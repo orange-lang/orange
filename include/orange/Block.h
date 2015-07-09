@@ -12,6 +12,8 @@
 #include "AST.h"
 #include "SymTable.h"
 
+class ReturnStmt;
+
 class Block : public Statement {
 private:
 	/**

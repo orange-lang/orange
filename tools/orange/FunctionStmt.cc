@@ -11,6 +11,8 @@
 #include <orange/IfStmts.h>
 #include <helper/string.h>
 #include <orange/Loop.h>
+#include <orange/FuncCall.h>
+#include <orange/ReturnStmt.h>
 
 FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* symtab) : Block(symtab) {
 	m_name = name;
@@ -195,9 +197,44 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	return clone;
 }
 
+bool nodeCallsFunction(ASTNode* node, std::string functionName) {
+	if (node->getClass() == "FuncCall") {
+		FuncCall* call = (FuncCall *)node; 
+		if (call->name() == functionName) return true; 
+	} 
+
+	auto children = node->children(); 
+	for (auto child : children) {
+		if (nodeCallsFunction(child, functionName))
+			return true;
+	}
+
+	return false; 
+}
+
+// Finds a list of all return statements starting at a root 
+std::vector<ReturnStmt *> allReturnStmts(ASTNode* root) {
+	std::vector<ReturnStmt *> ret; 
+
+	if (root->getClass() == "ReturnStmt") {
+		ret.push_back((ReturnStmt *)root);
+	}
+
+	for (auto stmt : root->children()) {
+		// Do not go into nested functions.
+		if (stmt->getClass() == "FunctionStmt") continue;
+
+		auto retStmts = allReturnStmts(stmt);
+		for (auto retStmt : retStmts) {
+			ret.push_back(retStmt);
+		}
+	}
+
+	return ret;
+}
 
 OrangeTy* FunctionStmt::getType() {
-	OrangeTy *ret = m_type; 
+	if (m_type != nullptr && m_type->isIDTy() == false) return m_type;
 
 	// This should not happen; getType() should only be called against clones.
 	if (isGeneric()) {
@@ -206,22 +243,27 @@ OrangeTy* FunctionStmt::getType() {
 
 	GE::runner()->pushBlock(this);
 
-	// Here, invalid type means that it needs to be redefined for this function.
-	bool invalidType = (m_type == nullptr || m_type->isVoidTy() || m_type->isIDTy());
-	if (invalidType && m_looking == false) {
-		// Set m_looking to true so we don't recursively try to get the type of FunctionStmt
-		m_looking = true;
-		
-		// If we don't have an explicit type set, we have to determine it from our body and nested bodies.
-		OrangeTy* foundRet = searchForReturn();
-		ret = foundRet ? foundRet : ASTNode::getType();
-		m_type = ret;
-		m_looking = false;
-	} 
+	OrangeTy* highType = nullptr; 
+	auto retStmts = allReturnStmts(this);
+
+	if (retStmts.size() == 0) {
+		highType = VoidTy::get();
+	}
+
+	for (auto retStmt : retStmts) {
+		if (nodeCallsFunction(retStmt, m_name) == true) continue;
+
+		if (highType == nullptr) {
+			highType = retStmt->getType(); 
+		} else {
+			highType = CastingEngine::GetFittingType(retStmt->getType(), highType);			
+		}
+	}
 
 	GE::runner()->popBlock();
 
-	return ret;
+	m_type = highType;
+	return m_type;
 }
 
 Value* FunctionStmt::Codegen() {
