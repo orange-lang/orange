@@ -156,12 +156,7 @@ bool ArrayExpr::isConstant() {
 ArrayExpr::ArrayExpr(ArgList elements) {
 	m_elements = elements;
 
-	for (unsigned int i = 0; i < m_elements.size(); i++) {
-		auto element = m_elements[i];
-			
-		std::stringstream ss; 
-		ss << "element" << i; 
-
-		addChild(ss.str(), element);
+	for (auto element : m_elements) {
+		addChild(element);
 	}
 }

@@ -39,13 +39,8 @@ ExternFunction::ExternFunction(OrangeTy* returnType, std::string name, ParamList
 		throw std::runtime_error("return type for an external function can not be null!");
 	}
 
-	for (unsigned int i = 0; i < m_parameters.size(); i++) {
-		auto param = m_parameters[i];
-
-		std::stringstream ss;
-		ss << "param" << i;
-
-		addChild(ss.str(), param);
+	for (auto param : m_parameters) {
+		addChild(param);
 	}
 }
 

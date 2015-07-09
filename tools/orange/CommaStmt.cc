@@ -34,12 +34,7 @@ std::string CommaStmt::string() {
 CommaStmt::CommaStmt(std::vector<Expression*> expressions) {
 	m_exprs = expressions;
 
-	for (unsigned int i = 0; i < m_exprs.size(); i++) {
-		auto e = m_exprs[i];
-
-		std::stringstream ss;
-		ss << "expr" << i;
-
-		addChild(ss.str(), e);
+	for (auto expr : m_exprs) {
+		addChild(expr);
 	}
 }

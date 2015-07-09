@@ -35,6 +35,8 @@ void Block::addStatement(ASTNode* statement) {
 
 	statement->setParent(this);
 	m_statements.push_back(statement);
+
+	addChild(statement);
 }
 
 void Block::generateStatements() {

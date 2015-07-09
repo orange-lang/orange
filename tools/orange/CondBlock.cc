@@ -49,7 +49,10 @@ ASTNode* CondBlock::clone() {
 
 
 void CondBlock::resolve() {
+	pushBlock();
 	ASTNode::resolve();
+	popBlock();
+	
 	Block::resolve();
 }
 

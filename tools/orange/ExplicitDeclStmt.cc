@@ -200,17 +200,8 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<
 
 		auto newVar = new VarExpr(pair.name, typeForExtras); 
 
-		{
-			std::stringstream ss; 
-			ss << "var" << i;
-			addChild(ss.str(), newVar);
-		}
-
-		{
-			std::stringstream ss;
-			ss << "expr" << i;
-			addChild(ss.str(), pair.expression);
-		}
+		addChild(newVar);
+		addChild(pair.expression);
 
 		m_extras.push_back(DeclPairInternal(newVar, pair.expression));
 	}

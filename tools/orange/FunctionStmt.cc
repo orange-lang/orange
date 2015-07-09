@@ -17,13 +17,8 @@ FunctionStmt::FunctionStmt(std::string name, ParamList parameters, SymTable* sym
 	m_orig_name = m_name;
 	m_parameters = parameters;
 
-	for (unsigned int i = 0; i < m_parameters.size(); i++) {
-		auto param = m_parameters[i];
-
-		std::stringstream ss;
-		ss << "param" << i;
-
-		addChild(ss.str(), param);
+	for (auto param : m_parameters) {
+		addChild(param);
 	}
 }
 
@@ -33,13 +28,8 @@ FunctionStmt::FunctionStmt(std::string name, OrangeTy* type, ParamList parameter
 	m_type = type; 
 	m_parameters = parameters;
 
-	for (unsigned int i = 0; i < m_parameters.size(); i++) {
-		auto param = m_parameters[i];
-
-		std::stringstream ss;
-		ss << "param" << i;
-
-		addChild(ss.str(), param);
+	for (auto param : m_parameters) {
+		addChild(param);
 	}
 }
 
@@ -481,8 +471,6 @@ void FunctionStmt::resolve() {
 	// Push our symtab into the stack and add our parameters to the symbol table.
 	GE::runner()->pushBlock(this);
 	
-	ASTNode::resolve();
-
 	for (auto param : m_parameters) {
 		param->create();
 	}

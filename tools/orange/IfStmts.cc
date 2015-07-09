@@ -120,16 +120,11 @@ ASTNode* IfStmts::clone() {
 }
 
 void IfStmts::resolve() {
-	ASTNode::resolve();
-
 	// If we're not already locked, we should be locked now; 
 	// don't allow adding any more blocks.
 	m_locked = true; 
 
-	// Resolve all of our blocks.
-	for (auto block : m_blocks) {
-		block->resolve();
-	}
+	ASTNode::resolve();
 }
 
 void IfStmts::addBlock(Block* block) {
@@ -153,4 +148,6 @@ void IfStmts::addBlock(Block* block) {
 	if (block->getClass() == "Block") {
 		m_locked = true; 
 	}
+
+	addChild(block);
 }
