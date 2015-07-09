@@ -61,17 +61,25 @@ protected:
 
 	/** 
 	 * The children for this node, if any.
-	 * The key string here is the name of the variable in the node.
 	 */
-	std::map<std::string, ASTNode*> m_children;
+	std::vector<ASTNode *> m_children;
+
+	std::string m_tag = ""; 
 
 	/** 
 	 * Adds a child to the list of children.
 	 */
-	void addChild(std::string name, ASTNode* child) {
+	void addChild(ASTNode* child) {
+		if (child == nullptr) return; 
+		child->setParent(this);
+		m_children.push_back(child);
+	}
+
+	void addChild(std::string tag, ASTNode* child) {
 		if (child == nullptr) return;
 		child->setParent(this);
-		m_children[name] = child;
+		child->setTag(tag);
+		m_children.push_back(child);
 	}
 public:
 	/**
@@ -82,10 +90,13 @@ public:
 	 */ 
 	virtual std::string getClass() { return "ASTNode"; }
 
-	std::map<std::string, ASTNode*> children() const { return m_children; } 
+	std::string tag() const { return m_tag; }
+	void setTag(std::string tag) { m_tag = tag; }
 
-	std::map<std::string, ASTNode*> siblings() {
-		std::map<std::string, ASTNode*> copy; 
+	std::vector<ASTNode*> children() const { return m_children; } 
+
+	std::vector<ASTNode*> siblings() {
+		std::vector<ASTNode*> copy; 
 		if (m_parent == nullptr) return copy; 
 		
 		copy = m_parent->m_children; 
@@ -175,8 +186,8 @@ public:
 	 * will only ever excecute once, to avoid unnecessary duplication of code.
 	 */
 	virtual void resolve() { 
-		for (auto kvp : m_children) {
-			kvp.second->resolve(); 
+		for (auto child : m_children) {
+			child->resolve();
 		}
 	}
 
@@ -186,8 +197,8 @@ public:
 	 * determine their types.
 	 */ 
 	virtual void fixup() {
-		for (auto kvp : m_children) {
-			kvp.second->fixup();
+		for (auto child : m_children) {
+			child->fixup();
 		}
 	}
 
