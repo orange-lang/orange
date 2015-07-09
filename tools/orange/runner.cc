@@ -121,6 +121,8 @@ void Runner::compile() {
 		mainFunction()->resolve();
 		mainFunction()->fixup();
 
+		std::cout << "Done resolving!\n";
+
 		if (hasError()) {
 			m_result->finish(false, m_messages);
 			return;

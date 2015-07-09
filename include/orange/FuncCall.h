@@ -37,6 +37,8 @@ public:
 	 */
 	virtual bool isSigned();
 
+	std::string name() const { return m_name; }
+
 	FuncCall(std::string name);
 	FuncCall(std::string name, ArgList arguments);
 }; 

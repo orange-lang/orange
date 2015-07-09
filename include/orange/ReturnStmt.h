@@ -35,6 +35,8 @@ public:
 			return "return";
 	}
 
+	Expression* expr() const { return m_expr; }
+
 	ReturnStmt() {}
 	ReturnStmt(Expression* expr) : m_expr(expr) { addChild("m_expr", m_expr); }
 }; 

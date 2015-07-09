@@ -42,12 +42,6 @@ private:
 	 */
 	Value* m_retVal = nullptr;
 	
-	/**
-	 * Indicates that we're currently looking in our body for a return statement.
-	 * Avoids infinite recursion.
-	 */
-	bool m_looking = false;
-
 	ParamList m_parameters;
 
 	std::vector<FunctionStmt*> m_clones;
