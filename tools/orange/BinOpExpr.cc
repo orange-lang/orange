@@ -355,23 +355,13 @@ void BinOpExpr::resolve() {
 	ASTNode::resolve();
 
 	if (m_op == "=" && isVarExpr(m_LHS)) {
-		// Set the type of LHS if it doesn't exist or this type has higher precedence. 
 		VarExpr* vExpr = getVarExpr(m_LHS); 
 
-		// Only create this variable if it doesn't exist in a parent scope.
 		if (vExpr->getType()->isVoidTy() || vExpr->getType()->isVarTy()) {
 			vExpr->setType(m_RHS->getType());
 			vExpr->resolve();
-		} else if (vExpr->isLocked() == false && CastingEngine::GetFittingType(vExpr->getType(), m_RHS->getType()) == m_RHS->getType()) {
-			vExpr->setType(m_RHS->getType());
-		}
-	} else if (IsAssignOp(m_op) && isVarExpr(m_LHS)) {
-		VarExpr* var = getVarExpr(m_LHS);
-		
-		if (var->isLocked() == false && CastingEngine::GetFittingType(var->getType(), m_RHS->getType()) == m_RHS->getType()) {
-			var->setType(m_RHS->getType());
-		}
-	}
+		} 
+	} 
 }
 
 bool BinOpExpr::isSigned() {
