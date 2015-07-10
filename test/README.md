@@ -11,6 +11,7 @@ The tests in each subdirectory have been arranged to have the following preceden
 ```
 basic/
 functions/
+recursion/
 if/
 variables/
 loops/
