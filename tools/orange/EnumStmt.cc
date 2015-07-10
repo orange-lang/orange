@@ -37,9 +37,17 @@ std::string EnumStmt::string() {
 }
 
 void EnumStmt::resolve() {
-	// We have to do some morphing here; first; determine the highest type.
-	// We can use getType because it will calculate it until the type is cached.
-	m_type = getType();
+	if (m_enums.size() == 0) {
+		m_type = VoidTy::get();
+	} else {
+		// We need to determine the highest precedence type and then
+		// change the other enums to use that type.
+		m_type = m_enums[0].value->getType();
+
+		for (unsigned int i = 1; i < m_enums.size(); i++) {
+			m_type = CastingEngine::GetFittingType(m_type, m_enums[i].value->getType());
+		}
+	}
 
 	for (auto& pair : m_enums) {
 		ValFactory factory;
@@ -57,17 +65,7 @@ void EnumStmt::resolve() {
 		throw CompilerMessage(*this, "Something named " + m_name + " already exists!");
 	}
 
-	if (m_enums.size() == 0) {
-		m_type = VoidTy::get();
-	} else {
-		// We need to determine the highest precedence type and then
-		// change the other enums to use that type.
-		m_type = m_enums[0].value->getType();
 
-		for (unsigned int i = 1; i < m_enums.size(); i++) {
-			m_type = CastingEngine::GetFittingType(m_type, m_enums[i].value->getType());
-		}
-	}
 
 }
 
