@@ -166,6 +166,8 @@ ASTNode* Block::clone() {
 			}
 		}
 	}
+
+	clonedBlock->copyProperties(this);	
 	return clonedBlock;
 }
 

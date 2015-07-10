@@ -32,17 +32,9 @@ Value* DotExpr::Codegen() {
 }
 
 ASTNode* DotExpr::clone() {
-	return new DotExpr((AnyID*)m_LHS->clone(), m_RHS);
-}
-
-OrangeTy* DotExpr::getType() {
-	if (m_obj->getClass() == "EnumStmt") {
-		EnumStmt* enumStmt = (EnumStmt*)m_obj;
-		return enumStmt->getType();
-	}
-
-	throw std::runtime_error("DotExpr::getType(): object is not an enum!");
-	return nullptr;
+	auto clone = new DotExpr((AnyID*)m_LHS->clone(), m_RHS);
+	clone->copyProperties(this);
+	return clone;
 }
 
 void DotExpr::resolve() {
@@ -60,6 +52,7 @@ void DotExpr::resolve() {
 	}
 
 	m_obj = enumStmt;
+	m_type = enumStmt->getType();
 }
 
 bool DotExpr::isSigned() {

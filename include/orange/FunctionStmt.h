@@ -30,8 +30,6 @@ private:
 	// TODO: clones of this function should be LinkOnceODRLinkage.
 	llvm::GlobalValue::LinkageTypes m_linkageType = Function::ExternalLinkage;
 
-	OrangeTy* m_type = IDTy::get();
-
 	/**
 	 * Indicates the exit block of the function to jump to when returning a value.
 	 */
@@ -52,6 +50,8 @@ private:
 	 * Set to true when the name has been mangled.
 	 */
 	bool m_mangled = false;
+
+	bool m_type_set = false;
 public:
 	virtual std::string getClass() { return "FunctionStmt"; }
 
@@ -60,8 +60,6 @@ public:
 	virtual ASTNode* clone();
 
 	virtual std::string string();
-
-	virtual OrangeTy* getType();
 
 	virtual std::string name() const { return m_name; }
 
@@ -107,6 +105,8 @@ public:
 	 *	type signature.
 	 */
 	virtual FunctionStmt* createGenericClone(ArgList args);
+
+	virtual FunctionStmt* getGenericClone(ArgList args);
 
 	/** 
 	 * Gets the exit block of the function to jump to when returning a value.

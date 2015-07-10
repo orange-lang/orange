@@ -37,12 +37,22 @@
 using namespace llvm;
 
 class FunctionStmt;
+class Block;
+
+typedef enum {
+	NO_STATEMENTS,
+	ALL_STATEMENTS,
+	NO_RETURN_STMTS,
+	ONLY_RETURN_STMTS
+} ResolveState; 
 
 /**
  * ASTNode is the base class for all structures in the AST. It provides some methods for pseudo-reflection and 
  * general features used throughout the project.
  */
 class ASTNode : public CodeElement {
+private:
+	ResolveState m_resolve_state = ALL_STATEMENTS;
 protected:
 	/**
 	 * The internal value returned by Codegen() and getValue().
@@ -52,7 +62,7 @@ protected:
 	/** 
 	 * Determines the type of the node. Used for caching. 
 	 */
-	OrangeTy* m_type = nullptr; 
+	OrangeTy* m_type = nullptr;
 
 	/**
 	 * The parent node that this node is stored inside, if any 
@@ -73,6 +83,7 @@ protected:
 		if (child == nullptr) return; 
 		child->setParent(this);
 		m_children.push_back(child);
+		child->setResolveState(m_resolve_state);
 	}
 
 	void addChild(std::string tag, ASTNode* child) {
@@ -80,7 +91,9 @@ protected:
 		child->setParent(this);
 		child->setTag(tag);
 		m_children.push_back(child);
+		child->setResolveState(m_resolve_state);
 	}
+
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 
@@ -101,6 +114,11 @@ public:
 		
 		copy = m_parent->m_children; 
 		return copy; 
+	}
+
+	void copyProperties(ASTNode* from) {
+		setLocation(from->location());
+		setResolveState(from->m_resolve_state);
 	}
 
 	/**
@@ -124,7 +142,11 @@ public:
 	 *
 	 * @return A clone of this object.
 	 */
-	virtual ASTNode* clone() { return new ASTNode(); }
+	virtual ASTNode* clone() { 
+		auto clone = new ASTNode(); 
+		clone->copyProperties(this);
+		return clone; 
+	}
 
 	/**
 	 * Returns the string represenation of this object in code. This string is a full representation
@@ -156,7 +178,7 @@ public:
 	 *
 	 * @return The type of this object.
 	 */
-	virtual OrangeTy* getType() { return VoidTy::get(); }
+	virtual OrangeTy* getType() { return m_type; }
 
 	/**
 	 * Gets the LLVM type of this object.
@@ -170,6 +192,11 @@ public:
 	 */
 	virtual FunctionStmt* getContainingFunction();
 
+	/**
+	 * @return The parent Block 
+	 */
+	Block* parentBlock() const;
+
 	/** 
 	 * Set the parent for this node.
 	 * @param parent The new parent.
@@ -181,13 +208,31 @@ public:
 	 */ 
 	virtual ASTNode* parent() const { return m_parent; }
 
+	bool shouldResolve() {
+		if (m_resolve_state == NO_STATEMENTS) return false;
+		if (m_resolve_state == NO_RETURN_STMTS && this->getClass() == "ReturnStmt") return false;
+		if (m_resolve_state == ONLY_RETURN_STMTS && this->getClass() != "ReturnStmt") return false;
+		return true;
+	}
+
 	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 
 	 * will only ever excecute once, to avoid unnecessary duplication of code.
 	 */
 	virtual void resolve() { 
+		if (m_resolve_state == NO_STATEMENTS) return;
+
 		for (auto child : m_children) {
+			if (child->shouldResolve() == false) continue;
 			child->resolve();
+		}
+	}
+
+	void setResolveState(ResolveState state) {
+		m_resolve_state = state; 
+
+		for (auto child : m_children) {
+			child->setResolveState(state);
 		}
 	}
 

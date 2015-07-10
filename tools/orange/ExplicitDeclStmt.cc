@@ -69,15 +69,16 @@ ASTNode* ExplicitDeclStmt::clone() {
 		extraClones.push_back(DeclPair(pair.var->name(), (Expression *)pair.val->clone()));
 	}
 
-	if (m_expr) {
-		return new ExplicitDeclStmt((VarExpr*)m_var->clone(), (Expression*)m_expr->clone(), extraClones);
-	} else {
-		return new ExplicitDeclStmt((VarExpr*)m_var->clone(), extraClones);
-	}
-}
+	ASTNode* clone = nullptr; 
 
-OrangeTy* ExplicitDeclStmt::getType() { 
-	return m_var->getType(); 
+	if (m_expr) {
+		clone = new ExplicitDeclStmt((VarExpr*)m_var->clone(), (Expression*)m_expr->clone(), extraClones);
+	} else {
+		clone = new ExplicitDeclStmt((VarExpr*)m_var->clone(), extraClones);
+	}
+
+	clone->copyProperties(this);
+	return clone;
 }
 
 bool ExplicitDeclStmt::isSigned() {
@@ -117,6 +118,8 @@ void ExplicitDeclStmt::resolve() {
 			throw CompilerMessage(*pair.var, "Variable-sized arrays may not be initialized");
 		}
 	}
+
+	m_type = m_var->getType();
 }
 
 std::string ExplicitDeclStmt::string() {

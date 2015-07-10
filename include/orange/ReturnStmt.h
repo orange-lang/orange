@@ -23,10 +23,9 @@ public:
 
 	virtual ASTNode* clone() {
 		ReturnStmt* cloned = m_expr ? new ReturnStmt((Expression *)m_expr->clone()) : new ReturnStmt();
+		cloned->copyProperties(this);
 		return cloned; 
 	}
-
-	virtual OrangeTy* getType();
 
 	virtual std::string string() {
 		if (m_expr)
@@ -34,6 +33,8 @@ public:
 		else 
 			return "return";
 	}
+
+	virtual void resolve();
 
 	Expression* expr() const { return m_expr; }
 

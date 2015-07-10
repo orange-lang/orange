@@ -87,11 +87,16 @@ Value* SizeOfExpr::Codegen() {
 }
 
 ASTNode* SizeOfExpr::clone() {
+	ASTNode* clone = nullptr;
+
 	if (m_expr) {
-		return new SizeOfExpr(m_expr); 
+		clone = new SizeOfExpr(m_expr); 
 	} else {
-		return new SizeOfExpr(m_type);
+		clone = new SizeOfExpr(m_type);
 	}
+
+	clone->copyProperties(this);
+	return clone;
 }
 
 void SizeOfExpr::resolve() {

@@ -29,11 +29,9 @@ Value* CastExpr::Codegen() {
 }
 
 ASTNode* CastExpr::clone() {
-	return new CastExpr(m_type, (Expression *)m_expr->clone());
-}
-
-OrangeTy* CastExpr::getType() { 
-	return m_type; 
+	auto clone = new CastExpr(m_type, (Expression *)m_expr->clone());
+	clone->copyProperties(this);
+	return clone;
 }
 
 bool CastExpr::isSigned() { 

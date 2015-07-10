@@ -29,7 +29,7 @@ public:
 
 	virtual std::string string();
 
-	virtual OrangeTy* getType();
+	virtual void resolve();
 
 	/**
 	 * Returns whether or not all the elements of the array 

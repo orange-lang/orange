@@ -116,6 +116,8 @@ ASTNode* IfStmts::clone() {
 	for (auto block : m_blocks) {
 		clone->addBlock((Block *)block->clone());
 	}
+	
+	clone->copyProperties(this);
 	return clone; 
 }
 

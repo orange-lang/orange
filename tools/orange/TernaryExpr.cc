@@ -81,12 +81,11 @@ Value* TernaryExpr::Codegen() {
 }
 
 ASTNode* TernaryExpr::clone() { 
-	return new TernaryExpr((Expression *)m_condition->clone(), (Expression *)m_true_expr->clone(), 
+	auto clone = new TernaryExpr((Expression *)m_condition->clone(), (Expression *)m_true_expr->clone(), 
 		(Expression *)m_false_expr->clone());
-}
 
-OrangeTy* TernaryExpr::getType() {
-	return CastingEngine::GetFittingType(m_true_expr->getType(), m_false_expr->getType());
+	clone->copyProperties(this);
+	return clone;
 }
 
 void TernaryExpr::resolve() { 
@@ -98,7 +97,9 @@ void TernaryExpr::resolve() {
 		errorStr += m_true_expr->getType()->string() + " and " + m_false_expr->getType()->string();
 		errorStr += " can not be casted to fit!";
 		throw CompilerMessage(*this, errorStr);
-	}
+	}	
+
+	m_type = CastingEngine::GetFittingType(m_true_expr->getType(), m_false_expr->getType());
 }
 
 bool TernaryExpr::isSigned() {

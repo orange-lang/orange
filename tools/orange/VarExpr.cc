@@ -55,7 +55,7 @@ std::string VarExpr::string() {
 OrangeTy* VarExpr::getType() {
 	// If we've been assigned a value, we'll return that, otherwise 
 	// we'll return the default type from ASTNode.	
-	if (m_type) {
+	if (m_type && m_type->isVoidTy() == false) {
 		return m_type; 
 	} 
 

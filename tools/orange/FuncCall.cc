@@ -83,6 +83,7 @@ ASTNode* FuncCall::clone() {
 		cloned->m_arguments.push_back((Expression*)arg->clone());
 	}
 
+	cloned->copyProperties(this);
 	return cloned; 
 }
 
@@ -99,27 +100,6 @@ std::string FuncCall::string() {
 
 	ss << ")";
 	return ss.str();
-}
-
-OrangeTy* FuncCall::getType() {
-	SymTable* curTab = GE::runner()->symtab();
-  ASTNode* node = curTab->findFromAny(m_name);
-  
-  if (node == nullptr) {
-      throw CompilerMessage(*this, m_name + " does not exist!");
-  }
-  
-  if ((node->getClass() != "FunctionStmt" &&
-       node->getClass() != "ExternFunction")) {
-      throw CompilerMessage(*this, m_name + " is not a function!");
-  }
-    
-	if (node->getClass() == "FunctionStmt" && ((FunctionStmt*)node)->isGeneric()) {
-		// Try resolving...
-		throw CompilerMessage(*this, "Can't get the type of an unresolved generic function.");
-	}
-
-	return node->getType();
 }
 
 void FuncCall::resolve() {
@@ -142,9 +122,20 @@ void FuncCall::resolve() {
 	if (function->getClass() == "FunctionStmt") {
 		FunctionStmt* fstmt = (FunctionStmt*)function;
 		if (fstmt->isGeneric()) {
+			bool shouldResolve = fstmt->getGenericClone(m_arguments) == nullptr;
+
 			FunctionStmt* clone = fstmt->createGenericClone(m_arguments);
 			m_name = clone->name();
+			function = clone;
+
+			if (shouldResolve) clone->resolve();
 		}
+	}
+
+	m_type = function->getType();
+
+	if (m_type == nullptr) {
+		throw CompilerMessage(*this, "Too soon to have a recursive function; no return type determined yet.");
 	}
 }
 

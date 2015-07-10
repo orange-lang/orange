@@ -94,13 +94,18 @@ ASTNode* ArrayExpr::clone() {
 		cloned_elements.push_back((Expression *)element->clone());
 	}
 
-	return new ArrayExpr(cloned_elements);
+	auto clone = new ArrayExpr(cloned_elements);
+	clone->copyProperties(this);
+	return clone;
 }
 
-OrangeTy* ArrayExpr::getType() {
+void ArrayExpr::resolve() {
+	ASTNode::resolve();
+
 	// If we don't have any elements, we're an int*. 
 	if (m_elements.size() == 0) {
-		return IntTy::getSigned(64)->getPointerTo();
+		m_type = IntTy::getSigned(64)->getPointerTo();
+		return;
 	}
 	
 	// First, we need to find the highest precedence type from all of the elements.
@@ -133,13 +138,11 @@ OrangeTy* ArrayExpr::getType() {
 	}	
 
 	// Now that we know the stack of elements, we can create our type.
-	OrangeTy* ret = highestType;
+	m_type = highestType;
 
 	for (auto i = elementStack.rbegin(); i < elementStack.rend(); i++) {
-		ret = ArrayTy::get(ret, *i);
+		m_type = ArrayTy::get(m_type, *i);
 	}
-
-	return ret; 
 }
 
 bool ArrayExpr::isConstant() {

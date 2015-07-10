@@ -44,6 +44,7 @@ ASTNode* CondBlock::clone() {
 		}
 	}
 
+	clonedBlock->copyProperties(this);
 	return clonedBlock;
 }
 

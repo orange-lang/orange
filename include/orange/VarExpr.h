@@ -44,6 +44,7 @@ public:
 		ret->m_locked = m_locked; 
 		ret->m_signed = m_signed; 
 		ret->m_type = m_type;
+		ret->copyProperties(this);
 		return ret;
 	}
 

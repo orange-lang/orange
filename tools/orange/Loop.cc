@@ -204,6 +204,7 @@ ASTNode* Loop::clone() {
 		}
 	}
 
+	cloneLoop->copyProperties(this);
 	return cloneLoop;
 }
 

@@ -29,6 +29,7 @@ FunctionStmt::FunctionStmt(std::string name, OrangeTy* type, ParamList parameter
 	m_orig_name = m_name;
 	m_type = type; 
 	m_parameters = parameters;
+	m_type_set = true;
 
 	for (auto param : m_parameters) {
 		addChild(param);
@@ -116,6 +117,28 @@ std::string FunctionStmt::getMangledName(ArgList args) {
 	return ss.str();
 }
 
+FunctionStmt* FunctionStmt::getGenericClone(ArgList args) {
+	// If we're not a generic, we shouldn't be trying to make a clone.
+	if (isGeneric() == false) {
+		return nullptr;
+	}
+
+	if (args.size() != m_parameters.size()) {
+		throw CompilerMessage(*this, "Mismatched number of arguments while calling " + m_name + "!");
+	}
+
+	std::string cloned_name = getMangledName(args);
+
+	// Does a clone with that name already exist? If so, return that clone.
+	for (auto clone : m_clones) {
+		if (clone->m_name == cloned_name) {
+			return clone;
+		}
+	}
+	
+	return nullptr;	
+}
+
 FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	// If we're not a generic, we shouldn't be trying to make a clone.
 	if (isGeneric() == false) {
@@ -156,14 +179,15 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	}
 
 	// Otherwise, create that clone here, add it to the list, and return it.
-	FunctionStmt* clone;
+	FunctionStmt* clone = nullptr;
 	
-	if (m_type) {
+	if (m_type && m_type_set) {
 		clone = new FunctionStmt(cloned_name, m_type, cloned_params, symtab()->clone());	
 	} else {
 		clone = new FunctionStmt(cloned_name, cloned_params, symtab()->clone());
 	}
 
+	clone->copyProperties(this);
 	clone->m_mangled = true;
 	
 	m_clones.push_back(clone);
@@ -193,7 +217,7 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 		}
 	}
 
-	clone->resolve();
+	clone->copyProperties(this);
 	return clone;
 }
 
@@ -211,6 +235,9 @@ bool nodeCallsFunction(ASTNode* node, std::string functionName) {
 
 	return false; 
 }
+
+
+
 
 // Finds a list of all return statements starting at a root 
 std::vector<ReturnStmt *> allReturnStmts(ASTNode* root) {
@@ -231,39 +258,6 @@ std::vector<ReturnStmt *> allReturnStmts(ASTNode* root) {
 	}
 
 	return ret;
-}
-
-OrangeTy* FunctionStmt::getType() {
-	if (m_type != nullptr && m_type->isIDTy() == false) return m_type;
-
-	// This should not happen; getType() should only be called against clones.
-	if (isGeneric()) {
-		throw CompilerMessage(*this, "Cannot get type of a generic function.");
-	}
-
-	GE::runner()->pushBlock(this);
-
-	OrangeTy* highType = nullptr; 
-	auto retStmts = allReturnStmts(this);
-
-	if (retStmts.size() == 0) {
-		highType = VoidTy::get();
-	}
-
-	for (auto retStmt : retStmts) {
-		if (nodeCallsFunction(retStmt, m_name) == true) continue;
-
-		if (highType == nullptr) {
-			highType = retStmt->getType(); 
-		} else {
-			highType = CastingEngine::GetFittingType(retStmt->getType(), highType);			
-		}
-	}
-
-	GE::runner()->popBlock();
-
-	m_type = highType;
-	return m_type;
 }
 
 Value* FunctionStmt::Codegen() {
@@ -327,7 +321,7 @@ Value* FunctionStmt::Codegen() {
 	Value *retVal = nullptr; 
 	if (getType()->isVoidTy() == false) {
 		retVal = GE::builder()->CreateAlloca(getLLVMType(), nullptr, "return");
-		m_retVal = retVal;
+		m_retVal = retVal;	
 	}
 
 	m_blockEnd = funcEnd;
@@ -415,6 +409,7 @@ ASTNode* FunctionStmt::clone() {
 		}
 	}
 
+	clonedFunc->copyProperties(this);
 	return clonedFunc;
 }
 
@@ -517,7 +512,30 @@ void FunctionStmt::resolve() {
 		param->create();
 	}
 
-	GE::runner()->popBlock();
 
 	Block::resolve();
+
+	if (m_type_set == false) {
+		OrangeTy* highType = nullptr; 
+		auto retStmts = allReturnStmts(this);
+
+		if (retStmts.size() == 0) {
+			highType = VoidTy::get();
+		}
+
+		for (auto retStmt : retStmts) {
+			if (nodeCallsFunction(retStmt, m_name) == true) continue;
+
+			if (highType == nullptr) {
+				highType = retStmt->getType(); 
+			} else {
+				highType = CastingEngine::GetFittingType(retStmt->getType(), highType);			
+			}
+		}
+		
+		m_type = highType;
+	}
+
+	GE::runner()->popBlock();
+
 }

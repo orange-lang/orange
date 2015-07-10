@@ -28,7 +28,9 @@ Value* AnyID::getValue() {
 }
 
 ASTNode* AnyID::clone() {
-	return new AnyID(m_name);
+	auto clone = new AnyID(m_name);
+	clone->copyProperties(this);
+	return clone;
 }
 
 std::string AnyID::string() {
@@ -66,16 +68,13 @@ void AnyID::resolve() {
 
 	if (node != nullptr && node->getClass() != "VarExpr") {
 		m_any_expr = (Expression *)node; 
+		addChild("m_any_expr", m_any_expr);
 	} else {
 		// Otherwise, we have to create something it should default to a VarExpr.
 		m_any_expr = new VarExpr(m_name);
-  	m_any_expr->resolve();
+		addChild("m_any_expr", m_any_expr);
+		ASTNode::resolve();
 	}
-
-	// We essentially transform into our any_expr here, so set its parent to our parent.
-	addChild("m_any_expr", m_any_expr);
-
-	// Resolve it. If the variable already exists, this probably won't do anything.
 }
 
 bool AnyID::isSigned() {
@@ -98,7 +97,9 @@ Expression* AnyID::expression() {
 
 void AnyID::newVarExpr() {
 	m_any_expr = new VarExpr(m_name);
-	m_any_expr->resolve();
+
+	addChild("m_any_expr", m_any_expr);
+	ASTNode::resolve();
 }
 
 AnyID::AnyID(std::string name) {

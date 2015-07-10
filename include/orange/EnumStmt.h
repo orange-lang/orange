@@ -35,8 +35,6 @@ public:
 
 	virtual ASTNode* clone();
 
-	virtual OrangeTy* getType();
-
 	virtual std::string string();
 
 	virtual std::string name() const { return m_name; }
