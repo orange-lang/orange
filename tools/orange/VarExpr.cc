@@ -42,6 +42,7 @@ void VarExpr::resolve() {
 		}
 
 		for (auto expr : variadicElements) {
+			if (expr) expr->newID();
 			if (expr) expr->resolve();
 		}
 	}

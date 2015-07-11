@@ -91,8 +91,6 @@ void ExplicitDeclStmt::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true;
 
-	//m_var->create();
-
 	if (m_var->getType()->isVoidTy()) {
 		throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");
 	}
@@ -109,7 +107,6 @@ void ExplicitDeclStmt::resolve() {
 	}
 
 	for (auto pair : m_extras) {
-		//pair.var->create();
 		pair.var->getType()->resolve();
 		
 		if (pair.var->getType()->isVoidTy()) {

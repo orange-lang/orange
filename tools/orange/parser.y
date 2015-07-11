@@ -88,12 +88,10 @@
 %left BITWISE_XOR
 %left BITWISE_AND
 
-
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
 %left OPEN_PAREN CLOSE_PAREN INCREMENT DECREMENT OPEN_BRACKET
 %right SIZEOF
-
 
 %%
 	
@@ -298,6 +296,8 @@ inline_if
 		GE::runner()->pushBlock(block);
 
 		block->addStatement($1);
+		$1->newID();
+
 		$$ = new IfStmts;
 		((IfStmts *)$$)->addBlock(block); 
 
@@ -321,6 +321,7 @@ inline_unless
 		SymTable* tab = new SymTable(GE::runner()->symtab());
 		CondBlock* block = new CondBlock($3, tab, true);
 		block->addStatement($1);
+		$1->newID();
 		$$ = new IfStmts;
 		((IfStmts *)$$)->addBlock(block); 
 	}
@@ -366,17 +367,20 @@ inline_loop
 	: return_or_expr FOR OPEN_PAREN initializer SEMICOLON opt_expr SEMICOLON opt_expr CLOSE_PAREN {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$$ = new Loop($4, $6, $8, tab);
-		((Loop *)$$)->addStatement($1);		
+		((Loop *)$$)->addStatement($1);
+		$1->newID();
 	}
 	| return_or_expr WHILE expression {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$$ = new Loop($3, false, tab);
 		((Loop *)$$)->addStatement($1);				
+		$1->newID();
 	}
 	| return_or_expr FOREVER {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		$$ = new Loop(tab);
 		((Loop *)$$)->addStatement($1);
+		$1->newID();
 	}
 
 loop_breaks

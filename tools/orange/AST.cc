@@ -63,6 +63,26 @@ Block* ASTNode::parentBlock() const {
 
 unsigned long lastID = 0;
 
+void ASTNode::addChild(ASTNode* child) {
+	if (child == nullptr) return; 
+	child->setParent(this);
+	m_children.push_back(child);
+}
+
+void ASTNode::addChild(std::string tag, ASTNode* child) {
+	if (child == nullptr) return;
+	child->setParent(this);
+	m_children.push_back(child);
+}
+
+void ASTNode::newID() {
+	m_ID = lastID++;
+
+	for (auto child : m_children) {
+		child->newID();
+	}
+}
+
 ASTNode::ASTNode() {
 	m_ID = lastID++;
 }

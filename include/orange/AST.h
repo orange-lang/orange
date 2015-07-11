@@ -70,17 +70,9 @@ protected:
 	/** 
 	 * Adds a child to the list of children.
 	 */
-	void addChild(ASTNode* child) {
-		if (child == nullptr) return; 
-		child->setParent(this);
-		m_children.push_back(child);
-	}
+	void addChild(ASTNode* child);
 
-	void addChild(std::string tag, ASTNode* child) {
-		if (child == nullptr) return;
-		child->setParent(this);
-		m_children.push_back(child);
-	}
+	void addChild(std::string tag, ASTNode* child);
 
 	bool m_resolved = false;
 
@@ -223,6 +215,11 @@ public:
 			child->resolve();
 		}
 	}
+
+	/**
+	 * Request a new ID.
+	 */
+	void newID();
 
 	ASTNode();
 	virtual ~ASTNode() { };

@@ -187,6 +187,8 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 		clone = new FunctionStmt(cloned_name, cloned_params, symtab()->clone());
 	}
 
+	clone->m_ID = m_ID;
+
 	clone->copyProperties(this);
 	clone->m_mangled = true;
 	

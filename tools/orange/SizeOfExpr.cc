@@ -103,12 +103,15 @@ void SizeOfExpr::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true;
 
-	if (m_expr) m_expr->resolve();
-	else if (m_type && m_type->isVariadicArray()) {
+	if (m_expr) { 
+		m_expr->newID();
+		m_expr->resolve();
+	} else if (m_type && m_type->isVariadicArray()) {
 		auto tp = m_type; 
 
 		while (tp->isArrayTy()) {
 			if (tp->isVariadicArray()) {
+				tp->getVariadicArrayElement()->newID();
 				tp->getVariadicArrayElement()->resolve();
 			}
 

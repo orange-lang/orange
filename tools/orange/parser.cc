@@ -558,23 +558,23 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   101,   101,   106,   107,   111,   112,   116,   117,   125,
-     126,   127,   128,   129,   130,   131,   132,   133,   134,   135,
-     136,   137,   141,   142,   146,   147,   148,   149,   150,   152,
-     153,   154,   155,   156,   157,   159,   160,   162,   163,   164,
-     166,   167,   169,   170,   171,   173,   175,   177,   178,   179,
-     183,   187,   188,   189,   190,   191,   192,   193,   194,   196,
-     197,   199,   200,   202,   203,   205,   210,   211,   215,   215,
-     220,   220,   227,   228,   232,   233,   234,   238,   245,   246,
-     250,   251,   255,   259,   255,   272,   276,   272,   280,   280,
-     289,   295,   309,   309,   320,   330,   330,   338,   338,   346,
-     346,   354,   354,   366,   371,   376,   383,   384,   385,   389,
-     403,   404,   405,   406,   410,   411,   415,   416,   419,   420,
-     424,   425,   429,   430,   431,   432,   435,   436,   440,   441,
-     442,   446,   447,   451,   452,   456,   457,   458,   459,   460,
-     461,   462,   463,   464,   465,   466,   467,   468,   469,   470,
-     474,   494,   505,   506,   507,   511,   512,   515,   516,   519,
-     520,   521
+       0,    99,    99,   104,   105,   109,   110,   114,   115,   123,
+     124,   125,   126,   127,   128,   129,   130,   131,   132,   133,
+     134,   135,   139,   140,   144,   145,   146,   147,   148,   150,
+     151,   152,   153,   154,   155,   157,   158,   160,   161,   162,
+     164,   165,   167,   168,   169,   171,   173,   175,   176,   177,
+     181,   185,   186,   187,   188,   189,   190,   191,   192,   194,
+     195,   197,   198,   200,   201,   203,   208,   209,   213,   213,
+     218,   218,   225,   226,   230,   231,   232,   236,   243,   244,
+     248,   249,   253,   257,   253,   270,   274,   270,   278,   278,
+     287,   293,   309,   309,   320,   331,   331,   339,   339,   347,
+     347,   355,   355,   367,   373,   379,   387,   388,   389,   393,
+     407,   408,   409,   410,   414,   415,   419,   420,   423,   424,
+     428,   429,   433,   434,   435,   436,   439,   440,   444,   445,
+     446,   450,   451,   455,   456,   460,   461,   462,   463,   464,
+     465,   466,   467,   468,   469,   470,   471,   472,   473,   474,
+     478,   498,   509,   510,   511,   515,   516,   519,   520,   523,
+     524,   525
 };
 #endif
 
@@ -1943,37 +1943,37 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 106 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 104 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyvsp[-1].block)->addStatement((yyvsp[0].node)); }
 #line 1949 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 4:
-#line 107 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 105 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.block) = GE::runner()->topBlock(); (yyval.block)->addStatement((yyvsp[0].node)); }
 #line 1955 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 5:
-#line 111 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 109 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.block) = (yyvsp[0].block); }
 #line 1961 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 6:
-#line 112 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 110 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.block) = GE::runner()->topBlock(); }
 #line 1967 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 7:
-#line 116 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 114 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = nullptr; }
 #line 1973 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 8:
-#line 117 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 115 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		if ((yyvsp[-1].arglist)->size() > 0) {
 			(yyvsp[-1].arglist)->push_back((yyvsp[-2].expr));
@@ -1986,361 +1986,361 @@ yyreduce:
     break;
 
   case 9:
-#line 125 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 123 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 1992 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 10:
-#line 126 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 124 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 1998 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 11:
-#line 127 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 125 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2004 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 12:
-#line 128 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 126 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2010 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 13:
-#line 129 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 127 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2016 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 14:
-#line 130 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 128 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2022 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 15:
-#line 131 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 129 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2028 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 16:
-#line 132 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 130 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2034 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 17:
-#line 133 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 131 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].node); }
 #line 2040 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 18:
-#line 134 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 132 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2046 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 19:
-#line 135 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 133 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2052 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 20:
-#line 136 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 134 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2058 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 21:
-#line 137 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 135 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.node) = (yyvsp[-1].stmt); }
 #line 2064 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 22:
-#line 141 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 139 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyvsp[0].arglist)->push_back((yyvsp[-1].expr)); (yyval.arglist) = (yyvsp[0].arglist); }
 #line 2070 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 23:
-#line 142 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 140 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.arglist) = new ArgList(); }
 #line 2076 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 24:
-#line 146 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 144 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2082 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 25:
-#line 147 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 145 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2088 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 26:
-#line 148 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 146 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2094 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 27:
-#line 149 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 147 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2100 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 28:
-#line 150 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 148 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2106 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 29:
-#line 152 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 150 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2112 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 30:
-#line 153 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 151 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2118 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 31:
-#line 154 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 152 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2124 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 32:
-#line 155 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 153 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2130 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 33:
-#line 156 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 154 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2136 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 34:
-#line 157 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 155 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2142 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 35:
-#line 159 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 157 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2148 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 36:
-#line 160 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 158 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2154 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 37:
-#line 162 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 160 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2160 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 38:
-#line 163 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 161 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2166 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 39:
-#line 164 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 162 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2172 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 40:
-#line 166 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 164 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2178 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 41:
-#line 167 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 165 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2184 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 42:
-#line 169 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 167 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2190 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 43:
-#line 170 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 168 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2196 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 44:
-#line 171 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 169 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new BinOpExpr((yyvsp[-2].expr), *(yyvsp[-1].strele), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2202 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 45:
-#line 173 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 171 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new TernaryExpr((yyvsp[-4].expr), (yyvsp[-2].expr), (yyvsp[0].expr)); SET_LOCATION((yyval.expr)); }
 #line 2208 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 46:
-#line 175 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 173 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new DotExpr(new AnyID(*(yyvsp[-2].str)), *(yyvsp[0].str)); }
 #line 2214 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 47:
-#line 177 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 175 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = (yyvsp[0].expr); }
 #line 2220 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 48:
-#line 178 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 176 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new CastExpr((yyvsp[-2].orangety), (yyvsp[0].expr)); }
 #line 2226 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 49:
-#line 179 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 177 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new AddressOfExpr((yyvsp[0].expr)); }
 #line 2232 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 50:
-#line 183 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 181 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = (yyvsp[0].expr); }
 #line 2238 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 51:
-#line 187 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 185 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = (yyvsp[-1].expr); SET_LOCATION((yyval.expr)); }
 #line 2244 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 52:
-#line 188 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 186 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = (yyvsp[0].expr); SET_LOCATION((yyval.expr)); }
 #line 2250 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 53:
-#line 189 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 187 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new StrVal(*(yyvsp[0].str)); }
 #line 2256 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 54:
-#line 190 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 188 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new AnyID(*(yyvsp[0].str)); SET_LOCATION((yyval.expr)); }
 #line 2262 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 55:
-#line 191 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 189 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new FuncCall(*(yyvsp[-3].str), *(yyvsp[-1].arglist)); SET_LOCATION((yyval.expr)); }
 #line 2268 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 56:
-#line 192 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 190 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new SizeOfExpr((yyvsp[-1].expr)); }
 #line 2274 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 57:
-#line 193 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 191 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new SizeOfExpr((yyvsp[-1].orangety)); }
 #line 2280 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 58:
-#line 194 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 192 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new NegativeExpr((yyvsp[0].expr)); }
 #line 2286 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 59:
-#line 196 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 194 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new IncrementExpr((yyvsp[-1].expr), *(yyvsp[0].strele), false); }
 #line 2292 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 60:
-#line 197 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 195 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new IncrementExpr((yyvsp[0].expr), *(yyvsp[-1].strele), true); }
 #line 2298 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 61:
-#line 199 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 197 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new IncrementExpr((yyvsp[-1].expr), *(yyvsp[0].strele), false); }
 #line 2304 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 62:
-#line 200 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 198 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new IncrementExpr((yyvsp[0].expr), *(yyvsp[-1].strele), true); }
 #line 2310 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 63:
-#line 202 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 200 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new ArrayExpr(*(yyvsp[-1].arglist)); }
 #line 2316 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 64:
-#line 203 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 201 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new ArrayAccess((yyvsp[-3].expr), (yyvsp[-1].expr)); }
 #line 2322 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 65:
-#line 205 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 203 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new DerefExpr((yyvsp[0].expr)); }
 #line 2328 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 66:
-#line 210 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 208 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new AnyID(*(yyvsp[0].str)); }
 #line 2334 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 67:
-#line 211 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 209 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.expr) = new ArrayAccess((yyvsp[-3].expr), (yyvsp[-1].expr)); }
 #line 2340 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 68:
-#line 215 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 213 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { 
 			SymTable *tab = new SymTable(nullptr, GE::runner()->symtab());
 			(yyval.stmt) = new FunctionStmt(*(yyvsp[-4].str), *(yyvsp[-2].paramlist), tab);
@@ -2350,13 +2350,13 @@ yyreduce:
     break;
 
   case 69:
-#line 219 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 217 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.stmt) = (yyvsp[-2].stmt); GE::runner()->popBlock(); SET_LOCATION((yyval.stmt)); }
 #line 2356 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 70:
-#line 220 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 218 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 			SymTable *tab = new SymTable(nullptr, GE::runner()->symtab());
 			(yyval.stmt) = new FunctionStmt(*(yyvsp[-6].str), (yyvsp[-1].orangety), *(yyvsp[-4].paramlist), tab);
@@ -2366,43 +2366,43 @@ yyreduce:
     break;
 
   case 71:
-#line 224 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 222 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.stmt) = (yyvsp[-2].stmt); GE::runner()->popBlock(); SET_LOCATION((yyval.stmt)); }
 #line 2372 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 72:
-#line 227 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 225 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.paramlist) = (yyvsp[0].paramlist); }
 #line 2378 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 73:
-#line 228 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 226 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.paramlist) = new ParamList(); }
 #line 2384 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 74:
-#line 232 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 230 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyvsp[-3].paramlist)->push_back(new VarExpr(*(yyvsp[0].str), (yyvsp[-1].orangety))); }
 #line 2390 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 75:
-#line 233 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 231 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyvsp[-2].paramlist)->setVarArg(true); }
 #line 2396 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 76:
-#line 234 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 232 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.paramlist) = new ParamList(); (yyval.paramlist)->push_back(new VarExpr(*(yyvsp[0].str), (yyvsp[-1].orangety))); }
 #line 2402 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 77:
-#line 239 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 237 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 	 		(yyval.stmt) = new ExternFunction((yyvsp[0].orangety), *(yyvsp[-5].str), *(yyvsp[-3].paramlist));
 	 	}
@@ -2410,31 +2410,31 @@ yyreduce:
     break;
 
   case 78:
-#line 245 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 243 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.arglist) = (yyvsp[0].arglist); }
 #line 2416 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 79:
-#line 246 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 244 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.arglist) = new ArgList(); }
 #line 2422 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 80:
-#line 250 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 248 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyvsp[-2].arglist)->push_back((yyvsp[0].expr)); }
 #line 2428 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 81:
-#line 251 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 249 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.arglist) = new ArgList(); (yyval.arglist)->push_back((yyvsp[0].expr)); }
 #line 2434 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 82:
-#line 255 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 253 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new CondBlock((yyvsp[-1].expr), tab);
@@ -2444,13 +2444,13 @@ yyreduce:
     break;
 
   case 83:
-#line 259 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 257 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { GE::runner()->popBlock(); }
 #line 2450 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 84:
-#line 259 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 257 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { 		
 		(yyval.stmt) = new IfStmts;
 
@@ -2465,7 +2465,7 @@ yyreduce:
     break;
 
   case 85:
-#line 272 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 270 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new CondBlock((yyvsp[-1].expr), tab);
@@ -2475,13 +2475,13 @@ yyreduce:
     break;
 
   case 86:
-#line 276 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 274 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { GE::runner()->popBlock(); }
 #line 2481 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 87:
-#line 276 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 274 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { 		
 		(yyvsp[0].blocklist)->insert((yyvsp[0].blocklist)->begin(), (CondBlock*)(yyvsp[-3].stmt));
 		(yyval.blocklist) = (yyvsp[0].blocklist);
@@ -2490,7 +2490,7 @@ yyreduce:
     break;
 
   case 88:
-#line 280 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 278 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new Block(tab);
@@ -2500,7 +2500,7 @@ yyreduce:
     break;
 
   case 89:
-#line 284 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 282 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		(yyval.blocklist) = new std::vector<Block*>;
 		(yyval.blocklist)->insert((yyval.blocklist)->begin(), (Block*)(yyvsp[-2].stmt));
@@ -2510,7 +2510,7 @@ yyreduce:
     break;
 
   case 90:
-#line 289 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 287 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		(yyval.blocklist) = new std::vector<Block*>;
 	}
@@ -2518,19 +2518,21 @@ yyreduce:
     break;
 
   case 91:
-#line 295 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 293 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable* tab = new SymTable(GE::runner()->symtab());
 		CondBlock* block = new CondBlock((yyvsp[0].expr), tab);
 		GE::runner()->pushBlock(block);
 
 		block->addStatement((yyvsp[-2].node));
+		(yyvsp[-2].node)->newID();
+
 		(yyval.stmt) = new IfStmts;
 		((IfStmts *)(yyval.stmt))->addBlock(block); 
 
 		GE::runner()->popBlock();
 	}
-#line 2534 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2536 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 92:
@@ -2540,7 +2542,7 @@ yyreduce:
 		(yyval.stmt) = new CondBlock((yyvsp[-1].expr), tab, true);
 		GE::runner()->pushBlock((CondBlock *)(yyval.stmt));
 	}
-#line 2544 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2546 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 93:
@@ -2550,7 +2552,7 @@ yyreduce:
 		((IfStmts *)(yyval.stmt))->addBlock((CondBlock*)(yyvsp[-2].stmt)); 
 		SET_LOCATION((yyval.stmt));
 	}
-#line 2554 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2556 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 94:
@@ -2559,139 +2561,143 @@ yyreduce:
 		SymTable* tab = new SymTable(GE::runner()->symtab());
 		CondBlock* block = new CondBlock((yyvsp[0].expr), tab, true);
 		block->addStatement((yyvsp[-2].node));
+		(yyvsp[-2].node)->newID();
 		(yyval.stmt) = new IfStmts;
 		((IfStmts *)(yyval.stmt))->addBlock(block); 
 	}
-#line 2566 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2569 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 95:
-#line 330 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 331 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new Loop((yyvsp[-6].node), (yyvsp[-4].expr), (yyvsp[-2].expr), tab);
 		GE::runner()->pushBlock((Loop *)(yyval.stmt));
 	}
-#line 2576 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2579 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 96:
-#line 334 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 335 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		(yyval.stmt) = (Loop *)(yyvsp[-2].stmt);
 		GE::runner()->popBlock();
 	}
-#line 2585 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2588 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 97:
-#line 338 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 339 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new Loop((yyvsp[-1].expr), false, tab);
 		GE::runner()->pushBlock((Loop *)(yyval.stmt));		
 	}
-#line 2595 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2598 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 98:
-#line 342 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 343 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		(yyval.stmt) = (Loop *)(yyvsp[-2].stmt);
 		GE::runner()->popBlock();
 	}
-#line 2604 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2607 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 99:
-#line 346 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 347 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new Loop(tab);
 		GE::runner()->pushBlock((Loop *)(yyval.stmt));				
 	}
-#line 2614 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2617 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 100:
-#line 350 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 351 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		(yyval.stmt) = (Loop *)(yyvsp[-2].stmt);
 		GE::runner()->popBlock();
 	}
-#line 2623 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2626 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 101:
-#line 354 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 355 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new Loop(nullptr, true, tab);
 		GE::runner()->pushBlock((Loop *)(yyval.stmt));				
 	}
-#line 2633 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2636 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 102:
-#line 358 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 359 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		(yyval.stmt) = (Loop *)(yyvsp[-4].stmt);
 		((Loop *)(yyval.stmt))->setCondition((yyvsp[0].expr));
 		GE::runner()->popBlock();
 	}
-#line 2643 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2646 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 103:
-#line 366 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 367 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new Loop((yyvsp[-5].node), (yyvsp[-3].expr), (yyvsp[-1].expr), tab);
-		((Loop *)(yyval.stmt))->addStatement((yyvsp[-8].node));		
+		((Loop *)(yyval.stmt))->addStatement((yyvsp[-8].node));
+		(yyvsp[-8].node)->newID();
 	}
-#line 2653 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2657 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 104:
-#line 371 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 373 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new Loop((yyvsp[0].expr), false, tab);
 		((Loop *)(yyval.stmt))->addStatement((yyvsp[-2].node));				
+		(yyvsp[-2].node)->newID();
 	}
-#line 2663 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2668 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 105:
-#line 376 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 379 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		SymTable *tab = new SymTable(GE::runner()->symtab());
 		(yyval.stmt) = new Loop(tab);
 		((Loop *)(yyval.stmt))->addStatement((yyvsp[-1].node));
+		(yyvsp[-1].node)->newID();
 	}
-#line 2673 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
-    break;
-
-  case 106:
-#line 383 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.stmt) = new LoopSkip(true); }
 #line 2679 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 107:
-#line 384 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+  case 106:
+#line 387 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.stmt) = new LoopSkip(true); }
 #line 2685 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 108:
-#line 385 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.stmt) = new LoopSkip(false); }
+  case 107:
+#line 388 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.stmt) = new LoopSkip(true); }
 #line 2691 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 109:
+  case 108:
 #line 389 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.stmt) = new LoopSkip(false); }
+#line 2697 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+    break;
+
+  case 109:
+#line 393 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     {
 		EnumStmt* enumStmt = new EnumStmt(*(yyvsp[-3].str));
 		for (auto pair : *(yyvsp[-1].enumlist)) {
@@ -2704,149 +2710,149 @@ yyreduce:
 
 		(yyval.stmt) = (Statement *)enumStmt;
 	}
-#line 2708 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
-    break;
-
-  case 110:
-#line 403 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyvsp[-2].enumlist)->push_back(EnumPair(*(yyvsp[-1].str))); }
 #line 2714 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 111:
-#line 404 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyvsp[-4].enumlist)->push_back(EnumPair(*(yyvsp[-3].str), (BaseVal*)(yyvsp[-1].expr))); }
+  case 110:
+#line 407 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyvsp[-2].enumlist)->push_back(EnumPair(*(yyvsp[-1].str))); }
 #line 2720 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 112:
-#line 405 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.enumlist) = new std::vector<EnumPair>; (yyval.enumlist)->push_back(EnumPair(*(yyvsp[-1].str))); }
+  case 111:
+#line 408 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyvsp[-4].enumlist)->push_back(EnumPair(*(yyvsp[-3].str), (BaseVal*)(yyvsp[-1].expr))); }
 #line 2726 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 113:
-#line 406 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.enumlist) = new std::vector<EnumPair>; (yyval.enumlist)->push_back(EnumPair(*(yyvsp[-3].str), (BaseVal*)(yyvsp[-1].expr))); }
+  case 112:
+#line 409 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.enumlist) = new std::vector<EnumPair>; (yyval.enumlist)->push_back(EnumPair(*(yyvsp[-1].str))); }
 #line 2732 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 114:
+  case 113:
 #line 410 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[0].stmt); }
+    { (yyval.enumlist) = new std::vector<EnumPair>; (yyval.enumlist)->push_back(EnumPair(*(yyvsp[-3].str), (BaseVal*)(yyvsp[-1].expr))); }
 #line 2738 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 115:
-#line 411 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[0].expr); }
+  case 114:
+#line 414 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[0].stmt); }
 #line 2744 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 116:
+  case 115:
 #line 415 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.expr) = (yyvsp[0].expr); }
+    { (yyval.node) = (yyvsp[0].expr); }
 #line 2750 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 117:
-#line 416 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.expr) = nullptr; }
+  case 116:
+#line 419 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.expr) = (yyvsp[0].expr); }
 #line 2756 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 118:
-#line 419 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.stmt) = new ExplicitDeclStmt(new VarExpr(*(yyvsp[-1].str), (yyvsp[-2].orangety)), *(yyvsp[0].declpairlist)); }
+  case 117:
+#line 420 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.expr) = nullptr; }
 #line 2762 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 119:
-#line 420 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.stmt) = new ExplicitDeclStmt(new VarExpr(*(yyvsp[-3].str), (yyvsp[-4].orangety)), (yyvsp[-1].expr), *(yyvsp[0].declpairlist)); }
+  case 118:
+#line 423 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.stmt) = new ExplicitDeclStmt(new VarExpr(*(yyvsp[-1].str), (yyvsp[-2].orangety)), *(yyvsp[0].declpairlist)); }
 #line 2768 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 120:
+  case 119:
 #line 424 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.declpairlist) = (yyvsp[0].declpairlist); }
+    { (yyval.stmt) = new ExplicitDeclStmt(new VarExpr(*(yyvsp[-3].str), (yyvsp[-4].orangety)), (yyvsp[-1].expr), *(yyvsp[0].declpairlist)); }
 #line 2774 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 121:
-#line 425 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.declpairlist) = new std::vector<DeclPair>(); }
+  case 120:
+#line 428 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.declpairlist) = (yyvsp[0].declpairlist); }
 #line 2780 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 122:
+  case 121:
 #line 429 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyvsp[0].declpairlist)->push_back(DeclPair(*(yyvsp[-2].str), nullptr)); }
+    { (yyval.declpairlist) = new std::vector<DeclPair>(); }
 #line 2786 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 123:
-#line 430 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyvsp[0].declpairlist)->push_back(DeclPair(*(yyvsp[-4].str), (yyvsp[-2].expr))); }
+  case 122:
+#line 433 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyvsp[0].declpairlist)->push_back(DeclPair(*(yyvsp[-2].str), nullptr)); }
 #line 2792 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 124:
-#line 431 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.declpairlist) = new std::vector<DeclPair>(); (yyval.declpairlist)->push_back(DeclPair(*(yyvsp[0].str), nullptr)); }
+  case 123:
+#line 434 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyvsp[0].declpairlist)->push_back(DeclPair(*(yyvsp[-4].str), (yyvsp[-2].expr))); }
 #line 2798 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 125:
-#line 432 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.declpairlist) = new std::vector<DeclPair>(); (yyval.declpairlist)->push_back(DeclPair(*(yyvsp[-2].str), (yyvsp[0].expr))); }
+  case 124:
+#line 435 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.declpairlist) = new std::vector<DeclPair>(); (yyval.declpairlist)->push_back(DeclPair(*(yyvsp[0].str), nullptr)); }
 #line 2804 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 126:
-#line 435 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.node) = new ExplicitDeclStmt(new VarExpr(*(yyvsp[-2].str), (yyvsp[-3].orangety), true), (yyvsp[0].expr)); }
+  case 125:
+#line 436 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.declpairlist) = new std::vector<DeclPair>(); (yyval.declpairlist)->push_back(DeclPair(*(yyvsp[-2].str), (yyvsp[0].expr))); }
 #line 2810 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 127:
-#line 436 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.node) = new BinOpExpr(new VarExpr(*(yyvsp[-2].str), true), "=", (yyvsp[0].expr)); }
+  case 126:
+#line 439 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.node) = new ExplicitDeclStmt(new VarExpr(*(yyvsp[-2].str), (yyvsp[-3].orangety), true), (yyvsp[0].expr)); }
 #line 2816 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 128:
+  case 127:
 #line 440 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[0].stmt); }
+    { (yyval.node) = new BinOpExpr(new VarExpr(*(yyvsp[-2].str), true), "=", (yyvsp[0].expr)); }
 #line 2822 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 129:
-#line 441 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[0].expr); }
+  case 128:
+#line 444 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[0].stmt); }
 #line 2828 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 130:
-#line 442 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.node) = (yyvsp[0].stmt); }
+  case 129:
+#line 445 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.node) = (yyvsp[0].expr); }
 #line 2834 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 131:
+  case 130:
 #line 446 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.stmt) = new ReturnStmt(); SET_LOCATION((yyval.stmt)); }
+    { (yyval.node) = (yyvsp[0].stmt); }
 #line 2840 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 132:
-#line 447 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.stmt) = new ReturnStmt((yyvsp[0].expr)); SET_LOCATION((yyval.stmt)); }
+  case 131:
+#line 450 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.stmt) = new ReturnStmt(); SET_LOCATION((yyval.stmt)); }
 #line 2846 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
+  case 132:
+#line 451 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.stmt) = new ReturnStmt((yyvsp[0].expr)); SET_LOCATION((yyval.stmt)); }
+#line 2852 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+    break;
+
   case 150:
-#line 474 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 478 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { 
 		(yyval.orangety) = OrangeTy::get(*(yyvsp[-2].str));
 
@@ -2864,11 +2870,11 @@ yyreduce:
 			}
 		}
 	}
-#line 2868 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+#line 2874 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
   case 151:
-#line 494 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+#line 498 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { 
 		(yyval.orangety) = OrangeTy::get(*(yyvsp[-1].str));
 		
@@ -2877,59 +2883,59 @@ yyreduce:
 			(yyval.orangety) = (yyval.orangety)->getPointerTo();
 		}
 	}
-#line 2881 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
-    break;
-
-  case 152:
-#line 505 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.number)++; }
 #line 2887 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 153:
-#line 506 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+  case 152:
+#line 509 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
     { (yyval.number)++; }
 #line 2893 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 154:
-#line 507 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.number) = 0; }
+  case 153:
+#line 510 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.number)++; }
 #line 2899 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 157:
-#line 515 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyvsp[-3].exprlist)->push_back((yyvsp[-1].expr)); }
+  case 154:
+#line 511 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.number) = 0; }
 #line 2905 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 158:
-#line 516 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.exprlist) = new std::vector<Expression *>(); }
+  case 157:
+#line 519 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyvsp[-3].exprlist)->push_back((yyvsp[-1].expr)); }
 #line 2911 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 159:
-#line 519 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.number)++; }
+  case 158:
+#line 520 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.exprlist) = new std::vector<Expression *>(); }
 #line 2917 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 160:
-#line 520 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.number) = 0; }
+  case 159:
+#line 523 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.number)++; }
 #line 2923 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
-  case 161:
-#line 521 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.number) = 1; }
+  case 160:
+#line 524 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.number) = 0; }
 #line 2929 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 
+  case 161:
+#line 525 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
+    { (yyval.number) = 1; }
+#line 2935 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+    break;
 
-#line 2933 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
+
+#line 2939 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -3164,5 +3170,5 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 524 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1906  */
+#line 528 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1906  */
 

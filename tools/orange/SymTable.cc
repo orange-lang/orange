@@ -43,31 +43,21 @@ ASTNode* SymTable::get(std::string name) {
 }
 
 bool SymTable::nodeValidFrom(ASTNode* node, ASTNode* from) {
-	auto siblings = from->siblings();
-	unsigned int fromPos = 0;
-
-	for (unsigned int i = 0; i < siblings.size(); i++) {
-		if (siblings[i] == from) {
-			fromPos = i;
-			break;
-		}
-	}
-
-	// Look at the siblings after fromPos. If any of them 
-	// contain node, then we're invalid.
-	for (auto i = fromPos; i < siblings.size(); i++) {
-		auto sibling = siblings[i];
-		if (sibling->contains(node)) {
-			return false;
-		}
-	}
-
-	return true;
+	return node->ID() < from->ID();
 }
 
 
 ASTNode* SymTable::find(std::string name, ASTNode* from) {
+	std::cout << "Things in SymTable:\n";
+	for (auto kvp : m_objs) {
+		std::cout << "\t" << kvp.first << std::endl;
+	}
+
+	std::cout << "Find " << name << std::endl;
+
 	auto it = m_objs.find(name); 
+
+	std::cout << (it == m_objs.end()) << std::endl;
 
 	// return null if it doesn't exist 
 	if (it == m_objs.end() || nodeValidFrom(it->second, from) == false) {

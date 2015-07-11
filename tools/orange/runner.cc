@@ -116,6 +116,8 @@ void Runner::compile() {
 		yyonce = 0; // reset yyonce
 		yyin = file; // give flex the file
 		yyparse(); // and do our parse.
+		
+		mainFunction()->newID();
 
 		// Analysis pass 
 		mainFunction()->initialize();
