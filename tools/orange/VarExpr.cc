@@ -9,27 +9,8 @@
 #include <orange/VarExpr.h>
 #include <orange/generator.h>
 
-VarExpr* VarExpr::symtabVar() {
-	SymTable* tab = GE::runner()->topBlock()->symtab();
-	ASTNode* tabVar = tab->find(m_name, this);
-	return tabVar ? (VarExpr*)tabVar : this; 
-}
-
 
 Value* VarExpr::Codegen() {
-	// "Generating" a variable doesn't actually do anything; 
-	// its creation is handled by other classes like BinOpExpr.
-	m_value = getValue();
-
-	if (m_value == nullptr) {
-		throw CompilerMessage(*this, "No value determined for " + m_name);
-	}
-
-	return m_value; 
-}
-
-Value* VarExpr::getValue() {
-
 	return m_value;
 }
 

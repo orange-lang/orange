@@ -52,8 +52,6 @@ public:
 
 	virtual void setType(OrangeTy* type);
 
-	virtual Value* getValue();
-
 	virtual void resolve();
 
 	virtual bool isSigned() { return getType()->isSigned(); }
