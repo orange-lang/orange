@@ -37,28 +37,6 @@ std::string VarExpr::string() {
 	return "(" + getType()->string() + ")" + m_name; 
 }
 
-OrangeTy* VarExpr::getType() {
-	// If we've been assigned a value, we'll return that, otherwise 
-	// we'll return the default type from ASTNode.	
-	if (m_type && m_type->isVoidTy() == false) {
-		return m_type; 
-	} 
-
-	if (ASTNode* node = GE::runner()->topBlock()->symtab()->find(m_name, this)) {
-		if (node->getClass() != getClass()) {
-			throw std::runtime_error(node->string() + " is not a variable!");
-		}
-
-		VarExpr* nodeExpr = (VarExpr*)node;
-
-		if (nodeExpr != this) {
-			return nodeExpr->m_type ? nodeExpr->m_type : nodeExpr->getType();
-		}
-	} 
-
-	return ASTNode::getType();
-}
-
 void VarExpr::setType(OrangeTy* type) {
 	m_type = type;
 }

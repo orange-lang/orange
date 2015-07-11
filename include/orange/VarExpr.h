@@ -50,8 +50,6 @@ public:
 
 	virtual std::string string();
 
-	virtual OrangeTy* getType();
-
 	virtual void setType(OrangeTy* type);
 
 	virtual Value* getValue();
