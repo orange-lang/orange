@@ -135,7 +135,7 @@ void FuncCall::resolve() {
 	m_type = function->getType();
 
 	if (m_type == nullptr) {
-		throw CompilerMessage(*this, "Too soon to have a recursive function; no return type determined yet.");
+		throw CompilerMessage(*this, "Ambiguous return type");
 	}
 }
 
