@@ -71,6 +71,9 @@ Value* ReturnStmt::Codegen() {
 
 void ReturnStmt::resolve() {
 	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
 	
 	if (m_expr) m_type = m_expr->getType();
 	else m_type = VoidTy::get();

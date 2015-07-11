@@ -13,14 +13,6 @@
 
 class SymTable {
 private:
-	struct SymObj {
-		ASTNode* node = nullptr;  
-		bool active = false;
-
-		SymObj() {}
-		SymObj(ASTNode* node, bool active) : node(node), active(active) {}
-	};
-
 	SymTable* m_parent = nullptr; 
 
 	/** 
@@ -41,11 +33,13 @@ private:
 	 */
 	ASTNode *m_structure = nullptr;
 
-	std::map<std::string, SymObj *> m_objs;
+	std::map<std::string, ASTNode *> m_objs;
 
 	int m_ID = 0; 
 
 	bool m_root = false;
+
+	bool nodeValidFrom(ASTNode* node, ASTNode* from);
 public:
 	/**
 	 * Gets the parent symbol table of this one. 
@@ -103,7 +97,7 @@ public:
 	 *
 	 * @return The ASTNode in this symbol table tree.
 	 */
-	ASTNode* find(std::string name, bool includeInactive = false);
+	ASTNode* find(std::string name, ASTNode* from);
 
 	/** 
 	 * Finds an ASTNode in this tree by name, if it exists.
@@ -113,19 +107,7 @@ public:
 	 *
 	 * @return The ASTNode in this symbol table tree.
 	 */
-	ASTNode* findFromAny(std::string name, bool includeInactive = false);
-
-	/** 
-	 * Activates an object in the symbol table by name and node.
-	 * Both name and node must match for an object to be activated.
-	 * @return True if an object was activated, false otherwise.
-	 */
-	bool activate(std::string name, ASTNode* node);
-
-	/** 
-	 * Resets all objects to being inactive.
-	 */
-	void reset();
+	ASTNode* findFromAny(std::string name, ASTNode* from);
 
 	/**
 	 * Finds the closest ASTNode of a certain class.

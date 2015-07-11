@@ -40,6 +40,9 @@ ASTNode* DotExpr::clone() {
 void DotExpr::resolve() {
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	if (m_LHS->expression()->getClass() != "EnumStmt") {
 		throw CompilerMessage(*this, ". only supports enums!");
 	}

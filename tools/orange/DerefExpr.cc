@@ -37,6 +37,9 @@ ASTNode* DerefExpr::clone() {
 void DerefExpr::resolve() {
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	m_type = m_expr->getType();
 
 	if (m_type->isPointerTy()) {

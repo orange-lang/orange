@@ -27,6 +27,9 @@ ASTNode* AddressOfExpr::clone() {
 void AddressOfExpr::resolve() { 
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	if (m_expr->returnsPtr() == false) {
 		throw CompilerMessage(*m_expr, "can not get the address of this expression"); 
 	}

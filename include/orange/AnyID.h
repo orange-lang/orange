@@ -50,11 +50,6 @@ public:
 
 	virtual Expression* expression(); 
 
-	/**
-	 * Creates a new VarExpr and sets it as the m_any_expr.
-	 */
-	virtual void newVarExpr(); 
-
 	AnyID(std::string name);
 };
 

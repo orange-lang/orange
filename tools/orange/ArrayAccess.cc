@@ -61,6 +61,9 @@ std::string ArrayAccess::string() {
 void ArrayAccess::resolve() {
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	// m_variable must be an array or pointer! 
 	if (m_variable->getType()->isArrayTy() == false && m_variable->getType()->isPointerTy() == false) {
 		throw CompilerMessage(*m_variable, "variable must be an array!");

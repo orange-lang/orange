@@ -54,6 +54,9 @@ OrangeTy* AnyID::getType() {
 }
 
 void AnyID::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	// In the resolve step, we want to actually determine 
 	// what object we're using. If it exists in the symbol 
 	// table, we use that one. Otherwise, we create our own 
@@ -64,16 +67,14 @@ void AnyID::resolve() {
 	// every instance of an id that is a variable to have a different 
 	// VarExpr instance.
 	SymTable* tab = GE::runner()->topBlock()->symtab();
-	ASTNode* node = tab->find(m_name);
+	ASTNode* node = tab->find(m_name, this);
 
-	if (node != nullptr && node->getClass() != "VarExpr") {
+	if (node != nullptr) {
 		m_any_expr = (Expression *)node; 
 		addChild("m_any_expr", m_any_expr);
+		m_any_expr->copyProperties(this);
 	} else {
-		// Otherwise, we have to create something it should default to a VarExpr.
-		m_any_expr = new VarExpr(m_name);
-		addChild("m_any_expr", m_any_expr);
-		ASTNode::resolve();
+		throw CompilerMessage(*this, m_name + " doesn't exist in this scope.");
 	}
 }
 
@@ -93,13 +94,6 @@ bool AnyID::isConstant() {
 Expression* AnyID::expression() {
 	ensureValid();
 	return m_any_expr;
-}
-
-void AnyID::newVarExpr() {
-	m_any_expr = new VarExpr(m_name);
-
-	addChild("m_any_expr", m_any_expr);
-	ASTNode::resolve();
 }
 
 AnyID::AnyID(std::string name) {

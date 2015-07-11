@@ -207,7 +207,7 @@ primary
 	;
 
 opt_array
-	: TYPE_ID { $$ = new VarExpr(*$1); }
+	: TYPE_ID { $$ = new AnyID(*$1); }
 	| opt_array OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccess($1, $3); }
 	;
 

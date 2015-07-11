@@ -87,6 +87,10 @@ bool ExplicitDeclStmt::isSigned() {
 
 void ExplicitDeclStmt::resolve() {
 	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	m_var->create();
 
 	if (m_var->getType()->isVoidTy()) {
@@ -98,12 +102,15 @@ void ExplicitDeclStmt::resolve() {
 		m_var->resolve(); 
 	} 
 
+	m_var->getType()->resolve();
+
 	if (m_var->getType()->isVariadicArray() && m_expr) {
 		throw CompilerMessage(*m_var, "Variable-sized arrays may not be initialized");
 	}
 
 	for (auto pair : m_extras) {
 		pair.var->create();
+		pair.var->getType()->resolve();
 		
 		if (pair.var->getType()->isVoidTy()) {
 			throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");

@@ -51,7 +51,7 @@ ASTNode* CondBlock::clone() {
 
 void CondBlock::resolve() {
 	pushBlock();
-	ASTNode::resolve();
+	m_condition->resolve();
 	popBlock();
 	
 	Block::resolve();

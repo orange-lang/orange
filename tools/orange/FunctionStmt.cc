@@ -261,19 +261,6 @@ std::vector<ReturnStmt *> allReturnStmts(ASTNode* root) {
 }
 
 Value* FunctionStmt::Codegen() {
-	// Activate ourself in the parent symtab.
-	if (symtab()->container() != nullptr) {
-		bool activated = symtab()->container()->activate(m_orig_name, this);
-		
-		if (activated == false) {
-			throw std::runtime_error("fatal: could not activate " + m_name);
-		}
-	}
-	
-	// Activate ourself.
-	// We don't want to reset the symbol table here; it is not necessary for functions.
-	symtab()->activate(m_orig_name, this);
-
 	// Check to see if we're a generic function. 
 	// If we are, we only should generate our clones since we're incomplete. 
 	if (isGeneric()) {
@@ -469,6 +456,9 @@ BasicBlock* FunctionStmt::createBasicBlock(std::string name) {
 
 
 void FunctionStmt::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	// If we don't exist in the parent symtab, add us as a reference.
 	// If the parent doesn't exist, we're in the global block, so 
 	// nothing could call is anyway.
@@ -511,7 +501,6 @@ void FunctionStmt::resolve() {
 	for (auto param : m_parameters) {
 		param->create();
 	}
-
 
 	Block::resolve();
 

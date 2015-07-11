@@ -80,9 +80,6 @@ bool Loop::isForeverLoop() const {
 }
 
 Value* Loop::Codegen() {
-	// Reset the symbol table.
-	symtab()->reset();
-
 	// First, we create our blocks.
 	m_condition_block    = getContainingFunction()->createBasicBlock("condition");
 	m_body_block         = getContainingFunction()->createBasicBlock("body");

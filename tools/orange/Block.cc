@@ -62,8 +62,6 @@ Value* Block::Codegen() {
 
 	GE::runner()->pushBlock(this);
 
-	m_symtab->reset();
-
 	generateStatements();
 
 	GE::runner()->popBlock();

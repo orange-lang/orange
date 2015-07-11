@@ -102,6 +102,9 @@ ASTNode* ArrayExpr::clone() {
 void ArrayExpr::resolve() {
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	// If we don't have any elements, we're an int*. 
 	if (m_elements.size() == 0) {
 		m_type = IntTy::getSigned(64)->getPointerTo();

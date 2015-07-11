@@ -39,6 +39,10 @@ Value* NegativeExpr::Codegen() {
 
 void NegativeExpr::resolve() {
 	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	m_type = m_expr->getType();
 }
 

@@ -201,7 +201,7 @@ Value* BinOpExpr::Codegen() {
 	Value* OrigRHS = RHS; 
 
 	if (m_op == "=" && LHS == nullptr) {
-		throw CompilerMessage(*m_LHS, m_LHS->string() + " doesn't exist!");
+		throw CompilerMessage(*m_LHS, m_LHS->string() + " never created in this scope.");
 	}
 
 	// Validate should never return false, since it throws an exception any time it encounters 
@@ -331,6 +331,9 @@ std::string BinOpExpr::string() {
 
 void BinOpExpr::resolve() {
 	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
 
 	if (m_op == "=" && isVarExpr(m_LHS)) {
 		// Set the type of LHS if it doesn't exist or this type has higher precedence. 

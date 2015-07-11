@@ -59,6 +59,9 @@ ASTNode* IncrementExpr::clone() {
 void IncrementExpr::resolve() {
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	if (m_expr->returnsPtr() == false) {
 		throw CompilerMessage(*m_expr, "expression must be a variable or a memory location!");
 	}

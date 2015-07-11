@@ -10,9 +10,6 @@
 #include <orange/generator.h>
 
 Value* EnumStmt::Codegen() {
-	// Reactivate us in the symbol table.
-	GE::runner()->topBlock()->symtab()->activate(m_name, this);
-
 	return nullptr;
 }
 
@@ -37,6 +34,9 @@ std::string EnumStmt::string() {
 }
 
 void EnumStmt::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	if (m_enums.size() == 0) {
 		m_type = VoidTy::get();
 	} else {
@@ -64,9 +64,6 @@ void EnumStmt::resolve() {
 	if (tab->create(m_name, this) == false) {
 		throw CompilerMessage(*this, "Something named " + m_name + " already exists!");
 	}
-
-
-
 }
 
 void EnumStmt::addEnum(std::string name) {

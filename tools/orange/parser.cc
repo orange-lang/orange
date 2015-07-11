@@ -2329,7 +2329,7 @@ yyreduce:
 
   case 66:
 #line 210 "/Users/robert/dev/orange/tools/orange/parser.y" /* yacc.c:1661  */
-    { (yyval.expr) = new VarExpr(*(yyvsp[0].str)); }
+    { (yyval.expr) = new AnyID(*(yyvsp[0].str)); }
 #line 2334 "/Users/robert/dev/orange/tools/orange/parser.cc" /* yacc.c:1661  */
     break;
 

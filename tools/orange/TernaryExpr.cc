@@ -91,6 +91,9 @@ ASTNode* TernaryExpr::clone() {
 void TernaryExpr::resolve() { 
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	// If the true and false expr types aren't compatible with one another, throw an error
 	if (CastingEngine::AreTypesCompatible(m_true_expr->getType(), m_false_expr->getType()) == false) {
 		std::string errorStr = "Types "; 

@@ -47,8 +47,6 @@ ExternFunction::ExternFunction(OrangeTy* returnType, std::string name, ParamList
 }
 
 Value* ExternFunction::Codegen() {
-	GE::runner()->symtab()->activate(m_name, this);
-
 	std::vector<Type*> Args;
 
 	for (auto param : m_parameters) {
@@ -64,6 +62,9 @@ Value* ExternFunction::Codegen() {
 }
 
 void ExternFunction::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	bool added = GE::runner()->symtab()->create(m_name, this);
 	if (added == false) {
 		std::string s = "A function called " + m_name + " already exists!";
