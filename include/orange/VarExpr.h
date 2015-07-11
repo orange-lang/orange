@@ -63,7 +63,7 @@ public:
 	/**
 	 * Tries to create this variable in the symbol table.
 	 */
-	virtual void create(); 
+	virtual void initialize(); 
 
 	/**
 	 * Returns whether or not this variable exists in a parent.

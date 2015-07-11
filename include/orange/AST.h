@@ -204,6 +204,12 @@ public:
 
 	virtual std::string dump();
 
+	virtual void initialize() {
+		for (auto child : m_children) {
+			child->initialize();
+		}
+	}
+
 	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 
 	 * will only ever excecute once, to avoid unnecessary duplication of code.

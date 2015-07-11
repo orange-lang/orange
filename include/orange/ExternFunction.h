@@ -30,6 +30,8 @@ public:
 		return clone; 
 	}
 
+	virtual void initialize();
+
 	virtual void resolve();
 
 	virtual bool isSigned() { return m_type->isSigned(); }

@@ -205,6 +205,12 @@ ASTNode* Loop::clone() {
 	return cloneLoop;
 }
 
+void Loop::initialize() {
+	pushBlock();
+	ASTNode::initialize();
+	popBlock();
+}
+
 void Loop::resolve() {
 	// As with all things that inherit from block, we need to push our symtab first.
 	GE::runner()->pushBlock(this);

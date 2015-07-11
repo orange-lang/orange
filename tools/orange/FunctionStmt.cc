@@ -217,6 +217,7 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 		}
 	}
 
+	clone->initialize();
 	clone->copyProperties(this);
 	return clone;
 }
@@ -454,6 +455,19 @@ BasicBlock* FunctionStmt::createBasicBlock(std::string name) {
 	return BasicBlock::Create(GE::runner()->context(), name, llvmFunction, getBlockEnd());
 }
 
+void FunctionStmt::initialize() {
+	if (isGeneric()) return;
+
+	pushBlock();
+	
+	for (auto param : m_parameters) {
+		param->initialize(); 
+	}
+
+	Block::initialize();
+
+	popBlock();
+}
 
 void FunctionStmt::resolve() {
 	if (m_resolved) return; 
@@ -498,10 +512,6 @@ void FunctionStmt::resolve() {
 	// Push our symtab into the stack and add our parameters to the symbol table.
 	GE::runner()->pushBlock(this);
 	
-	for (auto param : m_parameters) {
-		param->create();
-	}
-
 	Block::resolve();
 
 	if (m_type_set == false) {

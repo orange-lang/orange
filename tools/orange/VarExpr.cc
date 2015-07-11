@@ -47,7 +47,7 @@ void VarExpr::resolve() {
 	}
 }
 
-void VarExpr::create() {
+void VarExpr::initialize() {
 	// Tries to add this variable to the symbol table.
 	// If it already exists in the symbol table, and it's not this, throw an error.
 	SymTable* tab = GE::runner()->topBlock()->symtab();

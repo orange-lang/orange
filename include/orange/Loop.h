@@ -162,6 +162,8 @@ public:
 
 	virtual ASTNode* clone();
 
+	virtual void initialize();
+
 	virtual void resolve();
 
 	/**

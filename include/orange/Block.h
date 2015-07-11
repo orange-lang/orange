@@ -109,6 +109,8 @@ public:
 
 	virtual std::string string();
 
+	void initialize();
+
 	/**
 	 * This will resolve every statement added to this block.
 	 */

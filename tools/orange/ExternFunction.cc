@@ -61,6 +61,10 @@ Value* ExternFunction::Codegen() {
 	return m_value; 
 }
 
+void ExternFunction::initialize() {
+	// don't do anything
+}
+
 void ExternFunction::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true;

@@ -118,9 +118,14 @@ void Runner::compile() {
 		yyparse(); // and do our parse.
 
 		// Analysis pass 
+		mainFunction()->initialize();
 		mainFunction()->resolve();
 
 		if (hasError()) {
+			if (debug()) {
+				std::cout << mainFunction()->dump() << std::endl;
+			}
+
 			m_result->finish(false, m_messages);
 			return;
 		}
@@ -137,7 +142,7 @@ void Runner::compile() {
 			return;
 		}
 
-		if (debug())
+		if (debug()) 
 			m_module->dump();
 
 		optimizeModule();

@@ -126,6 +126,8 @@ public:
 	 */
 	BasicBlock* createBasicBlock(std::string name);
 
+	virtual void initialize();
+
 	/** 
 	 * Gets the parent symbol table, if there is one. 
 	 * If there is a parent symbol table, adds this to the 

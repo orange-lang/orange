@@ -91,7 +91,7 @@ void ExplicitDeclStmt::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true;
 
-	m_var->create();
+	//m_var->create();
 
 	if (m_var->getType()->isVoidTy()) {
 		throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");
@@ -109,7 +109,7 @@ void ExplicitDeclStmt::resolve() {
 	}
 
 	for (auto pair : m_extras) {
-		pair.var->create();
+		//pair.var->create();
 		pair.var->getType()->resolve();
 		
 		if (pair.var->getType()->isVoidTy()) {
@@ -159,6 +159,7 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var) {
 	}
 
 	m_var = var;
+	addChild("m_var", m_var);
 }
 
 ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, std::vector<DeclPair> extras) {
@@ -167,11 +168,20 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, std::vector<DeclPair> extras) {
 	}
 
 	m_var = var;
+	addChild("m_var", m_var);
 
 	auto typeForExtras = m_var->getType();
 
 	for (auto pair : extras) {
-		m_extras.push_back(DeclPairInternal(new VarExpr(pair.name, typeForExtras), pair.expression));
+		auto newVar = new VarExpr(pair.name, typeForExtras); 
+
+		addChild(newVar);
+
+		if (pair.expression) {
+			addChild(pair.expression);
+		}
+
+		m_extras.push_back(DeclPairInternal(newVar, pair.expression));
 	}	
 }
 
@@ -187,6 +197,9 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value) {
 
 	m_var = var;
 	m_expr = value; 
+
+	addChild("m_var", m_var);
+	addChild("m_expr", m_expr);
 }
 
 ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<DeclPair> extras) {
@@ -213,7 +226,10 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<
 		auto newVar = new VarExpr(pair.name, typeForExtras); 
 
 		addChild(newVar);
-		addChild(pair.expression);
+
+		if (pair.expression) {
+			addChild(pair.expression);
+		}
 
 		m_extras.push_back(DeclPairInternal(newVar, pair.expression));
 	}
