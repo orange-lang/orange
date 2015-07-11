@@ -32,6 +32,16 @@ bool SymTable::create(std::string name, ASTNode* node) {
 	return true; 
 }
 
+ASTNode* SymTable::get(std::string name) {
+	auto it = m_objs.find(name); 
+
+	if (it != m_objs.end()) {
+		return it->second->node; 
+	} else {
+		return nullptr;
+	}
+}
+
 ASTNode* SymTable::find(std::string name, bool includeInactive) {
 	auto it = m_objs.find(name); 
 

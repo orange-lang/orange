@@ -89,11 +89,19 @@ public:
 	bool create(std::string name, ASTNode* node);
 
 	/**
+	 * Gets an ASTNode in this table by name, if it exists.
+	 * @param name The name of the ASTNode to get. 
+	 * @return The ASTNode in this symbol table.
+	 */
+	ASTNode* get(std::string name);
+
+	/**
 	 * Find a ASTNode in this tree by name, if it exists.
+	 * Looks up the list of parents.
 	 *
 	 * @param name The name of the ASTNode to find.
 	 *
-	 * @return The ASTNode in this symbol table.
+	 * @return The ASTNode in this symbol table tree.
 	 */
 	ASTNode* find(std::string name, bool includeInactive = false);
 
@@ -103,7 +111,7 @@ public:
 	 *
 	 * @param name The name of the ASTNode to find.
 	 *
-	 * @return The ASTNode in this symbol table.
+	 * @return The ASTNode in this symbol table tree.
 	 */
 	ASTNode* findFromAny(std::string name, bool includeInactive = false);
 
