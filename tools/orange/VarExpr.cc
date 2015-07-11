@@ -75,7 +75,7 @@ void VarExpr::create() {
 		// We couldn't create it because it already exists. 
 		// If the ASTNode in the table isn't this var, throw an error.
 		if (tab->find(m_name, this) && tab->find(m_name, this) != this) {
-//			throw CompilerMessage(*this, "A variable by this name already exists!");
+			throw CompilerMessage(*this, "A variable by this name already exists!");
 		} 
 	}
 }
