@@ -458,23 +458,6 @@ BasicBlock* FunctionStmt::createBasicBlock(std::string name) {
 }
 
 void FunctionStmt::initialize() {
-	if (isGeneric()) return;
-
-	pushBlock();
-	
-	for (auto param : m_parameters) {
-		param->initialize(); 
-	}
-
-	Block::initialize();
-
-	popBlock();
-}
-
-void FunctionStmt::resolve() {
-	if (m_resolved) return; 
-	m_resolved = true;
-
 	// If we don't exist in the parent symtab, add us as a reference.
 	// If the parent doesn't exist, we're in the global block, so 
 	// nothing could call is anyway.
@@ -493,6 +476,23 @@ void FunctionStmt::resolve() {
 
 	// Add us as a structure.
 	symtab()->setStructure(this);
+	
+	if (isGeneric()) return;
+
+	pushBlock();
+	
+	for (auto param : m_parameters) {
+		param->initialize(); 
+	}
+
+	Block::initialize();
+
+	popBlock();
+}
+
+void FunctionStmt::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
 
 	if (isGeneric()) {
 		// We don't actually want to resolve our parameters or body since as a generic function, they will never 

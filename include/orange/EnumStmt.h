@@ -39,6 +39,8 @@ public:
 
 	virtual std::string name() const { return m_name; }
 
+	virtual void initialize();
+
 	virtual void resolve();
 
 	virtual void addEnum(std::string name);

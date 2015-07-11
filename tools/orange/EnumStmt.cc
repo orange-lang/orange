@@ -33,6 +33,17 @@ std::string EnumStmt::string() {
 	return ss.str();
 }
 
+void EnumStmt::initialize() {
+	ASTNode::initialize();
+	
+	// Now that everything is the same type, let's add the EnumStmt to the symbol table.
+	SymTable* tab = GE::runner()->topBlock()->symtab();
+
+	if (tab->create(m_name, this) == false) {
+		throw CompilerMessage(*this, "Something named " + m_name + " already exists!");
+	}
+}
+
 void EnumStmt::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true;
@@ -56,13 +67,6 @@ void EnumStmt::resolve() {
 
 		delete pair.value; // Delete our old value.
 		pair.value = factory.produce();
-	}
-
-	// Now that everything is the same type, let's add the EnumStmt to the symbol table.
-	SymTable* tab = GE::runner()->topBlock()->symtab();
-
-	if (tab->create(m_name, this) == false) {
-		throw CompilerMessage(*this, "Something named " + m_name + " already exists!");
 	}
 }
 

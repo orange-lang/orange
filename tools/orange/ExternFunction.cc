@@ -62,16 +62,18 @@ Value* ExternFunction::Codegen() {
 }
 
 void ExternFunction::initialize() {
-	// don't do anything
-}
-
-void ExternFunction::resolve() {
-	if (m_resolved) return; 
-	m_resolved = true;
-
+	// don't initialize children
+	// we don't want parameters in the symbol table
+	
 	bool added = GE::runner()->symtab()->create(m_name, this);
 	if (added == false) {
 		std::string s = "A function called " + m_name + " already exists!";
 		throw std::runtime_error(s);
 	}
+}
+
+void ExternFunction::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
+	// do nothing 
 }
