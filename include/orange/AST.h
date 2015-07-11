@@ -214,17 +214,6 @@ public:
 		}
 	}
 
-	/**
-	 * Fixes up the type of this object, intended for use during the analysis pass. Objects 
-	 * can look at the types of siblings and static attributes of parents to further 
-	 * determine their types.
-	 */ 
-	virtual void fixup() {
-		for (auto child : m_children) {
-			child->fixup();
-		}
-	}
-
 	virtual ~ASTNode() { };
 };
 

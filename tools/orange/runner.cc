@@ -117,9 +117,8 @@ void Runner::compile() {
 		yyin = file; // give flex the file
 		yyparse(); // and do our parse.
 
-		// Now that we've parsed everything, let's analyze and resolve code...
+		// Analysis pass 
 		mainFunction()->resolve();
-		mainFunction()->fixup();
 
 		if (hasError()) {
 			m_result->finish(false, m_messages);
