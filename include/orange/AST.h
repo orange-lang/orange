@@ -202,7 +202,7 @@ public:
 
 	ASTNode* root() const; 
 
-	std::string dump();
+	virtual std::string dump();
 
 	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 

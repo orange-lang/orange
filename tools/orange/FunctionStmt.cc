@@ -528,3 +528,29 @@ void FunctionStmt::resolve() {
 	GE::runner()->popBlock();
 
 }
+
+std::string FunctionStmt::dump() {
+	std::stringstream ss; 
+
+	if (isGeneric()) {
+		for (auto clone : m_clones) {
+			std::vector<std::string> lines = split(clone->dump(), '\n');
+			for (std::string line : lines) {
+				ss << line << std::endl;
+			}
+		}
+
+		return ss.str();
+	}
+
+	ss << "[" << getClass() << "] " << this << std::endl;
+
+	for (auto child : m_children) {
+		std::vector<std::string> lines = split(child->dump(), '\n');
+		for (std::string line : lines) {
+			ss << "\t" << line << std::endl;
+		}
+	}
+
+	return ss.str();
+}

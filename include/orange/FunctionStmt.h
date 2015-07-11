@@ -133,6 +133,8 @@ public:
 	 */
 	virtual void resolve();
 
+	std::string dump();
+
 	/** 
 	 * If set before resolve, will disable name mangling. 
 	 */
