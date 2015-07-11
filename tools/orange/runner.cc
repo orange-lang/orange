@@ -126,8 +126,10 @@ void Runner::compile() {
 			return;
 		}
 
-		if (debug())
+		if (debug()) {
+			std::cout << mainFunction()->dump() << std::endl;
 			std::cout << mainFunction()->string() << std::endl;
+		}
 
 		mainFunction()->Codegen();
 
