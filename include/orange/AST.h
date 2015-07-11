@@ -83,6 +83,8 @@ protected:
 	}
 
 	bool m_resolved = false;
+
+	unsigned long m_ID = 0;
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 
@@ -91,6 +93,8 @@ public:
 	 * @return The name of this class. Each instance of this class will return the same value.
 	 */ 
 	virtual std::string getClass() { return "ASTNode"; }
+
+	unsigned long ID() const { return m_ID; }
 
 	std::string tag() const { return m_tag; }
 	void setTag(std::string tag) { m_tag = tag; }
@@ -220,6 +224,7 @@ public:
 		}
 	}
 
+	ASTNode();
 	virtual ~ASTNode() { };
 };
 

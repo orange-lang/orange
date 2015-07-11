@@ -553,7 +553,7 @@ std::string FunctionStmt::dump() {
 		return ss.str();
 	}
 
-	ss << "[" << getClass() << "] " << this << std::endl;
+	ss << "[" << getClass() << "] " << ID() << " " << this << std::endl;
 
 	for (auto child : m_children) {
 		std::vector<std::string> lines = split(child->dump(), '\n');

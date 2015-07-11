@@ -24,7 +24,7 @@ ASTNode* ASTNode::root() const {
 
 std::string ASTNode::dump() {
 	std::stringstream ss; 
-	ss << "[" << getClass() << "] " << this << std::endl;
+	ss << "[" << getClass() << "] " << m_ID << " " << this << std::endl;
 
 	for (auto child : m_children) {
 		std::vector<std::string> lines = split(child->dump(), '\n');
@@ -59,4 +59,10 @@ Block* ASTNode::parentBlock() const {
 	}
 
 	return (Block *)parentPtr; 
+}
+
+unsigned long lastID = 0;
+
+ASTNode::ASTNode() {
+	m_ID = lastID++;
 }
