@@ -20,6 +20,20 @@ std::string VarExpr::string() {
 
 void VarExpr::setType(OrangeTy* type) {
 	m_type = type;
+
+	if (getType()->isVariadicArray()) {
+		std::vector<Expression *> variadicElements; 
+
+		auto ptr = getType(); 
+		while (ptr->isVariadicArray()) {
+			variadicElements.push_back(ptr->getVariadicArrayElement());
+			ptr = ptr->getArrayElementType();
+		}
+
+		for (auto expr : variadicElements) {
+			addChild(expr);
+		}
+	}
 }
 
 bool VarExpr::isLocked() {
@@ -42,7 +56,6 @@ void VarExpr::resolve() {
 		}
 
 		for (auto expr : variadicElements) {
-			if (expr) expr->newID();
 			if (expr) expr->resolve();
 		}
 	}
@@ -157,11 +170,11 @@ VarExpr::VarExpr(std::string name, bool constant) : m_name(name) {
 
 VarExpr::VarExpr(std::string name, OrangeTy* type) : m_name(name) {
 	m_locked = true;
-	m_type = type; 
+	setType(type);
 }
 
 VarExpr::VarExpr(std::string name, OrangeTy* type, bool constant) : m_name(name) {
 	m_locked = true;
 	m_constant = constant;
-	m_type = type; 
+	setType(type);
 }
