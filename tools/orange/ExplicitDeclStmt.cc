@@ -125,6 +125,8 @@ void ExplicitDeclStmt::resolve() {
 std::string ExplicitDeclStmt::string() {
 	std::stringstream ss; 
 
+	ss << m_type->string() << " ";
+
 	if (m_expr) {
 		ss << m_var->string() << " = " << m_expr->string();
 	} else {
