@@ -81,6 +81,8 @@ public:
 	 */
 	bool hasReturn();
 
+	bool hasReturnNested();
+
 	/**
 	 * Determines whether or not the body will jump.
 	 * Does not check for nested bodies. 

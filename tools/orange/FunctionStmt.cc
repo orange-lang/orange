@@ -334,13 +334,18 @@ Value* FunctionStmt::Codegen() {
 	if (hasReturn() == false && GE::builder()->GetInsertBlock()->getTerminator() == nullptr) {
 		if (isRoot()) {
 			GE::builder()->CreateStore(ConstantInt::getSigned(funcType->getReturnType(), 0), m_retVal);
-		} else if (m_type != nullptr && m_type->isVoidTy() == false) {
+		} else if (m_type != nullptr && m_type->isVoidTy() == false && hasReturnNested() == false) {
 			throw CompilerMessage(*this, "Missing return type; expected a " + m_type->string());
 		}
 
 		// Jump to the end now.
 		GE::builder()->CreateBr(m_blockEnd);
 	} 
+
+	// If we're not using the continue block, just remove it.
+	if (GE::builder()->GetInsertBlock()->size() == 0) {
+		GE::builder()->GetInsertBlock()->eraseFromParent();
+	}
 
 	GE::builder()->SetInsertPoint(m_blockEnd);
 

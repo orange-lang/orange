@@ -68,12 +68,31 @@ Value* Block::Codegen() {
 	return nullptr;
 }
 
-bool Block::hasReturn() {
-	for (ASTNode *s : m_statements) {
-		if (s->getClass() == "ReturnStmt") return true; 
+// Finds a list of all return statements starting at a root 
+bool findReturn(ASTNode* root) {
+	if (root->getClass() == "ReturnStmt") {
+		return true;
+	}
+
+	for (auto stmt : root->children()) {
+		// Do not go into nested functions.
+		if (stmt->getClass() == "FunctionStmt") continue;
+		if (findReturn(stmt) == true) return true;
 	}
 
 	return false;
+}
+
+bool Block::hasReturn() {
+	for (auto stmt : m_statements) {
+		if (stmt->getClass() == "ReturnStmt") return true;
+	}
+
+	return false;
+}
+
+bool Block::hasReturnNested() {
+	return findReturn(this);
 }
 
 bool Block::hasJump() {
