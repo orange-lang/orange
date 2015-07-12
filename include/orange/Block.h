@@ -109,6 +109,8 @@ public:
 
 	virtual std::string string();
 
+	void mapDependencies();
+
 	void initialize();
 
 	/**

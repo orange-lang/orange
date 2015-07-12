@@ -60,6 +60,11 @@ protected:
 	 */
 	ASTNode* m_parent = nullptr; 
 
+	/**
+	 * The dependency of this node.
+	 */
+	ASTNode* m_dependency = nullptr;
+
 	/** 
 	 * The children for this node, if any.
 	 */
@@ -106,6 +111,8 @@ public:
 	void copyProperties(ASTNode* from) {
 		setLocation(from->location());
 	}
+
+	ASTNode* dependency() const { return m_dependency; }
 
 	bool resolved() const { return m_resolved; }
 
@@ -207,10 +214,21 @@ public:
 	}
 
 	/**
+	 * Determines what node this node depends on being resolved.
+	 */ 
+	virtual void mapDependencies() {
+		for (auto child : m_children) {
+			child->mapDependencies();
+		}
+	}
+
+	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 
 	 * will only ever excecute once, to avoid unnecessary duplication of code.
 	 */
 	virtual void resolve() { 
+		if (m_dependency) m_dependency->resolve();
+
 		for (auto child : m_children) {
 			child->resolve();
 		}

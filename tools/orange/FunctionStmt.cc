@@ -220,6 +220,7 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	}
 
 	clone->initialize();
+	clone->mapDependencies();
 	clone->copyProperties(this);
 	return clone;
 }
@@ -556,6 +557,11 @@ std::string FunctionStmt::dump() {
 	}
 
 	ss << "[" << getClass() << "] " << ID() << " " << this << std::endl;
+
+	if (m_dependency) {
+		ss << "\t@ [" << m_dependency->getClass() << "] " << m_dependency->ID() << " " << m_dependency << std::endl;
+	}
+
 
 	for (auto child : m_children) {
 		std::vector<std::string> lines = split(child->dump(), '\n');

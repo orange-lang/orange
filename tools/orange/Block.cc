@@ -183,6 +183,27 @@ std::string Block::string() {
 	return ss.str();
 }
 
+void Block::mapDependencies() {
+	Runner* curRunner = GE::runner();
+
+	GE::runner()->pushBlock(this);
+
+	// Resolve all of our statements.
+	for (auto stmt : m_statements) {
+		try {
+			stmt->mapDependencies();
+		} catch (CompilerMessage& e) {
+			curRunner->log(e);
+		} catch (std::runtime_error& e) {
+			CodeLocation loc = stmt->location();
+			CompilerMessage msg(ERROR, e.what(), curRunner->pathname(), loc.row_begin, loc.row_end, loc.col_begin, loc.col_end);
+			curRunner->log(msg);
+		}
+	}
+
+	GE::runner()->popBlock();		
+}
+
 void Block::initialize() {
 	Runner* curRunner = GE::runner();
 

@@ -121,6 +121,7 @@ void Runner::compile() {
 
 		// Analysis pass 
 		mainFunction()->initialize();
+		mainFunction()->mapDependencies();
 		mainFunction()->resolve();
 
 		if (hasError()) {

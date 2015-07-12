@@ -26,6 +26,10 @@ std::string ASTNode::dump() {
 	std::stringstream ss; 
 	ss << "[" << getClass() << "] " << m_ID << " " << this << std::endl;
 
+	if (m_dependency) {
+		ss << "\t@ [" << m_dependency->getClass() << "] " << m_dependency->m_ID << " " << m_dependency << std::endl;
+	}
+
 	for (auto child : m_children) {
 		std::vector<std::string> lines = split(child->dump(), '\n');
 		for (std::string line : lines) {
