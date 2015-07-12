@@ -126,6 +126,8 @@ public:
 	 */
 	BasicBlock* createBasicBlock(std::string name);
 
+	virtual void mapDependencies();
+
 	virtual void initialize();
 
 	/** 

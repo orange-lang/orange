@@ -240,9 +240,6 @@ bool nodeCallsFunction(ASTNode* node, std::string functionName) {
 	return false; 
 }
 
-
-
-
 // Finds a list of all return statements starting at a root 
 std::vector<ReturnStmt *> allReturnStmts(ASTNode* root) {
 	std::vector<ReturnStmt *> ret; 
@@ -458,6 +455,53 @@ BasicBlock* FunctionStmt::createBasicBlock(std::string name) {
 	return BasicBlock::Create(GE::runner()->context(), name, llvmFunction, getBlockEnd());
 }
 
+bool nodeDependsOn(ASTNode* node, unsigned long ID) {
+	if (node->dependency()) {
+		if (node->dependency()->ID() == ID) return true;
+		else if (nodeDependsOn(node->dependency(), ID) == true) return true; 
+	} 
+
+	for (auto child : node->children()) {
+		if (nodeDependsOn(child, ID) == true) return true;
+	}
+
+	return false;
+}
+
+void FunctionStmt::mapDependencies() {
+	if (isGeneric()) return;
+
+	pushBlock();
+	
+	for (auto param : m_parameters) {
+		param->mapDependencies(); 
+	}
+
+	Block::mapDependencies();
+
+	popBlock();
+
+	// Figure out dependencies if 
+	// we don't have our type explicitly set. 
+	// We'll depend on the very first 
+	// return statement that doesn't have a 
+	// dependency mapping to this FunctionStmt.
+	if (m_type_set == false) {
+		auto retStmts = allReturnStmts(this);
+
+		for (auto retStmt : retStmts) {
+			if (nodeDependsOn(retStmt, ID()) == false) {
+				m_dependency = retStmt;
+				break;	
+			}
+		}
+
+		if (m_dependency == nullptr && retStmts.size()) {
+			throw CompilerMessage(*this, "Ambiguous return type for " + m_orig_name + "!");
+		}
+	}
+}
+
 void FunctionStmt::initialize() {
 	// If we don't exist in the parent symtab, add us as a reference.
 	// If the parent doesn't exist, we're in the global block, so 
@@ -514,32 +558,22 @@ void FunctionStmt::resolve() {
 
 	// Push our symtab into the stack and add our parameters to the symbol table.
 	GE::runner()->pushBlock(this);
+
+	// First, resolve our dependency. 
+	if (ReturnStmt* rstmt = (ReturnStmt *)m_dependency) {
+		rstmt->resolve();
+
+		// Assign our type to the return statement's type 
+		m_type = rstmt->getType(); 
+	} else if (m_type_set == false) { 
+		// If we didn't have a dependency, we're a void function.
+		m_type = VoidTy::get();
+	}
 	
+	// Now we can resolve our other statements.
 	Block::resolve();
 
-	if (m_type_set == false) {
-		OrangeTy* highType = nullptr; 
-		auto retStmts = allReturnStmts(this);
-
-		if (retStmts.size() == 0) {
-			highType = VoidTy::get();
-		}
-
-		for (auto retStmt : retStmts) {
-			if (nodeCallsFunction(retStmt, m_name) == true) continue;
-
-			if (highType == nullptr) {
-				highType = retStmt->getType(); 
-			} else {
-				highType = CastingEngine::GetFittingType(retStmt->getType(), highType);			
-			}
-		}
-		
-		m_type = highType;
-	}
-
 	GE::runner()->popBlock();
-
 }
 
 std::string FunctionStmt::dump() {

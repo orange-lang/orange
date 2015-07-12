@@ -42,6 +42,8 @@ public:
 
 	virtual OrangeTy* getType();
 
+	virtual void mapDependencies();
+
 	virtual void resolve();
 
 	virtual bool isSigned();

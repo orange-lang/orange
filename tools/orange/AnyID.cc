@@ -53,6 +53,23 @@ OrangeTy* AnyID::getType() {
 	return m_any_expr->getType();
 }
 
+void AnyID::mapDependencies() {
+	SymTable* tab = GE::runner()->topBlock()->symtab();
+	ASTNode* node = tab->find(m_name, this);
+
+	if (node != nullptr && node->getClass() == "VarExpr") {
+		auto parent = node->parent();
+
+		// AnyID's depend on the parent of where a variable is stored 
+		// (this will be the ExplicitDeclStmt).
+		if (parent->getClass() == "ExplicitDeclStmt") {
+			m_dependency = parent;
+		}
+	} else if (node == nullptr) {
+		throw CompilerMessage(*this, m_name + " doesn't exist in this scope.");
+	}
+}
+
 void AnyID::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true;

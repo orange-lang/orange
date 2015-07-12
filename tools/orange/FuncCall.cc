@@ -102,6 +102,29 @@ std::string FuncCall::string() {
 	return ss.str();
 }
 
+void FuncCall::mapDependencies() {
+	ASTNode::mapDependencies();
+
+	SymTable *curTab = GE::runner()->symtab();
+	ASTNode* function = curTab->findFromAny(m_name, this); 
+
+	if (function == nullptr) {
+		throw CompilerMessage(*this, "No function " + m_name + " found!");
+	}
+
+	if ((function->getClass() != "FunctionStmt" &&
+		function->getClass() != "ExternFunction")) {
+		throw CompilerMessage(*this, m_name + " is not a function!");
+	}
+
+	// The dependency here may be a generic function. 
+	// In which case, we will not be able to know which clone 
+	// we are depending on. This is not an issue, however, since 
+	// by the time dependencies are being resolved for this function 
+	// call, the function will have already been marked as resolved. 
+	m_dependency = function; 
+}
+
 void FuncCall::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true;

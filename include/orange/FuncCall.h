@@ -25,6 +25,8 @@ public:
 
 	virtual std::string string();
 
+	virtual void mapDependencies();
+
 	virtual void resolve();
 
 	/** 
