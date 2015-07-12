@@ -16,7 +16,7 @@ public:
 
 	CodeLocation() {};
 	CodeLocation(int row_begin, int row_end, int col_begin, int col_end) : row_begin(row_begin), row_end(row_end), 
-		col_begin(col_begin), col_end(col_end) { }
+		col_begin(col_begin-1), col_end(col_end-1) { }
 };
 
 /**

@@ -44,13 +44,14 @@ ASTNode* CondBlock::clone() {
 		}
 	}
 
+	clonedBlock->copyProperties(this);
 	return clonedBlock;
 }
 
 
 void CondBlock::resolve() {
 	pushBlock();
-	ASTNode::resolve();
+	m_condition->resolve();
 	popBlock();
 	
 	Block::resolve();

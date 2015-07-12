@@ -28,64 +28,55 @@ bool SymTable::create(std::string name, ASTNode* node) {
 	// We also require the name to not be blank
 	if (name == "") return false; 
 
-	m_objs[name] = new SymObj(node, true); 
+	m_objs[name] = node;
 	return true; 
 }
 
-ASTNode* SymTable::find(std::string name, bool includeInactive) {
+ASTNode* SymTable::get(std::string name) {
 	auto it = m_objs.find(name); 
 
-	// return null if it doesn't exist 
-	// alternatively, if we're _not_ including inactive && we found something inactive, keep looking.
-	if (it == m_objs.end() || (includeInactive == false && it->second->active == false)) {
-		return m_parent ? m_parent->find(name) : nullptr;
-	}  
-
-
-	return it->second->node; 
+	if (it != m_objs.end()) {
+		return it->second;
+	} else {
+		return nullptr;
+	}
 }
 
-ASTNode* SymTable::findFromAny(std::string name, bool includeInactive) {
+bool SymTable::nodeValidFrom(ASTNode* node, ASTNode* from) {
+	return node->ID() < from->ID();
+}
+
+
+ASTNode* SymTable::find(std::string name, ASTNode* from) {
 	auto it = m_objs.find(name); 
 
 	// return null if it doesn't exist 
-	if (it == m_objs.end() || (includeInactive == false && it->second->active == false)) {
+	if (it == m_objs.end() || nodeValidFrom(it->second, from) == false) {
+		return m_parent ? m_parent->find(name, from) : nullptr;
+	}  
+
+	return it->second;
+}
+
+ASTNode* SymTable::findFromAny(std::string name, ASTNode* from) {
+	auto it = m_objs.find(name); 
+
+	// return null if it doesn't exist 
+	if (it == m_objs.end() || nodeValidFrom(it->second, from) == false) {
 		if (m_parent) {
-			auto obj = m_parent->findFromAny(name); 
+			auto obj = m_parent->findFromAny(name, from); 
 			if (obj) return obj; 
 		}
 
 		if (m_container) {
-			auto obj = m_container->findFromAny(name);
+			auto obj = m_container->findFromAny(name, from);
 			if (obj) return obj; 
 		}
 
 		return nullptr;
 	}  
 
-	return it->second->node; 
-}
-
-bool SymTable::activate(std::string name, ASTNode* node) {
-	auto it = m_objs.find(name); 
-
-	if (it == m_objs.end()) {
-		return false; 
-	}
-
-	// Make sure the node matches.
-	if (it->second->node == node) {
-		it->second->active = true; 
-		return true;
-	}
-
-	return false;
-}
-
-void SymTable::reset() {
-	for (auto obj : m_objs) {
-		obj.second->active = false;
-	}
+	return it->second;
 }
 
 ASTNode* SymTable::findStructure(std::string className) {

@@ -87,16 +87,25 @@ Value* SizeOfExpr::Codegen() {
 }
 
 ASTNode* SizeOfExpr::clone() {
+	ASTNode* clone = nullptr;
+
 	if (m_expr) {
-		return new SizeOfExpr(m_expr); 
+		clone = new SizeOfExpr(m_expr); 
 	} else {
-		return new SizeOfExpr(m_type);
+		clone = new SizeOfExpr(m_type);
 	}
+
+	clone->copyProperties(this);
+	return clone;
 }
 
 void SizeOfExpr::resolve() {
-	if (m_expr) m_expr->resolve();
-	else if (m_type && m_type->isVariadicArray()) {
+	if (m_resolved) return; 
+	m_resolved = true;
+
+	if (m_expr) { 
+		m_expr->resolve();
+	} else if (m_type && m_type->isVariadicArray()) {
 		auto tp = m_type; 
 
 		while (tp->isArrayTy()) {
@@ -111,8 +120,18 @@ void SizeOfExpr::resolve() {
 
 SizeOfExpr::SizeOfExpr(OrangeTy* type) {
 	m_type = type;
+
+	auto tp = m_type;
+	while (tp->isArrayTy()) {
+		if (tp->isVariadicArray()) {
+			addChild(tp->getVariadicArrayElement());
+		}
+
+		tp = tp->getArrayElementType();
+	}
 }
 
 SizeOfExpr::SizeOfExpr(Expression* expr) {
 	m_expr = expr; 
+	addChild(expr);
 }

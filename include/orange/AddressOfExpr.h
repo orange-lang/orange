@@ -23,8 +23,6 @@ public:
 
 	virtual ASTNode* clone();
 
-	virtual OrangeTy* getType();
-
 	virtual void resolve();
 
 	AddressOfExpr(Expression* expr);

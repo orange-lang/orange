@@ -32,6 +32,8 @@ public:
 
 	virtual Expression* getVariadicArrayElement() { return m_count; }
 
+	virtual void resolve();
+
 	virtual OrangeTy* getBaseType() { return m_internal_ty->getBaseType(); }
 
 	static VariadicArrayTy* get(OrangeTy* internalTy, Expression* count);

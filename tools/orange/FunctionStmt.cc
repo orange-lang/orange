@@ -29,6 +29,7 @@ FunctionStmt::FunctionStmt(std::string name, OrangeTy* type, ParamList parameter
 	m_orig_name = m_name;
 	m_type = type; 
 	m_parameters = parameters;
+	m_type_set = true;
 
 	for (auto param : m_parameters) {
 		addChild(param);
@@ -116,6 +117,28 @@ std::string FunctionStmt::getMangledName(ArgList args) {
 	return ss.str();
 }
 
+FunctionStmt* FunctionStmt::getGenericClone(ArgList args) {
+	// If we're not a generic, we shouldn't be trying to make a clone.
+	if (isGeneric() == false) {
+		return nullptr;
+	}
+
+	if (args.size() != m_parameters.size()) {
+		throw CompilerMessage(*this, "Mismatched number of arguments while calling " + m_name + "!");
+	}
+
+	std::string cloned_name = getMangledName(args);
+
+	// Does a clone with that name already exist? If so, return that clone.
+	for (auto clone : m_clones) {
+		if (clone->m_name == cloned_name) {
+			return clone;
+		}
+	}
+	
+	return nullptr;	
+}
+
 FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	// If we're not a generic, we shouldn't be trying to make a clone.
 	if (isGeneric() == false) {
@@ -156,14 +179,17 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 	}
 
 	// Otherwise, create that clone here, add it to the list, and return it.
-	FunctionStmt* clone;
+	FunctionStmt* clone = nullptr;
 	
-	if (m_type) {
+	if (m_type && m_type_set) {
 		clone = new FunctionStmt(cloned_name, m_type, cloned_params, symtab()->clone());	
 	} else {
 		clone = new FunctionStmt(cloned_name, cloned_params, symtab()->clone());
 	}
 
+	clone->m_ID = m_ID;
+
+	clone->copyProperties(this);
 	clone->m_mangled = true;
 	
 	m_clones.push_back(clone);
@@ -193,7 +219,9 @@ FunctionStmt* FunctionStmt::createGenericClone(ArgList args) {
 		}
 	}
 
-	clone->resolve();
+	clone->initialize();
+	clone->mapDependencies();
+	clone->copyProperties(this);
 	return clone;
 }
 
@@ -233,53 +261,8 @@ std::vector<ReturnStmt *> allReturnStmts(ASTNode* root) {
 	return ret;
 }
 
-OrangeTy* FunctionStmt::getType() {
-	if (m_type != nullptr && m_type->isIDTy() == false) return m_type;
-
-	// This should not happen; getType() should only be called against clones.
-	if (isGeneric()) {
-		throw CompilerMessage(*this, "Cannot get type of a generic function.");
-	}
-
-	GE::runner()->pushBlock(this);
-
-	OrangeTy* highType = nullptr; 
-	auto retStmts = allReturnStmts(this);
-
-	if (retStmts.size() == 0) {
-		highType = VoidTy::get();
-	}
-
-	for (auto retStmt : retStmts) {
-		if (nodeCallsFunction(retStmt, m_name) == true) continue;
-
-		if (highType == nullptr) {
-			highType = retStmt->getType(); 
-		} else {
-			highType = CastingEngine::GetFittingType(retStmt->getType(), highType);			
-		}
-	}
-
-	GE::runner()->popBlock();
-
-	m_type = highType;
-	return m_type;
-}
 
 Value* FunctionStmt::Codegen() {
-	// Activate ourself in the parent symtab.
-	if (symtab()->container() != nullptr) {
-		bool activated = symtab()->container()->activate(m_orig_name, this);
-		
-		if (activated == false) {
-			throw std::runtime_error("fatal: could not activate " + m_name);
-		}
-	}
-	
-	// Activate ourself.
-	// We don't want to reset the symbol table here; it is not necessary for functions.
-	symtab()->activate(m_orig_name, this);
-
 	// Check to see if we're a generic function. 
 	// If we are, we only should generate our clones since we're incomplete. 
 	if (isGeneric()) {
@@ -327,7 +310,7 @@ Value* FunctionStmt::Codegen() {
 	Value *retVal = nullptr; 
 	if (getType()->isVoidTy() == false) {
 		retVal = GE::builder()->CreateAlloca(getLLVMType(), nullptr, "return");
-		m_retVal = retVal;
+		m_retVal = retVal;	
 	}
 
 	m_blockEnd = funcEnd;
@@ -352,13 +335,18 @@ Value* FunctionStmt::Codegen() {
 	if (hasReturn() == false && GE::builder()->GetInsertBlock()->getTerminator() == nullptr) {
 		if (isRoot()) {
 			GE::builder()->CreateStore(ConstantInt::getSigned(funcType->getReturnType(), 0), m_retVal);
-		} else if (m_type != nullptr && m_type->isVoidTy() == false) {
+		} else if (m_type != nullptr && m_type->isVoidTy() == false && hasReturnNested() == false) {
 			throw CompilerMessage(*this, "Missing return type; expected a " + m_type->string());
 		}
 
 		// Jump to the end now.
 		GE::builder()->CreateBr(m_blockEnd);
 	} 
+
+	// If we're not using the continue block, just remove it.
+	if (GE::builder()->GetInsertBlock()->size() == 0) {
+		GE::builder()->GetInsertBlock()->eraseFromParent();
+	}
 
 	GE::builder()->SetInsertPoint(m_blockEnd);
 
@@ -415,6 +403,7 @@ ASTNode* FunctionStmt::clone() {
 		}
 	}
 
+	clonedFunc->copyProperties(this);
 	return clonedFunc;
 }
 
@@ -472,8 +461,54 @@ BasicBlock* FunctionStmt::createBasicBlock(std::string name) {
 	return BasicBlock::Create(GE::runner()->context(), name, llvmFunction, getBlockEnd());
 }
 
+bool nodeDependsOn(ASTNode* node, unsigned long ID) {
+	if (node->dependency()) {
+		if (node->dependency()->ID() == ID) return true;
+		else if (nodeDependsOn(node->dependency(), ID) == true) return true; 
+	} 
 
-void FunctionStmt::resolve() {
+	for (auto child : node->children()) {
+		if (nodeDependsOn(child, ID) == true) return true;
+	}
+
+	return false;
+}
+
+void FunctionStmt::mapDependencies() {
+	if (isGeneric()) return;
+
+	pushBlock();
+	
+	for (auto param : m_parameters) {
+		param->mapDependencies(); 
+	}
+
+	Block::mapDependencies();
+
+	popBlock();
+
+	// Figure out dependencies if 
+	// we don't have our type explicitly set. 
+	// We'll depend on the very first 
+	// return statement that doesn't have a 
+	// dependency mapping to this FunctionStmt.
+	if (m_type_set == false) {
+		auto retStmts = allReturnStmts(this);
+
+		for (auto retStmt : retStmts) {
+			if (nodeDependsOn(retStmt, ID()) == false) {
+				m_dependency = retStmt;
+				break;	
+			}
+		}
+
+		if (m_dependency == nullptr && retStmts.size()) {
+			throw CompilerMessage(*this, "Ambiguous return type for " + m_orig_name + "!");
+		}
+	}
+}
+
+void FunctionStmt::initialize() {
 	// If we don't exist in the parent symtab, add us as a reference.
 	// If the parent doesn't exist, we're in the global block, so 
 	// nothing could call is anyway.
@@ -492,6 +527,23 @@ void FunctionStmt::resolve() {
 
 	// Add us as a structure.
 	symtab()->setStructure(this);
+	
+	if (isGeneric()) return;
+
+	pushBlock();
+	
+	for (auto param : m_parameters) {
+		param->initialize(); 
+	}
+
+	Block::initialize();
+
+	popBlock();
+}
+
+void FunctionStmt::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
 
 	if (isGeneric()) {
 		// We don't actually want to resolve our parameters or body since as a generic function, they will never 
@@ -512,12 +564,51 @@ void FunctionStmt::resolve() {
 
 	// Push our symtab into the stack and add our parameters to the symbol table.
 	GE::runner()->pushBlock(this);
-	
-	for (auto param : m_parameters) {
-		param->create();
+
+	// First, resolve our dependency. 
+	if (ReturnStmt* rstmt = (ReturnStmt *)m_dependency) {
+		rstmt->resolve();
+
+		// Assign our type to the return statement's type 
+		m_type = rstmt->getType(); 
+	} else if (m_type_set == false) { 
+		// If we didn't have a dependency, we're a void function.
+		m_type = VoidTy::get();
 	}
+	
+	// Now we can resolve our other statements.
+	Block::resolve();
 
 	GE::runner()->popBlock();
+}
 
-	Block::resolve();
+std::string FunctionStmt::dump() {
+	std::stringstream ss; 
+
+	if (isGeneric()) {
+		for (auto clone : m_clones) {
+			std::vector<std::string> lines = split(clone->dump(), '\n');
+			for (std::string line : lines) {
+				ss << line << std::endl;
+			}
+		}
+
+		return ss.str();
+	}
+
+	ss << "[" << getClass() << "] " << ID() << " " << this << std::endl;
+
+	if (m_dependency) {
+		ss << "\t@ [" << m_dependency->getClass() << "] " << m_dependency->ID() << " " << m_dependency << std::endl;
+	}
+
+
+	for (auto child : m_children) {
+		std::vector<std::string> lines = split(child->dump(), '\n');
+		for (std::string line : lines) {
+			ss << "\t" << line << std::endl;
+		}
+	}
+
+	return ss.str();
 }

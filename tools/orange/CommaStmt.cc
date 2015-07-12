@@ -17,7 +17,10 @@ Value* CommaStmt::Codegen() {
 ASTNode* CommaStmt::clone() {
 	std::vector<Expression*> clonedExprs;
 	for (auto expr : m_exprs) clonedExprs.push_back((Expression*)expr->clone());
-	return new CommaStmt(clonedExprs);
+		
+	auto clone = new CommaStmt(clonedExprs);
+	clone->copyProperties(this);
+	return clone;
 }
 
 std::string CommaStmt::string() {

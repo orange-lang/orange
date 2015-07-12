@@ -25,7 +25,9 @@ public:
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone() {
-		return new LoopSkip(m_continue);
+		auto clone = new LoopSkip(m_continue);
+		clone->copyProperties(this);
+		return clone;
 	}
 
 	LoopSkip(bool isContinue);

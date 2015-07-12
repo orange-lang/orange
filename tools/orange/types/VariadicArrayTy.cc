@@ -23,6 +23,10 @@ bool VariadicArrayTy::isSigned() const {
 	return m_internal_ty->isSigned();
 }
 
+void VariadicArrayTy::resolve() {
+	m_count->resolve();
+}
+
 VariadicArrayTy* VariadicArrayTy::get(OrangeTy* internalTy, Expression* count) {
 	std::stringstream ss; 
 	ss << internalTy->string() << "[" << (unsigned long long)count << "]";

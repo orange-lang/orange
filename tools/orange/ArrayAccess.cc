@@ -46,7 +46,9 @@ Value* ArrayAccess::Codegen() {
 }
 
 ASTNode* ArrayAccess::clone() {
-	return new ArrayAccess((Expression *)m_variable->clone(), (Expression *)m_idx->clone());
+	auto clone = new ArrayAccess((Expression *)m_variable->clone(), (Expression *)m_idx->clone());
+	clone->copyProperties(this);
+	return clone;
 }
 
 std::string ArrayAccess::string() {
@@ -56,22 +58,23 @@ std::string ArrayAccess::string() {
 	return ss.str();
 }
 
-OrangeTy* ArrayAccess::getType() {
-	OrangeTy* varType = m_variable->getType();
-
-	if (varType->isConstantArray() || varType->isVariadicArray()) {
-		return varType->getArrayElementType();
-	} else {
-		return varType->getPointerElementType();
-	}
-}
-
 void ArrayAccess::resolve() {
 	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
 
 	// m_variable must be an array or pointer! 
 	if (m_variable->getType()->isArrayTy() == false && m_variable->getType()->isPointerTy() == false) {
 		throw CompilerMessage(*m_variable, "variable must be an array!");
+	}
+
+	m_type = m_variable->getType();
+
+	if (m_type->isConstantArray() || m_type->isVariadicArray()) {
+		m_type = m_type->getArrayElementType();
+	} else {
+		m_type = m_type->getPointerElementType();
 	}
 }
 

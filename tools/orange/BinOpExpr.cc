@@ -201,7 +201,7 @@ Value* BinOpExpr::Codegen() {
 	Value* OrigRHS = RHS; 
 
 	if (m_op == "=" && LHS == nullptr) {
-		throw CompilerMessage(*m_LHS, m_LHS->string() + " doesn't exist!");
+		throw CompilerMessage(*m_LHS, m_LHS->string() + " never created in this scope.");
 	}
 
 	// Validate should never return false, since it throws an exception any time it encounters 
@@ -329,30 +329,11 @@ std::string BinOpExpr::string() {
 	return ss.str();
 }
 
-OrangeTy* BinOpExpr::getType() {
-	if (IsAssignOp(m_op)) {
-		OrangeTy* t = m_LHS->getType(); 
-		return t->isVoidTy() ? m_RHS->getType() : t; 
-	} 
-
-	OrangeTy *lType = m_LHS->getType();
-	OrangeTy *rType = m_RHS->getType();
-
-	if (lType->isVoidTy()) {
-		throw CompilerMessage(*m_LHS, m_LHS->string() + " does not exist!");
-	} else if (rType->isVoidTy()) {
-		throw CompilerMessage(*m_RHS, m_RHS->string() + " does not exist!");
-	}
-
-	if (IsCompareOp(m_op)) {
-		return IntTy::getUnsigned(1);
-	} else {
-		return CastingEngine::GetFittingType(lType, rType);
-	}
-}
-
 void BinOpExpr::resolve() {
 	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
 
 	if (m_op == "=" && isVarExpr(m_LHS)) {
 		VarExpr* vExpr = getVarExpr(m_LHS); 
@@ -362,6 +343,29 @@ void BinOpExpr::resolve() {
 			vExpr->resolve();
 		} 
 	} 
+	
+	// 
+	// Determine type 
+	//
+	if (IsAssignOp(m_op)) {
+		OrangeTy* t = m_LHS->getType(); 
+		m_type = t->isVoidTy() ? m_RHS->getType() : t; 
+	} else {
+		OrangeTy *lType = m_LHS->getType();
+		OrangeTy *rType = m_RHS->getType();
+
+		if (lType->isVoidTy()) {
+			throw CompilerMessage(*m_LHS, m_LHS->string() + " does not exist!");
+		} else if (rType->isVoidTy()) {
+			throw CompilerMessage(*m_RHS, m_RHS->string() + " does not exist!");
+		}
+
+		if (IsCompareOp(m_op)) {
+			m_type = IntTy::getUnsigned(1);
+		} else {
+			m_type = CastingEngine::GetFittingType(lType, rType);
+		}		
+	}
 }
 
 bool BinOpExpr::isSigned() {

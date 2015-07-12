@@ -34,7 +34,9 @@ std::string ExternFunction::string() {
 	return ss.str();
 }
 
-ExternFunction::ExternFunction(OrangeTy* returnType, std::string name, ParamList parameters) : m_type(returnType), m_name(name), m_parameters(parameters) {
+ExternFunction::ExternFunction(OrangeTy* returnType, std::string name, ParamList parameters) : m_name(name), m_parameters(parameters) {
+	m_type = returnType; 
+
 	if (returnType == nullptr) {
 		throw std::runtime_error("return type for an external function can not be null!");
 	}
@@ -45,8 +47,6 @@ ExternFunction::ExternFunction(OrangeTy* returnType, std::string name, ParamList
 }
 
 Value* ExternFunction::Codegen() {
-	GE::runner()->symtab()->activate(m_name, this);
-
 	std::vector<Type*> Args;
 
 	for (auto param : m_parameters) {
@@ -61,10 +61,19 @@ Value* ExternFunction::Codegen() {
 	return m_value; 
 }
 
-void ExternFunction::resolve() {
+void ExternFunction::initialize() {
+	// don't initialize children
+	// we don't want parameters in the symbol table
+	
 	bool added = GE::runner()->symtab()->create(m_name, this);
 	if (added == false) {
 		std::string s = "A function called " + m_name + " already exists!";
 		throw std::runtime_error(s);
 	}
+}
+
+void ExternFunction::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
+	// do nothing 
 }

@@ -19,19 +19,22 @@ Value* AddressOfExpr::Codegen() {
 }
 
 ASTNode* AddressOfExpr::clone() {
-	return new AddressOfExpr((Expression *)m_expr->clone());
-}
-
-OrangeTy* AddressOfExpr::getType() {
-	return m_expr->getType()->getPointerTo();
+	auto clone = new AddressOfExpr((Expression *)m_expr->clone());
+	clone->copyProperties(this);
+	return clone;
 }
 
 void AddressOfExpr::resolve() { 
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	if (m_expr->returnsPtr() == false) {
 		throw CompilerMessage(*m_expr, "can not get the address of this expression"); 
 	}
+
+	m_type = m_expr->getType()->getPointerTo();
 }
 
 AddressOfExpr::AddressOfExpr(Expression* expr) {

@@ -51,19 +51,22 @@ Value* IncrementExpr::Codegen() {
 }
 
 ASTNode* IncrementExpr::clone() {
-	return new IncrementExpr((Expression *)m_expr->clone(), m_op, m_preincrement);
-}
-
-OrangeTy* IncrementExpr::getType() {
-	return m_expr->getType();
+	auto clone = new IncrementExpr((Expression *)m_expr->clone(), m_op, m_preincrement);
+	clone->copyProperties(this);
+	return clone;
 }
 
 void IncrementExpr::resolve() {
 	ASTNode::resolve();
 
+	if (m_resolved) return; 
+	m_resolved = true;
+
 	if (m_expr->returnsPtr() == false) {
 		throw CompilerMessage(*m_expr, "expression must be a variable or a memory location!");
 	}
+
+	m_type = m_expr->getType();
 }
 
 

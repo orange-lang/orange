@@ -29,22 +29,26 @@ Value* DerefExpr::Codegen() {
 }
 
 ASTNode* DerefExpr::clone() {
-	return new DerefExpr((Expression*)m_expr->clone());
+	auto clone = new DerefExpr((Expression*)m_expr->clone());
+	clone->copyProperties(this);
+	return clone;
 }
 
-OrangeTy* DerefExpr::getType() {
-	OrangeTy* exprType = m_expr->getType();
+void DerefExpr::resolve() {
+	ASTNode::resolve();
 
-	if (exprType->isPointerTy()) {
-		return m_expr->getType()->getPointerElementType();
-	} else if (exprType->isArrayTy()) {
-		return m_expr->getType()->getArrayElementType();
+	if (m_resolved) return; 
+	m_resolved = true;
+
+	m_type = m_expr->getType();
+
+	if (m_type->isPointerTy()) {
+		m_type = m_type->getPointerElementType();
+	} else if (m_type->isArrayTy()) {
+		m_type = m_type->getArrayElementType();
 	} else {
 		throw CompilerMessage(*m_expr, "expression is not a pointer");
 	}
-
-	// should never reach this line.
-	return nullptr; 
 }
 
 bool DerefExpr::returnsPtr() {

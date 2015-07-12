@@ -12,7 +12,7 @@
 Value* FuncCall::Codegen() {
 	SymTable *curTab = GE::runner()->symtab();
 	
-	FunctionStmt* function = (FunctionStmt*)curTab->findFromAny(m_name); 
+	FunctionStmt* function = (FunctionStmt*)curTab->findFromAny(m_name, this); 
 
 	if (function == nullptr) {
 		throw CompilerMessage(*this, "No function " + m_name + " found!");
@@ -83,6 +83,7 @@ ASTNode* FuncCall::clone() {
 		cloned->m_arguments.push_back((Expression*)arg->clone());
 	}
 
+	cloned->copyProperties(this);
 	return cloned; 
 }
 
@@ -101,31 +102,38 @@ std::string FuncCall::string() {
 	return ss.str();
 }
 
-OrangeTy* FuncCall::getType() {
-	SymTable* curTab = GE::runner()->symtab();
-  ASTNode* node = curTab->findFromAny(m_name);
-  
-  if (node == nullptr) {
-      throw CompilerMessage(*this, m_name + " does not exist!");
-  }
-  
-  if ((node->getClass() != "FunctionStmt" &&
-       node->getClass() != "ExternFunction")) {
-      throw CompilerMessage(*this, m_name + " is not a function!");
-  }
-    
-	if (node->getClass() == "FunctionStmt" && ((FunctionStmt*)node)->isGeneric()) {
-		// Try resolving...
-		throw CompilerMessage(*this, "Can't get the type of an unresolved generic function.");
+void FuncCall::mapDependencies() {
+	ASTNode::mapDependencies();
+
+	SymTable *curTab = GE::runner()->symtab();
+	ASTNode* function = curTab->findFromAny(m_name, this); 
+
+	if (function == nullptr) {
+		throw CompilerMessage(*this, "No function " + m_name + " found!");
 	}
 
-	return node->getType();
+	if ((function->getClass() != "FunctionStmt" &&
+		function->getClass() != "ExternFunction")) {
+		throw CompilerMessage(*this, m_name + " is not a function!");
+	}
+
+	// The dependency here may be a generic function. 
+	// In which case, we will not be able to know which clone 
+	// we are depending on. This is not an issue, however, since 
+	// by the time dependencies are being resolved for this function 
+	// call, the function will have already been marked as resolved. 
+	m_dependency = function; 
 }
 
 void FuncCall::resolve() {
+	if (m_resolved) return; 
+	m_resolved = true;
+
+	if (m_dependency) m_dependency->resolve();
+
 	// Look for the function in the symbol table.
 	SymTable *curTab = GE::runner()->symtab();
-	ASTNode* function = curTab->findFromAny(m_name); 
+	ASTNode* function = curTab->findFromAny(m_name, this); 
 
 	if (function == nullptr) {
 		throw CompilerMessage(*this, "No function " + m_name + " found!");
@@ -142,9 +150,20 @@ void FuncCall::resolve() {
 	if (function->getClass() == "FunctionStmt") {
 		FunctionStmt* fstmt = (FunctionStmt*)function;
 		if (fstmt->isGeneric()) {
+			bool shouldResolve = fstmt->getGenericClone(m_arguments) == nullptr;
+
 			FunctionStmt* clone = fstmt->createGenericClone(m_arguments);
 			m_name = clone->name();
+			function = clone;
+
+			if (shouldResolve) clone->resolve();
 		}
+	}
+
+	m_type = function->getType();
+
+	if (m_type == nullptr) {
+		throw CompilerMessage(*this, "Ambiguous return type");
 	}
 }
 

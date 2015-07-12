@@ -25,7 +25,7 @@ public:
 
 	virtual std::string string();
 
-	virtual OrangeTy *getType();
+	virtual void mapDependencies();
 
 	virtual void resolve();
 

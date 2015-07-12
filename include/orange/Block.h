@@ -33,16 +33,6 @@ protected:
 	 * Generates all of the statements.
 	 */
 	void generateStatements();	
-
-	/** 
-	 * Pushes this to the symtable.
-	 */
-	void pushBlock();
-
-	/**
-	 * Pops this from the symtable.
-	 */
-	void popBlock(); 
 public:
 	virtual std::string getClass() { return "Block"; }
 
@@ -91,6 +81,8 @@ public:
 	 */
 	bool hasReturn();
 
+	bool hasReturnNested();
+
 	/**
 	 * Determines whether or not the body will jump.
 	 * Does not check for nested bodies. 
@@ -119,10 +111,24 @@ public:
 
 	virtual std::string string();
 
+	void mapDependencies();
+
+	void initialize();
+
 	/**
 	 * This will resolve every statement added to this block.
 	 */
 	void resolve();
+
+	/** 
+	 * Pushes this to the symtable.
+	 */
+	void pushBlock();
+
+	/**
+	 * Pops this from the symtable.
+	 */
+	void popBlock(); 
 
 	/**
 	 * Creates a block. Every block must have a symbol table attached to 

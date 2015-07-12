@@ -28,8 +28,6 @@ public:
 
 	virtual ASTNode* clone();
 
-	virtual OrangeTy* getType();
-
 	virtual void resolve();
 
 	virtual bool isSigned();

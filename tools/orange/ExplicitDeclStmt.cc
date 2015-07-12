@@ -69,15 +69,16 @@ ASTNode* ExplicitDeclStmt::clone() {
 		extraClones.push_back(DeclPair(pair.var->name(), (Expression *)pair.val->clone()));
 	}
 
-	if (m_expr) {
-		return new ExplicitDeclStmt((VarExpr*)m_var->clone(), (Expression*)m_expr->clone(), extraClones);
-	} else {
-		return new ExplicitDeclStmt((VarExpr*)m_var->clone(), extraClones);
-	}
-}
+	ASTNode* clone = nullptr; 
 
-OrangeTy* ExplicitDeclStmt::getType() { 
-	return m_var->getType(); 
+	if (m_expr) {
+		clone = new ExplicitDeclStmt((VarExpr*)m_var->clone(), (Expression*)m_expr->clone(), extraClones);
+	} else {
+		clone = new ExplicitDeclStmt((VarExpr*)m_var->clone(), extraClones);
+	}
+
+	clone->copyProperties(this);
+	return clone;
 }
 
 bool ExplicitDeclStmt::isSigned() {
@@ -86,7 +87,9 @@ bool ExplicitDeclStmt::isSigned() {
 
 void ExplicitDeclStmt::resolve() {
 	ASTNode::resolve();
-	m_var->create();
+
+	if (m_resolved) return; 
+	m_resolved = true;
 
 	if (m_var->getType()->isVoidTy()) {
 		throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");
@@ -97,12 +100,14 @@ void ExplicitDeclStmt::resolve() {
 		m_var->resolve(); 
 	} 
 
+	m_var->getType()->resolve();
+
 	if (m_var->getType()->isVariadicArray() && m_expr) {
 		throw CompilerMessage(*m_var, "Variable-sized arrays may not be initialized");
 	}
 
 	for (auto pair : m_extras) {
-		pair.var->create();
+		pair.var->getType()->resolve();
 		
 		if (pair.var->getType()->isVoidTy()) {
 			throw CompilerMessage(*m_var, "keyword void cannot be used to create a variable");
@@ -117,10 +122,14 @@ void ExplicitDeclStmt::resolve() {
 			throw CompilerMessage(*pair.var, "Variable-sized arrays may not be initialized");
 		}
 	}
+
+	m_type = m_var->getType();
 }
 
 std::string ExplicitDeclStmt::string() {
 	std::stringstream ss; 
+
+	ss << m_type->string() << " ";
 
 	if (m_expr) {
 		ss << m_var->string() << " = " << m_expr->string();
@@ -147,6 +156,7 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var) {
 	}
 
 	m_var = var;
+	addChild("m_var", m_var);
 }
 
 ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, std::vector<DeclPair> extras) {
@@ -155,11 +165,20 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, std::vector<DeclPair> extras) {
 	}
 
 	m_var = var;
+	addChild("m_var", m_var);
 
 	auto typeForExtras = m_var->getType();
 
 	for (auto pair : extras) {
-		m_extras.push_back(DeclPairInternal(new VarExpr(pair.name, typeForExtras), pair.expression));
+		auto newVar = new VarExpr(pair.name, typeForExtras); 
+
+		addChild(newVar);
+
+		if (pair.expression) {
+			addChild(pair.expression);
+		}
+
+		m_extras.push_back(DeclPairInternal(newVar, pair.expression));
 	}	
 }
 
@@ -175,6 +194,9 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value) {
 
 	m_var = var;
 	m_expr = value; 
+
+	addChild("m_var", m_var);
+	addChild("m_expr", m_expr);
 }
 
 ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<DeclPair> extras) {
@@ -201,7 +223,10 @@ ExplicitDeclStmt::ExplicitDeclStmt(VarExpr* var, Expression* value, std::vector<
 		auto newVar = new VarExpr(pair.name, typeForExtras); 
 
 		addChild(newVar);
-		addChild(pair.expression);
+
+		if (pair.expression) {
+			addChild(pair.expression);
+		}
 
 		m_extras.push_back(DeclPairInternal(newVar, pair.expression));
 	}

@@ -23,11 +23,11 @@ public:
 
 	virtual ASTNode* clone();
 
-	virtual OrangeTy* getType();
-
 	virtual bool isSigned();
 
 	virtual bool returnsPtr();
+
+	virtual void resolve();
 
 	DerefExpr(Expression* expr);
 };

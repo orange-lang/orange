@@ -15,7 +15,6 @@
 
 class ExternFunction : public Statement {
 private:
-	OrangeTy* m_type;
 	std::string m_name;
 	ParamList m_parameters;
 public:
@@ -26,12 +25,14 @@ public:
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone() {
-		return new ExternFunction(m_type, m_name, m_parameters);
+		auto clone = new ExternFunction(m_type, m_name, m_parameters);
+		clone->copyProperties(this);
+		return clone; 
 	}
 
-	virtual void resolve();
+	virtual void initialize();
 
-	virtual OrangeTy* getType() { return m_type; }
+	virtual void resolve();
 
 	virtual bool isSigned() { return m_type->isSigned(); }
 
