@@ -58,8 +58,6 @@ public:
 
 	virtual void createValue(Value* value);
 
-	virtual void setValue(Value* value);
-
 	/**
 	 * Tries to create this variable in the symbol table.
 	 */

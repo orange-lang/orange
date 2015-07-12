@@ -29,7 +29,9 @@ public:
 
 	virtual void resolve();
 
-	virtual OrangeTy* getType() { return IntTy::getUnsigned(64); }
+	virtual OrangeTy* getType() const { 
+		return IntTy::getUnsigned(64); 
+	}
 
 	virtual bool isSigned() { return false; }
 

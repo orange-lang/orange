@@ -24,7 +24,7 @@ protected:
 	/**
 	 * Ensures that m_any_expr is not nullptr, throwing an exception otherwise.
 	 */
-	void ensureValid();
+	void ensureValid() const;
 public:
 	virtual std::string getClass() { return "AnyID"; }
 
@@ -40,7 +40,7 @@ public:
 
 	virtual bool isBlock();
 
-	virtual OrangeTy* getType();
+	virtual OrangeTy* getType() const;
 
 	virtual void mapDependencies();
 

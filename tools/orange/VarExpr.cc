@@ -85,10 +85,6 @@ void VarExpr::createValue(Value* value) {
 	GE::builder()->CreateStore(value, m_value);
 }
 
-void VarExpr::setValue(Value *value) {
-	m_value = value; 
-}
-
 bool VarExpr::returnsPtr() {
 	return true;
 }

@@ -72,16 +72,23 @@ protected:
 
 	std::string m_tag = ""; 
 
+	/**
+	 * Flag indicating whether or not this node is resolved.
+	 */
+	bool m_resolved = false;
+
+	/**
+	 * A unique identifier for this node. Resolved generic functions 
+	 * have the same ID as their parent. 
+	 */
+	unsigned long m_ID = 0;
+
 	/** 
 	 * Adds a child to the list of children.
 	 */
 	void addChild(ASTNode* child);
 
 	void addChild(std::string tag, ASTNode* child);
-
-	bool m_resolved = false;
-
-	unsigned long m_ID = 0;
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 
@@ -91,37 +98,30 @@ public:
 	 */ 
 	virtual std::string getClass() { return "ASTNode"; }
 
-	unsigned long ID() const { return m_ID; }
+	unsigned long ID() const;
 
-	std::string tag() const { return m_tag; }
-	void setTag(std::string tag) { m_tag = tag; }
+	std::string tag() const;
 
-	std::vector<ASTNode*> children() const { return m_children; } 
+	void setTag(std::string tag);
 
-	std::vector<ASTNode*> siblings() {
-		std::vector<ASTNode*> copy; 
-		if (m_parent == nullptr) return copy; 
-		
-		copy = m_parent->m_children; 
-		return copy; 
-	}
+	std::vector<ASTNode*> children() const; 
+
+	std::vector<ASTNode*> siblings() const;
 
 	bool contains(ASTNode* node);
 
-	void copyProperties(ASTNode* from) {
-		setLocation(from->location());
-	}
+	void copyProperties(ASTNode* from);
 
-	ASTNode* dependency() const { return m_dependency; }
+	ASTNode* dependency() const;
 
-	bool resolved() const { return m_resolved; }
+	bool resolved() const;
 
 	/**
 	 * Generates code in the current LLVM module for use with compilation. May not return anything.
 	 *
 	 * @return Returns a Value if the class is a child of Expression, nullptr otherwise.
 	 */
-	virtual Value* Codegen() { return nullptr; }	
+	virtual Value* Codegen();
 
 	/**
 	 * Gets the value attributed to this object. This will usually be the value created 
@@ -129,7 +129,13 @@ public:
 	 *
 	 * @return The Value attributed to this object.
 	 */ 
-	virtual Value* getValue() { return m_value; }
+	virtual Value* getValue();
+
+	/**
+	 * Sets the value attributed to this object. 
+	 * @param value The new value for this object.
+	 */
+	virtual void setValue(Value* value);
 
 	/**
 	 * Creates a allocated clone of this object. The result of this function call must be cleaned up
@@ -137,11 +143,7 @@ public:
 	 *
 	 * @return A clone of this object.
 	 */
-	virtual ASTNode* clone() { 
-		auto clone = new ASTNode(); 
-		clone->copyProperties(this);
-		return clone; 
-	}
+	virtual ASTNode* clone(); 
 
 	/**
 	 * Returns the string represenation of this object in code. This string is a full representation
@@ -149,7 +151,7 @@ public:
 	 *
 	 * @return The string representation of this object in code.
 	 */  
-	virtual std::string string() { return ""; }
+	virtual std::string string(); 
 
 	/**
 	 * Indicates whether or not this object is to return a pointer to be loaded in by Codegen. Always returns false 
@@ -157,7 +159,7 @@ public:
 	 *
 	 * @return Indicates whether or not the Codegen return value should be loaded in.
 	 */
-	virtual bool returnsPtr() { return false; }
+	virtual bool returnsPtr();
 
 	/** 
 	 * Indicates whether or not this statement is a Block. 
@@ -165,7 +167,7 @@ public:
 	 *
 	 * @return True if this statement is a Block, false otherwise.
 	 */
-	virtual bool isBlock() { return false; }
+	virtual bool isBlock();
 
 	/**
 	 * Gets the type of this object. For most classes inheriting from Statement, the type will be 
@@ -173,14 +175,14 @@ public:
 	 *
 	 * @return The type of this object.
 	 */
-	virtual OrangeTy* getType() { return m_type; }
+	virtual OrangeTy* getType() const;
 
 	/**
 	 * Gets the LLVM type of this object.
 	 *
 	 * @return The LLVM type of this object in code.
 	 */
-	virtual Type *getLLVMType() { return getType()->getLLVMType(); }
+	Type* getLLVMType() const;
 
 	/**
 	 * @return The function this node is contained in.
@@ -193,46 +195,36 @@ public:
 	Block* parentBlock() const;
 
 	/** 
+	 * @return The parent of this node, if any.
+	 */ 
+	ASTNode* parent() const;
+
+	/** 
 	 * Set the parent for this node.
 	 * @param parent The new parent.
 	 */
-	void setParent(ASTNode* parent) { m_parent = parent; } 
-
-	/** 
-	 * @return The parent of this node, if any.
-	 */ 
-	ASTNode* parent() const { return m_parent; }
+	void setParent(ASTNode* parent);
 
 	ASTNode* root() const; 
 
 	virtual std::string dump();
 
-	virtual void initialize() {
-		for (auto child : m_children) {
-			child->initialize();
-		}
-	}
+	/**
+	 * Populates the symbol table as appropriate for 
+	 * this node and all of its children.
+	 */
+	virtual void initialize();
 
 	/**
 	 * Determines what node this node depends on being resolved.
 	 */ 
-	virtual void mapDependencies() {
-		for (auto child : m_children) {
-			child->mapDependencies();
-		}
-	}
+	virtual void mapDependencies();
 
 	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 
 	 * will only ever excecute once, to avoid unnecessary duplication of code.
 	 */
-	virtual void resolve() { 
-		if (m_dependency) m_dependency->resolve();
-
-		for (auto child : m_children) {
-			child->resolve();
-		}
-	}
+	virtual void resolve();
 
 	/**
 	 * Request a new ID.
@@ -240,7 +232,8 @@ public:
 	void newID();
 
 	ASTNode();
-	virtual ~ASTNode() { };
+	
+	virtual ~ASTNode();
 };
 
 /**

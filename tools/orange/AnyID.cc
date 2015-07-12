@@ -10,7 +10,7 @@
 #include <orange/SymTable.h>
 #include <orange/generator.h>
 
-void AnyID::ensureValid() {
+void AnyID::ensureValid() const {
 	if (m_any_expr == nullptr) {
 		throw std::runtime_error("AnyID::ensureValid(): m_any_expr must not be nullptr!");
 	}
@@ -48,7 +48,7 @@ bool AnyID::isBlock() {
 	return m_any_expr->isBlock();
 }
 
-OrangeTy* AnyID::getType() {
+OrangeTy* AnyID::getType() const {
 	ensureValid();	
 	return m_any_expr->getType();
 }

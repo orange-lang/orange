@@ -54,7 +54,9 @@ public:
 		return ss.str();
 	}
 
-	virtual OrangeTy* getType() { return PointerTy::get(IntTy::getSigned(8)); }
+	virtual OrangeTy* getType() const {
+		return PointerTy::get(IntTy::getSigned(8)); 
+	}
 
 	Value* Codegen();
 
@@ -93,7 +95,7 @@ public:
 		return ss.str();
 	}
 
-	virtual OrangeTy *getType() { 
+	virtual OrangeTy *getType() const { 
 		return IntTy::getUnsigned(size); 
 	}
 
@@ -133,7 +135,7 @@ public:
 		return ss.str();
 	}
 
-	virtual OrangeTy *getType() { 
+	virtual OrangeTy *getType() const { 
 		return IntTy::getSigned(size); 
 	}
 
@@ -170,7 +172,7 @@ public:
 		return ss.str();
 	}
 
-	virtual OrangeTy *getType() { 
+	virtual OrangeTy *getType() const { 
 		return FloatTy::get();
 	}
 
@@ -207,7 +209,7 @@ public:
 		return ss.str();
 	}
 
-	virtual OrangeTy *getType() { 
+	virtual OrangeTy *getType() const { 
 		return DoubleTy::get(); 
 	}
 
