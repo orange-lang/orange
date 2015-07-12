@@ -48,16 +48,7 @@ bool SymTable::nodeValidFrom(ASTNode* node, ASTNode* from) {
 
 
 ASTNode* SymTable::find(std::string name, ASTNode* from) {
-	std::cout << "Things in SymTable:\n";
-	for (auto kvp : m_objs) {
-		std::cout << "\t" << kvp.first << std::endl;
-	}
-
-	std::cout << "Find " << name << std::endl;
-
 	auto it = m_objs.find(name); 
-
-	std::cout << (it == m_objs.end()) << std::endl;
 
 	// return null if it doesn't exist 
 	if (it == m_objs.end() || nodeValidFrom(it->second, from) == false) {
