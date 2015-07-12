@@ -116,6 +116,8 @@ ASTNode* IfStmts::clone() {
 	for (auto block : m_blocks) {
 		clone->addBlock((Block *)block->clone());
 	}
+	
+	clone->copyProperties(this);
 	return clone; 
 }
 
@@ -125,6 +127,9 @@ void IfStmts::resolve() {
 	m_locked = true; 
 
 	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
 }
 
 void IfStmts::addBlock(Block* block) {

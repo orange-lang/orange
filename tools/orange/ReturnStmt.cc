@@ -69,7 +69,13 @@ Value* ReturnStmt::Codegen() {
 	return m_value;
 }
 
-OrangeTy* ReturnStmt::getType() {
-	if (m_expr) return m_expr->getType();
-	return VoidTy::get();
+void ReturnStmt::resolve() {
+	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
+	
+	if (m_expr) m_type = m_expr->getType();
+	else m_type = VoidTy::get();
 }
+

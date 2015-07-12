@@ -37,7 +37,8 @@
 using namespace llvm;
 
 class FunctionStmt;
-
+class Block;
+ 
 /**
  * ASTNode is the base class for all structures in the AST. It provides some methods for pseudo-reflection and 
  * general features used throughout the project.
@@ -52,12 +53,17 @@ protected:
 	/** 
 	 * Determines the type of the node. Used for caching. 
 	 */
-	OrangeTy* m_type = nullptr; 
+	OrangeTy* m_type = nullptr;
 
 	/**
 	 * The parent node that this node is stored inside, if any 
 	 */
 	ASTNode* m_parent = nullptr; 
+
+	/**
+	 * The dependency of this node.
+	 */
+	ASTNode* m_dependency = nullptr;
 
 	/** 
 	 * The children for this node, if any.
@@ -69,18 +75,13 @@ protected:
 	/** 
 	 * Adds a child to the list of children.
 	 */
-	void addChild(ASTNode* child) {
-		if (child == nullptr) return; 
-		child->setParent(this);
-		m_children.push_back(child);
-	}
+	void addChild(ASTNode* child);
 
-	void addChild(std::string tag, ASTNode* child) {
-		if (child == nullptr) return;
-		child->setParent(this);
-		child->setTag(tag);
-		m_children.push_back(child);
-	}
+	void addChild(std::string tag, ASTNode* child);
+
+	bool m_resolved = false;
+
+	unsigned long m_ID = 0;
 public:
 	/**
 	 * Gets the name of the class. Children classes will override this method to return the 
@@ -89,6 +90,8 @@ public:
 	 * @return The name of this class. Each instance of this class will return the same value.
 	 */ 
 	virtual std::string getClass() { return "ASTNode"; }
+
+	unsigned long ID() const { return m_ID; }
 
 	std::string tag() const { return m_tag; }
 	void setTag(std::string tag) { m_tag = tag; }
@@ -102,6 +105,16 @@ public:
 		copy = m_parent->m_children; 
 		return copy; 
 	}
+
+	bool contains(ASTNode* node);
+
+	void copyProperties(ASTNode* from) {
+		setLocation(from->location());
+	}
+
+	ASTNode* dependency() const { return m_dependency; }
+
+	bool resolved() const { return m_resolved; }
 
 	/**
 	 * Generates code in the current LLVM module for use with compilation. May not return anything.
@@ -124,7 +137,11 @@ public:
 	 *
 	 * @return A clone of this object.
 	 */
-	virtual ASTNode* clone() { return new ASTNode(); }
+	virtual ASTNode* clone() { 
+		auto clone = new ASTNode(); 
+		clone->copyProperties(this);
+		return clone; 
+	}
 
 	/**
 	 * Returns the string represenation of this object in code. This string is a full representation
@@ -156,7 +173,7 @@ public:
 	 *
 	 * @return The type of this object.
 	 */
-	virtual OrangeTy* getType() { return VoidTy::get(); }
+	virtual OrangeTy* getType() { return m_type; }
 
 	/**
 	 * Gets the LLVM type of this object.
@@ -168,40 +185,61 @@ public:
 	/**
 	 * @return The function this node is contained in.
 	 */
-	virtual FunctionStmt* getContainingFunction();
+	FunctionStmt* getContainingFunction();
+
+	/**
+	 * @return The parent Block 
+	 */
+	Block* parentBlock() const;
 
 	/** 
 	 * Set the parent for this node.
 	 * @param parent The new parent.
 	 */
-	virtual void setParent(ASTNode* parent) { m_parent = parent; } 
+	void setParent(ASTNode* parent) { m_parent = parent; } 
 
 	/** 
 	 * @return The parent of this node, if any.
 	 */ 
-	virtual ASTNode* parent() const { return m_parent; }
+	ASTNode* parent() const { return m_parent; }
+
+	ASTNode* root() const; 
+
+	virtual std::string dump();
+
+	virtual void initialize() {
+		for (auto child : m_children) {
+			child->initialize();
+		}
+	}
+
+	/**
+	 * Determines what node this node depends on being resolved.
+	 */ 
+	virtual void mapDependencies() {
+		for (auto child : m_children) {
+			child->mapDependencies();
+		}
+	}
 
 	/**
 	 * Resolves this object, intended for use during the analysis pass. This function's body 
 	 * will only ever excecute once, to avoid unnecessary duplication of code.
 	 */
 	virtual void resolve() { 
+		if (m_dependency) m_dependency->resolve();
+
 		for (auto child : m_children) {
 			child->resolve();
 		}
 	}
 
 	/**
-	 * Fixes up the type of this object, intended for use during the analysis pass. Objects 
-	 * can look at the types of siblings and static attributes of parents to further 
-	 * determine their types.
-	 */ 
-	virtual void fixup() {
-		for (auto child : m_children) {
-			child->fixup();
-		}
-	}
+	 * Request a new ID.
+	 */
+	void newID();
 
+	ASTNode();
 	virtual ~ASTNode() { };
 };
 

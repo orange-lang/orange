@@ -62,20 +62,37 @@ Value* Block::Codegen() {
 
 	GE::runner()->pushBlock(this);
 
-	m_symtab->reset();
-
 	generateStatements();
 
 	GE::runner()->popBlock();
 	return nullptr;
 }
 
-bool Block::hasReturn() {
-	for (ASTNode *s : m_statements) {
-		if (s->getClass() == "ReturnStmt") return true; 
+// Finds a list of all return statements starting at a root 
+bool findReturn(ASTNode* root) {
+	if (root->getClass() == "ReturnStmt") {
+		return true;
+	}
+
+	for (auto stmt : root->children()) {
+		// Do not go into nested functions.
+		if (stmt->getClass() == "FunctionStmt") continue;
+		if (findReturn(stmt) == true) return true;
 	}
 
 	return false;
+}
+
+bool Block::hasReturn() {
+	for (auto stmt : m_statements) {
+		if (stmt->getClass() == "ReturnStmt") return true;
+	}
+
+	return false;
+}
+
+bool Block::hasReturnNested() {
+	return findReturn(this);
 }
 
 bool Block::hasJump() {
@@ -166,6 +183,8 @@ ASTNode* Block::clone() {
 			}
 		}
 	}
+
+	clonedBlock->copyProperties(this);	
 	return clonedBlock;
 }
 
@@ -181,6 +200,48 @@ std::string Block::string() {
 
 	GE::runner()->popBlock();
 	return ss.str();
+}
+
+void Block::mapDependencies() {
+	Runner* curRunner = GE::runner();
+
+	GE::runner()->pushBlock(this);
+
+	// Resolve all of our statements.
+	for (auto stmt : m_statements) {
+		try {
+			stmt->mapDependencies();
+		} catch (CompilerMessage& e) {
+			curRunner->log(e);
+		} catch (std::runtime_error& e) {
+			CodeLocation loc = stmt->location();
+			CompilerMessage msg(ERROR, e.what(), curRunner->pathname(), loc.row_begin, loc.row_end, loc.col_begin, loc.col_end);
+			curRunner->log(msg);
+		}
+	}
+
+	GE::runner()->popBlock();		
+}
+
+void Block::initialize() {
+	Runner* curRunner = GE::runner();
+
+	GE::runner()->pushBlock(this);
+
+	// Resolve all of our statements.
+	for (auto stmt : m_statements) {
+		try {
+			stmt->initialize();
+		} catch (CompilerMessage& e) {
+			curRunner->log(e);
+		} catch (std::runtime_error& e) {
+			CodeLocation loc = stmt->location();
+			CompilerMessage msg(ERROR, e.what(), curRunner->pathname(), loc.row_begin, loc.row_end, loc.col_begin, loc.col_end);
+			curRunner->log(msg);
+		}
+	}
+
+	GE::runner()->popBlock();	
 }
 
 void Block::resolve() {

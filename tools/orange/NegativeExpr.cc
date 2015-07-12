@@ -37,10 +37,15 @@ Value* NegativeExpr::Codegen() {
 	return m_value;
 }
 
-std::string NegativeExpr::string() {
-	return "-" + m_expr->string();
+void NegativeExpr::resolve() {
+	ASTNode::resolve();
+
+	if (m_resolved) return; 
+	m_resolved = true;
+
+	m_type = m_expr->getType();
 }
 
-OrangeTy* NegativeExpr::getType() {
-	return m_expr->getType();
+std::string NegativeExpr::string() {
+	return "-" + m_expr->string();
 }

@@ -50,6 +50,8 @@ public:
 
 	static OrangeTy* get(std::string str);
 
+	virtual void resolve() {}
+
 	////
 	// Type comparison section 
 	////

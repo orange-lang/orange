@@ -106,12 +106,12 @@ public:
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone() {
-		return new BinOpExpr((Expression*)m_LHS->clone(), m_op, (Expression*)m_RHS->clone());
+		auto clone = new BinOpExpr((Expression*)m_LHS->clone(), m_op, (Expression*)m_RHS->clone());
+		clone->copyProperties(this);
+		return clone;
 	}
 
 	virtual std::string string();
-
-	virtual OrangeTy* getType();
 
 	virtual void resolve();
 

@@ -10,36 +10,14 @@
 #include <orange/generator.h>
 
 Value* EnumStmt::Codegen() {
-	// Reactivate us in the symbol table.
-	GE::runner()->topBlock()->symtab()->activate(m_name, this);
-
 	return nullptr;
 }
 
 ASTNode* EnumStmt::clone() {
 	EnumStmt* clone = new EnumStmt(m_name);
 	clone->m_enums = m_enums;
+	clone->copyProperties(this);
 	return clone;
-}
-
-OrangeTy* EnumStmt::getType() {
-	if (m_type != nullptr) {
-		return m_type;
-	}
-
-	if (m_enums.size() == 0) {
-		return VoidTy::get();
-	}
-
-	// We need to determine the highest precedence type and then
-	// change the other enums to use that type.
-	OrangeTy* highestType = m_enums[0].value->getType();
-
-	for (unsigned int i = 1; i < m_enums.size(); i++) {
-		highestType = CastingEngine::GetFittingType(highestType, m_enums[i].value->getType());
-	}
-
-	return highestType;
 }
 
 std::string EnumStmt::string() {
@@ -55,10 +33,32 @@ std::string EnumStmt::string() {
 	return ss.str();
 }
 
+void EnumStmt::initialize() {
+	ASTNode::initialize();
+	
+	// Now that everything is the same type, let's add the EnumStmt to the symbol table.
+	SymTable* tab = GE::runner()->topBlock()->symtab();
+
+	if (tab->create(m_name, this) == false) {
+		throw CompilerMessage(*this, "Something named " + m_name + " already exists!");
+	}
+}
+
 void EnumStmt::resolve() {
-	// We have to do some morphing here; first; determine the highest type.
-	// We can use getType because it will calculate it until the type is cached.
-	m_type = getType();
+	if (m_resolved) return; 
+	m_resolved = true;
+
+	if (m_enums.size() == 0) {
+		m_type = VoidTy::get();
+	} else {
+		// We need to determine the highest precedence type and then
+		// change the other enums to use that type.
+		m_type = m_enums[0].value->getType();
+
+		for (unsigned int i = 1; i < m_enums.size(); i++) {
+			m_type = CastingEngine::GetFittingType(m_type, m_enums[i].value->getType());
+		}
+	}
 
 	for (auto& pair : m_enums) {
 		ValFactory factory;
@@ -67,13 +67,6 @@ void EnumStmt::resolve() {
 
 		delete pair.value; // Delete our old value.
 		pair.value = factory.produce();
-	}
-
-	// Now that everything is the same type, let's add the EnumStmt to the symbol table.
-	SymTable* tab = GE::runner()->topBlock()->symtab();
-
-	if (tab->create(m_name, this) == false) {
-		throw CompilerMessage(*this, "Something named " + m_name + " already exists!");
 	}
 }
 

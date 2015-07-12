@@ -44,16 +44,13 @@ public:
 		ret->m_locked = m_locked; 
 		ret->m_signed = m_signed; 
 		ret->m_type = m_type;
+		ret->copyProperties(this);
 		return ret;
 	}
 
 	virtual std::string string();
 
-	virtual OrangeTy* getType();
-
 	virtual void setType(OrangeTy* type);
-
-	virtual Value* getValue();
 
 	virtual void resolve();
 
@@ -66,7 +63,7 @@ public:
 	/**
 	 * Tries to create this variable in the symbol table.
 	 */
-	virtual void create(bool throwError = true); 
+	virtual void initialize(); 
 
 	/**
 	 * Returns whether or not this variable exists in a parent.

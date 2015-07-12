@@ -1,0 +1,9 @@
+def recurse(var n) 
+	if n >= 2
+		return n 
+	end  
+	
+	return recurse(n + 1)
+end 
+
+return recurse(1) - 2

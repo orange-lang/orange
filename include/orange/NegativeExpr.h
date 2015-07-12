@@ -21,12 +21,14 @@ public:
 	virtual Value* Codegen();
 
 	virtual ASTNode* clone() {
-		return new NegativeExpr((Expression*)m_expr->clone());
+		auto clone = new NegativeExpr((Expression*)m_expr->clone());
+		clone->copyProperties(this);
+		return clone;
 	}
 
 	virtual std::string string();
 
-	virtual OrangeTy* getType();
+	virtual void resolve();
 
 	virtual bool isSigned() { return true; }
 

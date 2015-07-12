@@ -116,18 +116,27 @@ void Runner::compile() {
 		yyonce = 0; // reset yyonce
 		yyin = file; // give flex the file
 		yyparse(); // and do our parse.
+		
+		mainFunction()->newID();
 
-		// Now that we've parsed everything, let's analyze and resolve code...
+		// Analysis pass 
+		mainFunction()->initialize();
+		mainFunction()->mapDependencies();
 		mainFunction()->resolve();
-		mainFunction()->fixup();
 
 		if (hasError()) {
+			if (debug()) {
+				std::cout << mainFunction()->dump() << std::endl;
+			}
+
 			m_result->finish(false, m_messages);
 			return;
 		}
 
-		if (debug())
+		if (debug()) {
+			std::cout << mainFunction()->dump() << std::endl;
 			std::cout << mainFunction()->string() << std::endl;
+		}
 
 		mainFunction()->Codegen();
 
@@ -136,7 +145,7 @@ void Runner::compile() {
 			return;
 		}
 
-		if (debug())
+		if (debug()) 
 			m_module->dump();
 
 		optimizeModule();

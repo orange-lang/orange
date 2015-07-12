@@ -42,6 +42,8 @@ public:
 
 	virtual OrangeTy* getType();
 
+	virtual void mapDependencies();
+
 	virtual void resolve();
 
 	virtual bool isSigned();
@@ -49,11 +51,6 @@ public:
 	virtual bool isConstant();
 
 	virtual Expression* expression(); 
-
-	/**
-	 * Creates a new VarExpr and sets it as the m_any_expr.
-	 */
-	virtual void newVarExpr(); 
 
 	AnyID(std::string name);
 };

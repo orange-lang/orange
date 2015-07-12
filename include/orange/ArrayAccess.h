@@ -25,8 +25,6 @@ public:
 
 	virtual std::string string();
 
-	virtual OrangeTy* getType();
-
 	virtual void resolve();
 
 	virtual bool returnsPtr() { return true; }
