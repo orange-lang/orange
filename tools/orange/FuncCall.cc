@@ -129,6 +129,8 @@ void FuncCall::resolve() {
 	if (m_resolved) return; 
 	m_resolved = true;
 
+	if (m_dependency) m_dependency->resolve();
+
 	// Look for the function in the symbol table.
 	SymTable *curTab = GE::runner()->symtab();
 	ASTNode* function = curTab->findFromAny(m_name, this); 
