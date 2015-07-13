@@ -26,7 +26,7 @@ Value* TernaryExpr::Codegen() {
 		throw std::runtime_error("TernaryExpr::Codegen(): m_condition generated no value!");
 	}
 
-	if (CastingEngine::CastValueToType(&condition, IntTy::getUnsigned(1), m_condition->isSigned(), true) == false) {
+	if (m_condition->cast(&condition, IntTy::getUnsigned(1), true) == false) {
 		throw CompilerMessage(*m_condition, "could not cast to a boolean!");
 	}
 
@@ -52,7 +52,7 @@ Value* TernaryExpr::Codegen() {
 		trueValue = GE::builder()->CreateLoad(trueValue);
 	}
 
-	CastingEngine::CastValueToType(&trueValue, getType(), m_true_expr->isSigned(), true); 
+	m_true_expr->cast(&trueValue, getType(), true);
 	
 	GE::builder()->CreateStore(trueValue, result);
 	
@@ -67,7 +67,7 @@ Value* TernaryExpr::Codegen() {
 		falseValue = GE::builder()->CreateLoad(falseValue);
 	}
 
-	CastingEngine::CastValueToType(&falseValue, getType(), m_false_expr->isSigned(), true); 
+	m_false_expr->cast(&falseValue, getType(), true);
 	
 	GE::builder()->CreateStore(falseValue, result);
 	
@@ -102,7 +102,7 @@ void TernaryExpr::resolve() {
 		throw CompilerMessage(*this, errorStr);
 	}	
 
-	m_type = CastingEngine::GetFittingType(m_true_expr->getType(), m_false_expr->getType());
+	m_type = CastingEngine::GetHighestPrecedence(m_true_expr->getType(), m_false_expr->getType());
 }
 
 bool TernaryExpr::isSigned() {

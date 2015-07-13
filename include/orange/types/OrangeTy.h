@@ -107,7 +107,6 @@ public:
 	// LLVM operation section 
 	////
 	virtual Value* allocate(); 
-	static OrangeTy* getFromLLVM(Type* ty, bool isSigned);
 	static bool isExpressionValidForConstArray(Expression* e);
 	static unsigned int valueFromExpression(Expression* e);
 }; 

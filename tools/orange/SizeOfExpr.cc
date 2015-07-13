@@ -60,7 +60,7 @@ Value* SizeOfExpr::Codegen() {
 				Expression* e = typep->getVariadicArrayElement(); 
 				Value* v = e->Codegen();
 				if (e->returnsPtr()) v = GE::builder()->CreateLoad(v);
-				CastingEngine::CastValueToType(&v, getType(), e->isSigned(), true);
+				e->cast(&v, getType(), true);
 				multipliers.push_back(v);
 			}
 

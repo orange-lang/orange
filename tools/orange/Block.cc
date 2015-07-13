@@ -134,7 +134,7 @@ OrangeTy* Block::searchForReturn() {
 				retType = sReturnType; 
 			} else {
 				// We want to change retType to be the highest precedence return type.
-				retType = CastingEngine::GetFittingType(retType, sReturnType);
+				retType = CastingEngine::GetHighestPrecedence(retType, sReturnType);
 			}
 		} else if (s->isBlock() && s->getClass() != "FunctionStmt") {
 			// If we're a block (and not a function, since that shouldn't affect this), look for returns.
@@ -142,7 +142,7 @@ OrangeTy* Block::searchForReturn() {
 			OrangeTy* innerRetType = block->searchForReturn();
 
 			if (innerRetType) {
-				retType = CastingEngine::GetFittingType(retType, innerRetType);				
+				retType = CastingEngine::GetHighestPrecedence(retType, innerRetType);				
 			} 
 		} else if (s->getClass() == "IfStmts") {
 			IfStmts* ifStmts = (IfStmts *)s; 
@@ -152,7 +152,7 @@ OrangeTy* Block::searchForReturn() {
 				
 				if (innerRetType == nullptr || innerRetType->isIDTy() || innerRetType->isVoidTy()) continue;
 			
-				retType = retType ? CastingEngine::GetFittingType(retType, innerRetType) : innerRetType;
+				retType = retType ? CastingEngine::GetHighestPrecedence(retType, innerRetType) : innerRetType;
 			}
 		}
 	}

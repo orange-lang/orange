@@ -34,6 +34,8 @@ public:
 
 	virtual void resolve();
 
+	ParamList parameters() const { return m_parameters; }
+
 	virtual bool isSigned() { return m_type->isSigned(); }
 
 	ExternFunction(OrangeTy* returnType, std::string name, ParamList parameters);

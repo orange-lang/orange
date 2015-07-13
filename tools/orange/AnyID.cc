@@ -93,6 +93,8 @@ void AnyID::resolve() {
 	} else {
 		throw CompilerMessage(*this, m_name + " doesn't exist in this scope.");
 	}
+
+	m_type = m_any_expr->getType();
 }
 
 bool AnyID::isSigned() {

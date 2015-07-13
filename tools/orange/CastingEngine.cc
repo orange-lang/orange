@@ -8,125 +8,252 @@
 
 #include <orange/CastingEngine.h>
 #include <orange/generator.h>
+#include <orange/AST.h>
 
-bool CastingEngine::AreTypesCompatible(OrangeTy* a, OrangeTy* b) {
-	if (a == nullptr || b == nullptr) return false;
+bool CastingEngine::AreNodesCompatible(ASTNode* a, ASTNode* b) {
+	if (a == nullptr || b == nullptr) {
+		throw std::runtime_error("a and be must not be nullptr");
+	}
 
-	if (a->string() == b->string()) return true; 
-	if (a->isIntegerTy() && b->isIntegerTy()) return true;
-	if (a->isIntegerTy() && b->isFloatingPointTy()) return true;  
-	if (b->isIntegerTy() && a->isFloatingPointTy()) return true;  
-	if (a->isFloatingPointTy() && b->isFloatingPointTy()) return true;
-	if (a->isIntegerTy() && b->isPointerTy()) return true; 
-	if (b->isIntegerTy() && a->isPointerTy()) return true;
+	auto a_ty = a->getType();
+	auto b_ty = b->getType(); 
+
+	return AreTypesCompatible(a_ty, b_ty);
+}
+
+bool CastingEngine::IsNodeCompatible(ASTNode* a, OrangeTy* ty) {
+	if (a == nullptr) {
+		throw std::runtime_error("a must not be nullptr");
+	}
+
+	auto a_ty = a->getType();
+	return AreTypesCompatible(a_ty, ty);
+}
+
+bool CastingEngine::AreTypesCompatible(OrangeTy* a_ty, OrangeTy* b_ty) {
+	if (a_ty == nullptr || b_ty == nullptr) {
+		throw std::runtime_error("a.type or b.type is nullptr");
+	} 
+
+	if (a_ty == b_ty) return true; 
+	if (a_ty->isIntegerTy() && b_ty->isIntegerTy()) return true;
+	if (a_ty->isFloatingPointTy() && b_ty->isFloatingPointTy()) return true;
+	if (a_ty->isIntegerTy() && b_ty->isFloatingPointTy()) return true;  
+	if (b_ty->isIntegerTy() && a_ty->isFloatingPointTy()) return true;  
+	if (a_ty->isIntegerTy() && b_ty->isPointerTy()) return true; 
+	if (b_ty->isIntegerTy() && a_ty->isPointerTy()) return true;
 	return false;
 }
 
-bool CastingEngine::CanTypeBeCasted(OrangeTy* src, OrangeTy* dest) {
-	// For now, return the order-independent AreTypesCompatible
-	return AreTypesCompatible(src, dest);
+bool CastingEngine::CanNodeBeCasted(ASTNode* src, ASTNode* dest) {
+	return AreNodesCompatible(src, dest);
 }
 
-bool CastingEngine::CastValueToType(Value** v, OrangeTy* t, bool isSigned, bool force) {
-	if (v == nullptr || t == nullptr) return false; 
+bool CastingEngine::CanNodeBeCasted(ASTNode* src, OrangeTy* ty) {
+	return IsNodeCompatible(src, ty);
+}
 
-	OrangeTy* srcType = OrangeTy::getFromLLVM((*v)->getType(), false);
-	Type* llvmT = t->getLLVMType();
+bool CastingEngine::CanTypesBeCasted(OrangeTy* ty1, OrangeTy* ty2) {
+	return AreTypesCompatible(ty1, ty2);
+}
 
-	// If we're not forcing, and we can't cast v to t, just return.
-	if (force == false && CanTypeBeCasted(srcType, t) == false) return false;
-
-	// If we're not forcing, and v has a higher precedence than t, return.
-	if (force == false && ShouldTypeMorph(srcType, t) == false) return false; 
-
-	// Here we're weeded out all unnecessary or impossible morphing; you don't have 
-	// to check for force == true here anymore, so just morph anything that's possible.
-	
-	// Cast v to the integer type of t; this will account for bitwidths. 
-	if (t->isIntegerTy() && srcType->isIntegerTy()) {
-		*v = GE::builder()->CreateIntCast(*v, llvmT, isSigned);
-		return true;
+bool CastingEngine::CastNode(ASTNode *from, ASTNode* to, bool force) {
+	if (from == nullptr || to == nullptr) {
+		throw std::runtime_error("from and to must not be nullptr");
 	}
 
-	if (t->isFloatingPointTy() && srcType->isFloatingPointTy()) {
-		*v = GE::builder()->CreateFPCast(*v, llvmT);
-		return true;
+	auto to_ty = to->getType(); 
+
+	if (to_ty == nullptr) {
+		throw std::runtime_error("to.type is nullptr");
+	} 
+
+	return CastNode(from, to_ty);
+}
+
+bool CastingEngine::CastNode(ASTNode* from, OrangeTy* target, bool force) {
+	if (from == nullptr || target == nullptr) {
+		throw std::runtime_error("from and target must not be nullptr");
 	}
 
-	if (t->isFloatingPointTy() && srcType->isIntegerTy()) {
-		*v = isSigned ? GE::builder()->CreateSIToFP(*v, llvmT) : GE::builder()->CreateUIToFP(*v, llvmT);
-		return true; 
+	auto from_ty = from->getType();
+
+	if (from_ty == nullptr) {
+		throw std::runtime_error("from.type is nullptr");
+	} 
+
+	auto val = from->getValue();
+
+	bool casted = CastValue(&val, from_ty, target, force);
+	from->setValue(val);
+	return casted;
+}
+
+bool CastingEngine::CastValue(Value** val, OrangeTy* from, OrangeTy* target, bool force) {
+	if (val == nullptr || from == nullptr || target == nullptr) {
+		throw std::runtime_error("val, from, and target must not be nullptr");
 	}
 
-	if (t->isIntegerTy() && srcType->isFloatingPointTy()) {
-		*v = isSigned ? GE::builder()->CreateFPToSI(*v, llvmT) : GE::builder()->CreateFPToUI(*v, llvmT);
-		return true; 
-	}
+	auto orig_val = *val;
 
-	if (t->isPointerTy() && srcType->isPointerTy()) {
-		*v = GE::builder()->CreateBitCast(*v, llvmT);
-		return true; 
-	}
-	
-	if (srcType->isPointerTy() && t->isIntegerTy()) {
-		*v = GE::builder()->CreatePtrToInt(*v, llvmT);
-		return true; 
-	}
+	if (val == nullptr) {
+		throw std::runtime_error("from has no value!");
+	} 
 
-	if (srcType->isIntegerTy() && t->isPointerTy()) {
-		*v = GE::builder()->CreateIntToPtr(*v, llvmT); 
-		return true;
-	}
-
-	if (t->isPointerTy() && srcType->isArrayTy()) {
-		*v = GE::builder()->CreateBitCast(*v, llvmT);
-		return true;
-	}
-
-	if (t->isArrayTy() && srcType->isArrayTy()) {
-		// Do no casting.
+	if (force == false && CanTypesBeCasted(from, target) == false) { 
 		return false; 
 	}
 
-	throw std::runtime_error("could not determine type to cast.");
-	return false;
-}
-
-bool CastingEngine::CastValuesToFit(Value** v1, Value** v2, bool isV1Signed, bool isV2Signed) {
-	if (v1 == nullptr || v2 == nullptr) return false; 
-
-	OrangeTy* type1 = OrangeTy::getFromLLVM((*v1)->getType(), isV1Signed);
-	OrangeTy* type2 = OrangeTy::getFromLLVM((*v2)->getType(), isV2Signed);
-
-	if (AreTypesCompatible(type1, type2) == false) return false;
-
-	bool retVal = false;
-
-	if (ShouldTypeMorph(type1, type2)) {
-		// type2 > type1, so cast type1. 
-		retVal = CastValueToType(v1, type2, isV1Signed, false);
-	} else {
-		// type2 < type1, so cast type2.
-		retVal = CastValueToType(v2, type1, isV2Signed, false);
+	if (from == target) {
+		return true;
 	}
 
-	return retVal;
+	else if (from->isIntegerTy() && target->isIntegerTy()) {
+		*val = GE::builder()->CreateIntCast(*val, target->getLLVMType(), from->isSigned());
+	} 
+
+	else if (from->isFloatingPointTy() && target->isFloatingPointTy()) {
+		*val = GE::builder()->CreateFPCast(*val, target->getLLVMType());
+	} 
+
+	else if (from->isIntegerTy() && target->isFloatingPointTy()) {
+		if (from->isSigned()) {
+			*val = GE::builder()->CreateSIToFP(*val, target->getLLVMType());	
+		} else {
+			*val = GE::builder()->CreateUIToFP(*val, target->getLLVMType());	
+		}
+	} 
+
+	else if (from->isFloatingPointTy() && target->isIntegerTy()) {
+		if (from->isSigned()) {
+			*val = GE::builder()->CreateFPToSI(*val, target->getLLVMType());
+		} else {
+			*val = GE::builder()->CreateFPToUI(*val, target->getLLVMType());
+		}
+	} 
+
+	else if (from->isPointerTy() && target->isPointerTy()) {
+		*val = GE::builder()->CreateBitCast(*val, target->getLLVMType());
+	} 
+
+	else if (from->isPointerTy() && target->isIntegerTy()) {
+		*val = GE::builder()->CreatePtrToInt(*val, target->getLLVMType());
+	} 
+
+	else if (from->isIntegerTy() && target->isPointerTy()) {
+		*val = GE::builder()->CreateIntToPtr(*val, target->getLLVMType());
+	} 
+
+	else if (from->isArrayTy() && target->isPointerTy()) {
+		*val = GE::builder()->CreateBitCast(*val, target->getLLVMType());
+	} 
+
+	return *val != orig_val;
 }
 
-bool CastingEngine::ShouldTypeMorph(OrangeTy* src, OrangeTy* dest) {
-	if (dest->isFloatingPointTy() && src->isIntegerTy()) return true; 
-	if (dest->isDoubleTy() && src->isFloatTy()) return true;
 
-	if (src->isIntegerTy() && dest->isIntegerTy()) {
-		return dest->getIntegerBitWidth() > src->getIntegerBitWidth();
+bool CastingEngine::CastToFit(ASTNode* n1, ASTNode* n2) {
+	if (n1 == nullptr || n2 == nullptr) {
+		throw std::runtime_error("n1 and n2 must not be nullptr");
 	}
 
-	return false;
+	switch (Compare(n1, n2)) {
+		case LOWER_PRECEDENCE:
+			return CastNode(n1, n2);
+		case HIGHER_PRECEDENCE:
+			return CastNode(n2, n1);
+		case SAME_PRECEDENCE:
+			return true; 
+		case INCOMPATIBLE:
+			return false;
+	}
 }
 
-OrangeTy* CastingEngine::GetFittingType(OrangeTy* v1, OrangeTy* v2) {
-	// If v1 and v2 are the same, always prefer the LHS.
-	if (v1 == v2) return v1;
-	if (AreTypesCompatible(v1, v2) == false) return nullptr;
-	return ShouldTypeMorph(v1, v2) ? v2 : v1;
+bool CastingEngine::CastToFit(Value** v1, OrangeTy* ty1, Value** v2, OrangeTy* ty2) {
+	if (v1 == nullptr || ty1 == nullptr || v2 == nullptr || ty2 == nullptr) {
+		throw std::runtime_error("one or more arguments is nullptr");
+	}
+
+	switch (Compare(ty1, ty2)) {
+		case LOWER_PRECEDENCE:
+			return CastValue(v1, ty1, ty2);
+		case HIGHER_PRECEDENCE:
+			return CastValue(v2, ty2, ty1);
+		case SAME_PRECEDENCE:
+			return true; 
+		case INCOMPATIBLE:
+			return false;
+	}
+}
+
+
+PredenceComparison CastingEngine::Compare(ASTNode* n1, ASTNode* n2) {
+	if (n1 == nullptr || n2 == nullptr) {
+		throw std::runtime_error("n1 and n2 must not be nullptr");
+	}
+
+	auto n1_ty = n1->getType();
+	auto n2_ty = n2->getType(); 
+
+	return Compare(n1_ty, n2_ty);
+}
+
+PredenceComparison CastingEngine::Compare(ASTNode* n1, OrangeTy* ty) {
+	if (n1 == nullptr || ty == nullptr) {
+		throw std::runtime_error("n1 and ty must not be nullptr");
+	}
+
+	auto n1_ty = n1->getType();
+
+	return Compare(n1_ty, ty);
+}
+
+PredenceComparison CastingEngine::Compare(OrangeTy* ty1, OrangeTy* ty2) {
+	if (ty1 == nullptr || ty2 == nullptr) {
+		throw std::runtime_error("ty1 or ty2 is nullptr");
+	} 
+
+	if (ty1 == ty2) return SAME_PRECEDENCE;
+	else if (AreTypesCompatible(ty1, ty2) == false) return INCOMPATIBLE;
+	else if (ty1->isIntegerTy() && ty2->isFloatingPointTy()) return LOWER_PRECEDENCE;
+	else if (ty1->isFloatTy() && ty2->isDoubleTy()) return LOWER_PRECEDENCE;
+	else if (ty1->isIntegerTy() && ty2->isIntegerTy()) {
+		if (ty1->getIntegerBitWidth() < ty2->getIntegerBitWidth()) return LOWER_PRECEDENCE; 
+		else if (ty1->getIntegerBitWidth() > ty2->getIntegerBitWidth()) return HIGHER_PRECEDENCE;
+	}
+
+	return HIGHER_PRECEDENCE;
+}
+
+
+ASTNode* CastingEngine::GetHighestPrecedence(ASTNode* n1, ASTNode* n2) {
+	if (n1 == nullptr || n2 == nullptr) {
+		throw std::runtime_error("n1 and n2 must not be nullptr");
+	}
+
+	switch (Compare(n1, n2)) {
+		case LOWER_PRECEDENCE:
+			return n2; 
+		case HIGHER_PRECEDENCE:
+		case SAME_PRECEDENCE:
+			return n1; 
+		case INCOMPATIBLE:
+			return nullptr;
+	}
+}
+
+OrangeTy* CastingEngine::GetHighestPrecedence(OrangeTy* ty1, OrangeTy* ty2) {
+	if (ty1 == nullptr || ty2 == nullptr) {
+		throw std::runtime_error("ty1 and ty2 must not be nullptr");
+	}
+
+	switch (Compare(ty1, ty2)) {
+		case LOWER_PRECEDENCE:
+			return ty2; 
+		case HIGHER_PRECEDENCE:
+		case SAME_PRECEDENCE:
+			return ty1; 
+		case INCOMPATIBLE:
+			return nullptr;
+	}
 }

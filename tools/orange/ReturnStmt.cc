@@ -57,7 +57,7 @@ Value* ReturnStmt::Codegen() {
 
 		if (m_expr->returnsPtr()) retExpr = GE::builder()->CreateLoad(retExpr);
 
-		CastingEngine::CastValueToType(&retExpr, containingFunc->getType(), m_expr->isSigned(), true);
+		m_expr->cast(&retExpr, containingFunc->getType(), true);
 
 		// Store it and jump to the end block.
 		GE::builder()->CreateStore(retExpr, retVal);

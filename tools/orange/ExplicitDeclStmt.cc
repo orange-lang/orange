@@ -32,7 +32,7 @@ Value* ExplicitDeclStmt::CodegenPair(VarExpr* var, Expression* expr) {
 		bool arrayToArray = expr->getType()->isArrayTy() && var->getType()->isArrayTy(); 
 
 		if (arrayToArray == false) {
-			bool casted = CastingEngine::CastValueToType(&value, var->getType(), var->isSigned(), true);
+			bool casted = expr->cast(&value, var->getType(), true);
 			if (casted == false) {
 				throw CompilerMessage(*expr, "Could not cast expression to variable type!");
 			}

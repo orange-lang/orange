@@ -122,7 +122,7 @@ Value* Loop::Codegen() {
 		}
 
 
-		bool casted = CastingEngine::CastValueToType(&conditionV, IntTy::getUnsigned(1), m_condition->isSigned(), true);
+		bool casted = m_condition->cast(&conditionV, IntTy::getUnsigned(1), true);
 		if (casted == false) {
 			throw CompilerMessage(*m_condition, "cannot cast condition to boolean!");	
 		}

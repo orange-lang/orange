@@ -24,7 +24,7 @@ Value* CastExpr::Codegen() {
 		m_value = GE::builder()->CreateLoad(m_value);
 	}
 
-	CastingEngine::CastValueToType(&m_value, m_type, isSigned(), true);
+	m_expr->cast(&m_value, m_type, true);
 	return m_value;
 }
 

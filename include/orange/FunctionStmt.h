@@ -144,6 +144,10 @@ public:
 	 */
 	void disableMangle() { m_mangled = true; }
 
+	ParamList parameters() const { 
+		return m_parameters; 
+	} 
+
 	FunctionStmt(std::string name, ParamList parameters, SymTable* symtab);
 	FunctionStmt(std::string name, OrangeTy* type, ParamList parameters, SymTable* symtab);
 

@@ -81,7 +81,7 @@ Value* IfStmts::Codegen() {
 			}
 
 			// Our condition must be a boolean, try casting it if we can...
-			if (CastingEngine::CastValueToType(&condition, IntTy::getUnsigned(1), condBlock->condition()->isSigned(), true) == false) {
+			if (CastingEngine::CastValue(&condition, condBlock->condition()->getType(), IntTy::getUnsigned(1), true) == false) {
 				throw CompilerMessage(*(condBlock->condition()), "could not cast to boolean!");
 			}
 

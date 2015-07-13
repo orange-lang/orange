@@ -11,6 +11,7 @@
 #include <orange/Block.h>
 #include <sstream>
 #include <helper/string.h>
+#include <orange/CastingEngine.h>
 
 unsigned long lastID = 0;
 
@@ -195,6 +196,10 @@ void ASTNode::newID() {
 	for (auto child : m_children) {
 		child->newID();
 	}
+}
+
+bool ASTNode::cast(Value** v, OrangeTy* to, bool force) {
+	return CastingEngine::CastValue(v, m_type, to, force);
 }
 
 ASTNode::ASTNode() {

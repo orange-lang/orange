@@ -63,22 +63,6 @@ OrangeTy* OrangeTy::get(std::string str) {
 	return VoidTy::get();
 }
 
-OrangeTy* OrangeTy::getFromLLVM(Type *ty, bool isSigned) {
-	if (ty->isIntegerTy()) {
-		return IntTy::get(ty->getIntegerBitWidth(), isSigned);
-	} else if (ty->isFloatTy()) {
-		return FloatTy::get();
-	} else if (ty->isDoubleTy()) {
-		return DoubleTy::get();
-	} else if (ty->isArrayTy()) {
-		return ArrayTy::get(getFromLLVM(ty->getArrayElementType(), isSigned), ty->getArrayNumElements());
-	} else if (ty->isPointerTy()) {
-		return PointerTy::get(getFromLLVM(ty->getPointerElementType(), isSigned));
-	} else {
-		return VoidTy::get();
-	}
-}
-
 bool OrangeTy::isExpressionValidForConstArray(Expression* e) {
 	return e->isConstant();
 }

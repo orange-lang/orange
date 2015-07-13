@@ -51,8 +51,9 @@ Value* ArrayExpr::Codegen() {
 			Value* arr_ele = element->Codegen();
 
 			// Cast it to the type of the array 
-			if (element->getType()->isArrayTy() == false)
-				CastingEngine::CastValueToType(&arr_ele, arrType->getArrayElementType(), element->isSigned(), true);
+			if (element->getType()->isArrayTy() == false){
+				element->cast(&arr_ele, arrType->getArrayElementType(), true);
+			}
 
 			consts.push_back((Constant *)arr_ele);
 		}
@@ -74,8 +75,9 @@ Value* ArrayExpr::Codegen() {
 			}
 
 			// Cast it to the type of the array 
-			if (m_elements[i]->getType()->isArrayTy() == false)
-				CastingEngine::CastValueToType(&arr_ele, arrType->getArrayElementType(), m_elements[i]->isSigned(), true);
+			if (m_elements[i]->getType()->isArrayTy() == false) {
+				m_elements[i]->cast(&arr_ele, arrType->getArrayElementType(), true);
+			}
 			
 			Value *gep = GE::builder()->CreateConstInBoundsGEP2_64(space, 0, i);
 
@@ -126,7 +128,7 @@ void ArrayExpr::resolve() {
 		if (highestType == nullptr) {
 			highestType = ty; 
 		} else {
-			highestType = CastingEngine::GetFittingType(highestType, ty);
+			highestType = CastingEngine::GetHighestPrecedence(highestType, ty);
 		}
 	}
 

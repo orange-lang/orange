@@ -37,7 +37,7 @@ bool BinOpExpr::Validate(Value* LHS, Value* RHS) {
 	}
 
 	// The types of LHS and RHS must be compatible.
-	if (LHS && RHS && CastingEngine::AreTypesCompatible(m_LHS->getType(), m_RHS->getType()) == false) {
+	if (LHS && RHS && CastingEngine::AreNodesCompatible(m_LHS, m_RHS) == false) {
 		throw std::runtime_error("Cannot do operation.");
 	}
 
@@ -218,16 +218,16 @@ Value* BinOpExpr::Codegen() {
 	// If we're assigning, we want to cast RHS to LHS (forced).
 	// Otherwise, cast them to fit.
 	if (IsAssignOp(m_op)) {
-		CastingEngine::CastValueToType(&RHS, m_LHS->getType(), m_LHS->isSigned(), true);
+		m_RHS->cast(&RHS, m_LHS->getType(), true);
 	} else {
-		if (IsCompareOp(m_op) == false) {
+		if (IsCompareOp(m_op) == false && LHS->getType()->isPointerTy() && RHS->getType()->isIntegerTy()) {
 			// If we're doing arithmetic with pointers/integers, make LHS an int 		
-			if (LHS->getType()->isPointerTy() && RHS->getType()->isIntegerTy()) {
-				LHS = GE::builder()->CreatePtrToInt(LHS, LHS->getType()->getPointerElementType());
-			}
+			LHS = GE::builder()->CreatePtrToInt(LHS, LHS->getType()->getPointerElementType());
+			CastingEngine::CastToFit(&LHS, m_LHS->getType()->getPointerElementType(), &RHS, m_RHS->getType());
+		} else {
+			CastingEngine::CastToFit(&LHS, m_LHS->getType(), &RHS, m_RHS->getType());
 		}
 
-		CastingEngine::CastValuesToFit(&LHS, &RHS, m_LHS->isSigned(), m_RHS->isSigned());
 	}
 
 	if (m_op == "=") {
@@ -265,11 +265,11 @@ Value* BinOpExpr::Codegen() {
 		// Both LHS and RHS must be casted to booleans.
 		// The nature of when we go to check is determined by && and ||.
 		if (m_op == "&&" || m_op == "and" || m_op == "||" || m_op == "or") {
-			bool castedL = CastingEngine::CastValueToType(&LHS, IntTy::getUnsigned(1), false, true);
-			bool castedR = CastingEngine::CastValueToType(&RHS, IntTy::getUnsigned(1), false, true);
+			bool castedL = m_LHS->cast(&LHS, IntTy::getUnsigned(1), true);
+			bool castedR = m_RHS->cast(&RHS, IntTy::getUnsigned(1), true);
 
 			if (castedL == false || castedR == false) {
-				throw CompilerMessage(*this, "both LHS and RHS must be castable to a boolean!");
+ 				throw CompilerMessage(*this, "both LHS and RHS must be castable to a boolean!");
 			}
 
 			Value *booleanVal = GE::builder()->CreateAlloca(IntTy::getUnsigned(1)->getLLVMType());
@@ -308,6 +308,12 @@ Value* BinOpExpr::Codegen() {
 
 	if (IsCompareOp(m_op) == false) {
 		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);
+
+		// If we're doing arithmetic with pointers and integers, cast m_value back to a pointer 
+		if (m_LHS->getType()->isPointerTy() && m_RHS->getType()->isIntegerTy()) {
+			CastingEngine::CastValue(&m_value, m_RHS->getType(), m_LHS->getType(), true);
+		}
+
 		return m_value;
 	} else {
 		bool isFPOp = LHS->getType()->isFloatingPointTy() && RHS->getType()->isFloatingPointTy();
@@ -360,10 +366,10 @@ void BinOpExpr::resolve() {
 			throw CompilerMessage(*m_RHS, m_RHS->string() + " does not exist!");
 		}
 
-		if (IsCompareOp(m_op)) {
+		if (IsCompareOp(m_op) || IsCustomOp(m_op)) {
 			m_type = IntTy::getUnsigned(1);
 		} else {
-			m_type = CastingEngine::GetFittingType(lType, rType);
+			m_type = CastingEngine::GetHighestPrecedence(lType, rType);
 		}		
 	}
 }

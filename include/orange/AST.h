@@ -231,6 +231,13 @@ public:
 	 */
 	void newID();
 
+	/**
+	 * Casts a given value of to a target type.
+	 * Uses the type properties of this node to perform the cast.
+	 * @return True if the cast succeeded, false otherwise.
+	 */
+	bool cast(Value** v, OrangeTy* to, bool force = false);
+
 	ASTNode();
 	
 	virtual ~ASTNode();

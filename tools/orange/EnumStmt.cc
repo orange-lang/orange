@@ -56,7 +56,7 @@ void EnumStmt::resolve() {
 		m_type = m_enums[0].value->getType();
 
 		for (unsigned int i = 1; i < m_enums.size(); i++) {
-			m_type = CastingEngine::GetFittingType(m_type, m_enums[i].value->getType());
+			m_type = CastingEngine::GetHighestPrecedence(m_type, m_enums[i].value->getType());
 		}
 	}
 

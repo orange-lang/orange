@@ -54,10 +54,6 @@ public:
 		return ss.str();
 	}
 
-	virtual OrangeTy* getType() const {
-		return PointerTy::get(IntTy::getSigned(8)); 
-	}
-
 	Value* Codegen();
 
 	virtual ASTNode* clone() { 
@@ -95,10 +91,6 @@ public:
 		return ss.str();
 	}
 
-	virtual OrangeTy *getType() const { 
-		return IntTy::getUnsigned(size); 
-	}
-
 	virtual ASTNode* clone() { 
 		UIntVal *ret = new UIntVal(value, size); 
 		return ret;
@@ -114,8 +106,13 @@ public:
 		return ss.str();
 	}
 
-	UIntVal() { }
-	UIntVal(uint64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
+	UIntVal() { 
+		m_type = IntTy::getUnsigned(size); 
+	}
+
+	UIntVal(uint64_t val, uint8_t size) : value(val), size(size) {
+		m_type = IntTy::getUnsigned(size); 
+	} 
 };
 
 class IntVal : public BaseVal {
@@ -135,10 +132,6 @@ public:
 		return ss.str();
 	}
 
-	virtual OrangeTy *getType() const { 
-		return IntTy::getSigned(size); 
-	}
-
 	virtual ASTNode* clone() { 
 		IntVal* ret = new IntVal(value, size);
 		return ret;
@@ -154,8 +147,13 @@ public:
 		return ss.str();
 	}
 
-	IntVal() { }
-	IntVal(int64_t val, uint8_t size) : value(val), size(size) {} // parses a string into its value.
+	IntVal() { 
+		m_type = IntTy::getSigned(size); 
+	}
+
+	IntVal(int64_t val, uint8_t size) : value(val), size(size) {
+		m_type = IntTy::getSigned(size); 
+	}
 };
 
 class FloatVal : public BaseVal {
@@ -170,10 +168,6 @@ public:
 		std::stringstream ss;
 		ss << "(float)" << value;
 		return ss.str();
-	}
-
-	virtual OrangeTy *getType() const { 
-		return FloatTy::get();
 	}
 
 	virtual ASTNode* clone() { 
@@ -191,8 +185,13 @@ public:
 		return ss.str();
 	}
 
-	FloatVal();
-	FloatVal(float val) : value(val) {} // parses a string into its value.
+	FloatVal() {
+		m_type = FloatTy::get();
+	}
+
+	FloatVal(float val) : value(val) {
+		m_type = FloatTy::get();
+	}
 };
 
 class DoubleVal : public BaseVal {
@@ -207,10 +206,6 @@ public:
 		std::stringstream ss;
 		ss << "(double)" << value;
 		return ss.str();
-	}
-
-	virtual OrangeTy *getType() const { 
-		return DoubleTy::get(); 
 	}
 
 	virtual ASTNode* clone() { 
@@ -228,8 +223,13 @@ public:
 		return ss.str();
 	}
 
-	DoubleVal();
-	DoubleVal(double val) : value(val) {} // parses a string into its value.
+	DoubleVal() {
+		m_type = DoubleTy::get();
+	}
+
+	DoubleVal(double val) : value(val) {
+		m_type = DoubleTy::get();
+	} 
 };
 
 #endif 

@@ -39,6 +39,7 @@ StrVal::StrVal(StrElement value) : m_value(value) {
 	cpp_s = cpp_s.substr(1, cpp_s.length()-2);
 	replaceAll(cpp_s, "\\n", "\n");
 	m_value = cpp_s;
+	m_type = PointerTy::get(IntTy::getSigned(8)); 
 }
 
 Value* StrVal::Codegen() {

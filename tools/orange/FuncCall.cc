@@ -8,14 +8,19 @@
 
 #include <orange/FuncCall.h>
 #include <orange/generator.h>
+#include <orange/ExternFunction.h>
 
 Value* FuncCall::Codegen() {
 	SymTable *curTab = GE::runner()->symtab();
 	
-	FunctionStmt* function = (FunctionStmt*)curTab->findFromAny(m_name, this); 
+	auto function = curTab->findFromAny(m_name, this); 
 
 	if (function == nullptr) {
 		throw CompilerMessage(*this, "No function " + m_name + " found!");
+	}
+
+	if (function->getClass() != "FunctionStmt" && function->getClass() != "ExternFunction") {
+		throw CompilerMessage(*this, m_name + " is not a function!");
 	}
 
 	Function* llvmFunction = (Function*) function->getValue();
@@ -30,12 +35,19 @@ Value* FuncCall::Codegen() {
 		throw CompilerMessage(*this, "Must have at least one argument in a variable argument call!");		
 	}
 
+	ParamList parameters; 
+
+	if (function->getClass() == "FunctionStmt") {
+		parameters = ((FunctionStmt*)function)->parameters();
+	} else {
+		parameters = ((ExternFunction*)function)->parameters();
+	}
+
 	if (m_arguments.size()) {
 		std::vector<Value*> Args;
 
-		auto arg_it = llvmFunction->arg_begin();
-		for (unsigned int i = 0; i < llvmFunction->arg_size(); i++, arg_it++) {
-			Value *vArg = m_arguments[i]->Codegen();
+		for (unsigned int i = 0; i < parameters.size(); i++) {
+			Value* vArg = m_arguments[i]->Codegen();
 
 			if (vArg == nullptr) {
 				throw CompilerMessage(*m_arguments[i], "codegen returned nothing!");
@@ -45,9 +57,7 @@ Value* FuncCall::Codegen() {
 				vArg = GE::builder()->CreateLoad(vArg);
 			}
 
-			OrangeTy* ty = OrangeTy::getFromLLVM(arg_it->getType(), m_arguments[i]->isSigned());
-
-			CastingEngine::CastValueToType(&vArg, ty, m_arguments[i]->isSigned(), true);
+			m_arguments[i]->cast(&vArg, parameters[i]->getType(), true);
 			Args.push_back(vArg);
 		}
 
