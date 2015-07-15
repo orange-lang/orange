@@ -27,14 +27,18 @@ private:
 	bool m_set = false;
 	std::vector<std::string> names; 
 	std::string description;
-	std::string arg_value;
+	std::vector<std::string> arg_values;
 	bool m_hasArg;
+	bool m_hidden = false;
 public:
 	bool isSet() const;
 	bool hasArg() const { return m_hasArg; }
-	std::string argValue() const { return arg_value; }
+	bool hidden() const { return m_hidden; }
+	std::vector<std::string> argValues() const { return arg_values; }
 
-	cCommandOption(std::vector<std::string> names, std::string description, bool arg);
+	bool valuesContain(std::string str);
+
+	cCommandOption(std::vector<std::string> names, std::string description, bool arg, bool hidden = false);
 };
 
 class cOptionsState {

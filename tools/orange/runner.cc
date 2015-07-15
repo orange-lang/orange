@@ -19,6 +19,13 @@
 #include <llvm/Transforms/Vectorize.h>
 #include <llvm/Transforms/Utils/UnifyFunctionExitNodes.h>
 #include <llvm/Analysis/Passes.h>
+#include <llvm/IR/Verifier.h>
+#include <llvm/Support/Host.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/TargetRegistry.h>
+#include <llvm/Support/Path.h>
+#include <llvm/Transforms/Scalar.h>
+#include <orange/commands/RunSettings.h>
 
 void Runner::init() {
 	m_context = new LLVMContext();
@@ -48,6 +55,8 @@ void Runner::init() {
 	m_functionOptimizer->doInitialization();
 
 	GeneratingEngine::sharedEngine()->setActive(nullptr);
+
+	m_settings = new RunSettings;
 }
 
 Runner::Runner() {
@@ -123,7 +132,7 @@ void Runner::compile() {
 		mainFunction()->resolve();
 
 		if (hasError()) {
-			if (debug()) {
+			if (settings()->debugLevel(DEBUG_AST)) {
 				std::cout << mainFunction()->dump() << std::endl;
 			}
 
@@ -131,8 +140,11 @@ void Runner::compile() {
 			return;
 		}
 
-		if (debug()) {
+		if (settings()->debugLevel(DEBUG_PARENTAGE)) {
 			std::cout << mainFunction()->dump() << std::endl;
+		}
+
+		if (settings()->debugLevel(DEBUG_AST)) {
 			std::cout << mainFunction()->string() << std::endl;
 		}
 
@@ -143,12 +155,12 @@ void Runner::compile() {
 			return;
 		}
 
-		if (debug())
+		if (settings()->debugLevel(DEBUG_MODULE))
 			m_module->dump();
 
 		optimizeModule();
 
-		if (debug())
+		if (settings()->debugLevel(DUMP_MODULE))
 			m_module->dump();
 
 		fclose(file);
@@ -194,7 +206,7 @@ void Runner::run() {
 	// Do cleanup.
 	m_isRunning = false;
 
-	if (debug() && hasError() == false)
+	if (settings()->debug && hasError() == false)
 		std::cout << "Program returned " << retCode << std::endl;
 
 	bool succeeded = (retCode == 0) && (hasError() == false);
@@ -228,13 +240,18 @@ void Runner::buildModule() {
 		throw std::runtime_error("could not create target marchine.");
 	}
 
-	std::string loutput = sys::fs::directory_entry(pathname()).path();
+	std::string loutput = llvm::sys::fs::directory_entry(pathname()).path();
+	loutput = llvm::sys::path::stem(loutput);
 
+	if (settings()->assembly == false) {
 #if defined(__linux__) || defined(__APPLE__)
 		loutput += ".o";
 #elif defined(_WIN32)
 		loutput += ".obj";
 #endif
+	} else {
+		loutput += ".s";
+	}
 
 	std::error_code ec;
 	raw_fd_ostream raw(loutput.c_str(), ec, llvm::sys::fs::OpenFlags::F_RW);
@@ -248,7 +265,13 @@ void Runner::buildModule() {
   PassManager* ThePM = new PassManager;
 	ThePM->add(new DataLayoutPass());
 
-	bool b = tm->addPassesToEmitFile(*ThePM, strm, LLVMTargetMachine::CGFT_ObjectFile, false);
+	auto emissionType = llvm::LLVMTargetMachine::CGFT_ObjectFile;
+
+	if (settings()->assembly == true) {
+		emissionType = llvm::LLVMTargetMachine::CGFT_AssemblyFile;
+	}
+
+	bool b = tm->addPassesToEmitFile(*ThePM, strm, emissionType, false);
 
 	if (b == true) {
 		throw std::runtime_error("emission is not supported.\n");
@@ -269,6 +292,7 @@ void Runner::buildModule() {
 
 #ifdef __APPLE__
 		voptions.push_back("-w");
+		voptions.push_back("-ldylib1.o");
 #endif
 
 #ifdef __linux__
@@ -296,9 +320,11 @@ void Runner::buildModule() {
 
 		voptions.push_back(loutput.c_str());
 
-		invokeLinkerWithOptions(voptions);
+		if (settings()->assembly == false && settings()->skip_linking == false) {
+			invokeLinkerWithOptions(voptions);
 
-		remove(loutput.c_str());
+			remove(loutput.c_str());
+		}
 }
 
 int Runner::runModule(Function *function) {

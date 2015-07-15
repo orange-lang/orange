@@ -53,10 +53,20 @@ const char* getParameter(std::vector<std::string> a, int argc, char **argv, int 
 
 bool cCommandOption::isSet() const { return m_set; }
 
-cCommandOption::cCommandOption(std::vector<std::string> names, std::string description, bool arg) {
+bool cCommandOption::valuesContain(std::string str) {
+	for (auto val : arg_values) {
+		if (val == str) return true; 
+	}
+
+	return false;
+}
+
+
+cCommandOption::cCommandOption(std::vector<std::string> names, std::string description, bool arg, bool hidden) {
 	this->names = names;
 	this->description = description;
 	this->m_hasArg = arg;
+	this->m_hidden = hidden;
 }
 
 void cOptionsState::add(cCommandOption* option) { options.push_back(option); }
@@ -99,6 +109,8 @@ void cOptions::printHelp() {
 	std::cerr << "Available options" << helpStr << ":" << std::endl;
 
 	for (cCommandOption* option : curState->options) {
+		if (option->hidden()) continue;
+
 		std::cerr << "\t";
 
 		for (unsigned int i = 0; i < option->names.size(); i++) {
@@ -194,7 +206,7 @@ void cOptions::parse(int argc, char **argv) {
 					std::cerr << "error: unknown recognized argument " << param_arg << "for " << param << std::endl;
 					exit(1);
 				} else if (option->m_hasArg == true && param_arg != "") {
-					option->arg_value = param_arg;
+					option->arg_values.push_back(param_arg);
 					break; 
 				} else if (option->m_hasArg == true) {
 					i++;
@@ -211,7 +223,7 @@ void cOptions::parse(int argc, char **argv) {
 						exit(1);
 					}
 
-					option->arg_value = param_arg;
+					option->arg_values.push_back(param_arg);
 					break;
 				}
 			} 

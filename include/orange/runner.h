@@ -13,6 +13,8 @@
 #include "Block.h"
 #include "FunctionStmt.h"
 
+struct RunSettings;
+
 /**
  * Runner is a class that will run or build a file. It starts with the name 
  * of the path being built. It contains a list of messages that have been 
@@ -63,10 +65,7 @@ private:
 	 */
 	FunctionPassManager* m_functionOptimizer;
 
-	/**
-	 * Whether or not we are in debug mode.
-	 */
-	bool m_debug = false; 
+	RunSettings* m_settings = nullptr; 
 
 	/**
 	 * The output name, if building.
@@ -209,14 +208,7 @@ public:
 	 *
 	 * @return True if we are in debug mode, false otherwise.
 	 */
-	bool debug() const { return m_debug; }
-
-	/**
-	 * Sets whether or not we are in debug mode.
-	 *
-	 * @set inDebug Whether or not we are in debug mode.
-	 */
-	void setDebug(bool inDebug) { m_debug = inDebug; }
+	RunSettings* settings() const { return m_settings; }
 
 	void setTarget(std::string filename);
 

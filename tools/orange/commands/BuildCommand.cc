@@ -23,8 +23,8 @@ void BuildCommand::run() {
 	CodeExecutor::run();
 
 	auto outputOption = getOption("o");
-	if (outputOption->isSet()) {
-  	m_runner->setOutputName(outputOption->argValue());
+	if (outputOption->isSet() && outputOption->argValues().size() > 0) {
+  	m_runner->setOutputName(outputOption->argValues()[0]);
 	}
 
 	buildCompiled();

@@ -20,18 +20,25 @@
 #include <orange/commands/TestCommand.h>
 
 int main(int argc, char** argv) {
-	cOptions options("Orange WIP"); 
+	cOptions options("Orange WIP");
 
-  cCommandOption* debug = new cCommandOption({"debug", "D"}, "Print debugging info", false);
+  cCommandOption* debug = new cCommandOption({"debug", "D"}, "Print debugging info", true, true);
+  cCommandOption* dump = new cCommandOption({"dump"}, "Dump module after building", false, true);
   cCommandOption* output = new cCommandOption({"o", "output"}, "Specify output name", true);
+  cCommandOption* assem = new cCommandOption({"assem", "S"}, "Output assembly instead of a binary", false);
+  cCommandOption* skipl = new cCommandOption({"nolink", "c"}, "Skip linking the binary, leaving obj files", false);
 
 	RunCommand* runCommand = new RunCommand();
  	runCommand->add(debug);
+ 	runCommand->add(dump);
 	options.mainState.addState(runCommand);
 
 	BuildCommand* buildCommand = new BuildCommand();
 	buildCommand->add(debug);
+	buildCommand->add(dump);
 	buildCommand->add(output);
+	buildCommand->add(assem);
+	buildCommand->add(skipl);
 	options.mainState.addState(buildCommand);
 
 	TestCommand* testCommand = new TestCommand();
@@ -47,6 +54,8 @@ int main(int argc, char** argv) {
 	delete runCommand;
 	delete debug;
 	delete output;
+	delete dump;
+	delete assem;
 
 	return 0;
 }
