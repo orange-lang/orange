@@ -132,9 +132,13 @@ void Runner::compile() {
 		mainFunction()->resolve();
 
 		if (hasError()) {
-			if (settings()->debugLevel(DEBUG_AST)) {
+			if (settings()->debugLevel(DEBUG_PARENTAGE)) {
 				std::cout << mainFunction()->dump() << std::endl;
 			}
+
+			if (settings()->debugLevel(DEBUG_AST)) {			
+				std::cout << mainFunction()->string() << std::endl;
+			}			
 
 			m_result->finish(false, m_messages);
 			return;
