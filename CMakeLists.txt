@@ -24,16 +24,23 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	ADD_DEFINITIONS(-DDEBUG)
 endif()
 
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") 
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11")
+else()
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")	
+endif()
+
+
 
 # unix specific flags
 if(${APPLE})
 	MESSAGE(STATUS "Detected OS X...")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -fexceptions -Wno-unused -Wno-deprecated-register -g")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -Wno-unused -Wno-deprecated-register -g")
 	SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "-Wl,-dead_strip -Wl,-dead_strip_dylibs")
 	LINK_DIRECTORIES(/usr/local/lib)
 	SET(CMAKE_EXE_LINKER_FLAGS "-Wl,-dead_strip -Wl,-dead_strip_dylibs")
 elseif(${UNIX})
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -fexceptions -Wno-unused -g")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -Wno-unused -g")
 	SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections")
 endif()
 
@@ -41,7 +48,7 @@ endif()
 if(${WIN32})
 	SET(STATUS "Detected WIN32...")
 
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -fexceptions -Wno-unused ")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -Wno-unused ")
 	SET(CXX_DEFINES "${CXX_DEFINES} -DYY_NO_UNISTD_H")
 	SET(C_DEFINES "${C_DEFINES} -DYY_NO_UNISTD_H")
 endif(${WIN32})
