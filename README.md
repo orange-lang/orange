@@ -1,4 +1,4 @@
-# Orange
+# Orange [![Build Status](https://travis-ci.org/orange-lang/orange.svg?branch=master)](https://travis-ci.org/orange-lang/orange)
 Orange is a systems programming language made to be as powerful as C++ with none of the headache. It aims to be very producitve by baking the most important low- and high-level features directly into the langauge, instead of dealing with them through obtuse function calls. 
 
 # Status 
