@@ -242,6 +242,11 @@ void TestCommand::run() {
 
 	// Print a newline, since our runOnPath() wouldn't have.
 	std::cout << "\n"; 
+
+	// Exit with 1 if we had at least one failing test.
+	if (numPassedTests() - m_results.size() > 0) {
+		exit(1);
+	}
 }
 
 TestCommand::~TestCommand() { }
