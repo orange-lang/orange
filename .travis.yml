@@ -1,5 +1,7 @@
 sudo: false
 language: cpp
+notifications:
+  irc: "irc.freenode.net#orange-lang"
 compiler:
   - clang 
   - gcc
