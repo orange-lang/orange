@@ -1,0 +1,27 @@
+sudo: false
+language: cpp
+compiler:
+  - clang 
+  - gcc
+cache: apt 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise
+    - llvm-toolchain-precise-3.6
+    packages:
+    - llvm-3.6 
+    - llvm-3.6-dev
+    - libedit-dev
+    - g++-4.8
+git:
+  submodules: false
+before_install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+script:
+  - mkdir build
+  - cd build 
+  - cmake ..
+  - make all
+  - ./output/bin/orange test
