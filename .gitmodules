@@ -1,4 +1,4 @@
 [submodule "etc/llvm"]
 	path = etc/llvm
-	url = https://github.com/llvm-mirror/llvm.git
+	url = https://github.com/rfratto/llvm
 	branch = release_36
