@@ -7,8 +7,6 @@ branches:
 skip_commits:
   message: /\[ci-ignore\]/
 
-# init scripts are called at the beginning before repo cloning 
-
 install:
   - git submodule init 
   - git submodule update --depth 1
@@ -27,8 +25,6 @@ install:
   - md build
   - cd build 
 
-# before_build: run before build 
-
 build_script:
   - set PATH=C:\tools\mingw64\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Python27;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\CMake\bin;C:\LLVM\bin
   - cmake --version 
@@ -37,6 +33,3 @@ build_script:
 
 test_script:
   - output\bin\orange test
-# after_build: run after 
-
-# test_script: custom test 
