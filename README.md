@@ -1,9 +1,14 @@
-# Orange [![Build Status](https://travis-ci.org/orange-lang/orange.svg?branch=master)](https://travis-ci.org/orange-lang/orange)
+# Orange  
+
 Orange is a systems programming language made to be as powerful as C++ with none of the headache. It aims to be very producitve by baking the most important low- and high-level features directly into the langauge, instead of dealing with them through obtuse function calls. 
 
 # Status 
 
 Orange is still under development and in the design phase; a lot of planned features are not yet implemented. Check the [TODO](/TODO.md) to see what needs to be done.
+
+Linux/OS X  | Windows
+------------- | -------------
+[![Build Status](https://travis-ci.org/orange-lang/orange.svg?branch=master)](https://travis-ci.org/orange-lang/orange) | [![Build status](https://ci.appveyor.com/api/projects/status/r4y46n573riuqfv1/branch/master?svg=true)](https://ci.appveyor.com/project/rfratto/orange-9no7j/branch/master)
 
 # Hello World
 At the moment, Orange has no standard library, so you'll need to link against C library functions to do more 
