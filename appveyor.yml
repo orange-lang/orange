@@ -7,12 +7,16 @@ branches:
 skip_commits:
   message: /\[ci-ignore\]/
 
+cache:
+  - C:\projects\mingw.7z
+  - C:\projects\llvm.zip
+
 install:
   - git submodule init 
   - git submodule update --depth 1
-  - appveyor DownloadFile http://downloads.sourceforge.net/mingw-w64/x86_64-5.1.0-release-posix-seh-rt_v4-rev0.7z -FileName C:\projects\mingw.7z
+  - if not exist C:\projects\mingw.7z appveyor DownloadFile http://downloads.sourceforge.net/mingw-w64/x86_64-5.1.0-release-posix-seh-rt_v4-rev0.7z -FileName C:\projects\mingw.7z
   - 7z x -oC:\tools C:\projects\mingw.7z > nul
-  - appveyor DownloadFile https://github.com/rfratto/llvm/releases/download/v3.6.2/llvm-win-mingw64-posix-seh.zip -FileName C:\projects\llvm.zip
+  - if not exist C:\projects\llvm.zip appveyor DownloadFile https://github.com/rfratto/llvm/releases/download/v3.6.2/llvm-win-mingw64-posix-seh.zip -FileName C:\projects\llvm.zip
   - 7z x -OC:\tools\mingw64 C:\projects\llvm.zip > nul
 
   # validate toolchain
