@@ -167,6 +167,8 @@ bool CastingEngine::CastToFit(ASTNode* n1, ASTNode* n2) {
 		case INCOMPATIBLE:
 			return false;
 	}
+
+	return false;
 }
 
 bool CastingEngine::CastToFit(Value** v1, OrangeTy* ty1, Value** v2, OrangeTy* ty2) {
@@ -184,6 +186,8 @@ bool CastingEngine::CastToFit(Value** v1, OrangeTy* ty1, Value** v2, OrangeTy* t
 		case INCOMPATIBLE:
 			return false;
 	}
+
+	return false;
 }
 
 
@@ -240,6 +244,8 @@ ASTNode* CastingEngine::GetHighestPrecedence(ASTNode* n1, ASTNode* n2) {
 		case INCOMPATIBLE:
 			return nullptr;
 	}
+
+	return nullptr;
 }
 
 OrangeTy* CastingEngine::GetHighestPrecedence(OrangeTy* ty1, OrangeTy* ty2) {
@@ -256,4 +262,6 @@ OrangeTy* CastingEngine::GetHighestPrecedence(OrangeTy* ty1, OrangeTy* ty2) {
 		case INCOMPATIBLE:
 			return nullptr;
 	}
+
+	return nullptr;
 }
