@@ -3,19 +3,20 @@ language: cpp
 notifications:
   irc: "irc.freenode.net#orange-lang"
 compiler:
+  - clang
   - gcc
 cache: apt
 os: linux
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
     - llvm-toolchain-precise
     - llvm-toolchain-precise-3.6
     packages:
     - llvm-3.6
     - llvm-3.6-dev
     - libedit-dev
+    - g++-4.8
 matrix:
   include:
     - os: osx
@@ -24,19 +25,6 @@ matrix:
         - brew update
         - brew install llvm
         - export CMAKE_LLVM_PATH=-DLLVM_DIR=/usr/local/Cellar/llvm/3.6.2/share/llvm/cmake
-  include:
-    - os: linux
-      compiler: clang
-      addons:
-        apt:
-          sources:
-          - ubuntu-toolchain-r-test
-          - llvm-toolchain-precise
-          - llvm-toolchain-precise-3.6
-          packages:
-          - llvm-3.6
-          - llvm-3.6-dev
-          - libedit-dev
 git:
   submodules: false
 before_install:
