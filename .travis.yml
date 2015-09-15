@@ -3,10 +3,10 @@ language: cpp
 notifications:
   irc: "irc.freenode.net#orange-lang"
 compiler:
-  - clang 
+  - clang
   - gcc
-cache: apt 
-os: linux 
+cache: apt
+os: linux
 addons:
   apt:
     sources:
@@ -14,17 +14,17 @@ addons:
     - llvm-toolchain-precise
     - llvm-toolchain-precise-3.6
     packages:
-    - llvm-3.6 
+    - llvm-3.6
     - llvm-3.6-dev
     - libedit-dev
     - g++-4.8
 matrix:
   include:
-    - os: osx 
+    - os: osx
       compiler: clang
-      before_install: 
-        - brew update 
-        - brew install llvm 
+      before_install:
+        - brew update
+        - brew install llvm
         - export CMAKE_LLVM_PATH=-DLLVM_DIR=/usr/local/Cellar/llvm/3.6.2/share/llvm/cmake
 git:
   submodules: false
@@ -32,7 +32,7 @@ before_install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 script:
   - mkdir build
-  - cd build 
+  - cd build
   - cmake .. $CMAKE_LLVM_PATH
   - make all
   - ./output/bin/orange test
