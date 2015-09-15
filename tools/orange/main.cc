@@ -1,10 +1,10 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 #include <iostream>
 #include <stdexcept>
 #include <fstream>
@@ -20,8 +20,6 @@
 #include <orange/commands/TestCommand.h>
 
 int main(int argc, char** argv) {
-	CodeExecutor *executor = new CodeExecutor();
-
 	cOptions options("Orange WIP"); 
 
   cCommandOption* debug = new cCommandOption({"debug", "D"}, "Print debugging info", false);
@@ -29,7 +27,7 @@ int main(int argc, char** argv) {
 
 	RunCommand* runCommand = new RunCommand();
  	runCommand->add(debug);
-	options.mainState.addState(runCommand); 
+	options.mainState.addState(runCommand);
 
 	BuildCommand* buildCommand = new BuildCommand();
 	buildCommand->add(debug);
@@ -44,12 +42,11 @@ int main(int argc, char** argv) {
 
 	options.currentState()->run();
 
-	delete testCommand; 
-	delete buildCommand; 
-	delete runCommand; 
+	delete testCommand;
+	delete buildCommand;
+	delete runCommand;
 	delete debug;
 	delete output;
 
 	return 0;
 }
-

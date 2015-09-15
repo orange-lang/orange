@@ -1,10 +1,10 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 #include <orange/BinOpExpr.h>
 #include <orange/VarExpr.h>
 #include <orange/generator.h>
@@ -12,12 +12,12 @@
 
 bool BinOpExpr::LHSShouldNotBeNull() {
 	// For the moment, LHS should never be null.
-	return true; 
+	return true;
 }
 
 bool BinOpExpr::RHSShouldNotBeNull() {
 	// For the moment, RHS should never be null.
-	return true; 
+	return true;
 }
 
 bool BinOpExpr::Validate(Value* LHS, Value* RHS) {
@@ -31,7 +31,7 @@ bool BinOpExpr::Validate(Value* LHS, Value* RHS) {
 	}
 
 	// If we're assigning, this would mean that LHS *has* to return a pointer for us to load in.
-	// If it didn't, then something is wrong. 
+	// If it didn't, then something is wrong.
 	if (IsAssignOp(m_op) && m_LHS->returnsPtr() == false) {
 		throw std::runtime_error("LHS of this expression is not assignable.");
 	}
@@ -41,20 +41,20 @@ bool BinOpExpr::Validate(Value* LHS, Value* RHS) {
 		throw std::runtime_error("Cannot do operation.");
 	}
 
-	return true; 
+	return true;
 }
 
 bool BinOpExpr::isVarExpr(Expression* expr) {
 	if (expr == nullptr) return false;
 
-	if (expr->getClass() == "VarExpr") return true; 
+	if (expr->getClass() == "VarExpr") return true;
 
 	if (expr->getClass() == "AnyID") {
-		AnyID* anything = (AnyID *)expr; 
+		AnyID* anything = (AnyID *)expr;
 		return anything->expression()->getClass() == "VarExpr";
 	}
 
-	return false; 
+	return false;
 }
 
 VarExpr* BinOpExpr::getVarExpr(Expression* expr) {
@@ -63,7 +63,7 @@ VarExpr* BinOpExpr::getVarExpr(Expression* expr) {
 	if (expr->getClass() == "VarExpr") return (VarExpr *)expr;
 
 	if (expr->getClass() == "AnyID") {
-		AnyID* anything = (AnyID *)expr; 
+		AnyID* anything = (AnyID *)expr;
 
 		if (anything->expression()->getClass() == "VarExpr") {
 			return (VarExpr *)anything->expression();
@@ -90,10 +90,10 @@ bool BinOpExpr::IsCustomOp(std::string op) {
 
 
 Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, StrElement op, Value* value2, bool signed2) {
-	if ((value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy() == false) || 
+	if ((value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy() == false) ||
 		(value2->getType()->isFloatingPointTy() && value1->getType()->isFloatingPointTy() == false)) {
 		throw CompilerMessage(op, "Can't do operation with a float and non-float value.");
-	} 
+	}
 
 	bool isFPOp = value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy();
 
@@ -108,7 +108,7 @@ Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, 
 			return Instruction::FDiv;
 		} else {
 			return (signed1 || signed2) ? Instruction::SDiv : Instruction::UDiv;
-		}		
+		}
 	}	else if (op == "%" || op == "mod") {
 		if (isFPOp) {
 			return Instruction::FRem;
@@ -139,10 +139,10 @@ Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, 
 }
 
 CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrElement op, Value* value2, bool signed2) {
-	if ((value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy() == false) || 
+	if ((value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy() == false) ||
 		(value2->getType()->isFloatingPointTy() && value1->getType()->isFloatingPointTy() == false)) {
 		throw CompilerMessage(op, "Can't do operation with a float and non-float value.");
-	} 
+	}
 
 	bool isFPOp = value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy();
 
@@ -157,19 +157,19 @@ CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrE
 			return CmpInst::FCMP_OGE;
 		} else {
 			return (signed1 || signed2) ? CmpInst::ICMP_SGE : CmpInst::ICMP_UGE;
-		}		
+		}
 	} else if (op == "<") {
 		if (isFPOp) {
 			return CmpInst::FCMP_OLT;
 		} else {
 			return (signed1 || signed2) ? CmpInst::ICMP_SLT : CmpInst::ICMP_ULT;
-		}		
+		}
 	} else if (op == "<=") {
 		if (isFPOp) {
 			return CmpInst::FCMP_OLE;
 		} else {
 			return (signed1 || signed2) ? CmpInst::ICMP_SLE : CmpInst::ICMP_ULE;
-		}				
+		}
 	} else if (op == "==") {
 		if (isFPOp) {
 			return CmpInst::FCMP_OEQ;
@@ -182,7 +182,7 @@ CmpInst::Predicate BinOpExpr::GetBinOpPredComp(Value* value1, bool signed1, StrE
 		} else {
 			return CmpInst::ICMP_NE;
 		}
-	} 
+	}
 
 	throw CompilerMessage(op, "Unhandled compare operation " + op);
 }
@@ -192,23 +192,20 @@ Value* BinOpExpr::Codegen() {
   if (m_LHS == nullptr || m_RHS == nullptr) {
       std::runtime_error("LHS or RHS are missing!");
   }
-  
+
 	// Generate the LHS side of the expression, expecting it to return a value if it needs to.
 	Value* LHS = m_LHS->Codegen();
-	Value* RHS = m_RHS->Codegen(); 
-
-	Value* OrigLHS = LHS; 
-	Value* OrigRHS = RHS; 
+	Value* RHS = m_RHS->Codegen();
 
 	if (m_op == "=" && LHS == nullptr) {
 		throw CompilerMessage(*m_LHS, m_LHS->string() + " never created in this scope.");
 	}
 
-	// Validate should never return false, since it throws an exception any time it encounters 
+	// Validate should never return false, since it throws an exception any time it encounters
 	// something that is invalid, but let's make sure anyway.
 	if (Validate(LHS, RHS) == false) {
 		throw std::runtime_error("The expression is not valid!");
-	}	
+	}
 
 	if (m_RHS->returnsPtr()) RHS = GE::builder()->CreateLoad(RHS);
 
@@ -221,7 +218,7 @@ Value* BinOpExpr::Codegen() {
 		m_RHS->cast(&RHS, m_LHS->getType(), true);
 	} else {
 		if (IsCompareOp(m_op) == false && LHS->getType()->isPointerTy() && RHS->getType()->isIntegerTy()) {
-			// If we're doing arithmetic with pointers/integers, make LHS an int 		
+			// If we're doing arithmetic with pointers/integers, make LHS an int
 			LHS = GE::builder()->CreatePtrToInt(LHS, LHS->getType()->getPointerElementType());
 			CastingEngine::CastToFit(&LHS, m_LHS->getType()->getPointerElementType(), &RHS, m_RHS->getType());
 		} else {
@@ -243,24 +240,24 @@ Value* BinOpExpr::Codegen() {
 		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
 		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "-", RHS, m_RHS->isSigned()), loadedLHS, RHS);
 		GE::builder()->CreateStore(m_value, LHS);
-		return m_value;		
+		return m_value;
 	} else if (m_op == "*=") {
 		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
 		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "*", RHS, m_RHS->isSigned()), loadedLHS, RHS);
 		GE::builder()->CreateStore(m_value, LHS);
-		return m_value;				
+		return m_value;
 	} else if (m_op == "/=") {
 		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
 		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "/", RHS, m_RHS->isSigned()), loadedLHS, RHS);
 		GE::builder()->CreateStore(m_value, LHS);
-		return m_value;				
+		return m_value;
 	}
 
 
 	if (IsCustomOp(m_op)) {
-		// For && and ||, we have two blocks: check and continue. 
-		// Check is always used to modify the resulting value. 
-		// The value starts initially with being LHS. 
+		// For && and ||, we have two blocks: check and continue.
+		// Check is always used to modify the resulting value.
+		// The value starts initially with being LHS.
 		// If check is called, the value changes to the value of RHS.
 		// Both LHS and RHS must be casted to booleans.
 		// The nature of when we go to check is determined by && and ||.
@@ -279,20 +276,20 @@ Value* BinOpExpr::Codegen() {
 			auto curFunction   = (FunctionStmt*)GE::runner()->symtab()->findStructure("FunctionStmt");
 			auto llvmFunction  = (Function *)curFunction->getValue();
 
-			// Create our blocks 
+			// Create our blocks
 			auto checkBlock    = BasicBlock::Create(GE::runner()->context(), "check", llvmFunction, curFunction->getBlockEnd());
 			auto continueBlock = BasicBlock::Create(GE::runner()->context(), "continue", llvmFunction, curFunction->getBlockEnd());
 
 			if (m_op == "&&" || m_op == "and") {
-				// If LHS is true, we go to check. If it's false, we go to continue. 
-				// The reason for this is short circuiting; L && R will only ever evaluate 
+				// If LHS is true, we go to check. If it's false, we go to continue.
+				// The reason for this is short circuiting; L && R will only ever evaluate
 				// R if L is true, since false && x will never evaluate to true, independent of x.
 				GE::builder()->CreateCondBr(LHS, checkBlock, continueBlock);
 				GE::builder()->SetInsertPoint(checkBlock);
 				GE::builder()->CreateStore(RHS, booleanVal);
 			} else if (m_op	== "||" || m_op	== "or") {
 				// IF LHS is true, we go to continue. If it's false, we go to check.
-				// The reason for this is short circuiting; L || R will only ever evaluate R 
+				// The reason for this is short circuiting; L || R will only ever evaluate R
 				// if L is false; since true || x will always evaluate to true, independent of x.
 				GE::builder()->CreateCondBr(LHS, continueBlock, checkBlock);
 				GE::builder()->SetInsertPoint(checkBlock);
@@ -309,7 +306,7 @@ Value* BinOpExpr::Codegen() {
 	if (IsCompareOp(m_op) == false) {
 		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned()), LHS, RHS);
 
-		// If we're doing arithmetic with pointers and integers, cast m_value back to a pointer 
+		// If we're doing arithmetic with pointers and integers, cast m_value back to a pointer
 		if (m_LHS->getType()->isPointerTy() && m_RHS->getType()->isIntegerTy()) {
 			CastingEngine::CastValue(&m_value, m_RHS->getType(), m_LHS->getType(), true);
 		}
@@ -320,7 +317,7 @@ Value* BinOpExpr::Codegen() {
 		CmpInst::Predicate pred = GetBinOpPredComp(LHS, m_LHS->isSigned(), m_op, RHS, m_RHS->isSigned());
 
 		if (isFPOp) {
-			m_value = GE::builder()->CreateFCmp(pred, LHS, RHS); 
+			m_value = GE::builder()->CreateFCmp(pred, LHS, RHS);
 		} else {
 			m_value = GE::builder()->CreateICmp(pred, LHS, RHS);
 		}
@@ -330,7 +327,7 @@ Value* BinOpExpr::Codegen() {
 }
 
 std::string BinOpExpr::string() {
-	std::stringstream ss; 
+	std::stringstream ss;
 	ss << "(" << m_LHS->string() << " " << m_op << " " << m_RHS->string() << ")";
 	return ss.str();
 }
@@ -338,24 +335,24 @@ std::string BinOpExpr::string() {
 void BinOpExpr::resolve() {
 	ASTNode::resolve();
 
-	if (m_resolved) return; 
+	if (m_resolved) return;
 	m_resolved = true;
 
 	if (m_op == "=" && isVarExpr(m_LHS)) {
-		VarExpr* vExpr = getVarExpr(m_LHS); 
+		VarExpr* vExpr = getVarExpr(m_LHS);
 
 		if (vExpr->getType()->isVoidTy() || vExpr->getType()->isVarTy()) {
 			vExpr->setType(m_RHS->getType());
 			vExpr->resolve();
-		} 
-	} 
-	
-	// 
-	// Determine type 
+		}
+	}
+
+	//
+	// Determine type
 	//
 	if (IsAssignOp(m_op)) {
-		OrangeTy* t = m_LHS->getType(); 
-		m_type = t->isVoidTy() ? m_RHS->getType() : t; 
+		OrangeTy* t = m_LHS->getType();
+		m_type = t->isVoidTy() ? m_RHS->getType() : t;
 	} else {
 		OrangeTy *lType = m_LHS->getType();
 		OrangeTy *rType = m_RHS->getType();
@@ -370,7 +367,7 @@ void BinOpExpr::resolve() {
 			m_type = IntTy::getUnsigned(1);
 		} else {
 			m_type = CastingEngine::GetHighestPrecedence(lType, rType);
-		}		
+		}
 	}
 }
 
@@ -389,6 +386,3 @@ BinOpExpr::BinOpExpr(Expression* LHS, StrElement op, Expression* RHS) : m_LHS(LH
 	addChild("m_LHS", m_LHS);
 	addChild("m_RHS", m_RHS);
 }
-
-
-

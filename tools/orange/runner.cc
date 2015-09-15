@@ -21,8 +21,6 @@
 #include <llvm/Analysis/Passes.h>
 
 void Runner::init() {
-	bool added = GeneratingEngine::sharedEngine()->addRunner(this);
-
 	m_context = new LLVMContext();
 	GeneratingEngine::sharedEngine()->setActive(this);
 
@@ -116,10 +114,10 @@ void Runner::compile() {
 		yyonce = 0; // reset yyonce
 		yyin = file; // give flex the file
 		yyparse(); // and do our parse.
-		
+
 		mainFunction()->newID();
 
-		// Analysis pass 
+		// Analysis pass
 		mainFunction()->initialize();
 		mainFunction()->mapDependencies();
 		mainFunction()->resolve();
@@ -145,7 +143,7 @@ void Runner::compile() {
 			return;
 		}
 
-		if (debug()) 
+		if (debug())
 			m_module->dump();
 
 		optimizeModule();
