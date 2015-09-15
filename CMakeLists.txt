@@ -24,12 +24,12 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	ADD_DEFINITIONS(-DDEBUG)
 endif()
 
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang") 
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11")
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 	else()
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")	
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-deprecated-register")
@@ -37,12 +37,12 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-deprecated-register")
 # unix specific flags
 if(${APPLE})
 	MESSAGE(STATUS "Detected OS X...")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -Wno-unused -Wno-deprecated-register -g")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -Wno-deprecated-register")
 	SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "-Wl,-dead_strip -Wl,-dead_strip_dylibs")
 	LINK_DIRECTORIES(/usr/local/lib)
 	SET(CMAKE_EXE_LINKER_FLAGS "-Wl,-dead_strip -Wl,-dead_strip_dylibs")
 elseif(${UNIX})
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -Wno-unused -g")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexceptions -Wno-unused")
 	SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections")
 endif()
 
@@ -55,6 +55,7 @@ if(${WIN32})
 	SET(C_DEFINES "${C_DEFINES} -DYY_NO_UNISTD_H")
 endif(${WIN32})
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
 
 # If we don't have LLVM installed, add the subdirectory to get it
@@ -65,7 +66,7 @@ if (NOT ${LLVM_FOUND})
 	message(STATUS ${LLVM_CMAKE})
 
 	if (${LLVM_CMAKE} STREQUAL "LLVM_CMAKE-NOTFOUND")
-		message(FATAL_ERROR "You don't have LLVM installed, but llvm was not checked out to etc/llvm. If you are using a cloned repo, init and update git submodules. Otherwise, you will need to download and install LLVM.")
+		message(FATAL_ERROR "You don't have LLVM installed, but llvm was not checked out to etc/llvm. If you are using a cloned repo, init and update git submodules. Otherwise, you will need to download and install LLVM 3.6.")
 	endif()
 
 	add_subdirectory(etc/llvm)
