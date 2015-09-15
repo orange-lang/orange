@@ -88,6 +88,11 @@ bool BinOpExpr::IsCustomOp(std::string op) {
 	return op == "&&" || op == "and" || op == "||" || op == "or";
 }
 
+bool BinOpExpr::IsMathOp(std::string op) {
+	return op == "+" || op == "-" || op == "/" ||
+		op == "*";
+}
+
 
 Instruction::BinaryOps BinOpExpr::GetBinOpFunction(Value* value1, bool signed1, StrElement op, Value* value2, bool signed2) {
 	if ((value1->getType()->isFloatingPointTy() && value2->getType()->isFloatingPointTy() == false) ||
@@ -227,32 +232,26 @@ Value* BinOpExpr::Codegen() {
 
 	}
 
+	auto s_op = (std::string)m_op;
+	std::cout << s_op << " and " << s_op.substr(0,1) << std::endl;
+
 	if (m_op == "=") {
 		GE::builder()->CreateStore(RHS, LHS);
 		m_value = GE::builder()->CreateLoad(LHS);
 		return m_value;
-	} else if (m_op == "+=") {
+	} else if (IsAssignOp(m_op) && IsMathOp(s_op.substr(0,1))) {
+		std::cout << s_op << " and " << s_op.substr(0,1) << std::endl;
+
+		auto math_op = s_op.substr(0, 1);
+
 		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
-		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "+", RHS, m_RHS->isSigned()), loadedLHS, RHS);
-		GE::builder()->CreateStore(m_value, LHS);
-		return m_value;
-	} else if (m_op == "-=") {
-		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
-		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "-", RHS, m_RHS->isSigned()), loadedLHS, RHS);
-		GE::builder()->CreateStore(m_value, LHS);
-		return m_value;
-	} else if (m_op == "*=") {
-		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
-		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "*", RHS, m_RHS->isSigned()), loadedLHS, RHS);
-		GE::builder()->CreateStore(m_value, LHS);
-		return m_value;
-	} else if (m_op == "/=") {
-		Value* loadedLHS = GE::builder()->CreateLoad(LHS);
-		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(), "/", RHS, m_RHS->isSigned()), loadedLHS, RHS);
+
+		m_value = GE::builder()->CreateBinOp(GetBinOpFunction(loadedLHS, m_LHS->isSigned(),
+			math_op, RHS, m_RHS->isSigned()), loadedLHS, RHS);
+
 		GE::builder()->CreateStore(m_value, LHS);
 		return m_value;
 	}
-
 
 	if (IsCustomOp(m_op)) {
 		// For && and ||, we have two blocks: check and continue.
