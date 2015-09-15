@@ -10,6 +10,7 @@ os: linux
 addons:
   apt:
     sources:
+    - ubuntu-toolchain-r-test
     - llvm-toolchain-precise
     - llvm-toolchain-precise-3.6
     packages:
