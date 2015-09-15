@@ -1,10 +1,10 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 
 %{
 	#include <orange/orange.h>
@@ -38,8 +38,10 @@
 %option nounistd
 %option never-interactive
 %option yylineno
+%option nounput
+%option noinput
 
-%x HEX 
+%x HEX
 
 %%
 
@@ -50,9 +52,9 @@
 
 [0|1]+"b"								MKFACTORY(); DOFACTORY("b"); return VALUE;
 
-"0x"										MKFACTORY(); BEGIN(HEX); 
+"0x"										MKFACTORY(); BEGIN(HEX);
 <HEX>{
-	[0-9A-Fa-f]+					factory->value = yytext; DOFACTORY("x"); BEGIN(INITIAL); return VALUE; 
+	[0-9A-Fa-f]+					factory->value = yytext; DOFACTORY("x"); BEGIN(INITIAL); return VALUE;
 	.											printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
 }
 
@@ -77,14 +79,14 @@
 "false"									MKFACTORY(); factory->value = "0"; DOFACTORY("u8"); return VALUE;
 "true"									MKFACTORY(); factory->value = "1"; DOFACTORY("u8"); return VALUE;
 
-"def"										return DEF; 
+"def"										return DEF;
 "return"								return RETURN;
 "elif"									return ELIF;
 "else"									return ELSE;
-"end"										return END; 
+"end"										return END;
 "if"										return IF;
 "for"										return FOR;
-"forever"								return FOREVER; 
+"forever"								return FOREVER;
 "loop"									return LOOP;
 "continue"							return CONTINUE;
 "break"									return BREAK;
@@ -92,47 +94,47 @@
 "while"									return WHILE;
 "when"									return WHEN;
 "unless"								return UNLESS;
-"class"									return CLASS; 
-"using"									return USING; 
-"public"								return PUBLIC; 
-"private"								return PRIVATE; 
-"shared"								return SHARED; 
+"class"									return CLASS;
+"using"									return USING;
+"public"								return PUBLIC;
+"private"								return PRIVATE;
+"shared"								return SHARED;
 "extern"								return EXTERN;
 "const"									return CONST;
 "enum"									return ENUM;
 
 "var"										SAVESTR(); return TYPE_VAR;
-"char"									SAVESTR(); return TYPE_CHAR; 
-"int"										SAVESTR(); return TYPE_INT; 
-"uint"									SAVESTR(); return TYPE_UINT; 
-"float"									SAVESTR(); return TYPE_FLOAT; 
-"double"								SAVESTR(); return TYPE_DOUBLE; 
-"int8"									SAVESTR(); return TYPE_INT8; 
+"char"									SAVESTR(); return TYPE_CHAR;
+"int"										SAVESTR(); return TYPE_INT;
+"uint"									SAVESTR(); return TYPE_UINT;
+"float"									SAVESTR(); return TYPE_FLOAT;
+"double"								SAVESTR(); return TYPE_DOUBLE;
+"int8"									SAVESTR(); return TYPE_INT8;
 "uint8"									SAVESTR(); return TYPE_UINT8;
-"int16"									SAVESTR(); return TYPE_INT16; 
-"uint16"								SAVESTR(); return TYPE_UINT16; 
-"int32"									SAVESTR(); return TYPE_INT32; 
-"uint32"								SAVESTR(); return TYPE_UINT32; 
-"int64"									SAVESTR(); return TYPE_INT64; 
+"int16"									SAVESTR(); return TYPE_INT16;
+"uint16"								SAVESTR(); return TYPE_UINT16;
+"int32"									SAVESTR(); return TYPE_INT32;
+"uint32"								SAVESTR(); return TYPE_UINT32;
+"int64"									SAVESTR(); return TYPE_INT64;
 "uint64"								SAVESTR(); return TYPE_UINT64;
 "void"									SAVESTR(); return TYPE_VOID;
 
-"("											STR_ELEMENT; return OPEN_PAREN; 
-")"											STR_ELEMENT; return CLOSE_PAREN; 
-"{"											STR_ELEMENT; return OPEN_BRACE; 
+"("											STR_ELEMENT; return OPEN_PAREN;
+")"											STR_ELEMENT; return CLOSE_PAREN;
+"{"											STR_ELEMENT; return OPEN_BRACE;
 "}"											STR_ELEMENT; return CLOSE_BRACE;
-"["											STR_ELEMENT; return OPEN_BRACKET; 
-"]"											STR_ELEMENT; return CLOSE_BRACKET; 
+"["											STR_ELEMENT; return OPEN_BRACKET;
+"]"											STR_ELEMENT; return CLOSE_BRACKET;
 
 "..."										STR_ELEMENT; return VARARG;
 
-"++"										STR_ELEMENT; return INCREMENT; 
-"--"										STR_ELEMENT; return DECREMENT; 
+"++"										STR_ELEMENT; return INCREMENT;
+"--"										STR_ELEMENT; return DECREMENT;
 
 "!="										STR_ELEMENT; return NEQUALS;
 "=="										STR_ELEMENT; return EQUALS;
 
-"&&"										STR_ELEMENT; return LOGICAL_AND; 
+"&&"										STR_ELEMENT; return LOGICAL_AND;
 "||"										STR_ELEMENT; return LOGICAL_OR;
 "and"										STR_ELEMENT; return LOGICAL_AND;
 "or"										STR_ELEMENT; return LOGICAL_OR;
@@ -145,27 +147,27 @@
 "+="										STR_ELEMENT; return PLUS_ASSIGN;
 "-="										STR_ELEMENT; return MINUS_ASSIGN;
 "*="										STR_ELEMENT; return TIMES_ASSIGN;
-"/="										STR_ELEMENT; return DIVIDE_ASSIGN; 
+"/="										STR_ELEMENT; return DIVIDE_ASSIGN;
 "%="										STR_ELEMENT; return MOD_ASSIGN;
 
 "->"										STR_ELEMENT; return ARROW;
 "<-"										STR_ELEMENT; return ARROW_LEFT;
 "."											STR_ELEMENT; return DOT;
-";"											STR_ELEMENT; return SEMICOLON; 
+";"											STR_ELEMENT; return SEMICOLON;
 \n 											yycolumn = 1; return NEWLINE; // Reset column as we're on a new line.
 ","											STR_ELEMENT; return COMMA;
-	
-"<="										STR_ELEMENT; return LEQ;
-">="										STR_ELEMENT; return GEQ; 
 
-"<"											STR_ELEMENT; return COMP_LT; 
+"<="										STR_ELEMENT; return LEQ;
+">="										STR_ELEMENT; return GEQ;
+
+"<"											STR_ELEMENT; return COMP_LT;
 ">"											STR_ELEMENT; return COMP_GT;
 
 "+"											STR_ELEMENT; return PLUS;
 "-"											STR_ELEMENT; return MINUS;
-"*"											STR_ELEMENT; return TIMES; 
-"/"											STR_ELEMENT; return DIVIDE; 
-"%"											STR_ELEMENT; return MOD; 
+"*"											STR_ELEMENT; return TIMES;
+"/"											STR_ELEMENT; return DIVIDE;
+"%"											STR_ELEMENT; return MOD;
 
 "?"											STR_ELEMENT; return QUESTION;
 ":"											STR_ELEMENT; return COLON;
