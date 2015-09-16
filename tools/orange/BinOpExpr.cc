@@ -233,7 +233,6 @@ Value* BinOpExpr::Codegen() {
 	}
 
 	auto s_op = (std::string)m_op;
-	std::cout << s_op << " and " << s_op.substr(0,1) << std::endl;
 
 	if (m_op == "=") {
 		GE::builder()->CreateStore(RHS, LHS);
