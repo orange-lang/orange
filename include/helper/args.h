@@ -1,15 +1,14 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 
-#ifndef __HELPER_ARGS_H__
-#define __HELPER_ARGS_H__
+#pragma once
 
-#include <string> 
+#include <string>
 #include <vector>
 #include <functional>
 
@@ -25,7 +24,7 @@ friend cOptions;
 friend cOptionsState;
 private:
 	bool m_set = false;
-	std::vector<std::string> names; 
+	std::vector<std::string> names;
 	std::string description;
 	std::vector<std::string> arg_values;
 	bool m_hasArg;
@@ -48,7 +47,7 @@ private:
 	std::string name = "";
 	std::string description;
 	std::vector<cCommandOption*> options;
-	std::vector<cOptionsState*> states; 
+	std::vector<cOptionsState*> states;
 	std::vector<std::string> m_unparsed;
 	std::string customUsage = "";
 	std::string customInfo = "";
@@ -60,7 +59,7 @@ public:
 
 	cCommandOption* getOption(std::string option);
 
-	virtual void run() { } 
+	virtual void run() { }
 
 	void add(cCommandOption* option);
 	void addState(cOptionsState* state);
@@ -79,11 +78,9 @@ private:
 public:
 	cOptionsState mainState;
 
-	cOptionsState* currentState() const { return curState; } 
+	cOptionsState* currentState() const { return curState; }
 
 	void parse(int argc, char **argv);
 
 	cOptions(std::string name) : name(name) {}
 };
-
-#endif 

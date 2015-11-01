@@ -1,23 +1,20 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 
-#ifndef __ORANGE_FILE_H__ 
-#define __ORANGE_FILE_H__
+#pragma once
 
 #include <iostream>
 #include "config.h"
 
 /**
- * Finds the project directory by looking for a project settings file in the current 
+ * Finds the project directory by looking for a project settings file in the current
  * and parent directories. If it's not found, a runtime_error is thrown.
  *
  * @return The path of the project directory.
  */
 std::string findProjectDirectory();
-
-#endif 
