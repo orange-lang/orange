@@ -653,17 +653,10 @@ char *yytext;
 ** may not be copied, modified, or distributed except according to those terms.
 */
 #line 10 "/Users/robert/dev/orange/tools/orange/lexer.l"
-	#include <orange/orange.h>
 	#include <string.h>
 	#include "parser.hh"
 
 	#define STR (std::string(yytext, yyleng))
-
-	ValFactory *factory = nullptr;
-
-	#define MKFACTORY() factory = new ValFactory(); factory->value = yytext;
-	#define DOFACTORY(SZ) factory->size = SZ; yylval.expr = factory->produce(); delete factory;
-	#define SAVESTR() yylval.str = new std::string(yytext, yyleng);
 
 	// Get column and stuff for line information
 	int yycolumn = 1;
@@ -676,12 +669,10 @@ char *yytext;
 
   // defining this in here for C++
   void yyflushbuffer() { YY_FLUSH_BUFFER; }
-
-	#define STR_ELEMENT yylval.strele = new StrElement(yytext); yylval.strele->setLocation({ yylloc.first_line, yylloc.last_line, yylloc.first_column, yylloc.last_column });
 #define YY_NO_UNISTD_H 1
 #define YY_NO_INPUT 1
 
-#line 685 "/Users/robert/dev/orange/tools/orange/lexer.cc"
+#line 676 "/Users/robert/dev/orange/tools/orange/lexer.cc"
 
 #define INITIAL 0
 #define HEX 1
@@ -862,10 +853,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 46 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 37 "/Users/robert/dev/orange/tools/orange/lexer.l"
 
 
-#line 869 "/Users/robert/dev/orange/tools/orange/lexer.cc"
+#line 860 "/Users/robert/dev/orange/tools/orange/lexer.cc"
 
 	if ( !(yy_init) )
 		{
@@ -956,554 +947,554 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 48 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 39 "/Users/robert/dev/orange/tools/orange/lexer.l"
 ;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 50 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 41 "/Users/robert/dev/orange/tools/orange/lexer.l"
 yycolumn = 1; // Reset column as we're on a new line.
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 53 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("b"); return VALUE;
+#line 43 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 55 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); BEGIN(HEX);
+#line 45 "/Users/robert/dev/orange/tools/orange/lexer.l"
+BEGIN(HEX);
 	YY_BREAK
 
 case 5:
 YY_RULE_SETUP
-#line 57 "/Users/robert/dev/orange/tools/orange/lexer.l"
-factory->value = yytext; DOFACTORY("x"); BEGIN(INITIAL); return VALUE;
+#line 47 "/Users/robert/dev/orange/tools/orange/lexer.l"
+BEGIN(INITIAL); return VALUE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 58 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 48 "/Users/robert/dev/orange/tools/orange/lexer.l"
 printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
 	YY_BREAK
 
 case 7:
 YY_RULE_SETUP
-#line 61 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("f"); return VALUE;
+#line 51 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 62 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("d"); return VALUE;
+#line 52 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 63 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("d"); return VALUE;
+#line 53 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 65 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("u8"); return VALUE;
+#line 55 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 66 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("i8"); return VALUE;
+#line 56 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 67 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("u16"); return VALUE;
+#line 57 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 68 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("i16"); return VALUE;
+#line 58 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 69 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("u32"); return VALUE;
+#line 59 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 70 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("i32"); return VALUE;
+#line 60 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 71 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("u64"); return VALUE;
+#line 61 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 72 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("i64"); return VALUE;
+#line 62 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 73 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("u"); return VALUE;
+#line 63 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 74 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("i"); return VALUE;
+#line 64 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 75 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("i"); return VALUE;
+#line 65 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 77 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); DOFACTORY("i8"); return VALUE;
+#line 67 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 79 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); factory->value = "0"; DOFACTORY("u8"); return VALUE;
+#line 69 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 80 "/Users/robert/dev/orange/tools/orange/lexer.l"
-MKFACTORY(); factory->value = "1"; DOFACTORY("u8"); return VALUE;
+#line 70 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VALUE;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 82 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 72 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return DEF;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 83 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 73 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return RETURN;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 84 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 74 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return ELIF;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 85 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 75 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return ELSE;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 86 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 76 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return END;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 87 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 77 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return IF;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 88 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 78 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return FOR;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 89 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 79 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return FOREVER;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 90 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 80 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return LOOP;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 91 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 81 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return CONTINUE;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 92 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 82 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return BREAK;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 93 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 83 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return DO;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 94 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 84 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return WHILE;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 95 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 85 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return WHEN;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 96 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 86 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return UNLESS;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 97 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 87 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return CLASS;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 98 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 88 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return USING;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 99 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 89 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return PUBLIC;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 100 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 90 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return PRIVATE;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 101 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 91 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return SHARED;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 102 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 92 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return EXTERN;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 103 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 93 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return CONST;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 104 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 94 "/Users/robert/dev/orange/tools/orange/lexer.l"
 return ENUM;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 106 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_VAR;
+#line 96 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_VAR;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 107 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_CHAR;
+#line 97 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_CHAR;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 108 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_INT;
+#line 98 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_INT;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 109 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_UINT;
+#line 99 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_UINT;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 110 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_FLOAT;
+#line 100 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_FLOAT;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 111 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_DOUBLE;
+#line 101 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_DOUBLE;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 112 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_INT8;
+#line 102 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_INT8;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 113 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_UINT8;
+#line 103 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_UINT8;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 114 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_INT16;
+#line 104 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_INT16;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 115 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_UINT16;
+#line 105 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_UINT16;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 116 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_INT32;
+#line 106 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_INT32;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 117 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_UINT32;
+#line 107 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_UINT32;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 118 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_INT64;
+#line 108 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_INT64;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 119 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_UINT64;
+#line 109 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_UINT64;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 120 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_VOID;
+#line 110 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_VOID;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 122 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return OPEN_PAREN;
+#line 112 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return OPEN_PAREN;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 123 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return CLOSE_PAREN;
+#line 113 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return CLOSE_PAREN;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 124 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return OPEN_BRACE;
+#line 114 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return OPEN_BRACE;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 125 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return CLOSE_BRACE;
+#line 115 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return CLOSE_BRACE;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 126 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return OPEN_BRACKET;
+#line 116 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return OPEN_BRACKET;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 127 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return CLOSE_BRACKET;
+#line 117 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return CLOSE_BRACKET;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 129 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return VARARG;
+#line 119 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return VARARG;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 131 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return INCREMENT;
+#line 121 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return INCREMENT;
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 132 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return DECREMENT;
+#line 122 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return DECREMENT;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 134 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return NEQUALS;
+#line 124 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return NEQUALS;
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 135 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return EQUALS;
+#line 125 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return EQUALS;
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 137 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return LOGICAL_AND;
+#line 127 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return LOGICAL_AND;
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 138 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return LOGICAL_OR;
+#line 128 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return LOGICAL_OR;
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 139 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return LOGICAL_AND;
+#line 129 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return LOGICAL_AND;
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 140 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return LOGICAL_OR;
+#line 130 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return LOGICAL_OR;
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 142 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return BITWISE_AND;
+#line 132 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return BITWISE_AND;
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 143 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return BITWISE_OR;
+#line 133 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return BITWISE_OR;
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 144 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return BITWISE_XOR;
+#line 134 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return BITWISE_XOR;
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 146 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return ASSIGN;
+#line 136 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return ASSIGN;
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 147 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return PLUS_ASSIGN;
+#line 137 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return PLUS_ASSIGN;
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 148 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return MINUS_ASSIGN;
+#line 138 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return MINUS_ASSIGN;
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 149 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return TIMES_ASSIGN;
+#line 139 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TIMES_ASSIGN;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 150 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return DIVIDE_ASSIGN;
+#line 140 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return DIVIDE_ASSIGN;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 151 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return MOD_ASSIGN;
+#line 141 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return MOD_ASSIGN;
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 153 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return ARROW;
+#line 143 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return ARROW;
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 154 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return ARROW_LEFT;
+#line 144 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return ARROW_LEFT;
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 155 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return DOT;
+#line 145 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return DOT;
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 156 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return SEMICOLON;
+#line 146 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return SEMICOLON;
 	YY_BREAK
 case 90:
 /* rule 90 can match eol */
 YY_RULE_SETUP
-#line 157 "/Users/robert/dev/orange/tools/orange/lexer.l"
-yycolumn = 1; return NEWLINE; // Reset column as we're on a new line.
+#line 147 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return NEWLINE; // Reset column as we're on a new line.
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 158 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return COMMA;
+#line 148 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return COMMA;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 160 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return LEQ;
+#line 150 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return LEQ;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 161 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return GEQ;
+#line 151 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return GEQ;
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 163 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return COMP_LT;
+#line 153 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return COMP_LT;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 164 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return COMP_GT;
+#line 154 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return COMP_GT;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 166 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return PLUS;
+#line 156 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return PLUS;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 167 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return MINUS;
+#line 157 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return MINUS;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 168 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return TIMES;
+#line 158 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TIMES;
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 169 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return DIVIDE;
+#line 159 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return DIVIDE;
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 170 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return MOD;
+#line 160 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return MOD;
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 172 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return QUESTION;
+#line 162 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return QUESTION;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 173 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return COLON;
+#line 163 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return COLON;
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 175 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return MOD;
+#line 165 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return MOD;
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 177 "/Users/robert/dev/orange/tools/orange/lexer.l"
-STR_ELEMENT; return SIZEOF;
+#line 167 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return SIZEOF;
 	YY_BREAK
 case 105:
 /* rule 105 can match eol */
 YY_RULE_SETUP
-#line 179 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return STRING;
+#line 169 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return STRING;
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 180 "/Users/robert/dev/orange/tools/orange/lexer.l"
-SAVESTR(); return TYPE_ID;
+#line 170 "/Users/robert/dev/orange/tools/orange/lexer.l"
+return TYPE_ID;
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 182 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 172 "/Users/robert/dev/orange/tools/orange/lexer.l"
 yyerror("invalid token");
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(HEX):
-#line 184 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 174 "/Users/robert/dev/orange/tools/orange/lexer.l"
 { return yyonce++ ? 0 : NEWLINE; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 186 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 176 "/Users/robert/dev/orange/tools/orange/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1507 "/Users/robert/dev/orange/tools/orange/lexer.cc"
+#line 1498 "/Users/robert/dev/orange/tools/orange/lexer.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2466,7 +2457,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 186 "/Users/robert/dev/orange/tools/orange/lexer.l"
+#line 176 "/Users/robert/dev/orange/tools/orange/lexer.l"
 
 
 
