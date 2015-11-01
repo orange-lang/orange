@@ -85,5 +85,6 @@ else()
 endif()
 
 add_subdirectory(lib/libor)
+add_subdirectory(lib/cmd)
 add_subdirectory(lib/helper)
 add_subdirectory(tools/orange)

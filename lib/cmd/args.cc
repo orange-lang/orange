@@ -1,25 +1,25 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 
-#include "helper/args.h"
+#include "cmd/args.h"
 #include <iostream>
 
 void getArgs(int argc, char **argv, std::function<void(std::vector<std::string> arg, int loc)> cb) {
 	for (int i = 1; i < argc; i++) {
-		std::vector<std::string> a; 
+		std::vector<std::string> a;
 
-		// Search until you find an argument that starts with - or -- 
-		std::string arg = argv[i]; 
+		// Search until you find an argument that starts with - or --
+		std::string arg = argv[i];
 		if (arg.substr(0, 2) == "--") {
-			// Begins with -- 
+			// Begins with --
 			a.push_back(arg.substr(0));
 		} else if (arg[0] == '-') {
-			// Begins with - 
+			// Begins with -
 
 			a.push_back(arg.substr(0, 2));
 
@@ -42,11 +42,11 @@ const char* getParameter(std::vector<std::string> a, int argc, char **argv, int 
 
 	int search = loc + 1;
 	if (search >= argc) {
-		return nullptr; 
-	} 
+		return nullptr;
+	}
 
 	if (argv[search][0] == '-')
-		return nullptr; 
+		return nullptr;
 
 	return argv[search];
 }
@@ -55,7 +55,7 @@ bool cCommandOption::isSet() const { return m_set; }
 
 bool cCommandOption::valuesContain(std::string str) {
 	for (auto val : arg_values) {
-		if (val == str) return true; 
+		if (val == str) return true;
 	}
 
 	return false;
@@ -76,7 +76,7 @@ std::vector<std::string> cOptionsState::unparsed() const { return m_unparsed; }
 cCommandOption* cOptionsState::getOption(std::string option) {
 	for (auto o : options) {
 		for (auto name : o->names) {
-			if (name == option) return o; 
+			if (name == option) return o;
 		}
 	}
 
@@ -93,7 +93,7 @@ cOptionsState::cOptionsState(std::string name, std::string description, std::str
 void cOptions::printHelp() {
 	std::string helpStr = "";
 	if (curState->name != "") {
-		helpStr = " for " + curState->name; 
+		helpStr = " for " + curState->name;
 	}
 
 	std::cerr << name << std::endl << std::endl;
@@ -103,7 +103,7 @@ void cOptions::printHelp() {
 	}
 
 	if (curState->customInfo != "") {
-		std::cout << curState->customInfo << std::endl << std::endl;		
+		std::cout << curState->customInfo << std::endl << std::endl;
 	}
 
 	std::cerr << "Available options" << helpStr << ":" << std::endl;
@@ -115,7 +115,7 @@ void cOptions::printHelp() {
 
 		for (unsigned int i = 0; i < option->names.size(); i++) {
 			if (option->names[i].length() == 1) {
-				std::cerr << "-"; 
+				std::cerr << "-";
 			} else std::cerr << "--";
 
 			std::cerr << option->names[i];
@@ -123,7 +123,7 @@ void cOptions::printHelp() {
 			if (i + 1 < option->names.size()) std::cerr << " | ";
 		}
 
-		std::cerr << "\t\t" << option->description << std::endl; 
+		std::cerr << "\t\t" << option->description << std::endl;
 	}
 
 	std::cerr << "\t-h | --help\t\tPrints this message\n";
@@ -140,15 +140,15 @@ void cOptions::printHelp() {
 
 void cOptions::parse(int argc, char **argv) {
 	// go through each argument in argv.
-	// if it's an option, see if it matches any of the ones we've registered in this state 
-	// if the option has an argument, get the next parameter. if it's another option, throw an error and quit. 
+	// if it's an option, see if it matches any of the ones we've registered in this state
+	// if the option has an argument, get the next parameter. if it's another option, throw an error and quit.
 	// if the parameter matches a new state, switch to that state and continue.
 	curState = &mainState;
 	curState->mActive = true;
 
 	if (argc == 1) {
 		// We passed no options to the command line, so print out the help.
-		printHelp(); 
+		printHelp();
 	}
 
 	for (int i = 1; i < argc; i++) {
@@ -158,7 +158,7 @@ void cOptions::parse(int argc, char **argv) {
 		std::string param_arg = "";
 
 		if (arg.substr(0, 2) == "--") {
-			// look in options for this full name 
+			// look in options for this full name
 			param = arg.substr(2);
 		}	else if (arg[0] == '-') {
 			param = arg.substr(1);
@@ -170,7 +170,7 @@ void cOptions::parse(int argc, char **argv) {
 			bool switchedState = false;
 			for (cOptionsState* state : curState->states) {
 				if (state->name == arg) {
-					switchedState = true; 
+					switchedState = true;
 					curState->mActive = false;
 					curState = state;
 					curState->mActive = true;
@@ -189,12 +189,12 @@ void cOptions::parse(int argc, char **argv) {
 			printHelp();
 		}
 
-		// find param 
+		// find param
 		for (cCommandOption* option : curState->options) {
-			bool foundOption = false; 
+			bool foundOption = false;
 			for (std::string name : option->names) {
 				if (name == param) {
-					foundOption = true; 
+					foundOption = true;
 					break;
 				}
 			}
@@ -207,7 +207,7 @@ void cOptions::parse(int argc, char **argv) {
 					exit(1);
 				} else if (option->m_hasArg == true && param_arg != "") {
 					option->arg_values.push_back(param_arg);
-					break; 
+					break;
 				} else if (option->m_hasArg == true) {
 					i++;
 
@@ -219,14 +219,14 @@ void cOptions::parse(int argc, char **argv) {
 					param_arg = argv[i];
 
 					if (param_arg[0] == '-') {
-						std::cerr << "fatal: no argument passed to parameter " << param << std::endl; 
+						std::cerr << "fatal: no argument passed to parameter " << param << std::endl;
 						exit(1);
 					}
 
 					option->arg_values.push_back(param_arg);
 					break;
 				}
-			} 
+			}
 		}
 	}
 }

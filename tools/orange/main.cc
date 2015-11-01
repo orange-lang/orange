@@ -6,7 +6,7 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 #include <iostream>
-#include <helper/args.h>
+#include <cmd/args.h>
 #include <helper/link.h>
 
 int main(int argc, char** argv) {

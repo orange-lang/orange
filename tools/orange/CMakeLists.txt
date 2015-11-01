@@ -15,23 +15,23 @@ if (${BISON_FOUND})
 endif()
 
 find_package(FLEX)
-if (${FLEX_FOUND}) 
+if (${FLEX_FOUND})
     flex_target(FlexOutput ${CMAKE_SOURCE_DIR}/tools/orange/lexer.l ${CMAKE_SOURCE_DIR}/tools/orange/lexer.cc)
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/tools/orange)
 
-AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange ORANGE_SOURCES) 
-AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange/types ORANGE_SOURCES) 
-AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange/commands ORANGE_SOURCES) 
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange ORANGE_SOURCES)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange/types ORANGE_SOURCES)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange/commands ORANGE_SOURCES)
 
 file(GLOB_RECURSE INCLUDES "${CMAKE_SOURCE_DIR}/*.h")
 
-add_executable(orange 
+add_executable(orange
     ${ORANGE_SOURCES} ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS} ${INCLUDES}
 )
 
-target_link_libraries(orange helper ${llvm_libs})
+target_link_libraries(orange helper cmd ${llvm_libs})
 
 ADD_DEPENDENCIES(orange boot)
 
