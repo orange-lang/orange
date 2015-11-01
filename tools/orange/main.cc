@@ -7,7 +7,7 @@
 */
 #include <iostream>
 #include <cmd/args.h>
-#include <helper/link.h>
+#include <util/link.h>
 
 int main(int argc, char** argv) {
 	cOptions options("Orange WIP");

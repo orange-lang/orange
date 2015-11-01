@@ -31,7 +31,7 @@ add_executable(orange
     ${ORANGE_SOURCES} ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS} ${INCLUDES}
 )
 
-target_link_libraries(orange helper cmd ${llvm_libs})
+target_link_libraries(orange util cmd ${llvm_libs})
 
 ADD_DEPENDENCIES(orange boot)
 

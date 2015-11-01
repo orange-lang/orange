@@ -6,7 +6,7 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <helper/link.h>
+#include <util/link.h>
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
