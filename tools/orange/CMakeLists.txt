@@ -31,8 +31,25 @@ add_executable(orange
     ${ORANGE_SOURCES} ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS} ${INCLUDES}
 )
 
+# Test to see if util has been cotired.
+get_target_property(UTIL_HAS_PFX util COTIRE_ENABLE_PRECOMPILED_HEADER)
+if (${UTIL_HAS_PFX})
+  get_target_property(utilPfx util COTIRE_CXX_PREFIX_HEADER)
+  set_property(TARGET orange APPEND_STRING PROPERTY COTIRE_CXX_PREFIX_HEADER_INIT "${utilPfx};")
+endif()
+
+# Test to see if cmd has been cotired.
+get_target_property(CMD_HAS_PFX cmd COTIRE_ENABLE_PRECOMPILED_HEADER)
+if (${CMD_HAS_PFX})
+  get_target_property(cmdPfx cmd COTIRE_CXX_PREFIX_HEADER)
+  set_property(TARGET orange APPEND_STRING PROPERTY COTIRE_CXX_PREFIX_HEADER_INIT "${cmdPfx};")
+endif()
+
+
+cotire(orange)
+
 target_link_libraries(orange util cmd ${llvm_libs})
 
-ADD_DEPENDENCIES(orange boot)
+ADD_DEPENDENCIES(orange boot util)
 
 install(TARGETS orange DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

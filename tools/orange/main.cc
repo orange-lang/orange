@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 	cOptions options("Orange WIP");
 
 	// Parse our options
-	options.parse(argc, argv);
+	options.parse(argc, argv);	
 
 	options.currentState()->run();
 
