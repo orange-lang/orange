@@ -6,7 +6,7 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include "cmd/args.h"
+#include <cmd/args.h>
 #include <iostream>
 
 void getArgs(int argc, char **argv, std::function<void(std::vector<std::string> arg, int loc)> cb) {
