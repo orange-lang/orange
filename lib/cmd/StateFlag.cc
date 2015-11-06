@@ -76,6 +76,12 @@ StateFlag::StateFlag(std::string flagName, bool needsValue)
 		m_longform_name = flagName;
 	}
 	
+	if (flagName.find("=") != flagName.npos)
+	{
+		const char* error = "longName must not contain =.";
+		throw std::invalid_argument(error);
+	}
+	
 	m_needsValue = needsValue;
 }
 
@@ -91,6 +97,12 @@ StateFlag::StateFlag(std::string shortName, std::string longName, bool needsValu
 	if (longName.length() < 2)
 	{
 		const char* error = "longName must be longer than 1 character.";
+		throw std::invalid_argument(error);
+	}
+	
+	if (longName.find("=") != longName.npos)
+	{
+		const char* error = "longName must not contain =.";
 		throw std::invalid_argument(error);
 	}
 	
