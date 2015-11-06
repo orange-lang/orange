@@ -91,7 +91,7 @@ public:
 	 * unless this function is overloaded by a child class.
 	 * @param args The arguments used to call this state.
 	 */
-	virtual void run(std::vector<std::string> args) const;
+	virtual void run(std::vector<std::string> args);
 
 	OptionsState(std::string stateName);
 };
