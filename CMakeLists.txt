@@ -87,6 +87,7 @@ else()
 	include_directories(${LLVM_INCLUDE_DIRS})
 endif()
 
+add_subdirectory(lib/test)
 add_subdirectory(lib/libor)
 add_subdirectory(lib/cmd)
 add_subdirectory(lib/util)
