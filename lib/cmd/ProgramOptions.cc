@@ -102,7 +102,7 @@ void ProgramOptions::parse(int argc, char **argv)
 		if (isFlag(curArg))
 		{
 			// Find first non-"-" character
-            int first_alphanumeric = curArg.find_first_not_of("-");
+			int first_alphanumeric = curArg.find_first_not_of("-");
 	
 			// Trigger is either - or --.
 			std::string trigger = curArg.substr(0, first_alphanumeric);
@@ -112,7 +112,7 @@ void ProgramOptions::parse(int argc, char **argv)
 			std::string flagName = curArg.substr(first_alphanumeric, flagLen);
 			
 			std::string flagArg = "";
-    		if (shortArg && curArg.length() > 2)
+			if (shortArg && curArg.length() > 2)
 			{
 				flagArg = curArg.substr(2);
 			}
@@ -124,13 +124,7 @@ void ProgramOptions::parse(int argc, char **argv)
 				if (isHelpFlag(flagName))
 				{
 					std::cout << getHelpString() << std::endl;
-					
-					if (flagArg != "")
-					{
-        				stateArguments.push_back(flagArg);
-					}
-					
-					continue;
+					return;
 				}
 				else
 				{
