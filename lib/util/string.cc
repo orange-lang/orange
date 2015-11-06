@@ -24,3 +24,55 @@ std::vector<std::string> split(const std::string &s, char delim) {
     split(s, delim, elems);
     return elems;
 }
+
+const char* stringToCharArray(std::string str)
+{
+	char* arr = new char[str.length()+1];
+	bzero(arr, str.length()+1);
+	strncpy(arr, str.c_str(), str.length());
+	return arr;
+}
+
+std::vector<const char*> strToArgs(std::string str)
+{
+	std::vector<const char*> arguments;
+	arguments.push_back(stringToCharArray("program-name"));
+
+	// The character to split on.
+	char split_char = ' ';
+
+	std::string curArgument = "";
+	for (int i = 0; i < str.length(); i++)
+	{
+		if (str[i] == split_char && curArgument != "")
+		{
+			arguments.push_back(stringToCharArray(curArgument));
+
+			// Reset variables
+			split_char = ' ';
+			curArgument = "";
+			continue;
+		}
+		else if (str[i] == ' ' && curArgument == "")
+		{
+			continue;
+		}
+
+		// If we found a ", don't stop looking for the argument until the
+		// other " is found.
+		if (str[i] == '\"')
+		{
+			split_char = '\"';
+			continue;
+		}
+
+		curArgument += str[i];
+	}
+
+	if (curArgument != "")
+	{
+		arguments.push_back(stringToCharArray(curArgument));
+	}
+
+	return arguments;
+}

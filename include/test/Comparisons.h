@@ -30,3 +30,6 @@ int fail()
 {
 	return 1;
 }
+
+#define EXPECT_EXCEPTION(code) try { code; } \
+	catch (std::exception& e){ return pass(); } return fail();

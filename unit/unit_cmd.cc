@@ -15,73 +15,7 @@
 #include <cmd/StateFlag.h>
 #include <test/TestLib.h>
 #include <test/Comparisons.h>
-
-void unreachable(std::string error)
-{
-	fprintf(stderr, "%s\n", error.c_str());
-	exit(1);
-}
-
-template <typename T>
-void assertEq(T a, T b, std::string err)
-{
-	if (a != b)
-	{
-		unreachable(err);
-	}
-}
-
-const char* stringToCharArray(std::string str)
-{
-	char* arr = new char[str.length()+1];
-	bzero(arr, str.length()+1);
-	strncpy(arr, str.c_str(), str.length());
-	return arr;
-}
-
-std::vector<const char*> strToArgs(std::string str)
-{
-	std::vector<const char*> arguments;
-	arguments.push_back(stringToCharArray("program-name"));
-
-	// The character to split on.
-	char split_char = ' ';
-
-	std::string curArgument = "";
-	for (int i = 0; i < str.length(); i++)
-	{
-		if (str[i] == split_char && curArgument != "")
-		{
-			arguments.push_back(stringToCharArray(curArgument));
-
-			// Reset variables
-			split_char = ' ';
-			curArgument = "";
-			continue;
-		}
-		else if (str[i] == ' ' && curArgument == "")
-		{
-			continue;
-		}
-
-		// If we found a ", don't stop looking for the argument until the
-		// other " is found.
-		if (str[i] == '\"')
-		{
-			split_char = '\"';
-			continue;
-		}
-
-		curArgument += str[i];
-	}
-
-	if (curArgument != "")
-	{
-		arguments.push_back(stringToCharArray(curArgument));
-	}
-
-	return arguments;
-}
+#include <util/string.h>
 
 class TestState : public OptionsState
 {
@@ -113,7 +47,7 @@ public:
 	TestState* state_a = new TestState("a");
 	TestState* a_nested = new TestState("a_nested");
 	TestState* state_b = new TestState("state_b");
-	
+
 	StateFlag* flag_short = new StateFlag("f", false);
 	StateFlag* flag_long = new StateFlag("flag", false);
 	StateFlag* flag_alias = new StateFlag("o", "other", false);
@@ -126,16 +60,16 @@ private:
 		options->addState(state_a);
 		state_a->addState(a_nested);
 		options->addState(state_b);
-		
+
 		state_a->addFlag(flag_short);
 		state_a->addFlag(flag_long);
 		a_nested->addFlag(flag_alias);
 		state_b->addFlag(flag_v_short);
 		state_b->addFlag(flag_v_long);
-		
+
 		state_a->addFlag(flag_v_alias);
 		state_b->addFlag(flag_v_alias);
-		
+
 	}
 public:
 	void run(std::string cmd)
@@ -148,7 +82,7 @@ public:
     		delete arg;
     	}
 	}
-	
+
 	TestEnvironment()
 	{
 		setup();
@@ -157,7 +91,7 @@ public:
 	TestEnvironment(std::string cmd)
 	{
 		setup();
-		
+
 		run(cmd);
 	}
 
@@ -168,7 +102,7 @@ public:
 		delete state_a;
 		delete a_nested;
 		delete state_b;
-		
+
 		delete flag_short;
 		delete flag_long;
 		delete flag_alias;
@@ -196,16 +130,7 @@ int TestEmptyInput()
 ADD_TEST(TestOptionsStateNameEmpty, "OptionsState's name must not be empty");
 int TestOptionsStateNameEmpty()
 {
-	try
-	{
-		OptionsState state("");
-	}
-	catch (std::invalid_argument& e)
-	{
-		return pass();
-	}
-	
-	return fail();
+	EXPECT_EXCEPTION(OptionsState(""));
 }
 
 /*
@@ -214,31 +139,13 @@ int TestOptionsStateNameEmpty()
 ADD_TEST(TestStateFlagNameEmpty, "StateFlag must not be empty.");
 int TestStateFlagNameEmpty()
 {
-	try
-	{
-		StateFlag flag("", false);
-	}
-	catch (std::invalid_argument& e)
-	{
-		return pass();
-	}
-	
-	return fail();
+	EXPECT_EXCEPTION(StateFlag("", false));
 }
 
 ADD_TEST(TestStateFlagNameEquals, "StateFlag must not contain an equal sign.");
 int TestStateFlagNameEquals()
 {
-	try
-	{
-		StateFlag flag("flag=", false);
-	}
-	catch (std::invalid_argument& e)
-	{
-		return pass();
-	}
-	
-	return fail();
+	EXPECT_EXCEPTION(StateFlag("flag=", false));
 }
 
 /*
@@ -348,18 +255,7 @@ int TestBothHelpFlags()
 ADD_TEST(TestNonExistentFlag, "Test non-existent help flag.");
 int TestNonExistentFlag()
 {
-	TestEnvironment basicEnvironment;
-	
-	try
-	{
-		basicEnvironment.run("--thisFlagDoesNotExist");
-	}
-	catch (std::invalid_argument& e)
-	{
-		return pass();
-	}
-	
-	return fail();
+	EXPECT_EXCEPTION(TestEnvironment("--thisFlagDoesNotExist"));
 }
 
 ADD_TEST(TestDefaultFlag, "Test flag defaults");
