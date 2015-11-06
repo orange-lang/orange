@@ -28,7 +28,17 @@ int TestingEngine::run()
 
 	for (auto test : tests)
 	{
-		if (test->func() != 0)
+		int val = 0;
+		try
+		{
+    		val = test->func();
+		}
+		catch (std::exception& e)
+		{
+			val = 1;
+		}
+		
+		if (val != 0)
 		{
 			failed.push_back(test->desc);
 			retCode = 1;
