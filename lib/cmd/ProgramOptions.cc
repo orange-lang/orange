@@ -112,9 +112,16 @@ void ProgramOptions::parse(int argc, char **argv)
 			std::string flagName = curArg.substr(first_alphanumeric, flagLen);
 			
 			std::string flagArg = "";
+			
 			if (shortArg && curArg.length() > 2)
 			{
 				flagArg = curArg.substr(2);
+			}
+			
+			if (!shortArg && curArg.find("=") != curArg.npos)
+			{
+				flagArg = curArg.substr(curArg.find("=")+1);
+				flagName = flagName.substr(0, curArg.find("=")-2);
 			}
 			
 			StateFlag* flag = getCurrentState()->getFlag(flagName);
@@ -131,6 +138,10 @@ void ProgramOptions::parse(int argc, char **argv)
     				throw std::invalid_argument("Flag " + trigger + flagName +
     											" not recognized.");
 				}
+			}
+			else 
+			{
+				flag->setUsed(true);
 			}
 			
 			
