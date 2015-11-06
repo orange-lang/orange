@@ -82,7 +82,7 @@ public:
 	 *  Must not be empty.
 	 * @param needsValue Optional. Whether or not this argument needs a value.
 	 */
-	StateFlag(std::string flagName, bool needsValue = false);
+	StateFlag(std::string flagName, bool needsValue);
 
 	/**
 	 * Creates a state flag with a short name and a long name.
@@ -90,5 +90,5 @@ public:
 	 * @param longName The long name to use for the flag. Must not be empty.
 	 * @param needsValue Optional. Whether or not this argument needs a value.
 	 */
-	StateFlag(std::string shortName, std::string longName, bool needsValue = false);
+	StateFlag(std::string shortName, std::string longName, bool needsValue);
 };
