@@ -113,7 +113,31 @@ public:
 	TestState* state_a = new TestState("a");
 	TestState* a_nested = new TestState("a_nested");
 	TestState* state_b = new TestState("state_b");
-
+	
+	StateFlag* flag_short = new StateFlag("f", false);
+	StateFlag* flag_long = new StateFlag("flag", false);
+	StateFlag* flag_alias = new StateFlag("o", "other", false);
+	StateFlag* flag_v_short = new StateFlag("v", true);
+	StateFlag* flag_v_long = new StateFlag("value", true);
+	StateFlag* flag_v_alias = new StateFlag("s", "shared", true);
+private:
+	void setup()
+	{
+		options->addState(state_a);
+		state_a->addState(a_nested);
+		options->addState(state_b);
+		
+		state_a->addFlag(flag_short);
+		state_a->addFlag(flag_long);
+		a_nested->addFlag(flag_alias);
+		state_b->addFlag(flag_v_short);
+		state_b->addFlag(flag_v_long);
+		
+		state_a->addFlag(flag_v_alias);
+		state_b->addFlag(flag_v_alias);
+		
+	}
+public:
 	void run(std::string cmd)
 	{
 		auto args = strToArgs(cmd);
@@ -124,20 +148,16 @@ public:
     		delete arg;
     	}
 	}
-
+	
 	TestEnvironment()
 	{
-		options->addState(state_a);
-		state_a->addState(a_nested);
-		options->addState(state_b);
+		setup();
 	}
 
 	TestEnvironment(std::string cmd)
 	{
-		options->addState(state_a);
-		state_a->addState(a_nested);
-		options->addState(state_b);
-
+		setup();
+		
 		run(cmd);
 	}
 
@@ -148,11 +168,21 @@ public:
 		delete state_a;
 		delete a_nested;
 		delete state_b;
+		
+		delete flag_short;
+		delete flag_long;
+		delete flag_alias;
+		delete flag_v_short;
+		delete flag_v_long;
+		delete flag_v_alias;
 	}
 };
 
 START_TEST_MODULE();
 
+/*
+ * Basic tests
+ */
 ADD_TEST(TestEmptyInput, "Test the parser with no input.");
 int TestEmptyInput()
 {
@@ -160,44 +190,60 @@ int TestEmptyInput()
 	return pass();
 }
 
-ADD_TEST(TestLongHelpFlag, "Tests the long help flag.");
-int TestLongHelpFlag()
+/*
+ * Test OptionsState
+ */
+ADD_TEST(TestOptionsStateNameEmpty, "OptionsState's name must not be empty");
+int TestOptionsStateNameEmpty()
 {
-	TestEnvironment basicEnvironment("--help");
-	return pass();
-}
-
-ADD_TEST(TestShortHelpFlag, "Test the short help flag.");
-int TestShortHelpFlag()
-{
-	TestEnvironment basicEnvironment("-h");
-	return pass();
-}
-
-ADD_TEST(TestBothHelpFlags, "Test both help flags.");
-int TestBothHelpFlags()
-{
-	TestEnvironment basicEnvironment("--help -h");
-	return pass();
-}
-
-ADD_TEST(TestNonExistentFlag, "Test non-existent help flag.");
-int TestNonExistentFlag()
-{
-	TestEnvironment basicEnvironment;
-
 	try
 	{
-    	basicEnvironment.run("--thisFlagDoesNotExist");
+		OptionsState state("");
 	}
 	catch (std::invalid_argument& e)
 	{
-			return pass();
+		return pass();
 	}
-
+	
 	return fail();
 }
 
+/*
+ * Test StateFlag
+ */
+ADD_TEST(TestStateFlagNameEmpty, "StateFlag must not be empty.");
+int TestStateFlagNameEmpty()
+{
+	try
+	{
+		StateFlag flag("", false);
+	}
+	catch (std::invalid_argument& e)
+	{
+		return pass();
+	}
+	
+	return fail();
+}
+
+ADD_TEST(TestStateFlagNameEquals, "StateFlag must not contain an equal sign.");
+int TestStateFlagNameEquals()
+{
+	try
+	{
+		StateFlag flag("flag=", false);
+	}
+	catch (std::invalid_argument& e)
+	{
+		return pass();
+	}
+	
+	return fail();
+}
+
+/*
+ * Test states
+ */
 ADD_TEST(TestMainState, "Test main state.");
 int TestMainState()
 {
@@ -240,6 +286,9 @@ int TestNestedStatesWithArgument()
 	return cmpEq(env.options->getCurrentState(), env.a_nested);
 }
 
+/*
+ * Test arguments
+ */
 ADD_TEST(TestTransitionAfterArg, "Test argument followed by transition");
 int TestTransitionAfterArg()
 {
@@ -271,12 +320,197 @@ int TestNestedArgs()
 	return cmpEq(env.a_nested->args[0], "foobar");
 }
 
- ADD_TEST(TestArgumentWithTransition, "Test argument and transition");
- int TestArgumentWithTransition()
- {
- 	TestEnvironment env("a foobar a_nested");
-	ASSERT_EQ(env.a_nested->args.size(), 1);
- 	return env.a_nested->args[0] != "foobar";
- }
+ADD_TEST(TestArgumentWithTransition, "Test argument and transition");
+int TestArgumentWithTransition()
+{
+    TestEnvironment env("a foobar a_nested");
+    ASSERT_EQ(env.a_nested->args.size(), 1);
+    return env.a_nested->args[0] != "foobar";
+}
+
+/*
+ * Test flags
+ */
+ADD_TEST(TestShortHelpFlag, "Test the short help flag.");
+int TestShortHelpFlag()
+{
+	TestEnvironment basicEnvironment("-h");
+	return pass();
+}
+
+ADD_TEST(TestBothHelpFlags, "Test both help flags.");
+int TestBothHelpFlags()
+{
+	TestEnvironment basicEnvironment("--help -h");
+	return pass();
+}
+
+ADD_TEST(TestNonExistentFlag, "Test non-existent help flag.");
+int TestNonExistentFlag()
+{
+	TestEnvironment basicEnvironment;
+	
+	try
+	{
+		basicEnvironment.run("--thisFlagDoesNotExist");
+	}
+	catch (std::invalid_argument& e)
+	{
+		return pass();
+	}
+	
+	return fail();
+}
+
+ADD_TEST(TestDefaultFlag, "Test flag defaults");
+int TestDefaultFlag()
+{
+	TestEnvironment env("");
+	ASSERT_EQ(env.flag_short->getUsed(), false);
+	ASSERT_EQ(env.flag_long->getUsed(), false);
+	ASSERT_EQ(env.flag_alias->getUsed(), false);
+	ASSERT_EQ(env.flag_v_short->getUsed(), false);
+	ASSERT_EQ(env.flag_v_long->getUsed(), false);
+	ASSERT_EQ(env.flag_v_alias->getUsed(), false);
+	return pass();
+}
+
+ADD_TEST(TestShortFlag, "Test short flag.");
+int TestShortFlag()
+{
+	TestEnvironment env("a -f");
+	return cmpEq(env.flag_short->getUsed(), true);
+}
+
+ADD_TEST(TestLongFlag, "Test long flag.");
+int TestLongFlag()
+{
+	TestEnvironment env("a --flag");
+	return cmpEq(env.flag_long->getUsed(), true);
+}
+
+ADD_TEST(TestFlagAliasShort, "Test aliased flag's short.");
+int TestFlagAliasShort()
+{
+	TestEnvironment env("a a_nested -o");
+	return cmpEq(env.flag_alias->getUsed(), true);
+}
+
+ADD_TEST(TestFlagAliasLong, "Test aliased flag's long.");
+int TestFlagAliasLong()
+{
+	TestEnvironment env("a a_nested --other");
+	return cmpEq(env.flag_alias->getUsed(), true);
+}
+
+ADD_TEST(TestShortFlagValSeparate, "Test short flag value separate.");
+int TestShortFlagValSeparate()
+{
+	TestEnvironment env("state_b -v hello");
+	ASSERT_EQ(env.flag_v_short->getUsed(), true);
+	ASSERT_EQ(env.flag_v_short->getValue(), "hello");
+	return pass();
+}
+
+ADD_TEST(TestShortFlagValCombined, "Test short flag value combined.");
+int TestShortFlagValCombined()
+{
+	TestEnvironment env("state_b -vworld");
+	ASSERT_EQ(env.flag_v_short->getUsed(), true);
+	ASSERT_EQ(env.flag_v_short->getValue(), "world");
+	return pass();
+}
+
+ADD_TEST(TestLongFlagValSeparate, "Test long flag value separate.");
+int TestLongFlagValSeparate()
+{
+	TestEnvironment env("state_b --value fizz");
+	ASSERT_EQ(env.flag_v_long->getUsed(), true);
+	ASSERT_EQ(env.flag_v_long->getValue(), "fizz");
+	return pass();
+}
+
+ADD_TEST(TestLongFlagValCombined, "Test long flag value combined.");
+int TestLongFlagValCombined()
+{
+	TestEnvironment env("state_b --value=buzz");
+	ASSERT_EQ(env.flag_v_long->getUsed(), true);
+	ASSERT_EQ(env.flag_v_long->getValue(), "buzz");
+	return pass();
+}
+
+ADD_TEST(TestShortAliasFlagValSeparateA, "Test A's aliased flag's short value separate.");
+int TestShortAliasFlagValSeparateA()
+{
+	TestEnvironment env("a -s orange");
+	ASSERT_EQ(env.flag_v_alias->getUsed(), true);
+	ASSERT_EQ(env.flag_v_alias->getValue(), "orange");
+	return pass();
+}
+
+ADD_TEST(TestShortAliasFlagValCombinedA, "Test A's aliased flag's short value combined.");
+int TestShortAliasFlagValCombinedA()
+{
+	TestEnvironment env("a -sorange");
+	ASSERT_EQ(env.flag_v_alias->getUsed(), true);
+	ASSERT_EQ(env.flag_v_alias->getValue(), "orange");
+	return pass();
+}
+
+ADD_TEST(TestLongAliasFlagValSeparateA, "Test A's aliased flag's long value separate.");
+int TestLongAliasFlagValSeparateA()
+{
+	TestEnvironment env("a --shared orange");
+	ASSERT_EQ(env.flag_v_alias->getUsed(), true);
+	ASSERT_EQ(env.flag_v_alias->getValue(), "orange");
+	return pass();
+}
+
+
+ADD_TEST(TestLongAliasFlagValCombinedA, "Test A's aliased flag's long value combined.");
+int TestLongAliasFlagValCombinedA()
+{
+	TestEnvironment env("a --shared=orange");
+	ASSERT_EQ(env.flag_v_alias->getUsed(), true);
+	ASSERT_EQ(env.flag_v_alias->getValue(), "orange");
+	return pass();
+}
+
+ADD_TEST(TestShortAliasFlagValSeparateB, "Test B's aliased flag's short value separate.");
+int TestShortAliasFlagValSeparateB()
+{
+	TestEnvironment env("state_b -s orange");
+	ASSERT_EQ(env.flag_v_alias->getUsed(), true);
+	ASSERT_EQ(env.flag_v_alias->getValue(), "orange");
+	return pass();
+}
+
+ADD_TEST(TestShortAliasFlagValCombinedB, "Test B's aliased flag's short value combined.");
+int TestShortAliasFlagValCombinedB()
+{
+	TestEnvironment env("state_b -sorange");
+	ASSERT_EQ(env.flag_v_alias->getUsed(), true);
+	ASSERT_EQ(env.flag_v_alias->getValue(), "orange");
+	return pass();
+}
+
+ADD_TEST(TestLongAliasFlagValSeparateB, "Test B's aliased flag's long value separate.");
+int TestLongAliasFlagValSeparateB()
+{
+	TestEnvironment env("state_b --shared orange");
+	ASSERT_EQ(env.flag_v_alias->getUsed(), true);
+	ASSERT_EQ(env.flag_v_alias->getValue(), "orange");
+	return pass();
+}
+
+
+ADD_TEST(TestLongAliasFlagValCombinedB, "Test B's aliased flag's long value combined.");
+int TestLongAliasFlagValCombinedB()
+{
+	TestEnvironment env("state_b --shared=orange");
+	ASSERT_EQ(env.flag_v_alias->getUsed(), true);
+	ASSERT_EQ(env.flag_v_alias->getValue(), "orange");
+	return pass();
+}
 
 RUN_TESTS();
