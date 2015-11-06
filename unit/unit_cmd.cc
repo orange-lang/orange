@@ -8,11 +8,13 @@
 
 #include <vector>
 #include <cstdlib>
+#include <strings.h>
 
 #include <cmd/OptionsState.h>
 #include <cmd/ProgramOptions.h>
 #include <cmd/StateFlag.h>
 #include <test/TestLib.h>
+#include <test/Comparisons.h>
 
 void unreachable(std::string error)
 {
@@ -31,7 +33,8 @@ void assertEq(T a, T b, std::string err)
 
 const char* stringToCharArray(std::string str)
 {
-	char* arr = new char[str.length()];
+	char* arr = new char[str.length()+1];
+	bzero(arr, str.length()+1);
 	strncpy(arr, str.c_str(), str.length());
 	return arr;
 }
@@ -154,28 +157,28 @@ ADD_TEST(TestEmptyInput, "Test the parser with no input.");
 int TestEmptyInput()
 {
 	TestEnvironment basicEnvironment("");
-	return 0;
+	return pass();
 }
 
 ADD_TEST(TestLongHelpFlag, "Tests the long help flag.");
 int TestLongHelpFlag()
 {
 	TestEnvironment basicEnvironment("--help");
-	return 0;
+	return pass();
 }
 
 ADD_TEST(TestShortHelpFlag, "Test the short help flag.");
 int TestShortHelpFlag()
 {
 	TestEnvironment basicEnvironment("-h");
-	return 0;
+	return pass();
 }
 
 ADD_TEST(TestBothHelpFlags, "Test both help flags.");
 int TestBothHelpFlags()
 {
 	TestEnvironment basicEnvironment("--help -h");
-	return 0;
+	return pass();
 }
 
 ADD_TEST(TestNonExistentFlag, "Test non-existent help flag.");
@@ -189,88 +192,91 @@ int TestNonExistentFlag()
 	}
 	catch (std::invalid_argument& e)
 	{
-			return 0;
+			return pass();
 	}
 
-	return 1;
+	return fail();
 }
 
 ADD_TEST(TestMainState, "Test main state.");
 int TestMainState()
 {
 	TestEnvironment env("");
-	return env.options->getCurrentState() != env.options->getMainState();
+	return cmpEq(env.options->getCurrentState(), env.options->getMainState());
 }
 
 ADD_TEST(TestStateA, "Test state a.");
 int TestStateA()
 {
 	TestEnvironment env("a");
-	return env.options->getCurrentState() != env.state_a;
+	return cmpEq(env.options->getCurrentState(), env.state_a);
 }
 
 ADD_TEST(TestStateB, "Test state b.");
 int TestStateB()
 {
 	TestEnvironment env("state_b");
-	return env.options->getCurrentState() != env.state_b;
+	return cmpEq(env.options->getCurrentState(), env.state_b);
 }
 
 ADD_TEST(TestNestedStates, "Test nested states.");
 int TestNestedStates()
 {
 	TestEnvironment env("a a_nested");
-	return env.options->getCurrentState() != env.a_nested;
+	return cmpEq(env.options->getCurrentState(), env.a_nested);
 }
 
 ADD_TEST(TestStateAWithArgument, "Test state a with arguments.");
 int TestStateAWithArgument()
 {
 	TestEnvironment env("a foobar");
-	return env.options->getCurrentState() != env.state_a;
+	return cmpEq(env.options->getCurrentState(), env.state_a);
 }
 
 ADD_TEST(TestNestedStatesWithArgument, "Test nested states with args.");
 int TestNestedStatesWithArgument()
 {
 	TestEnvironment env("a a_nested foobar");
-	return env.options->getCurrentState() != env.a_nested;
+	return cmpEq(env.options->getCurrentState(), env.a_nested);
 }
 
 ADD_TEST(TestTransitionAfterArg, "Test argument followed by transition");
 int TestTransitionAfterArg()
 {
 	TestEnvironment env("a foobar a_nested");
-	return env.options->getCurrentState() != env.a_nested;
+	return cmpEq(env.options->getCurrentState(), env.a_nested);
 }
 
 ADD_TEST(TestArgStateA, "Test argument on state A");
 int TestArgStateA()
 {
 	TestEnvironment env("a foobar");
-	return env.state_a->args[0] != "foobar";
+	return cmpEq(env.state_a->args[0], "foobar");
 }
 
 ADD_TEST(TestArgsStateA, "Test arguments on state A.");
 int TestArgsStateA()
 {
 	TestEnvironment env("a foobar baz");
-	return env.state_a->args[0] != "foobar" ||
-		env.state_a->args[1] != "baz";
+	ASSERT_EQ(env.state_a->args[0], "foobar");
+	ASSERT_EQ(env.state_a->args[1], "baz");
+	return pass();
 }
 
 ADD_TEST(TestNestedArgs, "Test arguments on nested state.");
 int TestNestedArgs()
 {
 	TestEnvironment env("a a_nested foobar");
-	return env.a_nested->args[0] != "foobar";
+	ASSERT_EQ(env.a_nested->args.size(), 1);
+	return cmpEq(env.a_nested->args[0], "foobar");
 }
 
-ADD_TEST(TestArgumentWithTransition, "Test argument and transition");
-int TestArgumentWithTransition()
-{
-	TestEnvironment env("a foobar a_nested");
-	return env.a_nested->args[0] != "foobar";
-}
+ ADD_TEST(TestArgumentWithTransition, "Test argument and transition");
+ int TestArgumentWithTransition()
+ {
+ 	TestEnvironment env("a foobar a_nested");
+	ASSERT_EQ(env.a_nested->args.size(), 1);
+ 	return env.a_nested->args[0] != "foobar";
+ }
 
 RUN_TESTS();
