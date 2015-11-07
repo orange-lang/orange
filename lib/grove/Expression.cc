@@ -7,3 +7,13 @@
  */
 
 #include <grove/Expression.h>
+
+llvm::Value* Expression::getValue() const
+{
+	return m_value;
+}
+
+void Expression::setValue(llvm::Value *value)
+{
+	m_value = value;
+}

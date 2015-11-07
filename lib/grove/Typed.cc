@@ -6,16 +6,25 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#pragma once
+#include <grove/Typed.h>
+#include <grove/types/Type.h>
 
-namespace llvm { class Type; }
+Type* Typed::getType() const
+{
+	return m_type;
+}
 
-/**
- * Type is the base class for any Orange Type.
- */
-class Type {
-protected:
-	llvm::Type* m_type;
-public:
-	llvm::Type* getLLVMType() const; 
-};
+llvm::Type* Typed::getLLVMType() const
+{
+	if (m_type == nullptr)
+	{
+		return nullptr;
+	}
+	
+	return getType()->getLLVMType();
+}
+
+void Typed::setType(Type* type)
+{
+	m_type = type;
+}

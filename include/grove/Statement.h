@@ -10,9 +10,13 @@
 
 #include "ASTNode.h"
 
+class Library;
+
 /**
  * Statement is the base class for elements that do not have values.
  */
 class Statement : public ASTNode {
-
+public:
+	/// Register this statement in the library. Override to add behavior.
+	virtual void registerInLibrary(Library* library);
 };

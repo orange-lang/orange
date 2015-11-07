@@ -7,3 +7,8 @@
  */
 
 #include <grove/Statement.h>
+
+void Statement::registerInLibrary(Library *library)
+{
+	// Do nothing 
+}
