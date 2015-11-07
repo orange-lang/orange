@@ -28,6 +28,20 @@ public:
 	/// Returns the current build settings.
 	BuildSettings* getSettings() const;
 	
+	/*
+	 * Does the following steps:
+	 * 		Gathers the nodes for library registration in each module.
+	 * 		Builds a dependency map of those nodes, detecting circ refs.
+	 *		Asks module to resolve each node in the map.
+	 *			Traverse map locally, module will do resolution and track.
+	 * 		Lets those nodes register themselves in the library. 
+	 *		Tell each module to import its own registered nodes as headers.
+	 *			(Looks in the library for its LocalNamedTypes and imports them)
+	 *		Tell each module to resolve the remaining nodes.
+	 *		Tell each module to generate code.
+	 */
+	void build();
+	
 	/// Constructs a builder with the default settings.
 	Builder();
 	

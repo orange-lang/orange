@@ -17,6 +17,17 @@ class Library;
  */
 class Statement : public ASTNode {
 public:
-	/// Register this statement in the library. Override to add behavior.
-	virtual void registerInLibrary(Library* library);
+	/**
+	 * Whether or not this elements supports being registered. 
+	 * Just supporting registration does not necessarily mean 
+	 * an element will be registered; the main function of the module 
+	 * decided which elements get registered (immediate children are 
+	 * the first.
+	 * @return Returns whether this element can be registered.
+	 */
+	virtual bool supportsRegistration() const;
+	
+	/// Register this statement as a LocalNamedType in the library.
+	/// Override to add behavior.
+	virtual void registerInLibrary(Library* library) const;
 };

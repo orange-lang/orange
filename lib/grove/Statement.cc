@@ -8,7 +8,12 @@
 
 #include <grove/Statement.h>
 
-void Statement::registerInLibrary(Library *library)
+bool Statement::supportsRegistration() const
 {
-	// Do nothing 
+	return false;
+}
+
+void Statement::registerInLibrary(Library *library) const
+{
+	// Do nothing
 }

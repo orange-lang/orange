@@ -6,15 +6,20 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#pragma once 
+#pragma once
 
-#include <vector>
-#include "Types/NamedType.h"
+#include "NamedType.h"
+
+class Module;
 
 /**
- * Library holds references to all library namespaces in a shared library 
- * and the local library (i.e., the project source directory). 
+ * LocalNamedType is a NamedType with a module.
  */
-class Library {
+class LocalNamedType : public NamedType {
+private:
+	Module* m_module;
 public:
+	Module* getModule() const;
+	
+	LocalNamedType(Module* mod, std::string name, Type* type);
 };
