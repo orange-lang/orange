@@ -7,15 +7,25 @@
 */
 
 %{
-	#include <iostream>
+	#include <grove/Module.h>
+	#include <grove/ASTNode.h>
+	#include <grove/Block.h>
 
-	extern int yylex();
 	extern struct YYLTYPE yyloc;
-	extern void yyerror(const char *s);
+	extern void yyerror(Module* mod, const char *s);
+	
+	extern int yylex(Module* module);
 %}
 
 %locations
 // %error-verbose
+%lex-param { Module* module }
+%parse-param { Module* module }
+
+%union {
+	ASTNode* node;
+	Block* block;
+}
 
 %start start
 
@@ -30,6 +40,9 @@
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST QUESTION COLON ENUM SIZEOF
+
+%type <block> statements
+%type <node> statement
 
 /* lowest to highest precedence */
 %left COMMA
@@ -56,13 +69,17 @@
 %%
 
 start
-	:	statements
+    : statements
 	;
 
 /* Create our list of statements. Find our top block and add statements to it. */
 statements
 	: statements statement
-	| statement
+    | statement
+	{
+		$$ = module->getBlock();
+		$$->addStatement($1);
+	}
 	;
 
 opt_statements
@@ -71,7 +88,7 @@ opt_statements
 	;
 
 statement
-	:	term
+	: term
 	| expression more_exprs term
 	| function term
 	| extern_function term
@@ -95,23 +112,23 @@ more_exprs
 
 expression
 	: expression ASSIGN expression
-	|	expression PLUS_ASSIGN expression
-	|	expression MINUS_ASSIGN expression
-	|	expression TIMES_ASSIGN expression
-	|	expression DIVIDE_ASSIGN expression
+	| expression PLUS_ASSIGN expression
+	| expression MINUS_ASSIGN expression
+	| expression TIMES_ASSIGN expression
+	| expression DIVIDE_ASSIGN expression
 
-	|	expression COMP_LT expression
-	|	expression COMP_GT expression
-	|	expression LEQ expression
-	|	expression GEQ expression
-	|	expression EQUALS expression
-	|	expression NEQUALS expression
+	| expression COMP_LT expression
+	| expression COMP_GT expression
+	| expression LEQ expression
+	| expression GEQ expression
+	| expression EQUALS expression
+	| expression NEQUALS expression
 
-	|	expression PLUS expression
-	|	expression MINUS expression
+	| expression PLUS expression
+	| expression MINUS expression
 
-	|	expression TIMES expression
-	|	expression DIVIDE expression
+	| expression TIMES expression
+	| expression DIVIDE expression
 	| expression MOD expression
 
 	| expression LOGICAL_AND expression
@@ -136,9 +153,9 @@ primary_high
 
 primary
 	: OPEN_PAREN expression CLOSE_PAREN
-	|	VALUE
+	| VALUE
 	| STRING
-	|	TYPE_ID
+	| TYPE_ID
 	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN
 	| SIZEOF OPEN_PAREN expression CLOSE_PAREN
 	| SIZEOF OPEN_PAREN any_type CLOSE_PAREN
@@ -263,6 +280,7 @@ opt_variable_decls_impl
 	| TYPE_ID ASSIGN expression COMMA opt_variable_decls
 	| TYPE_ID
 	| TYPE_ID ASSIGN expression
+    ;
 
 const_var
 	: CONST any_type TYPE_ID ASSIGN expression
@@ -286,19 +304,19 @@ term
 	;
 
 basic_type
-	:	TYPE_INT
-	|	TYPE_UINT
-	|	TYPE_FLOAT
-	|	TYPE_DOUBLE
-	|	TYPE_INT8
-	|	TYPE_INT16
-	|	TYPE_INT32
-	|	TYPE_INT64
-	|	TYPE_UINT8
-	|	TYPE_UINT16
-	|	TYPE_UINT32
-	|	TYPE_UINT64
-	|	TYPE_CHAR
+	: TYPE_INT
+	| TYPE_UINT
+	| TYPE_FLOAT
+	| TYPE_DOUBLE
+	| TYPE_INT8
+	| TYPE_INT16
+	| TYPE_INT32
+	| TYPE_INT64
+	| TYPE_UINT8
+	| TYPE_UINT16
+	| TYPE_UINT32
+	| TYPE_UINT64
+	| TYPE_CHAR
 	| TYPE_VOID
 	| TYPE_VAR
 	;
@@ -319,16 +337,18 @@ var_arrays_and_ptrs
 
 opt_primary
 	: primary
-	| ;
+	|
+    ;
 
 var_arrays
 	: var_arrays OPEN_BRACKET expression CLOSE_BRACKET
 	|
+    ;
 
 var_ptrs
 	: var_ptrs TIMES
-	|
 	| OPEN_BRACKET CLOSE_BRACKET
-
+	|
+    ;
 
 %%

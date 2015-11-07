@@ -6,4 +6,11 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <grove/Meta.h>
+#include <stdexcept>
+
+#include <grove/Module.h>
+
+void yyerror(Module* mod, const char* str)
+{
+	throw std::runtime_error(str);
+}

@@ -6,4 +6,19 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <grove/Meta.h>
+#include <grove/Block.h>
+
+std::vector<ASTNode *> Block::getStatements() const
+{
+	return m_statements;
+}
+
+void Block::addStatement(ASTNode *statement)
+{
+	if (statement == nullptr)
+	{
+		throw std::invalid_argument("statement cannot be null.");
+	}
+	
+	m_statements.push_back(statement);
+}

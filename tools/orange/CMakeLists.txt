@@ -8,6 +8,7 @@ AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/tools/orange ORANGE_SOURCES)
 file(GLOB_RECURSE INCLUDES "${CMAKE_SOURCE_DIR}/include/orange/*.h")
 
 add_executable(orange ${ORANGE_SOURCES} ${INCLUDES})
+set_target_properties (orange PROPERTIES FOLDER tools)
 
 # Test to see if util has been cotired.
 get_target_property(UTIL_HAS_PFX util COTIRE_ENABLE_PRECOMPILED_HEADER)

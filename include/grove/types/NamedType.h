@@ -27,6 +27,9 @@ public:
 	/// Gets the name of this type.
 	std::string getName() const;
 	
+	/// Gets the mangled named of this type.
+	std::string getMangledName() const;
+	
 	/// Constructs a new named type with name and type.
 	NamedType(std::string name, Type* type);
 };

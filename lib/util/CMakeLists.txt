@@ -10,5 +10,6 @@ aux_source_directory(${CMAKE_SOURCE_DIR}/lib/util UTIL_SOURCES)
 file(GLOB_RECURSE INCLUDES "${CMAKE_SOURCE_DIR}/include/util/*.h")
 
 add_library(util ${UTIL_SOURCES} ${INCLUDES})
+set_target_properties (util PROPERTIES FOLDER lib)
 cotire(util)
 target_link_libraries(util ${llvm_libs})

@@ -7,22 +7,28 @@
 */
 
 %{
-	#include <string.h>
-	#include "parser.hh"
+	#include <grove/ASTNode.h>
+	#include <grove/Block.h>
+	
+    #include <string.h>
+    #include "parser.hh"
 
-	#define STR (std::string(yytext, yyleng))
+    #define STR (std::string(yytext, yyleng))
 
-	// Get column and stuff for line information
-	int yycolumn = 1;
-	#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = yycolumn; yylloc.last_column = yycolumn+yyleng-1; \
+    // Get column and stuff for line information
+    int yycolumn = 1;
+    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = yycolumn; yylloc.last_column = yycolumn+yyleng-1; \
     yycolumn += yyleng;
+	
+	#define YY_DECL int yylex(Module* module)
 
-  extern void yyerror(const char *);
+	class Module;
+    extern void yyerror(Module* mod, const char *);
 
-  int yyonce = 0;
+    int yyonce = 0;
 
-  // defining this in here for C++
-  void yyflushbuffer() { YY_FLUSH_BUFFER; }
+    // defining this in here for C++
+    void yyflushbuffer() { YY_FLUSH_BUFFER; }
 %}
 
 %option noyywrap
@@ -169,7 +175,7 @@
 \"(\\.|[^\\"])*\"				return STRING;
 [A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 	return TYPE_ID;
 
-.												yyerror("invalid token");
+.												yyerror(module, "invalid token");
 
 <<EOF>> { return yyonce++ ? 0 : NEWLINE; }
 

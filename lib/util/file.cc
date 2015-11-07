@@ -11,32 +11,61 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
 
-using namespace llvm::sys;
-using namespace llvm;
+//using namespace llvm::sys;
+//using namespace llvm;
 
-std::string findProjectDirectory() {
+
+std::string findProjectDirectory()
+{
 	llvm::SmallString<50> current_path_s;
-	fs::current_path(current_path_s);
-	std::string current_path = Twine(current_path_s).str();
+	llvm::sys::fs::current_path(current_path_s);
+	std::string current_path = llvm::Twine(current_path_s).str();
 	bool exists = true;
 
 	// While our current directory exists, try to find ORANGE_SETTINGS
-	while (exists) {
-		auto path_twine = Twine(current_path);
+	while (exists)
+	{
+		auto path_twine = llvm::Twine(current_path);
 
 		std::error_code ec;
+		
+		typedef llvm::sys::fs::directory_iterator llvm_dir_it;
 
-		auto end = fs::directory_iterator();
-		for (auto it = fs::directory_iterator(path_twine, ec); it != end; it.increment(ec)) {
-			if (path::filename(it->path()).str() == ORANGE_SETTINGS) {
+		auto end = llvm_dir_it();
+		for (auto it = llvm_dir_it(path_twine, ec); it != end; it.increment(ec))
+		{
+			if (llvm::sys::path::filename(it->path()).str() == ORANGE_SETTINGS)
+			{
 				return current_path;
 			}
 		}
 
-		current_path = path::parent_path(current_path);
-		exists = fs::exists(Twine(current_path));
+		// Go to the parent path, making sure it exists.
+		current_path = llvm::sys::path::parent_path(current_path);
+		exists = llvm::sys::fs::exists(llvm::Twine(current_path));
 	}
 
 	// we didn't find the path, so throw our exception here.
 	throw std::runtime_error("fatal: not in an orange project!");
+}
+
+std::string getWorkingDirectory()
+{
+	llvm::SmallString<50> buf;
+	llvm::sys::fs::current_path(buf);
+	return llvm::Twine(buf).str();
+}
+
+std::string combinePaths(std::string a, std::string b)
+{
+	llvm::SmallString<50> buf;
+	llvm::sys::path::append(buf, llvm::Twine(a), llvm::Twine(b));
+	return llvm::Twine(buf).str();
+}
+
+std::string getTempFile(std::string prefix, std::string suffix)
+{
+	llvm::SmallString<50> buf;
+	llvm::sys::fs::createTemporaryFile(llvm::Twine(prefix), suffix, buf);
+	return llvm::Twine(buf).str();
 }

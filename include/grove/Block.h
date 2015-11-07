@@ -6,12 +6,19 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#pragma once 
+#pragma once
+
+#include <vector>
+#include "Statement.h"
 
 /**
- * Library holds references to all library namespaces in a shared library 
- * and the local library (i.e., the project source directory). 
+ * Block is the base class for any element that holds a list of statements.
  */
-class Library {
+class Block : public Statement {
+private:
+	std::vector<ASTNode *> m_statements;
 public:
+	std::vector<ASTNode *> getStatements() const;
+	
+	void addStatement(ASTNode* statement);
 };

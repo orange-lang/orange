@@ -13,6 +13,6 @@
  * Meta is the base class for nodes that define metadata, like 
  * import statements, using statements, and package statements.
  */
-class Meta {
+class Meta : public ASTNode {
 
 };

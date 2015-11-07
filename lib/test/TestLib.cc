@@ -35,6 +35,7 @@ int TestingEngine::run()
 		}
 		catch (std::exception& e)
 		{
+			std::cerr << "Caught exception: " << e.what() << std::endl;
 			val = 1;
 		}
 		

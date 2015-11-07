@@ -242,11 +242,14 @@
 /* Copy the first part of user declarations.  */
 #line 9 "/Users/robert/dev/orange/lib/grove/parser.y"
 
-	#include <iostream>
+	#include <grove/Module.h>
+	#include <grove/ASTNode.h>
+	#include <grove/Block.h>
 
-	extern int yylex();
 	extern struct YYLTYPE yyloc;
-	extern void yyerror(const char *s);
+	extern void yyerror(Module* mod, const char *s);
+	
+	extern int yylex(Module* module);
 
 
 /* Enabling traces.  */
@@ -268,7 +271,15 @@
 #endif
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+#line 25 "/Users/robert/dev/orange/lib/grove/parser.y"
+{
+	ASTNode* node;
+	Block* block;
+}
+/* Line 193 of yacc.c.  */
+#line 282 "/Users/robert/dev/orange/lib/grove/parser.cc"
+	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -292,7 +303,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 296 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 307 "/Users/robert/dev/orange/lib/grove/parser.cc"
 
 #ifdef short
 # undef short
@@ -586,7 +597,7 @@ static const yytype_uint16 yyprhs[] =
      412,   416,   422,   424,   428,   434,   439,   441,   443,   445,
      447,   450,   452,   454,   456,   458,   460,   462,   464,   466,
      468,   470,   472,   474,   476,   478,   480,   482,   484,   488,
-     491,   494,   499,   500,   502,   503,   508,   509,   512,   513
+     491,   494,   499,   500,   502,   503,   508,   509,   512,   515
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -643,27 +654,27 @@ static const yytype_int8 yyrhs[] =
       33,    -1,    34,    -1,   121,   126,   127,    -1,   121,   124,
       -1,   124,    13,    -1,   124,    43,   125,    44,    -1,    -1,
       94,    -1,    -1,   126,    43,    92,    44,    -1,    -1,   127,
-      13,    -1,    -1,    43,    44,    -1
+      13,    -1,    43,    44,    -1,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    59,    59,    64,    65,    69,    70,    74,    75,    76,
-      77,    78,    79,    80,    81,    82,    83,    84,    85,    86,
-      87,    88,    92,    93,    97,    98,    99,   100,   101,   103,
-     104,   105,   106,   107,   108,   110,   111,   113,   114,   115,
-     117,   118,   120,   121,   122,   124,   126,   128,   129,   130,
-     134,   138,   139,   140,   141,   142,   143,   144,   145,   147,
-     148,   150,   151,   153,   154,   156,   161,   162,   166,   167,
-     170,   171,   175,   176,   177,   181,   185,   186,   190,   191,
-     195,   198,   199,   200,   204,   208,   211,   215,   216,   217,
-     218,   222,   223,   224,   227,   228,   229,   233,   236,   237,
-     238,   239,   243,   244,   248,   249,   252,   253,   257,   258,
-     262,   263,   264,   265,   268,   269,   273,   274,   275,   279,
-     280,   284,   285,   289,   290,   291,   292,   293,   294,   295,
-     296,   297,   298,   299,   300,   301,   302,   303,   307,   311,
-     315,   316,   317,   321,   322,   325,   326,   329,   330,   331
+       0,    72,    72,    77,    78,    86,    87,    91,    92,    93,
+      94,    95,    96,    97,    98,    99,   100,   101,   102,   103,
+     104,   105,   109,   110,   114,   115,   116,   117,   118,   120,
+     121,   122,   123,   124,   125,   127,   128,   130,   131,   132,
+     134,   135,   137,   138,   139,   141,   143,   145,   146,   147,
+     151,   155,   156,   157,   158,   159,   160,   161,   162,   164,
+     165,   167,   168,   170,   171,   173,   178,   179,   183,   184,
+     187,   188,   192,   193,   194,   198,   202,   203,   207,   208,
+     212,   215,   216,   217,   221,   225,   228,   232,   233,   234,
+     235,   239,   240,   241,   244,   245,   246,   250,   253,   254,
+     255,   256,   260,   261,   265,   266,   269,   270,   274,   275,
+     279,   280,   281,   282,   286,   287,   291,   292,   293,   297,
+     298,   302,   303,   307,   308,   309,   310,   311,   312,   313,
+     314,   315,   316,   317,   318,   319,   320,   321,   325,   329,
+     333,   334,   335,   339,   340,   344,   345,   349,   350,   351
 };
 #endif
 
@@ -753,7 +764,7 @@ static const yytype_uint8 yyr2[] =
        3,     5,     1,     3,     5,     4,     1,     1,     1,     1,
        2,     1,     1,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     3,     2,
-       2,     4,     0,     1,     0,     4,     0,     2,     0,     2
+       2,     4,     0,     1,     0,     4,     0,     2,     2,     0
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -774,7 +785,7 @@ static const yytype_uint8 yydefact[] =
       61,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     9,    10,    12,    14,    13,    15,    18,    19,    20,
-      21,    16,    17,     0,     0,     0,    93,     0,    11,   148,
+      21,    16,    17,     0,     0,     0,    93,     0,    11,   149,
      109,    71,     0,     0,    46,    51,     0,    63,     0,    71,
        0,   103,     0,   102,     0,     0,     0,     0,     0,     0,
        0,     0,    23,    37,    38,    36,    35,    24,    25,    26,
@@ -783,7 +794,7 @@ static const yytype_uint8 yydefact[] =
       92,     0,   138,     0,     0,   106,     0,    70,   142,     0,
        0,    55,    48,    78,     0,     0,   105,     0,     0,     0,
      115,     0,     0,     0,    56,    57,    22,     0,    64,     0,
-     149,     0,   147,   112,   108,   109,     0,     0,   139,    74,
+     148,     0,   147,   112,   108,   109,     0,     0,   139,    74,
       83,     0,     0,    80,     0,    85,   104,     0,    89,     0,
       88,   114,     0,   100,    97,     0,    45,   105,   145,   109,
        0,   107,     0,     6,    73,     0,   140,   144,     0,     0,
@@ -1291,7 +1302,7 @@ do								\
     }								\
   else								\
     {								\
-      yyerror (YY_("syntax error: cannot back up")); \
+      yyerror (module, YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
 while (YYID (0))
@@ -1348,7 +1359,7 @@ while (YYID (0))
 #ifdef YYLEX_PARAM
 # define YYLEX yylex (YYLEX_PARAM)
 #else
-# define YYLEX yylex ()
+# define YYLEX yylex (module)
 #endif
 
 /* Enable debugging if requested.  */
@@ -1371,7 +1382,7 @@ do {									  \
     {									  \
       YYFPRINTF (stderr, "%s ", Title);					  \
       yy_symbol_print (stderr,						  \
-		  Type, Value, Location); \
+		  Type, Value, Location, module); \
       YYFPRINTF (stderr, "\n");						  \
     }									  \
 } while (YYID (0))
@@ -1385,19 +1396,21 @@ do {									  \
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, Module* module)
 #else
 static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp)
+yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, module)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
     YYLTYPE const * const yylocationp;
+    Module* module;
 #endif
 {
   if (!yyvaluep)
     return;
   YYUSE (yylocationp);
+  YYUSE (module);
 # ifdef YYPRINT
   if (yytype < YYNTOKENS)
     YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
@@ -1419,14 +1432,15 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, YYLTYPE const * const yylocationp, Module* module)
 #else
 static void
-yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp)
+yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp, module)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
     YYLTYPE const * const yylocationp;
+    Module* module;
 #endif
 {
   if (yytype < YYNTOKENS)
@@ -1436,7 +1450,7 @@ yy_symbol_print (yyoutput, yytype, yyvaluep, yylocationp)
 
   YY_LOCATION_PRINT (yyoutput, *yylocationp);
   YYFPRINTF (yyoutput, ": ");
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, yylocationp, module);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -1476,13 +1490,14 @@ do {								\
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule)
+yy_reduce_print (YYSTYPE *yyvsp, YYLTYPE *yylsp, int yyrule, Module* module)
 #else
 static void
-yy_reduce_print (yyvsp, yylsp, yyrule)
+yy_reduce_print (yyvsp, yylsp, yyrule, module)
     YYSTYPE *yyvsp;
     YYLTYPE *yylsp;
     int yyrule;
+    Module* module;
 #endif
 {
   int yynrhs = yyr2[yyrule];
@@ -1496,7 +1511,7 @@ yy_reduce_print (yyvsp, yylsp, yyrule)
       fprintf (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
 		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       , &(yylsp[(yyi + 1) - (yynrhs)])		       );
+		       , &(yylsp[(yyi + 1) - (yynrhs)])		       , module);
       fprintf (stderr, "\n");
     }
 }
@@ -1504,7 +1519,7 @@ yy_reduce_print (yyvsp, yylsp, yyrule)
 # define YY_REDUCE_PRINT(Rule)		\
 do {					\
   if (yydebug)				\
-    yy_reduce_print (yyvsp, yylsp, Rule); \
+    yy_reduce_print (yyvsp, yylsp, Rule, module); \
 } while (YYID (0))
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1755,18 +1770,20 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocationp, Module* module)
 #else
 static void
-yydestruct (yymsg, yytype, yyvaluep, yylocationp)
+yydestruct (yymsg, yytype, yyvaluep, yylocationp, module)
     const char *yymsg;
     int yytype;
     YYSTYPE *yyvaluep;
     YYLTYPE *yylocationp;
+    Module* module;
 #endif
 {
   YYUSE (yyvaluep);
   YYUSE (yylocationp);
+  YYUSE (module);
 
   if (!yymsg)
     yymsg = "Deleting";
@@ -1791,7 +1808,7 @@ int yyparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int yyparse (void);
+int yyparse (Module* module);
 #else
 int yyparse ();
 #endif
@@ -1830,11 +1847,11 @@ yyparse (YYPARSE_PARAM)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 int
-yyparse (void)
+yyparse (Module* module)
 #else
 int
-yyparse ()
-
+yyparse (module)
+    Module* module;
 #endif
 #endif
 {
@@ -2094,9 +2111,17 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
+        case 4:
+#line 79 "/Users/robert/dev/orange/lib/grove/parser.y"
+    {
+		(yyval.block) = module->getBlock();
+		(yyval.block)->addStatement((yyvsp[(1) - (1)].node));
+	;}
+    break;
+
+
 /* Line 1267 of yacc.c.  */
-#line 2100 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 2125 "/Users/robert/dev/orange/lib/grove/parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2132,7 +2157,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (YY_("syntax error"));
+      yyerror (module, YY_("syntax error"));
 #else
       {
 	YYSIZE_T yysize = yysyntax_error (0, yystate, yychar);
@@ -2156,11 +2181,11 @@ yyerrlab:
 	if (0 < yysize && yysize <= yymsg_alloc)
 	  {
 	    (void) yysyntax_error (yymsg, yystate, yychar);
-	    yyerror (yymsg);
+	    yyerror (module, yymsg);
 	  }
 	else
 	  {
-	    yyerror (YY_("syntax error"));
+	    yyerror (module, YY_("syntax error"));
 	    if (yysize != 0)
 	      goto yyexhaustedlab;
 	  }
@@ -2184,7 +2209,7 @@ yyerrlab:
       else
 	{
 	  yydestruct ("Error: discarding",
-		      yytoken, &yylval, &yylloc);
+		      yytoken, &yylval, &yylloc, module);
 	  yychar = YYEMPTY;
 	}
     }
@@ -2241,7 +2266,7 @@ yyerrlab1:
 
       yyerror_range[0] = *yylsp;
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp, yylsp);
+		  yystos[yystate], yyvsp, yylsp, module);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -2284,7 +2309,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (YY_("memory exhausted"));
+  yyerror (module, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -2292,7 +2317,7 @@ yyexhaustedlab:
 yyreturn:
   if (yychar != YYEOF && yychar != YYEMPTY)
      yydestruct ("Cleanup: discarding lookahead",
-		 yytoken, &yylval, &yylloc);
+		 yytoken, &yylval, &yylloc, module);
   /* Do not reclaim the symbols of the rule which action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
@@ -2300,7 +2325,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp, yylsp);
+		  yystos[*yyssp], yyvsp, yylsp, module);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -2316,6 +2341,6 @@ yyreturn:
 }
 
 
-#line 334 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 354 "/Users/robert/dev/orange/lib/grove/parser.y"
 
 

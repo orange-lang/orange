@@ -14,8 +14,10 @@ foreach(program ${TEST_PROGRAMS})
 	set_target_properties(${outputName}
 		PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test/bin)
 
-	target_link_libraries(${outputName} util cmd testlib)
-	add_dependencies(${outputName} util cmd testlib)
+	target_link_libraries(${outputName} util cmd testlib grove)
+	add_dependencies(${outputName} util cmd testlib grove)
+	set_target_properties (${outputName} PROPERTIES FOLDER unit)
+
 
 	add_test(${outputName} ${CMAKE_BINARY_DIR}/test/bin/${outputName})
 endforeach()
