@@ -6,16 +6,25 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 #include <iostream>
-#include <cmd/args.h>
 #include <util/link.h>
+#include <cmd/ProgramOptions.h>
+#include <cmd/OptionsState.h>
 
 int main(int argc, char** argv) {
-	cOptions options("Orange WIP");
-
+	auto options = new ProgramOptions("Orange WIP");
+	
+	auto runState = new OptionsState("run");
+	auto buildState = new OptionsState("build");
+	auto testState = new OptionsState("test");
+	
+	options->addState(runState);
+	options->addState(buildState);
+	options->addState(testState);
+	
+	options->getMainState()->setRunDelegate(runState);
+	
 	// Parse our options
-	options.parse(argc, argv);	
-
-	options.currentState()->run();
-
+	options->parse(argc, argv);
+	
 	return 0;
 }

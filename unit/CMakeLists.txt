@@ -9,6 +9,7 @@ foreach(program ${TEST_PROGRAMS})
 	string(REPLACE "unit_" "test-" outputName ${fileName})
 
 	add_executable(${outputName} ${program})
+	cotire(${outputName})
 
 	set_target_properties(${outputName}
 		PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/test/bin)

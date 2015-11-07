@@ -240,7 +240,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 9 "/Users/robert/dev/orange/tools/orange/parser.y"
+#line 9 "/Users/robert/dev/orange/lib/grove/parser.y"
 
 	#include <iostream>
 
@@ -292,7 +292,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 296 "/Users/robert/dev/orange/tools/orange/parser.cc"
+#line 296 "/Users/robert/dev/orange/lib/grove/parser.cc"
 
 #ifdef short
 # undef short
@@ -2096,7 +2096,7 @@ yyreduce:
     {
       
 /* Line 1267 of yacc.c.  */
-#line 2100 "/Users/robert/dev/orange/tools/orange/parser.cc"
+#line 2100 "/Users/robert/dev/orange/lib/grove/parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2316,6 +2316,6 @@ yyreturn:
 }
 
 
-#line 334 "/Users/robert/dev/orange/tools/orange/parser.y"
+#line 334 "/Users/robert/dev/orange/lib/grove/parser.y"
 
 
