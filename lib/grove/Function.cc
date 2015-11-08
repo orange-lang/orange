@@ -17,6 +17,16 @@ std::string Function::getName() const
 	return m_name;
 }
 
+llvm::BasicBlock* Function::getEntry() const
+{
+	return m_entry;
+}
+
+llvm::BasicBlock* Function::getExit() const
+{
+	return m_exit;
+}
+
 void Function::build()
 {
 	if (getType() == nullptr)
@@ -32,8 +42,14 @@ void Function::build()
 	}
 	
 	auto linkage = llvm::GlobalValue::LinkageTypes::ExternalLinkage;
-	llvm::Function::Create(llvm_ty, linkage, m_name,
-						   getModule()->getLLVMModule());
+	auto func = llvm::Function::Create(llvm_ty, linkage, m_name,
+									   getModule()->getLLVMModule());
+	
+	m_entry = llvm::BasicBlock::Create(getModule()->getLLVMContext(),
+									   "entry", func);
+	
+	m_exit = llvm::BasicBlock::Create(getModule()->getLLVMContext(),
+									  "exit", func);
 
 	
 	/// @todo run optimization on function

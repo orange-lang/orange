@@ -14,13 +14,23 @@
 #include "Typed.h"
 
 namespace llvm { class Function; }
+namespace llvm { class BasicBlock; }
 
 class Function : public Block, public Typed {
 private:
 	std::string m_name;
+	
+	llvm::BasicBlock* m_entry = nullptr;
+	llvm::BasicBlock* m_exit = nullptr;
 public:
 	/// Gets the name of the function
 	std::string getName() const;
+	
+	/// Get the entry block for this function
+	llvm::BasicBlock* getEntry() const;
+	
+	/// Get the exit block for this function.
+	llvm::BasicBlock* getExit() const;
 	
 	virtual void build();
 	
