@@ -20,5 +20,13 @@ private:
 public:
 	virtual std::string getSignature() const;
 	
+	virtual bool isSigned() const;
+	
+	virtual bool isArrayTy() const;
+	
+	virtual Type* getBaseTy();
+	
+	virtual Type* getRootTy();
+	
 	static ArrayType* get(Type* contained, unsigned int size);
 };

@@ -8,20 +8,11 @@
 
 #pragma once
 
-#include "Type.h"
+#include "Function.h"
 
-class IntType : public Type
-{
-private:
-	unsigned int m_width = 0;
-	
-	IntType(unsigned int width);
+class MainFunction : public Function {
+protected:
+	virtual void setupFunction();
 public:
-	virtual std::string getSignature() const;
-	
-	virtual bool isSigned() const;
-	
-	virtual bool isIntTy() const;
-	
-	static IntType* get(unsigned int width);
+	MainFunction(Module* module, std::string name);
 };

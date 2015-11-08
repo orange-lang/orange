@@ -17,5 +17,8 @@ private:
 public:
 	virtual std::string getSignature() const;
 	
+	virtual bool isDoubleTy() const;
+	virtual bool isFloatingPointTy() const;
+	
 	static DoubleType* get();
 };

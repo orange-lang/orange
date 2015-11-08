@@ -71,7 +71,27 @@ std::string FunctionType::getSignature() const
 	return FunctionType::getSignature(m_ret_type, m_args);
 }
 
-Type* FunctionType::getReturnType() const
+bool FunctionType::isSigned() const
+{
+	return getReturnTy()->isSigned();
+}
+
+bool FunctionType::isFunctionTy() const
+{
+	return true;
+}
+
+Type* FunctionType::getBaseTy()
+{
+	return m_ret_type;
+}
+
+Type* FunctionType::getRootTy()
+{
+	return getBaseTy()->getRootTy();
+}
+
+Type* FunctionType::getReturnTy() const
 {
 	return m_ret_type;
 }

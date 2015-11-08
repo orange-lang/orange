@@ -19,6 +19,16 @@ std::string FloatType::getSignature() const
 	return "f";
 }
 
+bool FloatType::isFloatTy() const
+{
+	return true;
+}
+
+bool FloatType::isFloatingPointTy() const
+{
+	return true;
+}
+
 FloatType* FloatType::get()
 {
 	auto defined = getDefined("f");

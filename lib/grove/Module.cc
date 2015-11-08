@@ -9,12 +9,13 @@
 #include <stdexcept>
 #include <grove/Module.h>
 #include <grove/Namespace.h>
-#include <grove/Function.h>
+#include <grove/MainFunction.h>
 #include <grove/types/FunctionType.h>
 #include <grove/types/IntType.h>
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
+
 
 llvm::Module* Module::getLLVMModule() const
 {
@@ -150,7 +151,7 @@ Module::Module(Builder* builder, std::string filePath)
 	m_llvm_module = new llvm::Module(m_file, getLLVMContext());
 	m_ir_builder = new IRBuilder(getLLVMContext());
 	
-	m_main = new Function(this, "_main");
+	m_main = new MainFunction(this, "_main");
 	
 	auto mainFunctionTy = FunctionType::get(IntType::get(32),
 											std::vector<Type*>());

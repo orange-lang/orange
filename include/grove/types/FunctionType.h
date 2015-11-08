@@ -23,7 +23,15 @@ private:
 public:
 	virtual std::string getSignature() const;
 	
-	Type* getReturnType() const;
+	virtual bool isSigned() const;
+	
+	virtual bool isFunctionTy() const;
+	
+	Type* getBaseTy();
+	
+	Type* getRootTy();
+	
+	Type* getReturnTy() const;
 	
 	std::vector<Type *> getArgs() const;
 	

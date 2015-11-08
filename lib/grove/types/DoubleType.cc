@@ -19,6 +19,16 @@ std::string DoubleType::getSignature() const
 	return "F";
 }
 
+bool DoubleType::isDoubleTy() const
+{
+	return true;
+}
+
+bool DoubleType::isFloatingPointTy() const
+{
+	return true;
+}
+
 DoubleType* DoubleType::get()
 {
 	auto defined = getDefined("F");

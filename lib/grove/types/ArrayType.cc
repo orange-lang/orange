@@ -30,6 +30,26 @@ std::string ArrayType::getSignature() const
 	return ss.str();
 }
 
+bool ArrayType::isSigned() const
+{
+	return m_contained->isSigned();
+}
+
+bool ArrayType::isArrayTy() const
+{
+	return true;
+}
+
+Type* ArrayType::getBaseTy()
+{
+	return m_contained;
+}
+
+Type* ArrayType::getRootTy()
+{
+	return m_contained->getRootTy();
+}
+
 ArrayType* ArrayType::get(Type *contained, unsigned int size)
 {
 	if (contained == nullptr)

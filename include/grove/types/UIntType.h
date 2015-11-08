@@ -19,5 +19,8 @@ private:
 public:
 	virtual std::string getSignature() const;
 	
+	virtual bool isSigned() const;
+	virtual bool isIntTy() const;
+	
 	static UIntType* get(unsigned int width);
 };

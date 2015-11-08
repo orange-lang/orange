@@ -27,6 +27,12 @@ private:
 	llvm::BasicBlock* m_exit = nullptr;
 	
 	llvm::Value* m_ret_value = nullptr;
+	llvm::Function* m_function = nullptr;
+protected:
+	virtual void createFunction();
+	virtual void createReturn();
+	virtual void setupFunction();
+	virtual void optimize();
 public:
 	/// Gets the name of the function
 	std::string getName() const;

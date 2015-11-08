@@ -26,6 +26,27 @@ std::string PointerType::getSignature() const
 	return m_contained->getSignature() + "p";
 }
 
+bool PointerType::isSigned() const
+{
+	return true;
+}
+
+
+bool PointerType::isPointerTy() const
+{
+	return true;
+}
+
+Type* PointerType::getBaseTy()
+{
+	return m_contained;
+}
+
+Type* PointerType::getRootTy()
+{
+	return getBaseTy()->getRootTy();
+}
+
 PointerType* PointerType::get(Type *contained)
 {
 	if (contained == nullptr)

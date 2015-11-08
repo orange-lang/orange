@@ -26,6 +26,17 @@ std::string IntType::getSignature() const
 	return ss.str();
 }
 
+bool IntType::isSigned() const
+{
+	return true;
+}
+
+bool IntType::isIntTy() const
+{
+	return true;
+}
+
+
 IntType* IntType::get(unsigned int width)
 {
 	if (width == 0)

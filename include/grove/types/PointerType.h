@@ -19,5 +19,13 @@ private:
 public:
 	virtual std::string getSignature() const;
 	
+	virtual bool isSigned() const;
+	
+	virtual bool isPointerTy() const;
+	
+	virtual Type* getBaseTy();
+	
+	virtual Type* getRootTy();
+	
 	static PointerType* get(Type* contained);
 };

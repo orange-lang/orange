@@ -10,8 +10,64 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/LLVMContext.h>
 #include <grove/Module.h>
+#include <grove/types/PointerType.h>
 
 std::map<std::string, Type*> Type::m_defined;
+
+bool Type::isSigned() const
+{
+	return false;
+}
+
+bool Type::isArrayTy() const
+{
+	return false;
+}
+
+bool Type::isDoubleTy() const
+{
+	return false;
+}
+
+bool Type::isFloatTy() const
+{
+	return false;
+}
+
+bool Type::isFloatingPointTy() const
+{
+	return false;
+}
+
+bool Type::isFunctionTy() const
+{
+	return false;
+}
+
+bool Type::isIntTy() const
+{
+	return false;
+}
+
+bool Type::isPointerTy() const
+{
+	return false;
+}
+
+Type* Type::getPointerTo()
+{
+	return PointerType::get((Type *)this);
+}
+
+Type* Type::getBaseTy()
+{
+	return this;
+}
+
+Type* Type::getRootTy()
+{
+	return this;
+}
 
 Type* Type::getDefined(std::string signature)
 {
@@ -44,11 +100,6 @@ Type::Type()
 {
 	m_context = & llvm::getGlobalContext();
 	m_type = llvm::Type::getVoidTy(*m_context);
-}
-
-bool Type::isSigned() const
-{
-	return false;
 }
 
 std::string Type::getSignature() const

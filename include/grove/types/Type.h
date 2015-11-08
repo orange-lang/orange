@@ -33,6 +33,22 @@ protected:
 public:
 	virtual bool isSigned() const;
 	
+	virtual bool isArrayTy() const;
+	virtual bool isDoubleTy() const;
+	virtual bool isFloatTy() const;
+	virtual bool isFloatingPointTy() const;
+	virtual bool isFunctionTy() const;
+	virtual bool isIntTy() const;
+	virtual bool isPointerTy() const;
+	
+	Type* getPointerTo();
+	
+	/// Gets the contained type, or this
+	virtual Type* getBaseTy();
+	
+	/// Gets the root type.
+	virtual Type* getRootTy();
+	
 	virtual std::string getSignature() const;
 	
 	llvm::Type* getLLVMType() const; 
