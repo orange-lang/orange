@@ -10,11 +10,16 @@
 
 #include <string>
 #include <stack>
+#include <vector>
 
 class Builder;
 class Namespace;
 class Block;
 class Function;
+class ASTNode;
+
+namespace llvm { class Module; }
+namespace llvm { class LLVMContext; }
 
 /**
  * Module hosts methods for compiling a specific object file. It accepts 
@@ -22,6 +27,8 @@ class Function;
  */
 class Module {
 private:
+	llvm::Module* m_llvm_module = nullptr;
+	
 	Builder* m_builder = nullptr;
 	
 	// The global function
@@ -35,8 +42,15 @@ private:
 	// Stack of active blocks during parsing
 	std::stack<Block *> m_ctx;
 	
+	std::vector<ASTNode *> m_resolved;
+	
 	void parse();
 public:
+	/// Gets the LLVM module.
+	llvm::Module* getLLVMModule() const;
+	
+	llvm::LLVMContext& getLLVMContext() const;
+	
 	/// Get file that this module is building.
 	std::string getFile() const;
 	
@@ -57,6 +71,12 @@ public:
 	
 	/// Pops a block from the stack.
 	Block* popBlock();
+	
+	/// Resolve unresolved nodes.
+	void resolve();
+	
+	/// Generate code.
+	void build();
 	
 	/// Constructs a new module with a specified builder and filepath.
 	Module(Builder* builder, std::string filePath);

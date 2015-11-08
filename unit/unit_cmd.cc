@@ -95,7 +95,6 @@ public:
 		run(cmd);
 	}
 
-
 	~TestEnvironment()
 	{
 		delete options;

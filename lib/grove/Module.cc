@@ -11,6 +11,19 @@
 #include <grove/Namespace.h>
 #include <grove/Function.h>
 
+#include <llvm/IR/Module.h>
+#include <llvm/IR/LLVMContext.h>
+
+llvm::Module* Module::getLLVMModule() const
+{
+	return m_llvm_module;
+}
+
+llvm::LLVMContext& Module::getLLVMContext() const
+{
+	return llvm::getGlobalContext();
+}
+
 std::string Module::getFile() const
 {
 	return m_file;
@@ -57,6 +70,11 @@ Block* Module::getBlock() const
 	return m_ctx.top();
 }
 
+Function* Module::getMain() const
+{
+	return m_main;
+}
+
 void Module::pushBlock(Block *block)
 {
 	if (block == nullptr)
@@ -79,6 +97,28 @@ Block* Module::popBlock()
 	return popped;
 }
 
+void Module::resolve()
+{
+	std::function<void(ASTNode*)> resolve_recursive = [&,this](ASTNode* node)
+	{
+		auto it = std::find(this->m_resolved.begin(), this->m_resolved.end(),
+							node);
+		
+		if (it == std::end(this->m_resolved))
+		{
+			this->m_resolved.push_back(node);
+			node->resolve();
+		}
+		
+		for (auto child : node->getChildren())
+		{
+			resolve_recursive(child);
+		}
+	};
+	
+	resolve_recursive(getMain());
+}
+
 Module::Module(Builder* builder, std::string filePath)
 {
 	if (builder == nullptr)
@@ -94,6 +134,8 @@ Module::Module(Builder* builder, std::string filePath)
 	m_builder = builder;
 	m_namespace = new Namespace("local");
 	m_file = filePath;
+	
+	m_llvm_module = new llvm::Module(m_file, getLLVMContext());
 	
 	m_main = new Function(this, "_main");
 	pushBlock(m_main);

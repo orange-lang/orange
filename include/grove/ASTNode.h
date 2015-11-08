@@ -17,6 +17,8 @@ class ASTNode {
 private:
 	Module* m_module = nullptr;
 	ASTNode* m_parent = nullptr;
+	
+	std::vector<ASTNode *> m_children;
 public:
 	/// Gets the module this node resides in.
 	Module* getModule() const;
@@ -24,8 +26,14 @@ public:
 	/// Gets the parent of this node.
 	ASTNode* getParent() const;
 	
+	std::vector<ASTNode *> getChildren() const;
+	
+	void addChild(ASTNode* child);
+	
 	/// Creates a copy of this node.
 	virtual ASTNode* copy() const;
+	
+	virtual void resolve();
 	
 	/// Returns whether or not this node is a type.
 	template <typename T> bool is()

@@ -10,6 +10,7 @@
 #include <grove/BuildSettings.h>
 #include <grove/Library.h>
 #include <grove/Module.h>
+#include <llvm/IR/Module.h>
 
 Library* Builder::getLibrary() const
 {
@@ -28,6 +29,29 @@ std::vector<Module *> Builder::getModules() const
 
 int Builder::build()
 {
+	/// @todo Gather the nodes for library registration.
+	/// @todo Build dependency map of those nodes.
+	/// @todo Resolve each of those nodes, telling Module which to build
+	/// @todo Let those nodes register themselves in the library
+	/// @todo Tell each module to import its own registered nodes as headers
+	///		  (Look in the library for its LocalNamedTypes and import)
+	
+	// Resolve the remaining nodes
+	for (auto mod : getModules())
+	{
+		mod->resolve();
+	}
+	
+	
+	for (auto mod : getModules())
+	{
+		/// @todo Generate code
+		
+		
+		mod->getLLVMModule()->dump();
+	}
+	
+	
 	return 1;
 }
 

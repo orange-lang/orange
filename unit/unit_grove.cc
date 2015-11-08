@@ -60,7 +60,7 @@ int TestAllPrograms()
 		
     		if (builder->build() != 0)
     		{
-    			std::cout << "Failed: " << path << std::endl;
+    			std::cout << "Retcode 1: " << path << std::endl;
     			exitCode = 1;
     		}		
 		}

@@ -78,7 +78,11 @@ statements
     | statement
 	{
 		$$ = module->getBlock();
-		$$->addStatement($1);
+		
+		if ($1 != nullptr)
+		{
+    		$$->addStatement($1);
+		}
 	}
 	;
 

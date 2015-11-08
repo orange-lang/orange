@@ -19,9 +19,29 @@ ASTNode* ASTNode::getParent() const
 	return m_parent;
 }
 
+std::vector<ASTNode *> ASTNode::getChildren() const
+{
+	return m_children;
+}
+
+void ASTNode::addChild(ASTNode *child)
+{
+	if (child == nullptr)
+	{
+		throw std::invalid_argument("child must not be nullptr");
+	}
+	
+	m_children.push_back(child);
+}
+
 ASTNode* ASTNode::copy() const
 {
 	return new ASTNode(getModule());
+}
+
+void ASTNode::resolve()
+{
+	// Do nothing
 }
 
 ASTNode::ASTNode(Module* module)
@@ -43,6 +63,8 @@ ASTNode::ASTNode(ASTNode* parent)
 	
 	m_parent = parent;
 	m_module = getParent()->getModule();
+	
+	getParent()->addChild(this);
 }
 
 ASTNode::~ASTNode()
