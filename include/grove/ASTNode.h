@@ -44,4 +44,6 @@ public:
 	
 	/// Constructs a child node with a parent. 
 	ASTNode(ASTNode* parent);
+	
+	virtual ~ASTNode();
 };

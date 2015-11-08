@@ -22,3 +22,15 @@ void Block::addStatement(ASTNode *statement)
 	
 	m_statements.push_back(statement);
 }
+
+Block::Block(ASTNode* parent)
+: Statement(parent)
+{
+	// Do nothing
+}
+
+Block::Block(Module* module)
+: Statement(module)
+{
+	// Do nothing 
+}

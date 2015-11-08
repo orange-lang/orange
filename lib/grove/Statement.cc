@@ -17,3 +17,15 @@ void Statement::registerInLibrary(Library *library) const
 {
 	// Do nothing
 }
+
+Statement::Statement(ASTNode* parent)
+: ASTNode(parent)
+{
+	// Do nothing
+}
+
+Statement::Statement(Module* module)
+: ASTNode(module)
+{
+	// Do nothing 
+}

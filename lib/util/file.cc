@@ -69,3 +69,35 @@ std::string getTempFile(std::string prefix, std::string suffix)
 	llvm::sys::fs::createTemporaryFile(llvm::Twine(prefix), suffix, buf);
 	return llvm::Twine(buf).str();
 }
+
+std::vector<std::string> getFilesRecursive(std::string path)
+{
+	std::vector<std::string> ret;
+	
+	std::error_code ec;
+	typedef llvm::sys::fs::recursive_directory_iterator llvm_rdir_it;
+	auto it = llvm::sys::fs::recursive_directory_iterator(llvm::Twine(path),
+														  ec);
+	
+	if (ec.value() != 0)
+	{
+		throw std::runtime_error(ec.message());
+	}
+	
+	for ( ; it != llvm_rdir_it(); it.increment(ec))
+	{
+		auto entry = *it;
+	
+		auto status = llvm::sys::fs::file_status();
+		entry.status(status);
+		
+		if (status.type() != llvm::sys::fs::file_type::regular_file)
+		{
+			continue;
+		}
+		
+		ret.push_back(entry.path());
+	}
+	
+	return ret;
+}

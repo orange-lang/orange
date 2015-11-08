@@ -14,6 +14,7 @@
 class Builder;
 class Namespace;
 class Block;
+class Function;
 
 /**
  * Module hosts methods for compiling a specific object file. It accepts 
@@ -22,6 +23,9 @@ class Block;
 class Module {
 private:
 	Builder* m_builder = nullptr;
+	
+	// The global function
+	Function* m_main;
 	
 	// The local namespace for this module.
 	Namespace* m_namespace = nullptr;
@@ -44,6 +48,9 @@ public:
 	
 	/// Gets the currently active block.
 	Block* getBlock() const;
+	
+	/// Gets the main function for this module.
+	Function* getMain() const;
 	
 	/// Push a block to the stack.
 	void pushBlock(Block *);

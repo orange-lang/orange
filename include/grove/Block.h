@@ -21,4 +21,7 @@ public:
 	std::vector<ASTNode *> getStatements() const;
 	
 	void addStatement(ASTNode* statement);
+	
+	Block(ASTNode* parent);
+	Block(Module* module);
 };

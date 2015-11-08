@@ -44,4 +44,36 @@ int TestBuildProgram()
 	return cmpEq(result, 0);
 }
 
+ADD_TEST(TestAllPrograms, "Test building all test programs in test dir.")
+int TestAllPrograms()
+{
+	int exitCode = 0;
+	
+	auto test_path = combinePaths(getWorkingDirectory(), "test/basic");
+	auto test_files = getFilesRecursive(test_path);
+	
+	for (auto path : test_files)
+	{
+		try
+		{
+			auto builder = new Builder(path);
+		
+    		if (builder->build() != 0)
+    		{
+    			std::cout << "Failed: " << path << std::endl;
+    			exitCode = 1;
+    		}		
+		}
+		catch (std::exception& e)
+		{
+			std::cout << "Failed: " << path << std::endl;
+			std::cout << "\tReason: " << e.what() << std::endl;
+			exitCode = 1;
+		}
+	}
+	
+	return exitCode;
+}
+
+
 RUN_TESTS();

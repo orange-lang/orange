@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <grove/Module.h>
 #include <grove/Namespace.h>
+#include <grove/Function.h>
 
 std::string Module::getFile() const
 {
@@ -31,7 +32,6 @@ void Module::parse()
 	extern int yyparse(Module* mod);
 	extern int yyonce;
 	extern void yyflushbuffer();
-	
 	
 	auto file = fopen(getFile().c_str(), "r");
 	if (file == nullptr)
@@ -94,6 +94,9 @@ Module::Module(Builder* builder, std::string filePath)
 	m_builder = builder;
 	m_namespace = new Namespace("local");
 	m_file = filePath;
+	
+	m_main = new Function(this, "_main");
+	pushBlock(m_main);
 	
 	parse();
 }

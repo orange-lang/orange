@@ -44,3 +44,8 @@ ASTNode::ASTNode(ASTNode* parent)
 	m_parent = parent;
 	m_module = getParent()->getModule();
 }
+
+ASTNode::~ASTNode()
+{
+	// Do nothing 
+}

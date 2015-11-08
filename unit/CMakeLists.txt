@@ -18,6 +18,9 @@ foreach(program ${TEST_PROGRAMS})
 	add_dependencies(${outputName} util cmd testlib grove)
 	set_target_properties (${outputName} PROPERTIES FOLDER unit)
 
-
-	add_test(${outputName} ${CMAKE_BINARY_DIR}/test/bin/${outputName})
+	add_test(
+		NAME ${outputName}
+        COMMAND ${CMAKE_BINARY_DIR}/test/bin/${outputName}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	)
 endforeach()

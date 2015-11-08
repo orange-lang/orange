@@ -9,6 +9,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 /**
  * Finds the project directory by looking for a project settings file in the current
@@ -27,3 +28,7 @@ std::string combinePaths(std::string a, std::string b);
 
 /// Creates a temporary file with a prefix and suffix. 
 std::string getTempFile(std::string prefix, std::string suffix);
+
+/// Recursively get all files in path and return it in a vector
+std::vector<std::string> getFilesRecursive(std::string path);
+
