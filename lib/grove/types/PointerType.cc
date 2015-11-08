@@ -1,0 +1,49 @@
+/*
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
+** directory of this distribution.
+**
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
+** may not be copied, modified, or distributed except according to those terms.
+*/
+
+#include <grove/types/PointerType.h>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/DerivedTypes.h>
+
+PointerType::PointerType(Type* contained)
+{
+	if (contained == nullptr)
+	{
+		throw std::invalid_argument("contained must not be null.");
+	}
+	
+	m_contained = contained;
+	m_type = m_contained->getLLVMType()->getPointerTo();
+}
+
+std::string PointerType::getSignature() const
+{
+	return m_contained->getSignature() + "p";
+}
+
+PointerType* PointerType::get(Type *contained)
+{
+	if (contained == nullptr)
+	{
+		throw std::invalid_argument("contained must not be null.");
+	}
+	
+	std::string signature = contained->getSignature() + "p";
+	
+	auto defined = getDefined(signature);
+	if (defined != nullptr)
+	{
+		return dynamic_cast<PointerType *>(defined);
+	}
+	
+
+	PointerType* ty = new PointerType(contained);
+	define(signature, ty);
+	
+	return ty;
+}
