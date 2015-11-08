@@ -71,6 +71,16 @@ std::string FunctionType::getSignature() const
 	return FunctionType::getSignature(m_ret_type, m_args);
 }
 
+Type* FunctionType::getReturnType() const
+{
+	return m_ret_type;
+}
+
+std::vector<Type *> FunctionType::getArgs() const
+{
+	return m_args;
+}
+
 FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args)
 {
 	if (retType == nullptr)

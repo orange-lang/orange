@@ -21,6 +21,19 @@ class ASTNode;
 namespace llvm { class Module; }
 namespace llvm { class LLVMContext; }
 
+namespace llvm {
+	class ConstantFolder;
+	
+	template <bool preserveNames>
+	class IRBuilderDefaultInserter;
+	
+	template <bool preserveNames, typename T, typename Inserter>
+	class IRBuilder;
+}
+
+typedef llvm::IRBuilder<true, llvm::ConstantFolder,
+llvm::IRBuilderDefaultInserter<true> > IRBuilder;
+
 /**
  * Module hosts methods for compiling a specific object file. It accepts 
  * a single file.
@@ -28,6 +41,7 @@ namespace llvm { class LLVMContext; }
 class Module {
 private:
 	llvm::Module* m_llvm_module = nullptr;
+	IRBuilder* m_ir_builder = nullptr;
 	
 	Builder* m_builder = nullptr;
 	
@@ -48,6 +62,9 @@ private:
 public:
 	/// Gets the LLVM module.
 	llvm::Module* getLLVMModule() const;
+	
+	/// Gets the IR builder.
+	IRBuilder* getIRBuilder() const;
 	
 	llvm::LLVMContext& getLLVMContext() const;
 	

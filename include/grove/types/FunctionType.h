@@ -23,5 +23,9 @@ private:
 public:
 	virtual std::string getSignature() const;
 	
+	Type* getReturnType() const;
+	
+	std::vector<Type *> getArgs() const;
+	
 	static FunctionType* get(Type* retType, std::vector<Type*> args);
 };

@@ -15,6 +15,9 @@
 
 namespace llvm { class Function; }
 namespace llvm { class BasicBlock; }
+namespace llvm { class Value; }
+
+class Type;
 
 class Function : public Block, public Typed {
 private:
@@ -22,6 +25,8 @@ private:
 	
 	llvm::BasicBlock* m_entry = nullptr;
 	llvm::BasicBlock* m_exit = nullptr;
+	
+	llvm::Value* m_ret_value = nullptr;
 public:
 	/// Gets the name of the function
 	std::string getName() const;
@@ -31,6 +36,12 @@ public:
 	
 	/// Get the exit block for this function.
 	llvm::BasicBlock* getExit() const;
+	
+	llvm::Value* getRetValue() const;
+	
+	Type* getReturnType();
+	
+	bool isVoidFunction();
 	
 	virtual void build();
 	

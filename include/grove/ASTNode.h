@@ -8,6 +8,21 @@
 
 #pragma once 
 
+#include <vector>
+
+namespace llvm {
+	class ConstantFolder;
+	
+	template <bool preserveNames>
+	class IRBuilderDefaultInserter;
+	
+	template <bool preserveNames, typename T, typename Inserter>
+	class IRBuilder;
+}
+
+typedef llvm::IRBuilder<true, llvm::ConstantFolder,
+	llvm::IRBuilderDefaultInserter<true> > IRBuilder;
+
 class Module;
 
 /**
@@ -27,6 +42,9 @@ public:
 	ASTNode* getParent() const;
 	
 	std::vector<ASTNode *> getChildren() const;
+	
+	/// Gets the IR builder in the module.
+	IRBuilder* IRBuilder() const;
 	
 	void addChild(ASTNode* child);
 	

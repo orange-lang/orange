@@ -8,6 +8,7 @@
 
 #include <stdexcept>
 #include <grove/ASTNode.h>
+#include <grove/Module.h>
 
 Module* ASTNode::getModule() const
 {
@@ -17,6 +18,16 @@ Module* ASTNode::getModule() const
 ASTNode* ASTNode::getParent() const
 {
 	return m_parent;
+}
+
+IRBuilder* ASTNode::IRBuilder() const
+{
+	if (getModule() == nullptr)
+	{
+		return nullptr;
+	}
+	
+	return getModule()->getIRBuilder();
 }
 
 std::vector<ASTNode *> ASTNode::getChildren() const

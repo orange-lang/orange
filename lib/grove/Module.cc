@@ -14,12 +14,16 @@
 #include <grove/types/IntType.h>
 
 #include <llvm/IR/Module.h>
-#include <llvm/IR/LLVMContext.h>
-
+#include <llvm/IR/IRBuilder.h>
 
 llvm::Module* Module::getLLVMModule() const
 {
 	return m_llvm_module;
+}
+
+llvm::IRBuilder<>* Module::getIRBuilder() const
+{
+	return m_ir_builder;
 }
 
 llvm::LLVMContext& Module::getLLVMContext() const
@@ -144,6 +148,7 @@ Module::Module(Builder* builder, std::string filePath)
 	m_file = filePath;
 	
 	m_llvm_module = new llvm::Module(m_file, getLLVMContext());
+	m_ir_builder = new IRBuilder(getLLVMContext());
 	
 	m_main = new Function(this, "_main");
 	
