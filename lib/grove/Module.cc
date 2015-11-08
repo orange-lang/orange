@@ -10,9 +10,12 @@
 #include <grove/Module.h>
 #include <grove/Namespace.h>
 #include <grove/Function.h>
+#include <grove/types/FunctionType.h>
+#include <grove/types/IntType.h>
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/LLVMContext.h>
+
 
 llvm::Module* Module::getLLVMModule() const
 {
@@ -119,6 +122,11 @@ void Module::resolve()
 	resolve_recursive(getMain());
 }
 
+void Module::build()
+{
+	getMain()->build();
+}
+
 Module::Module(Builder* builder, std::string filePath)
 {
 	if (builder == nullptr)
@@ -138,6 +146,12 @@ Module::Module(Builder* builder, std::string filePath)
 	m_llvm_module = new llvm::Module(m_file, getLLVMContext());
 	
 	m_main = new Function(this, "_main");
+	
+	auto mainFunctionTy = FunctionType::get(IntType::get(32),
+											std::vector<Type*>());
+	getMain()->setType(mainFunctionTy);
+	
+	
 	pushBlock(m_main);
 	
 	parse();

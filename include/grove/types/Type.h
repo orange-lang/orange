@@ -33,7 +33,7 @@ protected:
 public:
 	virtual bool isSigned() const;
 	
-	std::string getSignature() const;
+	virtual std::string getSignature() const;
 	
 	llvm::Type* getLLVMType() const; 
 };

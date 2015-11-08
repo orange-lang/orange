@@ -46,7 +46,7 @@ int Builder::build()
 	for (auto mod : getModules())
 	{
 		/// @todo Generate code
-		
+		mod->build();
 		
 		mod->getLLVMModule()->dump();
 	}

@@ -13,12 +13,16 @@
 #include "Block.h"
 #include "Typed.h"
 
+namespace llvm { class Function; }
+
 class Function : public Block, public Typed {
 private:
 	std::string m_name;
 public:
 	/// Gets the name of the function
 	std::string getName() const;
+	
+	virtual void build();
 	
 	/// Constructs a new function that exists in a parent
 	Function(ASTNode* parent, std::string name);

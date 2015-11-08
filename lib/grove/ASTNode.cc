@@ -34,6 +34,11 @@ void ASTNode::addChild(ASTNode *child)
 	m_children.push_back(child);
 }
 
+bool ASTNode::isRootNode() const
+{
+	return getParent() == nullptr;
+}
+
 ASTNode* ASTNode::copy() const
 {
 	return new ASTNode(getModule());
@@ -42,6 +47,11 @@ ASTNode* ASTNode::copy() const
 void ASTNode::resolve()
 {
 	// Do nothing
+}
+
+void ASTNode::build()
+{
+	// Do nothing 
 }
 
 ASTNode::ASTNode(Module* module)

@@ -30,10 +30,15 @@ public:
 	
 	void addChild(ASTNode* child);
 	
+	bool isRootNode() const;
+	
 	/// Creates a copy of this node.
 	virtual ASTNode* copy() const;
 	
 	virtual void resolve();
+	
+	/// Generate code. Sets value if applicable.
+	virtual void build();
 	
 	/// Returns whether or not this node is a type.
 	template <typename T> bool is()
@@ -46,7 +51,7 @@ public:
 	{
 		return dynamic_cast<T>(this);
 	}
-	
+
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);
 	

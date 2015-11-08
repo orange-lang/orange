@@ -43,6 +43,7 @@ void Type::define(std::string signature, Type *ty)
 Type::Type()
 {
 	m_context = & llvm::getGlobalContext();
+	m_type = llvm::Type::getVoidTy(*m_context);
 }
 
 bool Type::isSigned() const
@@ -57,5 +58,5 @@ std::string Type::getSignature() const
 
 llvm::Type* Type::getLLVMType() const
 {
-	return llvm::Type::getVoidTy(*m_context);
+	return m_type;
 }
