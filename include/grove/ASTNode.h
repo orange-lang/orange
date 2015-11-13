@@ -69,6 +69,23 @@ public:
 	{
 		return dynamic_cast<T>(this);
 	}
+	
+	template <typename T> T findParent()
+	{
+		ASTNode* ptr = getParent();
+		
+		while (ptr != nullptr)
+		{
+			if (ptr->is<T>())
+			{
+				return ptr->as<T>();
+			}
+			
+			ptr = ptr->getParent();
+		}
+		
+		return nullptr;
+	}
 
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);
