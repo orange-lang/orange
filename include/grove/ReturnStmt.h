@@ -11,17 +11,20 @@
 #include "Statement.h"
 #include "Typed.h"
 
+class Expression;
+
 class ReturnStmt : public Statement, public Typed {
 private:
-	ASTNode* m_expr = nullptr;
+	Expression* m_expr = nullptr;
 public:
 	/// Get the expression that the return statement returns.
-	ASTNode* getExpression();
+	Expression* getExpression();
 	
 	/// Returns whether or not the return statement has an expression.
 	bool hasExpression();
 	
+	virtual void resolve();
 	virtual void build();
 	
-	ReturnStmt(ASTNode* parent, ASTNode* expression);
+	ReturnStmt(ASTNode* expression);
 };
