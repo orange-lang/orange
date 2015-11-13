@@ -59,6 +59,11 @@ bool Type::isPointerTy() const
 	return false;
 }
 
+bool Type::isVoidTy() const
+{
+	return false;
+}
+
 BasicType Type::PODTy() const
 {
 	return OTHER;

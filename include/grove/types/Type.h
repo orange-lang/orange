@@ -57,6 +57,7 @@ public:
 	virtual bool isFunctionTy() const;
 	virtual bool isIntTy() const;
 	virtual bool isPointerTy() const;
+	virtual bool isVoidTy() const;
 	
 	/// Gets plain old data type. 
 	virtual BasicType PODTy() const;
