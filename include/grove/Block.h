@@ -17,19 +17,10 @@
 class Block : public Statement {
 private:
 	std::vector<ASTNode *> m_statements;
-	
-	/// Determines whether or not a block should stop
-	/// building children statements.
-	bool m_should_stop_build = false;
 public:
 	std::vector<ASTNode *> getStatements() const;
 	
 	void addStatement(ASTNode* statement);
-	
-	bool shouldStopBuild() const;
-	
-	/// Request for a block to stop generating children statements.
-	void requestStopBuild();
 	
 	Block();
 	Block(Module* module);

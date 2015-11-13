@@ -131,11 +131,6 @@ void Function::build()
 	
 	for (auto stmt : getStatements())
 	{
-		if (shouldStopBuild())
-		{
-			break;
-		}
-		
 		stmt->build();
 	}
 	
