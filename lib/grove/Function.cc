@@ -123,12 +123,6 @@ void Function::optimize()
 
 void Function::build()
 {
-	auto ty = getType();
-	if (ty == nullptr || ty->isFunctionTy() == false)
-	{
-		throw std::runtime_error("Function does not have a function type.");
-	}
-	
 	// Save point.
 	auto stored_insert = IRBuilder()->GetInsertBlock();
 	
