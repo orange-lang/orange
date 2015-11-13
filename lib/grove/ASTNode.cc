@@ -88,6 +88,11 @@ ASTNode::ASTNode(ASTNode* parent)
 	getParent()->addChild(this);
 }
 
+ASTNode::ASTNode()
+{
+	// Do nothing.
+}
+
 ASTNode::~ASTNode()
 {
 	// Do nothing 

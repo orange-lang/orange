@@ -31,6 +31,6 @@ public:
 	/// Override to add behavior.
 	virtual void registerInLibrary(Library* library) const;
 	
-	Statement(ASTNode* parent);
+	Statement();
 	Statement(Module* module);
 };

@@ -51,8 +51,8 @@ public:
 	
 	virtual void build();
 	
-	/// Constructs a new function that exists in a parent
-	Function(ASTNode* parent, std::string name);
+	/// Constructs a new orphaned function 
+	Function(std::string name);
 	
 	/// Constructs a new global function.
 	Function(Module* module, std::string name);

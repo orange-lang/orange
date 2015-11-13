@@ -22,6 +22,6 @@ public:
 	
 	void addStatement(ASTNode* statement);
 	
-	Block(ASTNode* parent);
+	Block();
 	Block(Module* module);
 };

@@ -144,8 +144,8 @@ void Function::build()
 	}
 }
 
-Function::Function(ASTNode* parent, std::string name)
-: Block(parent)
+Function::Function(std::string name)
+: Block()
 {
 	if (name == "")
 	{

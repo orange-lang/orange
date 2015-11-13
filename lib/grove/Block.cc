@@ -23,8 +23,8 @@ void Block::addStatement(ASTNode *statement)
 	m_statements.push_back(statement);
 }
 
-Block::Block(ASTNode* parent)
-: Statement(parent)
+Block::Block()
+: Statement()
 {
 	// Do nothing
 }

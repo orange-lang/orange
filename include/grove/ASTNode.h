@@ -76,5 +76,9 @@ public:
 	/// Constructs a child node with a parent. 
 	ASTNode(ASTNode* parent);
 	
+	/// Constructs an orphaned node.
+	/// It is up to the parent to add it as a child.
+	ASTNode();
+	
 	virtual ~ASTNode();
 };
