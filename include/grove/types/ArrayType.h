@@ -18,15 +18,15 @@ private:
 	
 	ArrayType(Type* contained, unsigned int size);
 public:
-	virtual std::string getSignature() const;
+	virtual std::string getSignature() const override;
 	
-	virtual bool isSigned() const;
+	virtual bool isSigned() const override;
 	
-	virtual bool isArrayTy() const;
+	virtual bool isArrayTy() const override;
 	
-	virtual Type* getBaseTy();
+	virtual Type* getBaseTy() override;
 	
-	virtual Type* getRootTy();
+	virtual Type* getRootTy() override;
 	
 	static ArrayType* get(Type* contained, unsigned int size);
 };

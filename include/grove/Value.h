@@ -25,7 +25,7 @@ private:
 		double   d;
 	} m_values;
 public:
-	virtual void build();
+	virtual void build() override;
 	
 	/** 
 	 * Constructs a new Value.

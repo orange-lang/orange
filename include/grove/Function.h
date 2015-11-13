@@ -49,7 +49,7 @@ public:
 	
 	bool isVoidFunction();
 	
-	virtual void build();
+	virtual void build() override;
 	
 	/// Constructs a new orphaned function 
 	Function(std::string name);

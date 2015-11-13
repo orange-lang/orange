@@ -17,13 +17,13 @@ private:
 	
 	UIntType(unsigned int width);
 public:
-	virtual std::string getSignature() const;
+	virtual std::string getSignature() const override;
 	
-	virtual bool isPODTy() const;
-	virtual bool isSigned() const;
-	virtual bool isIntTy() const;
+	virtual bool isPODTy() const override;
+	virtual bool isSigned() const override;
+	virtual bool isIntTy() const override;
 	
-	virtual BasicType PODTy() const;
+	virtual BasicType PODTy() const override;
 	
 	static UIntType* get(unsigned int width);
 };

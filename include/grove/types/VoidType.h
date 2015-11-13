@@ -15,12 +15,12 @@ class VoidType : public Type
 private:
 	VoidType();
 public:
-	virtual std::string getSignature() const;
+	virtual std::string getSignature() const override;
 	
-	virtual bool isPODTy() const;
-	virtual bool isVoidTy() const;
+	virtual bool isPODTy() const override;
+	virtual bool isVoidTy() const override;
 	
-	virtual BasicType PODTy() const;
+	virtual BasicType PODTy() const override;
 	
 	static VoidType* get();
 };

@@ -12,7 +12,7 @@
 
 class MainFunction : public Function {
 protected:
-	virtual void setupFunction();
+	virtual void setupFunction() override;
 public:
 	MainFunction(Module* module, std::string name);
 };

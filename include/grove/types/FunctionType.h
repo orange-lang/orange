@@ -21,17 +21,17 @@ private:
 	
 	FunctionType(Type* retType, std::vector<Type*> args);
 public:
-	virtual std::string getSignature() const;
+	virtual std::string getSignature() const override;
 	
-	virtual bool isSigned() const;
+	virtual bool isSigned() const override;
 	
-	virtual bool isFunctionTy() const;
+	virtual bool isFunctionTy() const override;
 	
-	Type* getBaseTy();
+	virtual Type* getBaseTy() override;
 	
-	Type* getRootTy();
+	virtual Type* getRootTy() override;
 	
-	Type* getReturnTy() const;
+	virtual Type* getReturnTy() const;
 	
 	std::vector<Type *> getArgs() const;
 	

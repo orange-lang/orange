@@ -15,13 +15,13 @@ class FloatType : public Type
 private:
 	FloatType();
 public:
-	virtual std::string getSignature() const;
+	virtual std::string getSignature() const override;
 	
-	virtual bool isPODTy() const;
-	virtual bool isFloatTy() const;
-	virtual bool isFloatingPointTy() const;
+	virtual bool isPODTy() const override;
+	virtual bool isFloatTy() const override;
+	virtual bool isFloatingPointTy() const override;
 	
-	virtual BasicType PODTy() const;
+	virtual BasicType PODTy() const override;
 	
 	static FloatType* get();
 };

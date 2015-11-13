@@ -15,13 +15,13 @@ class DoubleType : public Type
 private:
 	DoubleType();
 public:
-	virtual std::string getSignature() const;
+	virtual std::string getSignature() const override;
 	
-	virtual bool isPODTy() const;
-	virtual bool isDoubleTy() const;
-	virtual bool isFloatingPointTy() const;
+	virtual bool isPODTy() const override;
+	virtual bool isDoubleTy() const override;
+	virtual bool isFloatingPointTy() const override;
 	
-	virtual BasicType PODTy() const;
+	virtual BasicType PODTy() const override;
 	
 	static DoubleType* get();
 };

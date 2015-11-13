@@ -17,15 +17,15 @@ private:
 	
 	PointerType(Type* contained);
 public:
-	virtual std::string getSignature() const;
+	virtual std::string getSignature() const override;
 	
-	virtual bool isSigned() const;
+	virtual bool isSigned() const override;
 	
-	virtual bool isPointerTy() const;
+	virtual bool isPointerTy() const override;
 	
-	virtual Type* getBaseTy();
+	virtual Type* getBaseTy() override;
 	
-	virtual Type* getRootTy();
+	virtual Type* getRootTy() override;
 	
 	static PointerType* get(Type* contained);
 };

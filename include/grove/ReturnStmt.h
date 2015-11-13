@@ -23,10 +23,10 @@ public:
 	/// Returns whether or not the return statement has an expression.
 	bool hasExpression();
 	
-	virtual bool isTerminator() const;
+	virtual bool isTerminator() const override;
 	
-	virtual void resolve();
-	virtual void build();
+	virtual void resolve() override;
+	virtual void build() override;
 	
 	ReturnStmt(ASTNode* expression);
 };
