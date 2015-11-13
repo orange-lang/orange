@@ -128,17 +128,7 @@ void Function::build()
 	
 	createFunction();
 	setupFunction();
-	
-	for (auto stmt : getStatements())
-	{
-		if (stmt->is<Statement *>() && stmt->as<Statement *>()->isTerminator())
-		{
-			break;
-		}
-		
-		stmt->build();
-	}
-	
+	buildStatements();
 	createReturn();
 	optimize();
 	

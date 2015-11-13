@@ -17,6 +17,8 @@
 class Block : public Statement {
 private:
 	std::vector<ASTNode *> m_statements;
+protected:
+	void buildStatements();
 public:
 	std::vector<ASTNode *> getStatements() const;
 	

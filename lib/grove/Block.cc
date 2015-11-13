@@ -23,6 +23,19 @@ void Block::addStatement(ASTNode *statement)
 	m_statements.push_back(statement);
 }
 
+void Block::buildStatements()
+{
+	for (auto stmt : getStatements())
+	{
+		if (stmt->is<Statement *>() && stmt->as<Statement *>()->isTerminator())
+		{
+			break;
+		}
+		
+		stmt->build();
+	}
+}
+
 Block::Block()
 : Statement()
 {
