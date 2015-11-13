@@ -23,6 +23,8 @@ public:
 	/// Returns whether or not the return statement has an expression.
 	bool hasExpression();
 	
+	virtual bool isTerminator() const;
+	
 	virtual void resolve();
 	virtual void build();
 	
