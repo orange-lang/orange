@@ -19,6 +19,11 @@ std::string FloatType::getSignature() const
 	return "f";
 }
 
+bool FloatType::isPODTy() const
+{
+	return true;
+}
+
 bool FloatType::isFloatTy() const
 {
 	return true;
@@ -27,6 +32,11 @@ bool FloatType::isFloatTy() const
 bool FloatType::isFloatingPointTy() const
 {
 	return true;
+}
+
+BasicType FloatType::PODTy() const
+{
+	return FLOAT;
 }
 
 FloatType* FloatType::get()

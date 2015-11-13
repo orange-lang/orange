@@ -26,6 +26,38 @@ std::string UIntType::getSignature() const
 	return ss.str();
 }
 
+bool UIntType::isPODTy() const
+{
+	return true;
+}
+
+bool UIntType::isSigned() const
+{
+	return false;
+}
+
+bool UIntType::isIntTy() const
+{
+	return true;
+}
+
+BasicType UIntType::PODTy() const
+{
+	switch (m_width)
+	{
+		case 8:
+			return UINT8;
+		case 16:
+			return UINT16;
+		case 32:
+			return UINT32;
+		case 64:
+			return UINT64;
+		default:
+			return OTHER;
+	}
+}
+
 UIntType* UIntType::get(unsigned int width)
 {
 	if (width == 0)

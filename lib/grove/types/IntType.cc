@@ -26,6 +26,11 @@ std::string IntType::getSignature() const
 	return ss.str();
 }
 
+bool IntType::isPODTy() const
+{
+	return true;
+}
+
 bool IntType::isSigned() const
 {
 	return true;
@@ -36,6 +41,22 @@ bool IntType::isIntTy() const
 	return true;
 }
 
+BasicType IntType::PODTy() const
+{
+	switch (m_width)
+	{
+		case 8:
+			return INT8;
+		case 16:
+			return INT16;
+		case 32:
+			return INT32;
+		case 64:
+			return INT64;
+		default:
+			return OTHER;
+	}
+}
 
 IntType* IntType::get(unsigned int width)
 {

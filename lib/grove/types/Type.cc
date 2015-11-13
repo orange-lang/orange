@@ -19,6 +19,11 @@ bool Type::isSigned() const
 	return false;
 }
 
+bool Type::isPODTy() const
+{
+	return false;
+}
+
 bool Type::isArrayTy() const
 {
 	return false;
@@ -52,6 +57,11 @@ bool Type::isIntTy() const
 bool Type::isPointerTy() const
 {
 	return false;
+}
+
+BasicType Type::PODTy() const
+{
+	return OTHER;
 }
 
 Type* Type::getPointerTo()

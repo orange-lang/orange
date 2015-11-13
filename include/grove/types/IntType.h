@@ -19,9 +19,11 @@ private:
 public:
 	virtual std::string getSignature() const;
 	
+	virtual bool isPODTy() const;
 	virtual bool isSigned() const;
-	
 	virtual bool isIntTy() const;
+	
+	virtual BasicType PODTy() const;
 	
 	static IntType* get(unsigned int width);
 };

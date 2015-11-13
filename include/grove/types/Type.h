@@ -16,6 +16,21 @@ class Module;
 namespace llvm { class Type; }
 namespace llvm { class LLVMContext; }
 
+typedef enum {
+	INT8,
+	INT16,
+	INT32,
+	INT64,
+	UINT8,
+	UINT16,
+	UINT32,
+	UINT64,
+	FLOAT,
+	DOUBLE,
+	VOID,
+	OTHER
+} BasicType;
+
 /**
  * Type is the base class for any Orange Type.
  */
@@ -33,6 +48,8 @@ protected:
 public:
 	virtual bool isSigned() const;
 	
+	/// Determines whether or not type is plain (int, float, not a pointer).
+	virtual bool isPODTy() const;
 	virtual bool isArrayTy() const;
 	virtual bool isDoubleTy() const;
 	virtual bool isFloatTy() const;
@@ -40,6 +57,9 @@ public:
 	virtual bool isFunctionTy() const;
 	virtual bool isIntTy() const;
 	virtual bool isPointerTy() const;
+	
+	/// Gets plain old data type. 
+	virtual BasicType PODTy() const;
 	
 	Type* getPointerTo();
 	

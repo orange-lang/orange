@@ -19,6 +19,11 @@ std::string DoubleType::getSignature() const
 	return "F";
 }
 
+bool DoubleType::isPODTy() const
+{
+	return true;
+}
+
 bool DoubleType::isDoubleTy() const
 {
 	return true;
@@ -27,6 +32,11 @@ bool DoubleType::isDoubleTy() const
 bool DoubleType::isFloatingPointTy() const
 {
 	return true;
+}
+
+BasicType DoubleType::PODTy() const
+{
+	return DOUBLE;
 }
 
 DoubleType* DoubleType::get()
