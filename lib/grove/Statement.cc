@@ -18,6 +18,11 @@ void Statement::registerInLibrary(Library *library) const
 	// Do nothing
 }
 
+bool Statement::isTerminator() const
+{
+	return false;
+}
+
 Statement::Statement(Module* module)
 : ASTNode(module)
 {

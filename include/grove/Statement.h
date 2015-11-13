@@ -31,6 +31,11 @@ public:
 	/// Override to add behavior.
 	virtual void registerInLibrary(Library* library) const;
 	
+	/// Determins whether or not a statement is a terminator;
+	/// e.g., if following the build of this statement, if other
+	/// code can follow it.
+	virtual bool isTerminator() const;
+	
 	Statement();
 	Statement(Module* module);
 };
