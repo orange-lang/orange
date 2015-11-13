@@ -131,6 +131,11 @@ void Function::build()
 	
 	for (auto stmt : getStatements())
 	{
+		if (stmt->is<Statement *>() && stmt->as<Statement *>()->isTerminator())
+		{
+			break;
+		}
+		
 		stmt->build();
 	}
 	
