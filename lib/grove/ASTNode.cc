@@ -35,11 +35,18 @@ std::vector<ASTNode *> ASTNode::getChildren() const
 	return m_children;
 }
 
-void ASTNode::addChild(ASTNode *child)
+void ASTNode::addChild(ASTNode *child, bool mustExist)
 {
 	if (child == nullptr)
 	{
-		throw std::invalid_argument("child must not be nullptr");
+		if (mustExist == true)
+		{
+    		throw std::invalid_argument("child must not be nullptr");
+		}
+		else
+		{
+			return;
+		}
 	}
 	
 	m_children.push_back(child);

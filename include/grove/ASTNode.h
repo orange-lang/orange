@@ -46,7 +46,7 @@ public:
 	/// Gets the IR builder in the module.
 	IRBuilder* IRBuilder() const;
 	
-	void addChild(ASTNode* child);
+	void addChild(ASTNode* child, bool mustExist = false);
 	
 	bool isRootNode() const;
 	
