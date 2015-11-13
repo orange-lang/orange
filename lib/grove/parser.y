@@ -10,6 +10,7 @@
 	#include <grove/Module.h>
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
+	#include <grove/Value.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -25,6 +26,7 @@
 %union {
 	ASTNode* node;
 	Block* block;
+	Value* val;
 }
 
 %start start

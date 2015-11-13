@@ -245,6 +245,7 @@
 	#include <grove/Module.h>
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
+	#include <grove/Value.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -272,13 +273,14 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 25 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 26 "/Users/robert/dev/orange/lib/grove/parser.y"
 {
 	ASTNode* node;
 	Block* block;
+	Value* val;
 }
 /* Line 193 of yacc.c.  */
-#line 282 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 284 "/Users/robert/dev/orange/lib/grove/parser.cc"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -303,7 +305,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 307 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 309 "/Users/robert/dev/orange/lib/grove/parser.cc"
 
 #ifdef short
 # undef short
@@ -660,21 +662,21 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    72,    72,    77,    78,    90,    91,    95,    96,    97,
-      98,    99,   100,   101,   102,   103,   104,   105,   106,   107,
-     108,   109,   113,   114,   118,   119,   120,   121,   122,   124,
-     125,   126,   127,   128,   129,   131,   132,   134,   135,   136,
-     138,   139,   141,   142,   143,   145,   147,   149,   150,   151,
-     155,   159,   160,   161,   162,   163,   164,   165,   166,   168,
-     169,   171,   172,   174,   175,   177,   182,   183,   187,   188,
-     191,   192,   196,   197,   198,   202,   206,   207,   211,   212,
-     216,   219,   220,   221,   225,   229,   232,   236,   237,   238,
-     239,   243,   244,   245,   248,   249,   250,   254,   257,   258,
-     259,   260,   264,   265,   269,   270,   273,   274,   278,   279,
-     283,   284,   285,   286,   290,   291,   295,   296,   297,   301,
-     302,   306,   307,   311,   312,   313,   314,   315,   316,   317,
-     318,   319,   320,   321,   322,   323,   324,   325,   329,   333,
-     337,   338,   339,   343,   344,   348,   349,   353,   354,   355
+       0,    74,    74,    79,    80,    92,    93,    97,    98,    99,
+     100,   101,   102,   103,   104,   105,   106,   107,   108,   109,
+     110,   111,   115,   116,   120,   121,   122,   123,   124,   126,
+     127,   128,   129,   130,   131,   133,   134,   136,   137,   138,
+     140,   141,   143,   144,   145,   147,   149,   151,   152,   153,
+     157,   161,   162,   163,   164,   165,   166,   167,   168,   170,
+     171,   173,   174,   176,   177,   179,   184,   185,   189,   190,
+     193,   194,   198,   199,   200,   204,   208,   209,   213,   214,
+     218,   221,   222,   223,   227,   231,   234,   238,   239,   240,
+     241,   245,   246,   247,   250,   251,   252,   256,   259,   260,
+     261,   262,   266,   267,   271,   272,   275,   276,   280,   281,
+     285,   286,   287,   288,   292,   293,   297,   298,   299,   303,
+     304,   308,   309,   313,   314,   315,   316,   317,   318,   319,
+     320,   321,   322,   323,   324,   325,   326,   327,   331,   335,
+     339,   340,   341,   345,   346,   350,   351,   355,   356,   357
 };
 #endif
 
@@ -2112,7 +2114,7 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 79 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 81 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.block) = module->getBlock();
 		
@@ -2125,7 +2127,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2129 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 2131 "/Users/robert/dev/orange/lib/grove/parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2345,6 +2347,6 @@ yyreturn:
 }
 
 
-#line 358 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 360 "/Users/robert/dev/orange/lib/grove/parser.y"
 
 

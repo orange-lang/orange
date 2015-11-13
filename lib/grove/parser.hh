@@ -214,13 +214,14 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 25 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 26 "/Users/robert/dev/orange/lib/grove/parser.y"
 {
 	ASTNode* node;
 	Block* block;
+	Value* val;
 }
 /* Line 1529 of yacc.c.  */
-#line 224 "/Users/robert/dev/orange/lib/grove/parser.hh"
+#line 225 "/Users/robert/dev/orange/lib/grove/parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

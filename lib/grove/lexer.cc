@@ -655,6 +655,7 @@ char *yytext;
 #line 10 "/Users/robert/dev/orange/lib/grove/lexer.l"
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
+	#include <grove/Value.h>
 	
     #include <string.h>
     #include "parser.hh"
@@ -678,7 +679,7 @@ char *yytext;
 #define YY_NO_UNISTD_H 1
 #define YY_NO_INPUT 1
 
-#line 682 "/Users/robert/dev/orange/lib/grove/lexer.cc"
+#line 683 "/Users/robert/dev/orange/lib/grove/lexer.cc"
 
 #define INITIAL 0
 #define HEX 1
@@ -859,10 +860,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 43 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 44 "/Users/robert/dev/orange/lib/grove/lexer.l"
 
 
-#line 866 "/Users/robert/dev/orange/lib/grove/lexer.cc"
+#line 867 "/Users/robert/dev/orange/lib/grove/lexer.cc"
 
 	if ( !(yy_init) )
 		{
@@ -953,554 +954,554 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 45 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 46 "/Users/robert/dev/orange/lib/grove/lexer.l"
 ;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 47 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 48 "/Users/robert/dev/orange/lib/grove/lexer.l"
 yycolumn = 1; // Reset column as we're on a new line.
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 49 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 50 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 51 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 52 "/Users/robert/dev/orange/lib/grove/lexer.l"
 BEGIN(HEX);
 	YY_BREAK
 
 case 5:
 YY_RULE_SETUP
-#line 53 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 54 "/Users/robert/dev/orange/lib/grove/lexer.l"
 BEGIN(INITIAL); return VALUE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 54 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 55 "/Users/robert/dev/orange/lib/grove/lexer.l"
 printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
 	YY_BREAK
 
 case 7:
 YY_RULE_SETUP
-#line 57 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 58 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 58 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 59 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 59 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 60 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 61 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 62 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 62 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 63 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 63 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 64 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 64 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 65 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 65 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 66 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 66 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 67 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 67 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 68 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 68 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 69 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 69 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 70 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 70 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 71 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 71 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 72 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 73 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 74 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 75 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 76 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 76 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 77 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VALUE;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 78 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 79 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return DEF;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 79 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 80 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return RETURN;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 80 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 81 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return ELIF;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 81 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 82 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return ELSE;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 82 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 83 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return END;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 83 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 84 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return IF;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 84 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 85 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return FOR;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 85 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 86 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return FOREVER;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 86 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 87 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return LOOP;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 87 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 88 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return CONTINUE;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 88 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 89 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return BREAK;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 89 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 90 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return DO;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 90 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 91 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return WHILE;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 91 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 92 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return WHEN;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 92 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 93 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return UNLESS;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 93 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 94 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return CLASS;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 94 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 95 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return USING;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 95 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 96 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return PUBLIC;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 96 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 97 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return PRIVATE;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 97 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 98 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return SHARED;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 98 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 99 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return EXTERN;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 99 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 100 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return CONST;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 100 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 101 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return ENUM;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 102 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 103 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_VAR;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 103 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 104 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_CHAR;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 104 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 105 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_INT;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 105 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 106 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_UINT;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 106 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 107 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_FLOAT;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 107 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 108 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_DOUBLE;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 108 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 109 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_INT8;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 109 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 110 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_UINT8;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 110 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 111 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_INT16;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 111 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 112 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_UINT16;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 112 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 113 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_INT32;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 113 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 114 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_UINT32;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 114 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 115 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_INT64;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 115 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 116 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_UINT64;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 116 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 117 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_VOID;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 118 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 119 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return OPEN_PAREN;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 119 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 120 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return CLOSE_PAREN;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 120 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 121 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return OPEN_BRACE;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 121 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 122 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return CLOSE_BRACE;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 122 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 123 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return OPEN_BRACKET;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 123 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 124 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return CLOSE_BRACKET;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 125 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 126 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return VARARG;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 127 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 128 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return INCREMENT;
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 128 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 129 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return DECREMENT;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 130 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 131 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return NEQUALS;
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 131 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 132 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return EQUALS;
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 133 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 134 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return LOGICAL_AND;
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 134 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 135 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return LOGICAL_OR;
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 135 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 136 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return LOGICAL_AND;
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 136 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 137 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return LOGICAL_OR;
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 138 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 139 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return BITWISE_AND;
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 139 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 140 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return BITWISE_OR;
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 140 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 141 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return BITWISE_XOR;
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 142 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 143 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return ASSIGN;
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 143 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 144 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return PLUS_ASSIGN;
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 144 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 145 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return MINUS_ASSIGN;
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 145 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 146 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TIMES_ASSIGN;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 146 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 147 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return DIVIDE_ASSIGN;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 147 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 148 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return MOD_ASSIGN;
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 149 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 150 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return ARROW;
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 150 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 151 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return ARROW_LEFT;
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 151 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 152 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return DOT;
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 152 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 153 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return SEMICOLON;
 	YY_BREAK
 case 90:
 /* rule 90 can match eol */
 YY_RULE_SETUP
-#line 153 "/Users/robert/dev/orange/lib/grove/lexer.l"
-return NEWLINE; // Reset column as we're on a new line.
+#line 154 "/Users/robert/dev/orange/lib/grove/lexer.l"
+yycolumn = 1; return NEWLINE; // Reset column as we're on a new line.
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 154 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 155 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return COMMA;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 156 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 157 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return LEQ;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 157 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 158 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return GEQ;
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 159 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 160 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return COMP_LT;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 160 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 161 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return COMP_GT;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 162 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 163 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return PLUS;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 163 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 164 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return MINUS;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 164 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 165 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TIMES;
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 165 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 166 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return DIVIDE;
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 166 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 167 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return MOD;
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 168 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 169 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return QUESTION;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 169 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 170 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return COLON;
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 171 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 172 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return MOD;
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 173 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 174 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return SIZEOF;
 	YY_BREAK
 case 105:
 /* rule 105 can match eol */
 YY_RULE_SETUP
-#line 175 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 176 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return STRING;
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 176 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 177 "/Users/robert/dev/orange/lib/grove/lexer.l"
 return TYPE_ID;
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 178 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 179 "/Users/robert/dev/orange/lib/grove/lexer.l"
 yyerror(module, "invalid token");
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(HEX):
-#line 180 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 181 "/Users/robert/dev/orange/lib/grove/lexer.l"
 { return yyonce++ ? 0 : NEWLINE; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 182 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 183 "/Users/robert/dev/orange/lib/grove/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1504 "/Users/robert/dev/orange/lib/grove/lexer.cc"
+#line 1505 "/Users/robert/dev/orange/lib/grove/lexer.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2463,7 +2464,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 182 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 183 "/Users/robert/dev/orange/lib/grove/lexer.l"
 
 
 
