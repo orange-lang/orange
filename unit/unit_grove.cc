@@ -44,7 +44,57 @@ int TestBuildProgram()
 	return cmpEq(result, 0);
 }
 
-ADD_TEST(TestAllPrograms, "Test building all test programs in test dir.")
+ADD_TEST(TestRet1, "Test program that returns 1.");
+int TestRet1()
+{
+	auto temp_path = getTempFile("test", "or");
+	std::ofstream file(temp_path);
+	
+	if (file.is_open() == false)
+	{
+		std::cerr << "Couldn't open " << temp_path << std::endl;
+		std::remove(temp_path.c_str());
+		return 1;
+	}
+	
+	// Write small orange program to file.
+	file << "return 1;" << std::endl;
+	file.close();
+	
+	// create our builder.
+	auto builder = new Builder(temp_path);
+	int result = builder->build();
+	
+	std::remove(temp_path.c_str());
+	return cmpEq(result, 1);
+}
+
+ADD_TEST(TestRet2, "Test program that returns 2.");
+int TestRet2()
+{
+	auto temp_path = getTempFile("test", "or");
+	std::ofstream file(temp_path);
+	
+	if (file.is_open() == false)
+	{
+		std::cerr << "Couldn't open " << temp_path << std::endl;
+		std::remove(temp_path.c_str());
+		return 1;
+	}
+	
+	// Write small orange program to file.
+	file << "return 2;" << std::endl;
+	file.close();
+	
+	// create our builder.
+	auto builder = new Builder(temp_path);
+	int result = builder->build();
+	
+	std::remove(temp_path.c_str());
+	return cmpEq(result, 2);
+}
+
+ADD_TEST(TestAllPrograms, "Test building all basic programs in test dir.")
 int TestAllPrograms()
 {
 	int exitCode = 0;
