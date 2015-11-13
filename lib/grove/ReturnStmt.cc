@@ -64,13 +64,8 @@ void ReturnStmt::build()
 	IRBuilder()->CreateBr(func->getExit());
 }
 
-ReturnStmt::ReturnStmt(ASTNode* expression)
+ReturnStmt::ReturnStmt(Expression* expression)
 {
-	if (expression != nullptr && expression->is<Expression *>() == false)
-	{
-		throw std::invalid_argument("arg must be child of Expression");
-	}
-	
 	addChild(expression);
 	
 	m_expr = expression->as<Expression *>();

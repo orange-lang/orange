@@ -28,5 +28,5 @@ public:
 	virtual void resolve() override;
 	virtual void build() override;
 	
-	ReturnStmt(ASTNode* expression);
+	ReturnStmt(Expression* expression);
 };
