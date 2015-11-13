@@ -23,6 +23,16 @@ void Block::addStatement(ASTNode *statement)
 	m_statements.push_back(statement);
 }
 
+bool Block::shouldStopBuild() const
+{
+	return m_should_stop_build;
+}
+
+void Block::requestStopBuild()
+{
+	m_should_stop_build = true;
+}
+
 Block::Block()
 : Statement()
 {
