@@ -7,13 +7,13 @@
 */
 
 #include <grove/BinOpCompare.h>
-#include <grove/types/IntType.h>
+#include <grove/types/BoolType.h>
 #include <util/assertions.h>
 
 void BinOpCompare::resolve()
 {
 	BinOpExpr::resolve();
-	setType(IntType::get(32));
+	setType(BoolType::get());
 }
 
 void BinOpCompare::build()
