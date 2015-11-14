@@ -49,7 +49,6 @@ void Builder::compile()
 	
 	for (auto mod : getModules())
 	{
-		/// @todo Generate code
 		mod->build();
 	}
 }
@@ -59,6 +58,7 @@ int Builder::run()
 	LLVMInitializeNativeTarget();
 	LLVMInitializeNativeAsmPrinter();
 	
+	/// @todo This should change to be the main module of the build.
 	auto run_module = m_modules[0];
 	
 	llvm::EngineBuilder builder(
