@@ -10,6 +10,7 @@
 	#include <grove/Module.h>
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
+	#include <grove/Function.h>
 	#include <grove/Value.h>
 	#include <grove/Expression.h>
 	#include <grove/ReturnStmt.h>
@@ -26,6 +27,7 @@
 %parse-param { Module* module }
 
 %union {
+	std::vector<ASTNode*>* nodes;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
@@ -46,9 +48,9 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST QUESTION COLON ENUM SIZEOF
 
-%type <block> statements
-%type <node> statement return
-%type <expr> expression primary primary_high
+%type <nodes> statements
+%type <node> statement return controls
+%type <expr> expression primary
 %type <val> VALUE
 
 /* lowest to highest precedence */
@@ -76,232 +78,54 @@
 %%
 
 start
-    : statements
-	;
-
-/* Create our list of statements. Find our top block and add statements to it. */
-statements
-	: statements statement
-    | statement
+  : statements
 	{
-		$$ = module->getBlock();
-
-		if ($1 != nullptr)
+		for (auto stmt : *$1)
 		{
-    		$$->addStatement($1);
+			module->getMain()->addStatement(stmt);
 		}
 	}
 	;
 
-opt_statements
-	: statements
-	|
+statements
+	: statements statement term
+	{
+		$$ = $1;
+
+		if ($2 != nullptr)
+		{
+    		$$->push_back($2);
+		}
+	}
+	| statement term
+	{
+		$$ = new std::vector<ASTNode *>();
+
+		if ($1 != nullptr)
+		{
+			$$->push_back($1);
+		}
+	}
 	;
 
 statement
-	: term { $$ = nullptr; }
-	| expression more_exprs term { $$ = nullptr; }
-	| function term { $$ = nullptr; }
-	| extern_function term { $$ = nullptr; }
-	| return term { $$ = $1; }
-	| if_statement term { $$ = nullptr; }
-	| unless_statement term { $$ = nullptr; }
-	| inline_if term { $$ = nullptr; }
-	| inline_unless term { $$ = nullptr; }
-	| variable_decl term { $$ = nullptr; }
-	| const_var term { $$ = nullptr; }
-	| for_loop term { $$ = nullptr; }
-	| inline_loop term { $$ = nullptr; }
-	| loop_breaks term { $$ = nullptr; }
-	| enum_stmt term { $$ = nullptr; }
+	: { $$ = nullptr; }
+//	| structures term  /* structures: if, loops, functions, etc */
+	| controls { $$ = $1; } /* controls: return, break, continue */
+	| expression { $$ = $1; }
 	;
 
-more_exprs
-	: COMMA expression more_exprs
-	|
+controls
+	: return { $$ = $1; }
 	;
 
 expression
-	: expression ASSIGN expression { $$ = nullptr; }
-	| expression PLUS_ASSIGN expression { $$ = nullptr; }
-	| expression MINUS_ASSIGN expression { $$ = nullptr; }
-	| expression TIMES_ASSIGN expression { $$ = nullptr; }
-	| expression DIVIDE_ASSIGN expression { $$ = nullptr; }
-
-	| expression COMP_LT expression { $$ = nullptr; }
-	| expression COMP_GT expression { $$ = nullptr; }
-	| expression LEQ expression { $$ = nullptr; }
-	| expression GEQ expression { $$ = nullptr; }
-	| expression EQUALS expression { $$ = nullptr; }
-	| expression NEQUALS expression { $$ = nullptr; }
-
-	| expression PLUS expression { $$ = nullptr; }
-	| expression MINUS expression { $$ = nullptr; }
-
-	| expression TIMES expression { $$ = nullptr; }
-	| expression DIVIDE expression { $$ = nullptr; }
-	| expression MOD expression { $$ = nullptr; }
-
-	| expression LOGICAL_AND expression { $$ = nullptr; }
-	| expression LOGICAL_OR expression { $$ = nullptr; }
-
-	| expression BITWISE_AND expression { $$ = nullptr; }
-	| expression BITWISE_OR expression { $$ = nullptr; }
-	| expression BITWISE_XOR expression { $$ = nullptr; }
-
-	| expression QUESTION expression COLON expression { $$ = nullptr; }
-
-	| TYPE_ID DOT TYPE_ID { $$ = nullptr; }
-
-	| primary_high { $$ = $1; }
-	| OPEN_PAREN any_type CLOSE_PAREN expression { $$ = nullptr; }
-	| BITWISE_AND expression { $$ = nullptr; }
-	;
-
-primary_high
 	: primary { $$ = $1; }
 	;
 
 primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 	| VALUE { $$ = $1; }
-	| STRING { $$ = nullptr; }
-	| TYPE_ID { $$ = nullptr; }
-	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN { $$ = nullptr; }
-	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = nullptr; }
-	| SIZEOF OPEN_PAREN any_type CLOSE_PAREN { $$ = nullptr; }
-	| MINUS expression { $$ = nullptr; }
-
-	| expression INCREMENT { $$ = nullptr; }
-	| INCREMENT expression { $$ = nullptr; }
-
-	| expression DECREMENT { $$ = nullptr; }
-	| DECREMENT expression { $$ = nullptr; }
-
-	| OPEN_BRACKET opt_arg_list CLOSE_BRACKET { $$ = nullptr; }
-	| opt_array OPEN_BRACKET expression CLOSE_BRACKET { $$ = nullptr; }
-
-	| TIMES expression { $$ = nullptr; }
-
-	;
-
-opt_array
-	: TYPE_ID
-	| opt_array OPEN_BRACKET expression CLOSE_BRACKET
-	;
-
-function
-	: DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN term opt_statements END
-	| DEF TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN ARROW any_type term opt_statements END
-
-opt_func_params
-	: func_params
-	|
-	;
-
-func_params
-	: func_params COMMA any_type_no_array TYPE_ID
-	| func_params COMMA VARARG
-	| any_type_no_array TYPE_ID
-	;
-
-extern_function
-	: EXTERN TYPE_ID OPEN_PAREN opt_func_params CLOSE_PAREN ARROW any_type
-	;
-
-opt_arg_list
-	: arg_list
-	|
-	;
-
-arg_list
-	: arg_list COMMA expression
-	| expression
-	;
-
-if_statement
-	: IF expression term statements else_ifs_or_end ;
-
-else_ifs_or_end
-	: ELIF expression term statements else_ifs_or_end
-	| ELSE term statements END
-	| END
-	;
-
-inline_if
-	: return_or_expr IF expression
-	;
-
-unless_statement
-	: UNLESS expression term statements END
-
-inline_unless
-	: return_or_expr UNLESS expression
-	;
-
-for_loop
-	: FOR OPEN_PAREN initializer SEMICOLON opt_expr SEMICOLON opt_expr CLOSE_PAREN term statements END
-	| WHILE expression term statements END
-	| FOREVER DO term statements END
-	| DO term statements END WHILE expression
-	;
-
-inline_loop
-	: return_or_expr FOR OPEN_PAREN initializer SEMICOLON opt_expr SEMICOLON opt_expr CLOSE_PAREN
-	| return_or_expr WHILE expression
-	| return_or_expr FOREVER
-
-loop_breaks
-	: LOOP
-	| CONTINUE
-	| BREAK
-	;
-
-enum_stmt
-	: ENUM TYPE_ID term enum_members END
-
-enum_members
-	: enum_members TYPE_ID term
-	| enum_members TYPE_ID ASSIGN VALUE term
-	| TYPE_ID term
-	| TYPE_ID ASSIGN VALUE term
-	;
-
-initializer
-	: variable_decl
-	| expression
-	;
-
-opt_expr
-	: expression
-	|
-
-variable_decl
-	: any_type TYPE_ID opt_variable_decls
-	| any_type TYPE_ID ASSIGN expression opt_variable_decls
-	;
-
-opt_variable_decls
-	: COMMA opt_variable_decls_impl
-	|
-	;
-
-opt_variable_decls_impl
-	: TYPE_ID COMMA opt_variable_decls
-	| TYPE_ID ASSIGN expression COMMA opt_variable_decls
-	| TYPE_ID
-	| TYPE_ID ASSIGN expression
-    ;
-
-const_var
-	: CONST any_type TYPE_ID ASSIGN expression
-	| CONST TYPE_ID ASSIGN expression
-	;
-
-return_or_expr
-	: return
-	| expression
-	| loop_breaks
 	;
 
 return
@@ -320,6 +144,7 @@ term
 	| SEMICOLON
 	;
 
+/*
 basic_type
 	: TYPE_INT
 	| TYPE_UINT
@@ -337,35 +162,6 @@ basic_type
 	| TYPE_VOID
 	| TYPE_VAR
 	;
-
-any_type
-	: basic_type var_arrays var_ptrs
-	;
-
-any_type_no_array
-	: basic_type var_arrays_and_ptrs
-	;
-
-var_arrays_and_ptrs
-	: var_arrays_and_ptrs TIMES
-	| var_arrays_and_ptrs OPEN_BRACKET opt_primary CLOSE_BRACKET
-	|
-	;
-
-opt_primary
-	: primary
-	|
-    ;
-
-var_arrays
-	: var_arrays OPEN_BRACKET expression CLOSE_BRACKET
-	|
-    ;
-
-var_ptrs
-	: var_ptrs TIMES
-	| OPEN_BRACKET CLOSE_BRACKET
-	|
-    ;
+*/
 
 %%
