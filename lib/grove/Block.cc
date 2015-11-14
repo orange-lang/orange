@@ -21,6 +21,7 @@ void Block::addStatement(ASTNode *statement)
 	}
 	
 	m_statements.push_back(statement);
+	addChild(statement, true);
 }
 
 void Block::buildStatements()
