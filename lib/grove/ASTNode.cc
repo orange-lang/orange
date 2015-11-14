@@ -50,7 +50,9 @@ void ASTNode::addChild(ASTNode *child, bool mustExist)
 	}
 	
 	m_children.push_back(child);
+	
 	child->m_parent = this;
+	child->m_module = getModule();
 }
 
 bool ASTNode::isRootNode() const
