@@ -112,15 +112,16 @@ void Module::resolve()
 		auto it = std::find(this->m_resolved.begin(), this->m_resolved.end(),
 							node);
 		
+		for (auto child : node->getChildren())
+		{
+			resolve_recursive(child);
+		}
+	
+		// Resolve this node after resolving all the children.
 		if (it == std::end(this->m_resolved))
 		{
 			this->m_resolved.push_back(node);
 			node->resolve();
-		}
-		
-		for (auto child : node->getChildren())
-		{
-			resolve_recursive(child);
 		}
 	};
 	
