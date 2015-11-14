@@ -21,7 +21,17 @@ protected:
 	llvm::Value* m_value = nullptr;
 public:
 	/// Gets the value for this expression.
+	/// If the expression is a variable, gets the value of the variable
+	/// and not its pointer.
 	llvm::Value* getValue() const;
+	
+	/// If this expression points to a memory location (like a variable),
+	/// gets the pointer where that expression is stored.
+	llvm::Value* getPointer() const;
+	
+	/// Determines whether or not getPointer will return a non-null value.
+	/// True in the case of pointers.
+	bool hasPointer() const;
 	
 	/// Sets the value for this expression.
 	void setValue(llvm::Value* value);

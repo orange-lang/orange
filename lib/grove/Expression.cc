@@ -13,6 +13,16 @@ llvm::Value* Expression::getValue() const
 	return m_value;
 }
 
+llvm::Value* Expression::getPointer() const
+{
+	return nullptr;
+}
+
+bool Expression::hasPointer() const
+{
+	return false;
+}
+
 void Expression::setValue(llvm::Value *value)
 {
 	m_value = value;
