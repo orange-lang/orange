@@ -11,10 +11,12 @@
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
 	#include <grove/Value.h>
+	#include <grove/Expression.h>
+	#include <grove/ReturnStmt.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
-	
+
 	extern int yylex(Module* module);
 %}
 
@@ -26,6 +28,7 @@
 %union {
 	ASTNode* node;
 	Block* block;
+	Expression* expr;
 	Value* val;
 }
 
@@ -44,7 +47,9 @@
 %token CONST QUESTION COLON ENUM SIZEOF
 
 %type <block> statements
-%type <node> statement
+%type <node> statement return
+%type <expr> expression primary primary_high
+%type <val> VALUE
 
 /* lowest to highest precedence */
 %left COMMA
@@ -80,7 +85,7 @@ statements
     | statement
 	{
 		$$ = module->getBlock();
-		
+
 		if ($1 != nullptr)
 		{
     		$$->addStatement($1);
@@ -94,21 +99,21 @@ opt_statements
 	;
 
 statement
-	: term
-	| expression more_exprs term
-	| function term
-	| extern_function term
-	| return term
-	| if_statement term
-	| unless_statement term
-	| inline_if term
-	| inline_unless term
-	| variable_decl term
-	| const_var term
-	| for_loop term
-	| inline_loop term
-	| loop_breaks term
-	| enum_stmt term
+	: term { $$ = nullptr; }
+	| expression more_exprs term { $$ = nullptr; }
+	| function term { $$ = nullptr; }
+	| extern_function term { $$ = nullptr; }
+	| return term { $$ = $1; }
+	| if_statement term { $$ = nullptr; }
+	| unless_statement term { $$ = nullptr; }
+	| inline_if term { $$ = nullptr; }
+	| inline_unless term { $$ = nullptr; }
+	| variable_decl term { $$ = nullptr; }
+	| const_var term { $$ = nullptr; }
+	| for_loop term { $$ = nullptr; }
+	| inline_loop term { $$ = nullptr; }
+	| loop_breaks term { $$ = nullptr; }
+	| enum_stmt term { $$ = nullptr; }
 	;
 
 more_exprs
@@ -117,66 +122,66 @@ more_exprs
 	;
 
 expression
-	: expression ASSIGN expression
-	| expression PLUS_ASSIGN expression
-	| expression MINUS_ASSIGN expression
-	| expression TIMES_ASSIGN expression
-	| expression DIVIDE_ASSIGN expression
+	: expression ASSIGN expression { $$ = nullptr; }
+	| expression PLUS_ASSIGN expression { $$ = nullptr; }
+	| expression MINUS_ASSIGN expression { $$ = nullptr; }
+	| expression TIMES_ASSIGN expression { $$ = nullptr; }
+	| expression DIVIDE_ASSIGN expression { $$ = nullptr; }
 
-	| expression COMP_LT expression
-	| expression COMP_GT expression
-	| expression LEQ expression
-	| expression GEQ expression
-	| expression EQUALS expression
-	| expression NEQUALS expression
+	| expression COMP_LT expression { $$ = nullptr; }
+	| expression COMP_GT expression { $$ = nullptr; }
+	| expression LEQ expression { $$ = nullptr; }
+	| expression GEQ expression { $$ = nullptr; }
+	| expression EQUALS expression { $$ = nullptr; }
+	| expression NEQUALS expression { $$ = nullptr; }
 
-	| expression PLUS expression
-	| expression MINUS expression
+	| expression PLUS expression { $$ = nullptr; }
+	| expression MINUS expression { $$ = nullptr; }
 
-	| expression TIMES expression
-	| expression DIVIDE expression
-	| expression MOD expression
+	| expression TIMES expression { $$ = nullptr; }
+	| expression DIVIDE expression { $$ = nullptr; }
+	| expression MOD expression { $$ = nullptr; }
 
-	| expression LOGICAL_AND expression
-	| expression LOGICAL_OR expression
+	| expression LOGICAL_AND expression { $$ = nullptr; }
+	| expression LOGICAL_OR expression { $$ = nullptr; }
 
-	| expression BITWISE_AND expression
-	| expression BITWISE_OR expression
-	| expression BITWISE_XOR expression
+	| expression BITWISE_AND expression { $$ = nullptr; }
+	| expression BITWISE_OR expression { $$ = nullptr; }
+	| expression BITWISE_XOR expression { $$ = nullptr; }
 
-	| expression QUESTION expression COLON expression
+	| expression QUESTION expression COLON expression { $$ = nullptr; }
 
-	| TYPE_ID DOT TYPE_ID
+	| TYPE_ID DOT TYPE_ID { $$ = nullptr; }
 
-	| primary_high
-	| OPEN_PAREN any_type CLOSE_PAREN expression
-	| BITWISE_AND expression
+	| primary_high { $$ = $1; }
+	| OPEN_PAREN any_type CLOSE_PAREN expression { $$ = nullptr; }
+	| BITWISE_AND expression { $$ = nullptr; }
 	;
 
 primary_high
-	: primary
+	: primary { $$ = $1; }
 	;
 
 primary
-	: OPEN_PAREN expression CLOSE_PAREN
-	| VALUE
-	| STRING
-	| TYPE_ID
-	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN
-	| SIZEOF OPEN_PAREN expression CLOSE_PAREN
-	| SIZEOF OPEN_PAREN any_type CLOSE_PAREN
-	| MINUS expression
+	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
+	| VALUE { $$ = $1; }
+	| STRING { $$ = nullptr; }
+	| TYPE_ID { $$ = nullptr; }
+	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN { $$ = nullptr; }
+	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = nullptr; }
+	| SIZEOF OPEN_PAREN any_type CLOSE_PAREN { $$ = nullptr; }
+	| MINUS expression { $$ = nullptr; }
 
-	| expression INCREMENT
-	| INCREMENT expression
+	| expression INCREMENT { $$ = nullptr; }
+	| INCREMENT expression { $$ = nullptr; }
 
-	| expression DECREMENT
-	| DECREMENT expression
+	| expression DECREMENT { $$ = nullptr; }
+	| DECREMENT expression { $$ = nullptr; }
 
-	| OPEN_BRACKET opt_arg_list CLOSE_BRACKET
-	| opt_array OPEN_BRACKET expression CLOSE_BRACKET
+	| OPEN_BRACKET opt_arg_list CLOSE_BRACKET { $$ = nullptr; }
+	| opt_array OPEN_BRACKET expression CLOSE_BRACKET { $$ = nullptr; }
 
-	| TIMES expression
+	| TIMES expression { $$ = nullptr; }
 
 	;
 
@@ -301,7 +306,13 @@ return_or_expr
 
 return
 	: RETURN
+	{
+		$$ = new ReturnStmt(nullptr);
+	}
 	| RETURN expression
+	{
+		$$ = new ReturnStmt($2);
+	}
 	;
 
 term
