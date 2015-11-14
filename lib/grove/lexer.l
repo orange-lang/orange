@@ -11,6 +11,11 @@
 	#include <grove/Block.h>
 	#include <grove/Value.h>
 	
+	#include <grove/types/UIntType.h>
+	#include <grove/types/IntType.h>
+	#include <grove/types/FloatType.h>
+	#include <grove/types/DoubleType.h>
+	
     #include <string.h>
     #include "parser.hh"
 
@@ -20,6 +25,8 @@
     int yycolumn = 1;
     #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = yycolumn; yylloc.last_column = yycolumn+yyleng-1; \
     yycolumn += yyleng;
+	
+	#define CREATE_VAL(ty) yylval.val = new Value(yytext, ty);
 	
 	#define YY_DECL int yylex(Module* module)
 
@@ -55,21 +62,21 @@
 	.											printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
 }
 
-[0-9][0-9]*\.[0-9]+"f" 							return VALUE;
-[0-9][0-9]*\.[0-9]+"d" 							return VALUE;
-[0-9][0-9]*\.[0-9]+ 							return VALUE;
+[0-9][0-9]*\.[0-9]+"f" 							CREATE_VAL(FloatType::get()); return VALUE;
+[0-9][0-9]*\.[0-9]+"d" 							CREATE_VAL(DoubleType::get()); return VALUE;
+[0-9][0-9]*\.[0-9]+ 							CREATE_VAL(DoubleType::get()); return VALUE;
 
-[0-9][0-9]*"u8"									return VALUE;
-[0-9][0-9]*"i8"									return VALUE;
-[0-9][0-9]*"u16"								return VALUE;
-[0-9][0-9]*"i16"								return VALUE;
-[0-9][0-9]*"u32"								return VALUE;
-[0-9][0-9]*"i32"								return VALUE;
-[0-9][0-9]*"u64"								return VALUE;
-[0-9][0-9]*"i64"								return VALUE;
-[0-9][0-9]*"u"									return VALUE;
-[0-9][0-9]*"i"									return VALUE;
-[0-9][0-9]*										return VALUE;
+[0-9][0-9]*"u8"									CREATE_VAL(UIntType::get(8)); return VALUE;
+[0-9][0-9]*"i8"									CREATE_VAL(IntType::get(8)); return VALUE;
+[0-9][0-9]*"u16"								CREATE_VAL(UIntType::get(16)); return VALUE;
+[0-9][0-9]*"i16"								CREATE_VAL(IntType::get(16)); return VALUE;
+[0-9][0-9]*"u32"								CREATE_VAL(UIntType::get(32)); return VALUE;
+[0-9][0-9]*"i32"								CREATE_VAL(IntType::get(32)); return VALUE;
+[0-9][0-9]*"u64"								CREATE_VAL(UIntType::get(64)); return VALUE;
+[0-9][0-9]*"i64"								CREATE_VAL(IntType::get(64)); return VALUE;
+[0-9][0-9]*"u"									CREATE_VAL(UIntType::get(32)); return VALUE;
+[0-9][0-9]*"i"									CREATE_VAL(IntType::get(32)); return VALUE;
+[0-9][0-9]*										CREATE_VAL(IntType::get(32)); return VALUE;
 
 '.'												return VALUE;
 
