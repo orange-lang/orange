@@ -19,7 +19,9 @@ private:
 	
 	static std::string getSignature(Type* retType, std::vector<Type*> args);
 	
+protected:
 	FunctionType(Type* retType, std::vector<Type*> args);
+	
 public:
 	virtual std::string getSignature() const override;
 	

@@ -12,7 +12,7 @@
 
 class VoidType : public Type
 {
-private:
+protected:
 	VoidType();
 public:
 	virtual std::string getSignature() const override;

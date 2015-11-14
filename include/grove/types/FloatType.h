@@ -12,7 +12,7 @@
 
 class FloatType : public Type
 {
-private:
+protected:
 	FloatType();
 public:
 	virtual std::string getSignature() const override;

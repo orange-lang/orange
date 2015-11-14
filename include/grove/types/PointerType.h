@@ -14,8 +14,10 @@ class PointerType : public Type
 {
 private:
 	Type* m_contained = nullptr;
-	
+
+protected:
 	PointerType(Type* contained);
+	
 public:
 	virtual std::string getSignature() const override;
 	

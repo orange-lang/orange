@@ -12,7 +12,7 @@
 
 class DoubleType : public Type
 {
-private:
+protected:
 	DoubleType();
 public:
 	virtual std::string getSignature() const override;

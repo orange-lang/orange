@@ -16,7 +16,9 @@ private:
 	Type* m_contained = nullptr;
 	unsigned int m_size = 0;
 	
+protected:
 	ArrayType(Type* contained, unsigned int size);
+	
 public:
 	virtual std::string getSignature() const override;
 	

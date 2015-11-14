@@ -14,8 +14,10 @@ class UIntType : public Type
 {
 private:
 	unsigned int m_width = 0;
-	
+
+protected:
 	UIntType(unsigned int width);
+	
 public:
 	virtual std::string getSignature() const override;
 	
