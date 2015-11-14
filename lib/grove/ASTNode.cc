@@ -50,6 +50,7 @@ void ASTNode::addChild(ASTNode *child, bool mustExist)
 	}
 	
 	m_children.push_back(child);
+	child->m_parent = this;
 }
 
 bool ASTNode::isRootNode() const
