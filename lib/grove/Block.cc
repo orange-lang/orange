@@ -27,12 +27,12 @@ void Block::buildStatements()
 {
 	for (auto stmt : getStatements())
 	{
+		stmt->build();
+		
 		if (stmt->is<Statement *>() && stmt->as<Statement *>()->isTerminator())
 		{
 			break;
 		}
-		
-		stmt->build();
 	}
 }
 
