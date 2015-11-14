@@ -22,7 +22,7 @@ void TestingEngine::addTest(Test* t)
 
 int TestingEngine::run()
 {
-	std::vector<std::string> failed;
+	std::vector<Test*> failed;
 
 	int retCode = 0;
 
@@ -35,13 +35,13 @@ int TestingEngine::run()
 		}
 		catch (std::exception& e)
 		{
-			std::cerr << "Caught exception: " << e.what() << std::endl;
+			test->errors.push_back(e.what());
 			val = 1;
 		}
 		
 		if (val != 0)
 		{
-			failed.push_back(test->desc);
+			failed.push_back(test);
 			retCode = 1;
 		}
 	}
@@ -54,7 +54,11 @@ int TestingEngine::run()
 	std::cout << "Failed:\n";
 	for (auto fail : failed)
 	{
-		std::cout << "\t" << fail << std::endl;
+		std::cout << "\t" << fail->desc << std::endl;
+		for (auto error : fail->errors)
+		{
+			std::cout << "\t\t" << error << std::endl;
+		}
 	}
 
 	return retCode;

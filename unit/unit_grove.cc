@@ -13,6 +13,7 @@
 
 #include <util/file.h>
 
+#include <sstream>
 #include <cstdio>
 #include <fstream>
 
@@ -117,14 +118,14 @@ int TestAllPrograms()
 		
     		if (builder->run() != 0)
     		{
-    			std::cout << "Retcode 1: " << path << std::endl;
     			exitCode = 1;
     		}		
 		}
 		catch (std::exception& e)
 		{
-			std::cout << "Failed: " << path << std::endl;
-			std::cout << "\tReason: " << e.what() << std::endl;
+			std::stringstream ss;
+			ss << path << ": " << e.what();
+			ADD_ERROR(TestAllPrograms, ss.str());
 			exitCode = 1;
 		}
 	}

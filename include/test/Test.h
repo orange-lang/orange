@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <vector>
 #include <string>
 
 typedef int (*TestFunction)(void);
@@ -15,6 +16,8 @@ typedef int (*TestFunction)(void);
 struct Test {
 	TestFunction func;
 	std::string desc;
+	
+	std::vector<std::string> errors;
 
 	Test(TestFunction func, std::string desc);
 };

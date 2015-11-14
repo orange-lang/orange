@@ -32,5 +32,6 @@ public:
 #define START_TEST_MODULE() TestingEngine* TestingEngine::singleton = new TestingEngine();
 
 #define ADD_TEST(n,d) int n(void); static Test TestLib__test__##n(n,d);
+#define ADD_ERROR(n,f) TestLib__test__##n.errors.push_back(f);
 #define RUN_TESTS() \
 	int main() { return TestingEngine::shared()->run(); }
