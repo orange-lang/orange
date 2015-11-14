@@ -16,6 +16,7 @@ IntType::IntType(unsigned int width)
 		throw std::invalid_argument("width must not be 0.");
 	}
 	
+	m_width = width;
 	m_type = (llvm::Type *)llvm::Type::getIntNTy(*m_context, width);
 }
 
