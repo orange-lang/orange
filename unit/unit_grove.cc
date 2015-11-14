@@ -38,7 +38,9 @@ int TestBuildProgram()
 	
 	// create our builder.
 	auto builder = new Builder(temp_path);
-	int result = builder->build();
+	builder->compile();
+	
+	int result = builder->run();
 	
 	std::remove(temp_path.c_str());
 	return cmpEq(result, 0);
@@ -63,7 +65,9 @@ int TestRet1()
 	
 	// create our builder.
 	auto builder = new Builder(temp_path);
-	int result = builder->build();
+	builder->compile();
+	
+	int result = builder->run();
 	
 	std::remove(temp_path.c_str());
 	return cmpEq(result, 1);
@@ -88,7 +92,9 @@ int TestRet2()
 	
 	// create our builder.
 	auto builder = new Builder(temp_path);
-	int result = builder->build();
+	builder->compile();
+	
+	int result = builder->run();
 	
 	std::remove(temp_path.c_str());
 	return cmpEq(result, 2);
@@ -107,8 +113,9 @@ int TestAllPrograms()
 		try
 		{
 			auto builder = new Builder(path);
+			builder->compile();
 		
-    		if (builder->build() != 0)
+    		if (builder->run() != 0)
     		{
     			std::cout << "Retcode 1: " << path << std::endl;
     			exitCode = 1;

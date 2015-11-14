@@ -10,7 +10,12 @@
 #include <grove/BuildSettings.h>
 #include <grove/Library.h>
 #include <grove/Module.h>
+#include <grove/Function.h>
 #include <llvm/IR/Module.h>
+
+#include <llvm/ExecutionEngine/GenericValue.h>
+#include <llvm/ExecutionEngine/MCJIT.h>
+
 
 Library* Builder::getLibrary() const
 {
@@ -27,7 +32,7 @@ std::vector<Module *> Builder::getModules() const
 	return m_modules;
 }
 
-int Builder::build()
+void Builder::compile()
 {
 	/// @todo Gather the nodes for library registration.
 	/// @todo Build dependency map of those nodes.
@@ -42,17 +47,45 @@ int Builder::build()
 		mod->resolve();
 	}
 	
-	
 	for (auto mod : getModules())
 	{
 		/// @todo Generate code
 		mod->build();
-		
-		mod->getLLVMModule()->dump();
+	}
+}
+
+int Builder::run()
+{
+	LLVMInitializeNativeTarget();
+	LLVMInitializeNativeAsmPrinter();
+	
+	auto run_module = m_modules[0];
+	
+	llvm::EngineBuilder builder(
+		std::unique_ptr<llvm::Module>(run_module->getLLVMModule()));
+	
+	std::string error = "";
+	
+	auto engine = builder
+		.setErrorStr(&error)
+		.setVerifyModules(true)
+		.setEngineKind(llvm::EngineKind::JIT)
+		.create();
+	
+	if (engine == nullptr)
+	{
+		throw std::runtime_error("could not create engine");
 	}
 	
+	engine->clearAllGlobalMappings();
+	engine->finalizeObject();
 	
-	return 1;
+	auto func = run_module->getMain()->getLLVMFunction();
+	
+	std::vector<llvm::GenericValue> args;
+	auto status = engine->runFunction(func, args);
+	
+	return status.IntVal.getSExtValue();
 }
 
 void Builder::initialize()

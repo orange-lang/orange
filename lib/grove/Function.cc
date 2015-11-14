@@ -39,6 +39,11 @@ llvm::Value* Function::getRetValue() const
 	return m_ret_value;
 }
 
+llvm::Function* Function::getLLVMFunction() const
+{
+	return m_function;
+}
+
 void Function::createReturn()
 {
 	/// If we're missing a terminator, jump to exit.

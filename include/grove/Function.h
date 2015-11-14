@@ -45,6 +45,8 @@ public:
 	
 	llvm::Value* getRetValue() const;
 	
+	llvm::Function* getLLVMFunction() const;
+	
 	Type* getReturnType();
 	
 	bool isVoidFunction();

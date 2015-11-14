@@ -50,7 +50,10 @@ public:
 	 *		Tell each module to resolve the remaining nodes.
 	 *		Tell each module to generate code.
 	 */
-	int build();
+	void compile();
+	
+	/// Runs the code JIT. Returns the exit status.
+	int run();
 	
 	/// Constructs a builder with the default settings.
 	Builder(std::string path);
