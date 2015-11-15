@@ -7,13 +7,60 @@
  */
 
 #include <grove/types/BoolType.h>
+#include <llvm/IR/Type.h>
+#include <llvm/IR/Instruction.h>
+
+#include <grove/types/UIntType.h>
+#include <grove/types/DoubleType.h>
+#include <grove/types/FloatType.h>
+#include <grove/types/IntType.h>
+#include <grove/types/PointerType.h>
 
 const int BOOL_WIDTH = 32;
+
+static int BoolToInt(Type* f, Type* t)
+{
+	auto from = dynamic_cast<BoolType *>(f);
+	auto to = dynamic_cast<IntType *>(t);
+	
+	if (from->getWidth() > to->getWidth())
+	{
+		return llvm::Instruction::CastOps::Trunc;
+	}
+	else if (from->getWidth() == to->getWidth())
+	{
+		return 0;
+	}
+	else
+	{
+		return llvm::Instruction::CastOps::SExt;
+	}
+}
+
+static int BoolToUInt(Type* f, Type* t)
+{
+	auto from = dynamic_cast<BoolType *>(f);
+	auto to = dynamic_cast<UIntType *>(t);
+	
+	if (from->getWidth() > to->getWidth())
+	{
+		return llvm::Instruction::CastOps::Trunc;
+	}
+	else if (from->getWidth() == to->getWidth())
+	{
+		return 0;
+	}
+	else
+	{
+		return llvm::Instruction::CastOps::SExt;
+	}
+}
 
 BoolType::BoolType()
 : IntType(BOOL_WIDTH)
 {
-	// Do nothing.
+	defineCast(typeid(IntType), BoolToInt);
+	defineCast(typeid(UIntType), BoolToUInt);
 }
 
 std::string BoolType::getSignature() const
