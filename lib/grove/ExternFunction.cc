@@ -47,7 +47,7 @@ void ExternFunction::build()
 ExternFunction::ExternFunction(std::string name, std::vector<Parameter *> params,
 							   Type* retType)
 {
-	if (m_name == "")
+	if (name == "")
 	{
 		throw std::invalid_argument("name must not be empty.");
 	}
