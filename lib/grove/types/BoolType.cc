@@ -18,19 +18,19 @@ BoolType::BoolType()
 
 std::string BoolType::getSignature() const
 {
-	return "i.32";
+	return "b";
 }
 
 BoolType* BoolType::get()
 {
-	auto defined = getDefined("i.32");
+	auto defined = getDefined("b");
 	if (defined != nullptr)
 	{
 		return dynamic_cast<BoolType*>(defined);
 	}
 	
 	BoolType* ty = new BoolType();
-	define("i.32", ty);
+	define("b", ty);
 	
 	return ty;
 }
