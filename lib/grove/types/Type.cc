@@ -113,13 +113,6 @@ void Type::define(std::string signature, Type *ty)
 	m_defined[signature] = ty;
 }
 
-void Type::defineCast(const std::type_info& from, const std::type_info& to,
-					  int cast)
-{
-	TypeTuple tuple(from.hash_code(), to.hash_code());
-	m_cast_map[tuple] = cast;
-}
-
 void Type::defineCast(const std::type_info &to, TypeCallback cb)
 {
 	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
@@ -128,7 +121,8 @@ void Type::defineCast(const std::type_info &to, TypeCallback cb)
 
 void Type::defineCast(const std::type_info &to, int cast)
 {
-	Type::defineCast(typeid(*this), to, cast);
+	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
+	m_cast_map[tuple] = cast;
 }
 
 Type::Type()

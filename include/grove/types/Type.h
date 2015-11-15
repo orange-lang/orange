@@ -45,22 +45,39 @@ const int NO_CAST = 0;
  */
 class Type {
 private:
+	/// The map of defined types, where the key is a unique identifier.
 	static std::map<std::string, Type *> m_defined;
+	
+	/// The map of type tuples to a cast operation.
+	/// Defines a cast operation to cast from tuple.0 to tuple.1.
 	static std::map<TypeTuple, int> m_cast_map;
+	
+	/// The map of type tuples to a cast operation callback.
+	/// Defines a callback that returns a cast operation to cast from
+	/// tuple.0 to tuple.1.
 	static std::map<TypeTuple, TypeCallback> m_cast_func_map;
 protected:
 	llvm::Type* m_type = nullptr;
 	llvm::LLVMContext* m_context = nullptr;
 	
+	/// Gets a type given by a signature, if it is defined.
+	/// Returns nullptr otherwise.
 	static Type* getDefined(std::string signature);
+	
+	/// Defines a type with a given signature.
+	/// ty must not be null.
 	static void define(std::string signature, Type* ty);
 	
-	static void defineCast(const std::type_info& from, const std::type_info& to, int cast);
+	/// Defines a direct mapping from a type to an operation.
 	void defineCast(const std::type_info& to, int cast);
+	
+	/// Defines a cast mapping from a type to a callback to determine an
+	/// operation.
 	void defineCast(const std::type_info& to, TypeCallback cb);
 	
 	Type();
 public:
+	/// Returns whether or not this type is signed.
 	virtual bool isSigned() const;
 	
 	/// Determines whether or not type is plain (int, float, not a pointer).
@@ -77,6 +94,7 @@ public:
 	/// Gets plain old data type. 
 	virtual BasicType PODTy() const;
 	
+	/// Gets a pointer to this type.
 	Type* getPointerTo();
 	
 	/// Gets the contained type, or this
@@ -85,11 +103,13 @@ public:
 	/// Gets the root type.
 	virtual Type* getRootTy();
 	
+	/// Gets the unique signature of this type.
 	virtual std::string getSignature() const;
 	
 	/// Gets the cast operation to convert to another type.
 	int castOperation(Type* to);
 	
+	/// Gets the internal LLVM type of this type.
 	llvm::Type* getLLVMType() const;
 	
 	virtual ~Type();
