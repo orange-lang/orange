@@ -11,6 +11,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <grove/Module.h>
 #include <grove/types/PointerType.h>
+#include <util/assertions.h>
 
 std::map<std::string, Type*> Type::m_defined;
 std::map<TypeTuple, int> Type::m_cast_map;
@@ -161,6 +162,9 @@ llvm::Type* Type::getLLVMType() const
 
 Comparison Type::compare(Type *source, Type *target)
 {
+	assertExists(source, "Source type must exist");
+	assertExists(target, "Target type must exist");
+	
 	if (source == target)
 	{
 		return Comparison::EQUAL;
