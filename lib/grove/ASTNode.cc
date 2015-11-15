@@ -12,6 +12,11 @@
 
 Module* ASTNode::getModule() const
 {
+	if (m_module == nullptr && getParent() != nullptr)
+	{
+		return getParent()->getModule();
+	}
+	
 	return m_module;
 }
 
