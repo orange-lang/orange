@@ -60,6 +60,8 @@ ExternFunction::ExternFunction(std::string name, std::vector<Parameter *> params
 	
 	assertExists(retType, "return type must exist");
 	
-	setType(FunctionType::get(retType, getParamTys()));
+	m_name = name;
 	m_params = params;
+	
+	setType(FunctionType::get(retType, getParamTys()));
 }
