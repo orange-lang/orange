@@ -51,10 +51,11 @@ int TestingEngine::run()
 		return retCode;
 	}
 
-	std::cout << "Failed:\n";
+	std::cout << failed.size() << " Failed:\n";
 	for (auto fail : failed)
 	{
-		std::cout << "\t" << fail->desc << std::endl;
+		std::cout << "\t" << fail->desc;
+		std::cout << " (" << fail->errors.size() << " errors)\n";
 		for (auto error : fail->errors)
 		{
 			std::cout << "\t\t" << error << std::endl;
