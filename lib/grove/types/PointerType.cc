@@ -9,6 +9,10 @@
 #include <grove/types/PointerType.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Instruction.h>
+
+#include <grove/types/UIntType.h>
+#include <grove/types/IntType.h>
 
 PointerType::PointerType(Type* contained)
 {
@@ -19,6 +23,9 @@ PointerType::PointerType(Type* contained)
 	
 	m_contained = contained;
 	m_type = m_contained->getLLVMType()->getPointerTo();
+	
+	defineCast(typeid(IntType), llvm::Instruction::CastOps::IntToPtr);
+	defineCast(typeid(UIntType), llvm::Instruction::CastOps::IntToPtr);
 }
 
 std::string PointerType::getSignature() const

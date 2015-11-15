@@ -13,6 +13,7 @@
 #include <grove/types/PointerType.h>
 
 std::map<std::string, Type*> Type::m_defined;
+std::map<TypeTuple, int> Type::m_cast_map;
 
 bool Type::isSigned() const
 {
@@ -111,6 +112,18 @@ void Type::define(std::string signature, Type *ty)
 	m_defined[signature] = ty;
 }
 
+void Type::defineCast(const std::type_info& from, const std::type_info& to,
+					  int cast)
+{
+	TypeTuple tuple(from.hash_code(), to.hash_code());
+	m_cast_map[tuple] = cast;
+}
+
+void Type::defineCast(const std::type_info &to, int cast)
+{
+	Type::defineCast(typeid(*this), to, cast);
+}
+
 Type::Type()
 {
 	m_context = & llvm::getGlobalContext();
@@ -122,7 +135,25 @@ std::string Type::getSignature() const
 	throw std::runtime_error("Type::getSignature shouldn't be called.");
 }
 
+int Type::castOperation(Type *to)
+{
+	TypeTuple key(typeid(*this).hash_code(), typeid(*to).hash_code());
+	auto it = m_cast_map.find(key);
+	
+	if (it == m_cast_map.end())
+	{
+		throw std::invalid_argument("no cast defined");
+	}
+	
+	return it->second;
+}
+
 llvm::Type* Type::getLLVMType() const
 {
 	return m_type;
+}
+
+Type::~Type()
+{
+	// Do nothing.
 }

@@ -8,6 +8,13 @@
 
 #include <grove/types/UIntType.h>
 #include <llvm/IR/Type.h>
+#include <llvm/IR/Instruction.h>
+
+#include <grove/types/IntType.h>
+#include <grove/types/DoubleType.h>
+#include <grove/types/FloatType.h>
+#include <grove/types/IntType.h>
+#include <grove/types/PointerType.h>
 
 UIntType::UIntType(unsigned int width)
 {
@@ -18,6 +25,12 @@ UIntType::UIntType(unsigned int width)
 	
 	m_width = width;
 	m_type = (llvm::Type *)llvm::Type::getIntNTy(*m_context, width);
+	
+	defineCast(typeid(UIntType), llvm::Instruction::CastOps::ZExt);
+	defineCast(typeid(IntType), llvm::Instruction::CastOps::ZExt);
+	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::FPToUI);
+	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPToUI);
+	defineCast(typeid(PointerType), llvm::Instruction::CastOps::PtrToInt);
 }
 
 std::string UIntType::getSignature() const

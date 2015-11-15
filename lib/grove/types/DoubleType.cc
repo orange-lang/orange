@@ -8,10 +8,19 @@
 
 #include <grove/types/DoubleType.h>
 #include <llvm/IR/Type.h>
+#include <llvm/IR/Instruction.h>
+
+#include <grove/types/UIntType.h>
+#include <grove/types/IntType.h>
+#include <grove/types/FloatType.h>
 
 DoubleType::DoubleType()
 {
 	m_type = llvm::Type::getDoubleTy(*m_context);
+	
+	defineCast(typeid(UIntType), llvm::Instruction::CastOps::UIToFP);
+	defineCast(typeid(IntType), llvm::Instruction::CastOps::SIToFP);
+	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPExt);
 }
 
 std::string DoubleType::getSignature() const

@@ -10,11 +10,14 @@
 
 #include <map>
 #include <string>
+#include <tuple>
+#include <typeinfo>
 
 class Module;
 
 namespace llvm { class Type; }
 namespace llvm { class LLVMContext; }
+namespace llvm { class Value; }
 
 typedef enum {
 	INT8,
@@ -31,18 +34,24 @@ typedef enum {
 	OTHER
 } BasicType;
 
+typedef std::tuple<size_t, size_t> TypeTuple;
+
 /**
  * Type is the base class for any Orange Type.
  */
 class Type {
 private:
 	static std::map<std::string, Type *> m_defined;
+	static std::map<TypeTuple, int> m_cast_map;
 protected:
 	llvm::Type* m_type = nullptr;
 	llvm::LLVMContext* m_context = nullptr;
 	
 	static Type* getDefined(std::string signature);
 	static void define(std::string signature, Type* ty);
+	
+	static void defineCast(const std::type_info& to, const std::type_info& from, int cast);
+	void defineCast(const std::type_info& from, int cast);
 	
 	Type();
 public:
@@ -72,5 +81,10 @@ public:
 	
 	virtual std::string getSignature() const;
 	
-	llvm::Type* getLLVMType() const; 
+	/// Gets the cast operation to convert to another type.
+	int castOperation(Type* to);
+	
+	llvm::Type* getLLVMType() const;
+	
+	virtual ~Type();
 };
