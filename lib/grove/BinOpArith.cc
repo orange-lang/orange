@@ -9,6 +9,7 @@
 #include <grove/BinOpArith.h>
 #include <grove/types/Type.h>
 #include <util/assertions.h>
+#include <util/llvmassertions.h>
 
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/InstrTypes.h>
@@ -105,8 +106,7 @@ void BinOpArith::build()
 	auto op = getBinOp(getOperator(), isFloatingPointOperation(),
 					   areOperandsSigned());
 	
-	assertEqual(vLHS->getType(), vRHS->getType(),
-				"LHS and RHS do not have the same type!");
+	assertEqual(vLHS, vRHS, "LHS and RHS do not have the same type!");
 	
 	auto value = IRBuilder()->CreateBinOp(op, vLHS, vRHS);
 	setValue(value);

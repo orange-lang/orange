@@ -9,6 +9,7 @@
 #include <grove/BinOpCompare.h>
 #include <grove/types/BoolType.h>
 #include <util/assertions.h>
+#include <util/llvmassertions.h>
 
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/InstrTypes.h>
@@ -89,6 +90,8 @@ void BinOpCompare::build()
 				break;
 		}
 	}
+	
+	assertEqual(vLHS, vRHS, "LHS and RHS do not have the same type!");
 	
 	auto predicate = getPredicate(getOperator(), isFloatingPointOperation(),
 								  areOperandsSigned());

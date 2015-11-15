@@ -11,6 +11,7 @@
 #include <grove/Expression.h>
 #include <grove/types/VoidType.h>
 #include <util/assertions.h>
+#include <util/llvmassertions.h>
 #include <llvm/IR/IRBuilder.h>
 
 Expression* ReturnStmt::getExpression()
@@ -70,13 +71,7 @@ void ReturnStmt::build()
 	{
 		auto ptr = func->getRetValue();
 		
-		auto val_type = value->getType();
-		auto sta_type = ptr->getType()->getPointerElementType();
-		
-		if (val_type != sta_type)
-		{
-			throw std::invalid_argument("can't store incompatible type.");
-		}
+    	assertEqual<VAL,PTR>(value, ptr, "Can't store incompatible type.");
 		
 		IRBuilder()->CreateStore(value, ptr);
 	}
