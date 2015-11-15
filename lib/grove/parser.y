@@ -11,6 +11,7 @@
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
 	#include <grove/Function.h>
+	#include <grove/FunctionCall.h>
 	#include <grove/Value.h>
 	#include <grove/Expression.h>
 	#include <grove/ReturnStmt.h>
@@ -54,7 +55,7 @@
 
 %type <nodes> statements
 %type <node> statement return controls
-%type <expr> expression primary comparison arithmetic
+%type <expr> expression primary comparison arithmetic call
 %type <stmt> structures function
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID
@@ -146,6 +147,7 @@ expression
 	: primary { $$ = $1; }
 	| comparison { $$ = $1; }
 	| arithmetic { $$ = $1; }
+	| call { $$ = $1; }
 	;
 
 comparison
@@ -158,6 +160,13 @@ comparison
 arithmetic
 	: expression PLUS expression { $$ = new BinOpArith($1, *$2, $3); }
 	| expression MINUS expression { $$ = new BinOpArith($1, *$2, $3); }
+	;
+
+call
+	: TYPE_ID OPEN_PAREN CLOSE_PAREN
+	{
+		$$ = new FunctionCall(*$1, {});
+	}
 	;
 
 primary
