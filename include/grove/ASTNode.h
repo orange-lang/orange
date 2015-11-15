@@ -70,6 +70,7 @@ public:
 		return dynamic_cast<T>(this);
 	}
 	
+	/// Finds a parent of a type T.
 	template <typename T> T findParent()
 	{
 		ASTNode* ptr = getParent();
