@@ -113,10 +113,10 @@ CAST_TEST(TestInt32ToFloat, IntType::get(32), FloatType::get(), C(SIToFP));
 CAST_TEST(TestInt64ToFloat, IntType::get(64), FloatType::get(), C(SIToFP));
 
 // UInt to Float.
-CAST_TEST(TestUInt8ToFloat,  UIntType::get(8),  FloatType::get(), C(SIToFP));
-CAST_TEST(TestUInt16ToFloat, UIntType::get(16), FloatType::get(), C(SIToFP));
-CAST_TEST(TestUInt32ToFloat, UIntType::get(32), FloatType::get(), C(SIToFP));
-CAST_TEST(TestUInt64ToFloat, UIntType::get(64), FloatType::get(), C(SIToFP));
+CAST_TEST(TestUInt8ToFloat,  UIntType::get(8),  FloatType::get(), C(UIToFP));
+CAST_TEST(TestUInt16ToFloat, UIntType::get(16), FloatType::get(), C(UIToFP));
+CAST_TEST(TestUInt32ToFloat, UIntType::get(32), FloatType::get(), C(UIToFP));
+CAST_TEST(TestUInt64ToFloat, UIntType::get(64), FloatType::get(), C(UIToFP));
 
 // Int to Double.
 CAST_TEST(TestInt8ToDouble,  IntType::get(8),  DoubleType::get(), C(SIToFP));
@@ -125,10 +125,10 @@ CAST_TEST(TestInt32ToDouble, IntType::get(32), DoubleType::get(), C(SIToFP));
 CAST_TEST(TestInt64ToDouble, IntType::get(64), DoubleType::get(), C(SIToFP));
 
 // UInt to Double.
-CAST_TEST(TestUInt8ToDouble,  UIntType::get(8),  DoubleType::get(), C(SIToFP));
-CAST_TEST(TestUInt16ToDouble, UIntType::get(16), DoubleType::get(), C(SIToFP));
-CAST_TEST(TestUInt32ToDouble, UIntType::get(32), DoubleType::get(), C(SIToFP));
-CAST_TEST(TestUInt64ToDouble, UIntType::get(64), DoubleType::get(), C(SIToFP));
+CAST_TEST(TestUInt8ToDouble,  UIntType::get(8),  DoubleType::get(), C(UIToFP));
+CAST_TEST(TestUInt16ToDouble, UIntType::get(16), DoubleType::get(), C(UIToFP));
+CAST_TEST(TestUInt32ToDouble, UIntType::get(32), DoubleType::get(), C(UIToFP));
+CAST_TEST(TestUInt64ToDouble, UIntType::get(64), DoubleType::get(), C(UIToFP));
 
 // Int to Pointer.
 CAST_TEST(TestInt8ToPointer,  IntType::get(8),  PointerType::get(BoolType::get()), C(IntToPtr));
@@ -186,6 +186,7 @@ CAST_TEST(TestPointerToUInt32, PointerType::get(BoolType::get()), UIntType::get(
 CAST_TEST(TestPointerToUInt64, PointerType::get(BoolType::get()), UIntType::get(64), C(PtrToInt));
 
 // Pointer to Pointer.
-CAST_TEST(TestPointerToPointer, PointerType::get(BoolType::get()), PointerType::get(BoolType::get()), C(BitCast));
+CAST_TEST(TestBoolPointerToBoolPointer, PointerType::get(BoolType::get()), PointerType::get(BoolType::get()), 0);
+CAST_TEST(TestBoolPointerToFloatPointer, PointerType::get(BoolType::get()), PointerType::get(FloatType::get()), C(BitCast));
 
 RUN_TESTS();
