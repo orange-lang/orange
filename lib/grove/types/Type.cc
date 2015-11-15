@@ -124,13 +124,6 @@ void Type::defineCast(const std::type_info &to, int cast)
 	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
 	m_cast_map[tuple] = cast;
 }
-
-Type::Type()
-{
-	m_context = & llvm::getGlobalContext();
-	m_type = llvm::Type::getVoidTy(*m_context);
-}
-
 std::string Type::getSignature() const
 {
 	throw std::runtime_error("Type::getSignature shouldn't be called.");
@@ -164,6 +157,36 @@ int Type::castOperation(Type *to)
 llvm::Type* Type::getLLVMType() const
 {
 	return m_type;
+}
+
+Comparison Type::compare(Type *source, Type *target)
+{
+	if (source == target)
+	{
+		return Comparison::EQUAL;
+	}
+	
+	// Only compare the precedence of two POD types.
+	bool bothPOD = source->isPODTy() && target->isPODTy();
+	if (bothPOD == false)
+	{
+		return Comparison::INCOMPATIBLE;
+	}
+	
+	if (source->PODTy() < target->PODTy())
+	{
+		return Comparison::HIGHER_PRECEDENCE;
+	}
+	else
+	{
+		return Comparison::LOWER_PRECEDENCE;
+	}
+}
+
+Type::Type()
+{
+	m_context = & llvm::getGlobalContext();
+	m_type = llvm::Type::getVoidTy(*m_context);
 }
 
 Type::~Type()

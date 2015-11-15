@@ -13,23 +13,27 @@
 #include <tuple>
 #include <typeinfo>
 
+#include "../Comparison.h"
+
 class Module;
 
 namespace llvm { class Type; }
 namespace llvm { class LLVMContext; }
 namespace llvm { class Value; }
 
+/// BasicTypes are plain old data types that are
+/// ordered by precedence, descending.
 typedef enum {
-	INT8,
-	INT16,
-	INT32,
-	INT64,
-	UINT8,
-	UINT16,
-	UINT32,
-	UINT64,
+	DOUBLE = 1,
 	FLOAT,
-	DOUBLE,
+	INT64,
+	INT32,
+	INT16,
+	INT8,
+	UINT64,
+	UINT32,
+	UINT16,
+	UINT8,
 	VOID,
 	OTHER
 } BasicType;
@@ -108,6 +112,11 @@ public:
 	
 	/// Gets the cast operation to convert to another type.
 	int castOperation(Type* to);
+	
+	/// Compare the precedence of two types.
+	/// @param source The source type to check.
+	/// @param target The target type to check against.
+	static Comparison compare(Type* source, Type* target);
 	
 	/// Gets the internal LLVM type of this type.
 	llvm::Type* getLLVMType() const;
