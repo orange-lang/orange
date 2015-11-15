@@ -19,6 +19,13 @@
 	#include <grove/BinOpArith.h>
 	#include <grove/Parameter.h>
 
+	#include <grove/types/Type.h>
+	#include <grove/types/IntType.h>
+	#include <grove/types/UIntType.h>
+	#include <grove/types/FloatType.h>
+	#include <grove/types/DoubleType.h>
+	#include <grove/types/VoidType.h>
+
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
 
@@ -32,12 +39,14 @@
 
 %union {
 	std::vector<ASTNode*>* nodes;
+	std::vector<Parameter*>* params;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
 	Statement* stmt;
 	Value* val;
 	std::string* str;
+	Type* ty;
 }
 
 %start start
@@ -60,6 +69,8 @@
 %type <stmt> structures function
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID
+%type <ty> basic_type
+%type <params> param_list
 
 /* lowest to highest precedence */
 %left COMMA
@@ -139,6 +150,29 @@ function
 
 		$$ = func;
 	}
+	| DEF TYPE_ID OPEN_PAREN param_list CLOSE_PAREN term statements END
+	{
+		auto func = new Function(*$2, *$4);
+
+		for (auto stmt : *$7)
+		{
+			func->addStatement(stmt);
+		}
+
+		$$ = func;
+	}
+
+param_list
+	: param_list COMMA basic_type TYPE_ID
+	{
+		$$ = $1;
+		$$->push_back(new Parameter($3, *$4));
+	}
+	| basic_type TYPE_ID
+	{
+		$$ = new std::vector<Parameter *>();
+		$$->push_back(new Parameter($1, *$2));
+	}
 
 controls
 	: return { $$ = $1; }
@@ -191,24 +225,22 @@ term
 	| SEMICOLON
 	;
 
-/*
 basic_type
-	: TYPE_INT
-	| TYPE_UINT
-	| TYPE_FLOAT
-	| TYPE_DOUBLE
-	| TYPE_INT8
-	| TYPE_INT16
-	| TYPE_INT32
-	| TYPE_INT64
-	| TYPE_UINT8
-	| TYPE_UINT16
-	| TYPE_UINT32
-	| TYPE_UINT64
-	| TYPE_CHAR
-	| TYPE_VOID
-	| TYPE_VAR
+	: TYPE_INT { $$ = IntType::get(32); }
+	| TYPE_UINT { $$ = UIntType::get(32); }
+	| TYPE_FLOAT { $$ = FloatType::get(); }
+	| TYPE_DOUBLE { $$ = DoubleType::get(); }
+	| TYPE_INT8 { $$ = IntType::get(8); }
+	| TYPE_INT16 { $$ = IntType::get(16); }
+	| TYPE_INT32 { $$ = IntType::get(32); }
+	| TYPE_INT64 { $$ = IntType::get(64); }
+	| TYPE_UINT8 { $$ = UIntType::get(8); }
+	| TYPE_UINT16 { $$ = UIntType::get(16); }
+	| TYPE_UINT32 { $$ = UIntType::get(32); }
+	| TYPE_UINT64 { $$ = UIntType::get(64); }
+	| TYPE_CHAR { $$ = IntType::get(8); }
+	| TYPE_VOID { $$ = VoidType::get(); }
+	| TYPE_VAR { $$ = nullptr; }
 	;
-*/
 
 %%

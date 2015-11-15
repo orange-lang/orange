@@ -15,6 +15,8 @@
 	#include <grove/types/IntType.h>
 	#include <grove/types/FloatType.h>
 	#include <grove/types/DoubleType.h>
+	
+	#include <grove/Parameter.h>
 
 	#include <string.h>
 	#include "parser.hh"
