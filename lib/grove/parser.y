@@ -21,6 +21,7 @@
 	#include <grove/BinOpArith.h>
 	#include <grove/Parameter.h>
 	#include <grove/IDReference.h>
+	#include <grove/NegativeExpr.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -254,6 +255,7 @@ call
 primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 	| VALUE { $$ = $1; }
+	| MINUS expression { $$ = new NegativeExpr($2); }
 	| STRING { $$ = new StrValue(*$1); }
 	| TYPE_ID { $$ = new IDReference(*$1); }
 	;
