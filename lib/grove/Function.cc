@@ -174,6 +174,19 @@ void Function::setupFunction()
 {
 	IRBuilder()->SetInsertPoint(getEntry());
 	
+	// Create our parameters.
+	auto arg_it = getLLVMFunction()->arg_begin();
+	for (unsigned int i = 0; i < getParams().size(); i++, arg_it++)
+	{
+		auto param = getParams()[i];
+		
+		auto ty = param->getType()->getLLVMType();
+		auto alloc = IRBuilder()->CreateAlloca(ty);
+		
+		IRBuilder()->CreateStore(arg_it, alloc);
+		param->setValue(alloc);
+	}
+	
 	if (isVoidFunction() == false)
 	{
 		auto ret_ty = getReturnType()->getLLVMType();
