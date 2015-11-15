@@ -76,7 +76,7 @@
 %type <stmt> structures function extern_function
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING
-%type <ty> type basic_type
+%type <ty> type basic_type type_hint
 %type <params> param_list
 %type <args> arg_list
 
@@ -148,20 +148,10 @@ structures
 	;
 
 function
- 	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN term statements END
+ 	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN type_hint term statements END
 	{
 		auto func = new Function(*$2, std::vector<Parameter *>());
-
-		for (auto stmt : *$6)
-		{
-			func->addStatement(stmt);
-		}
-
-		$$ = func;
-	}
-	| DEF TYPE_ID OPEN_PAREN param_list CLOSE_PAREN term statements END
-	{
-		auto func = new Function(*$2, *$4);
+		func->setReturnType($5);
 
 		for (auto stmt : *$7)
 		{
@@ -170,6 +160,24 @@ function
 
 		$$ = func;
 	}
+	| DEF TYPE_ID OPEN_PAREN param_list CLOSE_PAREN type_hint term statements END
+	{
+		auto func = new Function(*$2, *$4);
+		func->setReturnType($6);
+
+		for (auto stmt : *$8)
+		{
+			func->addStatement(stmt);
+		}
+
+		$$ = func;
+	}
+	;
+
+type_hint
+	: ARROW type { $$ = $2; }
+	| { $$ = nullptr; }
+	;
 
 extern_function
 	: EXTERN TYPE_ID OPEN_PAREN CLOSE_PAREN ARROW type
