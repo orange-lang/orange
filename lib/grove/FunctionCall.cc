@@ -10,7 +10,6 @@
 #include <grove/Named.h>
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
-#include <grove/types/FunctionType.h>
 #include <util/assertions.h>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
