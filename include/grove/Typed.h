@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "Comparison.h"
+
 class Type;
 
 namespace llvm { class Type; }
@@ -24,6 +26,9 @@ public:
 	
 	/// Returns the LLVM type. Equivalent to getType()->getLLVMType().
 	llvm::Type* getLLVMType() const;
+	
+	/// Compare the types of a source against a target.
+	static Comparison compare(Typed* source, Typed* target);
 	
 	/// Overrides the type.
 	void setType(Type* type);

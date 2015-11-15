@@ -8,6 +8,7 @@
 
 #include <grove/Typed.h>
 #include <grove/types/Type.h>
+#include <util/assertions.h>
 
 Type* Typed::getType() const
 {
@@ -22,6 +23,20 @@ llvm::Type* Typed::getLLVMType() const
 	}
 	
 	return getType()->getLLVMType();
+}
+
+Comparison Typed::compare(Typed *source, Typed *target)
+{
+	assertExists(source, "source type must exist.");
+	assertExists(target, "target type must exist.");
+	
+	auto source_ty = source->getType();
+	auto target_ty = target->getType();
+	
+	assertExists(source_ty, "source didn't have a type");
+	assertExists(target_ty, "target didn't have a type");
+	
+	return Type::compare(source_ty, target_ty);
 }
 
 void Typed::setType(Type* type)
