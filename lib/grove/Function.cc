@@ -117,8 +117,7 @@ void Function::resolve()
 	
 	if (retStmts.size() == 0)
 	{
-		std::vector<Type *> args;
-		setType(FunctionType::get(VoidType::get(), args));
+		setType(FunctionType::get(VoidType::get(), getParamTys()));
 	}
 	else
 	{
@@ -142,8 +141,7 @@ void Function::resolve()
 			}
 		}
 		
-		std::vector<Type *> args;
-		setType(FunctionType::get(highest, args));
+		setType(FunctionType::get(highest, getParamTys()));
 	}
 }
 
