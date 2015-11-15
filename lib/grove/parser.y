@@ -15,6 +15,7 @@
 	#include <grove/Expression.h>
 	#include <grove/ReturnStmt.h>
 	#include <grove/BinOpCompare.h>
+	#include <grove/BinOpArith.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -52,9 +53,9 @@
 
 %type <nodes> statements
 %type <node> statement return controls
-%type <expr> expression primary comparison
+%type <expr> expression primary comparison arithmetic
 %type <val> VALUE
-%type <str> COMP_LT COMP_GT LEQ GEQ
+%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS
 
 /* lowest to highest precedence */
 %left COMMA
@@ -124,7 +125,8 @@ controls
 
 expression
 	: primary { $$ = $1; }
-  | comparison { $$ = $1; }
+	| comparison { $$ = $1; }
+	| arithmetic { $$ = $1; }
 	;
 
 comparison
@@ -132,6 +134,11 @@ comparison
 	| expression COMP_GT expression { $$ = new BinOpCompare($1, *$2, $3); }
 	| expression LEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
 	| expression GEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
+	;
+
+arithmetic
+	: expression PLUS expression { $$ = new BinOpArith($1, *$2, $3); }
+	| expression MINUS expression { $$ = new BinOpArith($1, *$2, $3); }
 	;
 
 primary

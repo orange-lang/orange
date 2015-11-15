@@ -250,6 +250,7 @@
 	#include <grove/Expression.h>
 	#include <grove/ReturnStmt.h>
 	#include <grove/BinOpCompare.h>
+	#include <grove/BinOpArith.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -277,7 +278,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 30 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 31 "/Users/robert/dev/orange/lib/grove/parser.y"
 {
 	std::vector<ASTNode*>* nodes;
 	ASTNode* node;
@@ -287,7 +288,7 @@ typedef union YYSTYPE
 	std::string* str;
 }
 /* Line 193 of yacc.c.  */
-#line 291 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 292 "/Users/robert/dev/orange/lib/grove/parser.cc"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -312,7 +313,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 316 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 317 "/Users/robert/dev/orange/lib/grove/parser.cc"
 
 #ifdef short
 # undef short
@@ -527,18 +528,18 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  14
+#define YYFINAL  15
 /* YYLAST -- Last index in YYTABLE.  */
 #define YYLAST   61
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  86
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  10
+#define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  20
+#define YYNRULES  23
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  29
+#define YYNSTATES  34
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -593,17 +594,18 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     9,    12,    13,    15,    17,    19,
-      21,    23,    27,    31,    35,    39,    43,    45,    47,    50,
-      52
+      21,    23,    25,    29,    33,    37,    41,    45,    49,    53,
+      55,    57,    60,    62
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      87,     0,    -1,    88,    -1,    88,    89,    95,    -1,    89,
-      95,    -1,    -1,    90,    -1,    91,    -1,    94,    -1,    93,
-      -1,    92,    -1,    91,    58,    91,    -1,    91,    59,    91,
-      -1,    91,    56,    91,    -1,    91,    57,    91,    -1,     9,
+      87,     0,    -1,    88,    -1,    88,    89,    96,    -1,    89,
+      96,    -1,    -1,    90,    -1,    91,    -1,    95,    -1,    94,
+      -1,    92,    -1,    93,    -1,    91,    58,    91,    -1,    91,
+      59,    91,    -1,    91,    56,    91,    -1,    91,    57,    91,
+      -1,    91,    17,    91,    -1,    91,    16,    91,    -1,     9,
       91,    10,    -1,    61,    -1,    35,    -1,    35,    91,    -1,
       18,    -1,    19,    -1
 };
@@ -611,9 +613,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    84,    84,    94,   103,   115,   117,   118,   122,   126,
-     127,   131,   132,   133,   134,   138,   139,   143,   147,   154,
-     155
+       0,    85,    85,    95,   104,   116,   118,   119,   123,   127,
+     128,   129,   133,   134,   135,   136,   140,   141,   145,   146,
+     150,   154,   161,   162
 };
 #endif
 
@@ -637,7 +639,7 @@ static const char *const yytname[] =
   "BITWISE_OR", "BITWISE_XOR", "FOR", "FOREVER", "LOOP", "CONTINUE",
   "BREAK", "DO", "WHILE", "CONST", "QUESTION", "COLON", "ENUM", "SIZEOF",
   "$accept", "start", "statements", "statement", "controls", "expression",
-  "comparison", "primary", "return", "term", 0
+  "comparison", "arithmetic", "primary", "return", "term", 0
 };
 #endif
 
@@ -662,16 +664,16 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    86,    87,    88,    88,    89,    89,    89,    90,    91,
-      91,    92,    92,    92,    92,    93,    93,    94,    94,    95,
-      95
+      91,    91,    92,    92,    92,    92,    93,    93,    94,    94,
+      95,    95,    96,    96
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     1,     3,     2,     0,     1,     1,     1,     1,
-       1,     3,     3,     3,     3,     3,     1,     1,     2,     1,
-       1
+       1,     1,     3,     3,     3,     3,     3,     3,     3,     1,
+       1,     2,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -679,31 +681,35 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       5,     0,    17,    16,     0,     5,     0,     6,     7,    10,
-       9,     8,     0,    18,     1,     0,    19,    20,     4,     0,
-       0,     0,     0,    15,     3,    13,    14,    11,    12
+       5,     0,    20,    19,     0,     5,     0,     6,     7,    10,
+      11,     9,     8,     0,    21,     1,     0,    22,    23,     4,
+       0,     0,     0,     0,     0,     0,    18,     3,    17,    16,
+      14,    15,    12,    13
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     6,     7,     8,     9,    10,    11,    18
+      -1,     4,     5,     6,     7,     8,     9,    10,    11,    12,
+      19
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -52
+#define YYPACT_NINF -14
 static const yytype_int8 yypact[] =
 {
-      -8,    -7,    -7,   -52,    10,     0,    -6,   -52,   -51,   -52,
-     -52,   -52,     1,   -51,   -52,    -6,   -52,   -52,   -52,    -7,
-      -7,    -7,    -7,   -52,   -52,   -52,   -52,   -52,   -52
+      -8,    -7,    -7,   -14,     5,     0,   -12,   -14,   -13,   -14,
+     -14,   -14,   -14,     1,   -13,   -14,   -12,   -14,   -14,   -14,
+      -7,    -7,    -7,    -7,    -7,    -7,   -14,   -14,   -14,   -14,
+      -4,    -4,    -4,    -4
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -52,   -52,   -52,     9,   -52,     2,   -52,   -52,   -52,     3
+     -14,   -14,   -14,     3,   -14,    27,   -14,   -14,   -14,   -14,
+      -6
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -713,23 +719,23 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -3
 static const yytype_int8 yytable[] =
 {
-      -2,     1,     1,    12,    13,    19,    20,    21,    22,     1,
-      14,    23,    16,    17,    15,     0,     0,     0,    24,     0,
-       0,    25,    26,    27,    28,     0,     0,     2,     0,     0,
+      -2,     1,     1,    20,    21,    15,    17,    18,    16,     1,
+      27,    26,    20,    21,     0,     0,     0,    20,    21,     0,
+       0,     0,     0,     0,     0,     0,     0,     2,    13,    14,
        0,     0,     0,     0,     0,     2,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     3,     3,     0,     0,    19,    20,    21,
-      22,     3
+       0,     0,     0,    22,    23,    24,    25,    28,    29,    30,
+      31,    32,    33,     3,     3,     0,     0,    22,    23,    24,
+      25,     3
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,     9,     9,     1,     2,    56,    57,    58,    59,     9,
-       0,    10,    18,    19,     5,    -1,    -1,    -1,    15,    -1,
-      -1,    19,    20,    21,    22,    -1,    -1,    35,    -1,    -1,
+       0,     9,     9,    16,    17,     0,    18,    19,     5,     9,
+      16,    10,    16,    17,    -1,    -1,    -1,    16,    17,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    35,     1,     2,
       -1,    -1,    -1,    -1,    -1,    35,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    61,    61,    -1,    -1,    56,    57,    58,
+      -1,    -1,    -1,    56,    57,    58,    59,    20,    21,    22,
+      23,    24,    25,    61,    61,    -1,    -1,    56,    57,    58,
       59,    61
 };
 
@@ -738,8 +744,9 @@ static const yytype_int8 yycheck[] =
 static const yytype_uint8 yystos[] =
 {
        0,     9,    35,    61,    87,    88,    89,    90,    91,    92,
-      93,    94,    91,    91,     0,    89,    18,    19,    95,    56,
-      57,    58,    59,    10,    95,    91,    91,    91,    91
+      93,    94,    95,    91,    91,     0,    89,    18,    19,    96,
+      16,    17,    56,    57,    58,    59,    10,    96,    91,    91,
+      91,    91,    91,    91
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1582,7 +1589,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 85 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 86 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		for (auto stmt : *(yyvsp[(1) - (1)].nodes))
 		{
@@ -1592,7 +1599,7 @@ yyreduce:
     break;
 
   case 3:
-#line 95 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 96 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = (yyvsp[(1) - (3)].nodes);
 
@@ -1604,7 +1611,7 @@ yyreduce:
     break;
 
   case 4:
-#line 104 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 105 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = new std::vector<ASTNode *>();
 
@@ -1616,74 +1623,89 @@ yyreduce:
     break;
 
   case 5:
-#line 115 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 116 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = nullptr; ;}
     break;
 
   case 6:
-#line 117 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 118 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 7:
-#line 118 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 119 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
   case 8:
-#line 122 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 123 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 9:
-#line 126 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
-    break;
-
-  case 10:
 #line 127 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
+  case 10:
+#line 128 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
+    break;
+
   case 11:
-#line 131 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
+#line 129 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
   case 12:
-#line 132 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
-    break;
-
-  case 13:
 #line 133 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
     break;
 
-  case 14:
+  case 13:
 #line 134 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
     break;
 
+  case 14:
+#line 135 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
+    break;
+
   case 15:
-#line 138 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = (yyvsp[(2) - (3)].expr); ;}
+#line 136 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
     break;
 
   case 16:
-#line 139 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = (yyvsp[(1) - (1)].val); ;}
+#line 140 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
     break;
 
   case 17:
-#line 144 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 141 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
+    break;
+
+  case 18:
+#line 145 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = (yyvsp[(2) - (3)].expr); ;}
+    break;
+
+  case 19:
+#line 146 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = (yyvsp[(1) - (1)].val); ;}
+    break;
+
+  case 20:
+#line 151 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.node) = new ReturnStmt(nullptr);
 	;}
     break;
 
-  case 18:
-#line 148 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 21:
+#line 155 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.node) = new ReturnStmt((yyvsp[(2) - (2)].expr));
 	;}
@@ -1691,7 +1713,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1695 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 1717 "/Users/robert/dev/orange/lib/grove/parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1911,6 +1933,6 @@ yyreturn:
 }
 
 
-#line 178 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 185 "/Users/robert/dev/orange/lib/grove/parser.y"
 
 
