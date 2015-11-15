@@ -18,9 +18,9 @@ DoubleType::DoubleType()
 {
 	m_type = llvm::Type::getDoubleTy(*m_context);
 	
-	defineCast(typeid(UIntType), llvm::Instruction::CastOps::UIToFP);
-	defineCast(typeid(IntType), llvm::Instruction::CastOps::SIToFP);
-	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPExt);
+	defineCast(typeid(UIntType), llvm::Instruction::CastOps::FPToUI);
+	defineCast(typeid(IntType), llvm::Instruction::CastOps::FPToSI);
+	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPTrunc);
 }
 
 std::string DoubleType::getSignature() const

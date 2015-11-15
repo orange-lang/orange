@@ -24,8 +24,9 @@ PointerType::PointerType(Type* contained)
 	m_contained = contained;
 	m_type = m_contained->getLLVMType()->getPointerTo();
 	
-	defineCast(typeid(IntType), llvm::Instruction::CastOps::IntToPtr);
-	defineCast(typeid(UIntType), llvm::Instruction::CastOps::IntToPtr);
+	defineCast(typeid(IntType), llvm::Instruction::CastOps::PtrToInt);
+	defineCast(typeid(UIntType), llvm::Instruction::CastOps::PtrToInt);
+	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
 }
 
 std::string PointerType::getSignature() const

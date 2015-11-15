@@ -18,9 +18,9 @@ FloatType::FloatType()
 {
 	m_type = llvm::Type::getFloatTy(*m_context);
 	
-	defineCast(typeid(UIntType), llvm::Instruction::CastOps::UIToFP);
-	defineCast(typeid(IntType), llvm::Instruction::CastOps::SIToFP);
-	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::FPTrunc);
+	defineCast(typeid(UIntType), llvm::Instruction::CastOps::FPToUI);
+	defineCast(typeid(IntType), llvm::Instruction::CastOps::FPToSI);
+	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::FPExt);
 }
 
 std::string FloatType::getSignature() const

@@ -28,9 +28,9 @@ UIntType::UIntType(unsigned int width)
 	
 	defineCast(typeid(UIntType), llvm::Instruction::CastOps::ZExt);
 	defineCast(typeid(IntType), llvm::Instruction::CastOps::ZExt);
-	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::FPToUI);
-	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPToUI);
-	defineCast(typeid(PointerType), llvm::Instruction::CastOps::PtrToInt);
+	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::UIToFP);
+	defineCast(typeid(FloatType), llvm::Instruction::CastOps::UIToFP);
+	defineCast(typeid(PointerType), llvm::Instruction::CastOps::IntToPtr);
 }
 
 std::string UIntType::getSignature() const

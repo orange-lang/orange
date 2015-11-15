@@ -28,9 +28,9 @@ IntType::IntType(unsigned int width)
 	
 	defineCast(typeid(UIntType), llvm::Instruction::CastOps::SExt);
 	defineCast(typeid(IntType), llvm::Instruction::CastOps::SExt);
-	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::FPToSI);
-	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPToSI);
-	defineCast(typeid(PointerType), llvm::Instruction::CastOps::PtrToInt);
+	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::SIToFP);
+	defineCast(typeid(FloatType), llvm::Instruction::CastOps::SIToFP);
+	defineCast(typeid(PointerType), llvm::Instruction::CastOps::IntToPtr);
 }
 
 std::string IntType::getSignature() const
