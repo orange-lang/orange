@@ -89,6 +89,8 @@ bool Function::isVoidFunction()
 
 void Function::createFunction()
 {
+	assertExists(getType(), "Function does not have a type.");
+	
 	auto llvm_ty = (llvm::FunctionType *)(getType()->getLLVMType());
 	
 	auto linkage = llvm::GlobalValue::LinkageTypes::ExternalLinkage;
