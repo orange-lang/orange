@@ -153,28 +153,28 @@ CAST_TEST(TestUInt32ToPointer, UIntType::get(32), PointerType::get(BoolType::get
 CAST_TEST(TestUInt64ToPointer, UIntType::get(64), PointerType::get(BoolType::get()), C(IntToPtr));
 
 // Int to Bool
-CAST_TEST(TestInt8ToBool,  IntType::get(8),  BoolType::get(), C(SExt));
-CAST_TEST(TestInt16ToBool, IntType::get(16), BoolType::get(), C(SExt));
-CAST_TEST(TestInt32ToBool, IntType::get(32), BoolType::get(), NO_CAST);
+CAST_TEST(TestInt8ToBool,  IntType::get(8),  BoolType::get(), C(Trunc));
+CAST_TEST(TestInt16ToBool, IntType::get(16), BoolType::get(), C(Trunc));
+CAST_TEST(TestInt32ToBool, IntType::get(32), BoolType::get(), C(Trunc));
 CAST_TEST(TestInt64ToBool, IntType::get(64), BoolType::get(), C(Trunc));
 
 // UInt to Bool
-CAST_TEST(TestUInt8ToBool,  UIntType::get(8),  BoolType::get(), C(ZExt));
-CAST_TEST(TestUInt16ToBool, UIntType::get(16), BoolType::get(), C(ZExt));
-CAST_TEST(TestUInt32ToBool, UIntType::get(32), BoolType::get(), NO_CAST);
+CAST_TEST(TestUInt8ToBool,  UIntType::get(8),  BoolType::get(), C(Trunc));
+CAST_TEST(TestUInt16ToBool, UIntType::get(16), BoolType::get(), C(Trunc));
+CAST_TEST(TestUInt32ToBool, UIntType::get(32), BoolType::get(), C(Trunc));
 CAST_TEST(TestUInt64ToBool, UIntType::get(64), BoolType::get(), C(Trunc));
 
 // Bool to Int
-CAST_TEST(TestBoolToInt8,  BoolType::get(), IntType::get(8),  C(Trunc));
-CAST_TEST(TestBoolToInt16, BoolType::get(), IntType::get(16), C(Trunc));
-CAST_TEST(TestBoolToInt32, BoolType::get(), IntType::get(32), NO_CAST);
-CAST_TEST(TestBoolToInt64, BoolType::get(), IntType::get(64), C(SExt));
+CAST_TEST(TestBoolToInt8,  BoolType::get(), IntType::get(8),  C(ZExt));
+CAST_TEST(TestBoolToInt16, BoolType::get(), IntType::get(16), C(ZExt));
+CAST_TEST(TestBoolToInt32, BoolType::get(), IntType::get(32), C(ZExt));
+CAST_TEST(TestBoolToInt64, BoolType::get(), IntType::get(64), C(ZExt));
 
 // Bool to UInt
-CAST_TEST(TestBoolToUInt8,  BoolType::get(), UIntType::get(8),  C(Trunc));
-CAST_TEST(TestBoolToUInt16, BoolType::get(), UIntType::get(16), C(Trunc));
-CAST_TEST(TestBoolToUInt32, BoolType::get(), UIntType::get(32), NO_CAST);
-CAST_TEST(TestBoolToUInt64, BoolType::get(), UIntType::get(64), C(SExt));
+CAST_TEST(TestBoolToUInt8,  BoolType::get(), UIntType::get(8),  C(ZExt));
+CAST_TEST(TestBoolToUInt16, BoolType::get(), UIntType::get(16), C(ZExt));
+CAST_TEST(TestBoolToUInt32, BoolType::get(), UIntType::get(32), C(ZExt));
+CAST_TEST(TestBoolToUInt64, BoolType::get(), UIntType::get(64), C(ZExt));
 
 // FP to FP.
 CAST_TEST(TestFloatToFloat,   FloatType::get(),  FloatType::get(),  NO_CAST);
@@ -336,28 +336,28 @@ PREC_TEST(CompUInt32ToPointer, UIntType::get(32), PointerType::get(BoolType::get
 PREC_TEST(CompUInt64ToPointer, UIntType::get(64), PointerType::get(BoolType::get()), INCOMPATIBLE);
 
 // Int to Bool
-PREC_TEST(CompInt8ToBool,  IntType::get(8),  BoolType::get(), LOWER_PRECEDENCE);
-PREC_TEST(CompInt16ToBool, IntType::get(16), BoolType::get(), LOWER_PRECEDENCE);
-PREC_TEST(CompInt32ToBool, IntType::get(32), BoolType::get(), EQUAL);
+PREC_TEST(CompInt8ToBool,  IntType::get(8),  BoolType::get(), HIGHER_PRECEDENCE);
+PREC_TEST(CompInt16ToBool, IntType::get(16), BoolType::get(), HIGHER_PRECEDENCE);
+PREC_TEST(CompInt32ToBool, IntType::get(32), BoolType::get(), HIGHER_PRECEDENCE);
 PREC_TEST(CompInt64ToBool, IntType::get(64), BoolType::get(), HIGHER_PRECEDENCE);
 
 // UInt to Bool
-PREC_TEST(CompUInt8ToBool,  UIntType::get(8),  BoolType::get(), LOWER_PRECEDENCE);
-PREC_TEST(CompUInt16ToBool, UIntType::get(16), BoolType::get(), LOWER_PRECEDENCE);
-PREC_TEST(CompUInt32ToBool, UIntType::get(32), BoolType::get(), LOWER_PRECEDENCE);
-PREC_TEST(CompUInt64ToBool, UIntType::get(64), BoolType::get(), LOWER_PRECEDENCE);
+PREC_TEST(CompUInt8ToBool,  UIntType::get(8),  BoolType::get(), HIGHER_PRECEDENCE);
+PREC_TEST(CompUInt16ToBool, UIntType::get(16), BoolType::get(), HIGHER_PRECEDENCE);
+PREC_TEST(CompUInt32ToBool, UIntType::get(32), BoolType::get(), HIGHER_PRECEDENCE);
+PREC_TEST(CompUInt64ToBool, UIntType::get(64), BoolType::get(), HIGHER_PRECEDENCE);
 
 // Bool to Int
-PREC_TEST(CompBoolToInt8,  BoolType::get(), IntType::get(8),  HIGHER_PRECEDENCE);
-PREC_TEST(CompBoolToInt16, BoolType::get(), IntType::get(16), HIGHER_PRECEDENCE);
-PREC_TEST(CompBoolToInt32, BoolType::get(), IntType::get(32), EQUAL);
+PREC_TEST(CompBoolToInt8,  BoolType::get(), IntType::get(8),  LOWER_PRECEDENCE);
+PREC_TEST(CompBoolToInt16, BoolType::get(), IntType::get(16), LOWER_PRECEDENCE);
+PREC_TEST(CompBoolToInt32, BoolType::get(), IntType::get(32), LOWER_PRECEDENCE);
 PREC_TEST(CompBoolToInt64, BoolType::get(), IntType::get(64), LOWER_PRECEDENCE);
 
 // Bool to UInt
-PREC_TEST(CompBoolToUInt8,  BoolType::get(), UIntType::get(8),  HIGHER_PRECEDENCE);
-PREC_TEST(CompBoolToUInt16, BoolType::get(), UIntType::get(16), HIGHER_PRECEDENCE);
-PREC_TEST(CompBoolToUInt32, BoolType::get(), UIntType::get(32), HIGHER_PRECEDENCE);
-PREC_TEST(CompBoolToUInt64, BoolType::get(), UIntType::get(64), HIGHER_PRECEDENCE);
+PREC_TEST(CompBoolToUInt8,  BoolType::get(), UIntType::get(8),  LOWER_PRECEDENCE);
+PREC_TEST(CompBoolToUInt16, BoolType::get(), UIntType::get(16), LOWER_PRECEDENCE);
+PREC_TEST(CompBoolToUInt32, BoolType::get(), UIntType::get(32), LOWER_PRECEDENCE);
+PREC_TEST(CompBoolToUInt64, BoolType::get(), UIntType::get(64), LOWER_PRECEDENCE);
 
 
 // FP to FP.
