@@ -10,21 +10,15 @@
 
 #include "ASTNode.h"
 #include "Typed.h"
+#include "Valued.h"
 
 namespace llvm { class Value; }
 
 /**
  * Expression is the base class for elements that have values and types.
  */
-class Expression : public ASTNode, public Typed {
-protected:
-	llvm::Value* m_value = nullptr;
+class Expression : public ASTNode, public Valued, public Typed {
 public:
-	/// Gets the value for this expression.
-	/// If the expression is a variable, gets the value of the variable
-	/// and not its pointer.
-	llvm::Value* getValue() const;
-	
 	/// If this expression points to a memory location (like a variable),
 	/// gets the pointer where that expression is stored.
 	llvm::Value* getPointer() const;
@@ -40,8 +34,5 @@ public:
 	/// Casts the value of this expression to the type of another expression.
 	/// Returns the result of that cast. The original value is untouched.
 	llvm::Value* castTo(Expression* expr) const;
-	
-	/// Sets the value for this expression.
-	void setValue(llvm::Value* value);
 };
 

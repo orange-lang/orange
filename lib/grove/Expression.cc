@@ -13,12 +13,6 @@
 #include <llvm/IR/Instruction.h>
 #include <llvm/IR/IRBuilder.h>
 
-
-llvm::Value* Expression::getValue() const
-{
-	return m_value;
-}
-
 llvm::Value* Expression::getPointer() const
 {
 	return nullptr;
@@ -52,9 +46,4 @@ llvm::Value* Expression::castTo(Expression *expr) const
 	
 	auto expr_ty = expr->getType();
 	return castTo(expr_ty);
-}
-
-void Expression::setValue(llvm::Value *value)
-{
-	m_value = value;
 }
