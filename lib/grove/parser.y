@@ -12,6 +12,7 @@
 	#include <grove/Block.h>
 	#include <grove/Function.h>
 	#include <grove/FunctionCall.h>
+	#include <grove/ExternFunction.h>
 	#include <grove/Value.h>
 	#include <grove/Expression.h>
 	#include <grove/ReturnStmt.h>
@@ -27,6 +28,8 @@
 	#include <grove/types/DoubleType.h>
 	#include <grove/types/VoidType.h>
 	#include <grove/types/PointerType.h>
+	
+	#include <util/assertions.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -69,7 +72,7 @@
 %type <nodes> statements
 %type <node> statement return controls
 %type <expr> expression primary comparison arithmetic call
-%type <stmt> structures function
+%type <stmt> structures function extern_function
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID
 %type <ty> type basic_type
@@ -140,6 +143,7 @@ statement
 
 structures
 	: function { $$ = $1; }
+	| extern_function { $$ = $1; }
 	;
 
 function
@@ -164,6 +168,17 @@ function
 		}
 
 		$$ = func;
+	}
+
+extern_function
+	: EXTERN TYPE_ID OPEN_PAREN CLOSE_PAREN ARROW type
+	{
+		std::vector<Parameter *> params;
+		$$ = new ExternFunction(*$2, params, $6);
+	}
+	| EXTERN TYPE_ID OPEN_PAREN param_list CLOSE_PAREN ARROW type
+	{
+		$$ = new ExternFunction(*$2, *$4, $7);
 	}
 
 param_list
