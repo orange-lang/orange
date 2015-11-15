@@ -64,7 +64,7 @@ void BinOpCompare::build()
 	getRHS()->build();
 	
 	auto vLHS = getLHS()->getValue();
-	auto vRHS = getLHS()->getValue();
+	auto vRHS = getRHS()->getValue();
 	
 	assertExists(vLHS, "LHS did not generate a value.");
 	assertExists(vRHS, "RHS did not generate a value.");
