@@ -10,6 +10,48 @@
 #include <grove/types/BoolType.h>
 #include <util/assertions.h>
 
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/InstrTypes.h>
+
+#include <map>
+#include <tuple>
+
+static llvm::CmpInst::Predicate getPredicate(std::string op, bool FP, bool isSigned)
+{
+	typedef llvm::CmpInst::Predicate Pred;
+	typedef std::tuple<Pred, Pred, Pred> PredTuple;
+	
+	using namespace llvm;
+	
+	const static std::map<std::string, PredTuple> m_op_map = {
+		{"<",  {CmpInst::ICMP_ULT, CmpInst::ICMP_SLT, CmpInst::FCMP_OLT}},
+		{">",  {CmpInst::ICMP_UGT, CmpInst::ICMP_SGT, CmpInst::FCMP_OGT}},
+		{"<=", {CmpInst::ICMP_ULE, CmpInst::ICMP_SLE, CmpInst::FCMP_OLE}},
+		{">=", {CmpInst::ICMP_UGE, CmpInst::ICMP_SGE, CmpInst::FCMP_OGE}},
+	};
+	
+	auto it = m_op_map.find(op);
+	
+	if (it == m_op_map.end())
+	{
+		throw std::invalid_argument("op not supported.");
+	}
+	
+	if (FP == true)
+	{
+		return std::get<2>(it->second);
+	}
+	else if (isSigned == true)
+	{
+		return std::get<1>(it->second);
+	}
+	else
+	{
+		return std::get<0>(it->second);
+	}
+}
+
+
 void BinOpCompare::resolve()
 {
 	BinOpExpr::resolve();
@@ -48,8 +90,20 @@ void BinOpCompare::build()
 		}
 	}
 	
-	// Get the operation to use.
-	throw std::runtime_error("BinOpCompare::build NYI");
+	auto predicate = getPredicate(getOperator(), isFloatingPointOperation(),
+								  areOperandsSigned());
+	llvm::Value* value = nullptr;
+	
+	if (isFloatingPointOperation())
+	{
+		value = IRBuilder()->CreateFCmp(predicate, vLHS, vRHS);
+	}
+	else
+	{
+		value = IRBuilder()->CreateICmp(predicate, vLHS, vRHS);
+	}
+	
+	setValue(value);
 }
 
 BinOpCompare::BinOpCompare(Expression* LHS, std::string op, Expression* RHS)
