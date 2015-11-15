@@ -41,22 +41,22 @@ START_TEST_MODULE();
 #define C(castType) llvm::Instruction::CastOps::castType
 
 // Int to Int
-CAST_TEST(TestInt8ToInt8,   IntType::get(8),  IntType::get(8),  0);
+CAST_TEST(TestInt8ToInt8,   IntType::get(8),  IntType::get(8),  NO_CAST);
 CAST_TEST(TestInt8ToInt16,  IntType::get(8),  IntType::get(16), C(SExt));
 CAST_TEST(TestInt8ToInt32,  IntType::get(8),  IntType::get(32), C(SExt));
 CAST_TEST(TestInt8ToInt64,  IntType::get(8),  IntType::get(64), C(SExt));
 CAST_TEST(TestInt16ToInt8,  IntType::get(16), IntType::get(8),  C(Trunc));
-CAST_TEST(TestInt16ToInt16, IntType::get(16), IntType::get(16), 0);
+CAST_TEST(TestInt16ToInt16, IntType::get(16), IntType::get(16), NO_CAST);
 CAST_TEST(TestInt16ToInt32, IntType::get(16), IntType::get(32), C(SExt));
 CAST_TEST(TestInt16ToInt64, IntType::get(16), IntType::get(64), C(SExt));
 CAST_TEST(TestInt32ToInt8,  IntType::get(32), IntType::get(8),  C(Trunc));
 CAST_TEST(TestInt32ToInt16, IntType::get(32), IntType::get(16), C(Trunc));
-CAST_TEST(TestInt32ToInt32, IntType::get(32), IntType::get(32), 0);
+CAST_TEST(TestInt32ToInt32, IntType::get(32), IntType::get(32), NO_CAST);
 CAST_TEST(TestInt32ToInt64, IntType::get(32), IntType::get(64), C(SExt));
 CAST_TEST(TestInt64ToInt8,  IntType::get(64), IntType::get(8),  C(Trunc));
 CAST_TEST(TestInt64ToInt16, IntType::get(64), IntType::get(16), C(Trunc));
 CAST_TEST(TestInt64ToInt32, IntType::get(64), IntType::get(32), C(Trunc));
-CAST_TEST(TestInt64ToInt64, IntType::get(64), IntType::get(64), 0);
+CAST_TEST(TestInt64ToInt64, IntType::get(64), IntType::get(64), NO_CAST);
 
 PREC_TEST(CompInt8ToInt8,   IntType::get(8),  IntType::get(8),  EQUAL);
 PREC_TEST(CompInt8ToInt16,  IntType::get(8),  IntType::get(16), LOWER_PRECEDENCE);
@@ -76,22 +76,22 @@ PREC_TEST(CompInt64ToInt32, IntType::get(64), IntType::get(32), HIGHER_PRECEDENC
 PREC_TEST(CompInt64ToInt64, IntType::get(64), IntType::get(64), EQUAL);
 
 // UInt to UInt
-CAST_TEST(TestUInt8ToUInt8,   UIntType::get(8),  UIntType::get(8),  0);
+CAST_TEST(TestUInt8ToUInt8,   UIntType::get(8),  UIntType::get(8),  NO_CAST);
 CAST_TEST(TestUInt8ToUInt16,  UIntType::get(8),  UIntType::get(16), C(ZExt));
 CAST_TEST(TestUInt8ToUInt32,  UIntType::get(8),  UIntType::get(32), C(ZExt));
 CAST_TEST(TestUInt8ToUInt64,  UIntType::get(8),  UIntType::get(64), C(ZExt));
 CAST_TEST(TestUInt16ToUInt8,  UIntType::get(16), UIntType::get(8),  C(Trunc));
-CAST_TEST(TestUInt16ToUInt16, UIntType::get(16), UIntType::get(16), 0);
+CAST_TEST(TestUInt16ToUInt16, UIntType::get(16), UIntType::get(16), NO_CAST);
 CAST_TEST(TestUInt16ToUInt32, UIntType::get(16), UIntType::get(32), C(ZExt));
 CAST_TEST(TestUInt16ToUInt64, UIntType::get(16), UIntType::get(64), C(ZExt));
 CAST_TEST(TestUInt32ToUInt8,  UIntType::get(32), UIntType::get(8),  C(Trunc));
 CAST_TEST(TestUInt32ToUInt16, UIntType::get(32), UIntType::get(16), C(Trunc));
-CAST_TEST(TestUInt32ToUInt32, UIntType::get(32), UIntType::get(32), 0);
+CAST_TEST(TestUInt32ToUInt32, UIntType::get(32), UIntType::get(32), NO_CAST);
 CAST_TEST(TestUInt32ToUInt64, UIntType::get(32), UIntType::get(64), C(ZExt));
 CAST_TEST(TestUInt64ToUInt8,  UIntType::get(64), UIntType::get(8),  C(Trunc));
 CAST_TEST(TestUInt64ToUInt16, UIntType::get(64), UIntType::get(16), C(Trunc));
 CAST_TEST(TestUInt64ToUInt32, UIntType::get(64), UIntType::get(32), C(Trunc));
-CAST_TEST(TestUInt64ToUInt64, UIntType::get(64), UIntType::get(64), 0);
+CAST_TEST(TestUInt64ToUInt64, UIntType::get(64), UIntType::get(64), NO_CAST);
 
 PREC_TEST(CompUInt8ToUInt8,   UIntType::get(8),  UIntType::get(8),  EQUAL);
 PREC_TEST(CompUInt8ToUInt16,  UIntType::get(8),  UIntType::get(16), LOWER_PRECEDENCE);
@@ -111,22 +111,22 @@ PREC_TEST(CompUInt64ToUInt32, UIntType::get(64), UIntType::get(32), HIGHER_PRECE
 PREC_TEST(CompUInt64ToUInt64, UIntType::get(64), UIntType::get(64), EQUAL);
 
 // Int to UInt. Should SExt to keep negative bit.
-CAST_TEST(TestInt8ToUInt8,   IntType::get(8),  UIntType::get(8),  0);
+CAST_TEST(TestInt8ToUInt8,   IntType::get(8),  UIntType::get(8),  NO_CAST);
 CAST_TEST(TestInt8ToUInt16,  IntType::get(8),  UIntType::get(16), C(SExt));
 CAST_TEST(TestInt8ToUInt32,  IntType::get(8),  UIntType::get(32), C(SExt));
 CAST_TEST(TestInt8ToUInt64,  IntType::get(8),  UIntType::get(64), C(SExt));
 CAST_TEST(TestInt16ToUInt8,  IntType::get(16), UIntType::get(8),  C(Trunc));
-CAST_TEST(TestInt16ToUInt16, IntType::get(16), UIntType::get(16), 0);
+CAST_TEST(TestInt16ToUInt16, IntType::get(16), UIntType::get(16), NO_CAST);
 CAST_TEST(TestInt16ToUInt32, IntType::get(16), UIntType::get(32), C(SExt));
 CAST_TEST(TestInt16ToUInt64, IntType::get(16), UIntType::get(64), C(SExt));
 CAST_TEST(TestInt32ToUInt8,  IntType::get(32), UIntType::get(8),  C(Trunc));
 CAST_TEST(TestInt32ToUInt16, IntType::get(32), UIntType::get(16), C(Trunc));
-CAST_TEST(TestInt32ToUInt32, IntType::get(32), UIntType::get(32), 0);
+CAST_TEST(TestInt32ToUInt32, IntType::get(32), UIntType::get(32), NO_CAST);
 CAST_TEST(TestInt32ToUInt64, IntType::get(32), UIntType::get(64), C(SExt));
 CAST_TEST(TestInt64ToUInt8,  IntType::get(64), UIntType::get(8),  C(Trunc));
 CAST_TEST(TestInt64ToUInt16, IntType::get(64), UIntType::get(16), C(Trunc));
 CAST_TEST(TestInt64ToUInt32, IntType::get(64), UIntType::get(32), C(Trunc));
-CAST_TEST(TestInt64ToUInt64, IntType::get(64), UIntType::get(64), 0);
+CAST_TEST(TestInt64ToUInt64, IntType::get(64), UIntType::get(64), NO_CAST);
 
 PREC_TEST(CompInt8ToUInt8,   IntType::get(8),  UIntType::get(8),  HIGHER_PRECEDENCE);
 PREC_TEST(CompInt8ToUInt16,  IntType::get(8),  UIntType::get(16), HIGHER_PRECEDENCE);
@@ -146,22 +146,22 @@ PREC_TEST(CompInt64ToUInt32, IntType::get(64), UIntType::get(32), HIGHER_PRECEDE
 PREC_TEST(CompInt64ToUInt64, IntType::get(64), UIntType::get(64), HIGHER_PRECEDENCE);
 
 // UInt to Int. Should ZExt.
-CAST_TEST(TestUInt8ToInt8,   UIntType::get(8),  IntType::get(8),  0);
+CAST_TEST(TestUInt8ToInt8,   UIntType::get(8),  IntType::get(8),  NO_CAST);
 CAST_TEST(TestUInt8ToInt16,  UIntType::get(8),  IntType::get(16), C(ZExt));
 CAST_TEST(TestUInt8ToInt32,  UIntType::get(8),  IntType::get(32), C(ZExt));
 CAST_TEST(TestUInt8ToInt64,  UIntType::get(8),  IntType::get(64), C(ZExt));
 CAST_TEST(TestUInt16ToInt8,  UIntType::get(16), IntType::get(8),  C(Trunc));
-CAST_TEST(TestUInt16ToInt16, UIntType::get(16), IntType::get(16), 0);
+CAST_TEST(TestUInt16ToInt16, UIntType::get(16), IntType::get(16), NO_CAST);
 CAST_TEST(TestUInt16ToInt32, UIntType::get(16), IntType::get(32), C(ZExt));
 CAST_TEST(TestUInt16ToInt64, UIntType::get(16), IntType::get(64), C(ZExt));
 CAST_TEST(TestUInt32ToInt8,  UIntType::get(32), IntType::get(8),  C(Trunc));
 CAST_TEST(TestUInt32ToInt16, UIntType::get(32), IntType::get(16), C(Trunc));
-CAST_TEST(TestUInt32ToInt32, UIntType::get(32), IntType::get(32), 0);
+CAST_TEST(TestUInt32ToInt32, UIntType::get(32), IntType::get(32), NO_CAST);
 CAST_TEST(TestUInt32ToInt64, UIntType::get(32), IntType::get(64), C(ZExt));
 CAST_TEST(TestUInt64ToInt8,  UIntType::get(64), IntType::get(8),  C(Trunc));
 CAST_TEST(TestUInt64ToInt16, UIntType::get(64), IntType::get(16), C(Trunc));
 CAST_TEST(TestUInt64ToInt32, UIntType::get(64), IntType::get(32), C(Trunc));
-CAST_TEST(TestUInt64ToInt64, UIntType::get(64), IntType::get(64), 0);
+CAST_TEST(TestUInt64ToInt64, UIntType::get(64), IntType::get(64), NO_CAST);
 
 PREC_TEST(CompUInt8ToInt8,   UIntType::get(8),  IntType::get(8),  LOWER_PRECEDENCE);
 PREC_TEST(CompUInt8ToInt16,  UIntType::get(8),  IntType::get(16), LOWER_PRECEDENCE);
@@ -247,10 +247,10 @@ PREC_TEST(CompUInt32ToPointer, UIntType::get(32), PointerType::get(BoolType::get
 PREC_TEST(CompUInt64ToPointer, UIntType::get(64), PointerType::get(BoolType::get()), INCOMPATIBLE);
 
 // FP to FP.
-CAST_TEST(TestFloatToFloat,   FloatType::get(),  FloatType::get(),  0);
+CAST_TEST(TestFloatToFloat,   FloatType::get(),  FloatType::get(),  NO_CAST);
 CAST_TEST(TestFloatToDouble,  FloatType::get(),  DoubleType::get(), C(FPExt));
 
-CAST_TEST(TestDoubleToDouble, DoubleType::get(), DoubleType::get(), 0);
+CAST_TEST(TestDoubleToDouble, DoubleType::get(), DoubleType::get(), NO_CAST);
 CAST_TEST(TestDoubleToFloat,  DoubleType::get(), FloatType::get(),  C(FPTrunc));
 
 PREC_TEST(CompFloatToFloat,   FloatType::get(),  FloatType::get(),  EQUAL);
@@ -326,7 +326,7 @@ PREC_TEST(CompPointerToUInt32, PointerType::get(BoolType::get()), UIntType::get(
 PREC_TEST(CompPointerToUInt64, PointerType::get(BoolType::get()), UIntType::get(64), INCOMPATIBLE);
 
 // Pointer to Pointer.
-CAST_TEST(TestBoolPointerToBoolPointer, PointerType::get(BoolType::get()), PointerType::get(BoolType::get()), 0);
+CAST_TEST(TestBoolPointerToBoolPointer, PointerType::get(BoolType::get()), PointerType::get(BoolType::get()), NO_CAST);
 CAST_TEST(TestBoolPointerToFloatPointer, PointerType::get(BoolType::get()), PointerType::get(FloatType::get()), C(BitCast));
 
 PREC_TEST(CompBoolPointerToBoolPointer, PointerType::get(BoolType::get()), PointerType::get(BoolType::get()), EQUAL);
