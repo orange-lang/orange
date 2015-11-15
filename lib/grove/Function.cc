@@ -8,8 +8,10 @@
 
 #include <grove/Function.h>
 #include <grove/Module.h>
+#include <grove/ReturnStmt.h>
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
+#include <grove/types/VoidType.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/IRBuilder.h>
@@ -85,6 +87,48 @@ bool Function::isVoidFunction()
 	}
 	
 	return retType->getLLVMType()->isVoidTy();
+}
+
+void Function::resolve()
+{
+	// If we already have a type, return.
+	if (getType() != nullptr)
+	{
+		return;
+	}
+	
+	auto retStmts = findChildren<ReturnStmt *>();
+	
+	if (retStmts.size() == 0)
+	{
+		std::vector<Type *> args;
+		setType(FunctionType::get(VoidType::get(), args));
+	}
+	else
+	{
+		// Find the highest precedence type in retStmts.
+		auto highest = retStmts[0]->getType();
+		assertExists(highest, "Return statement missing type");
+		
+		for (int i = 1; i < retStmts.size(); i++)
+		{
+			auto cmp_ty = retStmts[i]->getType();
+    		assertExists(cmp_ty, "Return statement missing type");
+			
+			switch (Type::compare(highest, cmp_ty)) {
+				case LOWER_PRECEDENCE:
+					highest = cmp_ty;
+					break;
+				case INCOMPATIBLE:
+					throw std::invalid_argument("Found incompatible return statements");
+				default:
+					break;
+			}
+		}
+		
+		std::vector<Type *> args;
+		setType(FunctionType::get(highest, args));
+	}
 }
 
 void Function::createFunction()

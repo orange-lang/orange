@@ -51,6 +51,8 @@ public:
 	
 	bool isVoidFunction();
 	
+	virtual void resolve() override;
+	
 	virtual void build() override;
 	
 	/// Constructs a new orphaned function 
