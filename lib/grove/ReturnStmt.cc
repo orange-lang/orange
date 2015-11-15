@@ -69,6 +69,15 @@ void ReturnStmt::build()
 	if (hasExpression())
 	{
 		auto ptr = func->getRetValue();
+		
+		auto val_type = value->getType();
+		auto sta_type = ptr->getType()->getPointerElementType();
+		
+		if (val_type != sta_type)
+		{
+			throw std::invalid_argument("can't store incompatible type.");
+		}
+		
 		IRBuilder()->CreateStore(value, ptr);
 	}
 	
