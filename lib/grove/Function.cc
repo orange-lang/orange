@@ -155,6 +155,12 @@ void Function::createFunction()
 	m_function = llvm::Function::Create(llvm_ty, linkage, m_name,
 									   getModule()->getLLVMModule());
 	
+	// Set argument names
+	auto arg_it = m_function->arg_begin();
+	for (unsigned int i = 0; i < m_params.size(); i++, arg_it++)
+	{
+		arg_it->setName(m_params[i]->getName());
+	}
 	
 	m_entry = llvm::BasicBlock::Create(getModule()->getLLVMContext(),
 									   "entry", m_function);
