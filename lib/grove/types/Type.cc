@@ -14,6 +14,7 @@
 
 std::map<std::string, Type*> Type::m_defined;
 std::map<TypeTuple, int> Type::m_cast_map;
+std::map<TypeTuple, TypeCallback> Type::m_cast_func_map;
 
 bool Type::isSigned() const
 {
@@ -119,6 +120,12 @@ void Type::defineCast(const std::type_info& from, const std::type_info& to,
 	m_cast_map[tuple] = cast;
 }
 
+void Type::defineCast(const std::type_info &to, TypeCallback cb)
+{
+	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
+	m_cast_func_map[tuple] = cb;
+}
+
 void Type::defineCast(const std::type_info &to, int cast)
 {
 	Type::defineCast(typeid(*this), to, cast);
@@ -143,8 +150,15 @@ int Type::castOperation(Type *to)
 	}
 	
 	TypeTuple key(typeid(*this).hash_code(), typeid(*to).hash_code());
-	auto it = m_cast_map.find(key);
 	
+	// Search for callbacks first.
+	auto it_cb = m_cast_func_map.find(key);
+	if (it_cb != m_cast_func_map.end())
+	{
+		return it_cb->second(this, to);
+	}
+	
+	auto it = m_cast_map.find(key);
 	if (it == m_cast_map.end())
 	{
 		throw std::invalid_argument("no cast defined");

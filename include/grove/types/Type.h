@@ -34,7 +34,9 @@ typedef enum {
 	OTHER
 } BasicType;
 
+class Type;
 typedef std::tuple<size_t, size_t> TypeTuple;
+typedef std::function<int(Type*,Type*)> TypeCallback;
 
 /**
  * Type is the base class for any Orange Type.
@@ -43,6 +45,7 @@ class Type {
 private:
 	static std::map<std::string, Type *> m_defined;
 	static std::map<TypeTuple, int> m_cast_map;
+	static std::map<TypeTuple, TypeCallback> m_cast_func_map;
 protected:
 	llvm::Type* m_type = nullptr;
 	llvm::LLVMContext* m_context = nullptr;
@@ -52,6 +55,7 @@ protected:
 	
 	static void defineCast(const std::type_info& from, const std::type_info& to, int cast);
 	void defineCast(const std::type_info& to, int cast);
+	void defineCast(const std::type_info& to, TypeCallback cb);
 	
 	Type();
 public:
