@@ -87,6 +87,45 @@ public:
 		
 		return nullptr;
 	}
+	
+	/// Finds the first child, depth-first, of a type T.
+	template <typename T> T findChild()
+	{
+		for (auto child : getChildren())
+		{
+			if (child->is<T>())
+			{
+				return child->as<T>();
+			}
+			
+			auto val = child->findChild<T>();
+			if (val != nullptr)
+			{
+				return val;
+			}
+		}
+				
+		return nullptr;
+	}
+	
+	/// Finds all children, depth-first, of a type T.
+	template <typename T> std::vector<T> findChildren()
+	{
+		std::vector<T> children;
+		
+		for (auto child : getChildren())
+		{
+			if (child->is<T>())
+			{
+				children.push_back(child->as<T>());
+			}
+			
+			auto vals = child->findChildren<T>();
+			children.insert(children.end(), vals.begin(), vals.end());
+		}
+		
+		return children;
+	}
 
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);
