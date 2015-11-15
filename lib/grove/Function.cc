@@ -42,6 +42,21 @@ llvm::Function* Function::getLLVMFunction() const
 	return m_function;
 }
 
+std::vector<Type *> Function::getParamTys() const
+{
+	std::vector<Type *> tys;
+	
+	for (auto param : getParams())
+	{
+		auto ty = param->getType();
+		assertExists(ty, "Param did not have a type!");
+		
+		tys.push_back(ty);
+	}
+	
+	return tys;
+}
+
 std::vector<Parameter *> Function::getParams() const
 {
 	return m_params;

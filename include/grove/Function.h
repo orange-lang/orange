@@ -49,6 +49,9 @@ public:
 	/// Gets the LLVM function.
 	llvm::Function* getLLVMFunction() const;
 	
+	/// Gets the list of parameters as a list of types.
+	std::vector<Type *> getParamTys() const;
+	
 	/// Gets the parameters of this function.
 	std::vector<Parameter *> getParams() const;
 	
