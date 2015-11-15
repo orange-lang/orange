@@ -8,6 +8,9 @@
 
 #include <grove/StrValue.h>
 
+#include <grove/types/PointerType.h>
+#include <grove/types/IntType.h>
+
 #include <llvm/IR/IRBuilder.h>
 
 llvm::Value* StrValue::getValue() const
@@ -24,4 +27,5 @@ void StrValue::build()
 StrValue::StrValue(std::string value)
 {
 	m_str = value;
+	setType(PointerType::get(IntType::get(8)));
 }
