@@ -21,11 +21,6 @@
 #include <llvm/Transforms/Scalar.h>
 #include <util/assertions.h>
 
-std::string Function::getName() const
-{
-	return m_name;
-}
-
 llvm::BasicBlock* Function::getEntry() const
 {
 	return m_entry;

@@ -12,6 +12,7 @@
 
 #include "Block.h"
 #include "Typed.h"
+#include "Named.h"
 
 namespace llvm { class Function; }
 namespace llvm { class BasicBlock; }
@@ -19,10 +20,8 @@ namespace llvm { class Value; }
 
 class Type;
 
-class Function : public Block, public Typed {
+class Function : public Block, public Typed, public Named {
 private:
-	std::string m_name;
-	
 	llvm::BasicBlock* m_entry = nullptr;
 	llvm::BasicBlock* m_exit = nullptr;
 	
@@ -34,9 +33,6 @@ protected:
 	virtual void setupFunction();
 	virtual void optimize();
 public:
-	/// Gets the name of the function
-	std::string getName() const;
-	
 	/// Get the entry block for this function
 	llvm::BasicBlock* getEntry() const;
 	
