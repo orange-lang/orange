@@ -15,3 +15,11 @@ void assertExists(void* ptr, std::string str)
 		throw std::runtime_error(str);
 	}
 }
+
+void assertEqual(void* ptr_a, void* ptr_b, std::string str)
+{
+	if (ptr_a != ptr_b)
+	{
+		throw std::runtime_error(str);
+	}
+}

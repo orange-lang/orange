@@ -11,3 +11,4 @@
 #include <string>
 
 void assertExists(void*,std::string);
+void assertEqual(void*,void*,std::string);
