@@ -14,14 +14,14 @@ std::vector<ASTNode *> Block::getStatements() const
 	return m_statements;
 }
 
-Named* Block::getNamed(std::string name, ASTNode *limit)
+Named* Block::getNamed(std::string name, const ASTNode *limit) const
 {
 	std::vector<Type *> candidate_list;
 	return getNamed(name, candidate_list, limit);
 }
 
 Named* Block::getNamed(std::string name, std::vector<Type *> candidates,
-					   ASTNode *limit)
+					   const ASTNode *limit) const
 {
 	for (auto child : getChildren())
 	{

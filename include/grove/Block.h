@@ -31,7 +31,7 @@ public:
 	/// (i.e., does not search the whole tree.)
 	/// @param name The name of the node to look for.
 	/// @param limit The child to stop searching at.
-	Named* getNamed(std::string name, ASTNode* limit);
+	Named* getNamed(std::string name, const ASTNode* limit) const;
 	
 	/// Gets a Named node in the immediate list of children.
 	/// (i.e., does not search the whole tree.)
@@ -39,7 +39,7 @@ public:
 	/// @param candidates A list of candidates to help find the proper Node.
 	/// @param limit The child to stop searching at.
 	Named* getNamed(std::string name, std::vector<Type *> candidates,
-					ASTNode* limit);
+					const ASTNode* limit) const;
 	
 	Block();
 	Block(Module* module);
