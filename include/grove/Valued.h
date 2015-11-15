@@ -18,6 +18,6 @@ class Valued {
 protected:
 	llvm::Value* m_value = nullptr;
 public:
-	llvm::Value* getValue() const;
-	void setValue(llvm::Value* newValue);
+	virtual llvm::Value* getValue() const;
+	virtual void setValue(llvm::Value* newValue);
 };
