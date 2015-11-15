@@ -42,6 +42,11 @@ llvm::Function* Function::getLLVMFunction() const
 	return m_function;
 }
 
+std::vector<Parameter *> Function::getParams() const
+{
+	return m_params;
+}
+
 void Function::createReturn()
 {
 	/// If we're missing a terminator, jump to exit.
