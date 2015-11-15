@@ -16,7 +16,7 @@
 #include <grove/types/IntType.h>
 #include <grove/types/PointerType.h>
 
-const int BOOL_WIDTH = 32;
+const int BOOL_WIDTH = 1;
 
 static int BoolToInt(Type* f, Type* t)
 {
@@ -33,7 +33,7 @@ static int BoolToInt(Type* f, Type* t)
 	}
 	else
 	{
-		return llvm::Instruction::CastOps::SExt;
+		return llvm::Instruction::CastOps::ZExt;
 	}
 }
 
@@ -52,12 +52,12 @@ static int BoolToUInt(Type* f, Type* t)
 	}
 	else
 	{
-		return llvm::Instruction::CastOps::SExt;
+		return llvm::Instruction::CastOps::ZExt;
 	}
 }
 
 BoolType::BoolType()
-: IntType(BOOL_WIDTH)
+: UIntType(BOOL_WIDTH)
 {
 	defineCast(typeid(IntType), BoolToInt);
 	defineCast(typeid(UIntType), BoolToUInt);

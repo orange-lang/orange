@@ -66,7 +66,7 @@ IntType::IntType(unsigned int width)
 	m_type = (llvm::Type *)llvm::Type::getIntNTy(*m_context, width);
 	
 	defineCast(typeid(IntType), IntToInt);
-	defineCast(typeid(BoolType), IntToInt);
+	defineCast(typeid(BoolType), IntToUInt);
 	defineCast(typeid(UIntType), IntToUInt);
 
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::SIToFP);

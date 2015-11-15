@@ -8,9 +8,9 @@
 
 #pragma once 
 
-#include "IntType.h"
+#include "UIntType.h"
 
-class BoolType : public IntType
+class BoolType : public UIntType
 {
 protected:
 	BoolType();

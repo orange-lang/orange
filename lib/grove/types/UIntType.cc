@@ -65,8 +65,8 @@ UIntType::UIntType(unsigned int width)
 	m_type = (llvm::Type *)llvm::Type::getIntNTy(*m_context, width);
 	
 	defineCast(typeid(UIntType), UIntToUInt);
+	defineCast(typeid(BoolType), UIntToUInt);
 	defineCast(typeid(IntType), UIntToInt);
-	defineCast(typeid(BoolType), UIntToInt);
 	
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::UIToFP);
 	defineCast(typeid(FloatType), llvm::Instruction::CastOps::UIToFP);
@@ -104,6 +104,8 @@ BasicType UIntType::PODTy() const
 {
 	switch (m_width)
 	{
+		case 1:
+			return UINT1;
 		case 8:
 			return UINT8;
 		case 16:

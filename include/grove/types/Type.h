@@ -34,6 +34,7 @@ typedef enum {
 	UINT32,
 	UINT16,
 	UINT8,
+	UINT1,
 	VOID,
 	OTHER
 } BasicType;
