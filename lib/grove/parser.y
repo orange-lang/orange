@@ -24,7 +24,7 @@
 %}
 
 %locations
-%error-verbose
+//%error-verbose
 %lex-param { Module* module }
 %parse-param { Module* module }
 
