@@ -10,5 +10,12 @@
 
 #include <string>
 
-void assertExists(void*,std::string);
-void assertEqual(void*,void*,std::string);
+/// Throws an exception if ptr == nullptr.
+/// @param err The message of the exception.
+void assertExists(void* ptr, std::string err);
+
+/// Throws an exception if a != b.
+/// @param err The message of the exception.
+void assertEqual(void* a, void* b, std::string err);
+
+
