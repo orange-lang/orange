@@ -41,6 +41,8 @@ llvm::Value* Expression::castTo(Type *ty) const
 	}
 	
 	auto casted = IRBuilder()->CreateCast(op, getValue(), ty->getLLVMType());
+	assertExists(casted, "cast returned nullptr.");
+	
 	return casted;
 }
 
