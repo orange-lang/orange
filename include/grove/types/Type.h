@@ -38,6 +38,8 @@ class Type;
 typedef std::tuple<size_t, size_t> TypeTuple;
 typedef std::function<int(Type*,Type*)> TypeCallback;
 
+const int NO_CAST = 0;
+
 /**
  * Type is the base class for any Orange Type.
  */
