@@ -21,7 +21,7 @@ void MainFunction::setupFunction()
 }
 
 MainFunction::MainFunction(Module* mod, std::string name)
-: Function(mod, name)
+: Function(mod, name, std::vector<Parameter *>())
 {
 	// Do nothing
 }

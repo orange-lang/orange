@@ -17,6 +17,7 @@
 	#include <grove/ReturnStmt.h>
 	#include <grove/BinOpCompare.h>
 	#include <grove/BinOpArith.h>
+	#include <grove/Parameter.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -129,7 +130,7 @@ structures
 function
  	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN term statements END
 	{
-		auto func = new Function(*$2);
+		auto func = new Function(*$2, std::vector<Parameter *>());
 
 		for (auto stmt : *$6)
 		{

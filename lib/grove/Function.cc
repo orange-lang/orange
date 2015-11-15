@@ -9,6 +9,7 @@
 #include <grove/Function.h>
 #include <grove/Module.h>
 #include <grove/ReturnStmt.h>
+#include <grove/Parameter.h>
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
 #include <grove/types/VoidType.h>
@@ -187,7 +188,7 @@ void Function::build()
 	}
 }
 
-Function::Function(std::string name)
+Function::Function(std::string name, std::vector<Parameter *> params)
 : Block()
 {
 	if (name == "")
@@ -195,15 +196,27 @@ Function::Function(std::string name)
 		throw std::invalid_argument("name must not be blank.");
 	}
 	
+	for (auto param : params)
+	{
+		addChild(param, true);
+	}
+	
 	m_name = name;
+	m_params = params;
 }
 
-Function::Function(Module* module, std::string name)
+Function::Function(Module* module, std::string name,
+				   std::vector<Parameter *> params)
 : Block(module)
 {
 	if (name == "")
 	{
 		throw std::invalid_argument("name must not be blank.");
+	}
+	
+	for (auto param : params)
+	{
+		addChild(param, true);
 	}
 	
 	m_name = name;
