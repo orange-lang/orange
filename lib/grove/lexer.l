@@ -15,7 +15,7 @@
 	#include <grove/types/IntType.h>
 	#include <grove/types/FloatType.h>
 	#include <grove/types/DoubleType.h>
-	
+
 	#include <grove/Parameter.h>
 
 	#include <string.h>
@@ -56,14 +56,6 @@
 [\ \t\r]										;
 
 "#"[^\r\n]*										yycolumn = 1; // Reset column as we're on a new line.
-
-[0|1]+"b"										return VALUE;
-
-"0x"											BEGIN(HEX);
-<HEX>{
-	[0-9A-Fa-f]+								BEGIN(INITIAL); return VALUE;
-	.											printf("Invalid hex constant 0x%s\n", yytext); BEGIN(INITIAL);
-}
 
 [0-9][0-9]*\.[0-9]+"f" 							CREATE_VAL(FloatType::get()); return VALUE;
 [0-9][0-9]*\.[0-9]+"d" 							CREATE_VAL(DoubleType::get()); return VALUE;
