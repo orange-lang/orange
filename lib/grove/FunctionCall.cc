@@ -74,12 +74,29 @@ void FunctionCall::resolve()
 
 void FunctionCall::build()
 {
-	for (auto arg : m_args)
+	std::vector<llvm::Value *> llvm_args;
+	
+	auto func_ty = getFunctionTy();
+	for (unsigned int i = 0; i < m_args.size(); i++)
 	{
+		auto param_ty = func_ty->getArgs()[i];
+		
+		auto arg = m_args[i];
 		arg->build();
+	
+		// Cast the argument if it doesn't match the parameter.
+		if (arg->getType() != param_ty)
+		{
+			llvm_args.push_back(arg->castTo(param_ty));
+		}
+		else
+		{
+			llvm_args.push_back(arg->getValue());
+		}
 	}
 	
-	IRBuilder()->CreateCall(getFunction());
+	auto res = IRBuilder()->CreateCall(getFunction(), llvm_args);
+	setValue(res);
 }
 
 FunctionCall::FunctionCall(std::string name, std::vector<Expression *> args)
