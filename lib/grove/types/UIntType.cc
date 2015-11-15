@@ -10,10 +10,10 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Instruction.h>
 
-#include <grove/types/IntType.h>
 #include <grove/types/DoubleType.h>
 #include <grove/types/FloatType.h>
 #include <grove/types/IntType.h>
+#include <grove/types/BoolType.h>
 #include <grove/types/PointerType.h>
 
 static int UIntToInt(Type* f, Type* t)
@@ -66,6 +66,7 @@ UIntType::UIntType(unsigned int width)
 	
 	defineCast(typeid(UIntType), UIntToUInt);
 	defineCast(typeid(IntType), UIntToInt);
+	defineCast(typeid(BoolType), UIntToInt);
 	
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::UIToFP);
 	defineCast(typeid(FloatType), llvm::Instruction::CastOps::UIToFP);
