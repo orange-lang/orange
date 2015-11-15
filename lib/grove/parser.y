@@ -137,7 +137,7 @@ statements
 
 statement
 	: { $$ = nullptr; }
-	| structures term  { $$ = $1; } /* structures: if, loops, functions, etc */
+	| structures { $$ = $1; } /* structures: if, loops, functions, etc */
 	| controls { $$ = $1; } /* controls: return, break, continue */
 	| expression { $$ = $1; }
 	;
