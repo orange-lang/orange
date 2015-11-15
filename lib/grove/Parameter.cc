@@ -9,6 +9,13 @@
 #include <grove/Parameter.h>
 #include <util/assertions.h>
 
+#include <llvm/IR/IRBuilder.h>
+
+llvm::Value* Parameter::getValue() const
+{
+	return IRBuilder()->CreateLoad(m_value);
+}
+
 Parameter::Parameter(Type* type, std::string name)
 {
 	assertExists(type, "Type must not be null");

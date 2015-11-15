@@ -15,5 +15,7 @@ class Type;
 
 class Parameter : public Expression, public Named {
 public:
+	virtual llvm::Value* getValue() const override;
+	
 	Parameter(Type* type, std::string name);
 };
