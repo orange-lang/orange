@@ -137,6 +137,11 @@ std::string Type::getSignature() const
 
 int Type::castOperation(Type *to)
 {
+	if (this == to)
+	{
+		return 0;
+	}
+	
 	TypeTuple key(typeid(*this).hash_code(), typeid(*to).hash_code());
 	auto it = m_cast_map.find(key);
 	
