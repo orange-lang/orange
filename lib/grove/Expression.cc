@@ -26,6 +26,7 @@ bool Expression::hasPointer() const
 llvm::Value* Expression::castTo(Type *ty) const
 {
 	assertExists(ty, "type must exist.");
+	assertExists(getType(), "expression does not have a type.");
 	
 	auto op = (llvm::Instruction::CastOps)getType()->castOperation(ty);
 	
