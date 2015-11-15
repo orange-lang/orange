@@ -61,7 +61,7 @@ std::string BinOpExpr::getOperator() const
 
 void BinOpExpr::resolve()
 {
-	if (areTypesCompatible())
+	if (areTypesCompatible() == false)
 	{
 		throw std::invalid_argument("LHS is not compatible with RHS");
 	}
