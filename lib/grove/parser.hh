@@ -220,11 +220,12 @@ typedef union YYSTYPE
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
+	Statement* stmt;
 	Value* val;
 	std::string* str;
 }
 /* Line 1529 of yacc.c.  */
-#line 228 "/Users/robert/dev/orange/lib/grove/parser.hh"
+#line 229 "/Users/robert/dev/orange/lib/grove/parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

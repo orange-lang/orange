@@ -33,6 +33,7 @@
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
+	Statement* stmt;
 	Value* val;
 	std::string* str;
 }
@@ -54,8 +55,9 @@
 %type <nodes> statements
 %type <node> statement return controls
 %type <expr> expression primary comparison arithmetic
+%type <stmt> structures function
 %type <val> VALUE
-%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS
+%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID
 
 /* lowest to highest precedence */
 %left COMMA
@@ -114,10 +116,27 @@ statements
 
 statement
 	: { $$ = nullptr; }
-//	| structures term  /* structures: if, loops, functions, etc */
+	| structures term  { $$ = $1; } /* structures: if, loops, functions, etc */
 	| controls { $$ = $1; } /* controls: return, break, continue */
 	| expression { $$ = $1; }
 	;
+
+structures
+	: function { $$ = $1; }
+	;
+
+function
+ 	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN term statements END
+	{
+		auto func = new Function(*$2);
+
+		for (auto stmt : *$6)
+		{
+			func->addStatement(stmt);
+		}
+
+		$$ = func;
+	}
 
 controls
 	: return { $$ = $1; }
