@@ -7,10 +7,41 @@
 */
 
 #include <grove/Block.h>
+#include <grove/Named.h>
 
 std::vector<ASTNode *> Block::getStatements() const
 {
 	return m_statements;
+}
+
+Named* Block::getNamed(std::string name, ASTNode *limit)
+{
+	std::vector<Type *> candidate_list;
+	return getNamed(name, candidate_list, limit);
+}
+
+Named* Block::getNamed(std::string name, std::vector<Type *> candidates,
+					   ASTNode *limit)
+{
+	for (auto child : getChildren())
+	{
+		if (child == limit)
+		{
+			break;
+		}
+		
+		if (child->is<Named *>())
+		{
+			auto named = child->as<Named *>();
+			
+			if (named->matches(name, candidates))
+			{
+				return named;
+			}
+		}
+	}
+	
+	return nullptr;
 }
 
 void Block::addStatement(ASTNode *statement)

@@ -11,6 +11,9 @@
 #include <vector>
 #include "Statement.h"
 
+class Named;
+class Type;
+
 /**
  * Block is the base class for any element that holds a list of statements.
  */
@@ -23,6 +26,20 @@ public:
 	std::vector<ASTNode *> getStatements() const;
 	
 	void addStatement(ASTNode* statement);
+	
+	/// Gets a Named node in the immediate list of children.
+	/// (i.e., does not search the whole tree.)
+	/// @param name The name of the node to look for.
+	/// @param limit The child to stop searching at.
+	Named* getNamed(std::string name, ASTNode* limit);
+	
+	/// Gets a Named node in the immediate list of children.
+	/// (i.e., does not search the whole tree.)
+	/// @param name The name of the node to look for.
+	/// @param candidates A list of candidates to help find the proper Node.
+	/// @param limit The child to stop searching at.
+	Named* getNamed(std::string name, std::vector<Type *> candidates,
+					ASTNode* limit);
 	
 	Block();
 	Block(Module* module);
