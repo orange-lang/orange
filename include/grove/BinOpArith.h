@@ -17,5 +17,8 @@
 class BinOpArith : public BinOpExpr
 {
 public:
+	virtual void resolve() override;
+	virtual void build() override;
+	
 	BinOpArith(Expression* LHS, std::string op, Expression* RHS);
 };

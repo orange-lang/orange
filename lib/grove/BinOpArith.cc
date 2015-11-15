@@ -7,6 +7,110 @@
 */
 
 #include <grove/BinOpArith.h>
+#include <grove/types/Type.h>
+#include <util/assertions.h>
+
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/InstrTypes.h>
+
+#include <map>
+#include <tuple>
+
+static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSigned)
+{
+	typedef llvm::Instruction::BinaryOps BinOp;
+	typedef std::tuple<BinOp, BinOp, BinOp> BinOpTuple;
+	
+	using namespace llvm;
+	
+	const static std::map<std::string, BinOpTuple> m_op_map = {
+		{"+", {BinOp::Add, BinOp::Add, BinOp::FAdd}},
+		{"-", {BinOp::Sub, BinOp::Sub, BinOp::FSub}},
+	};
+	
+	auto it = m_op_map.find(op);
+	
+	if (it == m_op_map.end())
+	{
+		throw std::invalid_argument("op not supported.");
+	}
+	
+	if (FP == true)
+	{
+		return std::get<2>(it->second);
+	}
+	else if (isSigned == true)
+	{
+		return std::get<1>(it->second);
+	}
+	else
+	{
+		return std::get<0>(it->second);
+	}
+}
+
+void BinOpArith::resolve()
+{
+	BinOpExpr::resolve();
+	
+	switch (compare(getLHS(), getRHS()))
+	{
+		case LOWER_PRECEDENCE:
+			setType(getRHS()->getType());
+			break;
+		case HIGHER_PRECEDENCE:
+			setType(getLHS()->getType());
+			break;
+		case INCOMPATIBLE:
+			throw std::runtime_error("Cannot get type of expression.");
+			break;
+		case EQUAL:
+			setType(getLHS()->getType());
+			break;
+	}
+}
+
+void BinOpArith::build()
+{
+	getLHS()->build();
+	getRHS()->build();
+	
+	auto vLHS = getLHS()->getValue();
+	auto vRHS = getRHS()->getValue();
+	
+	assertExists(vLHS, "LHS did not generate a value.");
+	assertExists(vRHS, "RHS did not generate a value.");
+	
+	if (requiresCast())
+	{
+		auto prec = compare(getLHS(), getRHS());
+		
+		switch (prec)
+		{
+			case LOWER_PRECEDENCE:
+				vLHS = getLHS()->castTo(getRHS());
+				break;
+			case HIGHER_PRECEDENCE:
+				vRHS = getRHS()->castTo(getLHS());
+				break;
+			case INCOMPATIBLE:
+				throw std::runtime_error("Cannot cast types.");
+				break;
+			default:
+				// Do nothing
+				break;
+		}
+	}
+	
+	auto op = getBinOp(getOperator(), isFloatingPointOperation(),
+					   areOperandsSigned());
+	
+	assertEqual(vLHS->getType(), vRHS->getType(),
+				"LHS and RHS do not have the same type!");
+	
+	auto value = IRBuilder()->CreateBinOp(op, vLHS, vRHS);
+	setValue(value);
+}
 
 BinOpArith::BinOpArith(Expression* LHS, std::string op, Expression* RHS)
 : BinOpExpr(LHS, op, RHS)
