@@ -75,7 +75,7 @@
 %type <expr> expression primary comparison arithmetic call
 %type <stmt> structures function extern_function
 %type <val> VALUE
-%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING
+%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE
 %type <ty> type basic_type type_hint
 %type <params> param_list
 %type <args> arg_list
@@ -235,6 +235,8 @@ comparison
 arithmetic
 	: expression PLUS expression { $$ = new BinOpArith($1, *$2, $3); }
 	| expression MINUS expression { $$ = new BinOpArith($1, *$2, $3); }
+	| expression TIMES expression { $$ = new BinOpArith($1, *$2, $3); }
+	| expression DIVIDE expression { $$ = new BinOpArith($1, *$2, $3); }
 	;
 
 call
