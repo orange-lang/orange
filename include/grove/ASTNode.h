@@ -71,7 +71,7 @@ public:
 	}
 	
 	/// Finds a parent of a type T.
-	template <typename T> T findParent()
+	template <typename T> T findParent() const
 	{
 		ASTNode* ptr = getParent();
 		
@@ -89,7 +89,7 @@ public:
 	}
 	
 	/// Finds the first child, depth-first, of a type T.
-	template <typename T> T findChild()
+	template <typename T> T findChild() const
 	{
 		for (auto child : getChildren())
 		{
@@ -109,7 +109,7 @@ public:
 	}
 	
 	/// Finds all children, depth-first, of a type T.
-	template <typename T> std::vector<T> findChildren()
+	template <typename T> std::vector<T> findChildren() const
 	{
 		std::vector<T> children;
 		
