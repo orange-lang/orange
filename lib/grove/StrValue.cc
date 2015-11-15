@@ -26,6 +26,6 @@ void StrValue::build()
 
 StrValue::StrValue(std::string value)
 {
-	m_str = value;
+	m_str = value.substr(1, value.size() - 2);
 	setType(PointerType::get(IntType::get(8)));
 }
