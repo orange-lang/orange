@@ -24,6 +24,8 @@ typedef llvm::IRBuilder<true, llvm::ConstantFolder,
 	llvm::IRBuilderDefaultInserter<true> > IRBuilder;
 
 class Module;
+class Named;
+class Type;
 
 /**
  * ASTNode is the root node for any element in the AST.
@@ -65,7 +67,7 @@ public:
 	}
 	
 	/// Casts this node to a certain type.
-	template <typename T> T as()
+	template <typename T> T as() 
 	{
 		return dynamic_cast<T>(this);
 	}
@@ -126,6 +128,10 @@ public:
 		
 		return children;
 	}
+	
+	Named* findNamed(std::string name) const;
+	
+	Named* findNamed(std::string name, std::vector<Type *> candidates) const;
 
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);

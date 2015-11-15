@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <grove/ASTNode.h>
 #include <grove/Module.h>
+#include <grove/Block.h>
 
 Module* ASTNode::getModule() const
 {
@@ -78,6 +79,51 @@ void ASTNode::resolve()
 void ASTNode::build()
 {
 	// Do nothing 
+}
+
+Named* ASTNode::findNamed(std::string name) const
+{
+	std::vector<Type *> candidate_list;
+	return findNamed(name, candidate_list);
+}
+
+Named* ASTNode::findNamed(std::string name, std::vector<Type *> candidates) const
+{
+	auto ptr = this;
+	
+	while (ptr != nullptr)
+	{
+		// Find the nearest block from this pointer.
+		auto block = ptr->findParent<Block *>();
+		
+		if (block == nullptr)
+		{
+			return nullptr;
+		}
+		
+		// Find closest node whose parent is that block.
+		auto limit = ptr;
+		while (limit != nullptr)
+		{
+			if (limit->getParent() == block)
+			{
+				break;
+			}
+			
+			limit = limit->getParent();
+		}
+		
+		auto named = block->getNamed(name, candidates, limit);
+		if (named != nullptr)
+		{
+			return named;
+		}
+		
+		// If we didn't find it, start looking from the block.
+		ptr = block;
+	}
+	
+	return nullptr;
 }
 
 ASTNode::ASTNode(Module* module)
