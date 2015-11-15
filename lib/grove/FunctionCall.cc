@@ -41,6 +41,21 @@ llvm::Function* FunctionCall::getFunction() const
 	return (llvm::Function *)value;
 }
 
+FunctionType* FunctionCall::getFunctionTy() const
+{
+	auto named = dynamic_cast<Typed *>(findNamed(getName()));
+	assertExists(named, "Couldn't find function");
+	
+	auto ty = named->getType();
+	if (ty == nullptr || ty->isFunctionTy() == false)
+	{
+		assertExists(ty, "Object isn't a function.");
+	}
+	
+	auto func_ty = dynamic_cast<FunctionType*>(ty);
+	return func_ty;
+}
+
 void FunctionCall::resolve()
 {
 	// Determine type

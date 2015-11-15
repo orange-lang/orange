@@ -12,12 +12,15 @@
 
 namespace llvm { class Function; }
 
+class FunctionType;
+
 class FunctionCall : public Expression {
 private:
 	std::string m_name;
 	std::vector<Expression *> m_args;
 	
 	llvm::Function* getFunction() const;
+	FunctionType* getFunctionTy() const;
 public:
 	/// Gets the name of the function that we are calling.
 	std::string getName() const;
