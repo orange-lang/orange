@@ -30,6 +30,8 @@ private:
 	llvm::Value* m_ret_value = nullptr;
 	llvm::Function* m_function = nullptr;
 	
+	Type* m_ret_type = nullptr;
+	
 	std::vector<Parameter *> m_params;
 protected:
 	virtual void createFunction();
@@ -57,6 +59,8 @@ public:
 	
 	/// Gets this function's return type.
 	Type* getReturnType();
+	
+	void setReturnType(Type* ty);
 	
 	/// Indicates whether or not this function returns void.
 	bool isVoidFunction();

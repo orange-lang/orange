@@ -94,6 +94,11 @@ Type* Function::getReturnType()
 	return ty->getBaseTy();
 }
 
+void Function::setReturnType(Type *ty)
+{
+	m_ret_type = ty;
+}
+
 bool Function::isVoidFunction()
 {
 	auto retType = getReturnType();
@@ -110,6 +115,12 @@ void Function::resolve()
 	// If we already have a type, return.
 	if (getType() != nullptr)
 	{
+		return;
+	}
+	
+	if (m_ret_type != nullptr)
+	{
+		setType(FunctionType::get(m_ret_type, getParamTys()));
 		return;
 	}
 	
