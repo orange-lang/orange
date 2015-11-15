@@ -141,6 +141,8 @@ void Function::createFunction()
 									   "entry", m_function);
 	m_exit = llvm::BasicBlock::Create(getModule()->getLLVMContext(),
 									  "exit", m_function);
+	
+	setValue(m_function);
 }
 
 void Function::setupFunction()

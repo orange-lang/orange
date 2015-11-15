@@ -13,6 +13,7 @@
 #include "Block.h"
 #include "Typed.h"
 #include "Named.h"
+#include "Valued.h"
 
 namespace llvm { class Function; }
 namespace llvm { class BasicBlock; }
@@ -20,7 +21,7 @@ namespace llvm { class Value; }
 
 class Type;
 
-class Function : public Block, public Typed, public Named {
+class Function : public Block, public Valued, public Typed, public Named {
 private:
 	llvm::BasicBlock* m_entry = nullptr;
 	llvm::BasicBlock* m_exit = nullptr;
