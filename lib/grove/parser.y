@@ -14,6 +14,7 @@
 	#include <grove/FunctionCall.h>
 	#include <grove/ExternFunction.h>
 	#include <grove/Value.h>
+	#include <grove/StrValue.h>
 	#include <grove/Expression.h>
 	#include <grove/ReturnStmt.h>
 	#include <grove/BinOpCompare.h>
@@ -28,7 +29,7 @@
 	#include <grove/types/DoubleType.h>
 	#include <grove/types/VoidType.h>
 	#include <grove/types/PointerType.h>
-	
+
 	#include <util/assertions.h>
 
 	extern struct YYLTYPE yyloc;
@@ -74,7 +75,7 @@
 %type <expr> expression primary comparison arithmetic call
 %type <stmt> structures function extern_function
 %type <val> VALUE
-%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID
+%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING
 %type <ty> type basic_type
 %type <params> param_list
 %type <args> arg_list
@@ -243,6 +244,7 @@ call
 primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 	| VALUE { $$ = $1; }
+	| STRING { $$ = new StrValue(*$1); }
 	| TYPE_ID { $$ = new IDReference(*$1); }
 	;
 
