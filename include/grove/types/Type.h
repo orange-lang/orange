@@ -50,8 +50,8 @@ protected:
 	static Type* getDefined(std::string signature);
 	static void define(std::string signature, Type* ty);
 	
-	static void defineCast(const std::type_info& to, const std::type_info& from, int cast);
-	void defineCast(const std::type_info& from, int cast);
+	static void defineCast(const std::type_info& from, const std::type_info& to, int cast);
+	void defineCast(const std::type_info& to, int cast);
 	
 	Type();
 public:
