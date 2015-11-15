@@ -29,13 +29,26 @@ void BinOpCompare::build()
 	
 	if (requiresCast())
 	{
-		/// @todo Get the higher order type.
-		/// @todo Cast lower order to higher order.
-		throw std::runtime_error("Cannot cast types.");
+		auto prec = compare(getLHS(), getRHS());
+		
+		switch (prec)
+		{
+			case LOWER_PRECEDENCE:
+				vLHS = getLHS()->castTo(getRHS());
+				break;
+			case HIGHER_PRECEDENCE:
+				vRHS = getRHS()->castTo(getLHS());
+				break;
+			case INCOMPATIBLE:
+        		throw std::runtime_error("Cannot cast types.");
+				break;
+			default:
+				// Do nothing
+				break;
+		}
 	}
 	
 	// Get the operation to use.
-	
 	throw std::runtime_error("BinOpCompare::build NYI");
 }
 
