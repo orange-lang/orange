@@ -117,6 +117,7 @@ int name(){\
 	return exitCode;}
 
 ADD_TEST_FOLDER(TestBasicPrograms, basic);
+ADD_TEST_FOLDER(TestFunctionPrograms, functions);
 
 
 RUN_TESTS();
