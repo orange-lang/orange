@@ -101,37 +101,22 @@ int TestRet2()
 	return cmpEq(result, 2);
 }
 
-ADD_TEST(TestAllPrograms, "Test building all basic programs in test dir.")
-int TestAllPrograms()
-{
-	int exitCode = 0;
-	
-	auto test_path = combinePaths(getWorkingDirectory(), "test/basic");
-	auto test_files = getFilesRecursive(test_path);
-	
-	for (auto path : test_files)
-	{
-		try
-		{
-			auto builder = new Builder(path);
-			builder->compile();
-		
-    		if (builder->run() != 0)
-    		{
-    			exitCode = 1;
-    		}		
-		}
-		catch (std::exception& e)
-		{
-			std::stringstream ss;
-			ss << path << ": " << e.what();
-			ADD_ERROR(TestAllPrograms, ss.str());
-			exitCode = 1;
-		}
-	}
-	
-	return exitCode;
-}
+#define ADD_TEST_FOLDER(name, folder)\
+ADD_TEST(name, "Test building " #folder " programs in test/" #folder ".")\
+int name(){\
+	int exitCode = 0;\
+	auto test_path = combinePaths(getWorkingDirectory(), "test/" #folder);\
+	auto test_files = getFilesRecursive(test_path);\
+	for (auto path : test_files){\
+		try{\
+			auto builder = new Builder(path); builder->compile();\
+			if (builder->run() != 0) exitCode = 1;}\
+		catch(std::exception& e){\
+			std::stringstream ss; ss << path << ": " << e.what();\
+			ADD_ERROR(name, ss.str()); exitCode = 1;}}\
+	return exitCode;}
+
+ADD_TEST_FOLDER(TestBasicPrograms, basic);
 
 
 RUN_TESTS();
