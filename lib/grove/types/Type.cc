@@ -181,6 +181,10 @@ Comparison Type::compare(Type *source, Type *target)
 	{
 		return Comparison::HIGHER_PRECEDENCE;
 	}
+	else if (source->PODTy() == target->PODTy())
+	{
+		return Comparison::EQUAL;
+	}
 	else
 	{
 		return Comparison::LOWER_PRECEDENCE;
