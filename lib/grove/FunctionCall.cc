@@ -69,6 +69,12 @@ void FunctionCall::resolve()
 	}
 	
 	auto func_ty = dynamic_cast<FunctionType*>(ty);
+	
+	if (m_args.size() != func_ty->getArgs().size())
+	{
+		throw std::invalid_argument("function args != caller args");
+	}
+	
 	setType(func_ty->getReturnTy());
 }
 
