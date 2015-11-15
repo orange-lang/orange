@@ -32,6 +32,18 @@ bool BinOpExpr::requiresCast() const
 	return getLHS()->getType() != getRHS()->getType();
 }
 
+bool BinOpExpr::isFloatingPointOperation() const
+{
+	return getLHS()->getType()->isFloatingPointTy() ||
+    	getRHS()->getType()->isFloatingPointTy();
+}
+
+bool BinOpExpr::areOperandsSigned() const
+{
+	return getLHS()->getType()->isSigned() ||
+    	getRHS()->getType()->isSigned();
+}
+
 Expression* BinOpExpr::getLHS() const
 {
 	return m_LHS;

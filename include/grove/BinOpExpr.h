@@ -23,6 +23,9 @@ protected:
 	bool areTypesCompatible() const;
 	bool areTypesCastable() const;
 	bool requiresCast() const;
+	
+	bool isFloatingPointOperation() const;
+	bool areOperandsSigned() const;
 public:
 	Expression* getLHS() const;
 	Expression* getRHS() const;
