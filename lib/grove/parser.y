@@ -14,6 +14,7 @@
 	#include <grove/Value.h>
 	#include <grove/Expression.h>
 	#include <grove/ReturnStmt.h>
+	#include <grove/BinOpCompare.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -22,7 +23,7 @@
 %}
 
 %locations
-// %error-verbose
+%error-verbose
 %lex-param { Module* module }
 %parse-param { Module* module }
 
@@ -32,6 +33,7 @@
 	Block* block;
 	Expression* expr;
 	Value* val;
+	std::string* str;
 }
 
 %start start
@@ -50,8 +52,9 @@
 
 %type <nodes> statements
 %type <node> statement return controls
-%type <expr> expression primary
+%type <expr> expression primary comparison
 %type <val> VALUE
+%type <str> COMP_LT COMP_GT LEQ GEQ
 
 /* lowest to highest precedence */
 %left COMMA
@@ -121,6 +124,14 @@ controls
 
 expression
 	: primary { $$ = $1; }
+  | comparison { $$ = $1; }
+	;
+
+comparison
+	: expression COMP_LT expression { $$ = new BinOpCompare($1, *$2, $3); }
+	| expression COMP_GT expression { $$ = new BinOpCompare($1, *$2, $3); }
+	| expression LEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
+	| expression GEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
 	;
 
 primary

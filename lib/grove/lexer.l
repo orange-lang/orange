@@ -10,33 +10,34 @@
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
 	#include <grove/Value.h>
-	
+
 	#include <grove/types/UIntType.h>
 	#include <grove/types/IntType.h>
 	#include <grove/types/FloatType.h>
 	#include <grove/types/DoubleType.h>
-	
-    #include <string.h>
-    #include "parser.hh"
 
-    #define STR (std::string(yytext, yyleng))
+	#include <string.h>
+	#include "parser.hh"
 
-    // Get column and stuff for line information
-    int yycolumn = 1;
-    #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = yycolumn; yylloc.last_column = yycolumn+yyleng-1; \
-    yycolumn += yyleng;
-	
+	#define STR (std::string(yytext, yyleng))
+	#define SAVESTR() yylval.str = new std::string(yytext, yyleng);
+
+	// Get column and stuff for line information
+	int yycolumn = 1;
+	#define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yylineno; yylloc.first_column = yycolumn; yylloc.last_column = yycolumn+yyleng-1; \
+  yycolumn += yyleng;
+
 	#define CREATE_VAL(ty) yylval.val = new Value(yytext, ty);
-	
+
 	#define YY_DECL int yylex(Module* module)
 
 	class Module;
-    extern void yyerror(Module* mod, const char *);
+	extern void yyerror(Module* mod, const char *);
 
-    int yyonce = 0;
+	int yyonce = 0;
 
-    // defining this in here for C++
-    void yyflushbuffer() { YY_FLUSH_BUFFER; }
+	// defining this in here for C++
+	void yyflushbuffer() { YY_FLUSH_BUFFER; }
 %}
 
 %option noyywrap
@@ -83,105 +84,105 @@
 "false"											return VALUE;
 "true"											return VALUE;
 
-"def"											return DEF;
-"return"										return RETURN;
-"elif"											return ELIF;
-"else"											return ELSE;
-"end"											return END;
-"if"											return IF;
-"for"											return FOR;
-"forever"										return FOREVER;
-"loop"											return LOOP;
-"continue"										return CONTINUE;
-"break"											return BREAK;
-"do"											return DO;
-"while"											return WHILE;
-"when"											return WHEN;
-"unless"										return UNLESS;
-"class"											return CLASS;
-"using"											return USING;
-"public"										return PUBLIC;
-"private"										return PRIVATE;
-"shared"										return SHARED;
-"extern"										return EXTERN;
-"const"											return CONST;
-"enum"											return ENUM;
+"def"											SAVESTR(); return DEF;
+"return"										SAVESTR(); return RETURN;
+"elif"											SAVESTR(); return ELIF;
+"else"											SAVESTR(); return ELSE;
+"end"											SAVESTR(); return END;
+"if"											SAVESTR(); return IF;
+"for"											SAVESTR(); return FOR;
+"forever"										SAVESTR(); return FOREVER;
+"loop"											SAVESTR(); return LOOP;
+"continue"										SAVESTR(); return CONTINUE;
+"break"											SAVESTR(); return BREAK;
+"do"											SAVESTR(); return DO;
+"while"											SAVESTR(); return WHILE;
+"when"											SAVESTR(); return WHEN;
+"unless"										SAVESTR(); return UNLESS;
+"class"											SAVESTR(); return CLASS;
+"using"											SAVESTR(); return USING;
+"public"										SAVESTR(); return PUBLIC;
+"private"										SAVESTR(); return PRIVATE;
+"shared"										SAVESTR(); return SHARED;
+"extern"										SAVESTR(); return EXTERN;
+"const"											SAVESTR(); return CONST;
+"enum"											SAVESTR(); return ENUM;
 
-"var"											return TYPE_VAR;
-"char"											return TYPE_CHAR;
-"int"											return TYPE_INT;
-"uint"											return TYPE_UINT;
-"float"											return TYPE_FLOAT;
-"double"										return TYPE_DOUBLE;
-"int8"											return TYPE_INT8;
-"uint8"											return TYPE_UINT8;
-"int16"											return TYPE_INT16;
-"uint16"										return TYPE_UINT16;
-"int32"											return TYPE_INT32;
-"uint32"										return TYPE_UINT32;
-"int64"											return TYPE_INT64;
-"uint64"										return TYPE_UINT64;
-"void"											return TYPE_VOID;
+"var"											SAVESTR(); return TYPE_VAR;
+"char"											SAVESTR(); return TYPE_CHAR;
+"int"											SAVESTR(); return TYPE_INT;
+"uint"											SAVESTR(); return TYPE_UINT;
+"float"											SAVESTR(); return TYPE_FLOAT;
+"double"										SAVESTR(); return TYPE_DOUBLE;
+"int8"											SAVESTR(); return TYPE_INT8;
+"uint8"											SAVESTR(); return TYPE_UINT8;
+"int16"											SAVESTR(); return TYPE_INT16;
+"uint16"										SAVESTR(); return TYPE_UINT16;
+"int32"											SAVESTR(); return TYPE_INT32;
+"uint32"										SAVESTR(); return TYPE_UINT32;
+"int64"											SAVESTR(); return TYPE_INT64;
+"uint64"										SAVESTR(); return TYPE_UINT64;
+"void"											SAVESTR(); return TYPE_VOID;
 
-"("												return OPEN_PAREN;
-")"												return CLOSE_PAREN;
-"{"												return OPEN_BRACE;
-"}"												return CLOSE_BRACE;
-"["												return OPEN_BRACKET;
-"]"												return CLOSE_BRACKET;
+"("												SAVESTR(); return OPEN_PAREN;
+")"												SAVESTR(); return CLOSE_PAREN;
+"{"												SAVESTR(); return OPEN_BRACE;
+"}"												SAVESTR(); return CLOSE_BRACE;
+"["												SAVESTR(); return OPEN_BRACKET;
+"]"												SAVESTR(); return CLOSE_BRACKET;
 
-"..."											return VARARG;
+"..."											SAVESTR(); return VARARG;
 
-"++"											return INCREMENT;
-"--"											return DECREMENT;
+"++"											SAVESTR(); return INCREMENT;
+"--"											SAVESTR(); return DECREMENT;
 
-"!="											return NEQUALS;
-"=="											return EQUALS;
+"!="											SAVESTR(); return NEQUALS;
+"=="											SAVESTR(); return EQUALS;
 
-"&&"											return LOGICAL_AND;
-"||"											return LOGICAL_OR;
-"and"											return LOGICAL_AND;
-"or"											return LOGICAL_OR;
+"&&"											SAVESTR(); return LOGICAL_AND;
+"||"											SAVESTR(); return LOGICAL_OR;
+"and"											SAVESTR(); return LOGICAL_AND;
+"or"											SAVESTR(); return LOGICAL_OR;
 
-"&"												return BITWISE_AND;
-"|"												return BITWISE_OR;
-"^"												return BITWISE_XOR;
+"&"												SAVESTR(); return BITWISE_AND;
+"|"												SAVESTR(); return BITWISE_OR;
+"^"												SAVESTR(); return BITWISE_XOR;
 
-"="												return ASSIGN;
-"+="											return PLUS_ASSIGN;
-"-="											return MINUS_ASSIGN;
-"*="											return TIMES_ASSIGN;
-"/="											return DIVIDE_ASSIGN;
-"%="											return MOD_ASSIGN;
+"="												SAVESTR(); return ASSIGN;
+"+="											SAVESTR(); return PLUS_ASSIGN;
+"-="											SAVESTR(); return MINUS_ASSIGN;
+"*="											SAVESTR(); return TIMES_ASSIGN;
+"/="											SAVESTR(); return DIVIDE_ASSIGN;
+"%="											SAVESTR(); return MOD_ASSIGN;
 
-"->"											return ARROW;
-"<-"											return ARROW_LEFT;
-"."												return DOT;
-";"												return SEMICOLON;
+"->"											SAVESTR(); return ARROW;
+"<-"											SAVESTR(); return ARROW_LEFT;
+"."												SAVESTR(); return DOT;
+";"												SAVESTR(); return SEMICOLON;
 \n 												yycolumn = 1; return NEWLINE; // Reset column as we're on a new line.
-","												return COMMA;
+","												SAVESTR(); return COMMA;
 
-"<="											return LEQ;
-">="											return GEQ;
+"<="											SAVESTR(); return LEQ;
+">="											SAVESTR(); return GEQ;
 
-"<"												return COMP_LT;
-">"												return COMP_GT;
+"<"												SAVESTR(); return COMP_LT;
+">"												SAVESTR(); return COMP_GT;
 
-"+"												return PLUS;
-"-"												return MINUS;
-"*"												return TIMES;
-"/"												return DIVIDE;
-"%"												return MOD;
+"+"												SAVESTR(); return PLUS;
+"-"												SAVESTR(); return MINUS;
+"*"												SAVESTR(); return TIMES;
+"/"												SAVESTR(); return DIVIDE;
+"%"												SAVESTR(); return MOD;
 
-"?"												return QUESTION;
-":"												return COLON;
+"?"												SAVESTR(); return QUESTION;
+":"												SAVESTR(); return COLON;
 
-"mod"											return MOD;
+"mod"											SAVESTR(); return MOD;
 
-"sizeof"										return SIZEOF;
+"sizeof"										SAVESTR(); return SIZEOF;
 
-\"(\\.|[^\\"])*\"								return STRING;
-[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 			return TYPE_ID;
+\"(\\.|[^\\"])*\"								SAVESTR(); return STRING;
+[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 			SAVESTR(); return TYPE_ID;
 
 .												yyerror(module, "invalid token");
 
