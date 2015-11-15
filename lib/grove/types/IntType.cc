@@ -16,6 +16,45 @@
 #include <grove/types/IntType.h>
 #include <grove/types/PointerType.h>
 
+static int IntToInt(Type* f, Type* t)
+{
+	auto from = dynamic_cast<IntType *>(f);
+	auto to = dynamic_cast<IntType *>(t);
+	
+	if (from->getWidth() > to->getWidth())
+	{
+		return llvm::Instruction::CastOps::Trunc;
+	}
+	else if (from->getWidth() == to->getWidth())
+	{
+		return 0;
+	}
+	else
+	{
+		return llvm::Instruction::CastOps::SExt;
+    }
+}
+
+static int IntToUInt(Type* f, Type* t)
+{
+	auto from = dynamic_cast<IntType *>(f);
+	auto to = dynamic_cast<UIntType *>(t);
+	
+	if (from->getWidth() > to->getWidth())
+	{
+		return llvm::Instruction::CastOps::Trunc;
+	}
+	else if (from->getWidth() == to->getWidth())
+	{
+		return 0;
+	}
+	else
+	{
+		return llvm::Instruction::CastOps::SExt;
+	}
+}
+
+
 IntType::IntType(unsigned int width)
 {
 	if (width == 0)
@@ -26,8 +65,9 @@ IntType::IntType(unsigned int width)
 	m_width = width;
 	m_type = (llvm::Type *)llvm::Type::getIntNTy(*m_context, width);
 	
-	defineCast(typeid(UIntType), llvm::Instruction::CastOps::SExt);
-	defineCast(typeid(IntType), llvm::Instruction::CastOps::SExt);
+	defineCast(typeid(IntType), IntToInt);
+	defineCast(typeid(UIntType), IntToUInt);
+
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::SIToFP);
 	defineCast(typeid(FloatType), llvm::Instruction::CastOps::SIToFP);
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::IntToPtr);
@@ -53,6 +93,11 @@ bool IntType::isSigned() const
 bool IntType::isIntTy() const
 {
 	return true;
+}
+
+unsigned int IntType::getWidth() const
+{
+	return m_width;
 }
 
 BasicType IntType::PODTy() const

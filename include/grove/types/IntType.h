@@ -25,6 +25,8 @@ public:
 	virtual bool isSigned() const override;
 	virtual bool isIntTy() const override;
 	
+	unsigned int getWidth() const;
+	
 	virtual BasicType PODTy() const override;
 	
 	static IntType* get(unsigned int width);
