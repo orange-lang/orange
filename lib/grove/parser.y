@@ -26,6 +26,7 @@
 	#include <grove/types/FloatType.h>
 	#include <grove/types/DoubleType.h>
 	#include <grove/types/VoidType.h>
+	#include <grove/types/PointerType.h>
 
 	extern struct YYLTYPE yyloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -71,7 +72,7 @@
 %type <stmt> structures function
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID
-%type <ty> basic_type
+%type <ty> type basic_type
 %type <params> param_list
 %type <args> arg_list
 
@@ -166,12 +167,12 @@ function
 	}
 
 param_list
-	: param_list COMMA basic_type TYPE_ID
+	: param_list COMMA type TYPE_ID
 	{
 		$$ = $1;
 		$$->push_back(new Parameter($3, *$4));
 	}
-	| basic_type TYPE_ID
+	| type TYPE_ID
 	{
 		$$ = new std::vector<Parameter *>();
 		$$->push_back(new Parameter($1, *$2));
@@ -244,6 +245,17 @@ return
 term
 	: NEWLINE
 	| SEMICOLON
+	;
+
+type
+	: type TIMES
+	{
+		$$ = PointerType::get($1);
+	}
+	| basic_type
+	{
+		$$ = $1;
+	}
 	;
 
 basic_type
