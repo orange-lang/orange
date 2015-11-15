@@ -13,7 +13,7 @@
 #include <grove/types/UIntType.h>
 #include <grove/types/DoubleType.h>
 #include <grove/types/FloatType.h>
-#include <grove/types/IntType.h>
+#include <grove/types/BoolType.h>
 #include <grove/types/PointerType.h>
 
 static int IntToInt(Type* f, Type* t)
@@ -66,6 +66,7 @@ IntType::IntType(unsigned int width)
 	m_type = (llvm::Type *)llvm::Type::getIntNTy(*m_context, width);
 	
 	defineCast(typeid(IntType), IntToInt);
+	defineCast(typeid(BoolType), IntToInt);
 	defineCast(typeid(UIntType), IntToUInt);
 
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::SIToFP);
