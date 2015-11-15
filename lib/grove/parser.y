@@ -18,6 +18,7 @@
 	#include <grove/BinOpCompare.h>
 	#include <grove/BinOpArith.h>
 	#include <grove/Parameter.h>
+	#include <grove/IDReference.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -40,6 +41,7 @@
 %union {
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
+	std::vector<Expression*>* args;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
@@ -71,6 +73,7 @@
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID
 %type <ty> basic_type
 %type <params> param_list
+%type <args> arg_list
 
 /* lowest to highest precedence */
 %left COMMA
@@ -174,6 +177,18 @@ param_list
 		$$->push_back(new Parameter($1, *$2));
 	}
 
+arg_list
+	: arg_list COMMA expression
+	{
+		$$ = $1;
+		$$->push_back($3);
+	}
+	| expression
+	{
+		$$ = new std::vector<Expression *>();
+		$$->push_back($1);
+	}
+
 controls
 	: return { $$ = $1; }
 	;
@@ -200,13 +215,19 @@ arithmetic
 call
 	: TYPE_ID OPEN_PAREN CLOSE_PAREN
 	{
-		$$ = new FunctionCall(*$1, {});
+		std::vector<Expression *> params;
+		$$ = new FunctionCall(*$1, params);
+	}
+	| TYPE_ID OPEN_PAREN arg_list CLOSE_PAREN
+	{
+		$$ = new FunctionCall(*$1, *$3);
 	}
 	;
 
 primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
 	| VALUE { $$ = $1; }
+	| TYPE_ID { $$ = new IDReference(*$1); }
 	;
 
 return
