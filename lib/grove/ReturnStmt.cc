@@ -48,27 +48,27 @@ void ReturnStmt::build()
 	auto func = findParent<Function *>();
 	assertExists(func, "Couldn't find parent function of ReturnStmt");
 
-	getExpression()->build();
-	
-	auto value = getExpression()->getValue();
-	
-	if (getType() != func->getReturnType())
-	{
-		switch (Type::compare(getType(), func->getReturnType()))
-		{
-			case LOWER_PRECEDENCE:
-			case HIGHER_PRECEDENCE:
-				value = getExpression()->castTo(func->getReturnType());
-				break;
-			case INCOMPATIBLE:
-        		throw std::invalid_argument("ReturnStmt ty != func ty");
-			default:
-				break;
-		}
-	}
-	
 	if (hasExpression())
 	{
+		getExpression()->build();
+	
+    	auto value = getExpression()->getValue();
+		
+    	if (getType() != func->getReturnType())
+    	{
+    		switch (Type::compare(getType(), func->getReturnType()))
+    		{
+    			case LOWER_PRECEDENCE:
+    			case HIGHER_PRECEDENCE:
+    				value = getExpression()->castTo(func->getReturnType());
+    				break;
+    			case INCOMPATIBLE:
+            		throw std::invalid_argument("ReturnStmt ty != func ty");
+    			default:
+    				break;
+    		}
+    	}
+		
 		auto ptr = func->getRetValue();
 		
     	assertEqual<VAL,PTR>(value, ptr, "Can't store incompatible type.");
