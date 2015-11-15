@@ -33,6 +33,10 @@ public:
 	/// True in the case of pointers.
 	bool hasPointer() const;
 	
+	/// Casts the value of this expression to another type.
+	/// Returns the result of that cast. The original value is untouched.
+	llvm::Value* castTo(Type* ty);
+	
 	/// Sets the value for this expression.
 	void setValue(llvm::Value* value);
 };
