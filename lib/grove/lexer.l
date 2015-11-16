@@ -30,6 +30,7 @@
   yycolumn += yyleng;
 
 	#define CREATE_VAL(ty) yylval.val = new Value(yytext, ty);
+	#define CREATE_VAL_BASE(ty, base) yylval.val = new Value(yytext, ty, base);
 
 	#define YY_DECL int yylex(Module* module)
 
@@ -56,6 +57,14 @@
 [\ \t\r]										;
 
 "#"[^\r\n]*										yycolumn = 1; // Reset column as we're on a new line.
+
+[0|1]+"b"											CREATE_VAL_BASE(UIntType::get(32), 2); return VALUE;
+
+"0x"													BEGIN(HEX);
+<HEX>{
+	[0-9A-Fa-f]+								CREATE_VAL_BASE(UIntType::get(32), 16); BEGIN(INITIAL); return VALUE;
+	.														yyerror(module, "Invalid hex constant"); BEGIN(INITIAL);
+}
 
 [0-9][0-9]*\.[0-9]+"f" 							CREATE_VAL(FloatType::get()); return VALUE;
 [0-9][0-9]*\.[0-9]+"d" 							CREATE_VAL(DoubleType::get()); return VALUE;
