@@ -22,6 +22,10 @@ protected:
 	/// Find the named node in the block.
 	Valued* findNode() const;
 public:
+	virtual llvm::Value* getPointer() const override;
+	
+	virtual bool hasPointer() const override;
+	
 	/// Gets the name that this node is referring to.
 	std::string getName() const;
 	

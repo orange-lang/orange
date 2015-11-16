@@ -13,6 +13,16 @@
 
 #include <util/assertions.h>
 
+llvm::Value* IDReference::getPointer() const
+{
+	return findNode()->getPointer();
+}
+
+bool IDReference::hasPointer() const
+{
+	return findNode()->hasPointer();
+}
+
 Valued* IDReference::findNode() const
 {
 	auto valued = dynamic_cast<Valued *>(findNamed(getName()));
