@@ -83,5 +83,5 @@ ReturnStmt::ReturnStmt(Expression* expression)
 {
 	addChild(expression);
 	
-	m_expr = expression->as<Expression *>();
+	m_expr = expression;
 }
