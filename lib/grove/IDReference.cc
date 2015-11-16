@@ -25,10 +25,7 @@ bool IDReference::hasPointer() const
 
 Valued* IDReference::findNode() const
 {
-	auto valued = dynamic_cast<Valued *>(findNamed(getName()));
-	assertExists(valued, "Could not find named node.");
-	
-	return valued;
+	return findNamed(getName())->as<Valued *>();
 }
 
 std::string IDReference::getName() const
@@ -38,12 +35,11 @@ std::string IDReference::getName() const
 
 void IDReference::resolve()
 {
-	auto typed = dynamic_cast<Typed *>(findNamed(getName()));
-	assertExists(typed, "Could not find named node.");
-	
+	auto typed = findNamed(getName())->as<Typed *>();
+
 	auto ty = typed->getType();
 	assertExists(ty, "Could not assign type.");
-	
+
 	setType(ty);
 }
 
@@ -59,6 +55,6 @@ IDReference::IDReference(std::string name)
 	{
 		throw std::invalid_argument("name cannot be null.");
 	}
-	
+
 	m_name = name;
 }

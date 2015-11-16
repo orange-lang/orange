@@ -28,30 +28,27 @@ std::vector<Expression *> FunctionCall::getArgs() const
 llvm::Function* FunctionCall::getFunction() const
 {
 	// Determine type
-	auto named = dynamic_cast<Valued *>(findNamed(getName()));
-	assertExists(named, "Couldn't find function");
-	
-	auto value = named->getValue();
-	
+	auto valued = findNamed(getName())->as<Valued *>();
+	auto value = valued->getValue();
+
 	if (llvm::isa<llvm::Function>(value) == false)
 	{
 		throw std::invalid_argument("Object did not contain a function");
 	}
-	
+
 	return (llvm::Function *)value;
 }
 
 FunctionType* FunctionCall::getFunctionTy() const
 {
-	auto named = dynamic_cast<Typed *>(findNamed(getName()));
-	assertExists(named, "Couldn't find function");
-	
-	auto ty = named->getType();
+	auto typed = findNamed(getName())->as<Typed *>();
+	auto ty = typed->getType();
+
 	if (ty == nullptr || ty->isFunctionTy() == false)
 	{
 		assertExists(ty, "Object isn't a function.");
 	}
-	
+
 	auto func_ty = dynamic_cast<FunctionType*>(ty);
 	return func_ty;
 }
@@ -59,37 +56,36 @@ FunctionType* FunctionCall::getFunctionTy() const
 void FunctionCall::resolve()
 {
 	// Determine type
-	auto named = dynamic_cast<Typed *>(findNamed(getName()));
-	assertExists(named, "Couldn't find function");
-	
-	auto ty = named->getType();
+	auto typed = findNamed(getName())->as<Typed *>();
+	auto ty = typed->getType();
+
 	if (ty == nullptr || ty->isFunctionTy() == false)
 	{
     	assertExists(ty, "Object isn't a function.");
 	}
-	
+
 	auto func_ty = dynamic_cast<FunctionType*>(ty);
-	
+
 	if (m_args.size() != func_ty->getArgs().size())
 	{
 		throw std::invalid_argument("function args != caller args");
 	}
-	
+
 	setType(func_ty->getReturnTy());
 }
 
 void FunctionCall::build()
 {
 	std::vector<llvm::Value *> llvm_args;
-	
+
 	auto func_ty = getFunctionTy();
 	for (unsigned int i = 0; i < m_args.size(); i++)
 	{
 		auto param_ty = func_ty->getArgs()[i];
-		
+
 		auto arg = m_args[i];
 		arg->build();
-	
+
 		// Cast the argument if it doesn't match the parameter.
 		if (arg->getType() != param_ty)
 		{
@@ -100,7 +96,7 @@ void FunctionCall::build()
 			llvm_args.push_back(arg->getValue());
 		}
 	}
-	
+
 	auto res = IRBuilder()->CreateCall(getFunction(), llvm_args);
 	setValue(res);
 }
@@ -111,12 +107,12 @@ FunctionCall::FunctionCall(std::string name, std::vector<Expression *> args)
 	{
 		throw std::invalid_argument("name cannot be empty");
 	}
-	
+
 	for (auto arg : args)
 	{
 		addChild(arg, true);
 	}
-	
+
 	m_name = name;
 	m_args = args;
 }
