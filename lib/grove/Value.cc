@@ -15,7 +15,7 @@
 void Value::build()
 {
 	auto ty = getType();
-	
+
 	if (ty->isIntTy() && ty->isSigned())
 	{
 		m_value = llvm::ConstantInt::get(getType()->getLLVMType(), m_values.i,
@@ -36,40 +36,40 @@ void Value::build()
 	}
 }
 
-Value::Value(std::string str, Type* t)
+Value::Value(std::string str, Type* t, int base)
 {
 	if (t == nullptr)
 	{
 		throw std::invalid_argument("type must not be null");
 	}
-	
+
 	m_type = t;
-	
+
 	switch (t->PODTy())
 	{
 		case INT8:
-			m_values.i = (int8_t)std::stoll(str);
+			m_values.i = (int8_t)std::stoll(str, nullptr, base);
 			break;
 		case INT16:
-			m_values.i = (int16_t)std::stoll(str);
+			m_values.i = (int16_t)std::stoll(str, nullptr, base);
 			break;
 		case INT32:
-			m_values.i = (int32_t)std::stoll(str);
+			m_values.i = (int32_t)std::stoll(str, nullptr, base);
 			break;
 		case INT64:
-			m_values.i = (int64_t)std::stoll(str);
+			m_values.i = (int64_t)std::stoll(str, nullptr, base);
 			break;
 		case UINT8:
-			m_values.u = (uint8_t)std::stoull(str);
+			m_values.u = (uint8_t)std::stoull(str, nullptr, base);
 			break;
 		case UINT16:
-			m_values.u = (uint16_t)std::stoull(str);
+			m_values.u = (uint16_t)std::stoull(str, nullptr, base);
 			break;
 		case UINT32:
-			m_values.u = (uint32_t)std::stoull(str);
+			m_values.u = (uint32_t)std::stoull(str, nullptr, base);
 			break;
 		case UINT64:
-			m_values.u = (uint64_t)std::stoull(str);
+			m_values.u = (uint64_t)std::stoull(str, nullptr, base);
 			break;
 		case FLOAT:
 			m_values.d = (float)std::stof(str);

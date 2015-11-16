@@ -21,16 +21,16 @@ private:
 	union {
 		int64_t  i;
 		uint64_t u;
-		
+
 		double   d;
 	} m_values;
 public:
 	virtual void build() override;
-	
-	/** 
+
+	/**
 	 * Constructs a new Value.
 	 * @param str The string to convert to a value.
 	 * @param t The type of the value.
 	 */
-	Value(std::string str, Type* t);
+	Value(std::string str, Type* t, int base = 10);
 };
