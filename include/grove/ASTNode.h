@@ -69,7 +69,14 @@ public:
 	/// Casts this node to a certain type.
 	template <typename T> T as() 
 	{
-		return dynamic_cast<T>(this);
+		auto casted = dynamic_cast<T>(this);
+		
+		if (casted == nullptr)
+		{
+			throw std::runtime_error("object could not be casted to type");
+		}
+		
+		return casted;
 	}
 	
 	/// Finds a parent of a type T.
