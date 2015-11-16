@@ -9,6 +9,7 @@
 #pragma once
 
 #include <vector>
+#include "ObjectBase.h"
 
 namespace llvm {
 	class ConstantFolder;
@@ -30,7 +31,7 @@ class Type;
 /**
  * ASTNode is the root node for any element in the AST.
  */
-class ASTNode {
+class ASTNode : public ObjectBase {
 private:
 	Module* m_module = nullptr;
 	ASTNode* m_parent = nullptr;
@@ -59,25 +60,6 @@ public:
 
 	/// Generate code. Sets value if applicable.
 	virtual void build();
-
-	/// Returns whether or not this node is a type.
-	template <typename T> bool is()
-	{
-		return dynamic_cast<T>(this) != nullptr;
-	}
-
-	/// Casts this node to a certain type.
-	template <typename T> T as()
-	{
-		auto casted = dynamic_cast<T>(this);
-
-		if (casted == nullptr)
-		{
-			throw std::runtime_error("object could not be casted to type");
-		}
-
-		return casted;
-	}
 
 	/// Finds a parent of a type T.
 	template <typename T> T findParent() const
