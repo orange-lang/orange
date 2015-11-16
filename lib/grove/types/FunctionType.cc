@@ -16,7 +16,7 @@ FunctionType::FunctionType(Type* retType, std::vector<Type*> args)
 	{
 		throw std::invalid_argument("retType must not be null.");
 	}
-	
+
 	for (auto arg : args)
 	{
 		if (arg == nullptr)
@@ -24,16 +24,16 @@ FunctionType::FunctionType(Type* retType, std::vector<Type*> args)
 			throw std::invalid_argument("must args must not be null.");
 		}
 	}
-	
+
 	m_ret_type = retType;
 	m_args = args;
-	
+
 	std::vector<llvm::Type *> params;
 	for (auto ty : args)
 	{
 		params.push_back(ty->getLLVMType());
 	}
-	
+
 	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, false);
 }
 
@@ -43,25 +43,25 @@ std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args)
 	{
 		throw std::invalid_argument("retType must not be null.");
 	}
-	
+
 	std::stringstream ss;
 	ss << retType->getSignature() << "(";
-	
+
 	for (unsigned int i = 0; i < args.size(); i++)
 	{
 		if (args[i] == nullptr)
 		{
 			throw std::invalid_argument("every argument must not be null");
 		}
-		
+
 		ss << args[i]->getSignature();
-		
+
 		if (i + 1 < args.size())
 		{
 			ss << ",";
 		}
 	}
-	
+
 	ss << ")";
 	return ss.str();
 }
@@ -107,7 +107,7 @@ FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args)
 	{
 		throw std::invalid_argument("retType must not be null.");
 	}
-	
+
 	for (auto arg : args)
 	{
 		if (arg == nullptr)
@@ -118,14 +118,14 @@ FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args)
 
 	std::string signature = getSignature(retType, args);
 	auto defined = getDefined(signature);
-	
+
 	if (defined != nullptr)
 	{
-		return dynamic_cast<FunctionType *>(defined);
+		return defined->as<FunctionType *>();
 	}
 
 	auto ty = new FunctionType(retType, args);
 	define(signature, ty);
-	
+
 	return ty;
 }

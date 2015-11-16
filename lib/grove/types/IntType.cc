@@ -18,9 +18,9 @@
 
 static int IntToInt(Type* f, Type* t)
 {
-	auto from = dynamic_cast<IntType *>(f);
-	auto to = dynamic_cast<IntType *>(t);
-	
+	auto from = f->as<IntType *>();
+	auto to = t->as<IntType *>();
+
 	if (from->getWidth() > to->getWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
@@ -37,9 +37,9 @@ static int IntToInt(Type* f, Type* t)
 
 static int IntToUInt(Type* f, Type* t)
 {
-	auto from = dynamic_cast<IntType *>(f);
-	auto to = dynamic_cast<UIntType *>(t);
-	
+	auto from = f->as<IntType *>();
+	auto to = t->as<UIntType *>();
+
 	if (from->getWidth() > to->getWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
@@ -61,10 +61,10 @@ IntType::IntType(unsigned int width)
 	{
 		throw std::invalid_argument("width must not be 0.");
 	}
-	
+
 	m_width = width;
 	m_type = (llvm::Type *)llvm::Type::getIntNTy(*m_context, width);
-	
+
 	defineCast(typeid(IntType), IntToInt);
 	defineCast(typeid(BoolType), IntToUInt);
 	defineCast(typeid(UIntType), IntToUInt);
@@ -124,18 +124,18 @@ IntType* IntType::get(unsigned int width)
 	{
 		throw std::invalid_argument("width must not be 0.");
 	}
-	
+
 	std::stringstream ss;
 	ss << "i." << width;
-	
+
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
 	{
-		return dynamic_cast<IntType*>(defined);
+		return defined->as<IntType*>();
 	}
-	
+
 	IntType* ty = new IntType(width);
 	define(ss.str(), ty);
-	
+
 	return ty;
 }

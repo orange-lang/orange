@@ -17,7 +17,7 @@
 DoubleType::DoubleType()
 {
 	m_type = llvm::Type::getDoubleTy(*m_context);
-	
+
 	defineCast(typeid(UIntType), llvm::Instruction::CastOps::FPToUI);
 	defineCast(typeid(IntType), llvm::Instruction::CastOps::FPToSI);
 	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPTrunc);
@@ -53,11 +53,11 @@ DoubleType* DoubleType::get()
 	auto defined = getDefined("F");
 	if (defined != nullptr)
 	{
-		return dynamic_cast<DoubleType*>(defined);
+		return defined->as<DoubleType*>();
 	}
-	
+
 	DoubleType* ty = new DoubleType();
 	define("F", ty);
-	
+
 	return ty;
 }

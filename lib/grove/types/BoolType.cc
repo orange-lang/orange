@@ -20,9 +20,9 @@ const int BOOL_WIDTH = 1;
 
 static int BoolToInt(Type* f, Type* t)
 {
-	auto from = dynamic_cast<BoolType *>(f);
-	auto to = dynamic_cast<IntType *>(t);
-	
+	auto from = f->as<BoolType*>();
+	auto to = t->as<IntType*>();
+
 	if (from->getWidth() > to->getWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
@@ -39,9 +39,9 @@ static int BoolToInt(Type* f, Type* t)
 
 static int BoolToUInt(Type* f, Type* t)
 {
-	auto from = dynamic_cast<BoolType *>(f);
-	auto to = dynamic_cast<UIntType *>(t);
-	
+	auto from = f->as<BoolType*>();
+	auto to = t->as<UIntType*>();
+
 	if (from->getWidth() > to->getWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
@@ -73,11 +73,11 @@ BoolType* BoolType::get()
 	auto defined = getDefined("b");
 	if (defined != nullptr)
 	{
-		return dynamic_cast<BoolType*>(defined);
+		return defined->as<BoolType*>();
 	}
-	
+
 	BoolType* ty = new BoolType();
 	define("b", ty);
-	
+
 	return ty;
 }

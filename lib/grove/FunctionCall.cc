@@ -49,8 +49,7 @@ FunctionType* FunctionCall::getFunctionTy() const
 		assertExists(ty, "Object isn't a function.");
 	}
 
-	auto func_ty = dynamic_cast<FunctionType*>(ty);
-	return func_ty;
+	return ty->as<FunctionType*>();
 }
 
 void FunctionCall::resolve()
@@ -64,7 +63,7 @@ void FunctionCall::resolve()
     	assertExists(ty, "Object isn't a function.");
 	}
 
-	auto func_ty = dynamic_cast<FunctionType*>(ty);
+	auto func_ty = ty->as<FunctionType*>();
 
 	if (m_args.size() != func_ty->getArgs().size())
 	{

@@ -17,7 +17,7 @@
 FloatType::FloatType()
 {
 	m_type = llvm::Type::getFloatTy(*m_context);
-	
+
 	defineCast(typeid(UIntType), llvm::Instruction::CastOps::FPToUI);
 	defineCast(typeid(IntType), llvm::Instruction::CastOps::FPToSI);
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::FPExt);
@@ -53,11 +53,11 @@ FloatType* FloatType::get()
 	auto defined = getDefined("f");
 	if (defined != nullptr)
 	{
-		return dynamic_cast<FloatType*>(defined);
+		return defined->as<FloatType*>();
 	}
-	
+
 	FloatType* ty = new FloatType();
 	define("f", ty);
-	
+
 	return ty;
 }

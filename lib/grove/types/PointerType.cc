@@ -20,10 +20,10 @@ PointerType::PointerType(Type* contained)
 	{
 		throw std::invalid_argument("contained must not be null.");
 	}
-	
+
 	m_contained = contained;
 	m_type = m_contained->getLLVMType()->getPointerTo();
-	
+
 	defineCast(typeid(IntType), llvm::Instruction::CastOps::PtrToInt);
 	defineCast(typeid(UIntType), llvm::Instruction::CastOps::PtrToInt);
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
@@ -61,18 +61,18 @@ PointerType* PointerType::get(Type *contained)
 	{
 		throw std::invalid_argument("contained must not be null.");
 	}
-	
+
 	std::string signature = contained->getSignature() + "p";
-	
+
 	auto defined = getDefined(signature);
 	if (defined != nullptr)
 	{
-		return dynamic_cast<PointerType *>(defined);
+		return defined->as<PointerType *>();
 	}
-	
+
 
 	PointerType* ty = new PointerType(contained);
 	define(signature, ty);
-	
+
 	return ty;
 }

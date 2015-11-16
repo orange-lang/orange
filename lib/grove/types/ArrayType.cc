@@ -16,10 +16,10 @@ ArrayType::ArrayType(Type* contained, unsigned int size)
 	{
 		throw std::invalid_argument("contained must not be null.");
 	}
-	
+
 	m_contained = contained;
 	m_size = size;
-	
+
 	m_type = llvm::ArrayType::get(m_contained->getLLVMType(), m_size);
 }
 
@@ -56,18 +56,18 @@ ArrayType* ArrayType::get(Type *contained, unsigned int size)
 	{
 		throw std::invalid_argument("contained must not be nullptr");
 	}
-	
+
 	std::stringstream ss;
 	ss << size << contained->getSignature();
-	
+
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
 	{
-		return dynamic_cast<ArrayType *>(defined);
+		return defined->as<ArrayType *>();
 	}
-	
+
 	ArrayType* ty = new ArrayType(contained, size);
 	define(ss.str(), ty);
-	
+
 	return ty;
 }

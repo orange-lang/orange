@@ -39,11 +39,11 @@ VoidType* VoidType::get()
 	auto defined = getDefined("v");
 	if (defined != nullptr)
 	{
-		return dynamic_cast<VoidType*>(defined);
+		return defined->as<VoidType*>();
 	}
-	
+
 	VoidType* ty = new VoidType();
 	define("v", ty);
-	
+
 	return ty;
 }
