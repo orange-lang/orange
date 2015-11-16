@@ -19,6 +19,7 @@
 	#include <grove/ReturnStmt.h>
 	#include <grove/BinOpCompare.h>
 	#include <grove/BinOpArith.h>
+	#include <grove/BinOpAssign.h>
 	#include <grove/Parameter.h>
 	#include <grove/IDReference.h>
 	#include <grove/NegativeExpr.h>
@@ -76,7 +77,7 @@
 %type <expr> expression primary comparison arithmetic call
 %type <stmt> structures function extern_function
 %type <val> VALUE
-%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE
+%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <ty> type basic_type type_hint
 %type <params> param_list
 %type <args> arg_list
@@ -238,6 +239,9 @@ arithmetic
 	| expression MINUS expression { $$ = new BinOpArith($1, *$2, $3); }
 	| expression TIMES expression { $$ = new BinOpArith($1, *$2, $3); }
 	| expression DIVIDE expression { $$ = new BinOpArith($1, *$2, $3); }
+
+	| expression ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
+
 	;
 
 call
