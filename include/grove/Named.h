@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "ObjectBase.h"
+
 #include <vector>
 
 class Type;
@@ -15,17 +17,17 @@ class Type;
 /**
  * Named is an interface to define any node with a name.
  */
-class Named {
+class Named : public ObjectBase {
 protected:
 	std::string m_name;
 public:
 	/// Gets the name of this node.
 	std::string getName() const;
-	
+
 	/// Determines whether or not a name matches this node.
 	/// @param name The name to compare against.
 	virtual bool matches(std::string name) const;
-	
+
 	/// Determines whether or not a name matches this node.
 	/// @param name The name to compare against.
 	/// @param candidates A list of candidates to help narrow down if the name
