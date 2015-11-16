@@ -8,24 +8,26 @@
 
 #pragma once
 
+#include "ObjectBase.h"
+
 namespace llvm { class Value; }
 
 /**
  * Valued is an interface to define any node with a value.
  * Those nodes are not necessarily expressions.
  */
-class Valued {
+class Valued : public ObjectBase {
 protected:
 	llvm::Value* m_value = nullptr;
 public:
 	/// If this expression points to a memory location (like a variable),
 	/// gets the pointer where that expression is stored.
 	virtual llvm::Value* getPointer() const;
-	
+
 	/// Determines whether or not getPointer will return a non-null value.
 	/// True in the case of pointers.
 	virtual bool hasPointer() const;
-	
+
 	virtual llvm::Value* getValue() const;
 	virtual void setValue(llvm::Value* newValue);
 };
