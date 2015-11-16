@@ -10,3 +10,4 @@ Makefile
 /build*
 /.ycm_extra_conf.py*
 *.swp
+/.clang_complete

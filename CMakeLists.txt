@@ -12,6 +12,7 @@ set(gen_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/gen)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
 
 include(cotire)
+include(clang_complete)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/lib)
@@ -94,3 +95,7 @@ add_subdirectory(lib/util)
 add_subdirectory(lib/grove)
 add_subdirectory(tools/orange)
 add_subdirectory(unit)
+
+if (${BUILD_CLANG_COMPLETE})
+	clang_complete(${CMAKE_SOURCE_DIR}/.clang_complete)
+endif()
