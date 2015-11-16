@@ -68,7 +68,7 @@ bool ASTNode::isRootNode() const
 
 ASTNode* ASTNode::copy() const
 {
-	return new ASTNode(getModule());
+	throw std::runtime_error("ASTNode::copy() not overridden");
 }
 
 void ASTNode::resolve()
