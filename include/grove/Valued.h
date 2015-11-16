@@ -18,6 +18,14 @@ class Valued {
 protected:
 	llvm::Value* m_value = nullptr;
 public:
+	/// If this expression points to a memory location (like a variable),
+	/// gets the pointer where that expression is stored.
+	virtual llvm::Value* getPointer() const;
+	
+	/// Determines whether or not getPointer will return a non-null value.
+	/// True in the case of pointers.
+	virtual bool hasPointer() const;
+	
 	virtual llvm::Value* getValue() const;
 	virtual void setValue(llvm::Value* newValue);
 };

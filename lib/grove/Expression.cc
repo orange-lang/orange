@@ -13,16 +13,6 @@
 #include <llvm/IR/Instruction.h>
 #include <llvm/IR/IRBuilder.h>
 
-llvm::Value* Expression::getPointer() const
-{
-	return nullptr;
-}
-
-bool Expression::hasPointer() const
-{
-	return false;
-}
-
 llvm::Value* Expression::castTo(Type *ty) const
 {
 	assertExists(ty, "type must exist.");

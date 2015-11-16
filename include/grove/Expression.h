@@ -19,14 +19,6 @@ namespace llvm { class Value; }
  */
 class Expression : public ASTNode, public Valued, public Typed {
 public:
-	/// If this expression points to a memory location (like a variable),
-	/// gets the pointer where that expression is stored.
-	llvm::Value* getPointer() const;
-	
-	/// Determines whether or not getPointer will return a non-null value.
-	/// True in the case of pointers.
-	bool hasPointer() const;
-	
 	/// Casts the value of this expression to another type.
 	/// Returns the result of that cast. The original value is untouched.
 	llvm::Value* castTo(Type* ty) const;

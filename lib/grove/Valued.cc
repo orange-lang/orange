@@ -8,6 +8,17 @@
 
 #include <grove/Valued.h>
 
+
+llvm::Value* Valued::getPointer() const
+{
+	return nullptr;
+}
+
+bool Valued::hasPointer() const
+{
+	return false;
+}
+
 llvm::Value* Valued::getValue() const
 {
 	return m_value;
