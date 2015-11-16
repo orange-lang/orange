@@ -11,6 +11,16 @@
 
 #include <llvm/IR/IRBuilder.h>
 
+llvm::Value* Parameter::getPointer() const
+{
+	return m_value;
+}
+
+bool Parameter::hasPointer() const
+{
+	return true;
+}
+
 llvm::Value* Parameter::getValue() const
 {
 	return IRBuilder()->CreateLoad(m_value);

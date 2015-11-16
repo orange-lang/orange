@@ -15,6 +15,10 @@ class Type;
 
 class Parameter : public Expression, public Named {
 public:
+	virtual llvm::Value* getPointer() const override;
+	
+	virtual bool hasPointer() const override;
+	
 	virtual llvm::Value* getValue() const override;
 	
 	Parameter(Type* type, std::string name);
