@@ -31,6 +31,7 @@
 	#include <grove/types/DoubleType.h>
 	#include <grove/types/VoidType.h>
 	#include <grove/types/PointerType.h>
+	#include <grove/types/VarType.h>
 
 	#include <util/assertions.h>
 
@@ -306,7 +307,7 @@ basic_type
 	| TYPE_UINT64 { $$ = UIntType::get(64); }
 	| TYPE_CHAR { $$ = IntType::get(8); }
 	| TYPE_VOID { $$ = VoidType::get(); }
-	| TYPE_VAR { $$ = nullptr; }
+	| TYPE_VAR { $$ = VarType::get(); }
 	;
 
 %%
