@@ -96,6 +96,7 @@ public:
 	virtual bool isIntTy() const;
 	virtual bool isPointerTy() const;
 	virtual bool isVoidTy() const;
+	virtual bool isVarTy() const;
 
 	/// Gets plain old data type.
 	virtual BasicType PODTy() const;

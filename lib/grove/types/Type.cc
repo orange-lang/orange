@@ -67,6 +67,11 @@ bool Type::isVoidTy() const
 	return false;
 }
 
+bool Type::isVarTy() const
+{
+	return true;
+}
+
 BasicType Type::PODTy() const
 {
 	return OTHER;
