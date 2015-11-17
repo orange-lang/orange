@@ -61,6 +61,16 @@ PointerType* PointerType::get(Type *contained)
 	{
 		throw std::invalid_argument("contained must not be null.");
 	}
+	
+	if (contained->isVoidTy())
+	{
+		throw std::invalid_argument("cannot get pointer to void");
+	}
+	
+	if (contained->isVarTy())
+	{
+		throw std::invalid_argument("cannot get pointer to var");
+	}
 
 	std::string signature = contained->getSignature() + "p";
 
@@ -69,7 +79,6 @@ PointerType* PointerType::get(Type *contained)
 	{
 		return defined->as<PointerType *>();
 	}
-
 
 	PointerType* ty = new PointerType(contained);
 	define(signature, ty);
