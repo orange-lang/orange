@@ -11,9 +11,9 @@
 #include <string>
 
 #include "Block.h"
-#include "Typed.h"
 #include "Named.h"
 #include "Valued.h"
+#include "Genericable.h"
 
 namespace llvm { class Function; }
 namespace llvm { class BasicBlock; }
@@ -22,7 +22,8 @@ namespace llvm { class Value; }
 class Type;
 class Parameter;
 
-class Function : public Block, public Valued, public Typed, public Named {
+class Function : public Block, public Valued, public Genericable, public Named
+{
 private:
 	llvm::BasicBlock* m_entry = nullptr;
 	llvm::BasicBlock* m_exit = nullptr;
