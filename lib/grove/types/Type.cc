@@ -69,7 +69,7 @@ bool Type::isVoidTy() const
 
 bool Type::isVarTy() const
 {
-	return true;
+	return false;
 }
 
 BasicType Type::PODTy() const
