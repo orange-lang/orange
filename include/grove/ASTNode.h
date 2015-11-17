@@ -118,13 +118,38 @@ public:
 		return children;
 	}
 
-	/// Finds a named node in the AST. Searches up to this node.
+	/**
+	 * Tries to find a Named node in the AST. Searches up to this node.
+	 *
+	 * If multiple matching nodes are found, an exception is thrown.
+	 *
+	 * @param name The name of the node to look for.
+	 * @param limit The child to stop searching at, if any.
+	 *
+	 * @return The named node, if one was found.
+	 * @throws Throws an exception if multiple nodes were found.
+	 */
 	Named* findNamed(std::string name) const;
 
-	/// Finds a named node in the AST with a list of candidates to help
-	/// resolve nodes that may have duplicates (functions). Searches
-	/// up to this node.
-	Named* findNamed(std::string name, std::vector<Type *> candidates) const;
+	/**
+	 * Tries to find a Named node in the AST. Searches up to this node.
+	 *
+	 * This function allows for a type hint to be passed in to narrow 
+	 * down results if more than one node was found by name. The hint can 
+	 * be any type, including VarType and compound types (like FunctionType).
+	 * VarType is used as a wildcard.
+	 *
+	 * @param name The name of the node to look for.
+	 * @param hint The type hint to narrow down search results.
+	 * @param limit The child to stop searching at, if any.
+	 *
+	 * @return The named node, if one was found.
+	 *
+	 * @throws Throws an exception if multiple nodes with the same name
+	 * were found, and using hint does not narrow down results to exactly
+	 * one node.
+	 */
+	Named* findNamed(std::string name, Type* type) const;
 
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);

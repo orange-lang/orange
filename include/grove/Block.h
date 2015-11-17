@@ -27,19 +27,44 @@ public:
 	
 	void addStatement(ASTNode* statement);
 	
-	/// Gets a Named node in the immediate list of children.
-	/// (i.e., does not search the whole tree.)
-	/// @param name The name of the node to look for.
-	/// @param limit The child to stop searching at.
+	/**
+	 * Tries to find a Named node in the immediate list of children. Does 
+	 * not search the whole tree.
+	 *
+	 * If multiple matching nodes are found, an exception is thrown. 
+	 *
+	 * @param name The name of the node to look for.
+	 * @param limit The child to stop searching at, if any. 
+	 *
+	 * @return The named node, if one was found.
+	 */
 	Named* getNamed(std::string name, const ASTNode* limit) const;
 	
-	/// Gets a Named node in the immediate list of children.
-	/// (i.e., does not search the whole tree.)
-	/// @param name The name of the node to look for.
-	/// @param candidates A list of candidates to help find the proper Node.
-	/// @param limit The child to stop searching at.
-	Named* getNamed(std::string name, std::vector<Type *> candidates,
-					const ASTNode* limit) const;
+	/**
+	 * Tries to find a Named node in the immediate list of chidlren. Does 
+	 * not search the whole tree.
+	 *
+	 * Unlike getNamed(std::string, const ASTNode*), this function allows 
+	 * for a type hint to be passed in. It is used to narrow down results 
+	 * in the case of multiple nodes with the same name being found. The hint
+	 * can be a compound type (e.g., FunctionType) or a regular type (e.g.,
+	 * IntType). VarType can be used as a wildcard. If the hint provided 
+	 * leaves 0 or more than 1 results, an error is thrown, but only if 
+	 * hint was used.
+	 *
+	 * Hint is only used if multiple nodes are found by name. 
+	 *
+	 * @param name The name of the node to look for.
+	 * @param hint The type hint to narrow down search results. 
+	 * @param limit The child to stop searching at, if any. 
+	 *
+	 * @return The named node, if one was found. 
+	 *
+	 * @throws Throws an exception if multiple nodes with the same name 
+	 * were found, and using hint does not narrow down results to exactly 
+	 * ony node.
+	 */
+	Named* getNamed(std::string name, Type* type, const ASTNode* limit) const;
 	
 	Block();
 	Block(Module* module);

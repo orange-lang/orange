@@ -16,11 +16,10 @@ std::vector<ASTNode *> Block::getStatements() const
 
 Named* Block::getNamed(std::string name, const ASTNode *limit) const
 {
-	std::vector<Type *> candidate_list;
-	return getNamed(name, candidate_list, limit);
+	return getNamed(name, nullptr, limit);
 }
 
-Named* Block::getNamed(std::string name, std::vector<Type *> candidates,
+Named* Block::getNamed(std::string name, Type* type,
 					   const ASTNode *limit) const
 {
 	for (auto child : getChildren())
@@ -34,7 +33,7 @@ Named* Block::getNamed(std::string name, std::vector<Type *> candidates,
 		{
 			auto named = child->as<Named *>();
 			
-			if (named->matches(name, candidates))
+			if (named->matches(name, type))
 			{
 				return named;
 			}

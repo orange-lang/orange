@@ -83,12 +83,14 @@ void ASTNode::build()
 
 Named* ASTNode::findNamed(std::string name) const
 {
-	std::vector<Type *> candidate_list;
-	return findNamed(name, candidate_list);
+	return findNamed(name, nullptr);
 }
 
-Named* ASTNode::findNamed(std::string name, std::vector<Type *> candidates) const
+Named* ASTNode::findNamed(std::string name, Type* type) const
 {
+	std::exception error;
+	bool caught_error = false;
+	
 	auto ptr = this;
 	
 	while (ptr != nullptr)
@@ -112,15 +114,30 @@ Named* ASTNode::findNamed(std::string name, std::vector<Type *> candidates) cons
 			
 			limit = limit->getParent();
 		}
-		
-		auto named = block->getNamed(name, candidates, limit);
-		if (named != nullptr)
+	
+		// Try to get the named node, but catch errors for now,
+		// since a proper node may be found later up the tree.
+		try
 		{
-			return named;
+			auto named = block->getNamed(name, type, limit);
+			if (named != nullptr)
+			{
+				return named;
+			}
+		}
+		catch (std::exception& e)
+		{
+			error = e;
+			caught_error = true;
 		}
 		
 		// If we didn't find it, start looking from the block.
 		ptr = block;
+	}
+	
+	if (caught_error == true)
+	{
+		throw error;
 	}
 	
 	return nullptr;

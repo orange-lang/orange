@@ -15,11 +15,10 @@ std::string Named::getName() const
 
 bool Named::matches(std::string name) const
 {
-	std::vector<Type *> candidate_list;
-	return matches(name, candidate_list);
+	return matches(name, nullptr);
 }
 
-bool Named::matches(std::string name, std::vector<Type *> candidates) const
+bool Named::matches(std::string name, Type* type) const
 {
 	return m_name == name;
 }
