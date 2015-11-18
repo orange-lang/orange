@@ -1,0 +1,5 @@
+# const_double_alt.or
+#
+# Test returning a constant double with alternative format.
+
+return 0.0d

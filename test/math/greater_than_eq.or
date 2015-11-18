@@ -1,0 +1,5 @@
+# less_than.or
+#
+# Test if one number is greater than or equal to another.
+
+return 1 >= 2

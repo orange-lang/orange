@@ -1,0 +1,5 @@
+# const_int.or
+#
+# Test returning a constant signed integer.
+
+return 0

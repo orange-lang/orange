@@ -1,0 +1,5 @@
+# equality.or
+#
+# Test equality of two numbers
+
+return 3 == 5
