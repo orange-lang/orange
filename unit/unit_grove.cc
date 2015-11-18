@@ -125,6 +125,7 @@ ADD_TEST_FOLDER(TestReturnPrograms, return);
 ADD_TEST_FOLDER(TestMathPrograms, math);
 ADD_TEST_FOLDER(TestFunctionPrograms, functions);
 ADD_TEST_FOLDER(TestVariablePrograms, variables);
+ADD_TEST_FOLDER(TestGenericFunctions, generic_functions);
 
 
 RUN_TESTS();
