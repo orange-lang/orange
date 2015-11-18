@@ -12,6 +12,64 @@
 
 #include <llvm/IR/IRBuilder.h>
 
+#include <map>
+#include <tuple>
+
+static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSigned)
+{
+	typedef llvm::Instruction::BinaryOps BinOp;
+	typedef std::tuple<BinOp, BinOp, BinOp> BinOpTuple;
+	
+	using namespace llvm;
+	
+	const static std::map<std::string, BinOpTuple> m_op_map = {
+		{"+", {BinOp::Add,  BinOp::Add,  BinOp::FAdd}},
+		{"-", {BinOp::Sub,  BinOp::Sub,  BinOp::FSub}},
+		{"*", {BinOp::Mul,  BinOp::Mul,  BinOp::FMul}},
+		{"/", {BinOp::UDiv, BinOp::SDiv, BinOp::FDiv}}
+	};
+	
+	auto it = m_op_map.find(op);
+	
+	if (it == m_op_map.end())
+	{
+		throw std::invalid_argument("op not supported.");
+	}
+	
+	if (FP == true)
+	{
+		return std::get<2>(it->second);
+	}
+	else if (isSigned == true)
+	{
+		return std::get<1>(it->second);
+	}
+	else
+	{
+		return std::get<0>(it->second);
+	}
+}
+
+bool BinOpAssign::doesArithmetic() const
+{
+	const std::vector<std::string> arith_op_list = {
+		"+=", "-=", "*=", "/="
+	};
+	
+	return std::find(arith_op_list.begin(), arith_op_list.end(),
+					 getOperator()) != arith_op_list.end();
+}
+
+std::string BinOpAssign::getArithOp() const
+{
+	if (doesArithmetic() == false)
+	{
+		throw std::runtime_error("operator does no arithmetic");
+	}
+	
+	return getOperator().substr(0, 1);
+}
+
 void BinOpAssign::resolve()
 {
 	BinOpExpr::resolve();
@@ -58,11 +116,20 @@ void BinOpAssign::build()
 	
 	assertEqual(vLHS, vRHS, "LHS and RHS do not have the same type!");
 	
+	auto val = vRHS;
+	
+	if (doesArithmetic())
+	{
+		auto op = getBinOp(getArithOp(), isFloatingPointOperation(),
+						   areOperandsSigned());
+		val = IRBuilder()->CreateBinOp(op, vLHS, val);
+	}
+	
 	auto ptr = getLHS()->getPointer();
 	assertExists(ptr, "LHS didn't give a pointer");
 	
-	assertEqual<VAL, PTR>(vRHS, ptr, "Can't assign RHS to address");
-	IRBuilder()->CreateStore(vRHS, ptr);
+	assertEqual<VAL, PTR>(val, ptr, "Can't assign RHS to address");
+	IRBuilder()->CreateStore(val, ptr);
 	
 	setValue(vRHS);
 }
@@ -70,7 +137,7 @@ void BinOpAssign::build()
 BinOpAssign::BinOpAssign(Expression* LHS, std::string op, Expression* RHS)
 :BinOpExpr(LHS, op, RHS)
 {
-	if (op != "=")
+	if (op != "=" && op != "+=" && op != "-=" && op != "*=" && op != "/=")
 	{
 		throw std::invalid_argument("Unknown assign operator");
 	}

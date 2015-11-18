@@ -80,7 +80,7 @@
 %type <stmt> structures function extern_function var_decl
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
-%type <str> EQUALS NEQUALS
+%type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <ty> type basic_type type_hint
 %type <params> param_list
 %type <args> arg_list
@@ -252,6 +252,10 @@ arithmetic
 	| expression DIVIDE expression { $$ = new BinOpArith($1, *$2, $3); }
 
 	| expression ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
+	| expression PLUS_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
+	| expression MINUS_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
+	| expression TIMES_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
+	| expression DIVIDE_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
 
 	;
 

@@ -20,5 +20,13 @@ public:
 	virtual void resolve() override;
 	virtual void build() override;
 	
+	/// Determines whether or not the operator also
+	/// does some form of artithmetic.
+	bool doesArithmetic() const;
+	
+	/// If the operator does arithmetic, get the
+	/// arithmetic operator.
+	std::string getArithOp() const;
+	
 	BinOpAssign(Expression* LHS, std::string op, Expression* RHS);
 };
