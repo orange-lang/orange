@@ -1,9 +1,0 @@
-# when creating a variable using the var keyword and 
-# you don't assign it an initial value, its type will 
-# be assigned to the first time it is assigned a value 
-var a 
-a = 5 
-
-# make sure that a doesn't change to a double 
-a += 0.2 
-return a > 5.0 
