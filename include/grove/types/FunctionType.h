@@ -14,14 +14,14 @@ class FunctionType : public Type
 {
 private:
 	Type* m_ret_type = nullptr;
+	bool m_var_arg = false;
 	
 	std::vector<Type*> m_args;
 	
-	static std::string getSignature(Type* retType, std::vector<Type*> args);
-	
+	static std::string getSignature(Type* retType, std::vector<Type*> args,
+									bool vaarg);
 protected:
-	FunctionType(Type* retType, std::vector<Type*> args);
-	
+	FunctionType(Type* retType, std::vector<Type*> args, bool vaarg);
 public:
 	virtual std::string getSignature() const override;
 	
@@ -37,5 +37,8 @@ public:
 	
 	std::vector<Type *> getArgs() const;
 	
-	static FunctionType* get(Type* retType, std::vector<Type*> args);
+	bool isVarArg() const;
+	
+	static FunctionType* get(Type* retType, std::vector<Type*> args,
+							 bool vaarg = false);
 };

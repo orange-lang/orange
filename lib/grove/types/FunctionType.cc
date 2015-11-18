@@ -10,7 +10,7 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DerivedTypes.h>
 
-FunctionType::FunctionType(Type* retType, std::vector<Type*> args)
+FunctionType::FunctionType(Type* retType, std::vector<Type*> args, bool vaarg)
 {
 	if (retType == nullptr)
 	{
@@ -33,11 +33,14 @@ FunctionType::FunctionType(Type* retType, std::vector<Type*> args)
 	{
 		params.push_back(ty->getLLVMType());
 	}
+	
+	m_var_arg = vaarg;
 
-	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, false);
+	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, vaarg);
 }
 
-std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args)
+std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args,
+									   bool vaarg)
 {
 	if (retType == nullptr)
 	{
@@ -61,6 +64,11 @@ std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args)
 			ss << ",";
 		}
 	}
+	
+	if (vaarg)
+	{
+		ss << ",...";
+	}
 
 	ss << ")";
 	return ss.str();
@@ -68,7 +76,7 @@ std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args)
 
 std::string FunctionType::getSignature() const
 {
-	return FunctionType::getSignature(m_ret_type, m_args);
+	return FunctionType::getSignature(m_ret_type, m_args, m_var_arg);
 }
 
 bool FunctionType::isSigned() const
@@ -79,6 +87,11 @@ bool FunctionType::isSigned() const
 bool FunctionType::isFunctionTy() const
 {
 	return true;
+}
+
+bool FunctionType::isVarArg() const
+{
+	return m_var_arg;
 }
 
 Type* FunctionType::getBaseTy()
@@ -101,7 +114,8 @@ std::vector<Type *> FunctionType::getArgs() const
 	return m_args;
 }
 
-FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args)
+FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args,
+								bool vaarg)
 {
 	if (retType == nullptr)
 	{
@@ -116,7 +130,7 @@ FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args)
 		}
 	}
 
-	std::string signature = getSignature(retType, args);
+	std::string signature = getSignature(retType, args, vaarg);
 	auto defined = getDefined(signature);
 
 	if (defined != nullptr)
@@ -124,7 +138,7 @@ FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args)
 		return defined->as<FunctionType *>();
 	}
 
-	auto ty = new FunctionType(retType, args);
+	auto ty = new FunctionType(retType, args, vaarg);
 	define(signature, ty);
 
 	return ty;
