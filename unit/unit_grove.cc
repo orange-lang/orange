@@ -110,7 +110,11 @@ int name(){\
 	for (auto path : test_files){\
 		try{\
 			auto builder = new Builder(path); builder->compile();\
-			if (builder->run() != 0) exitCode = 1;}\
+			int val = builder->run();\
+			if (val != 0) {exitCode = 1; \
+				std::stringstream ss; ss << path << " returned " << val;\
+				ADD_ERROR(name, ss.str()); }\
+		}\
 		catch(std::exception& e){\
 			std::stringstream ss; ss << path << ": " << e.what();\
 			ADD_ERROR(name, ss.str()); exitCode = 1;}}\
