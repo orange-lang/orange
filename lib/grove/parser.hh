@@ -219,6 +219,7 @@ typedef union YYSTYPE
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
 	std::vector<Expression*>* args;
+	std::vector<std::tuple<std::string, Expression*>>* pairs;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
@@ -228,7 +229,7 @@ typedef union YYSTYPE
 	Type* ty;
 }
 /* Line 1529 of yacc.c.  */
-#line 232 "/Users/robert/dev/orange/lib/grove/parser.hh"
+#line 233 "/Users/robert/dev/orange/lib/grove/parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

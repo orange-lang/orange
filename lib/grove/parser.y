@@ -51,6 +51,7 @@
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
 	std::vector<Expression*>* args;
+	std::vector<std::tuple<std::string, Expression*>>* pairs;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
@@ -74,10 +75,11 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST QUESTION COLON ENUM SIZEOF
 
-%type <nodes> opt_statements statements compound_statement
+%type <nodes> opt_statements statements compound_statement var_decl
 %type <node> statement return controls
+%type <pairs> var_decl_list
 %type <expr> expression primary comparison arithmetic call
-%type <stmt> structures function extern_function var_decl
+%type <stmt> structures function extern_function
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
@@ -175,8 +177,7 @@ statement
 compound_statement
 	: var_decl term
 	{
-		$$ = new std::vector<ASTNode *>();
-		$$->push_back($1);
+		$$ = $1;
 	}
 	;
 
@@ -322,15 +323,39 @@ return
 	;
 
 var_decl
-	: type TYPE_ID
+	: type var_decl_list
 	{
-		$$ = new VarDecl($1, *$2, nullptr);
-	}
-	| type TYPE_ID ASSIGN expression
-	{
-		$$ = new VarDecl($1, *$2, $4);
+		$$ = new std::vector<ASTNode*>();
+		
+		for (auto tupl : *$2)
+		{
+			auto decl = new VarDecl($1, std::get<0>(tupl), std::get<1>(tupl));
+			$$->push_back(decl);
+		}
 	}
 	;
+
+var_decl_list
+	: var_decl_list COMMA TYPE_ID
+	{
+		$$ = $1;
+		$$->push_back(std::make_tuple(*$3, nullptr));
+	}
+	| var_decl_list COMMA TYPE_ID ASSIGN expression
+	{
+		$$ = $1;
+		$$->push_back(std::make_tuple(*$3, $5));
+	}
+	| TYPE_ID
+	{
+		$$ = new std::vector<std::tuple<std::string, Expression*>>();
+		$$->push_back(std::make_tuple(*$1, nullptr));
+	}
+	| TYPE_ID ASSIGN expression
+	{
+		$$ = new std::vector<std::tuple<std::string, Expression*>>();
+		$$->push_back(std::make_tuple(*$1, $3));
+	}
 
 term
 	: NEWLINE
