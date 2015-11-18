@@ -110,12 +110,30 @@ bool Function::isVoidFunction()
 	return retType->getLLVMType()->isVoidTy();
 }
 
+bool Function::isGeneric() const
+{
+	for (auto ty : getParamTys())
+	{
+		if (ty->isVarTy())
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 void Function::resolve()
 {
 	// If we already have a type, return.
 	if (getType() != nullptr)
 	{
 		return;
+	}
+	
+	if (isGeneric())
+	{
+		throw std::runtime_error("Don't know how to handle generic funcs");
 	}
 	
 	if (m_ret_type != nullptr)

@@ -66,6 +66,8 @@ public:
 	/// Indicates whether or not this function returns void.
 	bool isVoidFunction();
 	
+	virtual bool isGeneric() const override;
+	
 	virtual void resolve() override;
 	
 	virtual void build() override;
