@@ -1,0 +1,10 @@
+# function_param_reassign.or
+#
+# Test reassigning a function parameter.
+
+def foo(int a)
+	a = 0
+	return a
+end
+
+return foo(5)
