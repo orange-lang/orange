@@ -23,6 +23,7 @@
 	#include <grove/Parameter.h>
 	#include <grove/IDReference.h>
 	#include <grove/NegativeExpr.h>
+	#include <grove/VarDecl.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -76,7 +77,7 @@
 %type <nodes> statements
 %type <node> statement return controls
 %type <expr> expression primary comparison arithmetic call
-%type <stmt> structures function extern_function
+%type <stmt> structures function extern_function var_decl
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS
@@ -145,6 +146,7 @@ statement
 	| structures { $$ = $1; } /* structures: if, loops, functions, etc */
 	| controls { $$ = $1; } /* controls: return, break, continue */
 	| expression { $$ = $1; }
+	| var_decl { $$ = $1; }
 	;
 
 structures
@@ -281,6 +283,17 @@ return
 	| RETURN expression
 	{
 		$$ = new ReturnStmt($2);
+	}
+	;
+
+var_decl
+	: type TYPE_ID
+	{
+		$$ = new VarDecl($1, *$2, nullptr);
+	}
+	| type TYPE_ID ASSIGN expression
+	{
+		$$ = new VarDecl($1, *$2, $4);
 	}
 	;
 
