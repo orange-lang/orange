@@ -559,7 +559,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  20
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  64
+#define YYNRULES  65
 /* YYNRULES -- Number of states.  */
 #define YYNSTATES  107
 
@@ -615,50 +615,50 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     5,     9,    12,    13,    15,    17,    19,
-      21,    23,    32,    42,    45,    46,    53,    61,    66,    69,
-      73,    75,    77,    79,    81,    83,    85,    89,    93,    97,
-     101,   105,   109,   113,   117,   121,   125,   129,   133,   138,
-     142,   144,   147,   149,   151,   153,   156,   158,   160,   163,
-     165,   167,   169,   171,   173,   175,   177,   179,   181,   183,
-     185,   187,   189,   191,   193
+       0,     0,     3,     5,     9,    12,    13,    14,    16,    18,
+      20,    22,    24,    33,    43,    46,    47,    54,    62,    67,
+      70,    74,    76,    78,    80,    82,    84,    86,    90,    94,
+      98,   102,   106,   110,   114,   118,   122,   126,   130,   134,
+     139,   143,   145,   148,   150,   152,   154,   157,   159,   161,
+     164,   166,   168,   170,   172,   174,   176,   178,   180,   182,
+     184,   186,   188,   190,   192,   194
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
       87,     0,    -1,    88,    -1,    88,    89,   103,    -1,    89,
-     103,    -1,    -1,    90,    -1,    96,    -1,    97,    -1,    91,
-      -1,    93,    -1,     3,     8,     9,    10,    92,   103,    88,
-       4,    -1,     3,     8,     9,    94,    10,    92,   103,    88,
-       4,    -1,    53,   104,    -1,    -1,    63,     8,     9,    10,
-      53,   104,    -1,    63,     8,     9,    94,    10,    53,   104,
-      -1,    94,    12,   104,     8,    -1,   104,     8,    -1,    95,
-      12,    97,    -1,    97,    -1,   102,    -1,   101,    -1,    98,
-      -1,    99,    -1,   100,    -1,    97,    58,    97,    -1,    97,
-      59,    97,    -1,    97,    56,    97,    -1,    97,    57,    97,
-      -1,    97,    65,    97,    -1,    97,    66,    97,    -1,    97,
-      17,    97,    -1,    97,    16,    97,    -1,    97,    13,    97,
-      -1,    97,    15,    97,    -1,    97,    47,    97,    -1,     8,
-       9,    10,    -1,     8,     9,    95,    10,    -1,     9,    97,
-      10,    -1,    61,    -1,    16,    97,    -1,    62,    -1,     8,
-      -1,    35,    -1,    35,    97,    -1,    18,    -1,    19,    -1,
-     104,    13,    -1,   105,    -1,    20,    -1,    21,    -1,    22,
-      -1,    23,    -1,    24,    -1,    26,    -1,    28,    -1,    30,
-      -1,    25,    -1,    27,    -1,    29,    -1,    31,    -1,    32,
-      -1,    33,    -1,    34,    -1
+     103,    -1,    -1,    -1,    90,    -1,    96,    -1,    97,    -1,
+      91,    -1,    93,    -1,     3,     8,     9,    10,    92,   103,
+      88,     4,    -1,     3,     8,     9,    94,    10,    92,   103,
+      88,     4,    -1,    53,   104,    -1,    -1,    63,     8,     9,
+      10,    53,   104,    -1,    63,     8,     9,    94,    10,    53,
+     104,    -1,    94,    12,   104,     8,    -1,   104,     8,    -1,
+      95,    12,    97,    -1,    97,    -1,   102,    -1,   101,    -1,
+      98,    -1,    99,    -1,   100,    -1,    97,    58,    97,    -1,
+      97,    59,    97,    -1,    97,    56,    97,    -1,    97,    57,
+      97,    -1,    97,    65,    97,    -1,    97,    66,    97,    -1,
+      97,    17,    97,    -1,    97,    16,    97,    -1,    97,    13,
+      97,    -1,    97,    15,    97,    -1,    97,    47,    97,    -1,
+       8,     9,    10,    -1,     8,     9,    95,    10,    -1,     9,
+      97,    10,    -1,    61,    -1,    16,    97,    -1,    62,    -1,
+       8,    -1,    35,    -1,    35,    97,    -1,    18,    -1,    19,
+      -1,   104,    13,    -1,   105,    -1,    20,    -1,    21,    -1,
+      22,    -1,    23,    -1,    24,    -1,    26,    -1,    28,    -1,
+      30,    -1,    25,    -1,    27,    -1,    29,    -1,    31,    -1,
+      32,    -1,    33,    -1,    34,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   112,   112,   122,   131,   143,   144,   145,   146,   150,
-     151,   155,   167,   182,   183,   187,   192,   198,   203,   210,
-     215,   222,   226,   227,   228,   229,   233,   234,   235,   236,
-     237,   238,   242,   243,   244,   245,   247,   252,   257,   264,
-     265,   266,   267,   268,   272,   276,   283,   284,   288,   292,
-     299,   300,   301,   302,   303,   304,   305,   306,   307,   308,
-     309,   310,   311,   312,   313
+       0,   112,   112,   122,   131,   140,   144,   145,   146,   147,
+     151,   152,   156,   168,   183,   184,   188,   193,   199,   204,
+     211,   216,   223,   227,   228,   229,   230,   234,   235,   236,
+     237,   238,   239,   243,   244,   245,   246,   248,   253,   258,
+     265,   266,   267,   268,   269,   273,   277,   284,   285,   289,
+     293,   300,   301,   302,   303,   304,   305,   306,   307,   308,
+     309,   310,   311,   312,   313,   314
 };
 #endif
 
@@ -708,25 +708,25 @@ static const yytype_uint16 yytoknum[] =
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    86,    87,    88,    88,    89,    89,    89,    89,    90,
-      90,    91,    91,    92,    92,    93,    93,    94,    94,    95,
-      95,    96,    97,    97,    97,    97,    98,    98,    98,    98,
-      98,    98,    99,    99,    99,    99,    99,   100,   100,   101,
-     101,   101,   101,   101,   102,   102,   103,   103,   104,   104,
-     105,   105,   105,   105,   105,   105,   105,   105,   105,   105,
-     105,   105,   105,   105,   105
+       0,    86,    87,    88,    88,    88,    89,    89,    89,    89,
+      90,    90,    91,    91,    92,    92,    93,    93,    94,    94,
+      95,    95,    96,    97,    97,    97,    97,    98,    98,    98,
+      98,    98,    98,    99,    99,    99,    99,    99,   100,   100,
+     101,   101,   101,   101,   101,   102,   102,   103,   103,   104,
+     104,   105,   105,   105,   105,   105,   105,   105,   105,   105,
+     105,   105,   105,   105,   105,   105
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     3,     2,     0,     1,     1,     1,     1,
-       1,     8,     9,     2,     0,     6,     7,     4,     2,     3,
-       1,     1,     1,     1,     1,     1,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     4,     3,
-       1,     2,     1,     1,     1,     2,     1,     1,     2,     1,
+       0,     2,     1,     3,     2,     0,     0,     1,     1,     1,
+       1,     1,     8,     9,     2,     0,     6,     7,     4,     2,
+       3,     1,     1,     1,     1,     1,     1,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     4,
+       3,     1,     2,     1,     1,     1,     2,     1,     1,     2,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1
+       1,     1,     1,     1,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -734,17 +734,17 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       5,     0,    43,     0,     0,    44,    40,    42,     0,     0,
-       5,     0,     6,     9,    10,     7,     8,    23,    24,    25,
-      22,    21,     0,     0,     0,    41,    45,     0,     1,     0,
-      46,    47,     4,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    37,     0,    20,    39,     0,
-       3,    34,    35,    33,    32,    36,    28,    29,    26,    27,
-      30,    31,    14,    50,    51,    52,    53,    54,    58,    55,
-      59,    56,    60,    57,    61,    62,    63,    64,     0,     0,
-      49,    38,     0,     0,     0,     0,     0,    14,     0,    18,
-      48,    19,     0,     0,    13,     5,     0,     0,    15,     0,
-       5,     5,    17,    16,    11,     5,    12
+       5,     0,    44,     0,     0,    45,    41,    43,     0,     0,
+       6,     0,     7,    10,    11,     8,     9,    24,    25,    26,
+      23,    22,     0,     0,     0,    42,    46,     0,     1,     0,
+      47,    48,     4,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    38,     0,    21,    40,     0,
+       3,    35,    36,    34,    33,    37,    29,    30,    27,    28,
+      31,    32,    15,    51,    52,    53,    54,    55,    59,    56,
+      60,    57,    61,    58,    62,    63,    64,    65,     0,     0,
+      50,    39,     0,     0,     0,     0,     0,    15,     0,    19,
+      49,    20,     0,     0,    14,     5,     0,     0,    16,     0,
+       6,     5,    18,    17,    12,     6,    13
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -1729,28 +1729,28 @@ yyreduce:
     break;
 
   case 5:
-#line 143 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.node) = nullptr; ;}
+#line 140 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.nodes) = new std::vector<ASTNode *>() ;}
     break;
 
   case 6:
 #line 144 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.node) = (yyvsp[(1) - (1)].stmt); ;}
+    { (yyval.node) = nullptr; ;}
     break;
 
   case 7:
 #line 145 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
+    { (yyval.node) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
   case 8:
 #line 146 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.node) = (yyvsp[(1) - (1)].expr); ;}
+    { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 9:
-#line 150 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
+#line 147 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.node) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
   case 10:
@@ -1759,7 +1759,12 @@ yyreduce:
     break;
 
   case 11:
-#line 156 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 152 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
+    break;
+
+  case 12:
+#line 157 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto func = new Function(*(yyvsp[(2) - (8)].str), std::vector<Parameter *>());
 		func->setReturnType((yyvsp[(5) - (8)].ty));
@@ -1773,8 +1778,8 @@ yyreduce:
 	;}
     break;
 
-  case 12:
-#line 168 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 13:
+#line 169 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto func = new Function(*(yyvsp[(2) - (9)].str), *(yyvsp[(4) - (9)].params));
 		func->setReturnType((yyvsp[(6) - (9)].ty));
@@ -1788,71 +1793,66 @@ yyreduce:
 	;}
     break;
 
-  case 13:
-#line 182 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 14:
+#line 183 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = (yyvsp[(2) - (2)].ty); ;}
     break;
 
-  case 14:
-#line 183 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 15:
+#line 184 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = nullptr; ;}
     break;
 
-  case 15:
-#line 188 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 16:
+#line 189 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		std::vector<Parameter *> params;
 		(yyval.stmt) = new ExternFunction(*(yyvsp[(2) - (6)].str), params, (yyvsp[(6) - (6)].ty));
 	;}
     break;
 
-  case 16:
-#line 193 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 17:
+#line 194 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.stmt) = new ExternFunction(*(yyvsp[(2) - (7)].str), *(yyvsp[(4) - (7)].params), (yyvsp[(7) - (7)].ty));
 	;}
     break;
 
-  case 17:
-#line 199 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 18:
+#line 200 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.params) = (yyvsp[(1) - (4)].params);
 		(yyval.params)->push_back(new Parameter((yyvsp[(3) - (4)].ty), *(yyvsp[(4) - (4)].str)));
 	;}
     break;
 
-  case 18:
-#line 204 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 19:
+#line 205 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.params) = new std::vector<Parameter *>();
 		(yyval.params)->push_back(new Parameter((yyvsp[(1) - (2)].ty), *(yyvsp[(2) - (2)].str)));
 	;}
     break;
 
-  case 19:
-#line 211 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 20:
+#line 212 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.args) = (yyvsp[(1) - (3)].args);
 		(yyval.args)->push_back((yyvsp[(3) - (3)].expr));
 	;}
     break;
 
-  case 20:
-#line 216 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 21:
+#line 217 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.args) = new std::vector<Expression *>();
 		(yyval.args)->push_back((yyvsp[(1) - (1)].expr));
 	;}
     break;
 
-  case 21:
-#line 222 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
-    break;
-
   case 22:
-#line 226 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
+#line 223 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 23:
@@ -1871,8 +1871,8 @@ yyreduce:
     break;
 
   case 26:
-#line 233 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
+#line 230 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
   case 27:
@@ -1901,8 +1901,8 @@ yyreduce:
     break;
 
   case 32:
-#line 242 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
+#line 239 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
     break;
 
   case 33:
@@ -1921,156 +1921,161 @@ yyreduce:
     break;
 
   case 36:
-#line 247 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
+#line 246 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
     break;
 
   case 37:
-#line 253 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 248 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); ;}
+    break;
+
+  case 38:
+#line 254 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		std::vector<Expression *> params;
 		(yyval.expr) = new FunctionCall(*(yyvsp[(1) - (3)].str), params);
 	;}
     break;
 
-  case 38:
-#line 258 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 39:
+#line 259 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.expr) = new FunctionCall(*(yyvsp[(1) - (4)].str), *(yyvsp[(3) - (4)].args));
 	;}
     break;
 
-  case 39:
-#line 264 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = (yyvsp[(2) - (3)].expr); ;}
-    break;
-
   case 40:
 #line 265 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = (yyvsp[(1) - (1)].val); ;}
+    { (yyval.expr) = (yyvsp[(2) - (3)].expr); ;}
     break;
 
   case 41:
 #line 266 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new NegativeExpr((yyvsp[(2) - (2)].expr)); ;}
+    { (yyval.expr) = (yyvsp[(1) - (1)].val); ;}
     break;
 
   case 42:
 #line 267 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new StrValue(*(yyvsp[(1) - (1)].str)); ;}
+    { (yyval.expr) = new NegativeExpr((yyvsp[(2) - (2)].expr)); ;}
     break;
 
   case 43:
 #line 268 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new IDReference(*(yyvsp[(1) - (1)].str)); ;}
+    { (yyval.expr) = new StrValue(*(yyvsp[(1) - (1)].str)); ;}
     break;
 
   case 44:
-#line 273 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 269 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new IDReference(*(yyvsp[(1) - (1)].str)); ;}
+    break;
+
+  case 45:
+#line 274 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.node) = new ReturnStmt(nullptr);
 	;}
     break;
 
-  case 45:
-#line 277 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 46:
+#line 278 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.node) = new ReturnStmt((yyvsp[(2) - (2)].expr));
 	;}
     break;
 
-  case 48:
-#line 289 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 49:
+#line 290 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.ty) = PointerType::get((yyvsp[(1) - (2)].ty));
 	;}
     break;
 
-  case 49:
-#line 293 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 50:
+#line 294 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.ty) = (yyvsp[(1) - (1)].ty);
 	;}
     break;
 
-  case 50:
-#line 299 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(32); ;}
-    break;
-
   case 51:
 #line 300 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(32); ;}
+    { (yyval.ty) = IntType::get(32); ;}
     break;
 
   case 52:
 #line 301 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = FloatType::get(); ;}
+    { (yyval.ty) = UIntType::get(32); ;}
     break;
 
   case 53:
 #line 302 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = DoubleType::get(); ;}
+    { (yyval.ty) = FloatType::get(); ;}
     break;
 
   case 54:
 #line 303 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(8); ;}
+    { (yyval.ty) = DoubleType::get(); ;}
     break;
 
   case 55:
 #line 304 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(16); ;}
+    { (yyval.ty) = IntType::get(8); ;}
     break;
 
   case 56:
 #line 305 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(32); ;}
+    { (yyval.ty) = IntType::get(16); ;}
     break;
 
   case 57:
 #line 306 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(64); ;}
+    { (yyval.ty) = IntType::get(32); ;}
     break;
 
   case 58:
 #line 307 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(8); ;}
+    { (yyval.ty) = IntType::get(64); ;}
     break;
 
   case 59:
 #line 308 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(16); ;}
+    { (yyval.ty) = UIntType::get(8); ;}
     break;
 
   case 60:
 #line 309 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(32); ;}
+    { (yyval.ty) = UIntType::get(16); ;}
     break;
 
   case 61:
 #line 310 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(64); ;}
+    { (yyval.ty) = UIntType::get(32); ;}
     break;
 
   case 62:
 #line 311 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(8); ;}
+    { (yyval.ty) = UIntType::get(64); ;}
     break;
 
   case 63:
 #line 312 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = VoidType::get(); ;}
+    { (yyval.ty) = IntType::get(8); ;}
     break;
 
   case 64:
 #line 313 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.ty) = VoidType::get(); ;}
+    break;
+
+  case 65:
+#line 314 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = VarType::get(); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 2074 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 2079 "/Users/robert/dev/orange/lib/grove/parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2290,6 +2295,6 @@ yyreturn:
 }
 
 
-#line 316 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 317 "/Users/robert/dev/orange/lib/grove/parser.y"
 
 

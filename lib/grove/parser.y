@@ -137,6 +137,7 @@ statements
 			$$->push_back($1);
 		}
 	}
+	| { $$ = new std::vector<ASTNode *>() };
 	;
 
 statement
