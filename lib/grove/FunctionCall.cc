@@ -113,6 +113,11 @@ void FunctionCall::build()
 		
 		auto arg_ty = arg->getType();
 		
+		// To meet with C calling conventials, arugments that are in the
+		// "variable argument" section of the argument list are upcasted
+		// in certain conditions:
+		// 	- integers lower than 32 bits are casted to int32
+		// 	- floats are casted to doubles.
 		if (arg_ty->isIntTy() && arg_ty->getIntegerBitWidth() < 32)
 		{
 			if (arg_ty->isSigned())
