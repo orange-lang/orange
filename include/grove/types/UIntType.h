@@ -25,7 +25,7 @@ public:
 	virtual bool isSigned() const override;
 	virtual bool isIntTy() const override;
 	
-	unsigned int getWidth() const;
+	virtual unsigned int getIntegerBitWidth() const override;
 	
 	virtual BasicType PODTy() const override;
 	

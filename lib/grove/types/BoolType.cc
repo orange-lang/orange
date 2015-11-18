@@ -23,11 +23,11 @@ static int BoolToInt(Type* f, Type* t)
 	auto from = f->as<BoolType*>();
 	auto to = t->as<IntType*>();
 
-	if (from->getWidth() > to->getWidth())
+	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
 	}
-	else if (from->getWidth() == to->getWidth())
+	else if (from->getIntegerBitWidth() == to->getIntegerBitWidth())
 	{
 		return 0;
 	}
@@ -42,11 +42,11 @@ static int BoolToUInt(Type* f, Type* t)
 	auto from = f->as<BoolType*>();
 	auto to = t->as<UIntType*>();
 
-	if (from->getWidth() > to->getWidth())
+	if (from->Type::getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
 	}
-	else if (from->getWidth() == to->getWidth())
+	else if (from->getIntegerBitWidth() == to->getIntegerBitWidth())
 	{
 		return 0;
 	}

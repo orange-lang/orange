@@ -21,11 +21,11 @@ static int UIntToInt(Type* f, Type* t)
 	auto from = dynamic_cast<UIntType *>(f);
 	auto to = dynamic_cast<IntType *>(t);
 	
-	if (from->getWidth() > to->getWidth())
+	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
 	}
-	else if (from->getWidth() == to->getWidth())
+	else if (from->getIntegerBitWidth() == to->getIntegerBitWidth())
 	{
 		return 0;
 	}
@@ -40,11 +40,11 @@ static int UIntToUInt(Type* f, Type* t)
 	auto from = dynamic_cast<UIntType *>(f);
 	auto to = dynamic_cast<UIntType *>(t);
 	
-	if (from->getWidth() > to->getWidth())
+	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
 	}
-	else if (from->getWidth() == to->getWidth())
+	else if (from->getIntegerBitWidth() == to->getIntegerBitWidth())
 	{
 		return 0;
 	}
@@ -73,6 +73,11 @@ UIntType::UIntType(unsigned int width)
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::IntToPtr);
 }
 
+unsigned int IntType::getIntegerBitWidth() const
+{
+	return m_width;
+}
+
 std::string UIntType::getSignature() const
 {
 	std::stringstream ss;
@@ -95,7 +100,7 @@ bool UIntType::isIntTy() const
 	return true;
 }
 
-unsigned int UIntType::getWidth() const
+unsigned int UIntType::getIntegerBitWidth() const
 {
 	return m_width;
 }

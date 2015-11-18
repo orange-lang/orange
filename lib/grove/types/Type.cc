@@ -104,6 +104,11 @@ Type* Type::getDefined(std::string signature)
 	return it->second;
 }
 
+unsigned int Type::getIntegerBitWidth() const
+{
+	return 0;
+}
+
 void Type::define(std::string signature, Type *ty)
 {
 	if (getDefined(signature) != nullptr)

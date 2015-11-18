@@ -97,6 +97,8 @@ public:
 	virtual bool isPointerTy() const;
 	virtual bool isVoidTy() const;
 	virtual bool isVarTy() const;
+	
+	virtual unsigned int getIntegerBitWidth() const;
 
 	/// Gets plain old data type.
 	virtual BasicType PODTy() const;

@@ -40,11 +40,11 @@ static int IntToUInt(Type* f, Type* t)
 	auto from = f->as<IntType *>();
 	auto to = t->as<UIntType *>();
 
-	if (from->getWidth() > to->getWidth())
+	if (from->getWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
 	}
-	else if (from->getWidth() == to->getWidth())
+	else if (from->getIntegerBitWidth() == to->getIntegerBitWidth())
 	{
 		return 0;
 	}
@@ -53,7 +53,6 @@ static int IntToUInt(Type* f, Type* t)
 		return llvm::Instruction::CastOps::SExt;
 	}
 }
-
 
 IntType::IntType(unsigned int width)
 {
@@ -72,6 +71,11 @@ IntType::IntType(unsigned int width)
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::SIToFP);
 	defineCast(typeid(FloatType), llvm::Instruction::CastOps::SIToFP);
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::IntToPtr);
+}
+
+unsigned int IntType::getIntegerBitWidth() const
+{
+	return m_width;
 }
 
 std::string IntType::getSignature() const
