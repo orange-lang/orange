@@ -1,7 +1,0 @@
-int8 a = 1 
-int16 b = 2 
-int32 c = 3 
-int64 d = 4 
-int e = 5 
-var f = 6
-return f - e - d - c - b - a + 9
