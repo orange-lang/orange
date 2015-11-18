@@ -56,8 +56,8 @@ static int BoolToUInt(Type* f, Type* t)
 	}
 }
 
-BoolType::BoolType()
-: UIntType(BOOL_WIDTH)
+BoolType::BoolType(bool isConst)
+: UIntType(BOOL_WIDTH, isConst)
 {
 	defineCast(typeid(IntType), BoolToInt);
 	defineCast(typeid(UIntType), BoolToUInt);
@@ -68,16 +68,24 @@ std::string BoolType::getSignature() const
 	return "b";
 }
 
-BoolType* BoolType::get()
+BoolType* BoolType::get(bool isConst)
 {
-	auto defined = getDefined("b");
+	std::stringstream ss;
+	ss << "b";
+	
+	if (isConst)
+	{
+		ss << "!";
+	}
+	
+	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<BoolType*>();
 	}
 
-	BoolType* ty = new BoolType();
-	define("b", ty);
+	BoolType* ty = new BoolType(isConst);
+	define(ss.str(), ty);
 
 	return ty;
 }

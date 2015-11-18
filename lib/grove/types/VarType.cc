@@ -9,7 +9,8 @@
 #include <grove/types/VarType.h>
 #include <llvm/IR/Type.h>
 
-VarType::VarType()
+VarType::VarType(bool isConst)
+: Type(isConst)
 {
 	m_type = (llvm::Type *)llvm::Type::getVoidTy(*m_context);
 }
@@ -24,16 +25,23 @@ bool VarType::isVarTy() const
 	return true;
 }
 
-VarType* VarType::get()
+VarType* VarType::get(bool isConst)
 {
-	auto defined = getDefined("V");
+	std::stringstream ss;
+	ss << "V";
+	
+	if (isConst) {
+		ss << "!";
+	}
+	
+	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<VarType*>();
 	}
 	
-	VarType* ty = new VarType();
-	define("V", ty);
+	VarType* ty = new VarType(isConst);
+	define(ss.str(), ty);
 	
 	return ty;
 }

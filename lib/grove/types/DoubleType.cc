@@ -14,7 +14,8 @@
 #include <grove/types/IntType.h>
 #include <grove/types/FloatType.h>
 
-DoubleType::DoubleType()
+DoubleType::DoubleType(bool isConst)
+: Type(isConst)
 {
 	m_type = llvm::Type::getDoubleTy(*m_context);
 
@@ -48,16 +49,24 @@ BasicType DoubleType::PODTy() const
 	return DOUBLE;
 }
 
-DoubleType* DoubleType::get()
+DoubleType* DoubleType::get(bool isConst)
 {
-	auto defined = getDefined("F");
+	std::stringstream ss;
+	ss << "F";
+	
+	if (isConst)
+	{
+		ss << "!";
+	}
+	
+	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<DoubleType*>();
 	}
 
-	DoubleType* ty = new DoubleType();
-	define("F", ty);
+	DoubleType* ty = new DoubleType(isConst);
+	define(ss.str(), ty);
 
 	return ty;
 }

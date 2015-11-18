@@ -17,7 +17,7 @@ private:
 	unsigned int m_size = 0;
 	
 protected:
-	ArrayType(Type* contained, unsigned int size);
+	ArrayType(Type* contained, unsigned int size, bool isConst);
 	
 public:
 	virtual std::string getSignature() const override;
@@ -30,5 +30,6 @@ public:
 	
 	virtual Type* getRootTy() override;
 	
-	static ArrayType* get(Type* contained, unsigned int size);
+	static ArrayType* get(Type* contained, unsigned int size,
+						  bool isConst = false);
 };

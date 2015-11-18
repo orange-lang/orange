@@ -11,6 +11,7 @@
 #include <llvm/IR/DerivedTypes.h>
 
 FunctionType::FunctionType(Type* retType, std::vector<Type*> args, bool vaarg)
+: Type(false)
 {
 	if (retType == nullptr)
 	{

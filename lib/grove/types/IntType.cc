@@ -54,7 +54,8 @@ static int IntToUInt(Type* f, Type* t)
 	}
 }
 
-IntType::IntType(unsigned int width)
+IntType::IntType(unsigned int width, bool isConst)
+: Type(isConst)
 {
 	if (width == 0)
 	{
@@ -122,7 +123,7 @@ BasicType IntType::PODTy() const
 	}
 }
 
-IntType* IntType::get(unsigned int width)
+IntType* IntType::get(unsigned int width, bool isConst)
 {
 	if (width == 0)
 	{
@@ -131,6 +132,11 @@ IntType* IntType::get(unsigned int width)
 
 	std::stringstream ss;
 	ss << "i." << width;
+	
+	if (isConst)
+	{
+		ss << "!";
+	}
 
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
@@ -138,7 +144,7 @@ IntType* IntType::get(unsigned int width)
 		return defined->as<IntType*>();
 	}
 
-	IntType* ty = new IntType(width);
+	IntType* ty = new IntType(width, isConst);
 	define(ss.str(), ty);
 
 	return ty;

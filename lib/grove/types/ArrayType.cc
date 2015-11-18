@@ -10,7 +10,8 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DerivedTypes.h>
 
-ArrayType::ArrayType(Type* contained, unsigned int size)
+ArrayType::ArrayType(Type* contained, unsigned int size, bool isConst)
+: Type(isConst)
 {
 	if (contained == nullptr)
 	{
@@ -50,7 +51,7 @@ Type* ArrayType::getRootTy()
 	return m_contained->getRootTy();
 }
 
-ArrayType* ArrayType::get(Type *contained, unsigned int size)
+ArrayType* ArrayType::get(Type *contained, unsigned int size, bool isConst)
 {
 	if (contained == nullptr)
 	{
@@ -59,6 +60,11 @@ ArrayType* ArrayType::get(Type *contained, unsigned int size)
 
 	std::stringstream ss;
 	ss << size << contained->getSignature();
+	
+	if (isConst)
+	{
+		ss << "!";
+	}
 
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
@@ -66,7 +72,7 @@ ArrayType* ArrayType::get(Type *contained, unsigned int size)
 		return defined->as<ArrayType *>();
 	}
 
-	ArrayType* ty = new ArrayType(contained, size);
+	ArrayType* ty = new ArrayType(contained, size, isConst);
 	define(ss.str(), ty);
 
 	return ty;

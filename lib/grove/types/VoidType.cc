@@ -10,6 +10,7 @@
 #include <llvm/IR/Type.h>
 
 VoidType::VoidType()
+: Type(false)
 {
 	m_type = (llvm::Type *)llvm::Type::getVoidTy(*m_context);
 }

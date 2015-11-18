@@ -13,9 +13,9 @@
 class BoolType : public UIntType
 {
 protected:
-	BoolType();
+	BoolType(bool isConst);
 public:
 	virtual std::string getSignature() const override;
 	
-	static BoolType* get();
+	static BoolType* get(bool isConst = false);
 };

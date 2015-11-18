@@ -16,7 +16,7 @@ private:
 	Type* m_contained = nullptr;
 
 protected:
-	PointerType(Type* contained);
+	PointerType(Type* contained, bool isConst);
 	
 public:
 	virtual std::string getSignature() const override;
@@ -29,5 +29,5 @@ public:
 	
 	virtual Type* getRootTy() override;
 	
-	static PointerType* get(Type* contained);
+	static PointerType* get(Type* contained, bool isConst = false);
 };

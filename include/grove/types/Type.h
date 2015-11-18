@@ -65,6 +65,7 @@ private:
 protected:
 	llvm::Type* m_type = nullptr;
 	llvm::LLVMContext* m_context = nullptr;
+	bool m_const = false;
 
 	/// Gets a type given by a signature, if it is defined.
 	/// Returns nullptr otherwise.
@@ -81,7 +82,7 @@ protected:
 	/// operation.
 	void defineCast(const std::type_info& to, TypeCallback cb);
 
-	Type();
+	Type(bool isConst);
 public:
 	/// Returns whether or not this type is signed.
 	virtual bool isSigned() const;
@@ -118,6 +119,8 @@ public:
 	/// Gets the cast operation to convert to another type.
 	int castOperation(Type* to);
 
+	bool isConst() const;
+	
 	/// Compare the precedence of two types.
 	/// @param source The source type to check.
 	/// @param target The target type to check against.

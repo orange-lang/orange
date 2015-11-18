@@ -13,11 +13,11 @@
 class VarType : public Type
 {
 protected:
-	VarType();
+	VarType(bool isConst);
 public:
 	virtual std::string getSignature() const override;
 	
 	virtual bool isVarTy() const override;
 	
-	static VarType* get();
+	static VarType* get(bool isConst = false);
 };

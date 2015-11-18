@@ -14,7 +14,8 @@
 #include <grove/types/IntType.h>
 #include <grove/types/DoubleType.h>
 
-FloatType::FloatType()
+FloatType::FloatType(bool isConst)
+: Type(isConst)
 {
 	m_type = llvm::Type::getFloatTy(*m_context);
 
@@ -48,16 +49,24 @@ BasicType FloatType::PODTy() const
 	return FLOAT;
 }
 
-FloatType* FloatType::get()
+FloatType* FloatType::get(bool isConst)
 {
-	auto defined = getDefined("f");
+	std::stringstream ss;
+	ss << "f";
+	
+	if (isConst)
+	{
+		ss << "!";
+	}
+	
+	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<FloatType*>();
 	}
 
-	FloatType* ty = new FloatType();
-	define("f", ty);
+	FloatType* ty = new FloatType(isConst);
+	define(ss.str(), ty);
 
 	return ty;
 }

@@ -13,7 +13,7 @@
 class FloatType : public Type
 {
 protected:
-	FloatType();
+	FloatType(bool isConst);
 public:
 	virtual std::string getSignature() const override;
 	
@@ -23,5 +23,5 @@ public:
 	
 	virtual BasicType PODTy() const override;
 	
-	static FloatType* get();
+	static FloatType* get(bool isConst = false);
 };

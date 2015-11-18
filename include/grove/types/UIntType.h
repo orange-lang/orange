@@ -16,7 +16,7 @@ private:
 	unsigned int m_width = 0;
 
 protected:
-	UIntType(unsigned int width);
+	UIntType(unsigned int width, bool isConst);
 	
 public:
 	virtual std::string getSignature() const override;
@@ -29,5 +29,5 @@ public:
 	
 	virtual BasicType PODTy() const override;
 	
-	static UIntType* get(unsigned int width);
+	static UIntType* get(unsigned int width, bool isConst = false);
 };

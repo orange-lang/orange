@@ -14,7 +14,8 @@
 #include <grove/types/UIntType.h>
 #include <grove/types/IntType.h>
 
-PointerType::PointerType(Type* contained)
+PointerType::PointerType(Type* contained, bool isConst)
+: Type(isConst)
 {
 	if (contained == nullptr)
 	{
@@ -55,7 +56,7 @@ Type* PointerType::getRootTy()
 	return getBaseTy()->getRootTy();
 }
 
-PointerType* PointerType::get(Type *contained)
+PointerType* PointerType::get(Type *contained, bool isConst)
 {
 	if (contained == nullptr)
 	{
@@ -73,6 +74,11 @@ PointerType* PointerType::get(Type *contained)
 	}
 
 	std::string signature = contained->getSignature() + "p";
+	
+	if (isConst)
+	{
+		signature += "!";
+	}
 
 	auto defined = getDefined(signature);
 	if (defined != nullptr)
@@ -80,7 +86,7 @@ PointerType* PointerType::get(Type *contained)
 		return defined->as<PointerType *>();
 	}
 
-	PointerType* ty = new PointerType(contained);
+	PointerType* ty = new PointerType(contained, isConst);
 	define(signature, ty);
 
 	return ty;

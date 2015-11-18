@@ -54,7 +54,8 @@ static int UIntToUInt(Type* f, Type* t)
 	}
 }
 
-UIntType::UIntType(unsigned int width)
+UIntType::UIntType(unsigned int width, bool isConst)
+: Type(isConst)
 {
 	if (width == 0)
 	{
@@ -124,7 +125,7 @@ BasicType UIntType::PODTy() const
 	}
 }
 
-UIntType* UIntType::get(unsigned int width)
+UIntType* UIntType::get(unsigned int width, bool isConst)
 {
 	if (width == 0)
 	{
@@ -134,13 +135,18 @@ UIntType* UIntType::get(unsigned int width)
 	std::stringstream ss;
 	ss << "I." << width;
 	
+	if (isConst)
+	{
+		ss << "!";
+	}
+	
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
 	{
 		return dynamic_cast<UIntType*>(defined);
 	}
 	
-	UIntType* ty = new UIntType(width);
+	UIntType* ty = new UIntType(width, isConst);
 	define(ss.str(), ty);
 	
 	return ty;

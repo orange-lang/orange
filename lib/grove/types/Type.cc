@@ -72,6 +72,11 @@ bool Type::isVarTy() const
 	return false;
 }
 
+bool Type::isConst() const
+{
+	return m_const;
+}
+
 BasicType Type::PODTy() const
 {
 	return OTHER;
@@ -201,9 +206,10 @@ Comparison Type::compare(Type *source, Type *target)
 	}
 }
 
-Type::Type()
+Type::Type(bool isConst)
 {
 	m_context = & llvm::getGlobalContext();
+	m_const = isConst;
 	m_type = llvm::Type::getVoidTy(*m_context);
 }
 

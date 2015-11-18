@@ -13,7 +13,7 @@
 class DoubleType : public Type
 {
 protected:
-	DoubleType();
+	DoubleType(bool isConst);
 public:
 	virtual std::string getSignature() const override;
 	
@@ -23,5 +23,5 @@ public:
 	
 	virtual BasicType PODTy() const override;
 	
-	static DoubleType* get();
+	static DoubleType* get(bool isConst = false);
 };
