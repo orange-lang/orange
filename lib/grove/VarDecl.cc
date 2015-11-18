@@ -38,37 +38,42 @@ Expression* VarDecl::getExpression() const
 
 void VarDecl::resolve()
 {
+	if (findNamed(getName()))
+	{
+		throw std::invalid_argument("Variable already exists.");
+	}
+
 	if (getType()->isVarTy() && getExpression() == nullptr)
 	{
 		throw std::runtime_error("A variable of type var must have \
 								 an expression");
 	}
-	
+
 	if (getExpression())
 	{
 		assertExists(getExpression()->getType(), "Expression has no type.");
-	
+
     	if (getType()->isVarTy())
     	{
     		setType(getExpression()->getType());
-    	}	
+    	}
 	}
 }
 
 void VarDecl::build()
 {
 	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType()));
-	
+
 	if (getExpression())
 	{
 		getExpression()->build();
 		auto val = getExpression()->getValue();
 		assertExists(val, "Built expression has no value.");
-		
+
 		val = getExpression()->castTo(getType());
-		
+
 		assertEqual<VAL, PTR>(val, getPointer(), "value does not match variable");
-		
+
 		IRBuilder()->CreateStore(val, getPointer());
 	}
 }
@@ -76,20 +81,20 @@ void VarDecl::build()
 VarDecl::VarDecl(Type* type, std::string name, Expression* expression)
 {
 	assertExists(type, "Type must exist");
-	
+
 	if (type->isVoidTy())
 	{
 		throw std::runtime_error("type of variable cannot be void");
 	}
-	
+
 	if (name == "")
 	{
 		throw std::invalid_argument("name cannot be empty");
 	}
-	
+
 	m_name = name;
 	m_expr = expression;
-	
+
 	setType(type);
 	addChild(m_expr, false);
 }
