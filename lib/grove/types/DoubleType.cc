@@ -49,6 +49,11 @@ BasicType DoubleType::PODTy() const
 	return DOUBLE;
 }
 
+Type* DoubleType::getConst()
+{
+	return DoubleType::get(true);
+}
+
 DoubleType* DoubleType::get(bool isConst)
 {
 	std::stringstream ss;

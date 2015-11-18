@@ -125,6 +125,11 @@ BasicType UIntType::PODTy() const
 	}
 }
 
+Type* UIntType::getConst()
+{
+	return UIntType::get(m_width, true);
+}
+
 UIntType* UIntType::get(unsigned int width, bool isConst)
 {
 	if (width == 0)

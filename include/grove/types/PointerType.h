@@ -29,5 +29,7 @@ public:
 	
 	virtual Type* getRootTy() override;
 	
+	virtual Type* getConst() override;
+	
 	static PointerType* get(Type* contained, bool isConst = false);
 };

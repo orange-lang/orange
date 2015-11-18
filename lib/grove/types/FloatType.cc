@@ -49,6 +49,11 @@ BasicType FloatType::PODTy() const
 	return FLOAT;
 }
 
+Type* FloatType::getConst()
+{
+	return FloatType::get(true);
+}
+
 FloatType* FloatType::get(bool isConst)
 {
 	std::stringstream ss;

@@ -123,6 +123,11 @@ BasicType IntType::PODTy() const
 	}
 }
 
+Type* IntType::getConst()
+{
+	return IntType::get(m_width, true);
+}
+
 IntType* IntType::get(unsigned int width, bool isConst)
 {
 	if (width == 0)

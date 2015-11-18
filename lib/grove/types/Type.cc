@@ -97,6 +97,11 @@ Type* Type::getRootTy()
 	return this;
 }
 
+Type* Type::getConst()
+{
+	throw std::runtime_error("Cannot get const of this type");
+}
+
 Type* Type::getDefined(std::string signature)
 {
 	auto it = m_defined.find(signature);

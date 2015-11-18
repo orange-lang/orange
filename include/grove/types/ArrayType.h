@@ -30,6 +30,8 @@ public:
 	
 	virtual Type* getRootTy() override;
 	
+	virtual Type* getConst() override;
+	
 	static ArrayType* get(Type* contained, unsigned int size,
 						  bool isConst = false);
 };

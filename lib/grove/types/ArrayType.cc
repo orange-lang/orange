@@ -51,6 +51,11 @@ Type* ArrayType::getRootTy()
 	return m_contained->getRootTy();
 }
 
+Type* ArrayType::getConst()
+{
+	return ArrayType::get(m_contained, m_size, true);
+}
+
 ArrayType* ArrayType::get(Type *contained, unsigned int size, bool isConst)
 {
 	if (contained == nullptr)

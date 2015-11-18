@@ -23,5 +23,7 @@ public:
 	
 	virtual BasicType PODTy() const override;
 	
+	virtual Type* getConst() override;
+	
 	static FloatType* get(bool isConst = false);
 };

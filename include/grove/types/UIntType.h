@@ -29,5 +29,7 @@ public:
 	
 	virtual BasicType PODTy() const override;
 	
+	virtual Type* getConst() override;
+	
 	static UIntType* get(unsigned int width, bool isConst = false);
 };

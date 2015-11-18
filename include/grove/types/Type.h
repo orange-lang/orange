@@ -112,6 +112,9 @@ public:
 
 	/// Gets the root type.
 	virtual Type* getRootTy();
+	
+	/// Gets a const version of this type.
+	virtual Type* getConst();
 
 	/// Gets the unique signature of this type.
 	virtual std::string getSignature() const;

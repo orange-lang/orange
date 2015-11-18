@@ -25,6 +25,11 @@ bool VarType::isVarTy() const
 	return true;
 }
 
+Type* VarType::getConst()
+{
+	return VarType::get(true);
+}
+
 VarType* VarType::get(bool isConst)
 {
 	std::stringstream ss;

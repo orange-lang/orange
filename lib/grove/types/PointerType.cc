@@ -56,6 +56,11 @@ Type* PointerType::getRootTy()
 	return getBaseTy()->getRootTy();
 }
 
+Type* PointerType::getConst()
+{
+	return PointerType::get(m_contained, true);
+}
+
 PointerType* PointerType::get(Type *contained, bool isConst)
 {
 	if (contained == nullptr)

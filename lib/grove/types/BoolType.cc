@@ -68,6 +68,11 @@ std::string BoolType::getSignature() const
 	return "b";
 }
 
+Type* BoolType::getConst()
+{
+	return BoolType::get(true);
+}
+
 BoolType* BoolType::get(bool isConst)
 {
 	std::stringstream ss;
