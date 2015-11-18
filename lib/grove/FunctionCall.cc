@@ -10,6 +10,9 @@
 #include <grove/Named.h>
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
+#include <grove/types/IntType.h>
+#include <grove/types/UIntType.h>
+#include <grove/types/DoubleType.h>
 #include <util/assertions.h>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
@@ -65,9 +68,13 @@ void FunctionCall::resolve()
 
 	auto func_ty = ty->as<FunctionType*>();
 
-	if (m_args.size() != func_ty->getArgs().size())
+	if (!func_ty->isVarArg() && m_args.size() != func_ty->getArgs().size())
 	{
 		throw std::invalid_argument("function args != caller args");
+	}
+	else if (func_ty->isVarArg() && m_args.size() < func_ty->getArgs().size())
+	{
+		throw std::invalid_argument("not enough arguments to call vaarg func");
 	}
 
 	setType(func_ty->getReturnTy());
@@ -78,7 +85,9 @@ void FunctionCall::build()
 	std::vector<llvm::Value *> llvm_args;
 
 	auto func_ty = getFunctionTy();
-	for (unsigned int i = 0; i < m_args.size(); i++)
+	auto num_args = func_ty->getArgs().size();
+	
+	for (unsigned int i = 0; i < num_args; i++)
 	{
 		auto param_ty = func_ty->getArgs()[i];
 
@@ -89,6 +98,35 @@ void FunctionCall::build()
 		if (arg->getType() != param_ty)
 		{
 			llvm_args.push_back(arg->castTo(param_ty));
+		}
+		else
+		{
+			llvm_args.push_back(arg->getValue());
+		}
+	}
+	
+	// Add remaining arguments if it is vaarg.
+	for (unsigned int i = num_args; i < m_args.size(); i++)
+	{
+		auto arg = m_args[i];
+		arg->build();
+		
+		auto arg_ty = arg->getType();
+		
+		if (arg_ty->isIntTy() && arg_ty->getIntegerBitWidth() < 32)
+		{
+			if (arg_ty->isSigned())
+			{
+    			llvm_args.push_back(arg->castTo(IntType::get(32)));
+			}
+			else
+			{
+    			llvm_args.push_back(arg->castTo(UIntType::get(32)));
+			}
+		}
+		else if (arg_ty->isFloatTy())
+		{
+			llvm_args.push_back(arg->castTo(DoubleType::get()));
 		}
 		else
 		{

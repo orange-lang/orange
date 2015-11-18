@@ -33,5 +33,5 @@ public:
 	std::vector<Parameter *> getParams() const;
 	
 	ExternFunction(std::string name, std::vector<Parameter *> params,
-				   Type* retType);
+				   Type* retType, bool vaarg = false);
 };

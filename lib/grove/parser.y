@@ -194,6 +194,10 @@ extern_function
 	{
 		$$ = new ExternFunction(*$2, *$4, $7);
 	}
+	| EXTERN TYPE_ID OPEN_PAREN param_list COMMA VARARG CLOSE_PAREN ARROW type
+	{
+		$$ = new ExternFunction(*$2, *$4, $9, true);
+	}
 
 param_list
 	: param_list COMMA type TYPE_ID

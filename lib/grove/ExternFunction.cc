@@ -45,7 +45,7 @@ void ExternFunction::build()
 }
 
 ExternFunction::ExternFunction(std::string name, std::vector<Parameter *> params,
-							   Type* retType)
+							   Type* retType, bool vararg)
 {
 	if (name == "")
 	{
@@ -63,5 +63,5 @@ ExternFunction::ExternFunction(std::string name, std::vector<Parameter *> params
 	m_name = name;
 	m_params = params;
 	
-	setType(FunctionType::get(retType, getParamTys()));
+	setType(FunctionType::get(retType, getParamTys(), vararg));
 }
