@@ -74,7 +74,7 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST QUESTION COLON ENUM SIZEOF
 
-%type <nodes> statements
+%type <nodes> opt_statements statements
 %type <node> statement return controls
 %type <expr> expression primary comparison arithmetic call
 %type <stmt> structures function extern_function var_decl
@@ -120,7 +120,7 @@ start
 	;
 
 statements
-	: statements statement term
+	: statements statement
 	{
 		$$ = $1;
 
@@ -129,7 +129,7 @@ statements
     		$$->push_back($2);
 		}
 	}
-	| statement term
+	| statement
 	{
 		$$ = new std::vector<ASTNode *>();
 
@@ -138,15 +138,19 @@ statements
 			$$->push_back($1);
 		}
 	}
-	| { $$ = new std::vector<ASTNode *>() };
+	;
+
+opt_statements
+	: statements { $$ = $1; }
+	| { $$ = new std::vector<ASTNode *>(); }
 	;
 
 statement
-	: { $$ = nullptr; }
-	| structures { $$ = $1; } /* structures: if, loops, functions, etc */
-	| controls { $$ = $1; } /* controls: return, break, continue */
-	| expression { $$ = $1; }
-	| var_decl { $$ = $1; }
+	: structures term { $$ = $1; } /* structures: if, loops, functions, etc */
+	| controls term { $$ = $1; } /* controls: return, break, continue */
+	| expression term { $$ = $1; }
+	| var_decl term { $$ = $1; }
+	| term { $$ = nullptr; }
 	;
 
 structures
@@ -155,7 +159,7 @@ structures
 	;
 
 function
- 	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN type_hint term statements END
+ 	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN type_hint term opt_statements END
 	{
 		auto func = new Function(*$2, std::vector<Parameter *>());
 		func->setReturnType($5);
@@ -167,7 +171,7 @@ function
 
 		$$ = func;
 	}
-	| DEF TYPE_ID OPEN_PAREN param_list CLOSE_PAREN type_hint term statements END
+	| DEF TYPE_ID OPEN_PAREN param_list CLOSE_PAREN type_hint term opt_statements END
 	{
 		auto func = new Function(*$2, *$4);
 		func->setReturnType($6);
