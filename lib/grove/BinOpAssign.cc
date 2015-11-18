@@ -7,6 +7,7 @@
 */
 
 #include <grove/BinOpAssign.h>
+#include <grove/types/Type.h>
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
 
@@ -81,6 +82,11 @@ void BinOpAssign::resolve()
 	
 	assertExists(getLHS()->getType(), "LHS doesn't have a type");
 	setType(getLHS()->getType());
+	
+	if (getLHS()->getType()->isConst())
+	{
+		throw std::invalid_argument("Cann't assign to a const var");
+	}
 }
 
 void BinOpAssign::build()
