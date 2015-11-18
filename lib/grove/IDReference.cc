@@ -35,6 +35,9 @@ std::string IDReference::getName() const
 
 void IDReference::resolve()
 {
+	auto ref = findNamed(getName());
+	assertExists(ref, "No variable with this name exists.");
+
 	auto typed = findNamed(getName())->as<Typed *>();
 
 	auto ty = typed->getType();
