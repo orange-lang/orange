@@ -116,8 +116,12 @@ int name(){\
 			ADD_ERROR(name, ss.str()); exitCode = 1;}}\
 	return exitCode;}
 
-ADD_TEST_FOLDER(TestBasicPrograms, basic);
-ADD_TEST_FOLDER(TestFunctionPrograms, functions);
+ADD_TEST_FOLDER(TestEmptyPrograms, empty);
+ADD_TEST_FOLDER(TestReturnPrograms, return);
+ADD_TEST_FOLDER(TestMathPrograms, math);
+
+//ADD_TEST_FOLDER(TestBasicPrograms, basic);
+//ADD_TEST_FOLDER(TestFunctionPrograms, functions);
 
 
 RUN_TESTS();
