@@ -1,7 +1,0 @@
-extern printf(char *s, ...) -> int32
-
-def foo(var s, var a)
-	return printf(s, a + 1)
-end 
-
-return foo("hello: %d\n", -1) - 9

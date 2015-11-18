@@ -1,6 +1,10 @@
-def a()
-	return
-end 
+# void_return.or
+#
+# Test creating and calling a function that returns nothing but has a return
+# statement.
 
-a()
-return 0
+def foo()
+	return
+end
+
+foo()

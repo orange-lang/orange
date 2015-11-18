@@ -1,0 +1,6 @@
+# extern_func_global.or
+#
+# Test calling an external function from the global scope.
+
+extern puts(char* s) -> int32
+return puts("hello\n") - 6

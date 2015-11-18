@@ -1,3 +1,0 @@
-extern puts(char *s) -> int32
-puts("hello!")
-return 0
