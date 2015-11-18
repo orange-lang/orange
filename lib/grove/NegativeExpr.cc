@@ -44,7 +44,17 @@ void NegativeExpr::build()
 	getExpression()->build();
 	assertExists(getExpression()->getValue(), "expression has no value.");
 	
-	auto val = IRBuilder()->CreateNeg(getExpression()->getValue());
+	llvm::Value* val = nullptr;
+	
+	if (getExpression()->getType()->isFloatingPointTy())
+	{
+		val = IRBuilder()->CreateFNeg(getExpression()->getValue());
+	}
+	else
+	{
+		val = IRBuilder()->CreateNeg(getExpression()->getValue());
+	}
+	
 	setValue(val);
 }
 
