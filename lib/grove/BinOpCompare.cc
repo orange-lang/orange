@@ -29,6 +29,8 @@ static llvm::CmpInst::Predicate getPredicate(std::string op, bool FP, bool isSig
 		{">",  {CmpInst::ICMP_UGT, CmpInst::ICMP_SGT, CmpInst::FCMP_OGT}},
 		{"<=", {CmpInst::ICMP_ULE, CmpInst::ICMP_SLE, CmpInst::FCMP_OLE}},
 		{">=", {CmpInst::ICMP_UGE, CmpInst::ICMP_SGE, CmpInst::FCMP_OGE}},
+		{"==", {CmpInst::ICMP_EQ,  CmpInst::ICMP_EQ,  CmpInst::FCMP_OEQ}},
+		{"!=", {CmpInst::ICMP_NE,  CmpInst::ICMP_NE,  CmpInst::FCMP_ONE}}
 	};
 	
 	auto it = m_op_map.find(op);

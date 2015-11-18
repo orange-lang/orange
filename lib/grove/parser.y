@@ -79,6 +79,7 @@
 %type <stmt> structures function extern_function
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
+%type <str> EQUALS NEQUALS
 %type <ty> type basic_type type_hint
 %type <params> param_list
 %type <args> arg_list
@@ -233,6 +234,8 @@ comparison
 	| expression COMP_GT expression { $$ = new BinOpCompare($1, *$2, $3); }
 	| expression LEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
 	| expression GEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
+	| expression EQUALS expression { $$ = new BinOpCompare($1, *$2, $3); }
+	| expression NEQUALS expression { $$ = new BinOpCompare($1, *$2, $3); }
 	;
 
 arithmetic
