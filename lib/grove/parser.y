@@ -74,7 +74,7 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST QUESTION COLON ENUM SIZEOF
 
-%type <nodes> opt_statements statements
+%type <nodes> opt_statements statements compound_statement
 %type <node> statement return controls
 %type <expr> expression primary comparison arithmetic call
 %type <stmt> structures function extern_function var_decl
@@ -129,6 +129,16 @@ statements
     		$$->push_back($2);
 		}
 	}
+	| statements compound_statement
+	{
+		$$ = $1;
+		
+		for (auto stmt : *$2)
+		{
+			if (stmt == nullptr) continue;
+			$$->push_back(stmt);
+		}
+	}
 	| statement
 	{
 		$$ = new std::vector<ASTNode *>();
@@ -136,6 +146,16 @@ statements
 		if ($1 != nullptr)
 		{
 			$$->push_back($1);
+		}
+	}
+	| compound_statement
+	{
+		$$ = new std::vector<ASTNode *>();
+
+		for (auto stmt : *$1)
+		{
+			if (stmt == nullptr) continue;
+			$$->push_back(stmt);
 		}
 	}
 	;
@@ -149,8 +169,15 @@ statement
 	: structures term { $$ = $1; } /* structures: if, loops, functions, etc */
 	| controls term { $$ = $1; } /* controls: return, break, continue */
 	| expression term { $$ = $1; }
-	| var_decl term { $$ = $1; }
 	| term { $$ = nullptr; }
+	;
+
+compound_statement
+	: var_decl term
+	{
+		$$ = new std::vector<ASTNode *>();
+		$$->push_back($1);
+	}
 	;
 
 structures
