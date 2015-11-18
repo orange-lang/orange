@@ -371,6 +371,10 @@ type
 	{
 		$$ = $1;
 	}
+	| CONST type
+	{
+		$$ = $2->getConst();
+	}
 	;
 
 basic_type
