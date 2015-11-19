@@ -8,6 +8,7 @@
 
 #include <grove/Genericable.h>
 #include <grove/Typed.h>
+#include <grove/Named.h>
 #include <grove/types/Type.h>
 
 #include <util/assertions.h>
@@ -39,7 +40,16 @@ Genericable* Genericable::findInstance(Type *type) const
 		auto ty = instance->getType();
 		assertExists(ty, "Instance did not have a type!");
 		
-		if (ty == type)
+		if (instance->is<Named *>())
+		{
+			auto named = instance->as<Named *>();
+			
+			if (named->matches(named->getName(), type))
+			{
+				return instance;
+			}
+		}
+		else if (ty == type)
 		{
 			return instance;
 		}
