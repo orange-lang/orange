@@ -236,9 +236,13 @@ llvm::Value* Type::cast(void *irBuilder, llvm::Value *val, Type *target)
 	TypeTuple key(typeid(*this).hash_code(), typeid(*target).hash_code());
 	
 	auto it = m_cast_map.find(key);
-	if (it == m_cast_map.end())
+	if (it == m_cast_map.end() && this != target)
 	{
 		throw std::invalid_argument("no cast defined.");
+	}
+	else if (this == target)
+	{
+		return val;
 	}
 	
 	return it->second(irBuilder, val, this, target);
