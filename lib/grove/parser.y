@@ -88,6 +88,7 @@
 %type <args> arg_list
 
 /* lowest to highest precedence */
+%right CONST
 %left COMMA
 
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN
