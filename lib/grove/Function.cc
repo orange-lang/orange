@@ -16,6 +16,7 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Codegen/Passes.h>
 #include <llvm/Analysis/Passes.h>
@@ -315,6 +316,7 @@ void Function::setupFunction()
 void Function::optimize()
 {
 	llvm::legacy::FunctionPassManager FPM(getModule()->getLLVMModule());
+	FPM.add(llvm::createVerifierPass(true));
 	FPM.add(llvm::createBasicAliasAnalysisPass());
 	FPM.add(llvm::createPromoteMemoryToRegisterPass());
 	FPM.add(llvm::createInstructionCombiningPass());
