@@ -83,7 +83,7 @@
 %type <pairs> var_decl_list
 %type <blocks> else_if_or_end
 %type <expr> expression primary comparison arithmetic call
-%type <stmt> structures function extern_function ifs
+%type <stmt> structures function extern_function ifs inline_if
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
@@ -190,6 +190,7 @@ structures
 	: function { $$ = $1; }
 	| extern_function { $$ = $1; }
 	| ifs { $$ = $1; }
+	| inline_if { $$ = $1; }
 	;
 
 function
@@ -292,6 +293,29 @@ else_if_or_end
 	| END
 	{
 		$$ = new std::vector<Block *>();
+	}
+	;
+
+inline_if
+	: controls IF expression
+	{
+		auto block = new CondBlock($3);
+		block->addStatement($1);
+
+		auto if_stmt = new IfStmt();
+		if_stmt->addBlock(block);
+		
+		$$ = if_stmt;
+	}
+	| expression IF expression
+	{
+		auto block = new CondBlock($3);
+		block->addStatement($1);
+
+		auto if_stmt = new IfStmt();
+		if_stmt->addBlock(block);
+		
+		$$ = if_stmt;
 	}
 	;
 
