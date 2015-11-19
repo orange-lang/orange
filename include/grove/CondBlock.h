@@ -21,6 +21,7 @@ class CondBlock : public Block
 {
 private:
 	Expression* m_expr = nullptr;
+	bool m_invert = false;
 public:
 	virtual void resolve() override;
 	
@@ -28,5 +29,7 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
-	CondBlock(Expression* expr);
+	bool invertCondition() const; 
+	
+	CondBlock(Expression* expr, bool invert = false);
 };

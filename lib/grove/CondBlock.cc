@@ -13,7 +13,7 @@
 
 ASTNode* CondBlock::copy() const
 {
-	auto clone = new CondBlock(m_expr->copy()->as<Expression *>());
+	auto clone = new CondBlock(m_expr->copy()->as<Expression *>(), m_invert);
 	clone->copyStatements(this);
 	return clone;
 }
@@ -33,10 +33,17 @@ Expression* CondBlock::getExpression() const
 	return m_expr;
 }
 
-CondBlock::CondBlock(Expression* expr)
+bool CondBlock::invertCondition() const
+{
+	return m_invert;
+}
+
+CondBlock::CondBlock(Expression* expr, bool invert)
 {
 	assertExists(expr, "Expression can not be null!");
 	
 	m_expr = expr;
+	m_invert = invert;
+	
 	addChild(m_expr);
 }
