@@ -66,6 +66,8 @@ public:
 	/// Indicates whether or not this function returns void.
 	bool isVoidFunction();
 	
+	virtual ASTNode* copy() const override;
+	
 	virtual bool isGeneric() const override;
 	
 	virtual void resolve() override;

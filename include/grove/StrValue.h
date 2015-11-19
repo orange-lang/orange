@@ -23,6 +23,8 @@ private:
 public:
 	virtual llvm::Value* getValue() const override;
 	
+	virtual ASTNode* copy() const override;
+	
 	virtual void build() override;
 	
 	StrValue(std::string value);

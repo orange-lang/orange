@@ -29,6 +29,18 @@ bool ReturnStmt::isTerminator() const
 	return true;
 }
 
+ASTNode* ReturnStmt::copy() const
+{
+	if (m_expr)
+	{
+		return new ReturnStmt(m_expr->copy()->as<Expression *>());
+	}
+	else
+	{
+		return new ReturnStmt(nullptr);
+	}
+}
+
 void ReturnStmt::resolve()
 {
 	Statement::resolve();

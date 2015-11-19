@@ -28,8 +28,10 @@ public:
 	/// Gets the arguments in this function call.
 	std::vector<Expression *> getArgs() const;
 	
-	virtual void resolve();
-	virtual void build();
+	virtual void resolve() override;
+	virtual void build() override;
+	
+	virtual ASTNode* copy() const override;
 	
 	/// Constructs a new function call.
 	/// @param name The name of the function to call.

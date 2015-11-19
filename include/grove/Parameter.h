@@ -21,5 +21,7 @@ public:
 	
 	virtual llvm::Value* getValue() const override;
 	
+	virtual ASTNode* copy() const override;
+	
 	Parameter(Type* type, std::string name);
 };

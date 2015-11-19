@@ -33,5 +33,7 @@ public:
 	
 	virtual void build() override;
 	
+	virtual ASTNode* copy() const override;
+	
 	IDReference(std::string name);
 };

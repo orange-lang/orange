@@ -21,6 +21,7 @@
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Transforms/Scalar.h>
 #include <util/assertions.h>
+#include <util/copy.h>
 
 llvm::BasicBlock* Function::getEntry() const
 {
@@ -121,6 +122,13 @@ bool Function::isGeneric() const
 	}
 	
 	return false;
+}
+
+ASTNode* Function::copy() const
+{
+	auto func = new Function(getModule(), getName(), copyVector(getParams()));
+	func->copyStatements(this);
+	return func;
 }
 
 void Function::resolve()

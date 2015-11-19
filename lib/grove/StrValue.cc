@@ -37,6 +37,11 @@ llvm::Value* StrValue::getValue() const
 	return IRBuilder()->CreateConstGEP2_32(m_value, 0, 0);
 }
 
+ASTNode* StrValue::copy() const
+{
+	return new StrValue("\"" + m_str + "\"");
+}
+
 void StrValue::build()
 {
 	auto val = IRBuilder()->CreateGlobalString(m_str);

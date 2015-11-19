@@ -23,6 +23,9 @@ class ExternFunction
 {
 private:
 	std::vector<Parameter *> m_params;
+	
+	Type* m_ret_type = nullptr;
+	bool m_vararg = false;
 public:
 	virtual void build() override;
 	
@@ -31,6 +34,8 @@ public:
 	
 	/// Gets the list of parameters.
 	std::vector<Parameter *> getParams() const;
+	
+	virtual ASTNode* copy() const override;
 	
 	ExternFunction(std::string name, std::vector<Parameter *> params,
 				   Type* retType, bool vaarg = false);

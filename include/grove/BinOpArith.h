@@ -20,5 +20,7 @@ public:
 	virtual void resolve() override;
 	virtual void build() override;
 	
+	virtual ASTNode* copy() const override;
+	
 	BinOpArith(Expression* LHS, std::string op, Expression* RHS);
 };

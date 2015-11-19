@@ -22,6 +22,8 @@ private:
 	std::vector<ASTNode *> m_statements;
 protected:
 	void buildStatements();
+	
+	void copyStatements(const Block *orig);
 public:
 	std::vector<ASTNode *> getStatements() const;
 	

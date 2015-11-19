@@ -24,9 +24,14 @@ private:
 
 		double   d;
 	} m_values;
+	
+	std::string m_str = "";
+	int m_base = 0;
 public:
 	virtual void build() override;
-
+	
+	virtual ASTNode* copy() const override;
+	
 	/**
 	 * Constructs a new Value.
 	 * @param str The string to convert to a value.

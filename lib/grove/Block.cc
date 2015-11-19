@@ -67,6 +67,14 @@ void Block::buildStatements()
 	}
 }
 
+void Block::copyStatements(const Block *orig)
+{
+	for (auto stmt : orig->getStatements())
+	{
+		addStatement(stmt->copy());
+	}
+}
+
 Block::Block()
 : Statement()
 {

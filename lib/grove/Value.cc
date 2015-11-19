@@ -12,6 +12,11 @@
 #include <llvm/IR/Constants.h>
 #include <string>
 
+ASTNode* Value::copy() const
+{
+	return new Value(m_str, m_type, m_base);
+}
+
 void Value::build()
 {
 	auto ty = getType();
@@ -44,6 +49,8 @@ Value::Value(std::string str, Type* t, int base)
 	}
 
 	m_type = t;
+	m_base = base;
+	m_str = str;
 
 	switch (t->PODTy())
 	{

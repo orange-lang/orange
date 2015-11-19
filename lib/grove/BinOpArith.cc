@@ -52,6 +52,13 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 	}
 }
 
+ASTNode* BinOpArith::copy() const
+{
+	auto copiedLHS = getLHS()->copy()->as<Expression *>();
+	auto copiedRHS = getRHS()->copy()->as<Expression *>();
+	return new BinOpArith(copiedLHS, getOperator(), copiedRHS);
+}
+
 void BinOpArith::resolve()
 {
 	BinOpExpr::resolve();

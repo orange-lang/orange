@@ -11,6 +11,7 @@
 #include <grove/ExternFunction.h>
 #include <grove/Parameter.h>
 #include <util/assertions.h>
+#include <util/copy.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Function.h>
 #include <grove/Module.h>
@@ -31,6 +32,12 @@ std::vector<Type *> ExternFunction::getParamTys() const
 std::vector<Parameter *> ExternFunction::getParams() const
 {
 	return m_params;
+}
+
+ASTNode* ExternFunction::copy() const
+{
+	return new ExternFunction(getName(), copyVector(m_params),
+							  m_ret_type, m_vararg);
 }
 
 void ExternFunction::build()
@@ -62,6 +69,8 @@ ExternFunction::ExternFunction(std::string name, std::vector<Parameter *> params
 	
 	m_name = name;
 	m_params = params;
+	m_ret_type = retType;
+	m_vararg = vararg;
 	
 	setType(FunctionType::get(retType, getParamTys(), vararg));
 }

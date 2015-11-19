@@ -25,6 +25,8 @@ public:
 	
 	virtual bool isTerminator() const override;
 	
+	virtual ASTNode* copy() const override;
+	
 	virtual void resolve() override;
 	virtual void build() override;
 	

@@ -36,6 +36,18 @@ Expression* VarDecl::getExpression() const
 	return m_expr;
 }
 
+ASTNode* VarDecl::copy() const
+{
+	if (m_expr)
+	{
+		return new VarDecl(m_type, m_name, m_expr->copy()->as<Expression *>());
+	}
+	else
+	{
+		return new VarDecl(m_type, m_name, nullptr);
+	}
+}
+
 void VarDecl::resolve()
 {
 	if (findNamed(getName()))

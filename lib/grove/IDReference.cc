@@ -33,6 +33,11 @@ std::string IDReference::getName() const
 	return m_name;
 }
 
+ASTNode* IDReference::copy() const
+{
+	return new IDReference(m_name);
+}
+
 void IDReference::resolve()
 {
 	auto ref = findNamed(getName());

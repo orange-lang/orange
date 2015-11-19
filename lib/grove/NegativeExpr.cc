@@ -19,6 +19,11 @@ Expression* NegativeExpr::getExpression() const
 	return m_expr;
 }
 
+ASTNode* NegativeExpr::copy() const
+{
+	return new NegativeExpr(m_expr->copy()->as<Expression *>());
+}
+
 void NegativeExpr::resolve()
 {
 	auto ty = getExpression()->getType();

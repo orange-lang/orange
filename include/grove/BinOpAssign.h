@@ -27,6 +27,8 @@ public:
 	/// If the operator does arithmetic, get the
 	/// arithmetic operator.
 	std::string getArithOp() const;
+
+	virtual ASTNode* copy() const override;
 	
 	BinOpAssign(Expression* LHS, std::string op, Expression* RHS);
 };

@@ -71,6 +71,14 @@ std::string BinOpAssign::getArithOp() const
 	return getOperator().substr(0, 1);
 }
 
+ASTNode* BinOpAssign::copy() const
+{
+	auto copiedLHS = getLHS()->copy()->as<Expression *>();
+	auto copiedRHS = getRHS()->copy()->as<Expression *>();
+	
+	return new BinOpAssign(copiedLHS, getOperator(), copiedRHS);
+}
+
 void BinOpAssign::resolve()
 {
 	BinOpExpr::resolve();

@@ -14,6 +14,7 @@
 #include <grove/types/UIntType.h>
 #include <grove/types/DoubleType.h>
 #include <util/assertions.h>
+#include <util/copy.h>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Function.h>
@@ -53,6 +54,11 @@ FunctionType* FunctionCall::getFunctionTy() const
 	}
 
 	return ty->as<FunctionType*>();
+}
+
+ASTNode* FunctionCall::copy() const
+{
+	return new FunctionCall(getName(), copyVector(getArgs()));
 }
 
 void FunctionCall::resolve()

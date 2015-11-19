@@ -26,6 +26,11 @@ llvm::Value* Parameter::getValue() const
 	return IRBuilder()->CreateLoad(m_value);
 }
 
+ASTNode* Parameter::copy() const
+{
+	return new Parameter(m_type, getName());
+}
+
 Parameter::Parameter(Type* type, std::string name)
 {
 	assertExists(type, "Type must not be null");
