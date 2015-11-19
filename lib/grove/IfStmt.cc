@@ -154,6 +154,11 @@ void IfStmt::build()
 
 bool IfStmt::isTerminator() const
 {
+	if (hasElse() == false)
+	{
+		return false;
+	}
+	
 	for (auto block : m_if_blocks)
 	{
 		if (block->isTerminator() == false)
@@ -165,7 +170,7 @@ bool IfStmt::isTerminator() const
 	return true;
 }
 
-bool IfStmt::hasElse()
+bool IfStmt::hasElse() const
 {
 	for (auto block : m_if_blocks)
 	{

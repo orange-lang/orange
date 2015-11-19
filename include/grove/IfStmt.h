@@ -46,7 +46,7 @@ public:
 	void addBlock(Block* block);
 	
 	/// Determines whether or not there is an else statement.
-	bool hasElse();
+	bool hasElse() const;
 	
 	/// Returns whether or not this if statement is a terminator.
 	/// It will only be a terminator if every one of the blocks is a
