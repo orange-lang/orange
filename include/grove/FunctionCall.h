@@ -21,6 +21,9 @@ private:
 	
 	llvm::Function* getFunction() const;
 	FunctionType* getFunctionTy() const;
+	
+	/// Get the function type we're expecting.
+	FunctionType* expectedFunctionTy() const;
 public:
 	/// Gets the name of the function that we are calling.
 	std::string getName() const;

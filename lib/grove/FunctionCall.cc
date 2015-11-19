@@ -13,6 +13,7 @@
 #include <grove/types/IntType.h>
 #include <grove/types/UIntType.h>
 #include <grove/types/DoubleType.h>
+#include <grove/types/VarType.h>
 #include <util/assertions.h>
 #include <util/copy.h>
 #include <llvm/IR/Value.h>
@@ -32,7 +33,7 @@ std::vector<Expression *> FunctionCall::getArgs() const
 llvm::Function* FunctionCall::getFunction() const
 {
 	// Determine type
-	auto valued = findNamed(getName())->as<Valued *>();
+	auto valued = findNamed(getName(), expectedFunctionTy())->as<Valued *>();
 	auto value = valued->getValue();
 
 	if (llvm::isa<llvm::Function>(value) == false)
@@ -45,7 +46,7 @@ llvm::Function* FunctionCall::getFunction() const
 
 FunctionType* FunctionCall::getFunctionTy() const
 {
-	auto typed = findNamed(getName())->as<Typed *>();
+	auto typed = findNamed(getName(), expectedFunctionTy())->as<Typed *>();
 	auto ty = typed->getType();
 
 	if (ty == nullptr || ty->isFunctionTy() == false)
@@ -56,6 +57,18 @@ FunctionType* FunctionCall::getFunctionTy() const
 	return ty->as<FunctionType*>();
 }
 
+FunctionType* FunctionCall::expectedFunctionTy() const
+{
+	auto ty_list = std::vector<Type *>();
+	for (auto arg : m_args)
+	{
+		ty_list.push_back(arg->getType());
+	}
+	
+	// Put a wildcard on the return type.
+	return FunctionType::get(VarType::get(), ty_list);
+}
+
 ASTNode* FunctionCall::copy() const
 {
 	return new FunctionCall(getName(), copyVector(getArgs()));
@@ -64,7 +77,7 @@ ASTNode* FunctionCall::copy() const
 void FunctionCall::resolve()
 {
 	// Determine type
-	auto typed = findNamed(getName())->as<Typed *>();
+	auto typed = findNamed(getName(), expectedFunctionTy())->as<Typed *>();
 	auto ty = typed->getType();
 
 	if (ty == nullptr || ty->isFunctionTy() == false)
