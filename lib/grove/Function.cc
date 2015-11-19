@@ -162,7 +162,58 @@ Genericable* Function::createInstance(Type *type)
 	}
 	
 	m_instances.push_back(clone);
+	getParent()->addChild(clone);
+	
 	return clone;
+}
+
+bool Function::matches(std::string name, Type *type) const
+{
+	if (name != m_name)
+	{
+		return false;
+	}
+	
+	// If we're not comparing types, just return true here.
+	if (type == nullptr || getType() == nullptr)
+	{
+		return true;
+	}
+	
+	auto arg_ty = type->as<FunctionType *>();
+	auto match_ty = getType()->as<FunctionType *>();
+	
+	// Match return types (if our return isn't var)
+	if (arg_ty->getReturnTy()->isVarTy() == false &&
+		match_ty->getReturnTy() != arg_ty->getReturnTy())
+	{
+		return false;
+	}
+	
+	// Match argument length
+	if (arg_ty->getArgs().size() != match_ty->getArgs().size())
+	{
+		return false;
+	}
+	
+	// Match arguments
+	for (unsigned int i = 0; i < arg_ty->getArgs().size(); i++)
+	{
+		auto their_arg = arg_ty->getArgs()[i];
+		auto our_arg = arg_ty->getArgs()[i];
+		
+		if (their_arg->isVarTy())
+		{
+			continue;
+		}
+		
+		if (their_arg != our_arg)
+		{
+			return false;
+		}
+	}
+	
+	return true;
 }
 
 ASTNode* Function::copy() const

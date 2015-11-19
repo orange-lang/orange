@@ -76,6 +76,8 @@ public:
 	
 	virtual void build() override;
 	
+	virtual bool matches(std::string name, Type* type) const override;
+	
 	/// Constructs a new orphaned function 
 	Function(std::string name, std::vector<Parameter *> params);
 	
