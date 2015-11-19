@@ -70,7 +70,13 @@ bool IfStmt::isElse(Block *block)
 ASTNode* IfStmt::copy() const
 {
 	auto ret = new IfStmt();
-	ret->m_if_blocks = copyVector(m_if_blocks);
+	
+	auto copied_blocks = copyVector(m_if_blocks);
+	for (auto block : copied_blocks)
+	{
+		ret->addBlock(block);
+	}
+	
 	return ret;
 }
 
