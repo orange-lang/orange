@@ -207,6 +207,14 @@ void Type::defineCast(const std::type_info &to, int cast)
 	m_cast_map[tuple] = tc;
 	m_cast_ty_map[tuple] = cb;
 }
+
+void Type::defineCast(const std::type_info &to, TypeCallback cb, TypeCast func)
+{
+	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
+	m_cast_map[tuple] = func;
+	m_cast_ty_map[tuple] = cb;
+}
+
 std::string Type::getSignature() const
 {
 	throw std::runtime_error("Type::getSignature shouldn't be called.");
