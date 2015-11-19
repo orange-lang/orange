@@ -145,7 +145,15 @@ void IfStmt::build()
 		{
 			auto cond = block->as<CondBlock *>();
 			cond->getExpression()->build();
-			IRBuilder()->CreateCondBr(getCond(cond), if_body, next);
+			
+			if (cond->invertCondition() == false)
+			{
+    			IRBuilder()->CreateCondBr(getCond(cond), if_body, next);
+			}
+			else
+			{
+    			IRBuilder()->CreateCondBr(getCond(cond), next, if_body);
+			}
 		}
 		else // handle else block
 		{
