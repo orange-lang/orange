@@ -49,7 +49,7 @@ BasicType DoubleType::PODTy() const
 	return DOUBLE;
 }
 
-Type* DoubleType::getConst()
+Type* DoubleType::getConst() const
 {
 	return DoubleType::get(true);
 }

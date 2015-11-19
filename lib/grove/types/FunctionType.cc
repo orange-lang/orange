@@ -95,12 +95,12 @@ bool FunctionType::isVarArg() const
 	return m_var_arg;
 }
 
-Type* FunctionType::getBaseTy()
+Type* FunctionType::getBaseTy() const
 {
 	return m_ret_type;
 }
 
-Type* FunctionType::getRootTy()
+Type* FunctionType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }

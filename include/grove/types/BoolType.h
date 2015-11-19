@@ -17,7 +17,7 @@ protected:
 public:
 	virtual std::string getSignature() const override;
 	
-	virtual Type* getConst() override;
+	virtual Type* getConst() const override;
 	
 	static BoolType* get(bool isConst = false);
 };

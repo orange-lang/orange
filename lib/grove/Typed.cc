@@ -41,7 +41,7 @@ Comparison Typed::compare(Typed *source, Typed *target)
 
 bool Typed::matchesType(Type *ty) const
 {
-	return m_type == ty || ty->getBaseTy()->isVarTy();
+	return m_type->matches(ty);
 }
 
 void Typed::setType(Type* type)

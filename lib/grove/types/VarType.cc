@@ -25,7 +25,7 @@ bool VarType::isVarTy() const
 	return true;
 }
 
-Type* VarType::getConst()
+Type* VarType::getConst() const
 {
 	return VarType::get(true);
 }

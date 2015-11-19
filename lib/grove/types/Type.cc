@@ -82,29 +82,30 @@ BasicType Type::PODTy() const
 	return OTHER;
 }
 
-Type* Type::getPointerTo()
+Type* Type::getPointerTo() const
 {
 	return PointerType::get((Type *)this);
 }
 
-Type* Type::getBaseTy()
+Type* Type::getBaseTy() const
 {
-	return this;
+	return (Type *)this;
 }
 
-Type* Type::getRootTy()
+Type* Type::getRootTy() const
 {
-	return this;
+	return (Type *)this;
 }
 
-Type* Type::getConst()
+Type* Type::getConst() const
 {
 	throw std::runtime_error("Cannot get const of this type");
 }
 
 bool Type::matches(Type *ty) const
 {
-	return ty == this || ty->isVarTy() || this->isVarTy();
+	return ty == this || ty->isVarTy() || this->isVarTy() ||
+		this->getBaseTy()->isVarTy() || ty->getBaseTy()->isVarTy();
 }
 
 Type* Type::getDefined(std::string signature)

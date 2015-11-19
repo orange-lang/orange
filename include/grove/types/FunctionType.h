@@ -29,9 +29,9 @@ public:
 	
 	virtual bool isFunctionTy() const override;
 	
-	virtual Type* getBaseTy() override;
+	virtual Type* getBaseTy() const override;
 	
-	virtual Type* getRootTy() override;
+	virtual Type* getRootTy() const override;
 	
 	virtual Type* getReturnTy() const;
 	

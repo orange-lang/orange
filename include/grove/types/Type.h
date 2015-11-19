@@ -105,16 +105,16 @@ public:
 	virtual BasicType PODTy() const;
 
 	/// Gets a pointer to this type.
-	Type* getPointerTo();
+	Type* getPointerTo() const;
 
 	/// Gets the contained type, or this
-	virtual Type* getBaseTy();
+	virtual Type* getBaseTy() const;
 
 	/// Gets the root type.
-	virtual Type* getRootTy();
+	virtual Type* getRootTy() const;
 	
 	/// Gets a const version of this type.
-	virtual Type* getConst();
+	virtual Type* getConst() const;
 
 	/// Gets the unique signature of this type.
 	virtual std::string getSignature() const;

@@ -41,17 +41,17 @@ bool ArrayType::isArrayTy() const
 	return true;
 }
 
-Type* ArrayType::getBaseTy()
+Type* ArrayType::getBaseTy() const
 {
 	return m_contained;
 }
 
-Type* ArrayType::getRootTy()
+Type* ArrayType::getRootTy() const
 {
 	return m_contained->getRootTy();
 }
 
-Type* ArrayType::getConst()
+Type* ArrayType::getConst() const
 {
 	return ArrayType::get(m_contained, m_size, true);
 }

@@ -19,7 +19,7 @@ public:
 	
 	virtual bool isVarTy() const override;
 	
-	virtual Type* getConst() override;
+	virtual Type* getConst() const override;
 	
 	static VarType* get(bool isConst = false);
 };

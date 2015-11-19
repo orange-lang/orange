@@ -68,7 +68,7 @@ std::string BoolType::getSignature() const
 	return "b";
 }
 
-Type* BoolType::getConst()
+Type* BoolType::getConst() const
 {
 	return BoolType::get(true);
 }

@@ -25,11 +25,11 @@ public:
 	
 	virtual bool isPointerTy() const override;
 	
-	virtual Type* getBaseTy() override;
+	virtual Type* getBaseTy() const override;
 	
-	virtual Type* getRootTy() override;
+	virtual Type* getRootTy() const override;
 	
-	virtual Type* getConst() override;
+	virtual Type* getConst() const override;
 	
 	static PointerType* get(Type* contained, bool isConst = false);
 };

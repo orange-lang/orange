@@ -46,17 +46,17 @@ bool PointerType::isPointerTy() const
 	return true;
 }
 
-Type* PointerType::getBaseTy()
+Type* PointerType::getBaseTy() const
 {
 	return m_contained;
 }
 
-Type* PointerType::getRootTy()
+Type* PointerType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-Type* PointerType::getConst()
+Type* PointerType::getConst() const
 {
 	return PointerType::get(m_contained, true);
 }

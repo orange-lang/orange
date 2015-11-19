@@ -26,11 +26,11 @@ public:
 	
 	virtual bool isArrayTy() const override;
 	
-	virtual Type* getBaseTy() override;
+	virtual Type* getBaseTy() const override;
 	
-	virtual Type* getRootTy() override;
+	virtual Type* getRootTy() const override;
 	
-	virtual Type* getConst() override;
+	virtual Type* getConst() const override;
 	
 	static ArrayType* get(Type* contained, unsigned int size,
 						  bool isConst = false);

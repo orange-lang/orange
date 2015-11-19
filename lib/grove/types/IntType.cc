@@ -123,7 +123,7 @@ BasicType IntType::PODTy() const
 	}
 }
 
-Type* IntType::getConst()
+Type* IntType::getConst() const
 {
 	return IntType::get(m_width, true);
 }

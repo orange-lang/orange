@@ -49,7 +49,7 @@ BasicType FloatType::PODTy() const
 	return FLOAT;
 }
 
-Type* FloatType::getConst()
+Type* FloatType::getConst() const
 {
 	return FloatType::get(true);
 }

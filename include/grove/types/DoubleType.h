@@ -23,7 +23,7 @@ public:
 	
 	virtual BasicType PODTy() const override;
 	
-	virtual Type* getConst() override;
+	virtual Type* getConst() const override;
 	
 	static DoubleType* get(bool isConst = false);
 };
