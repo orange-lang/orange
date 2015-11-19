@@ -315,6 +315,16 @@ void Function::setupFunction()
 
 void Function::optimize()
 {
+	// Validate all blocks have terminators.
+	auto it = m_function->getBasicBlockList().begin();
+	for ( ; it != m_function->getBasicBlockList().end(); it++)
+	{
+		if (it->getTerminator() == nullptr)
+		{
+			throw std::runtime_error("Block is missing terminator!");
+		}
+	}
+	
 	llvm::legacy::FunctionPassManager FPM(getModule()->getLLVMModule());
 	FPM.add(llvm::createVerifierPass(true));
 	FPM.add(llvm::createBasicAliasAnalysisPass());
