@@ -18,17 +18,7 @@ llvm::Value* Expression::castTo(Type *ty) const
 	assertExists(ty, "type must exist.");
 	assertExists(getType(), "expression does not have a type.");
 	
-	auto op = (llvm::Instruction::CastOps)getType()->castOperation(ty);
-	
-	if (op == NO_CAST)
-	{
-		return getValue();
-	}
-	
-	auto casted = IRBuilder()->CreateCast(op, getValue(), ty->getLLVMType());
-	assertExists(casted, "cast returned nullptr.");
-	
-	return casted;
+	return getType()->cast(IRBuilder(), getValue(), ty);
 }
 
 llvm::Value* Expression::castTo(Expression *expr) const
