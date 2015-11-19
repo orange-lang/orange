@@ -10,7 +10,9 @@
 	#include <grove/Module.h>
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
+	#include <grove/CondBlock.h>
 	#include <grove/Function.h>
+	#include <grove/IfStmt.h>
 	#include <grove/FunctionCall.h>
 	#include <grove/ExternFunction.h>
 	#include <grove/Value.h>
@@ -51,6 +53,7 @@
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
 	std::vector<Expression*>* args;
+	std::vector<Block*>* blocks;
 	std::vector<std::tuple<std::string, Expression*>>* pairs;
 	ASTNode* node;
 	Block* block;
@@ -78,8 +81,9 @@
 %type <nodes> opt_statements statements compound_statement var_decl
 %type <node> statement return controls
 %type <pairs> var_decl_list
+%type <blocks> else_if_or_end
 %type <expr> expression primary comparison arithmetic call
-%type <stmt> structures function extern_function
+%type <stmt> structures function extern_function ifs
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
@@ -135,7 +139,7 @@ statements
 	| statements compound_statement
 	{
 		$$ = $1;
-		
+
 		for (auto stmt : *$2)
 		{
 			if (stmt == nullptr) continue;
@@ -185,6 +189,7 @@ compound_statement
 structures
 	: function { $$ = $1; }
 	| extern_function { $$ = $1; }
+	| ifs { $$ = $1; }
 	;
 
 function
@@ -233,6 +238,62 @@ extern_function
 	{
 		$$ = new ExternFunction(*$2, *$4, $9, true);
 	}
+	;
+
+ifs
+	: IF expression term statements else_if_or_end
+	{
+		auto blocks = $5;
+
+		auto block = new CondBlock($2);
+		for (auto stmt : *$4)
+		{
+			block->addStatement(stmt);
+		}
+
+		blocks->insert(blocks->begin(), block);
+
+		auto if_stmt = new IfStmt();
+		for (auto block : *blocks)
+		{
+			if_stmt->addBlock(block);
+		}
+
+		$$ = if_stmt;
+	}
+	;
+
+else_if_or_end
+	: ELIF expression term statements else_if_or_end
+	{
+		$$ = $5;
+
+		auto block = new CondBlock($2);
+		for (auto stmt : *$4)
+		{
+			block->addStatement(stmt);
+		}
+
+		$$->insert($$->begin(), block);
+
+	}
+	| ELSE term statements END
+	{
+		$$ = new std::vector<Block *>();
+
+		auto block = new Block();
+		for (auto stmt : *$3)
+		{
+			block->addStatement(stmt);
+		}
+
+		$$->insert($$->begin(), block);
+	}
+	| END
+	{
+		$$ = new std::vector<Block *>();
+	}
+	;
 
 param_list
 	: param_list COMMA type TYPE_ID
@@ -327,7 +388,7 @@ var_decl
 	: type var_decl_list
 	{
 		$$ = new std::vector<ASTNode*>();
-		
+
 		for (auto tupl : *$2)
 		{
 			auto decl = new VarDecl($1, std::get<0>(tupl), std::get<1>(tupl));
