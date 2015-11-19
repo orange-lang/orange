@@ -178,9 +178,8 @@ bool Function::matchesType(Type *type) const
 	auto arg_ty = type->as<FunctionType *>();
 	auto match_ty = getType()->as<FunctionType *>();
 	
-	// Match return types (if our return isn't var)
-	if (arg_ty->getReturnTy()->isVarTy() == false &&
-		match_ty->getReturnTy() != arg_ty->getReturnTy())
+	// Match return types
+	if (arg_ty->getReturnTy()->matches(match_ty->getReturnTy()) == false)
 	{
 		return false;
 	}
@@ -197,12 +196,7 @@ bool Function::matchesType(Type *type) const
 		auto their_arg = arg_ty->getArgs()[i];
 		auto our_arg = arg_ty->getArgs()[i];
 		
-		if (their_arg->isVarTy())
-		{
-			continue;
-		}
-		
-		if (their_arg != our_arg)
+		if (their_arg->matches(our_arg) == false)
 		{
 			return false;
 		}

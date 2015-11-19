@@ -124,6 +124,10 @@ public:
 
 	bool isConst() const;
 	
+	/// Gets whether or not this type matches another type.
+	/// Returns true if either of the types are VarType.
+	bool matches(Type* ty) const;
+	
 	/// Compare the precedence of two types.
 	/// @param source The source type to check.
 	/// @param target The target type to check against.

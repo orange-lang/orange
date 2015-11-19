@@ -102,6 +102,11 @@ Type* Type::getConst()
 	throw std::runtime_error("Cannot get const of this type");
 }
 
+bool Type::matches(Type *ty) const
+{
+	return ty == this || ty->isVarTy() || this->isVarTy();
+}
+
 Type* Type::getDefined(std::string signature)
 {
 	auto it = m_defined.find(signature);
