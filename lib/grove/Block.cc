@@ -8,6 +8,7 @@
 
 #include <grove/Block.h>
 #include <grove/Named.h>
+#include <grove/Genericable.h>
 
 std::vector<ASTNode *> Block::getStatements() const
 {
@@ -35,6 +36,20 @@ Named* Block::getNamed(std::string name, Type* type,
 			
 			if (named->matches(name, type))
 			{
+				if (named->is<Genericable *>() &&
+					named->as<Genericable *>()->isGeneric())
+				{
+					auto generic = named->as<Genericable *>();
+					if (generic->hasInstance(type))
+					{
+						return generic->findInstance(type)->as<Named *>();
+					}
+					else
+					{
+						return generic->createInstance(type)->as<Named *>();
+					}
+				}
+				
 				return named;
 			}
 		}
