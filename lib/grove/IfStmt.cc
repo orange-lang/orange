@@ -57,9 +57,7 @@ llvm::Value* IfStmt::getCond(CondBlock *block)
 	assertExists(val, "val is null!");
 	assertExists(ty, "val type is null!");
 	
-	auto bool_ty = llvm::IntegerType::get(getModule()->getLLVMContext(),
-										  1);
-	return IRBuilder()->CreateIntCast(val, bool_ty, ty->isSigned());
+	return val; 
 }
 
 bool IfStmt::isElse(Block *block)
