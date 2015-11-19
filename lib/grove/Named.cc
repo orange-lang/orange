@@ -13,12 +13,7 @@ std::string Named::getName() const
 	return m_name;
 }
 
-bool Named::matches(std::string name) const
+bool Named::matchesName(std::string name) const
 {
-	return matches(name, nullptr);
-}
-
-bool Named::matches(std::string name, Type* type) const
-{
-	return m_name == name;
+	return name == m_name;
 }

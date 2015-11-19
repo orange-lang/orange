@@ -8,6 +8,8 @@
 
 #pragma once
 
+class Type;
+
 class ObjectBase
 {
 public:
@@ -29,7 +31,7 @@ public:
 
 		return casted;
 	}
-
+	
 	virtual ~ObjectBase()
 	{
 		// Do nothing.

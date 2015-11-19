@@ -40,16 +40,7 @@ Genericable* Genericable::findInstance(Type *type) const
 		auto ty = instance->getType();
 		assertExists(ty, "Instance did not have a type!");
 		
-		if (instance->is<Named *>())
-		{
-			auto named = instance->as<Named *>();
-			
-			if (named->matches(named->getName(), type))
-			{
-				return instance;
-			}
-		}
-		else if (ty == type)
+		if (ty == type || instance->matchesType(type))
 		{
 			return instance;
 		}

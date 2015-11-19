@@ -167,15 +167,10 @@ Genericable* Function::createInstance(Type *type)
 	return clone;
 }
 
-bool Function::matches(std::string name, Type *type) const
+
+bool Function::matchesType(Type *type) const
 {
-	if (name != m_name)
-	{
-		return false;
-	}
-	
-	// If we're not comparing types, just return true here.
-	if (type == nullptr || getType() == nullptr)
+	if (isGeneric())
 	{
 		return true;
 	}

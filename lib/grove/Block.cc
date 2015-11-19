@@ -35,7 +35,13 @@ Named* Block::getNamed(std::string name, Type* type,
 		{
 			auto named = child->as<Named *>();
 			
-			if (named->matches(name, type))
+			bool matches = named->matchesName(name);
+			if (type && matches && named->is<Typed *>())
+			{
+				matches = named->as<Typed *>()->matchesType(type);
+			}
+			
+			if (matches)
 			{
 				if (named->is<Genericable *>() &&
 					named->as<Genericable *>()->isGeneric())

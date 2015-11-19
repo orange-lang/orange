@@ -31,12 +31,5 @@ public:
 
 	/// Determines whether or not a name matches this node.
 	/// @param name The name to compare against.
-	virtual bool matches(std::string name) const;
-
-	/// Determines whether or not a name matches this node.
-	/// @param name The name to compare against.
-	/// @param type A type to narrow down the list of candidates if
-	/// multiple candidates exist. type can be a basic type, or a FunctionType,
-	/// or any other compound type.
-	virtual bool matches(std::string name, Type* type) const;
+	virtual bool matchesName(std::string name) const;
 };
