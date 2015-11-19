@@ -124,6 +124,46 @@ bool Function::isGeneric() const
 	return false;
 }
 
+Genericable* Function::createInstance(Type *type)
+{
+	if (isGeneric() == false)
+	{
+		throw std::runtime_error("Cannot create instance of non-generic");
+	}
+	
+	assertExists(type, "Type cannot be null");
+	
+	auto func_ty = type->as<FunctionType *>();
+	auto clone = copy()->as<Function *>();
+	
+	if (func_ty->getArgs().size() != clone->getParams().size())
+	{
+		throw std::runtime_error("params in type doesn't match function");
+	}
+	
+	for (int i = 0; i < clone->getParams().size(); i++)
+	{
+		auto param = clone->m_params[i];
+		auto ty = param->getType();
+		auto new_ty = func_ty->getArgs()[i];
+		
+		// Don't change type of non-var arguments
+		if (ty->isVarTy() == false)
+		{
+			continue;
+		}
+		
+		param->setType(new_ty);
+	}
+	
+	if (clone->isGeneric())
+	{
+		throw std::runtime_error("instance is still generic!");
+	}
+	
+	return clone;
+}
+
 ASTNode* Function::copy() const
 {
 	auto func = new Function(getModule(), getName(), copyVector(getParams()));

@@ -70,6 +70,8 @@ public:
 	
 	virtual bool isGeneric() const override;
 	
+	virtual Genericable* createInstance(Type* type) override;
+	
 	virtual void resolve() override;
 	
 	virtual void build() override;
