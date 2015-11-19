@@ -344,4 +344,5 @@ Function::Function(Module* module, std::string name,
 	}
 	
 	m_name = name;
+	m_params = params;
 }
