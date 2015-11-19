@@ -286,6 +286,16 @@ void Function::optimize()
 
 void Function::build()
 {
+	if (isGeneric())
+	{
+		for (auto inst : m_instances)
+		{
+			inst->as<Function *>()->build();
+		}
+		
+		return;
+	}
+	
 	// Save point.
 	auto stored_insert = IRBuilder()->GetInsertBlock();
 	
