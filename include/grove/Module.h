@@ -89,6 +89,9 @@ public:
 	/// Pops a block from the stack.
 	Block* popBlock();
 	
+	/// Resolve a node and its children, if it's unresolved.
+	void resolve(ASTNode *node);
+	
 	/// Resolve unresolved nodes.
 	void resolve();
 	

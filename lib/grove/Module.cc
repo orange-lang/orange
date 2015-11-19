@@ -105,33 +105,33 @@ Block* Module::popBlock()
 	return popped;
 }
 
+void Module::resolve(ASTNode *node)
+{
+	if (node->is<Genericable *>() &&
+		node->as<Genericable *>()->isGeneric())
+	{
+		return;
+	}
+	
+	for (auto child : node->getChildren())
+	{
+		resolve(child);
+	}
+	
+	// Resolve this node after resolving all the children.
+	auto it = std::find(this->m_resolved.begin(), this->m_resolved.end(),
+						node);
+	
+	if (it == std::end(this->m_resolved))
+	{
+		this->m_resolved.push_back(node);
+		node->resolve();
+	}
+}
+
 void Module::resolve()
 {
-	std::function<void(ASTNode*)> resolve_recursive = [&,this](ASTNode* node)
-	{
-		if (node->is<Genericable *>() &&
-			node->as<Genericable *>()->isGeneric())
-		{
-			return;
-		}
-		
-		for (auto child : node->getChildren())
-		{
-			resolve_recursive(child);
-		}
-	
-		// Resolve this node after resolving all the children.
-		auto it = std::find(this->m_resolved.begin(), this->m_resolved.end(),
-							node);
-
-		if (it == std::end(this->m_resolved))
-		{
-			this->m_resolved.push_back(node);
-			node->resolve();
-		}
-	};
-	
-	resolve_recursive(getMain());
+	resolve(getMain());
 }
 
 void Module::build()
