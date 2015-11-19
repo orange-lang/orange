@@ -134,7 +134,7 @@ void BinOpAssign::build()
 	
 	if (doesArithmetic())
 	{
-		auto op = getBinOp(getArithOp(), isFloatingPointOperation(),
+		auto op = getBinOp(getArithOp(), getLHS()->getType()->isFloatingPointTy(),
 						   areOperandsSigned());
 		val = IRBuilder()->CreateBinOp(op, vLHS, val);
 	}
