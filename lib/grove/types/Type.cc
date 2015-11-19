@@ -57,6 +57,11 @@ bool Type::isIntTy() const
 	return false;
 }
 
+bool Type::isBoolTy() const
+{
+	return false;
+}
+
 bool Type::isPointerTy() const
 {
 	return false;

@@ -19,5 +19,7 @@ public:
 	
 	virtual Type* getConst() const override;
 	
+	virtual bool isBoolTy() const override;
+	
 	static BoolType* get(bool isConst = false);
 };

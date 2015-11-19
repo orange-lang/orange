@@ -95,6 +95,7 @@ public:
 	virtual bool isFloatingPointTy() const;
 	virtual bool isFunctionTy() const;
 	virtual bool isIntTy() const;
+	virtual bool isBoolTy() const;
 	virtual bool isPointerTy() const;
 	virtual bool isVoidTy() const;
 	virtual bool isVarTy() const;
