@@ -78,6 +78,8 @@ public:
 	
 	virtual bool matchesType(Type* type) const override;
 	
+	virtual bool isTerminator() const override;
+	
 	/// Constructs a new orphaned function 
 	Function(std::string name, std::vector<Parameter *> params);
 	

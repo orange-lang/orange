@@ -353,6 +353,11 @@ void Function::build()
 	}
 }
 
+bool Function::isTerminator() const
+{
+	return false;
+}
+
 Function::Function(std::string name, std::vector<Parameter *> params)
 : Block()
 {
