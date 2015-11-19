@@ -109,6 +109,12 @@ void Module::resolve()
 {
 	std::function<void(ASTNode*)> resolve_recursive = [&,this](ASTNode* node)
 	{
+		if (node->is<Genericable *>() &&
+			node->as<Genericable *>()->isGeneric())
+		{
+			return;
+		}
+		
 		for (auto child : node->getChildren())
 		{
 			resolve_recursive(child);
