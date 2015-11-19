@@ -82,6 +82,19 @@ void Block::addStatement(ASTNode *statement)
 	addChild(statement, true);
 }
 
+bool Block::isTerminator() const
+{
+	for (auto stmt : getStatements())
+	{
+		if (stmt->is<Statement *>() && stmt->as<Statement *>()->isTerminator())
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 void Block::buildStatements()
 {
 	for (auto stmt : getStatements())
