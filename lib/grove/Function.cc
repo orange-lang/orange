@@ -161,6 +161,7 @@ Genericable* Function::createInstance(Type *type)
 		throw std::runtime_error("instance is still generic!");
 	}
 	
+	m_instances.push_back(clone);
 	return clone;
 }
 
