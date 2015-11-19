@@ -9,6 +9,7 @@
 #include <grove/Block.h>
 #include <grove/Named.h>
 #include <grove/Genericable.h>
+#include <grove/Module.h>
 
 std::vector<ASTNode *> Block::getStatements() const
 {
@@ -46,7 +47,9 @@ Named* Block::getNamed(std::string name, Type* type,
 					}
 					else
 					{
-						return generic->createInstance(type)->as<Named *>();
+						auto inst = generic->createInstance(type)->as<Named *>();
+						getModule()->resolve(inst->as<ASTNode *>());
+						return inst;
 					}
 				}
 				
