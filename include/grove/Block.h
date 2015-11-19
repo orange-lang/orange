@@ -68,6 +68,8 @@ public:
 	 */
 	Named* getNamed(std::string name, Type* type, const ASTNode* limit) const;
 	
+	virtual void build() override;
+	
 	/// Returns whether or not this block is a terminator.
 	/// This block is a terminator when one of its immediate children is a
 	/// terminator.
