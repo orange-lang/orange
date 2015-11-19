@@ -9,13 +9,15 @@
 #include <grove/types/Type.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/IRBuilder.h>
 #include <grove/Module.h>
 #include <grove/types/PointerType.h>
+#include <grove/ASTNode.h>
 #include <util/assertions.h>
 
 std::map<std::string, Type*> Type::m_defined;
-std::map<TypeTuple, int> Type::m_cast_map;
-std::map<TypeTuple, TypeCallback> Type::m_cast_func_map;
+std::map<TypeTuple, TypeCast> Type::m_cast_map;
+std::map<TypeTuple, TypeCallback> Type::m_cast_ty_map;
 
 bool Type::isSigned() const
 {
@@ -147,14 +149,63 @@ void Type::define(std::string signature, Type *ty)
 
 void Type::defineCast(const std::type_info &to, TypeCallback cb)
 {
+	TypeCast tc = [cb](void* build, llvm::Value* val,
+					   Type* from, Type* to) -> llvm::Value*
+	{
+		assertExists(build, "build must exist");
+		assertExists(from, "from must exist");
+		assertExists(to, "to must exist");
+		
+		IRBuilder* IRB = (IRBuilder *)build;
+		
+		auto op = (llvm::Instruction::CastOps)cb(from, to);
+		if (op == NO_CAST)
+		{
+			return val;
+		}
+		
+		auto casted = IRB->CreateCast(op, val, to->getLLVMType());
+		assertExists(casted, "cast returned nullptr");
+		
+		return casted;
+	};
+	
 	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
-	m_cast_func_map[tuple] = cb;
+	m_cast_map[tuple] = tc;
+	m_cast_ty_map[tuple] = cb;
 }
 
 void Type::defineCast(const std::type_info &to, int cast)
 {
+	TypeCallback cb = [cast](Type*, Type*) -> int
+	{
+		return cast;
+	};
+	
+	TypeCast tc = [cb](void* build, llvm::Value* val,
+					 Type* from, Type* to) -> llvm::Value*
+	{
+		assertExists(build, "build must exist");
+		assertExists(from, "from must exist");
+		assertExists(to, "to must exist");
+		
+		IRBuilder* IRB = (IRBuilder *)build;
+		
+		auto op = (llvm::Instruction::CastOps)cb(from, to);
+		if (op == NO_CAST)
+		{
+			return val;
+		}
+		
+		auto casted = IRB->CreateCast(op, val, to->getLLVMType());
+		assertExists(casted, "cast returned nullptr");
+		
+		return casted;
+	};
+	
 	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
-	m_cast_map[tuple] = cast;
+	m_cast_map[tuple] = tc;
+	m_cast_ty_map[tuple] = cb;
 }
 std::string Type::getSignature() const
 {
@@ -171,19 +222,26 @@ int Type::castOperation(Type *to)
 	TypeTuple key(typeid(*this).hash_code(), typeid(*to).hash_code());
 	
 	// Search for callbacks first.
-	auto it_cb = m_cast_func_map.find(key);
-	if (it_cb != m_cast_func_map.end())
+	auto it_cb = m_cast_ty_map.find(key);
+	if (it_cb == m_cast_ty_map.end())
 	{
-		return it_cb->second(this, to);
+		throw std::runtime_error("No cast defined.");
 	}
+	
+	return it_cb->second(this, to);
+}
+
+llvm::Value* Type::cast(void *irBuilder, llvm::Value *val, Type *target)
+{
+	TypeTuple key(typeid(*this).hash_code(), typeid(*target).hash_code());
 	
 	auto it = m_cast_map.find(key);
 	if (it == m_cast_map.end())
 	{
-		throw std::invalid_argument("no cast defined");
+		throw std::invalid_argument("no cast defined.");
 	}
 	
-	return it->second;
+	return it->second(irBuilder, val, this, target);
 }
 
 llvm::Type* Type::getLLVMType() const

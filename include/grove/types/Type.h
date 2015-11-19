@@ -42,7 +42,10 @@ typedef enum {
 
 class Type;
 typedef std::tuple<size_t, size_t> TypeTuple;
+
 typedef std::function<int(Type*,Type*)> TypeCallback;
+typedef std::function<llvm::Value*(void*, llvm::Value*, Type*,
+								   Type*)> TypeCast;
 
 const int NO_CAST = 0;
 
@@ -53,15 +56,10 @@ class Type : public ObjectBase {
 private:
 	/// The map of defined types, where the key is a unique identifier.
 	static std::map<std::string, Type *> m_defined;
-
-	/// The map of type tuples to a cast operation.
-	/// Defines a cast operation to cast from tuple.0 to tuple.1.
-	static std::map<TypeTuple, int> m_cast_map;
-
-	/// The map of type tuples to a cast operation callback.
-	/// Defines a callback that returns a cast operation to cast from
-	/// tuple.0 to tuple.1.
-	static std::map<TypeTuple, TypeCallback> m_cast_func_map;
+	
+	/// The map of type uples to a cast function.
+	static std::map<TypeTuple, TypeCast> m_cast_map;
+	static std::map<TypeTuple, TypeCallback> m_cast_ty_map;
 protected:
 	llvm::Type* m_type = nullptr;
 	llvm::LLVMContext* m_context = nullptr;
@@ -120,9 +118,7 @@ public:
 	/// Gets the unique signature of this type.
 	virtual std::string getSignature() const;
 
-	/// Gets the cast operation to convert to another type.
-	int castOperation(Type* to);
-
+	/// Gets whether or not this type is constant.
 	bool isConst() const;
 	
 	/// Gets whether or not this type matches another type.
@@ -136,6 +132,9 @@ public:
 
 	/// Gets the internal LLVM type of this type.
 	llvm::Type* getLLVMType() const;
+	
+	int castOperation(Type* to);
+	llvm::Value* cast(void *irBuilder, llvm::Value* val, Type* target);
 
 	virtual ~Type();
 };
