@@ -112,14 +112,22 @@ void IfStmt::build()
 		m_blocks.push_back(bb);
 	}
 	
-	// Finally, create the continue block.
-	m_continue_block = llvm::BasicBlock::Create(getModule()->getLLVMContext(),
-												"if_continue", llvm_func,
-												parent_func->getExit());
+	if (isTerminator() == false)
+	{
+		// Finally, create the continue block.
+    	m_continue_block = llvm::BasicBlock::Create(getModule()->getLLVMContext(),
+    												"if_continue", llvm_func,
+    												parent_func->getExit());
 	
-	// Add continue to the end of if_checks.
-	if_checks.push_back(m_continue_block);
-	
+    	// Add continue to the end of if_checks.
+    	if_checks.push_back(m_continue_block);
+	}
+	else
+	{
+		// Add null block to end of if_checks to act as continue.
+		if_checks.push_back(nullptr);
+	}
+
 	// Create all of our if statements.
 	for (unsigned int i = 0; i < getBlocks().size(); i++)
 	{
@@ -148,7 +156,10 @@ void IfStmt::build()
 			IRBuilder()->CreateBr(m_continue_block);
 		}
 		
-		IRBuilder()->SetInsertPoint(next);
+		if (next != nullptr)
+		{
+			IRBuilder()->SetInsertPoint(next);
+		}
 	}
 }
 
