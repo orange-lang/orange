@@ -11,6 +11,13 @@
 #include <grove/types/Type.h>
 #include <util/assertions.h>
 
+ASTNode* CondBlock::copy() const
+{
+	auto clone = new CondBlock(m_expr->copy()->as<Expression *>());
+	clone->copyStatements(this);
+	return clone;
+}
+
 void CondBlock::resolve()
 {
 	assertExists(getExpression()->getType(), "Expression has no type!");

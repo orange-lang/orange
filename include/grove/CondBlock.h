@@ -26,5 +26,7 @@ public:
 	
 	Expression* getExpression() const;
 	
+	virtual ASTNode* copy() const override;
+	
 	CondBlock(Expression* expr);
 };
