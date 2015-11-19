@@ -7,14 +7,21 @@
 */
 
 #include <grove/types/UIntType.h>
-#include <llvm/IR/Type.h>
-#include <llvm/IR/Instruction.h>
-
 #include <grove/types/DoubleType.h>
 #include <grove/types/FloatType.h>
 #include <grove/types/IntType.h>
 #include <grove/types/BoolType.h>
 #include <grove/types/PointerType.h>
+
+#include <grove/ASTNode.h>
+
+#include <util/assertions.h>
+#include <util/llvmassertions.h>
+
+#include <llvm/IR/Type.h>
+#include <llvm/IR/Instruction.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/IRBuilder.h>
 
 static int UIntToInt(Type* f, Type* t)
 {
@@ -54,6 +61,22 @@ static int UIntToUInt(Type* f, Type* t)
 	}
 }
 
+static llvm::Value* BoolCast(void* irBuilder, llvm::Value* val, Type* from,
+							 Type* to)
+{
+	assertExists(irBuilder, "irbuilder must exist");
+	assertExists(val, "val must exist");
+	assertExists(from, "from must exist");
+	assertExists(to, "to must exist");
+	
+	IRBuilder* IRB = (IRBuilder *)irBuilder;
+	
+	auto zero = llvm::ConstantInt::get(from->getLLVMType(), 0, false);
+	assertEqual(zero, val, "Could not create bool cast");
+	
+	return IRB->CreateICmpNE(val, zero);
+}
+
 UIntType::UIntType(unsigned int width, bool isConst)
 : Type(isConst)
 {
@@ -66,12 +89,13 @@ UIntType::UIntType(unsigned int width, bool isConst)
 	m_type = (llvm::Type *)llvm::Type::getIntNTy(*m_context, width);
 	
 	defineCast(typeid(UIntType), UIntToUInt);
-	defineCast(typeid(BoolType), UIntToUInt);
 	defineCast(typeid(IntType), UIntToInt);
 	
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::UIToFP);
 	defineCast(typeid(FloatType), llvm::Instruction::CastOps::UIToFP);
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::IntToPtr);
+	
+	defineCast(typeid(BoolType), UIntToUInt, BoolCast);
 }
 
 unsigned int IntType::getIntegerBitWidth() const
