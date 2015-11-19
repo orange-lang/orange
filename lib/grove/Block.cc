@@ -31,37 +31,41 @@ Named* Block::getNamed(std::string name, Type* type,
 			break;
 		}
 		
-		if (child->is<Named *>())
+		if (child->is<Named *>() == false)
 		{
-			auto named = child->as<Named *>();
-			
-			bool matches = named->matchesName(name);
-			if (type && matches && named->is<Typed *>())
+			continue;
+		}
+		
+		auto named = child->as<Named *>();
+		
+		bool matches = named->matchesName(name);
+		if (type && matches && named->is<Typed *>())
+		{
+			matches = named->as<Typed *>()->matchesType(type);
+		}
+		
+		if (matches == false)
+		{
+			continue;
+		}
+		
+		if (named->is<Genericable *>() &&
+			named->as<Genericable *>()->isGeneric())
+		{
+			auto generic = named->as<Genericable *>();
+			if (generic->hasInstance(type))
 			{
-				matches = named->as<Typed *>()->matchesType(type);
+				return generic->findInstance(type)->as<Named *>();
 			}
-			
-			if (matches)
+			else
 			{
-				if (named->is<Genericable *>() &&
-					named->as<Genericable *>()->isGeneric())
-				{
-					auto generic = named->as<Genericable *>();
-					if (generic->hasInstance(type))
-					{
-						return generic->findInstance(type)->as<Named *>();
-					}
-					else
-					{
-						auto inst = generic->createInstance(type)->as<Named *>();
-						getModule()->resolve(inst->as<ASTNode *>());
-						return inst;
-					}
-				}
-				
-				return named;
+				auto inst = generic->createInstance(type)->as<Named *>();
+				getModule()->resolve(inst->as<ASTNode *>());
+				return inst;
 			}
 		}
+		
+		return named;
 	}
 	
 	return nullptr;
