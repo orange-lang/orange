@@ -35,6 +35,7 @@ llvm::Function* FunctionCall::getFunction() const
 	// Determine type
 	auto valued = findNamed(getName(), expectedFunctionTy())->as<Valued *>();
 	auto value = valued->getValue();
+	assertExists(value, "p");
 
 	if (llvm::isa<llvm::Function>(value) == false)
 	{
