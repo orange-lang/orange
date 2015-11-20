@@ -28,14 +28,17 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 		{"-", {BinOp::Sub,  BinOp::Sub,  BinOp::FSub}},
 		{"*", {BinOp::Mul,  BinOp::Mul,  BinOp::FMul}},
 		{"/", {BinOp::UDiv, BinOp::SDiv, BinOp::FDiv}},
-		{"%", {BinOp::URem, BinOp::SRem, BinOp::FRem}}
+		{"%", {BinOp::URem, BinOp::SRem, BinOp::FRem}},
+		{"|", {BinOp::Or,   BinOp::Or,   BinOp::BinaryOpsEnd}},
+		{"&", {BinOp::And,  BinOp::And,  BinOp::BinaryOpsEnd}},
+		{"^", {BinOp::Xor,  BinOp::Xor,  BinOp::BinaryOpsEnd}}
 	};
 	
 	auto it = m_op_map.find(op);
 	
 	if (it == m_op_map.end())
 	{
-		throw std::invalid_argument("op not supported.");
+		throw std::invalid_argument("op " + op + " not supported.");
 	}
 	
 	if (FP == true)
@@ -55,7 +58,7 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 bool BinOpAssign::doesArithmetic() const
 {
 	const std::vector<std::string> arith_op_list = {
-		"+=", "-=", "*=", "/="
+		"+=", "-=", "*=", "/=", "%=", "&=", "|=", "^="
 	};
 	
 	return std::find(arith_op_list.begin(), arith_op_list.end(),
@@ -96,6 +99,18 @@ void BinOpAssign::resolve()
 	{
 		throw std::invalid_argument("Cann't assign to a const var");
 	}
+	
+	if (doesArithmetic())
+	{
+		auto op = getBinOp(getArithOp(), isFloatingPointOperation(),
+					   areOperandsSigned());
+	
+    	if (op == llvm::Instruction::BinaryOpsEnd)
+    	{
+    		throw std::runtime_error("Cannot do operation");
+    	}	
+	}
+
 }
 
 void BinOpAssign::build()
@@ -152,7 +167,8 @@ void BinOpAssign::build()
 BinOpAssign::BinOpAssign(Expression* LHS, std::string op, Expression* RHS)
 :BinOpExpr(LHS, op, RHS)
 {
-	if (op != "=" && op != "+=" && op != "-=" && op != "*=" && op != "/=")
+	if (op != "="  && op != "+=" && op != "-=" && op != "*=" && op != "/=" &&
+		op != "%=" && op != "|=" && op != "&=" && op != "^=")
 	{
 		throw std::invalid_argument("Unknown assign operator");
 	}

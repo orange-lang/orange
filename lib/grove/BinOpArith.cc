@@ -29,14 +29,17 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 		{"-", {BinOp::Sub,  BinOp::Sub,  BinOp::FSub}},
 		{"*", {BinOp::Mul,  BinOp::Mul,  BinOp::FMul}},
 		{"/", {BinOp::UDiv, BinOp::SDiv, BinOp::FDiv}},
-		{"%", {BinOp::URem, BinOp::URem, BinOp::FRem}}
+		{"%", {BinOp::URem, BinOp::URem, BinOp::FRem}},
+		{"|", {BinOp::Or,   BinOp::Or,   BinOp::BinaryOpsEnd}},
+		{"&", {BinOp::And,  BinOp::And,  BinOp::BinaryOpsEnd}},
+		{"^", {BinOp::Xor,  BinOp::Xor,  BinOp::BinaryOpsEnd}}
 	};
 	
 	auto it = m_op_map.find(op);
 	
 	if (it == m_op_map.end())
 	{
-		throw std::invalid_argument("op not supported.");
+		throw std::invalid_argument("op " + op + " not supported.");
 	}
 	
 	if (FP == true)
@@ -78,6 +81,14 @@ void BinOpArith::resolve()
 		case EQUAL:
 			setType(getLHS()->getType());
 			break;
+	}
+	
+	auto op = getBinOp(getOperator(), isFloatingPointOperation(),
+					   areOperandsSigned());
+	
+	if (op == llvm::Instruction::BinaryOpsEnd)
+	{
+		throw std::runtime_error("Cannot do operation");
 	}
 }
 
