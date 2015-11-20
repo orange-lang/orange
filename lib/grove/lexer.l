@@ -146,8 +146,8 @@
 
 "&&"											SAVESTR(); return LOGICAL_AND;
 "||"											SAVESTR(); return LOGICAL_OR;
-"and"											SAVESTR(); return LOGICAL_AND;
-"or"											SAVESTR(); return LOGICAL_OR;
+"and"											CUSTSTR("&&"); return LOGICAL_AND;
+"or"											CUSTSTR("||"); return LOGICAL_OR;
 
 "&"												SAVESTR(); return BITWISE_AND;
 "|"												SAVESTR(); return BITWISE_OR;
