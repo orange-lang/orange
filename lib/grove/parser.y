@@ -88,7 +88,7 @@
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
-%type <str> MOD MOD_ASSIGN
+%type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR
 %type <ty> type basic_type type_hint
 %type <params> param_list
 %type <args> arg_list
@@ -411,6 +411,10 @@ arithmetic
 	| expression TIMES expression { $$ = new BinOpArith($1, *$2, $3); }
 	| expression DIVIDE expression { $$ = new BinOpArith($1, *$2, $3); }
 	| expression MOD expression { $$ = new BinOpArith($1, *$2, $3); }
+
+	| expression BITWISE_AND expression { $$ = new BinOpArith($1, *$2, $3); }
+	| expression BITWISE_OR expression { $$ = new BinOpArith($1, *$2, $3); }
+	| expression BITWISE_XOR expression { $$ = new BinOpArith($1, *$2, $3); }
 
 	| expression ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
 	| expression PLUS_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
