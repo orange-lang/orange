@@ -10,7 +10,7 @@
 #include <orange/RunCommand.h>
 #include <grove/Builder.h>
 
-void RunCommand::run(std::vector<std::string> args)
+int RunCommand::run(std::vector<std::string> args)
 {
 	if (args.size() == 0)
 	{
@@ -28,14 +28,16 @@ void RunCommand::run(std::vector<std::string> args)
 
 		if (result != 0)
 		{
-			exit(result);
+			return result;
 		}
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << "Error: " << e.what() << std::endl;
-		exit(1);
+		return 1;
 	}
+	
+	return 0;
 }
 
 RunCommand::RunCommand()

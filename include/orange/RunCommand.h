@@ -16,7 +16,7 @@
 class RunCommand : public OptionsState
 {
 public:
-	virtual void run(std::vector<std::string> args) override;
+	virtual int run(std::vector<std::string> args) override;
 
 	RunCommand();
 };

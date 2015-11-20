@@ -28,10 +28,12 @@ public:
 
 	}
 
-	virtual void run(std::vector<std::string> args)
+	virtual int run(std::vector<std::string> args)
 	{
 		this->args = args;
 		hit = true;
+		
+		return 0;
 	}
 
 	virtual ~TestState()

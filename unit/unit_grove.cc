@@ -127,6 +127,7 @@ ADD_TEST_FOLDER(TestFunctionPrograms, functions);
 ADD_TEST_FOLDER(TestVariablePrograms, variables);
 ADD_TEST_FOLDER(TestGenericFunctions, generic_functions);
 ADD_TEST_FOLDER(TestIfPrograms, if);
+ADD_TEST_FOLDER(TestRecursionPrograms, recursion);
 
 
 RUN_TESTS();

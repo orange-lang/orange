@@ -91,9 +91,10 @@ void OptionsState::setRunDelegate(OptionsState *runDelegate)
 	m_run_delegate = runDelegate;
 }
 
-void OptionsState::run(std::vector<std::string> args) 
+int OptionsState::run(std::vector<std::string> args)
 {
 	// Do nothing, override for custom logic.
+	return 0;
 }
 
 OptionsState::OptionsState(std::string stateName)

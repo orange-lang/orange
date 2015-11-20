@@ -84,7 +84,7 @@ OptionsState* ProgramOptions::getMainState() const
 	return m_main_state;
 }
 
-void ProgramOptions::parse(int argc, char **argv)
+int ProgramOptions::parse(int argc, char **argv)
 {
 	const std::string SHORT_ARG = "-";
 	const std::string LONG_ARG = "--";
@@ -131,7 +131,7 @@ void ProgramOptions::parse(int argc, char **argv)
 				if (isHelpFlag(flagName))
 				{
 					std::cout << getHelpString() << std::endl;
-					return;
+					return 1;
 				}
 				else
 				{
@@ -186,11 +186,11 @@ void ProgramOptions::parse(int argc, char **argv)
 	OptionsState* runDelegate = getCurrentState()->getRunDelegate();
 	if (runDelegate != nullptr)
 	{
-		runDelegate->run(stateArguments);
+		return runDelegate->run(stateArguments);
 	}
 	else
 	{
-		getCurrentState()->run(stateArguments);
+		return getCurrentState()->run(stateArguments);
 	}
 }
 

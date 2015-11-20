@@ -48,7 +48,7 @@ public:
 	 * This method will modify setting flags and call run() on the final
 	 * state set by the program.
 	 */
-	void parse(int argc, char** argv);
+	int parse(int argc, char** argv);
 
 	/**
 	 * Adds a new state to the main state.
