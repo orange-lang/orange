@@ -26,6 +26,7 @@
 	#include <grove/IDReference.h>
 	#include <grove/NegativeExpr.h>
 	#include <grove/VarDecl.h>
+	#include <grove/IncrementExpr.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -82,7 +83,7 @@
 %type <node> statement return controls
 %type <pairs> var_decl_list
 %type <blocks> else_if_or_end
-%type <expr> expression primary comparison arithmetic call
+%type <expr> expression primary comparison arithmetic call increment
 %type <stmt> structures function extern_function ifs inline_if unless
 %type <stmt> inline_unless
 %type <val> VALUE
@@ -394,6 +395,7 @@ expression
 	| comparison { $$ = $1; }
 	| arithmetic { $$ = $1; }
 	| call { $$ = $1; }
+	| increment { $$ = $1; }
 	;
 
 comparison
@@ -422,7 +424,13 @@ arithmetic
 	| expression TIMES_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
 	| expression DIVIDE_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
 	| expression MOD_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
+	;
 
+increment
+	: expression INCREMENT { $$ = new IncrementExpr($1,  1, false); }
+	| expression DECREMENT { $$ = new IncrementExpr($1, -1, false); }
+	| INCREMENT expression { $$ = new IncrementExpr($2,  1, true); }
+	| DECREMENT expression { $$ = new IncrementExpr($2, -1, true); }
 	;
 
 call
