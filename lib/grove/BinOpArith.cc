@@ -28,7 +28,8 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 		{"+", {BinOp::Add,  BinOp::Add,  BinOp::FAdd}},
 		{"-", {BinOp::Sub,  BinOp::Sub,  BinOp::FSub}},
 		{"*", {BinOp::Mul,  BinOp::Mul,  BinOp::FMul}},
-		{"/", {BinOp::UDiv, BinOp::SDiv, BinOp::FDiv}}
+		{"/", {BinOp::UDiv, BinOp::SDiv, BinOp::FDiv}},
+		{"%", {BinOp::URem, BinOp::URem, BinOp::FRem}}
 	};
 	
 	auto it = m_op_map.find(op);
