@@ -78,6 +78,11 @@ bool BoolType::isBoolTy() const
 	return true;
 }
 
+bool BoolType::isIntTy() const
+{
+	return false; 
+}
+
 BoolType* BoolType::get(bool isConst)
 {
 	std::stringstream ss;

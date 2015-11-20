@@ -20,6 +20,7 @@ public:
 	virtual Type* getConst() const override;
 	
 	virtual bool isBoolTy() const override;
+	virtual bool isIntTy() const override;
 	
 	static BoolType* get(bool isConst = false);
 };
