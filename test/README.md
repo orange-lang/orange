@@ -24,11 +24,13 @@ functions: test functions that aren't generic
 variables: test variables
 generic_functions: test generic functions
 if: test if statements
+recursion: test recursive functions
 loops: test any kind of loop structure
 array: test arrays
 pointers: test pointers
 ternary: test ternary statement
 enum: test enums
+builtin: builtin function tests.
 sizeof: test sizeof operator
 programs: test programs
 bugs: test bugs found at some point
