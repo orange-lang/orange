@@ -24,8 +24,6 @@ int main(int argc, char** argv) {
 
 	options->getMainState()->setRunDelegate(runState);
 
-	// Parse our options
-	options->parse(argc, argv);
-
-	return 0;
+	// Run our program.
+	return options->parse(argc, argv);
 }
