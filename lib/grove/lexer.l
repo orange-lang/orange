@@ -15,6 +15,7 @@
 	#include <grove/types/IntType.h>
 	#include <grove/types/FloatType.h>
 	#include <grove/types/DoubleType.h>
+	#include <grove/types/BoolType.h>
 
 	#include <grove/Parameter.h>
 
@@ -85,8 +86,8 @@
 
 '.'												return VALUE;
 
-"false"											return VALUE;
-"true"											return VALUE;
+"false"											CREATE_VAL(BoolType::get()); return VALUE;
+"true"											CREATE_VAL(BoolType::get()); return VALUE;
 
 "def"											SAVESTR(); return DEF;
 "return"										SAVESTR(); return RETURN;
