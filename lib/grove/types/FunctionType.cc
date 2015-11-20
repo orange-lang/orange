@@ -49,7 +49,7 @@ std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args,
 	}
 
 	std::stringstream ss;
-	ss << retType->getSignature() << "(";
+	ss << "_" << retType->getSignature();
 
 	for (unsigned int i = 0; i < args.size(); i++)
 	{
@@ -59,19 +59,13 @@ std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args,
 		}
 
 		ss << args[i]->getSignature();
-
-		if (i + 1 < args.size())
-		{
-			ss << ",";
-		}
 	}
 	
 	if (vaarg)
 	{
-		ss << ",...";
+		ss << "$";
 	}
 
-	ss << ")";
 	return ss.str();
 }
 
