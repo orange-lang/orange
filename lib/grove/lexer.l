@@ -23,6 +23,7 @@
 
 	#define STR (std::string(yytext, yyleng))
 	#define SAVESTR() yylval.str = new std::string(yytext, yyleng);
+	#define CUSTSTR(custom) yylval.str = new std::string(custom);
 
 	// Get column and stuff for line information
 	int yycolumn = 1;
@@ -180,7 +181,7 @@
 "?"												SAVESTR(); return QUESTION;
 ":"												SAVESTR(); return COLON;
 
-"mod"											SAVESTR(); return MOD;
+"mod"											CUSTSTR("%"); return MOD;
 
 "sizeof"										SAVESTR(); return SIZEOF;
 
