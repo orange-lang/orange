@@ -31,6 +31,11 @@ void Value::build()
 		m_value = llvm::ConstantInt::get(getType()->getLLVMType(), m_values.u,
 										 false);
 	}
+	else if (ty->isBoolTy())
+	{
+		m_value = llvm::ConstantInt::get(getType()->getLLVMType(), m_values.u,
+    									 false);	
+	}
 	else if (ty->isFloatingPointTy())
 	{
 		m_value = llvm::ConstantFP::get(getType()->getLLVMType(), m_values.d);
@@ -65,6 +70,16 @@ Value::Value(std::string str, Type* t, int base)
 			break;
 		case INT64:
 			m_values.i = (int64_t)std::stoll(str, nullptr, base);
+			break;
+		case UINT1:
+			if (str == "false")
+			{
+				m_values.u = 0;
+			}
+			else if (str == "true")
+			{
+				m_values.u = 1;
+			}
 			break;
 		case UINT8:
 			m_values.u = (uint8_t)std::stoull(str, nullptr, base);
