@@ -22,6 +22,7 @@
 	#include <grove/BinOpCompare.h>
 	#include <grove/BinOpArith.h>
 	#include <grove/BinOpAssign.h>
+	#include <grove/BinOpAndOr.h>
 	#include <grove/Parameter.h>
 	#include <grove/IDReference.h>
 	#include <grove/NegativeExpr.h>
@@ -89,7 +90,8 @@
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
-%type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR
+%type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
+%type <str> LOGICAL_OR
 %type <ty> type basic_type type_hint
 %type <params> param_list
 %type <args> arg_list
@@ -405,6 +407,9 @@ comparison
 	| expression GEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
 	| expression EQUALS expression { $$ = new BinOpCompare($1, *$2, $3); }
 	| expression NEQUALS expression { $$ = new BinOpCompare($1, *$2, $3); }
+
+    | expression LOGICAL_AND expression { $$ = new BinOpAndOr($1, *$2, $3); }
+    | expression LOGICAL_OR expression { $$ = new BinOpAndOr($1, *$2, $3); }
 	;
 
 arithmetic
