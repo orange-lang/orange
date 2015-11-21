@@ -80,6 +80,8 @@ public:
 	std::vector<Named *> getAllNamed(std::string name, const ASTNode* limit)
     	const;
 	
+	virtual ASTNode* copy() const override;
+	
 	virtual void build() override;
 	
 	/// Returns whether or not this block is a terminator.
