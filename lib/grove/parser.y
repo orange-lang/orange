@@ -28,6 +28,7 @@
 	#include <grove/NegativeExpr.h>
 	#include <grove/VarDecl.h>
 	#include <grove/IncrementExpr.h>
+	#include <grove/Loop.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -80,13 +81,15 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST QUESTION COLON ENUM SIZEOF
 
-%type <nodes> opt_statements statements compound_statement var_decl
+%type <nodes> opt_statements statements compound_statement var_decl valued
+%type <nodes> opt_valued
 %type <node> statement return controls
 %type <pairs> var_decl_list
 %type <blocks> else_if_or_end
 %type <expr> expression primary comparison arithmetic call increment
+%type <expr> opt_expression
 %type <stmt> structures function extern_function ifs inline_if unless
-%type <stmt> inline_unless
+%type <stmt> inline_unless for_loop inline_for_loop
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
@@ -191,6 +194,17 @@ compound_statement
 	}
 	;
 
+valued
+	: var_decl
+	{
+		$$ = $1;
+	}
+	| expression
+	{
+		$$ = new std::vector<ASTNode *>();
+		$$->push_back($1);
+	}
+
 structures
 	: function { $$ = $1; }
 	| extern_function { $$ = $1; }
@@ -198,6 +212,8 @@ structures
 	| unless { $$ = $1; }
 	| inline_if { $$ = $1; }
 	| inline_unless { $$ = $1; }
+	| for_loop { $$ = $1; }
+	| inline_for_loop { $$ = $1; }
 	;
 
 function
@@ -311,10 +327,10 @@ unless
 		{
 			block->addStatement(stmt);
 		}
-		
+
 		auto if_stmt = new IfStmt();
 		if_stmt->addBlock(block);
-		
+
 		$$ = if_stmt;
 	}
 
@@ -326,7 +342,7 @@ inline_if
 
 		auto if_stmt = new IfStmt();
 		if_stmt->addBlock(block);
-		
+
 		$$ = if_stmt;
 	}
 	| expression IF expression
@@ -336,7 +352,7 @@ inline_if
 
 		auto if_stmt = new IfStmt();
 		if_stmt->addBlock(block);
-		
+
 		$$ = if_stmt;
 	}
 	;
@@ -346,22 +362,124 @@ inline_unless
 	{
 		auto block = new CondBlock($3, true);
 		block->addStatement($1);
-		
+
 		auto if_stmt = new IfStmt();
 		if_stmt->addBlock(block);
-		
+
 		$$ = if_stmt;
 	}
 	| expression UNLESS expression
 	{
 		auto block = new CondBlock($3, true);
 		block->addStatement($1);
-		
+
 		auto if_stmt = new IfStmt();
 		if_stmt->addBlock(block);
-		
+
 		$$ = if_stmt;
 	}
+	;
+
+for_loop
+	: FOR OPEN_PAREN opt_valued SEMICOLON opt_expression SEMICOLON opt_expression
+	  CLOSE_PAREN term statements END
+	{
+		auto loop = new Loop(*$3, $5, $7, false);
+
+	  	for (auto stmt : *$10)
+		{
+			loop->addStatement(stmt);
+		}
+
+		$$ = loop;
+	}
+	| WHILE expression term statements END
+	{
+		auto loop = new Loop(std::vector<ASTNode*>(), $2, nullptr, false);
+
+		for (auto stmt : *$4)
+		{
+			loop->addStatement(stmt);
+		}
+
+		$$ = loop;
+	}
+	| FOREVER DO term statements END
+	{
+		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
+
+		for (auto stmt : *$4)
+		{
+			loop->addStatement(stmt);
+		}
+
+		$$ = loop;
+	}
+	| DO term statements END WHILE expression
+	{
+		auto loop = new Loop(std::vector<ASTNode*>(), $6, nullptr, true);
+
+		for (auto stmt : *$3)
+		{
+			loop->addStatement(stmt);
+		}
+
+		$$ = loop;
+	}
+	;
+
+inline_for_loop
+	: controls FOR OPEN_PAREN opt_valued SEMICOLON opt_expression SEMICOLON opt_expression
+	  CLOSE_PAREN
+	{
+		auto loop = new Loop(*$4, $6, $8, false);
+		loop->addStatement($1);
+		$$ = loop;
+	}
+	| expression FOR OPEN_PAREN opt_valued SEMICOLON opt_expression SEMICOLON opt_expression
+	  CLOSE_PAREN
+	{
+		auto loop = new Loop(*$4, $6, $8, false);
+		loop->addStatement($1);
+		$$ = loop;
+	}
+	| controls WHILE expression
+	{
+		auto loop = new Loop(std::vector<ASTNode*>(), $3, nullptr, false);
+		loop->addStatement($1);
+		$$ = loop;
+	}
+	| expression WHILE expression
+	{
+		auto loop = new Loop(std::vector<ASTNode*>(), $3, nullptr, false);
+		loop->addStatement($1);
+		$$ = loop;
+	}
+	| controls FOREVER
+	{
+		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
+		loop->addStatement($1);
+		$$ = loop;
+	}
+	| expression FOREVER
+	{
+		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
+		loop->addStatement($1);
+		$$ = loop;
+	}
+	;
+
+
+
+
+opt_valued
+	: valued { $$ = $1; }
+	| { $$ = new std::vector<ASTNode*>(); }
+	;
+
+opt_expression
+	: expression { $$ = $1; }
+	| { $$ = nullptr; }
 	;
 
 param_list
