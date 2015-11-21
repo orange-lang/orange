@@ -271,7 +271,7 @@ void Function::createFunction()
 	auto llvm_ty = (llvm::FunctionType *)(getType()->getLLVMType());
 	
 	auto linkage = llvm::GlobalValue::LinkageTypes::ExternalLinkage;
-	m_function = llvm::Function::Create(llvm_ty, linkage, m_name,
+	m_function = llvm::Function::Create(llvm_ty, linkage, getMangledName(),
 									   getModule()->getLLVMModule());
 	
 	// Set argument names

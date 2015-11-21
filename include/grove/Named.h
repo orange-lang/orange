@@ -28,6 +28,9 @@ protected:
 public:
 	/// Gets the name of this node.
 	std::string getName() const;
+	
+	/// Gets the mangled name of this node.
+	virtual std::string getMangledName() const;
 
 	/// Determines whether or not a name matches this node.
 	/// @param name The name to compare against.

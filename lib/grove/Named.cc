@@ -13,6 +13,11 @@ std::string Named::getName() const
 	return m_name;
 }
 
+std::string Named::getMangledName() const
+{
+	return getName();
+}
+
 bool Named::matchesName(std::string name) const
 {
 	return name == m_name;
