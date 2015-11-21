@@ -36,6 +36,15 @@ FunctionType::FunctionType(Type* retType, std::vector<Type*> args, bool vaarg)
 	}
 	
 	m_var_arg = vaarg;
+	
+	for (auto ty : args)
+	{
+		if (ty->isVarTy())
+		{
+			m_type = llvm::Type::getVoidTy(*m_context);
+			return;
+		}
+	}
 
 	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, vaarg);
 }
