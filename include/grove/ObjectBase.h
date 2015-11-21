@@ -22,6 +22,13 @@ public:
 	/// Casts this node to a certain type.
 	template <typename T> T as()
 	{
+		// Hack out a way to check if this == nullptr
+		void* ptr = this;
+		if (ptr == nullptr)
+		{
+			throw std::runtime_error("this == nullptr");
+		}
+		
 		auto casted = dynamic_cast<T>(this);
 
 		if (casted == nullptr)
