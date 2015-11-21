@@ -180,22 +180,23 @@ Genericable* Function::createInstance(Type *type)
 
 bool Function::matchesType(Type *type) const
 {
-	if (isGeneric())
-	{
-		return true;
-	}
-	
 	auto arg_ty = type->as<FunctionType *>();
-	auto match_ty = getType()->as<FunctionType *>();
-	
-	// Match return types
-	if (arg_ty->getReturnTy()->matches(match_ty->getReturnTy()) == false)
+
+	if (getType())
 	{
-		return false;
+		auto match_ty = getType()->as<FunctionType *>();
+		
+		// Match return types
+    	if (arg_ty->getReturnTy()->matches(match_ty->getReturnTy()) == false)
+    	{
+    		return false;
+    	}
 	}
+	
+	auto param_tys = getParamTys();
 	
 	// Match argument length
-	if (arg_ty->getArgs().size() != match_ty->getArgs().size())
+	if (arg_ty->getArgs().size() != param_tys.size())
 	{
 		return false;
 	}
@@ -204,7 +205,7 @@ bool Function::matchesType(Type *type) const
 	for (unsigned int i = 0; i < arg_ty->getArgs().size(); i++)
 	{
 		auto their_arg = arg_ty->getArgs()[i];
-		auto our_arg = arg_ty->getArgs()[i];
+		auto our_arg = param_tys[i];
 		
 		if (their_arg->matches(our_arg) == false)
 		{
