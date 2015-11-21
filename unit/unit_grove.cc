@@ -101,6 +101,46 @@ int TestRet2()
 	return cmpEq(result, 2);
 }
 
+ADD_TEST(TestMatchingFunctions, "Test program that has two matching functions");
+int TestMatchingFunctions()
+{
+	auto temp_path = getTempFile("test", "or");
+	std::ofstream file(temp_path);
+	
+	if (file.is_open() == false)
+	{
+		std::cerr << "Couldn't open " << temp_path << std::endl;
+		std::remove(temp_path.c_str());
+		return 1;
+	}
+	
+	// Write small orange program to file.
+	file << "def foo(int a)\n";
+	file << "	return 1\n";
+	file << "end\n\n";
+	file << "def foo(int a)\n";
+	file << "	return 1\n";
+	file << "end\n\n";
+	file << "return 0\n";
+	file.close();
+	
+	// create our builder.
+	try
+	{
+		auto builder = new Builder(temp_path);
+		builder->compile();
+	}
+	catch (std::exception& e)
+	{
+		std::remove(temp_path.c_str());
+		return 0;
+	}
+	
+	ADD_ERROR(TestMatchingFunctions, "No exception caught");
+	std::remove(temp_path.c_str());
+	return 1;
+}
+
 ADD_TEST(TestMatchingGenerics, "Test program that has two matching generics");
 int TestMatchingGenerics()
 {
