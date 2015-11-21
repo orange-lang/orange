@@ -28,6 +28,7 @@ public:
 	/// Returns the LLVM type. Equivalent to getType()->getLLVMType().
 	llvm::Type* getLLVMType() const;
 	
+	/// Determines whether or not this type matches another type.
 	virtual bool matchesType(Type* ty) const;
 
 	/// Compare the types of a source against a target.
