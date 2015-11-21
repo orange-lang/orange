@@ -209,5 +209,6 @@ ADD_TEST_FOLDER(TestGenericFunctions, generic_functions);
 ADD_TEST_FOLDER(TestIfPrograms, if);
 ADD_TEST_FOLDER(TestRecursionPrograms, recursion);
 ADD_TEST_FOLDER(TestLoopPrograms, loops);
+ADD_TEST_FOLDER(TestPointerPrograms, pointers);
 
 RUN_TESTS();
