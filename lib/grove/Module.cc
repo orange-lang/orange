@@ -107,11 +107,16 @@ Block* Module::popBlock()
 
 void Module::resolve(ASTNode *node)
 {
-	for (auto child : node->getChildren())
+	// Only resolve the children in a non-generic node.
+	if (node->is<Genericable *>() == false ||
+		node->as<Genericable *>()->isGeneric() == false)
 	{
-		resolve(child);
+		for (auto child : node->getChildren())
+    	{
+    		resolve(child);
+    	}
 	}
-	
+
 	// Resolve this node after resolving all the children.
 	auto it = std::find(this->m_resolved.begin(), this->m_resolved.end(),
 						node);
