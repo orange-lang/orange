@@ -64,6 +64,15 @@ std::vector<Parameter *> Function::getParams() const
 	return m_params;
 }
 
+std::string Function::getMangledName() const
+{
+	std::stringstream ss;
+	ss << "_O" << getName().size() << getName();
+	ss << getType()->getSignature();
+	
+	return ss.str();
+}
+
 void Function::createReturn()
 {
 	/// If we're missing a terminator, jump to exit.
