@@ -81,6 +81,8 @@ public:
 	
 	virtual Genericable* createInstance(Type* type) override;
 	
+	virtual void findDependencies() override;
+	
 	virtual void resolve() override;
 	
 	virtual void build() override;

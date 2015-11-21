@@ -239,6 +239,35 @@ ASTNode* Function::copy() const
 	return func;
 }
 
+void Function::findDependencies()
+{
+	// Find all return statements that don't depend on this function.
+	auto retStmts = findChildren<ReturnStmt *>();
+	
+	bool found_ret = false;
+	
+	for (auto ret : retStmts)
+	{
+		if (ret->dependsOn(this) == true)
+		{
+			continue;
+		}
+		
+		if (isInstance() && ret->dependsOn(getInstanceParent()))
+		{
+			continue;
+		}
+		
+		addDependency(ret);
+		found_ret = true;
+	}
+	
+	if (retStmts.size() > 0 && found_ret == false)
+	{
+		throw std::runtime_error("Could not determine return type for function");
+	}
+}
+
 void Function::resolve()
 {
 	// If we already have a type, return.
@@ -265,7 +294,15 @@ void Function::resolve()
 		return;
 	}
 	
-	auto retStmts = findChildren<ReturnStmt *>();
+	// Get return statements this function depends on.
+	std::vector<ReturnStmt *> retStmts;
+	for (auto dep : getDependencies())
+	{
+		if (dep->is<ReturnStmt *>())
+		{
+			retStmts.push_back(dep->as<ReturnStmt *>());
+		}
+	}
 	
 	if (retStmts.size() == 0)
 	{
