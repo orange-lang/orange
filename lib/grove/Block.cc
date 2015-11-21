@@ -34,6 +34,7 @@ Named* Block::namedOrGenericInstance(Named* n, Type* t) const
 		else
 		{
 			auto inst = generic->createInstance(t)->as<Named *>();
+			getModule()->findDependencies(inst->as<ASTNode *>());
 			getModule()->resolve(inst->as<ASTNode *>());
 			return inst;
 		}
