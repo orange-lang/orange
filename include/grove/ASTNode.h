@@ -51,6 +51,9 @@ public:
 	std::vector<ASTNode *> getChildren() const;
 	
 	std::vector<ASTNode *> getDependencies() const;
+	
+	/// Gets whether or not this node depends on a specified node.
+	bool dependsOn(ASTNode* node) const;
 
 	/// Gets the IR builder in the module.
 	IRBuilder* IRBuilder() const;

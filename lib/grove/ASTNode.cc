@@ -54,6 +54,24 @@ std::vector<ASTNode *> ASTNode::getDependencies() const
 	return m_dependencies;
 }
 
+bool ASTNode::dependsOn(ASTNode *node) const
+{
+	for (auto dependency : getDependencies())
+	{
+		if (dependency == node)
+		{
+			return true;
+		}
+		
+		if (dependency->dependsOn(node))
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 void ASTNode::addDependency(ASTNode *dependency)
 {
 	m_dependencies.push_back(dependency);
