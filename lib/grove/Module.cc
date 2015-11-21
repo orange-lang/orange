@@ -135,19 +135,15 @@ void Module::findDependencies()
 	findDependencies(getMain());
 }
 
-void Module::resolve(ASTNode *node)
+void Module::resolveDependencies(ASTNode *node)
 {
-	// Only resolve the children in a non-generic node.
-	if (node->is<Genericable *>() == false ||
-		node->as<Genericable *>()->isGeneric() == false)
+	// Go through each of the dependencies and resolve them.
+	for (auto dependency : node->getDependencies())
 	{
-		for (auto child : node->getChildren())
-    	{
-    		resolve(child);
-    	}
+		resolveDependencies(dependency);
 	}
-
-	// Resolve this node after resolving all the children.
+	
+	// Resolve this node after resolving the dependencies.
 	auto it = std::find(this->m_resolved.begin(), this->m_resolved.end(),
 						node);
 	
@@ -155,6 +151,23 @@ void Module::resolve(ASTNode *node)
 	{
 		this->m_resolved.push_back(node);
 		node->resolve();
+	}
+}
+
+void Module::resolve(ASTNode *node)
+{
+	// First, resolve the dependencies of this node.
+	// This node will also be resolved.
+	resolveDependencies(node);
+	
+	// Then, resolve the remaining children.
+	if (node->is<Genericable *>() == false ||
+		node->as<Genericable *>()->isGeneric() == false)
+	{
+		for (auto child : node->getChildren())
+    	{
+    		resolve(child);
+    	}
 	}
 }
 

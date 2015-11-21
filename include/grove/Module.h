@@ -97,6 +97,10 @@ public:
 	// Finds dependencies for all unsearched nodes.
 	void findDependencies();
 	
+	/// Resolve the dependencies of a node and then the node, but
+	/// not its children. If the nodes have already been resolved, does nothing.
+	void resolveDependencies(ASTNode* node);
+	
 	/// Resolve a node and its children, if it's unresolved.
 	void resolve(ASTNode* node);
 	
