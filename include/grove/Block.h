@@ -70,7 +70,8 @@ public:
 	 * were found, and using hint does not narrow down results to exactly 
 	 * ony node.
 	 */
-	Named* getNamed(std::string name, Type* type, const ASTNode* limit) const;
+	Named* getNamed(std::string name, Type* type, const ASTNode* limit,
+					bool forceTypeMatch) const;
 	
 	virtual void build() override;
 	

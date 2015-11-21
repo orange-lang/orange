@@ -149,7 +149,8 @@ public:
 	 * were found, and using hint does not narrow down results to exactly
 	 * one node.
 	 */
-	Named* findNamed(std::string name, Type* type) const;
+	Named* findNamed(std::string name, Type* type,
+					 bool forceTypeMatch = false) const;
 
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);

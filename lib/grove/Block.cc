@@ -18,7 +18,7 @@ std::vector<ASTNode *> Block::getStatements() const
 
 Named* Block::getNamed(std::string name, const ASTNode *limit) const
 {
-	return getNamed(name, nullptr, limit);
+	return getNamed(name, nullptr, limit, false);
 }
 
 Named* Block::namedOrGenericInstance(Named* n, Type* t) const
@@ -43,7 +43,7 @@ Named* Block::namedOrGenericInstance(Named* n, Type* t) const
 }
 
 Named* Block::getNamed(std::string name, Type* type,
-					   const ASTNode *limit) const
+					   const ASTNode *limit, bool forceTypeMatch) const
 {
 	// First thing to do is get the list of names that match.
 	std::vector<Named *> matches;
@@ -63,6 +63,14 @@ Named* Block::getNamed(std::string name, Type* type,
 		auto named = child->as<Named *>();
 		if (named->matchesName(name))
 		{
+			if (forceTypeMatch && type && named->is<Typed *>())
+			{
+				if (named->as<Typed *>()->matchesType(type) == false)
+				{
+					continue;
+				}
+			}
+			
 			matches.push_back(named);
 		}
 	}

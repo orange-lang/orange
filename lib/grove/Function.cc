@@ -287,6 +287,12 @@ void Function::resolve()
 		
 		setType(FunctionType::get(highest, getParamTys()));
 	}
+	
+	if (isInstance() == false &&
+		findNamed(getName(), getType(), true) != nullptr)
+	{
+		throw std::runtime_error("A function with this signature already exists");
+	}
 }
 
 void Function::createFunction()
