@@ -26,7 +26,16 @@ DoubleType::DoubleType(bool isConst)
 
 std::string DoubleType::getSignature() const
 {
-	return "F";
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "U";
+	}
+	
+	ss << "F";
+	
+	return ss.str();
 }
 
 bool DoubleType::isPODTy() const
@@ -57,12 +66,13 @@ Type* DoubleType::getConst() const
 DoubleType* DoubleType::get(bool isConst)
 {
 	std::stringstream ss;
-	ss << "F";
 	
 	if (isConst)
 	{
-		ss << "!";
+		ss << "U";
 	}
+	
+	ss << "F";
 	
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)

@@ -26,7 +26,16 @@ FloatType::FloatType(bool isConst)
 
 std::string FloatType::getSignature() const
 {
-	return "f";
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "U";
+	}
+	
+	ss << "f";
+	
+	return ss.str();
 }
 
 bool FloatType::isPODTy() const
@@ -57,12 +66,13 @@ Type* FloatType::getConst() const
 FloatType* FloatType::get(bool isConst)
 {
 	std::stringstream ss;
-	ss << "f";
 	
 	if (isConst)
 	{
-		ss << "!";
+		ss << "U";
 	}
+	
+	ss << "f";
 	
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)

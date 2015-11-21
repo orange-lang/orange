@@ -104,11 +104,44 @@ unsigned int IntType::getIntegerBitWidth() const
 	return m_width;
 }
 
-std::string IntType::getSignature() const
+
+std::string IntType::getSignature(unsigned int width, bool isConst)
 {
 	std::stringstream ss;
-	ss << "i." << m_width;
+	
+	if (isConst)
+	{
+		ss << "U";
+	}
+	
+	switch (width)
+	{
+		case 1:
+			ss << "b";
+			break;
+		case 8:
+			ss << "c";
+			break;
+		case 16:
+			ss << "s";
+			break;
+		case 32:
+			ss << "i";
+			break;
+		case 64:
+			ss << "l";
+			break;
+		default:
+			ss << width << "i";
+			break;
+	}
+	
 	return ss.str();
+}
+
+std::string IntType::getSignature() const
+{
+	return getSignature(m_width, isConst());
 }
 
 bool IntType::isPODTy() const
@@ -160,22 +193,15 @@ IntType* IntType::get(unsigned int width, bool isConst)
 		throw std::invalid_argument("width must not be 0.");
 	}
 
-	std::stringstream ss;
-	ss << "i." << width;
-	
-	if (isConst)
-	{
-		ss << "!";
-	}
-
-	auto defined = getDefined(ss.str());
+	auto sig = getSignature(width, isConst);
+	auto defined = getDefined(sig);
 	if (defined != nullptr)
 	{
 		return defined->as<IntType*>();
 	}
 
 	IntType* ty = new IntType(width, isConst);
-	define(ss.str(), ty);
+	define(sig, ty);
 
 	return ty;
 }

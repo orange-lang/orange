@@ -32,7 +32,15 @@ PointerType::PointerType(Type* contained, bool isConst)
 
 std::string PointerType::getSignature() const
 {
-	return m_contained->getSignature() + "p";
+	std::stringstream ss;
+	
+	if (isConst()) {
+		ss << "U";
+	}
+	
+	ss << "p" << m_contained->getSignature();
+	
+	return ss.str();
 }
 
 bool PointerType::isSigned() const
@@ -78,7 +86,7 @@ PointerType* PointerType::get(Type *contained, bool isConst)
 		throw std::invalid_argument("cannot get pointer to var");
 	}
 
-	std::string signature = contained->getSignature() + "p";
+	std::string signature = "p" + contained->getSignature();
 	
 	if (isConst)
 	{

@@ -65,7 +65,16 @@ BoolType::BoolType(bool isConst)
 
 std::string BoolType::getSignature() const
 {
-	return "b";
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "U";
+	}
+	
+	ss << "b";
+	
+	return ss.str();
 }
 
 Type* BoolType::getConst() const
@@ -86,12 +95,13 @@ bool BoolType::isIntTy() const
 BoolType* BoolType::get(bool isConst)
 {
 	std::stringstream ss;
-	ss << "b";
 	
 	if (isConst)
 	{
-		ss << "!";
+		ss << "U";
 	}
+	
+	ss << "b";
 	
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)

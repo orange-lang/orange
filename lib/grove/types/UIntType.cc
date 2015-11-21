@@ -103,11 +103,43 @@ unsigned int IntType::getIntegerBitWidth() const
 	return m_width;
 }
 
-std::string UIntType::getSignature() const
+std::string UIntType::getSignature(unsigned int width, bool isConst)
 {
 	std::stringstream ss;
-	ss << "I." << m_width;
+	
+	if (isConst)
+	{
+		ss << "U";
+	}
+	
+	switch (width)
+	{
+		case 1:
+			ss << "B";
+			break;
+		case 8:
+			ss << "C";
+			break;
+		case 16:
+			ss << "S";
+			break;
+		case 32:
+			ss << "I";
+			break;
+		case 64:
+			ss << "L";
+			break;
+		default:
+			ss << width << "I";
+			break;
+	}
+	
 	return ss.str();
+}
+
+std::string UIntType::getSignature() const
+{
+	return getSignature(m_width, isConst());
 }
 
 bool UIntType::isPODTy() const

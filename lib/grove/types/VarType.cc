@@ -17,7 +17,16 @@ VarType::VarType(bool isConst)
 
 std::string VarType::getSignature() const
 {
-	return "V";
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "U";
+	}
+	
+	ss << "A";
+	
+	return ss.str();
 }
 
 bool VarType::isVarTy() const
@@ -33,11 +42,13 @@ Type* VarType::getConst() const
 VarType* VarType::get(bool isConst)
 {
 	std::stringstream ss;
-	ss << "V";
 	
-	if (isConst) {
-		ss << "!";
+	if (isConst)
+	{
+		ss << "C";
 	}
+	
+	ss << "V";
 	
 	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
