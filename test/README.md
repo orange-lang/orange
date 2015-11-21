@@ -38,3 +38,7 @@ bugs: test bugs found at some point
 
 That is to say, tests in `array/` depend on tests in `loops/` and `if/` passing,
 as `array/` has a higher precedence.
+
+The `unit/` folder contains extra tests for the compiler as a whole, including
+tests for orange programs that should fail, which cannot be covered here as
+all tests in this folder are expected to pass.
