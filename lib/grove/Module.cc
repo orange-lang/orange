@@ -107,12 +107,6 @@ Block* Module::popBlock()
 
 void Module::resolve(ASTNode *node)
 {
-	if (node->is<Genericable *>() &&
-		node->as<Genericable *>()->isGeneric())
-	{
-		return;
-	}
-	
 	for (auto child : node->getChildren())
 	{
 		resolve(child);
