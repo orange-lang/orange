@@ -29,6 +29,7 @@
 	#include <grove/VarDecl.h>
 	#include <grove/IncrementExpr.h>
 	#include <grove/Loop.h>
+	#include <grove/LoopTerminator.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -94,7 +95,7 @@
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
-%type <str> LOGICAL_OR
+%type <str> LOGICAL_OR LOOP CONTINUE BREAK
 %type <ty> type basic_type type_hint
 %type <params> param_list
 %type <args> arg_list
@@ -508,6 +509,9 @@ arg_list
 
 controls
 	: return { $$ = $1; }
+	| CONTINUE { $$ = new LoopTerminator(*$1); }
+	| BREAK { $$ = new LoopTerminator(*$1); }
+	| LOOP { $$ = new LoopTerminator(*$1); }
 	;
 
 expression
