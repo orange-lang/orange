@@ -83,10 +83,11 @@ void ASTNode::build()
 
 Named* ASTNode::findNamed(std::string name) const
 {
-	return findNamed(name, nullptr, false);
+	return findNamed(name, nullptr, false, true);
 }
 
-Named* ASTNode::findNamed(std::string name, Type* type, bool forceTypeMatch)
+Named* ASTNode::findNamed(std::string name, Type* type, bool forceTypeMatch,
+						  bool createGeneric)
 const
 {
 	std::exception error;
@@ -120,7 +121,8 @@ const
 		// since a proper node may be found later up the tree.
 		try
 		{
-			auto named = block->getNamed(name, type, limit, forceTypeMatch);
+			auto named = block->getNamed(name, type, limit, forceTypeMatch,
+										 createGeneric);
 			if (named != nullptr)
 			{
 				return named;

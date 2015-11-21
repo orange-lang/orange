@@ -18,7 +18,7 @@ std::vector<ASTNode *> Block::getStatements() const
 
 Named* Block::getNamed(std::string name, const ASTNode *limit) const
 {
-	return getNamed(name, nullptr, limit, false);
+	return getNamed(name, nullptr, limit, false, true);
 }
 
 Named* Block::namedOrGenericInstance(Named* n, Type* t) const
@@ -43,7 +43,8 @@ Named* Block::namedOrGenericInstance(Named* n, Type* t) const
 }
 
 Named* Block::getNamed(std::string name, Type* type,
-					   const ASTNode *limit, bool forceTypeMatch) const
+					   const ASTNode *limit, bool forceTypeMatch,
+					   bool createGeneric) const
 {
 	// First thing to do is get the list of names that match.
 	std::vector<Named *> matches;
@@ -78,7 +79,14 @@ Named* Block::getNamed(std::string name, Type* type,
 	// If we only had one match, we can return it.
 	if (matches.size() == 1)
 	{
-		return namedOrGenericInstance(matches.at(0), type);
+		if (createGeneric)
+		{
+    		return namedOrGenericInstance(matches.at(0), type);
+		}
+		else
+		{
+			return matches.at(0);
+		}
 	}
 	
 	// If we had more than one match, we need to see if we can find
@@ -93,7 +101,14 @@ Named* Block::getNamed(std::string name, Type* type,
 		auto typed = match->as<Typed *>();
 		if (typed->matchesType(type))
 		{
-			return namedOrGenericInstance(match, type);
+			if (createGeneric)
+			{
+    			return namedOrGenericInstance(match, type);
+			}
+			else
+			{
+				return matches.at(0);
+			}
 		}
 	}
 	

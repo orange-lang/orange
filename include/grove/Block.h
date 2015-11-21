@@ -71,7 +71,7 @@ public:
 	 * ony node.
 	 */
 	Named* getNamed(std::string name, Type* type, const ASTNode* limit,
-					bool forceTypeMatch) const;
+					bool forceTypeMatch, bool createGeneric) const;
 	
 	virtual void build() override;
 	

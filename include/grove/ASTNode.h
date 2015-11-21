@@ -150,7 +150,7 @@ public:
 	 * one node.
 	 */
 	Named* findNamed(std::string name, Type* type,
-					 bool forceTypeMatch = false) const;
+					 bool forceTypeMatch = false, bool createGeneric = true) const;
 
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);
