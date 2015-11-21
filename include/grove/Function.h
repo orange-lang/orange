@@ -33,6 +33,8 @@ private:
 	
 	Type* m_ret_type = nullptr;
 	
+	Function* m_instance_of = nullptr;
+	
 	std::vector<Parameter *> m_params;
 protected:
 	virtual void createFunction();
@@ -59,14 +61,19 @@ public:
 	std::vector<Parameter *> getParams() const;
 	
 	/// Gets this function's return type.
-	Type* getReturnType();
+	Type* getReturnType() const;
+	
+	Function* getInstanceParent() const;
 	
 	void setReturnType(Type* ty);
 	
 	virtual std::string getMangledName() const override;
 	
 	/// Indicates whether or not this function returns void.
-	bool isVoidFunction();
+	bool isVoidFunction() const;
+	
+	/// Indicates whether or not this function is a generic instance.
+	bool isInstance() const;
 	
 	virtual ASTNode* copy() const override;
 	

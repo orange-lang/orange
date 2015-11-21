@@ -94,7 +94,7 @@ void Function::createReturn()
 	}
 }
 
-Type* Function::getReturnType()
+Type* Function::getReturnType() const
 {
 	auto ty = getType();
 	if (ty == nullptr || ty->isFunctionTy() == false)
@@ -110,7 +110,17 @@ void Function::setReturnType(Type *ty)
 	m_ret_type = ty;
 }
 
-bool Function::isVoidFunction()
+Function* Function::getInstanceParent() const
+{
+	return m_instance_of;
+}
+
+bool Function::isInstance() const
+{
+	return m_instance_of != nullptr;
+}
+
+bool Function::isVoidFunction() const
 {
 	auto retType = getReturnType();
 	if (retType == nullptr)
@@ -171,6 +181,8 @@ Genericable* Function::createInstance(Type *type)
 		throw std::runtime_error("instance is still generic!");
 	}
 	
+	clone->m_instance_of = this;
+	
 	m_instances.push_back(clone);
 	getParent()->addChild(clone);
 	
@@ -181,18 +193,6 @@ Genericable* Function::createInstance(Type *type)
 bool Function::matchesType(Type *type) const
 {
 	auto arg_ty = type->as<FunctionType *>();
-
-	if (getType())
-	{
-		auto match_ty = getType()->as<FunctionType *>();
-		
-		// Match return types
-    	if (arg_ty->getReturnTy()->matches(match_ty->getReturnTy()) == false)
-    	{
-    		return false;
-    	}
-	}
-	
 	auto param_tys = getParamTys();
 	
 	// Match argument length
@@ -206,6 +206,21 @@ bool Function::matchesType(Type *type) const
 	{
 		auto their_arg = arg_ty->getArgs()[i];
 		auto our_arg = param_tys[i];
+		
+		// If we're an instance, we only want to match types
+		// that were generic from our parent, since arg casting
+		// may have occured. This partial type matching won't
+		// affect multiple matches, since an exact match has to
+		// occur if multiple nodes are found with the same name.
+		if (isInstance())
+		{
+			// If parameter i of our parent isn't var, continue.
+			auto parent_arg = getInstanceParent()->getParamTys().at(i);
+			if (parent_arg->isVarTy() == false)
+			{
+				continue;
+			}
+		}
 		
 		if (their_arg->matches(our_arg) == false)
 		{
