@@ -37,6 +37,10 @@ private:
 	ASTNode* m_parent = nullptr;
 
 	std::vector<ASTNode *> m_children;
+	std::vector<ASTNode *> m_dependencies;
+protected:
+	/// Adds all children as dependencies.
+	void addAllChildrenAsDependencies();
 public:
 	/// Gets the module this node resides in.
 	Module* getModule() const;
@@ -45,9 +49,13 @@ public:
 	ASTNode* getParent() const;
 
 	std::vector<ASTNode *> getChildren() const;
+	
+	std::vector<ASTNode *> getDependencies() const;
 
 	/// Gets the IR builder in the module.
 	IRBuilder* IRBuilder() const;
+	
+	void addDependency(ASTNode* dependency);
 
 	void addChild(ASTNode* child, bool mustExist = false);
 
@@ -56,6 +64,9 @@ public:
 	/// Creates a copy of this node.
 	virtual ASTNode* copy() const;
 
+	virtual void findDependencies();
+	
+	/// Resolve node. Sets type if applicable.
 	virtual void resolve();
 
 	/// Generate code. Sets value if applicable.

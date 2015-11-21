@@ -11,6 +11,14 @@
 #include <grove/Module.h>
 #include <grove/Block.h>
 
+void ASTNode::addAllChildrenAsDependencies()
+{
+	for (auto child : getChildren())
+	{
+		addDependency(child);
+	}
+}
+
 Module* ASTNode::getModule() const
 {
 	if (m_module == nullptr && getParent() != nullptr)
@@ -41,6 +49,16 @@ std::vector<ASTNode *> ASTNode::getChildren() const
 	return m_children;
 }
 
+std::vector<ASTNode *> ASTNode::getDependencies() const
+{
+	return m_dependencies;
+}
+
+void ASTNode::addDependency(ASTNode *dependency)
+{
+	m_dependencies.push_back(dependency);
+}
+
 void ASTNode::addChild(ASTNode *child, bool mustExist)
 {
 	if (child == nullptr)
@@ -69,6 +87,12 @@ bool ASTNode::isRootNode() const
 ASTNode* ASTNode::copy() const
 {
 	throw std::runtime_error("ASTNode::copy() not overridden");
+}
+
+void ASTNode::findDependencies()
+{
+	// By default, add all children as dependencies.
+	addAllChildrenAsDependencies();
 }
 
 void ASTNode::resolve()
