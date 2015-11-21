@@ -151,6 +151,11 @@ public:
 	 */
 	Named* findNamed(std::string name, Type* type,
 					 bool forceTypeMatch = false, bool createGeneric = true) const;
+	
+	/**
+	 * Gets all Named nodes with a given name up the whole AST.
+	 */
+	std::vector<Named*> findAllNamed(std::string name) const;
 
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);

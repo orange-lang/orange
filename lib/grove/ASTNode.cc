@@ -146,6 +146,42 @@ const
 	return nullptr;
 }
 
+std::vector<Named*> ASTNode::findAllNamed(std::string name) const
+{
+	std::vector<Named *> matches;
+	
+	auto ptr = this;
+	while (ptr != nullptr)
+	{
+		// Find the nearest block from this pointer.
+		auto block = ptr->findParent<Block *>();
+		
+		if (block == nullptr)
+		{
+			break;
+		}
+		
+		// Find closest node whose parent is that block.
+		auto limit = ptr;
+		while (limit != nullptr)
+		{
+			if (limit->getParent() == block)
+			{
+				break;
+			}
+			
+			limit = limit->getParent();
+		}
+		
+		auto found = block->getAllNamed(name, limit);
+		matches.insert(matches.end(), found.begin(), found.end());
+		
+		ptr = block;
+	}
+	
+	return matches;
+}
+
 ASTNode::ASTNode(Module* module)
 {
 	if (module == nullptr)
