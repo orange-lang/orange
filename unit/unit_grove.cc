@@ -101,6 +101,46 @@ int TestRet2()
 	return cmpEq(result, 2);
 }
 
+ADD_TEST(TestMatchingGenerics, "Test program that has two matching generics");
+int TestMatchingGenerics()
+{
+	auto temp_path = getTempFile("test", "or");
+	std::ofstream file(temp_path);
+	
+	if (file.is_open() == false)
+	{
+		std::cerr << "Couldn't open " << temp_path << std::endl;
+		std::remove(temp_path.c_str());
+		return 1;
+	}
+	
+	// Write small orange program to file.
+	file << "def foo(var f, int a)\n";
+	file << "	return 1\n";
+	file << "end\n\n";
+	file << "def foo(var f, int a)\n";
+	file << "	return 1\n";
+	file << "end\n\n";
+	file << "return 0\n";
+	file.close();
+	
+	// create our builder.
+	try
+	{
+		auto builder = new Builder(temp_path);
+		builder->compile();
+	}
+	catch (std::exception& e)
+	{
+		std::remove(temp_path.c_str());
+		return 0;
+	}
+	
+	ADD_ERROR(TestMatchingGenerics, "No exception caught");
+	std::remove(temp_path.c_str());
+	return 1;
+}
+
 #define ADD_TEST_FOLDER(name, folder)\
 ADD_TEST(name, "Test building " #folder " programs in test/" #folder ".")\
 int name(){\
@@ -127,7 +167,7 @@ ADD_TEST_FOLDER(TestFunctionPrograms, functions);
 ADD_TEST_FOLDER(TestVariablePrograms, variables);
 ADD_TEST_FOLDER(TestGenericFunctions, generic_functions);
 ADD_TEST_FOLDER(TestIfPrograms, if);
-ADD_TEST_FOLDER(TestRecursionPrograms, recursion);
+//ADD_TEST_FOLDER(TestRecursionPrograms, recursion);
 
 
 RUN_TESTS();
