@@ -30,6 +30,7 @@
 	#include <grove/IncrementExpr.h>
 	#include <grove/Loop.h>
 	#include <grove/LoopTerminator.h>
+	#include <grove/DerefExpr.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -578,6 +579,7 @@ primary
 	| MINUS expression { $$ = new NegativeExpr($2); }
 	| STRING { $$ = new StrValue(*$1); }
 	| TYPE_ID { $$ = new IDReference(*$1); }
+	| TIMES expression { $$ = new DerefExpr($2); }
 	;
 
 return
