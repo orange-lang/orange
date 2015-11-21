@@ -57,6 +57,7 @@ private:
 	std::stack<Block *> m_ctx;
 	
 	std::vector<ASTNode *> m_resolved;
+	std::vector<ASTNode *> m_searched;
 	
 	void parse();
 public:
@@ -89,8 +90,15 @@ public:
 	/// Pops a block from the stack.
 	Block* popBlock();
 	
+	/// Find all dependencies for a node and its children, if it hasn't been
+	/// searched.
+	void findDependencies(ASTNode* node);
+	
+	// Finds dependencies for all unsearched nodes.
+	void findDependencies();
+	
 	/// Resolve a node and its children, if it's unresolved.
-	void resolve(ASTNode *node);
+	void resolve(ASTNode* node);
 	
 	/// Resolve unresolved nodes.
 	void resolve();

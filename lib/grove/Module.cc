@@ -105,6 +105,36 @@ Block* Module::popBlock()
 	return popped;
 }
 
+void Module::findDependencies(ASTNode *node)
+{
+	// Only find the dependencies of a non-generic node.
+	if (node->is<Genericable *>() == true &&
+		node->as<Genericable *>()->isGeneric())
+	{
+		return;
+	}
+	
+	for (auto child : node->getChildren())
+	{
+		findDependencies(child);
+	}
+	
+	// Find the dependencies of this node after searching all the children.
+	auto it = std::find(this->m_searched.begin(), this->m_searched.end(),
+						node);
+	
+	if (it == std::end(this->m_searched))
+	{
+		this->m_searched.push_back(node);
+		node->findDependencies();
+	}
+}
+
+void Module::findDependencies()
+{
+	findDependencies(getMain());
+}
+
 void Module::resolve(ASTNode *node)
 {
 	// Only resolve the children in a non-generic node.
