@@ -271,6 +271,15 @@ Comparison Type::compare(Type *source, Type *target)
 		return Comparison::EQUAL;
 	}
 	
+	if (source->isIntTy() && target->isPointerTy())
+	{
+		return Comparison::HIGHER_PRECEDENCE;
+	}
+	else if (source->isPointerTy() && target->isIntTy())
+	{
+		return Comparison::LOWER_PRECEDENCE;
+	}
+	
 	// Only compare the precedence of two POD types.
 	bool bothPOD = source->isPODTy() && target->isPODTy();
 	if (bothPOD == false)
