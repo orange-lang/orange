@@ -10,6 +10,11 @@
 #include <grove/types/Type.h>
 #include <llvm/IR/IRBuilder.h>
 
+std::string MainFunction::getMangledName() const
+{
+	return getName();
+}
+
 void MainFunction::setupFunction()
 {
 	Function::setupFunction();

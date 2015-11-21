@@ -14,5 +14,7 @@ class MainFunction : public Function {
 protected:
 	virtual void setupFunction() override;
 public:
+	virtual std::string getMangledName() const override;
+	
 	MainFunction(Module* module, std::string name);
 };
