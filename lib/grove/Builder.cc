@@ -41,6 +41,12 @@ void Builder::compile()
 	/// @todo Tell each module to import its own registered nodes as headers
 	///		  (Look in the library for its LocalNamedTypes and import)
 	
+	// Find dependencies for all modules.
+	for (auto mod : getModules())
+	{
+		mod->findDependencies();
+	}
+	
 	// Resolve the remaining nodes
 	for (auto mod : getModules())
 	{
