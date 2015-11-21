@@ -13,6 +13,7 @@
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
 #include <grove/types/VoidType.h>
+#include <grove/types/VarType.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/IRBuilder.h>
@@ -248,7 +249,8 @@ void Function::resolve()
 	
 	if (isGeneric())
 	{
-		throw std::runtime_error("Don't know how to handle generic funcs");
+		setType(FunctionType::get(VarType::get(), getParamTys()));
+		return;
 	}
 	
 	if (m_ret_type != nullptr)
