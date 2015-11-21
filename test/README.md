@@ -26,8 +26,8 @@ generic_functions: test generic functions
 if: test if statements
 recursion: test recursive functions
 loops: test any kind of loop structure
-array: test arrays
 pointers: test pointers
+array: test arrays
 ternary: test ternary statement
 enum: test enums
 builtin: builtin function tests.
