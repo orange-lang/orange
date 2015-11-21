@@ -166,7 +166,7 @@ void Loop::build()
 	
 	// If we're not a terminator, go to either our m_afterthought block
 	// or our body block, depending on which exists.
-	if (isTerminator() == false)
+	if (Block::isTerminator() == false)
 	{
 		if (getAfterthoughtBlock() != nullptr)
 		{
