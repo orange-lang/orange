@@ -20,6 +20,10 @@ class Type;
 class Block : public Statement {
 private:
 	std::vector<ASTNode *> m_statements;
+	
+	/// Returns the named node or a generic instance
+	/// of the named node.
+	Named* namedOrGenericInstance(Named* n, Type* t) const;
 protected:
 	void buildStatements();
 	

@@ -21,9 +21,33 @@ Named* Block::getNamed(std::string name, const ASTNode *limit) const
 	return getNamed(name, nullptr, limit);
 }
 
+Named* Block::namedOrGenericInstance(Named* n, Type* t) const
+{
+	if (n->is<Genericable *>() &&
+		n->as<Genericable *>()->isGeneric())
+	{
+		auto generic = n->as<Genericable *>();
+		if (generic->hasInstance(t))
+		{
+			return generic->findInstance(t)->as<Named *>();
+		}
+		else
+		{
+			auto inst = generic->createInstance(t)->as<Named *>();
+			getModule()->resolve(inst->as<ASTNode *>());
+			return inst;
+		}
+	}
+	
+	return n;
+}
+
 Named* Block::getNamed(std::string name, Type* type,
 					   const ASTNode *limit) const
 {
+	// First thing to do is get the list of names that match.
+	std::vector<Named *> matches;
+	
 	for (auto child : getChildren())
 	{
 		if (child == limit)
@@ -37,35 +61,32 @@ Named* Block::getNamed(std::string name, Type* type,
 		}
 		
 		auto named = child->as<Named *>();
-		
-		bool matches = named->matchesName(name);
-		if (type && matches && named->is<Typed *>())
+		if (named->matchesName(name))
 		{
-			matches = named->as<Typed *>()->matchesType(type);
+			matches.push_back(named);
 		}
-		
-		if (matches == false)
+	}
+	
+	// If we only had one match, we can return it.
+	if (matches.size() == 1)
+	{
+		return namedOrGenericInstance(matches.at(0), type);
+	}
+	
+	// If we had more than one match, we need to see if we can find
+	// a match by type.
+	for (auto match : matches)
+	{
+		if (match->is<Typed *>() == false)
 		{
 			continue;
 		}
 		
-		if (named->is<Genericable *>() &&
-			named->as<Genericable *>()->isGeneric())
+		auto typed = match->as<Typed *>();
+		if (typed->matchesType(type))
 		{
-			auto generic = named->as<Genericable *>();
-			if (generic->hasInstance(type))
-			{
-				return generic->findInstance(type)->as<Named *>();
-			}
-			else
-			{
-				auto inst = generic->createInstance(type)->as<Named *>();
-				getModule()->resolve(inst->as<ASTNode *>());
-				return inst;
-			}
+			return namedOrGenericInstance(match, type);
 		}
-		
-		return named;
 	}
 	
 	return nullptr;
