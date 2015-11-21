@@ -250,6 +250,12 @@ void Function::resolve()
 	if (isGeneric())
 	{
 		setType(FunctionType::get(VarType::get(), getParamTys()));
+		
+		if (findNamed(getName(), getType(), true, false) != nullptr)
+		{
+			throw std::runtime_error("A function with this signature already exists");
+		}
+		
 		return;
 	}
 	
