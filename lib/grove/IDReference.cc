@@ -38,6 +38,14 @@ ASTNode* IDReference::copy() const
 	return new IDReference(m_name);
 }
 
+void IDReference::findDependencies()
+{
+	auto ref = findNamed(getName());
+	assertExists(ref, "No variable with this name exists.");
+	
+	addDependency(ref->as<ASTNode *>());
+}
+
 void IDReference::resolve()
 {
 	auto ref = findNamed(getName());

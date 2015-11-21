@@ -29,6 +29,8 @@ public:
 	/// Gets the name that this node is referring to.
 	std::string getName() const;
 	
+	virtual void findDependencies() override;
+	
 	virtual void resolve() override;
 	
 	virtual void build() override;
