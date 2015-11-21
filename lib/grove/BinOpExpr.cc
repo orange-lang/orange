@@ -24,7 +24,19 @@ bool BinOpExpr::areTypesCompatible() const
 
 bool BinOpExpr::areTypesCastable() const
 {
-	return getLHS()->getType()->isPODTy() && getRHS()->getType()->isPODTy();
+	if (getLHS()->getType()->isPODTy() && getRHS()->getType()->isPODTy())
+	{
+		return true;
+	}
+	
+	if ((getLHS()->getType()->isPointerTy() && getRHS()->getType()->isIntTy()) ||
+		(getLHS()->getType()->isIntTy() && getRHS()->getType()->isPointerTy()))
+	{
+		return true;
+	}
+		
+	
+	return false;
 }
 
 bool BinOpExpr::requiresCast() const
