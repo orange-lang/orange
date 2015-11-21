@@ -31,6 +31,8 @@ public:
 	/// Gets the arguments in this function call.
 	std::vector<Expression *> getArgs() const;
 	
+	virtual void findDependencies() override;
+	
 	virtual void resolve() override;
 	virtual void build() override;
 	

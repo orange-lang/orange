@@ -75,6 +75,17 @@ ASTNode* FunctionCall::copy() const
 	return new FunctionCall(getName(), copyVector(getArgs()));
 }
 
+void FunctionCall::findDependencies()
+{
+	ASTNode::findDependencies();
+	
+	auto named = findAllNamed(getName());
+	for (auto n : named)
+	{
+		addDependency(n->as<ASTNode *>());
+	}
+}
+
 void FunctionCall::resolve()
 {
 	// Determine type
