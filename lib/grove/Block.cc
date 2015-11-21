@@ -115,6 +115,32 @@ Named* Block::getNamed(std::string name, Type* type,
 	return nullptr;
 }
 
+std::vector<Named*> Block::getAllNamed(std::string name, const ASTNode *limit) const
+{
+	std::vector<Named *> matches;
+	
+	for (auto child : getChildren())
+	{
+		if (child == limit)
+		{
+			break;
+		}
+		
+		if (child->is<Named *>() == false)
+		{
+			continue;
+		}
+		
+		auto named = child->as<Named *>();
+		if (named->matchesName(name))
+		{
+			matches.push_back(named);
+		}
+	}
+	
+	return matches;
+}
+
 void Block::addStatement(ASTNode *statement)
 {
 	if (statement == nullptr)

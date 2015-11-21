@@ -73,6 +73,13 @@ public:
 	Named* getNamed(std::string name, Type* type, const ASTNode* limit,
 					bool forceTypeMatch, bool createGeneric) const;
 	
+	/**
+	 * Tries to find all named nodes with a given name from the immediate 
+	 * list of children. Does not search the whole tree.
+	 */
+	std::vector<Named *> getAllNamed(std::string name, const ASTNode* limit)
+    	const;
+	
 	virtual void build() override;
 	
 	/// Returns whether or not this block is a terminator.
