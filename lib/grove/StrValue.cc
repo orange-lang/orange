@@ -32,6 +32,11 @@ const void replaceAll(std::string& str, const std::string& from,
 	}
 }
 
+bool StrValue::isConstant() const
+{
+	return true;
+}
+
 llvm::Value* StrValue::getValue() const
 {
 	return IRBuilder()->CreateConstGEP2_32(m_value, 0, 0);

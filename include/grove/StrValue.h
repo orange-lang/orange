@@ -27,5 +27,7 @@ public:
 	
 	virtual void build() override;
 	
+	virtual bool isConstant() const override;
+	
 	StrValue(std::string value);
 };
