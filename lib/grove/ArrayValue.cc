@@ -28,6 +28,21 @@ std::vector<Expression *> ArrayValue::getElements() const
 	return m_elements;
 }
 
+llvm::Value* ArrayValue::castTo(Type* ty) const
+{
+	assertExists(ty, "type must exist.");
+	assertExists(getType(), "expression does not have a type.");
+	
+	// If casting to a pointer, use the pointer for the cast.
+	auto use_val = getValue();
+	if (ty->isPointerTy())
+	{
+		use_val = getPointer();
+	}
+	
+	return getType()->cast(IRBuilder(), use_val, ty);
+}
+
 void ArrayValue::resolve()
 {
 	// Find the highest precedence type in retStmts.

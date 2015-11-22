@@ -17,6 +17,8 @@ private:
 public:
 	virtual ASTNode* copy() const override;
 	
+	virtual llvm::Value* castTo(Type* ty) const override;
+	
 	std::vector<Expression *> getElements() const;
 	
 	virtual void resolve() override;
