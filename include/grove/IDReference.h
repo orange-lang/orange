@@ -26,14 +26,14 @@ public:
 	
 	virtual bool hasPointer() const override;
 	
+	virtual llvm::Value* getValue() const override;
+	
 	/// Gets the name that this node is referring to.
 	std::string getName() const;
 	
 	virtual void findDependencies() override;
 	
 	virtual void resolve() override;
-	
-	virtual void build() override;
 	
 	virtual ASTNode* copy() const override;
 	

@@ -59,10 +59,9 @@ void IDReference::resolve()
 	setType(ty);
 }
 
-void IDReference::build()
+llvm::Value* IDReference::getValue() const
 {
-	setValue(findNode()->getValue());
-	assertExists(getValue(), "Value was not assigned.");
+	return findNode()->getValue();
 }
 
 IDReference::IDReference(std::string name)
