@@ -177,8 +177,15 @@ const
 			caught_error = true;
 		}
 		
-		// If we didn't find it, start looking from the block.
-		ptr = block;
+		if (settings.searchWholeTree == false)
+		{
+			break;
+		}
+		else
+		{
+    		// If we didn't find it, start looking from the block.
+    		ptr = block;
+		}
 	}
 	
 	if (caught_error == true)

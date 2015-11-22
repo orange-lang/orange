@@ -146,13 +146,21 @@ public:
 	Named* findNamed(std::string name) const;
 
 	struct NamedSearchSettings {
+		/// Whether or not to force type matching even if only one
+		/// node with a name is found.
 		bool forceTypeMatch;
+		
+		/// Whether or not to create generics on nodes found.
 		bool createGeneric;
+		
+		/// Whether to search up the whole tree or just the current block.
+		bool searchWholeTree;
 		
 		NamedSearchSettings()
 		{
 			forceTypeMatch = false;
 			createGeneric = true;
+			searchWholeTree = true;
 		}
 	};
 
