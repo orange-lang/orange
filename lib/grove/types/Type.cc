@@ -365,6 +365,16 @@ unsigned int Type::exprAsArrSize(Expression* expr)
 	return size;
 }
 
+bool Type::isVariadiclySized() const
+{
+	return false;
+}
+
+std::vector<Expression *> Type::getVariadicSizes() const
+{
+	return std::vector<Expression *>();
+}
+
 Type::Type(bool isConst)
 {
 	m_context = & llvm::getGlobalContext();

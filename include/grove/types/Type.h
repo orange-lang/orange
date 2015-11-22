@@ -129,6 +129,10 @@ public:
 	/// Gets whether or not this type is constant.
 	bool isConst() const;
 	
+	virtual bool isVariadiclySized() const;
+	
+	virtual std::vector<Expression*> getVariadicSizes() const;
+	
 	/// Gets whether or not this type matches another type.
 	/// Returns true if either of the types are VarType.
 	bool matches(Type* ty) const;
