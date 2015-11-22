@@ -11,6 +11,7 @@
 #include <grove/types/Type.h>
 #include <grove/types/ArrayType.h>
 
+#include <util/llvmassertions.h>
 #include <util/assertions.h>
 #include <util/copy.h>
 
@@ -92,6 +93,8 @@ void ArrayValue::build()
 			assertExists(ele_val, "Element couldn't be casted");
 			
 			auto gep = IRBuilder()->CreateConstInBoundsGEP2_64(val, 0, i);
+			
+			assertEqual<VAL,PTR>(ele_val, gep, "Types not matching!");
 			IRBuilder()->CreateStore(ele_val, gep);
 		}
 	}
@@ -101,7 +104,7 @@ void ArrayValue::build()
 
 bool ArrayValue::hasPointer() const
 {
-	return true;
+	return false;
 }
 
 llvm::Value* ArrayValue::getPointer() const
@@ -111,6 +114,7 @@ llvm::Value* ArrayValue::getPointer() const
 
 llvm::Value* ArrayValue::getValue() const
 {
+//	return m_value;
 	return IRBuilder()->CreateLoad(m_value);
 }
 
