@@ -676,29 +676,38 @@ type
 	{
 		$$ = $1;
 
+		bool is_const = true;
+		for (int i = 0; i < $2->size(); i++)
+		{
+			auto def = $2->at(i);
+
+			if (Type::exprValidForArrSize(def) == false)
+			{
+				is_const = false;
+				break;
+			}
+		}
+
 		int sz = (int)$2->size();
 		for (int i = sz - 1; i >= 0; i--)
 		{
 			auto def = $2->at(i);
 
-			if (def != nullptr)
+			if (is_const)
 			{
-				if (Type::exprValidForArrSize(def))
-				{
-					auto arr_sz = Type::exprAsArrSize(def);
-					$$ = ArrayType::get($$, arr_sz, false);
-				}
-				else
-				{
-					throw std::runtime_error("don't know how to handle \
-						variadic array sizes");
-				}
+				auto arr_sz = Type::exprAsArrSize(def);
+				$$ = ArrayType::get($$, arr_sz, false);
 			}
 			else
 			{
-				$$ = PointerType::get($$);
+				throw std::runtime_error("don't know how to handle \
+					variadic array sizes");
 			}
 		}
+	}
+	| basic_type OPEN_BRACKET CLOSE_BRACKET
+	{
+		$$ = PointerType::get($1);
 	}
 	;
 
@@ -708,20 +717,10 @@ array_def_list
 		$$ = $1;
 		$$->push_back($3);
 	}
-	| array_def_list OPEN_BRACKET CLOSE_BRACKET
-	{
-		$$ = $1;
-		$$->push_back(nullptr);
-	}
 	| OPEN_BRACKET expression CLOSE_BRACKET
 	{
 		$$ = new std::vector<Expression *>();
 		$$->push_back($2);
-	}
-	| OPEN_BRACKET CLOSE_BRACKET
-	{
-		$$ = new std::vector<Expression *>();
-		$$->push_back(nullptr);
 	}
 	;
 
