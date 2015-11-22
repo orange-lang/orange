@@ -52,7 +52,9 @@ ASTNode* VarDecl::copy() const
 
 void VarDecl::resolve()
 {
-	if (findNamed(getName()))
+	NamedSearchSettings settings;
+	settings.searchWholeTree = false;
+	if (findNamed(getName(), getType(), settings))
 	{
 		throw std::invalid_argument("Variable already exists.");
 	}
