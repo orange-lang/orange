@@ -88,38 +88,6 @@ Type* ArrayType::getConst() const
 	return ArrayType::get(m_contained, m_size, true);
 }
 
-ArrayType* ArrayType::get(Type* contained, Expression* expr, bool isConst)
-{
-	if (expr->isConstant() == false)
-	{
-		throw std::invalid_argument("cannot use non-constant expr for type");
-	}
-	
-	if (expr->getType()->isIntTy() == false)
-	{
-		throw std::invalid_argument("array size can only be defined with an integer");
-	}
-	
-	if (dynamic_cast<Value *>(expr) == nullptr)
-	{
-		throw std::invalid_argument("Don't know how to handle this");
-	}
-	
-	Value* v = dynamic_cast<Value *>(expr);
-	unsigned int size = 0;
-	
-	if (expr->getType()->isSigned())
-	{
-		size = v->getInt();
-	}
-	else
-	{
-		size = v->getUInt();
-	}
-	
-	return get(contained, size, isConst);
-}
-
 ArrayType* ArrayType::get(Type *contained, unsigned int size, bool isConst)
 {
 	if (contained == nullptr)
