@@ -14,6 +14,8 @@
 #include <grove/types/UIntType.h>
 #include <grove/types/DoubleType.h>
 #include <grove/types/VarType.h>
+#include <grove/types/ArrayType.h>
+#include <grove/types/PointerType.h>
 #include <util/assertions.h>
 #include <util/copy.h>
 #include <llvm/IR/Value.h>
@@ -63,6 +65,13 @@ FunctionType* FunctionCall::expectedFunctionTy() const
 	auto ty_list = std::vector<Type *>();
 	for (auto arg : m_args)
 	{
+		// Cast arrays to pointers so we can pass-by-reference
+		if (arg->getType()->isArrayTy())
+		{
+			ty_list.push_back(PointerType::get(arg->getType()->getBaseTy()));
+			continue;
+		}
+		
 		ty_list.push_back(arg->getType());
 	}
 	
