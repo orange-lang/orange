@@ -8,6 +8,7 @@
 
 #include <grove/Value.h>
 #include <grove/types/Type.h>
+#include <grove/types/IntType.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Constants.h>
 #include <string>
@@ -49,6 +50,12 @@ void Value::build()
 	{
 		throw std::invalid_argument("invalid type.");
 	}
+}
+
+Value::Value(char c)
+{
+	m_values.i = (int)c;
+	m_type = IntType::get(8);
 }
 
 Value::Value(std::string str, Type* t, int base)

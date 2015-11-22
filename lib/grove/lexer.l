@@ -84,7 +84,7 @@
 [0-9][0-9]*"i"									CREATE_VAL(IntType::get(64)); return VALUE;
 [0-9][0-9]*										CREATE_VAL(IntType::get(64)); return VALUE;
 
-'.'												return VALUE;
+'.'												yylval.val = new Value(yytext[1]); return VALUE;
 
 "false"											CREATE_VAL(BoolType::get()); return VALUE;
 "true"											CREATE_VAL(BoolType::get()); return VALUE;

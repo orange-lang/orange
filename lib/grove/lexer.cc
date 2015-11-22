@@ -1070,7 +1070,7 @@ CREATE_VAL(IntType::get(64)); return VALUE;
 case 21:
 YY_RULE_SETUP
 #line 87 "/Users/robert/dev/orange/lib/grove/lexer.l"
-return VALUE;
+yylval.val = new Value(yytext[1]); return VALUE;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP

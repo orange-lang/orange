@@ -34,6 +34,8 @@ public:
 	
 	virtual bool isConstant() const override;
 	
+	Value(char c);
+	
 	/**
 	 * Constructs a new Value.
 	 * @param str The string to convert to a value.
