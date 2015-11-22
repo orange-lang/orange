@@ -31,6 +31,7 @@
 	#include <grove/Loop.h>
 	#include <grove/LoopTerminator.h>
 	#include <grove/DerefExpr.h>
+	#include <grove/CastExpr.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -580,6 +581,7 @@ primary
 	| STRING { $$ = new StrValue(*$1); }
 	| TYPE_ID { $$ = new IDReference(*$1); }
 	| TIMES expression { $$ = new DerefExpr($2); }
+	| OPEN_PAREN type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); }
 	;
 
 return
