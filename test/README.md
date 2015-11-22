@@ -31,7 +31,6 @@ array: test arrays
 ternary: test ternary statement
 enum: test enums
 builtin: builtin function tests.
-sizeof: test sizeof operator
 programs: test programs
 bugs: test bugs found at some point
 ```
