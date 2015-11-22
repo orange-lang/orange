@@ -49,15 +49,15 @@ public:
 	ASTNode* getParent() const;
 
 	std::vector<ASTNode *> getChildren() const;
-	
+
 	std::vector<ASTNode *> getDependencies() const;
-	
+
 	/// Gets whether or not this node depends on a specified node.
 	bool dependsOn(ASTNode* node) const;
 
 	/// Gets the IR builder in the module.
 	IRBuilder* IRBuilder() const;
-	
+
 	void addDependency(ASTNode* dependency);
 
 	void addChild(ASTNode* child, bool mustExist = false);
@@ -68,7 +68,7 @@ public:
 	virtual ASTNode* copy() const;
 
 	virtual void findDependencies();
-	
+
 	/// Resolve node. Sets type if applicable.
 	virtual void resolve();
 
@@ -145,11 +145,22 @@ public:
 	 */
 	Named* findNamed(std::string name) const;
 
+	struct NamedSearchSettings {
+		bool forceTypeMatch;
+		bool createGeneric;
+		
+		NamedSearchSettings()
+		{
+			forceTypeMatch = false;
+			createGeneric = true;
+		}
+	};
+
 	/**
 	 * Tries to find a Named node in the AST. Searches up to this node.
 	 *
-	 * This function allows for a type hint to be passed in to narrow 
-	 * down results if more than one node was found by name. The hint can 
+	 * This function allows for a type hint to be passed in to narrow
+	 * down results if more than one node was found by name. The hint can
 	 * be any type, including VarType and compound types (like FunctionType).
 	 * VarType is used as a wildcard.
 	 *
@@ -164,8 +175,9 @@ public:
 	 * one node.
 	 */
 	Named* findNamed(std::string name, Type* type,
-					 bool forceTypeMatch = false, bool createGeneric = true) const;
-	
+					 NamedSearchSettings settings = NamedSearchSettings())
+	const;
+
 	/**
 	 * Gets all Named nodes with a given name up the whole AST.
 	 */

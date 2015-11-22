@@ -284,7 +284,11 @@ void Function::resolve()
 	{
 		setType(FunctionType::get(VarType::get(), getParamTys()));
 		
-		if (findNamed(getName(), getType(), true, false) != nullptr)
+		auto search_settings = NamedSearchSettings();
+		search_settings.forceTypeMatch = true;
+		search_settings.createGeneric = false;
+		
+		if (findNamed(getName(), getType(), search_settings) != nullptr)
 		{
 			throw std::runtime_error("A function with this signature already exists");
 		}
@@ -337,8 +341,11 @@ void Function::resolve()
 		setType(FunctionType::get(highest, getParamTys()));
 	}
 	
+	auto search_settings = NamedSearchSettings();
+	search_settings.forceTypeMatch = true;
+	
 	if (isInstance() == false &&
-		findNamed(getName(), getType(), true) != nullptr)
+		findNamed(getName(), getType(), search_settings) != nullptr)
 	{
 		throw std::runtime_error("A function with this signature already exists");
 	}
