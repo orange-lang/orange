@@ -92,7 +92,8 @@ void ArrayAccessExpr::build()
 	
 	std::vector<llvm::Value *> indices;
 	
-	if (getArray()->getType()->isArrayTy())
+	if (getArray()->getType()->isArrayTy() &&
+		getArray()->getType()->isVariadiclySized() == false)
 	{
 		auto& ctx = getModule()->getLLVMContext();
 		auto idx = llvm::ConstantInt::get(llvm::Type::getInt64Ty(ctx), 0);
