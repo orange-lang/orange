@@ -10,6 +10,8 @@
 
 #include "Type.h"
 
+class Expression;
+
 class ArrayType : public Type
 {
 private:
@@ -31,6 +33,9 @@ public:
 	virtual Type* getRootTy() const override;
 	
 	virtual Type* getConst() const override;
+	
+	static ArrayType* get(Type* contained, Expression* expr,
+						  bool isConst = false);
 	
 	static ArrayType* get(Type* contained, unsigned int size,
 						  bool isConst = false);
