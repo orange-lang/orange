@@ -18,7 +18,7 @@ llvm::Value* Expression::castTo(Type *ty) const
 	assertExists(ty, "type must exist.");
 	assertExists(getType(), "expression does not have a type.");
 	
-	return getType()->cast(IRBuilder(), getValue(), ty);
+	return getType()->cast(IRBuilder(), (Valued *)this, ty);
 }
 
 llvm::Value* Expression::castTo(Expression *expr) const
