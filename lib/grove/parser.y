@@ -92,7 +92,7 @@
 %type <nodes> opt_statements statements compound_statement var_decl valued
 %type <nodes> opt_valued
 %type <node> statement return controls
-%type <exprs> expr_list
+%type <exprs> expr_list array_def_list
 %type <pairs> var_decl_list
 %type <blocks> else_if_or_end
 %type <expr> expression primary comparison arithmetic call increment
@@ -671,13 +671,46 @@ type
 	{
 		$$ = $2->getConst();
 	}
-	| type OPEN_BRACKET expression CLOSE_BRACKET
+	| basic_type array_def_list
 	{
-		$$ = ArrayType::get($1, $3, false);
+		$$ = $1;
+
+		for (unsigned int i = 0; i < $2->size(); i++)
+		{
+			auto def = $2->at(i);
+
+			if (def != nullptr)
+			{
+				$$ = ArrayType::get($$, def, false);
+			}
+			else
+			{
+				$$ = PointerType::get($$);
+			}
+		}
 	}
-	| type OPEN_BRACKET CLOSE_BRACKET
+	;
+
+array_def_list
+	: array_def_list OPEN_BRACKET expression CLOSE_BRACKET
 	{
-		$$ = PointerType::get($1);
+		$$ = $1;
+		$$->push_back($3);
+	}
+	| array_def_list OPEN_BRACKET CLOSE_BRACKET
+	{
+		$$ = $1;
+		$$->push_back(nullptr);
+	}
+	| OPEN_BRACKET expression CLOSE_BRACKET
+	{
+		$$ = new std::vector<Expression *>();
+		$$->push_back($2);
+	}
+	| OPEN_BRACKET CLOSE_BRACKET
+	{
+		$$ = new std::vector<Expression *>();
+		$$->push_back(nullptr);
 	}
 	;
 
