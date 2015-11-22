@@ -14,6 +14,7 @@
 #include <grove/types/PointerType.h>
 
 #include <grove/ASTNode.h>
+#include <grove/Valued.h>
 
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
@@ -61,7 +62,7 @@ static int UIntToUInt(Type* f, Type* t)
 	}
 }
 
-static llvm::Value* BoolCast(void* irBuilder, llvm::Value* val, Type* from,
+static llvm::Value* BoolCast(void* irBuilder, Valued* val, Type* from,
 							 Type* to)
 {
 	assertExists(irBuilder, "irbuilder must exist");
@@ -71,10 +72,13 @@ static llvm::Value* BoolCast(void* irBuilder, llvm::Value* val, Type* from,
 	
 	IRBuilder* IRB = (IRBuilder *)irBuilder;
 	
-	auto zero = llvm::ConstantInt::get(from->getLLVMType(), 0, false);
-	assertEqual(zero, val, "Could not create bool cast");
+	auto llvm_val = val->getValue();
+	assertExists(llvm_val, "llvm_val is nullptr");
 	
-	return IRB->CreateICmpNE(val, zero);
+	auto zero = llvm::ConstantInt::get(from->getLLVMType(), 0, false);
+	assertEqual(zero, llvm_val, "Could not create bool cast");
+	
+	return IRB->CreateICmpNE(llvm_val, zero);
 }
 
 UIntType::UIntType(unsigned int width, bool isConst)

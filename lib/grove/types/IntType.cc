@@ -7,11 +7,6 @@
 */
 
 #include <grove/types/IntType.h>
-#include <llvm/IR/Type.h>
-#include <llvm/IR/Instruction.h>
-#include <llvm/IR/IRBuilder.h>
-#include <llvm/IR/Constants.h>
-
 #include <grove/types/UIntType.h>
 #include <grove/types/DoubleType.h>
 #include <grove/types/FloatType.h>
@@ -19,9 +14,17 @@
 #include <grove/types/PointerType.h>
 
 #include <grove/ASTNode.h>
+#include <grove/Valued.h>
 
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
+
+#include <llvm/IR/Type.h>
+#include <llvm/IR/Instruction.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Constants.h>
+
+
 
 static int IntToInt(Type* f, Type* t)
 {
@@ -61,7 +64,7 @@ static int IntToUInt(Type* f, Type* t)
 	}
 }
 
-static llvm::Value* BoolCast(void* irBuilder, llvm::Value* val, Type* from,
+static llvm::Value* BoolCast(void* irBuilder, Valued* val, Type* from,
 							 Type* to)
 {
 	assertExists(irBuilder, "irbuilder must exist");
@@ -69,12 +72,15 @@ static llvm::Value* BoolCast(void* irBuilder, llvm::Value* val, Type* from,
 	assertExists(from, "from must exist");
 	assertExists(to, "to must exist");
 	
+	auto llvm_val = val->getValue();
+	assertExists(llvm_val, "valued didn't have value");
+	
 	IRBuilder* IRB = (IRBuilder *)irBuilder;
 	
 	auto zero = llvm::ConstantInt::get(from->getLLVMType(), 0, true);
-	assertEqual(zero, val, "Could not create bool cast");
+	assertEqual(zero, llvm_val, "Could not create bool cast");
 	
-	return IRB->CreateICmpNE(val, zero);
+	return IRB->CreateICmpNE(llvm_val, zero);
 }
 
 IntType::IntType(unsigned int width, bool isConst)

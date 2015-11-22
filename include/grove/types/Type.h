@@ -41,10 +41,11 @@ typedef enum {
 } BasicType;
 
 class Type;
+class Valued;
 typedef std::tuple<size_t, size_t> TypeTuple;
 
 typedef std::function<int(Type*,Type*)> TypeCallback;
-typedef std::function<llvm::Value*(void*, llvm::Value*, Type*,
+typedef std::function<llvm::Value*(void*, Valued*, Type*,
 								   Type*)> TypeCast;
 
 const int NO_CAST = 0;
@@ -137,7 +138,7 @@ public:
 	llvm::Type* getLLVMType() const;
 	
 	int castOperation(Type* to);
-	llvm::Value* cast(void *irBuilder, llvm::Value* val, Type* target);
+	llvm::Value* cast(void *irBuilder, Valued* val, Type* target);
 
 	virtual ~Type();
 };

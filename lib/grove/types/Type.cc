@@ -7,12 +7,16 @@
 */
 
 #include <grove/types/Type.h>
+#include <grove/types/PointerType.h>
+
 #include <llvm/IR/Type.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/IRBuilder.h>
+
 #include <grove/Module.h>
-#include <grove/types/PointerType.h>
+#include <grove/Valued.h>
 #include <grove/ASTNode.h>
+
 #include <util/assertions.h>
 
 std::map<std::string, Type*> Type::m_defined;
@@ -149,7 +153,7 @@ void Type::define(std::string signature, Type *ty)
 
 void Type::defineCast(const std::type_info &to, TypeCallback cb)
 {
-	TypeCast tc = [cb](void* build, llvm::Value* val,
+	TypeCast tc = [cb](void* build, Valued* val,
 					   Type* from, Type* to) -> llvm::Value*
 	{
 		assertExists(build, "build must exist");
@@ -158,13 +162,16 @@ void Type::defineCast(const std::type_info &to, TypeCallback cb)
 		
 		IRBuilder* IRB = (IRBuilder *)build;
 		
+		auto llvm_val = val->getValue();
+		assertExists(llvm_val, "value must exist");
+		
 		auto op = (llvm::Instruction::CastOps)cb(from, to);
 		if (op == NO_CAST)
 		{
-			return val;
+			return llvm_val;
 		}
 		
-		auto casted = IRB->CreateCast(op, val, to->getLLVMType());
+		auto casted = IRB->CreateCast(op, llvm_val, to->getLLVMType());
 		assertExists(casted, "cast returned nullptr");
 		
 		return casted;
@@ -182,7 +189,7 @@ void Type::defineCast(const std::type_info &to, int cast)
 		return cast;
 	};
 	
-	TypeCast tc = [cb](void* build, llvm::Value* val,
+	TypeCast tc = [cb](void* build, Valued* val,
 					 Type* from, Type* to) -> llvm::Value*
 	{
 		assertExists(build, "build must exist");
@@ -191,13 +198,16 @@ void Type::defineCast(const std::type_info &to, int cast)
 		
 		IRBuilder* IRB = (IRBuilder *)build;
 		
+		auto llvm_val = val->getValue();
+		assertExists(llvm_val, "value must exist");
+		
 		auto op = (llvm::Instruction::CastOps)cb(from, to);
 		if (op == NO_CAST)
 		{
-			return val;
+			return llvm_val;
 		}
 		
-		auto casted = IRB->CreateCast(op, val, to->getLLVMType());
+		auto casted = IRB->CreateCast(op, llvm_val, to->getLLVMType());
 		assertExists(casted, "cast returned nullptr");
 		
 		return casted;
@@ -239,7 +249,7 @@ int Type::castOperation(Type *to)
 	return it_cb->second(this, to);
 }
 
-llvm::Value* Type::cast(void *irBuilder, llvm::Value *val, Type *target)
+llvm::Value* Type::cast(void *irBuilder, Valued *val, Type *target)
 {
 	TypeTuple key(typeid(*this).hash_code(), typeid(*target).hash_code());
 	
@@ -250,7 +260,7 @@ llvm::Value* Type::cast(void *irBuilder, llvm::Value *val, Type *target)
 	}
 	else if (this == target)
 	{
-		return val;
+		return val->getValue();
 	}
 	
 	return it->second(irBuilder, val, this, target);
