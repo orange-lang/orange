@@ -211,5 +211,7 @@ ADD_TEST_FOLDER(TestRecursionPrograms, recursion);
 ADD_TEST_FOLDER(TestLoopPrograms, loops);
 ADD_TEST_FOLDER(TestPointerPrograms, pointers);
 ADD_TEST_FOLDER(TestArrayPrograms, array);
+ADD_TEST_FOLDER(TestProgramPrograms, programs);
+ADD_TEST_FOLDER(TestBugPrograms, bugs);
 
 RUN_TESTS();
