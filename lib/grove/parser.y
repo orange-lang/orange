@@ -700,8 +700,7 @@ type
 			}
 			else
 			{
-				throw std::runtime_error("don't know how to handle \
-					variadic array sizes");
+				$$ = VariadicArrayType::get($$, def, false);
 			}
 		}
 	}
