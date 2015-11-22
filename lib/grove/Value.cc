@@ -23,6 +23,21 @@ bool Value::isConstant() const
 	return true;
 }
 
+int64_t Value::getInt() const
+{
+	return m_values.i;
+}
+
+uint64_t Value::getUInt() const
+{
+	return m_values.u;
+}
+
+double Value::getDouble() const
+{
+	return m_values.d;
+}
+
 void Value::build()
 {
 	auto ty = getType();

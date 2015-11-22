@@ -34,6 +34,10 @@ public:
 	
 	virtual bool isConstant() const override;
 	
+	int64_t getInt() const;
+	uint64_t getUInt() const;
+	double getDouble() const;
+	
 	Value(char c);
 	
 	/**
