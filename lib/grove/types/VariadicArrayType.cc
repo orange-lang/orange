@@ -43,7 +43,14 @@ VariadicArrayType::VariadicArrayType(Type* contained, Expression* size,
 	m_contained = contained;
 	m_size = size;
 	
-	m_type = (llvm::Type *)m_contained->getRootTy()->getLLVMType()->getPointerTo();
+	
+	auto non_array = m_contained;
+	while (non_array->isArrayTy())
+	{
+		non_array = non_array->getBaseTy();
+	}
+	
+	m_type = (llvm::Type *)non_array->getLLVMType()->getPointerTo();
 	
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast,
 			   PointerCast);
