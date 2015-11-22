@@ -75,10 +75,14 @@ void ArrayAccessExpr::build()
 	getArray()->build();
 	getIndex()->build();
 	
-	llvm::Value* vArray = getArray()->getValue();
+	llvm::Value* vArray = nullptr;
 	if (getArray()->hasPointer() && getArray()->getType()->isArrayTy())
 	{
 		vArray = getArray()->getPointer();
+	}
+	else
+	{
+		vArray = getArray()->getValue();
 	}
 	
 	auto vIndex = getIndex()->getValue();
