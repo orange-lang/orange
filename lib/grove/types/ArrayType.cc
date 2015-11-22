@@ -132,7 +132,7 @@ ArrayType* ArrayType::get(Type *contained, unsigned int size, bool isConst)
 	
 	if (isConst)
 	{
-		ss << "!";
+		ss << "U";
 	}
 
 	auto defined = getDefined(ss.str());
