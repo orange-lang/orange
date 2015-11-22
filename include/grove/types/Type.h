@@ -17,6 +17,7 @@
 #include "../ObjectBase.h"
 
 class Module;
+class Expression;
 
 namespace llvm { class Type; }
 namespace llvm { class LLVMContext; }
@@ -139,6 +140,9 @@ public:
 
 	/// Gets the internal LLVM type of this type.
 	llvm::Type* getLLVMType() const;
+	
+	static bool exprValidForArrSize(Expression* expr);
+	static unsigned int exprAsArrSize(Expression* expr);
 	
 	int castOperation(Type* to);
 	llvm::Value* cast(void *irBuilder, Valued* val, Type* target);

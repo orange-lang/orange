@@ -16,6 +16,8 @@
 #include <grove/Module.h>
 #include <grove/Valued.h>
 #include <grove/ASTNode.h>
+#include <grove/Expression.h>
+#include <grove/Value.h>
 
 #include <util/assertions.h>
 
@@ -319,6 +321,48 @@ Comparison Type::compare(Type *source, Type *target)
 	{
 		return Comparison::LOWER_PRECEDENCE;
 	}
+}
+
+bool Type::exprValidForArrSize(Expression* expr)
+{
+	if (expr->isConstant() == false)
+	{
+		return false;
+	}
+	
+	if (expr->getType()->isIntTy() == false)
+	{
+		return false;
+	}
+	
+	if (dynamic_cast<Value *>(expr) == nullptr)
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+unsigned int Type::exprAsArrSize(Expression* expr)
+{
+	if (dynamic_cast<Value *>(expr) == nullptr)
+	{
+		return false;
+	}
+	
+	Value* v = dynamic_cast<Value *>(expr);
+	unsigned int size = 0;
+	
+	if (expr->getType()->isSigned())
+	{
+		size = v->getInt();
+	}
+	else
+	{
+		size = v->getUInt();
+	}
+	
+	return size;
 }
 
 Type::Type(bool isConst)
