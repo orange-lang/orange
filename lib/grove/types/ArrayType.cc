@@ -7,8 +7,11 @@
 */
 
 #include <grove/types/ArrayType.h>
+#include <grove/types/PointerType.h>
+
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Instruction.h>
 
 ArrayType::ArrayType(Type* contained, unsigned int size, bool isConst)
 : Type(isConst)
@@ -22,6 +25,8 @@ ArrayType::ArrayType(Type* contained, unsigned int size, bool isConst)
 	m_size = size;
 
 	m_type = llvm::ArrayType::get(m_contained->getLLVMType(), m_size);
+	
+	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
 }
 
 std::string ArrayType::getSignature() const
