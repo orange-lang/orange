@@ -31,12 +31,12 @@ void ArrayValue::resolve()
 {
 	// Find the highest precedence type in retStmts.
 	auto highest = getElements()[0]->getType();
-	assertExists(highest, "Return statement missing type");
+	assertExists(highest, "Array element missing type");
 	
 	for (int i = 1; i < getElements().size(); i++)
 	{
 		auto cmp_ty = getElements().at(i)->getType();
-		assertExists(cmp_ty, "Return statement missing type");
+		assertExists(cmp_ty, "Array element missing type");
 		
 		switch (Type::compare(highest, cmp_ty)) {
 			case LOWER_PRECEDENCE:
