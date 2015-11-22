@@ -324,16 +324,16 @@ PREC_TEST(CompUInt32ToDouble, UIntType::get(32), DoubleType::get(), LOWER_PRECED
 PREC_TEST(CompUInt64ToDouble, UIntType::get(64), DoubleType::get(), LOWER_PRECEDENCE);
 
 // Int to Pointer.
-PREC_TEST(CompInt8ToPointer,  IntType::get(8),  PointerType::get(BoolType::get()), INCOMPATIBLE);
-PREC_TEST(CompInt16ToPointer, IntType::get(16), PointerType::get(BoolType::get()), INCOMPATIBLE);
-PREC_TEST(CompInt32ToPointer, IntType::get(32), PointerType::get(BoolType::get()), INCOMPATIBLE);
-PREC_TEST(CompInt64ToPointer, IntType::get(64), PointerType::get(BoolType::get()), INCOMPATIBLE);
+PREC_TEST(CompInt8ToPointer,  IntType::get(8),  PointerType::get(BoolType::get()), HIGHER_PRECEDENCE);
+PREC_TEST(CompInt16ToPointer, IntType::get(16), PointerType::get(BoolType::get()), HIGHER_PRECEDENCE);
+PREC_TEST(CompInt32ToPointer, IntType::get(32), PointerType::get(BoolType::get()), HIGHER_PRECEDENCE);
+PREC_TEST(CompInt64ToPointer, IntType::get(64), PointerType::get(BoolType::get()), HIGHER_PRECEDENCE);
 
 // UInt to Pointer.
-PREC_TEST(CompUInt8ToPointer,  UIntType::get(8),  PointerType::get(BoolType::get()), INCOMPATIBLE);
-PREC_TEST(CompUInt16ToPointer, UIntType::get(16), PointerType::get(BoolType::get()), INCOMPATIBLE);
-PREC_TEST(CompUInt32ToPointer, UIntType::get(32), PointerType::get(BoolType::get()), INCOMPATIBLE);
-PREC_TEST(CompUInt64ToPointer, UIntType::get(64), PointerType::get(BoolType::get()), INCOMPATIBLE);
+PREC_TEST(CompUInt8ToPointer,  UIntType::get(8),  PointerType::get(BoolType::get()), HIGHER_PRECEDENCE);
+PREC_TEST(CompUInt16ToPointer, UIntType::get(16), PointerType::get(BoolType::get()), HIGHER_PRECEDENCE);
+PREC_TEST(CompUInt32ToPointer, UIntType::get(32), PointerType::get(BoolType::get()), HIGHER_PRECEDENCE);
+PREC_TEST(CompUInt64ToPointer, UIntType::get(64), PointerType::get(BoolType::get()), HIGHER_PRECEDENCE);
 
 // Int to Bool
 PREC_TEST(CompInt8ToBool,  IntType::get(8),  BoolType::get(), HIGHER_PRECEDENCE);
@@ -392,16 +392,16 @@ PREC_TEST(CompDoubleToUInt32, DoubleType::get(), UIntType::get(32), HIGHER_PRECE
 PREC_TEST(CompDoubleToUInt64, DoubleType::get(), UIntType::get(64), HIGHER_PRECEDENCE);
 
 // Pointer to Int.
-PREC_TEST(CompPointerToInt8,  PointerType::get(BoolType::get()), IntType::get(8),  INCOMPATIBLE);
-PREC_TEST(CompPointerToInt16, PointerType::get(BoolType::get()), IntType::get(16), INCOMPATIBLE);
-PREC_TEST(CompPointerToInt32, PointerType::get(BoolType::get()), IntType::get(32), INCOMPATIBLE);
-PREC_TEST(CompPointerToInt64, PointerType::get(BoolType::get()), IntType::get(64), INCOMPATIBLE);
+PREC_TEST(CompPointerToInt8,  PointerType::get(BoolType::get()), IntType::get(8),  LOWER_PRECEDENCE);
+PREC_TEST(CompPointerToInt16, PointerType::get(BoolType::get()), IntType::get(16), LOWER_PRECEDENCE);
+PREC_TEST(CompPointerToInt32, PointerType::get(BoolType::get()), IntType::get(32), LOWER_PRECEDENCE);
+PREC_TEST(CompPointerToInt64, PointerType::get(BoolType::get()), IntType::get(64), LOWER_PRECEDENCE);
 
 // Pointer to UInt.
-PREC_TEST(CompPointerToUInt8,  PointerType::get(BoolType::get()), UIntType::get(8),  INCOMPATIBLE);
-PREC_TEST(CompPointerToUInt16, PointerType::get(BoolType::get()), UIntType::get(16), INCOMPATIBLE);
-PREC_TEST(CompPointerToUInt32, PointerType::get(BoolType::get()), UIntType::get(32), INCOMPATIBLE);
-PREC_TEST(CompPointerToUInt64, PointerType::get(BoolType::get()), UIntType::get(64), INCOMPATIBLE);
+PREC_TEST(CompPointerToUInt8,  PointerType::get(BoolType::get()), UIntType::get(8),  LOWER_PRECEDENCE);
+PREC_TEST(CompPointerToUInt16, PointerType::get(BoolType::get()), UIntType::get(16), LOWER_PRECEDENCE);
+PREC_TEST(CompPointerToUInt32, PointerType::get(BoolType::get()), UIntType::get(32), LOWER_PRECEDENCE);
+PREC_TEST(CompPointerToUInt64, PointerType::get(BoolType::get()), UIntType::get(64), LOWER_PRECEDENCE);
 
 // Pointer to Pointer.
 PREC_TEST(CompBoolPointerToBoolPointer, PointerType::get(BoolType::get()), PointerType::get(BoolType::get()), EQUAL);
