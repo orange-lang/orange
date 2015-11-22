@@ -675,7 +675,8 @@ type
 	{
 		$$ = $1;
 
-		for (unsigned int i = 0; i < $2->size(); i++)
+		int sz = (int)$2->size();
+		for (int i = sz - 1; i >= 0; i--)
 		{
 			auto def = $2->at(i);
 
