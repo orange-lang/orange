@@ -74,7 +74,8 @@ void VarDecl::resolve()
 
 void VarDecl::build()
 {
-	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType()));
+	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), nullptr,
+									   getName()));
 
 	if (getExpression())
 	{
