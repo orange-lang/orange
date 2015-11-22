@@ -107,6 +107,27 @@ Type* VariadicArrayType::getConst() const
 	return get(m_contained, m_size, true);
 }
 
+bool VariadicArrayType::isVariadiclySized() const
+{
+	return true;
+}
+
+std::vector<Expression *> VariadicArrayType::getVariadicSizes() const
+{
+	std::vector<Expression *> sizes;
+	
+	const Type* ptr = this;
+	while (ptr->isVariadiclySized())
+	{
+		auto va = dynamic_cast<const VariadicArrayType *>(ptr);
+		sizes.push_back(va->getSize());
+		
+		ptr = ptr->getBaseTy();
+	}
+	
+	return sizes;
+}
+
 VariadicArrayType* VariadicArrayType::get(Type *contained, Expression *expr,
 										  bool isConst)
 {

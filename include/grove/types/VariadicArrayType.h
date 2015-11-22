@@ -36,6 +36,10 @@ public:
 	
 	virtual Type* getConst() const override;
 	
+	virtual bool isVariadiclySized() const override;
+	
+	virtual std::vector<Expression*> getVariadicSizes() const override;
+	
 	static VariadicArrayType* get(Type* contained, Expression* expr,
 								  bool isConst = false);
 };
