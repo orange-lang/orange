@@ -671,11 +671,11 @@ type
 	{
 		$$ = $2->getConst();
 	}
-	| basic_type OPEN_BRACKET expression CLOSE_BRACKET
+	| type OPEN_BRACKET expression CLOSE_BRACKET
 	{
 		$$ = ArrayType::get($1, $3, false);
 	}
-	| basic_type OPEN_BRACKET CLOSE_BRACKET
+	| type OPEN_BRACKET CLOSE_BRACKET
 	{
 		$$ = PointerType::get($1);
 	}
