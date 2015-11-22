@@ -651,8 +651,8 @@ type
 	;
 
 basic_type
-	: TYPE_INT { $$ = IntType::get(32); }
-	| TYPE_UINT { $$ = UIntType::get(32); }
+	: TYPE_INT { $$ = IntType::get(64); }
+	| TYPE_UINT { $$ = UIntType::get(64); }
 	| TYPE_FLOAT { $$ = FloatType::get(); }
 	| TYPE_DOUBLE { $$ = DoubleType::get(); }
 	| TYPE_INT8 { $$ = IntType::get(8); }

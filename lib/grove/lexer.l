@@ -60,11 +60,11 @@
 
 "#"[^\r\n]*										yycolumn = 1; // Reset column as we're on a new line.
 
-[0|1]+"b"											CREATE_VAL_BASE(UIntType::get(32), 2); return VALUE;
+[0|1]+"b"											CREATE_VAL_BASE(UIntType::get(64), 2); return VALUE;
 
 "0x"													BEGIN(HEX);
 <HEX>{
-	[0-9A-Fa-f]+								CREATE_VAL_BASE(UIntType::get(32), 16); BEGIN(INITIAL); return VALUE;
+	[0-9A-Fa-f]+								CREATE_VAL_BASE(UIntType::get(64), 16); BEGIN(INITIAL); return VALUE;
 	.														yyerror(module, "Invalid hex constant"); BEGIN(INITIAL);
 }
 
@@ -80,9 +80,9 @@
 [0-9][0-9]*"i32"								CREATE_VAL(IntType::get(32)); return VALUE;
 [0-9][0-9]*"u64"								CREATE_VAL(UIntType::get(64)); return VALUE;
 [0-9][0-9]*"i64"								CREATE_VAL(IntType::get(64)); return VALUE;
-[0-9][0-9]*"u"									CREATE_VAL(UIntType::get(32)); return VALUE;
-[0-9][0-9]*"i"									CREATE_VAL(IntType::get(32)); return VALUE;
-[0-9][0-9]*										CREATE_VAL(IntType::get(32)); return VALUE;
+[0-9][0-9]*"u"									CREATE_VAL(UIntType::get(64)); return VALUE;
+[0-9][0-9]*"i"									CREATE_VAL(IntType::get(64)); return VALUE;
+[0-9][0-9]*										CREATE_VAL(IntType::get(64)); return VALUE;
 
 '.'												return VALUE;
 

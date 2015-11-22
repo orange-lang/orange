@@ -978,7 +978,7 @@ yycolumn = 1; // Reset column as we're on a new line.
 case 3:
 YY_RULE_SETUP
 #line 63 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL_BASE(UIntType::get(32), 2); return VALUE;
+CREATE_VAL_BASE(UIntType::get(64), 2); return VALUE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -989,7 +989,7 @@ BEGIN(HEX);
 case 5:
 YY_RULE_SETUP
 #line 67 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL_BASE(UIntType::get(32), 16); BEGIN(INITIAL); return VALUE;
+CREATE_VAL_BASE(UIntType::get(64), 16); BEGIN(INITIAL); return VALUE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -1055,17 +1055,17 @@ CREATE_VAL(IntType::get(64)); return VALUE;
 case 18:
 YY_RULE_SETUP
 #line 83 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(UIntType::get(32)); return VALUE;
+CREATE_VAL(UIntType::get(64)); return VALUE;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 84 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(IntType::get(32)); return VALUE;
+CREATE_VAL(IntType::get(64)); return VALUE;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 85 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(IntType::get(32)); return VALUE;
+CREATE_VAL(IntType::get(64)); return VALUE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
