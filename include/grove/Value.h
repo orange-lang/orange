@@ -32,6 +32,8 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
+	virtual bool isConstant() const override;
+	
 	/**
 	 * Constructs a new Value.
 	 * @param str The string to convert to a value.

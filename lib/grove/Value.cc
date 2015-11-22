@@ -17,6 +17,11 @@ ASTNode* Value::copy() const
 	return new Value(m_str, m_type, m_base);
 }
 
+bool Value::isConstant() const
+{
+	return true;
+}
+
 void Value::build()
 {
 	auto ty = getType();
