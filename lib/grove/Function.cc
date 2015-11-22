@@ -10,10 +10,16 @@
 #include <grove/Module.h>
 #include <grove/ReturnStmt.h>
 #include <grove/Parameter.h>
+
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
 #include <grove/types/VoidType.h>
 #include <grove/types/VarType.h>
+#include <grove/types/PointerType.h>
+
+#include <util/assertions.h>
+#include <util/copy.h>
+
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/IRBuilder.h>
@@ -22,8 +28,6 @@
 #include <llvm/Codegen/Passes.h>
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Transforms/Scalar.h>
-#include <util/assertions.h>
-#include <util/copy.h>
 
 llvm::BasicBlock* Function::getEntry() const
 {
@@ -456,6 +460,12 @@ Function::Function(std::string name, std::vector<Parameter *> params)
 	
 	for (auto param : params)
 	{
+		if (param->getType()->isArrayTy())
+		{
+			auto ty = param->getType();
+			param->setType(PointerType::get(ty->getRootTy()));
+		}
+		
 		addChild(param, true);
 	}
 	
