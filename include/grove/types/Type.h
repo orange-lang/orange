@@ -83,6 +83,9 @@ protected:
 	
 	/// Defines a cast mapping using a cast function.
 	void defineCast(const std::type_info& to, TypeCallback cb, TypeCast func);
+	
+	/// Defines a cast that uses a cast mapping and a function.
+	void defineCast(const std::type_info& to, int cast, TypeCast func);
 
 	Type(bool isConst);
 public:
