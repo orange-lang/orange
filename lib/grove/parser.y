@@ -33,6 +33,8 @@
 	#include <grove/DerefExpr.h>
 	#include <grove/ReferenceExpr.h>
 	#include <grove/CastExpr.h>
+	#include <grove/ArrayValue.h>
+	#include <grove/ArrayAccessExpr.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -61,6 +63,7 @@
 	std::vector<Parameter*>* params;
 	std::vector<Expression*>* args;
 	std::vector<Block*>* blocks;
+	std::vector<Expression*>* exprs;
 	std::vector<std::tuple<std::string, Expression*>>* pairs;
 	ASTNode* node;
 	Block* block;
@@ -88,6 +91,7 @@
 %type <nodes> opt_statements statements compound_statement var_decl valued
 %type <nodes> opt_valued
 %type <node> statement return controls
+%type <exprs> expr_list
 %type <pairs> var_decl_list
 %type <blocks> else_if_or_end
 %type <expr> expression primary comparison arithmetic call increment
@@ -584,7 +588,23 @@ primary
 	| TIMES expression { $$ = new DerefExpr($2); }
 	| BITWISE_AND expression { $$ = new ReferenceExpr($2); }
 	| OPEN_PAREN type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); }
+	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayValue(*$2); }
+	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); }
 	;
+
+expr_list
+	: expr_list COMMA expression
+	{
+		$$ = $1;
+		$$->push_back($3);
+	}
+	| expression
+	{
+		$$ = new std::vector<Expression *>();
+		$$->push_back($1);
+	}
+	;
+
 
 return
 	: RETURN
