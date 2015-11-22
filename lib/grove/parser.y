@@ -44,6 +44,7 @@
 	#include <grove/types/VoidType.h>
 	#include <grove/types/PointerType.h>
 	#include <grove/types/VarType.h>
+	#include <grove/types/ArrayType.h>
 
 	#include <util/assertions.h>
 
@@ -669,6 +670,10 @@ type
 	| CONST type
 	{
 		$$ = $2->getConst();
+	}
+	| basic_type OPEN_BRACKET expression CLOSE_BRACKET
+	{
+		$$ = ArrayType::get($1, $3, false);
 	}
 	;
 
