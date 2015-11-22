@@ -675,6 +675,10 @@ type
 	{
 		$$ = ArrayType::get($1, $3, false);
 	}
+	| basic_type OPEN_BRACKET CLOSE_BRACKET
+	{
+		$$ = PointerType::get($1);
+	}
 	;
 
 basic_type
