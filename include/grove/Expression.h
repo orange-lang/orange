@@ -21,7 +21,7 @@ class Expression : public ASTNode, public Valued, public Typed {
 public:
 	/// Casts the value of this expression to another type.
 	/// Returns the result of that cast. The original value is untouched.
-	llvm::Value* castTo(Type* ty) const;
+	virtual llvm::Value* castTo(Type* ty) const;
 	
 	/// Casts the value of this expression to the type of another expression.
 	/// Returns the result of that cast. The original value is untouched.
