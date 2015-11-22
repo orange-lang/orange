@@ -26,5 +26,8 @@ public:
 	/// Casts the value of this expression to the type of another expression.
 	/// Returns the result of that cast. The original value is untouched.
 	llvm::Value* castTo(Expression* expr) const;
+	
+	/// Returns whether or not this expression represents a constant value.
+	virtual bool isConstant() const;
 };
 

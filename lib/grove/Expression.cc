@@ -28,3 +28,8 @@ llvm::Value* Expression::castTo(Expression *expr) const
 	auto expr_ty = expr->getType();
 	return castTo(expr_ty);
 }
+
+bool Expression::isConstant() const
+{
+	return false;
+}
