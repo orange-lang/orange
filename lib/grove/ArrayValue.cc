@@ -118,6 +118,11 @@ bool ArrayValue::isConstant() const
 {
 	for (auto element : getElements())
 	{
+		if (element->getType()->isArrayTy())
+		{
+			return false;
+		}
+		
 		if (element->isConstant() == false)
 		{
 			return false;
