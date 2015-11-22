@@ -8,7 +8,9 @@
 
 #include <grove/VarDecl.h>
 #include <grove/Expression.h>
+
 #include <grove/types/Type.h>
+#include <grove/types/UIntType.h>
 
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
@@ -70,11 +72,43 @@ void VarDecl::resolve()
     		setType(getExpression()->getType());
     	}
 	}
+	
+	if (getType()->isVariadiclySized())
+	{
+		for (auto size : getType()->getVariadicSizes())
+		{
+			if (size->getType()->isIntTy() == false)
+			{
+				throw std::runtime_error("variadic array type's sizes must all \
+										 be integers.");
+			}
+		}
+	}
 }
 
 void VarDecl::build()
 {
-	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), nullptr,
+	llvm::Value* size = nullptr;
+	
+	if (getType()->isVariadiclySized())
+	{
+		for (auto s : getType()->getVariadicSizes())
+		{
+			s->build();
+			auto s_val = s->castTo(UIntType::get(64));
+			
+			if (size == nullptr)
+			{
+				size = s_val;
+			}
+			else
+			{
+				size = IRBuilder()->CreateMul(size, s_val);
+			}
+		}
+	}
+	
+	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), size,
 									   getName()));
 
 	if (getExpression())
@@ -98,6 +132,14 @@ VarDecl::VarDecl(Type* type, std::string name, Expression* expression)
 	if (type->isVoidTy())
 	{
 		throw std::runtime_error("type of variable cannot be void");
+	}
+	
+	if (type->isVariadiclySized())
+	{
+		for (auto size : type->getVariadicSizes())
+		{
+			addChild(size, true);
+		}
 	}
 
 	if (name == "")
