@@ -134,5 +134,10 @@ ArrayValue::ArrayValue(std::vector<Expression *> elements)
 		throw std::invalid_argument("Arrays must have at least 1 element.");
 	}
 	
+	for (auto element : elements)
+	{
+		addChild(element, true);
+	}
+	
 	m_elements = elements;
 }
