@@ -45,6 +45,7 @@
 	#include <grove/types/PointerType.h>
 	#include <grove/types/VarType.h>
 	#include <grove/types/ArrayType.h>
+	#include <grove/types/VariadicArrayType.h>
 
 	#include <util/assertions.h>
 
@@ -682,7 +683,16 @@ type
 
 			if (def != nullptr)
 			{
-				$$ = ArrayType::get($$, def, false);
+				if (Type::exprValidForArrSize(def))
+				{
+					auto arr_sz = Type::exprAsArrSize(def);
+					$$ = ArrayType::get($$, arr_sz, false);
+				}
+				else
+				{
+					throw std::runtime_error("don't know how to handle \
+						variadic array sizes");
+				}
 			}
 			else
 			{
