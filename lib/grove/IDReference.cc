@@ -25,7 +25,7 @@ bool IDReference::hasPointer() const
 
 Valued* IDReference::findNode() const
 {
-	return findNamed(getName())->as<Valued *>();
+	return m_node;
 }
 
 std::string IDReference::getName() const
@@ -48,11 +48,11 @@ void IDReference::findDependencies()
 
 void IDReference::resolve()
 {
-	auto ref = findNamed(getName());
-	assertExists(ref, "No variable with this name exists.");
+	m_node = findNamed(getName())->as<Valued *>();
+	
+	assertExists(m_node, "No variable with this name exists.");
 
-	auto typed = findNamed(getName())->as<Typed *>();
-
+	auto typed = m_node->as<Typed *>();
 	auto ty = typed->getType();
 	assertExists(ty, "Could not assign type.");
 

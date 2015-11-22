@@ -18,9 +18,12 @@ class Valued;
 class IDReference : public Expression {
 private:
 	std::string m_name;
+	
 protected:
 	/// Find the named node in the block.
 	Valued* findNode() const;
+	
+	Valued* m_node = nullptr;
 public:
 	virtual llvm::Value* getPointer() const override;
 	
