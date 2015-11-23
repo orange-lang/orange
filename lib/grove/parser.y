@@ -35,6 +35,7 @@
 	#include <grove/CastExpr.h>
 	#include <grove/ArrayValue.h>
 	#include <grove/ArrayAccessExpr.h>
+	#include <grove/TernaryExpr.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -97,7 +98,7 @@
 %type <pairs> var_decl_list
 %type <blocks> else_if_or_end
 %type <expr> expression primary comparison arithmetic call increment
-%type <expr> opt_expression
+%type <expr> opt_expression ternary
 %type <stmt> structures function extern_function ifs inline_if unless
 %type <stmt> inline_unless for_loop inline_for_loop
 %type <val> VALUE
@@ -529,6 +530,7 @@ expression
 	| arithmetic { $$ = $1; }
 	| call { $$ = $1; }
 	| increment { $$ = $1; }
+	| ternary { $$ = $1; }
 	;
 
 comparison
@@ -567,6 +569,13 @@ increment
 	| expression DECREMENT { $$ = new IncrementExpr($1, -1, false); }
 	| INCREMENT expression { $$ = new IncrementExpr($2,  1, true); }
 	| DECREMENT expression { $$ = new IncrementExpr($2, -1, true); }
+	;
+
+ternary
+	: expression QUESTION expression COLON expression
+	{
+		$$ = new TernaryExpr($1, $3, $5);
+	}
 	;
 
 call
