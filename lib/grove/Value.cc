@@ -75,6 +75,31 @@ void Value::build()
 	}
 }
 
+Value* Value::addDelta(int64_t d) const
+{
+	Value* v = new Value();
+	v->setType(getType());
+	
+	if (getType()->isIntTy() && getType()->isSigned())
+	{
+		v->m_values.i = m_values.i + d;
+	}
+	else if (getType()->isIntTy() && getType()->isSigned() == false)
+	{
+		v->m_values.u = m_values.u + d;
+	}
+	else if (getType()->isBoolTy())
+	{
+		v->m_values.u = m_values.u + d;
+	}
+	else if (getType()->isFloatingPointTy())
+	{
+		v->m_values.d = m_values.d + d;
+	}
+	
+	return v;
+}
+
 Value::Value(char c)
 {
 	m_values.i = (int)c;
