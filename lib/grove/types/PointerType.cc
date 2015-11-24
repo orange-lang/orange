@@ -86,21 +86,23 @@ PointerType* PointerType::get(Type *contained, bool isConst)
 		throw std::invalid_argument("cannot get pointer to var");
 	}
 
-	std::string signature = "p" + contained->getSignature();
-	
+	std::stringstream ss;
+
 	if (isConst)
 	{
-		signature += "!";
+		ss << "U";
 	}
-
-	auto defined = getDefined(signature);
+	
+	ss << "p" << contained->getSignature();
+	
+	auto defined = getDefined(ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<PointerType *>();
 	}
 
 	PointerType* ty = new PointerType(contained, isConst);
-	define(signature, ty);
+	define(ss.str(), ty);
 
 	return ty;
 }
