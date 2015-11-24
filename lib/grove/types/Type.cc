@@ -30,6 +30,31 @@ std::string Type::getConstIdentifier()
 	return "U";
 }
 
+void Type::copyCasts(const std::type_info &of)
+{
+	for (auto pair : m_cast_map)
+	{
+		if (std::get<0>(pair.first) != of.hash_code())
+		{
+			continue;
+		}
+		
+		TypeTuple tup(typeid(*this).hash_code(), std::get<1>(pair.first));
+		m_cast_map[tup] = pair.second;
+	}
+	
+	for (auto pair : m_cast_ty_map)
+	{
+		if (std::get<0>(pair.first) != of.hash_code())
+		{
+			continue;
+		}
+		
+		TypeTuple tup(typeid(*this).hash_code(), std::get<1>(pair.first));
+		m_cast_ty_map[tup] = pair.second;
+	}
+}
+
 bool Type::isSigned() const
 {
 	return false;

@@ -90,6 +90,8 @@ protected:
 	
 	/// Gets the const identifier for signatures.
 	static std::string getConstIdentifier();
+	
+	void copyCasts(const std::type_info& of);
 
 	Type(bool isConst);
 public:
