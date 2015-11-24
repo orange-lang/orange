@@ -25,8 +25,6 @@ private:
 		double   d;
 	} m_values;
 	
-	std::string m_str = "";
-	int m_base = 0;
 	Value();
 public:
 	virtual void build() override;

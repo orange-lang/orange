@@ -20,7 +20,10 @@ Value::Value()
 
 ASTNode* Value::copy() const
 {
-	return new Value(m_str, m_type, m_base);
+	auto val = new Value();
+	val->setType(getType());
+	val->m_values = m_values;
+	return val;
 }
 
 bool Value::isConstant() const
@@ -86,8 +89,6 @@ Value::Value(std::string str, Type* t, int base)
 	}
 
 	m_type = t;
-	m_base = base;
-	m_str = str;
 
 	switch (t->PODTy())
 	{
