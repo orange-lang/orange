@@ -37,6 +37,9 @@ public:
 	uint64_t getUInt() const;
 	double getDouble() const;
 	
+	/// Converts to a new type.
+	void convert(Type* newty);
+	
 	/// Gets a new value from this value with the added
 	/// delta as the value.
 	Value* addDelta(int64_t d) const;

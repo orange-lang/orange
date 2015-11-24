@@ -75,6 +75,57 @@ void Value::build()
 	}
 }
 
+void Value::convert(Type *new_ty)
+{
+	if (new_ty->isIntTy() == false && new_ty->isFloatingPointTy())
+	{
+		throw std::invalid_argument("invalid type to convert to");
+	}
+	
+	auto old_ty = getType();
+	
+	if (old_ty == new_ty)
+	{
+		return;
+	}
+	
+	if (old_ty->isIntTy() && old_ty->isSigned())
+	{
+		if (new_ty->isIntTy() && new_ty->isSigned() == false)
+		{
+			m_values.u = (uint64_t)m_values.i;
+		}
+		else if (new_ty->isFloatingPointTy())
+		{
+			m_values.d = (double)m_values.i;
+		}
+	}
+	else if (old_ty->isIntTy() && old_ty->isSigned() == false)
+	{
+		if (new_ty->isIntTy() && new_ty->isSigned())
+		{
+			m_values.i = (uint64_t)m_values.u;
+		}
+		else if (new_ty->isFloatingPointTy())
+		{
+			m_values.d = (double)m_values.u;
+		}
+	}
+	else if (old_ty->isFloatingPointTy())
+	{
+		if (new_ty->isIntTy() && new_ty->isSigned())
+		{
+			m_values.i = (uint64_t)m_values.d;
+		}
+		else if (new_ty->isIntTy() && new_ty->isSigned() == false)
+		{
+			m_values.u = (double)m_values.d;
+		}
+	}
+	
+	setType(new_ty);
+}
+
 Value* Value::addDelta(int64_t d) const
 {
 	Value* v = new Value();
