@@ -21,7 +21,7 @@ std::string VarType::getSignature() const
 	
 	if (isConst())
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "A";
@@ -45,7 +45,7 @@ VarType* VarType::get(bool isConst)
 	
 	if (isConst)
 	{
-		ss << "C";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "V";

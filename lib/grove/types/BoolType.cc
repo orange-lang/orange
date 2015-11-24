@@ -69,7 +69,7 @@ std::string BoolType::getSignature() const
 	
 	if (isConst())
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "b";

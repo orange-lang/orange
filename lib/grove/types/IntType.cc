@@ -117,7 +117,7 @@ std::string IntType::getSignature(unsigned int width, bool isConst)
 	
 	if (isConst)
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	switch (width)

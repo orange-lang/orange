@@ -113,7 +113,7 @@ std::string UIntType::getSignature(unsigned int width, bool isConst)
 	
 	if (isConst)
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	switch (width)
@@ -196,23 +196,17 @@ UIntType* UIntType::get(unsigned int width, bool isConst)
 	{
 		throw std::invalid_argument("width must not be 0.");
 	}
+
+	auto sig = getSignature(width, isConst);
 	
-	std::stringstream ss;
-	ss << "I." << width;
-	
-	if (isConst)
-	{
-		ss << "!";
-	}
-	
-	auto defined = getDefined(ss.str());
+	auto defined = getDefined(sig);
 	if (defined != nullptr)
 	{
 		return dynamic_cast<UIntType*>(defined);
 	}
 	
 	UIntType* ty = new UIntType(width, isConst);
-	define(ss.str(), ty);
+	define(sig, ty);
 	
 	return ty;
 }

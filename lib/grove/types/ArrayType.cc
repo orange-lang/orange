@@ -59,6 +59,12 @@ ArrayType::ArrayType(Type* contained, unsigned int size, bool isConst)
 std::string ArrayType::getSignature() const
 {
 	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << getConstIdentifier();
+	}
+	
 	ss << m_size << m_contained->getSignature();
 	return ss.str();
 }
@@ -100,7 +106,7 @@ ArrayType* ArrayType::get(Type *contained, unsigned int size, bool isConst)
 	
 	if (isConst)
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 
 	auto defined = getDefined(ss.str());

@@ -35,7 +35,7 @@ std::string PointerType::getSignature() const
 	std::stringstream ss;
 	
 	if (isConst()) {
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "p" << m_contained->getSignature();
@@ -90,7 +90,7 @@ PointerType* PointerType::get(Type *contained, bool isConst)
 
 	if (isConst)
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "p" << contained->getSignature();

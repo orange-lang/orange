@@ -30,7 +30,7 @@ std::string DoubleType::getSignature() const
 	
 	if (isConst())
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "F";
@@ -69,7 +69,7 @@ DoubleType* DoubleType::get(bool isConst)
 	
 	if (isConst)
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "F";

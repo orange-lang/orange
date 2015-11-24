@@ -30,7 +30,7 @@ std::string FloatType::getSignature() const
 	
 	if (isConst())
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "f";
@@ -69,7 +69,7 @@ FloatType* FloatType::get(bool isConst)
 	
 	if (isConst)
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "f";

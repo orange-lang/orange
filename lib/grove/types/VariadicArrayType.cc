@@ -63,7 +63,7 @@ std::string VariadicArrayType::getSignature(Type *conatined, Expression *size,
 	
 	if (isConst)
 	{
-		ss << "U";
+		ss << getConstIdentifier();
 	}
 	
 	ss << "S" << conatined->getSignature() << (uint64_t)size;
