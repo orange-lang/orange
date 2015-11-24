@@ -87,6 +87,9 @@ protected:
 	
 	/// Defines a cast that uses a cast mapping and a function.
 	void defineCast(const std::type_info& to, int cast, TypeCast func);
+	
+	/// Gets the const identifier for signatures.
+	static std::string getConstIdentifier();
 
 	Type(bool isConst);
 public:

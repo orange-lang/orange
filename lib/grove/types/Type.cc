@@ -25,6 +25,11 @@ std::map<std::string, Type*> Type::m_defined;
 std::map<TypeTuple, TypeCast> Type::m_cast_map;
 std::map<TypeTuple, TypeCallback> Type::m_cast_ty_map;
 
+std::string Type::getConstIdentifier()
+{
+	return "U";
+}
+
 bool Type::isSigned() const
 {
 	return false;
