@@ -16,6 +16,7 @@
 #include <grove/types/BoolType.h>
 #include <grove/types/DoubleType.h>
 #include <grove/types/FloatType.h>
+#include <grove/types/EnumType.h>
 #include <grove/types/FunctionType.h>
 #include <grove/types/IntType.h>
 #include <grove/types/LocalNamedType.h>
@@ -223,6 +224,9 @@ CAST_TEST(TestPointerToUInt64, PointerType::get(BoolType::get()), UIntType::get(
 CAST_TEST(TestBoolPointerToBoolPointer, PointerType::get(BoolType::get()), PointerType::get(BoolType::get()), NO_CAST);
 CAST_TEST(TestBoolPointerToFloatPointer, PointerType::get(BoolType::get()), PointerType::get(FloatType::get()), C(BitCast));
 
+// Enums should inherit casts
+CAST_TEST(EnumIntToFloat, EnumType::get(IntType::get(64)), FloatType::get(), C(SIToFP));
+
 //////
 // Cast tests
 //////
@@ -406,5 +410,6 @@ PREC_TEST(CompPointerToUInt64, PointerType::get(BoolType::get()), UIntType::get(
 // Pointer to Pointer.
 PREC_TEST(CompBoolPointerToBoolPointer, PointerType::get(BoolType::get()), PointerType::get(BoolType::get()), EQUAL);
 PREC_TEST(CompBoolPointerToFloatPointer, PointerType::get(BoolType::get()), PointerType::get(FloatType::get()), INCOMPATIBLE);
+
 
 RUN_TESTS();
