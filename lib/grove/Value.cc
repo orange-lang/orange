@@ -13,6 +13,11 @@
 #include <llvm/IR/Constants.h>
 #include <string>
 
+Value::Value()
+{
+	// Do nothing.
+}
+
 ASTNode* Value::copy() const
 {
 	return new Value(m_str, m_type, m_base);
