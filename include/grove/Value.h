@@ -44,6 +44,10 @@ public:
 	/// delta as the value.
 	Value* addDelta(int64_t d) const;
 	
+	/// Negates this value (multiplies it by -1).
+	/// Throws an error if this is unsigned.
+	void negate();
+	
 	Value(char c);
 	
 	/**

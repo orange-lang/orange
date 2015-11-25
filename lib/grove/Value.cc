@@ -151,6 +151,23 @@ Value* Value::addDelta(int64_t d) const
 	return v;
 }
 
+void Value::negate()
+{
+	if (getType()->isIntTy() && getType()->isSigned() == false)
+	{
+		throw std::runtime_error("Can't negate an unsigned integer");
+	}
+	
+	if (getType()->isIntTy())
+	{
+		m_values.i = -m_values.i;
+	}
+	else if (getType()->isFloatingPointTy())
+	{
+		m_values.d = -m_values.d;
+	}
+}
+
 Value::Value(char c)
 {
 	m_values.i = (int)c;
