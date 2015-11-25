@@ -38,6 +38,7 @@
 	#include <grove/TernaryExpr.h>
 	#include <grove/AccessExpr.h>
 	#include <grove/EnumStmt.h>
+	#include <grove/SizeofExpr.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -110,7 +111,7 @@
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK
-%type <ty> type basic_type type_hint
+%type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list
 %type <args> arg_list
 
@@ -608,6 +609,8 @@ primary
 	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayValue(*$2); }
 	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); }
 	| expression DOT TYPE_ID { $$ = new AccessExpr($1, *$3); }
+	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeofExpr($3); }
+	| SIZEOF OPEN_PAREN type CLOSE_PAREN { $$ = new SizeofExpr($3); }
 	;
 
 expr_list
@@ -719,8 +722,12 @@ term
 	| SEMICOLON
 	;
 
-type
-	: type TIMES
+non_agg_type
+	: non_agg_type OPEN_BRACKET CLOSE_BRACKET
+	{
+		$$ = PointerType::get($1);
+	}
+	| type TIMES
 	{
 		$$ = PointerType::get($1);
 	}
@@ -728,11 +735,25 @@ type
 	{
 		$$ = $1;
 	}
-	| CONST type
+	;
+
+type
+	: CONST type
 	{
 		$$ = $2->getConst();
 	}
-	| basic_type array_def_list
+	| array_type
+	{
+		$$ = $1;
+	}
+	| non_agg_type
+	{
+		$$ = $1;
+	}
+	;
+
+array_type
+	: non_agg_type array_def_list
 	{
 		$$ = $1;
 
@@ -745,7 +766,7 @@ type
 			{
 				is_const = false;
 				break;
-			}
+				}
 		}
 
 		int sz = (int)$2->size();
@@ -763,10 +784,6 @@ type
 				$$ = VariadicArrayType::get($$, def, false);
 			}
 		}
-	}
-	| basic_type OPEN_BRACKET CLOSE_BRACKET
-	{
-		$$ = PointerType::get($1);
 	}
 	;
 
