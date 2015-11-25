@@ -19,5 +19,7 @@ class Type;
 class Accessible : public ObjectBase
 {
 public:
+	virtual bool isAccessible() const;
+	
 	virtual Expression* access(std::string name, Type* hint) const;
 };
