@@ -36,6 +36,8 @@
 	#include <grove/ArrayValue.h>
 	#include <grove/ArrayAccessExpr.h>
 	#include <grove/TernaryExpr.h>
+	#include <grove/AccessExpr.h>
+	#include <grove/EnumStmt.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -57,7 +59,7 @@
 %}
 
 %locations
-//%error-verbose
+%error-verbose
 %lex-param { Module* module }
 %parse-param { Module* module }
 
@@ -68,6 +70,7 @@
 	std::vector<Block*>* blocks;
 	std::vector<Expression*>* exprs;
 	std::vector<std::tuple<std::string, Expression*>>* pairs;
+	std::vector<std::tuple<std::string, Value*>>* vpairs;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
@@ -96,11 +99,12 @@
 %type <node> statement return controls
 %type <exprs> expr_list array_def_list
 %type <pairs> var_decl_list
+%type <vpairs> enum_members
 %type <blocks> else_if_or_end
 %type <expr> expression primary comparison arithmetic call increment
 %type <expr> opt_expression ternary
 %type <stmt> structures function extern_function ifs inline_if unless
-%type <stmt> inline_unless for_loop inline_for_loop
+%type <stmt> inline_unless for_loop inline_for_loop enum_stmt
 %type <val> VALUE
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
@@ -130,7 +134,7 @@
 
 %left PLUS MINUS
 %left TIMES DIVIDE MOD
-%left OPEN_PAREN CLOSE_PAREN INCREMENT DECREMENT OPEN_BRACKET
+%left OPEN_PAREN CLOSE_PAREN INCREMENT DECREMENT OPEN_BRACKET DOT
 %right SIZEOF
 
 %%
@@ -225,6 +229,7 @@ structures
 	| inline_unless { $$ = $1; }
 	| for_loop { $$ = $1; }
 	| inline_for_loop { $$ = $1; }
+	| enum_stmt { $$ = $1; }
 	;
 
 function
@@ -601,6 +606,7 @@ primary
 	| OPEN_PAREN type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); }
 	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayValue(*$2); }
 	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); }
+	| expression DOT TYPE_ID { $$ = new AccessExpr($1, *$3); }
 	;
 
 expr_list
@@ -660,6 +666,38 @@ var_decl_list
 	| TYPE_ID ASSIGN expression
 	{
 		$$ = new std::vector<std::tuple<std::string, Expression*>>();
+		$$->push_back(std::make_tuple(*$1, $3));
+	}
+
+enum_stmt
+	: ENUM TYPE_ID term enum_members END
+	{
+		auto estmt = new EnumStmt(*$2, IntType::get(64));
+		for (auto pair : *$4)
+		{
+			estmt->addMember(std::get<0>(pair), std::get<1>(pair));
+		}
+
+		$$ = estmt;
+	}
+
+enum_members
+	: enum_members TYPE_ID term
+	{
+		$$->push_back(std::make_tuple(*$2, (Value *)nullptr));
+	}
+	| enum_members TYPE_ID ASSIGN VALUE term
+	{
+		$$->push_back(std::make_tuple(*$2, $4));
+	}
+	| TYPE_ID term
+	{
+		$$ = new std::vector<std::tuple<std::string, Value*>>();
+		$$->push_back(std::make_tuple(*$1, (Value *)nullptr));
+	}
+	| TYPE_ID ASSIGN VALUE term
+	{
+		$$ = new std::vector<std::tuple<std::string, Value*>>();
 		$$->push_back(std::make_tuple(*$1, $3));
 	}
 

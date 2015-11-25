@@ -214,7 +214,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 64 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 66 "/Users/robert/dev/orange/lib/grove/parser.y"
 {
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
@@ -222,6 +222,7 @@ typedef union YYSTYPE
 	std::vector<Block*>* blocks;
 	std::vector<Expression*>* exprs;
 	std::vector<std::tuple<std::string, Expression*>>* pairs;
+	std::vector<std::tuple<std::string, Value*>>* vpairs;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
@@ -231,7 +232,7 @@ typedef union YYSTYPE
 	Type* ty;
 }
 /* Line 1529 of yacc.c.  */
-#line 235 "/Users/robert/dev/orange/lib/grove/parser.hh"
+#line 236 "/Users/robert/dev/orange/lib/grove/parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
