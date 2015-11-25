@@ -19,6 +19,11 @@ bool Valued::hasPointer() const
 	return false;
 }
 
+llvm::Value* Valued::getSize() const
+{
+	return m_size;
+}
+
 llvm::Value* Valued::getValue() const
 {
 	return m_value;
