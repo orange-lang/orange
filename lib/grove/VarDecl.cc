@@ -90,8 +90,6 @@ void VarDecl::resolve()
 
 void VarDecl::build()
 {
-	llvm::Value* size = nullptr;
-	
 	if (getType()->isVariadiclySized())
 	{
 		for (auto s : getType()->getVariadicSizes())
@@ -99,18 +97,18 @@ void VarDecl::build()
 			s->build();
 			auto s_val = s->castTo(UIntType::get(64));
 			
-			if (size == nullptr)
+			if (m_size == nullptr)
 			{
-				size = s_val;
+				m_size = s_val;
 			}
 			else
 			{
-				size = IRBuilder()->CreateMul(size, s_val);
+				m_size = IRBuilder()->CreateMul(m_size, s_val);
 			}
 		}
 	}
 	
-	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), size,
+	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), m_size,
 									   getName()));
 
 	if (getExpression())
