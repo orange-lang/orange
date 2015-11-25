@@ -115,13 +115,18 @@ int TestMatchingFunctions()
 	}
 	
 	// Write small orange program to file.
-	file << "def foo(int a)\n";
-	file << "	return 1\n";
-	file << "end\n\n";
-	file << "def foo(int a)\n";
-	file << "	return 1\n";
-	file << "end\n\n";
-	file << "return 0\n";
+	file << R"EOF(
+		def foo(int a)
+			return 1
+		end
+
+		def foo(int a)
+			return 1
+		end
+
+		return 0
+	)EOF";
+	
 	file.close();
 	
 	// create our builder.
@@ -155,13 +160,17 @@ int TestMatchingGenerics()
 	}
 	
 	// Write small orange program to file.
-	file << "def foo(var f, int a)\n";
-	file << "	return 1\n";
-	file << "end\n\n";
-	file << "def foo(var f, int a)\n";
-	file << "	return 1\n";
-	file << "end\n\n";
-	file << "return 0\n";
+	
+	file << R"EOF(
+    	def foo(var f, int a)
+    		return 1
+    	end
+    	def foo(var f, int a)
+    		return 1
+    	end
+    	return 0
+	)EOF";
+	
 	file.close();
 	
 	// create our builder.
