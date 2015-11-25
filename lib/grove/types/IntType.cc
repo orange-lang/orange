@@ -26,16 +26,13 @@
 
 
 
-static int IntToInt(Type* f, Type* t)
+static int IntToInt(Type* from, Type* to)
 {
-	auto from = f->as<IntType *>();
-	auto to = t->as<IntType *>();
-
-	if (from->getWidth() > to->getWidth())
+	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
 	}
-	else if (from->getWidth() == to->getWidth())
+	else if (from->getIntegerBitWidth() == to->getIntegerBitWidth())
 	{
 		return 0;
 	}
@@ -45,12 +42,9 @@ static int IntToInt(Type* f, Type* t)
     }
 }
 
-static int IntToUInt(Type* f, Type* t)
+static int IntToUInt(Type* from, Type* to)
 {
-	auto from = f->as<IntType *>();
-	auto to = t->as<UIntType *>();
-
-	if (from->getWidth() > to->getIntegerBitWidth())
+	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
 	}

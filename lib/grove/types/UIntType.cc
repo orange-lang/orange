@@ -24,11 +24,8 @@
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/IRBuilder.h>
 
-static int UIntToInt(Type* f, Type* t)
+static int UIntToInt(Type* from, Type* to)
 {
-	auto from = dynamic_cast<UIntType *>(f);
-	auto to = dynamic_cast<IntType *>(t);
-	
 	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
@@ -43,11 +40,8 @@ static int UIntToInt(Type* f, Type* t)
 	}
 }
 
-static int UIntToUInt(Type* f, Type* t)
+static int UIntToUInt(Type* from, Type* to)
 {
-	auto from = dynamic_cast<UIntType *>(f);
-	auto to = dynamic_cast<UIntType *>(t);
-	
 	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
 		return llvm::Instruction::CastOps::Trunc;
