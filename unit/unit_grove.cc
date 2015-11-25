@@ -212,8 +212,9 @@ ADD_TEST_FOLDER(TestLoopPrograms, loops);
 ADD_TEST_FOLDER(TestPointerPrograms, pointers);
 ADD_TEST_FOLDER(TestArrayPrograms, array);
 ADD_TEST_FOLDER(TestTernaryPrograms, ternary);
-ADD_TEST_FOLDER(TestProgramPrograms, programs);
 ADD_TEST_FOLDER(TestEnumPrograms, enum);
+ADD_TEST_FOLDER(TestBuiltinPrograms, builtin);
+ADD_TEST_FOLDER(TestProgramPrograms, programs);
 ADD_TEST_FOLDER(TestBugPrograms, bugs);
 
 RUN_TESTS();
