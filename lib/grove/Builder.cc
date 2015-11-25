@@ -16,6 +16,15 @@
 #include <llvm/ExecutionEngine/GenericValue.h>
 #include <llvm/ExecutionEngine/MCJIT.h>
 
+#include <llvm/IR/Module.h>
+#include <llvm/Support/Host.h>
+#include <llvm/Support/TargetRegistry.h>
+#include <llvm/ADT/Triple.h>
+#include <llvm/MC/SubtargetFeature.h>
+#include <llvm/Target/TargetOptions.h>
+#include <llvm/Target/TargetMachine.h>
+
+#include <util/assertions.h>
 
 Library* Builder::getLibrary() const
 {
@@ -30,6 +39,11 @@ BuildSettings* Builder::getSettings() const
 std::vector<Module *> Builder::getModules() const
 {
 	return m_modules;
+}
+
+llvm::TargetMachine* Builder::getTargetMachine() const
+{
+	return m_target_machine;
 }
 
 void Builder::compile()
@@ -61,9 +75,6 @@ void Builder::compile()
 
 int Builder::run()
 {
-	LLVMInitializeNativeTarget();
-	LLVMInitializeNativeAsmPrinter();
-	
 	/// @todo This should change to be the main module of the build.
 	auto run_module = m_modules[0];
 	
@@ -94,6 +105,32 @@ int Builder::run()
 	return status.IntVal.getSExtValue();
 }
 
+void Builder::initializeLLVM()
+{
+	LLVMInitializeNativeTarget();
+	LLVMInitializeNativeAsmPrinter();
+	
+	std::string err = "";
+	
+	auto target_triple = llvm::sys::getProcessTriple();
+	llvm::Triple triple = llvm::Triple(target_triple);
+	
+	auto target = llvm::TargetRegistry::lookupTarget(target_triple, err);
+	assertExists(target, "Target not found in registry.");
+	
+	auto name = llvm::sys::getHostCPUName();
+	llvm::SubtargetFeatures features;
+	
+	features.getDefaultSubtargetFeatures(triple);
+	auto featuresStr = features.getString();
+	
+	llvm::TargetOptions options;
+	
+	m_target_machine = target->createTargetMachine(triple.getTriple(),
+	  name, featuresStr, options, llvm::Reloc::Default,
+	  llvm::CodeModel::Default);
+}
+
 void Builder::initialize()
 {
 	m_library = new Library();
@@ -102,6 +139,8 @@ void Builder::initialize()
 	{
 		throw std::runtime_error("Only regular files are supported currently.");
 	}
+	
+	initializeLLVM();
 	
 	auto mod = new Module(this, m_build_path);
 	m_modules.push_back(mod);
