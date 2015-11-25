@@ -9,13 +9,14 @@
 #pragma once
 
 #include "Expression.h"
+#include "Accessible.h"
 
 class Valued;
 
 /**
  * IDReference is a class that can refer to any ID by name.
  */
-class IDReference : public Expression {
+class IDReference : public Expression, public Accessible {
 private:
 	std::string m_name;
 	
@@ -33,6 +34,10 @@ public:
 	
 	/// Gets the name that this node is referring to.
 	std::string getName() const;
+	
+	virtual bool isAccessible() const override;
+	
+	virtual Expression* access(std::string name, Type* hint) const override;
 	
 	virtual void findDependencies() override;
 	

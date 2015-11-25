@@ -38,6 +38,24 @@ ASTNode* IDReference::copy() const
 	return new IDReference(m_name);
 }
 
+
+bool IDReference::isAccessible() const
+{
+	return findNode()->is<Accessible *>() &&
+		findNode()->as<Accessible *>()->isAccessible();
+}
+
+Expression* IDReference::access(std::string name, Type* hint) const
+{
+	if (isAccessible() == false)
+	{
+		return nullptr;
+	}
+	
+	return findNode()->as<Accessible *>()->access(name, hint);
+}
+
+
 void IDReference::findDependencies()
 {
 	auto ref = findNamed(getName());
@@ -45,6 +63,7 @@ void IDReference::findDependencies()
 	
 	addDependency(ref->as<ASTNode *>());
 }
+
 
 void IDReference::resolve()
 {
