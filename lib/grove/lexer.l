@@ -60,12 +60,12 @@
 
 "#"[^\r\n]*										yycolumn = 1; // Reset column as we're on a new line.
 
-[0|1]+"b"											CREATE_VAL_BASE(UIntType::get(64), 2); return VALUE;
+[0|1]+"b"										CREATE_VAL_BASE(UIntType::get(64), 2); return VALUE;
 
-"0x"													BEGIN(HEX);
+"0x"											BEGIN(HEX);
 <HEX>{
 	[0-9A-Fa-f]+								CREATE_VAL_BASE(UIntType::get(64), 16); BEGIN(INITIAL); return VALUE;
-	.														yyerror(module, "Invalid hex constant"); BEGIN(INITIAL);
+	.											yyerror(module, "Invalid hex constant"); BEGIN(INITIAL);
 }
 
 [0-9][0-9]*\.[0-9]+"f" 							CREATE_VAL(FloatType::get()); return VALUE;
@@ -187,7 +187,7 @@
 "sizeof"										SAVESTR(); return SIZEOF;
 
 \"(\\.|[^\\"])*\"								SAVESTR(); return STRING;
-[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 			SAVESTR(); return TYPE_ID;
+[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 		SAVESTR(); return TYPE_ID;
 
 .												yyerror(module, "invalid token");
 
