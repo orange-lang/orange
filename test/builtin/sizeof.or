@@ -1,62 +1,69 @@
 # Check basic types
-var integer = 1 
-var integer_64_bits = 1i64 
+var integer = 1
+var integer_64_bits = 1i64
 var integer_32_bits = 1i32
-var integer_16_bits = 1i16 
-var integer_08_bits = 1i8 
+var integer_16_bits = 1i16
+var integer_08_bits = 1i8
 
-var uinteger = 1u  
+var uinteger = 1u
 var uinteger_64_bits = 1
 var uinteger_32_bits = 1u32
 var uinteger_16_bits = 1u16
 var uinteger_08_bits = 1u8
 
-var float_number = 1.0f 
-var double_number = 1.0 
+var float_number = 1.0f
+var double_number = 1.0
 
-return 1 if sizeof(integer) != 8 
-return 1 if sizeof(integer_64_bits) != 8 
-return 1 if sizeof(integer_32_bits) != 4 
-return 1 if sizeof(integer_16_bits) != 2 
-return 1 if sizeof(integer_08_bits) != 1
+return 1 if sizeof(integer) != 8
+return 2 if sizeof(integer_64_bits) != 8
+return 3 if sizeof(integer_32_bits) != 4
+return 4 if sizeof(integer_16_bits) != 2
+return 5 if sizeof(integer_08_bits) != 1
 
-return 1 if sizeof(int) != 8
-return 1 if sizeof(int64) != 8
-return 1 if sizeof(int32) != 4 
-return 1 if sizeof(int16) != 2 
-return 1 if sizeof(int8) != 1
+return 6 if sizeof(int) != 8
+return 7 if sizeof(int64) != 8
+return 8 if sizeof(int32) != 4
+return 9 if sizeof(int16) != 2
+return 10 if sizeof(int8) != 1
 
-return 1 if sizeof(uinteger) != 8 
-return 1 if sizeof(uinteger_64_bits) != 8 
-return 1 if sizeof(uinteger_32_bits) != 4 
-return 1 if sizeof(uinteger_16_bits) != 2 
-return 1 if sizeof(uinteger_08_bits) != 1
+return 11 if sizeof(uinteger) != 8
+return 12 if sizeof(uinteger_64_bits) != 8
+return 13 if sizeof(uinteger_32_bits) != 4
+return 14 if sizeof(uinteger_16_bits) != 2
+return 15 if sizeof(uinteger_08_bits) != 1
 
-return 1 if sizeof(uint) != 8
-return 1 if sizeof(uint64) != 8
-return 1 if sizeof(uint32) != 4 
-return 1 if sizeof(uint16) != 2 
-return 1 if sizeof(uint8) != 1
- 
-return 1 if sizeof(float_number) != 4 
-return 1 if sizeof(double_number) != 8
+return 16 if sizeof(uint) != 8
+return 17 if sizeof(uint64) != 8
+return 18 if sizeof(uint32) != 4
+return 19 if sizeof(uint16) != 2
+return 20 if sizeof(uint8) != 1
 
-return 1 if sizeof(float) != 4 
-return 1 if sizeof(double) != 8
+return 21 if sizeof(float_number) != 4
+return 22 if sizeof(double_number) != 8
 
-# Some pointer types 
-return 1 if sizeof(float*) != 8 
-return 1 if sizeof(int8*) != 8
+return 23 if sizeof(float) != 4
+return 24 if sizeof(double) != 8
 
-# Check array types 
-return 1 if sizeof(int[50]) != sizeof(int) * 50
+# Some pointer types
+return 25 if sizeof(float*) != 8
+return 26 if sizeof(int8*) != 8
 
-var n = 25 
-return 1 if sizeof(int[n]) != sizeof(int) * 25
+# Check array types
+return 27 if sizeof(int[50]) != sizeof(int) * 50
 
-return 1 if sizeof(int8[50]*) != sizeof(int8*) * 50 
+var n = 25
+return 28 if sizeof(int[n]) != sizeof(int) * 25
 
-# Check expressions 
-return 1 if sizeof(3 + 5.0) != 8  # should be sizeof double 
+return 29 if sizeof(int8[50]*) != 8
+
+return 30 if sizeof(int8*[50]) != sizeof(int8*) * 50
+
+int[n] arr
+return 31 if sizeof(arr) != sizeof(int) * 25
+
+return 32 if sizeof(int[5][4]) != sizeof(int) * 5 * 4
+
+# Check expressions
+return 33 if sizeof(3 + 5.0) != 8  # should be sizeof double
 
 return 0
