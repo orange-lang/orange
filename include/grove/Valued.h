@@ -31,7 +31,7 @@ public:
 	
 	/// If this value was allocated with an array size,
 	/// returns that size.
-	llvm::Value* getSize() const;
+	virtual llvm::Value* getSize() const;
 
 	virtual llvm::Value* getValue() const;
 	virtual void setValue(llvm::Value* newValue);
