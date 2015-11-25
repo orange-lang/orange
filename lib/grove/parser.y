@@ -105,7 +105,7 @@
 %type <expr> opt_expression ternary
 %type <stmt> structures function extern_function ifs inline_if unless
 %type <stmt> inline_unless for_loop inline_for_loop enum_stmt
-%type <val> VALUE
+%type <val> VALUE pos_or_neg_value
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
@@ -687,7 +687,7 @@ enum_members
 	{
 		$$->push_back(std::make_tuple(*$2, (Value *)nullptr));
 	}
-	| enum_members TYPE_ID ASSIGN VALUE term
+	| enum_members TYPE_ID ASSIGN pos_or_neg_value term
 	{
 		$$->push_back(std::make_tuple(*$2, $4));
 	}
@@ -696,11 +696,23 @@ enum_members
 		$$ = new std::vector<std::tuple<std::string, Value*>>();
 		$$->push_back(std::make_tuple(*$1, (Value *)nullptr));
 	}
-	| TYPE_ID ASSIGN VALUE term
+	| TYPE_ID ASSIGN pos_or_neg_value term
 	{
 		$$ = new std::vector<std::tuple<std::string, Value*>>();
 		$$->push_back(std::make_tuple(*$1, $3));
 	}
+
+pos_or_neg_value
+	: VALUE
+	{
+		$$ = $1;
+	}
+	| MINUS VALUE
+	{
+		$$ = $2;
+		$2->negate();
+	}
+
 
 term
 	: NEWLINE
