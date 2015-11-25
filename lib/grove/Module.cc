@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <grove/Module.h>
 #include <grove/Namespace.h>
+#include <grove/Builder.h>
 #include <grove/MainFunction.h>
 #include <grove/types/FunctionType.h>
 #include <grove/types/IntType.h>
@@ -16,6 +17,9 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/Support/Host.h>
+#include <llvm/Target/TargetMachine.h>
+#include <llvm/Target/TargetSubtargetInfo.h>
+
 
 llvm::Module* Module::getLLVMModule() const
 {
@@ -198,7 +202,13 @@ Module::Module(Builder* builder, std::string filePath)
 	m_file = filePath;
 	
 	m_llvm_module = new llvm::Module(m_file, getLLVMContext());
-	m_llvm_module->setTargetTriple(llvm::sys::getProcessTriple());
+	
+	auto target = getBuilder()->getTargetMachine();
+	auto triple = target->getTargetTriple();
+	auto layout = target->getSubtargetImpl()->getDataLayout();
+	
+	m_llvm_module->setTargetTriple(triple);
+	m_llvm_module->setDataLayout(layout);
 	
 	m_ir_builder = new IRBuilder(getLLVMContext());
 	
