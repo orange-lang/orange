@@ -32,6 +32,8 @@ public:
 	
 	virtual llvm::Value* getValue() const override;
 	
+	virtual llvm::Value* getSize() const override;
+	
 	/// Gets the name that this node is referring to.
 	std::string getName() const;
 	

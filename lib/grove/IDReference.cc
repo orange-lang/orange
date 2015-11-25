@@ -83,6 +83,11 @@ llvm::Value* IDReference::getValue() const
 	return findNode()->getValue();
 }
 
+llvm::Value* IDReference::getSize() const
+{
+	return findNode()->getSize();
+}
+
 IDReference::IDReference(std::string name)
 {
 	if (name == "")
