@@ -8,7 +8,7 @@
 
 #include <util/assertions.h>
 
-void assertExists(void* ptr, std::string str)
+void assertExists(const void* ptr, std::string str)
 {
 	if (ptr == nullptr)
 	{
@@ -16,7 +16,7 @@ void assertExists(void* ptr, std::string str)
 	}
 }
 
-void assertEqual(void* ptr_a, void* ptr_b, std::string str)
+void assertEqual(const void* ptr_a, const void* ptr_b, std::string str)
 {
 	if (ptr_a != ptr_b)
 	{
