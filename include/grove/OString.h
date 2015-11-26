@@ -29,6 +29,6 @@ public:
 	// Constructors
 	OString();
 	OString(OString& str);
-	OString(std::string& str);
+	OString(std::string str);
 	OString(const char* str);
 };

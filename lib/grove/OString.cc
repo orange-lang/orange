@@ -48,7 +48,7 @@ OString::OString(OString& str)
 	m_str = str.str();
 }
 
-OString::OString(std::string& str)
+OString::OString(std::string str)
 {
 	m_str = str;
 }
