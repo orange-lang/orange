@@ -22,4 +22,6 @@ protected:
 public:
 	CodeLocation getLocation() const;
 	void setLocation(CodeLocation loc);
+	
+	CodeBase();
 };

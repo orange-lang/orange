@@ -17,3 +17,9 @@ void CodeBase::setLocation(CodeLocation loc)
 {
 	m_location = loc;
 }
+
+CodeBase::CodeBase()
+: m_location("", 0, 0, 0, 0)
+{
+	// Do nothing.
+}
