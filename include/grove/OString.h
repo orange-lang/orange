@@ -18,8 +18,8 @@ public:
 	operator std::string() const;
 	
 	// Comparisons
-	bool operator==(OString& other);
-	bool operator==(std::string& other);
+	bool operator==(const OString& other);
+	bool operator==(const std::string& other);
 	bool operator==(const char* other);
 	
 	// Methods
