@@ -16,6 +16,8 @@
 #include <grove/types/FunctionType.h>
 #include <grove/types/IntType.h>
 
+#include <grove/exceptions/file_error.h>
+
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/Support/Host.h>
@@ -63,7 +65,7 @@ void Module::parse()
 	auto file = fopen(getFile().c_str(), "r");
 	if (file == nullptr)
 	{
-		throw std::runtime_error("Module couldn't open file.");
+		throw file_error(this);
 	}
 	
 	yyflushbuffer();
