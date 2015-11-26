@@ -17,6 +17,9 @@ private:
 public:
 	operator std::string() const;
 	
+	friend OString operator+(const char* LHS, const OString& RHS);
+	friend OString operator+(const OString& LHS, const OString& RHS);
+	
 	// Comparisons
 	bool operator!=(const OString& other) const;
 	bool operator!=(const std::string& other) const;

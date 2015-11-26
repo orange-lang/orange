@@ -13,6 +13,18 @@ OString::operator std::string() const
 	return m_str;
 }
 
+OString operator+(const char* LHS, const OString& RHS)
+{
+	std::string str = LHS + RHS.str();
+	return OString(str);
+}
+
+OString operator+(const OString& LHS, const OString& RHS)
+{
+	std::string str = LHS.str() + RHS.str();
+	return OString(str);
+}
+
 bool OString::operator!=(const OString& other) const
 {
 	return m_str != other.m_str;
