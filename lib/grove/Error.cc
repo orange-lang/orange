@@ -10,7 +10,18 @@
 
 #include <grove/Module.h>
 
+#include <grove/Parameter.h>
+#include <grove/Value.h>
+#include <grove/Statement.h>
+#include "parser.hh"
+
+extern struct YYLTYPE yylloc;
+
 void yyerror(Module* mod, const char* str)
 {
-	throw std::runtime_error(str);
+	std::stringstream ss;
+	ss << mod->getFile() << ":" << yylloc.last_line << ":" <<
+ 		yylloc.last_column << ": " << str;
+	
+	throw std::runtime_error(ss.str());
 }
