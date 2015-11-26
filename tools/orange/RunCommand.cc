@@ -33,7 +33,7 @@ int RunCommand::run(std::vector<std::string> args)
 	}
 	catch (std::exception& e)
 	{
-		std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 		return 1;
 	}
 	
