@@ -10,6 +10,7 @@
 	#include <grove/ASTNode.h>
 	#include <grove/Block.h>
 	#include <grove/Value.h>
+	#include <grove/OString.h>
 
 	#include <grove/types/UIntType.h>
 	#include <grove/types/IntType.h>
@@ -23,8 +24,8 @@
 	#include "parser.hh"
 
 	#define STR (std::string(yytext, yyleng))
-	#define SAVESTR() yylval.str = new std::string(yytext, yyleng);
-	#define CUSTSTR(custom) yylval.str = new std::string(custom);
+	#define SAVESTR() yylval.str = new OString(std::string(yytext, yyleng));
+	#define CUSTSTR(custom) yylval.str = new OString(custom);
 
 	// Get column and stuff for line information
 	int yycolumn = 1;

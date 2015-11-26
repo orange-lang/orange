@@ -79,7 +79,7 @@ void BinOpExpr::resolve()
 	}
 }
 
-BinOpExpr::BinOpExpr(Expression* LHS, std::string op, Expression* RHS)
+BinOpExpr::BinOpExpr(Expression* LHS, OString op, Expression* RHS)
 {
 	assertExists(LHS, "LHS must not be null.");
 	assertExists(RHS, "RHS must not be null.");

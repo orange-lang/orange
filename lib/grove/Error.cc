@@ -13,6 +13,7 @@
 #include <grove/Parameter.h>
 #include <grove/Value.h>
 #include <grove/Statement.h>
+#include <grove/OString.h>
 #include "parser.hh"
 
 extern struct YYLTYPE yylloc;

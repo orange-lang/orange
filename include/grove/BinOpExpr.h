@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Expression.h"
+#include "OString.h"
 
 /**
  * BinOpExpr is the base class for any grammar defined as expr operator expr.
@@ -18,7 +19,7 @@ private:
 	Expression* m_LHS;
 	Expression* m_RHS;
 	
-	std::string m_operator;
+	OString m_operator;
 protected:
 	bool areTypesCompatible() const;
 	bool areTypesCastable() const;
@@ -34,5 +35,5 @@ public:
 	
 	virtual void resolve() override;
 	
-	BinOpExpr(Expression* LHS, std::string op, Expression* RHS);
+	BinOpExpr(Expression* LHS, OString op, Expression* RHS);
 };

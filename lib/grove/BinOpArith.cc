@@ -133,7 +133,7 @@ void BinOpArith::build()
 	setValue(value);
 }
 
-BinOpArith::BinOpArith(Expression* LHS, std::string op, Expression* RHS)
+BinOpArith::BinOpArith(Expression* LHS, OString op, Expression* RHS)
 : BinOpExpr(LHS, op, RHS)
 {
 	// Do nothing.

@@ -43,7 +43,7 @@ OString::OString()
 	m_str = "";
 }
 
-OString::OString(OString& str)
+OString::OString(OString const& str)
 {
 	m_str = str.str();
 }

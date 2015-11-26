@@ -39,6 +39,7 @@
 	#include <grove/AccessExpr.h>
 	#include <grove/EnumStmt.h>
 	#include <grove/SizeofExpr.h>
+	#include <grove/OString.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -74,14 +75,14 @@
 	std::vector<Expression*>* args;
 	std::vector<Block*>* blocks;
 	std::vector<Expression*>* exprs;
-	std::vector<std::tuple<std::string, Expression*>>* pairs;
-	std::vector<std::tuple<std::string, Value*>>* vpairs;
+	std::vector<std::tuple<OString, Expression*>>* pairs;
+	std::vector<std::tuple<OString, Value*>>* vpairs;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
 	Statement* stmt;
 	Value* val;
-	std::string* str;
+	OString* str;
 	Type* ty;
 }
 
@@ -699,12 +700,12 @@ var_decl_list
 	}
 	| TYPE_ID
 	{
-		$$ = new std::vector<std::tuple<std::string, Expression*>>();
+		$$ = new std::vector<std::tuple<OString, Expression*>>();
 		$$->push_back(std::make_tuple(*$1, nullptr));
 	}
 	| TYPE_ID ASSIGN expression
 	{
-		$$ = new std::vector<std::tuple<std::string, Expression*>>();
+		$$ = new std::vector<std::tuple<OString, Expression*>>();
 		$$->push_back(std::make_tuple(*$1, $3));
 	}
 
@@ -732,12 +733,12 @@ enum_members
 	}
 	| TYPE_ID term
 	{
-		$$ = new std::vector<std::tuple<std::string, Value*>>();
+		$$ = new std::vector<std::tuple<OString, Value*>>();
 		$$->push_back(std::make_tuple(*$1, (Value *)nullptr));
 	}
 	| TYPE_ID ASSIGN pos_or_neg_value term
 	{
-		$$ = new std::vector<std::tuple<std::string, Value*>>();
+		$$ = new std::vector<std::tuple<OString, Value*>>();
 		$$->push_back(std::make_tuple(*$1, $3));
 	}
 
