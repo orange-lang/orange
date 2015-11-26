@@ -135,11 +135,6 @@ void Builder::initialize()
 {
 	m_library = new Library();
 
-	if (llvm::sys::fs::is_regular_file(llvm::Twine(m_build_path)) == false)
-	{
-		throw std::runtime_error("Only regular files are supported currently.");
-	}
-	
 	initializeLLVM();
 	
 	auto mod = new Module(this, m_build_path);
@@ -148,11 +143,6 @@ void Builder::initialize()
 
 Builder::Builder(std::string path)
 {
-	if (path == "" || llvm::sys::fs::exists(path) == false)
-	{
-		throw std::invalid_argument("Path must exist.");
-	}
-	
 	m_build_path = path;
 	m_settings = new BuildSettings();
 	
@@ -161,11 +151,6 @@ Builder::Builder(std::string path)
 
 Builder::Builder(std::string path, BuildSettings* settings)
 {
-	if (path == "" || llvm::sys::fs::exists(path) == false)
-	{
-		throw std::invalid_argument("Path must exist.");
-	}
-	
 	if (settings == nullptr)
 	{
 		throw std::invalid_argument("Settings cannot be null.");

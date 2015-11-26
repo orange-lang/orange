@@ -192,11 +192,6 @@ Module::Module(Builder* builder, std::string filePath)
 		throw std::invalid_argument("builder must not be null.");
 	}
 	
-	if (llvm::sys::fs::exists(llvm::Twine(filePath)) == false)
-	{
-		throw std::invalid_argument("file must exist");
-	}
-	
 	m_builder = builder;
 	m_namespace = new Namespace("local");
 	m_file = filePath;
