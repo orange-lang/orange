@@ -52,6 +52,10 @@
 	#include <grove/types/VariadicArrayType.h>
 
 	#include <util/assertions.h>
+	
+	#define SET_LOCATION(node, start, end)\
+		node->setLocation(CodeLocation(module->getFile(), start.first_line,\
+		end.last_line, start.first_column, end.last_column));
 
 	extern struct YYLTYPE yylloc;
 	extern void yyerror(Module* mod, const char *s);
@@ -244,8 +248,9 @@ function
 		{
 			func->addStatement(stmt);
 		}
-
+		
 		$$ = func;
+        SET_LOCATION($$, @1, @8);
 	}
 	| DEF TYPE_ID OPEN_PAREN param_list CLOSE_PAREN type_hint term opt_statements END
 	{
@@ -258,6 +263,7 @@ function
 		}
 
 		$$ = func;
+        SET_LOCATION($$, @1, @9);
 	}
 	;
 
@@ -271,14 +277,17 @@ extern_function
 	{
 		std::vector<Parameter *> params;
 		$$ = new ExternFunction(*$2, params, $6);
+		SET_LOCATION($$, @1, @6);
 	}
 	| EXTERN TYPE_ID OPEN_PAREN param_list CLOSE_PAREN ARROW type
 	{
 		$$ = new ExternFunction(*$2, *$4, $7);
+		SET_LOCATION($$, @1, @7);
 	}
 	| EXTERN TYPE_ID OPEN_PAREN param_list COMMA VARARG CLOSE_PAREN ARROW type
 	{
 		$$ = new ExternFunction(*$2, *$4, $9, true);
+		SET_LOCATION($$, @1, @9);
 	}
 	;
 
@@ -302,6 +311,7 @@ ifs
 		}
 
 		$$ = if_stmt;
+		SET_LOCATION($$, @1, @5);
 	}
 	;
 
@@ -318,6 +328,7 @@ else_if_or_end
 
 		$$->insert($$->begin(), block);
 
+		SET_LOCATION(block, @1, @5);
 	}
 	| ELSE term statements END
 	{
@@ -330,6 +341,8 @@ else_if_or_end
 		}
 
 		$$->insert($$->begin(), block);
+		
+		SET_LOCATION(block, @1, @4);
 	}
 	| END
 	{
@@ -350,6 +363,7 @@ unless
 		if_stmt->addBlock(block);
 
 		$$ = if_stmt;
+		SET_LOCATION($$, @1, @5);
 	}
 
 inline_if
@@ -362,6 +376,7 @@ inline_if
 		if_stmt->addBlock(block);
 
 		$$ = if_stmt;
+		SET_LOCATION($$, @1, @3);
 	}
 	| expression IF expression
 	{
@@ -372,6 +387,7 @@ inline_if
 		if_stmt->addBlock(block);
 
 		$$ = if_stmt;
+		SET_LOCATION($$, @1, @3);
 	}
 	;
 
@@ -385,6 +401,7 @@ inline_unless
 		if_stmt->addBlock(block);
 
 		$$ = if_stmt;
+		SET_LOCATION($$, @1, @3);
 	}
 	| expression UNLESS expression
 	{
@@ -395,6 +412,7 @@ inline_unless
 		if_stmt->addBlock(block);
 
 		$$ = if_stmt;
+		SET_LOCATION($$, @1, @3);
 	}
 	;
 
@@ -410,6 +428,7 @@ for_loop
 		}
 
 		$$ = loop;
+		SET_LOCATION($$, @1, @11);
 	}
 	| WHILE expression term statements END
 	{
@@ -421,6 +440,7 @@ for_loop
 		}
 
 		$$ = loop;
+		SET_LOCATION($$, @1, @5);
 	}
 	| FOREVER DO term statements END
 	{
@@ -432,6 +452,7 @@ for_loop
 		}
 
 		$$ = loop;
+		SET_LOCATION($$, @1, @5);
 	}
 	| DO term statements END WHILE expression
 	{
@@ -443,6 +464,7 @@ for_loop
 		}
 
 		$$ = loop;
+		SET_LOCATION($$, @1, @6);
 	}
 	;
 
@@ -453,6 +475,7 @@ inline_for_loop
 		auto loop = new Loop(*$4, $6, $8, false);
 		loop->addStatement($1);
 		$$ = loop;
+		SET_LOCATION($$, @1, @9);
 	}
 	| expression FOR OPEN_PAREN opt_valued SEMICOLON opt_expression SEMICOLON opt_expression
 	  CLOSE_PAREN
@@ -460,35 +483,37 @@ inline_for_loop
 		auto loop = new Loop(*$4, $6, $8, false);
 		loop->addStatement($1);
 		$$ = loop;
+		SET_LOCATION($$, @1, @9);
 	}
 	| controls WHILE expression
 	{
 		auto loop = new Loop(std::vector<ASTNode*>(), $3, nullptr, false);
 		loop->addStatement($1);
 		$$ = loop;
+		SET_LOCATION($$, @1, @3);
 	}
 	| expression WHILE expression
 	{
 		auto loop = new Loop(std::vector<ASTNode*>(), $3, nullptr, false);
 		loop->addStatement($1);
 		$$ = loop;
+		SET_LOCATION($$, @1, @3);
 	}
 	| controls FOREVER
 	{
 		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
 		loop->addStatement($1);
 		$$ = loop;
+		SET_LOCATION($$, @1, @2);
 	}
 	| expression FOREVER
 	{
 		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
 		loop->addStatement($1);
 		$$ = loop;
+		SET_LOCATION($$, @1, @2);
 	}
 	;
-
-
-
 
 opt_valued
 	: valued { $$ = $1; }
@@ -504,12 +529,16 @@ param_list
 	: param_list COMMA type TYPE_ID
 	{
 		$$ = $1;
-		$$->push_back(new Parameter($3, *$4));
+		auto param = new Parameter($3, *$4);
+		$$->push_back(param);
+		SET_LOCATION(param, @1, @4);
 	}
 	| type TYPE_ID
 	{
 		$$ = new std::vector<Parameter *>();
-		$$->push_back(new Parameter($1, *$2));
+		auto param = new Parameter($1, *$2);
+		$$->push_back(param);
+		SET_LOCATION(param, @1, @2);
 	}
 
 arg_list
@@ -526,9 +555,9 @@ arg_list
 
 controls
 	: return { $$ = $1; }
-	| CONTINUE { $$ = new LoopTerminator(*$1); }
-	| BREAK { $$ = new LoopTerminator(*$1); }
-	| LOOP { $$ = new LoopTerminator(*$1); }
+	| CONTINUE { $$ = new LoopTerminator(*$1); SET_LOCATION($$, @1, @1); }
+	| BREAK { $$ = new LoopTerminator(*$1); SET_LOCATION($$, @1, @1); }
+	| LOOP { $$ = new LoopTerminator(*$1); SET_LOCATION($$, @1, @1); }
 	;
 
 expression
@@ -541,47 +570,48 @@ expression
 	;
 
 comparison
-	: expression COMP_LT expression { $$ = new BinOpCompare($1, *$2, $3); }
-	| expression COMP_GT expression { $$ = new BinOpCompare($1, *$2, $3); }
-	| expression LEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
-	| expression GEQ expression { $$ = new BinOpCompare($1, *$2, $3); }
-	| expression EQUALS expression { $$ = new BinOpCompare($1, *$2, $3); }
-	| expression NEQUALS expression { $$ = new BinOpCompare($1, *$2, $3); }
+	: expression COMP_LT expression { $$ = new BinOpCompare($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression COMP_GT expression { $$ = new BinOpCompare($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression LEQ expression { $$ = new BinOpCompare($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression GEQ expression { $$ = new BinOpCompare($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression EQUALS expression { $$ = new BinOpCompare($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression NEQUALS expression { $$ = new BinOpCompare($1, *$2, $3); SET_LOCATION($$, @1, @3); }
 
-    | expression LOGICAL_AND expression { $$ = new BinOpAndOr($1, *$2, $3); }
-    | expression LOGICAL_OR expression { $$ = new BinOpAndOr($1, *$2, $3); }
+    | expression LOGICAL_AND expression { $$ = new BinOpAndOr($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+    | expression LOGICAL_OR expression { $$ = new BinOpAndOr($1, *$2, $3); SET_LOCATION($$, @1, @3); }
 	;
 
 arithmetic
-	: expression PLUS expression { $$ = new BinOpArith($1, *$2, $3); }
-	| expression MINUS expression { $$ = new BinOpArith($1, *$2, $3); }
-	| expression TIMES expression { $$ = new BinOpArith($1, *$2, $3); }
-	| expression DIVIDE expression { $$ = new BinOpArith($1, *$2, $3); }
-	| expression MOD expression { $$ = new BinOpArith($1, *$2, $3); }
+	: expression PLUS expression { $$ = new BinOpArith($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression MINUS expression { $$ = new BinOpArith($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression TIMES expression { $$ = new BinOpArith($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression DIVIDE expression { $$ = new BinOpArith($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression MOD expression { $$ = new BinOpArith($1, *$2, $3); SET_LOCATION($$, @1, @3); }
 
-	| expression BITWISE_AND expression { $$ = new BinOpArith($1, *$2, $3); }
-	| expression BITWISE_OR expression { $$ = new BinOpArith($1, *$2, $3); }
-	| expression BITWISE_XOR expression { $$ = new BinOpArith($1, *$2, $3); }
+	| expression BITWISE_AND expression { $$ = new BinOpArith($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression BITWISE_OR expression { $$ = new BinOpArith($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression BITWISE_XOR expression { $$ = new BinOpArith($1, *$2, $3); SET_LOCATION($$, @1, @3); }
 
-	| expression ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
-	| expression PLUS_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
-	| expression MINUS_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
-	| expression TIMES_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
-	| expression DIVIDE_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
-	| expression MOD_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); }
+	| expression ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression PLUS_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression MINUS_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression TIMES_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression DIVIDE_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); SET_LOCATION($$, @1, @3); }
+	| expression MOD_ASSIGN expression { $$ = new BinOpAssign($1, *$2, $3); SET_LOCATION($$, @1, @3); }
 	;
 
 increment
-	: expression INCREMENT { $$ = new IncrementExpr($1,  1, false); }
-	| expression DECREMENT { $$ = new IncrementExpr($1, -1, false); }
-	| INCREMENT expression { $$ = new IncrementExpr($2,  1, true); }
-	| DECREMENT expression { $$ = new IncrementExpr($2, -1, true); }
+	: expression INCREMENT { $$ = new IncrementExpr($1,  1, false); SET_LOCATION($$, @1, @2); }
+	| expression DECREMENT { $$ = new IncrementExpr($1, -1, false); SET_LOCATION($$, @1, @2); }
+	| INCREMENT expression { $$ = new IncrementExpr($2,  1, true); SET_LOCATION($$, @1, @2); }
+	| DECREMENT expression { $$ = new IncrementExpr($2, -1, true); SET_LOCATION($$, @1, @2); }
 	;
 
 ternary
 	: expression QUESTION expression COLON expression
 	{
 		$$ = new TernaryExpr($1, $3, $5);
+		SET_LOCATION($$, @1, @5);
 	}
 	;
 
@@ -590,27 +620,29 @@ call
 	{
 		std::vector<Expression *> params;
 		$$ = new FunctionCall(*$1, params);
+		SET_LOCATION($$, @1, @3);
 	}
 	| TYPE_ID OPEN_PAREN arg_list CLOSE_PAREN
 	{
 		$$ = new FunctionCall(*$1, *$3);
+		SET_LOCATION($$, @1, @4);
 	}
 	;
 
 primary
 	: OPEN_PAREN expression CLOSE_PAREN { $$ = $2; }
-	| VALUE { $$ = $1; }
-	| MINUS expression { $$ = new NegativeExpr($2); }
-	| STRING { $$ = new StrValue(*$1); }
-	| TYPE_ID { $$ = new IDReference(*$1); }
-	| TIMES expression { $$ = new DerefExpr($2); }
-	| BITWISE_AND expression { $$ = new ReferenceExpr($2); }
-	| OPEN_PAREN type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); }
-	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayValue(*$2); }
-	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); }
-	| expression DOT TYPE_ID { $$ = new AccessExpr($1, *$3); }
-	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeofExpr($3); }
-	| SIZEOF OPEN_PAREN type CLOSE_PAREN { $$ = new SizeofExpr($3); }
+	| VALUE { $$ = $1; SET_LOCATION($$, @1, @1); }
+	| MINUS expression { $$ = new NegativeExpr($2); SET_LOCATION($$, @1, @2); }
+	| STRING { $$ = new StrValue(*$1); SET_LOCATION($$, @1, @1); }
+	| TYPE_ID { $$ = new IDReference(*$1); SET_LOCATION($$, @1, @1); }
+	| TIMES expression { $$ = new DerefExpr($2); SET_LOCATION($$, @1, @2); }
+	| BITWISE_AND expression { $$ = new ReferenceExpr($2); SET_LOCATION($$, @1, @2); }
+	| OPEN_PAREN type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); SET_LOCATION($$, @1, @4); }
+	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayValue(*$2); SET_LOCATION($$, @1, @3); }
+	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); SET_LOCATION($$, @1, @4); }
+	| expression DOT TYPE_ID { $$ = new AccessExpr($1, *$3); SET_LOCATION($$, @1, @3); }
+	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
+	| SIZEOF OPEN_PAREN type CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
 	;
 
 expr_list
@@ -631,10 +663,12 @@ return
 	: RETURN
 	{
 		$$ = new ReturnStmt(nullptr);
+		SET_LOCATION($$, @1, @1);
 	}
 	| RETURN expression
 	{
 		$$ = new ReturnStmt($2);
+		SET_LOCATION($$, @1, @2);
 	}
 	;
 
@@ -647,6 +681,7 @@ var_decl
 		{
 			auto decl = new VarDecl($1, std::get<0>(tupl), std::get<1>(tupl));
 			$$->push_back(decl);
+    		SET_LOCATION(decl, @1, @2);
 		}
 	}
 	;
@@ -683,6 +718,7 @@ enum_stmt
 		}
 
 		$$ = estmt;
+		SET_LOCATION($$, @1, @5);
 	}
 
 enum_members
@@ -709,11 +745,13 @@ pos_or_neg_value
 	: VALUE
 	{
 		$$ = $1;
+		SET_LOCATION($$, @1, @1);
 	}
 	| MINUS VALUE
 	{
 		$$ = $2;
 		$2->negate();
+		SET_LOCATION($$, @1, @2);
 	}
 
 
