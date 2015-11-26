@@ -8,17 +8,17 @@
 
 #include <grove/Named.h>
 
-std::string Named::getName() const
+OString Named::getName() const
 {
 	return m_name;
 }
 
-std::string Named::getMangledName() const
+OString Named::getMangledName() const
 {
 	return getName();
 }
 
-bool Named::matchesName(std::string name) const
+bool Named::matchesName(OString name) const
 {
 	return name == m_name;
 }

@@ -45,7 +45,7 @@ void ExternFunction::build()
 	auto func_ty = (llvm::FunctionType *)getType()->getLLVMType();
 	auto linkage = llvm::Function::ExternalLinkage;
 	
-	auto func = llvm::Function::Create(func_ty, linkage, getName(),
+	auto func = llvm::Function::Create(func_ty, linkage, getName().str(),
 									   getModule()->getLLVMModule());
 	
 	setValue(func);

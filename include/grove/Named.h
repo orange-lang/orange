@@ -9,6 +9,7 @@
 #pragma once
 
 #include "ObjectBase.h"
+#include "OString.h"
 
 #include <vector>
 
@@ -24,15 +25,15 @@ class Type;
  */
 class Named : public ObjectBase {
 protected:
-	std::string m_name;
+	OString m_name;
 public:
 	/// Gets the name of this node.
-	std::string getName() const;
+	OString getName() const;
 	
 	/// Gets the mangled name of this node.
-	virtual std::string getMangledName() const;
+	virtual OString getMangledName() const;
 
 	/// Determines whether or not a name matches this node.
 	/// @param name The name to compare against.
-	virtual bool matchesName(std::string name) const;
+	virtual bool matchesName(OString name) const;
 };

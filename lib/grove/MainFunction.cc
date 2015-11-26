@@ -10,7 +10,7 @@
 #include <grove/types/Type.h>
 #include <llvm/IR/IRBuilder.h>
 
-std::string MainFunction::getMangledName() const
+OString MainFunction::getMangledName() const
 {
 	return getName();
 }
@@ -25,7 +25,7 @@ void MainFunction::setupFunction()
 	IRBuilder()->CreateStore(default_ret, getRetValue());
 }
 
-MainFunction::MainFunction(Module* mod, std::string name)
+MainFunction::MainFunction(Module* mod, OString name)
 : Function(mod, name, std::vector<Parameter *>())
 {
 	// Do nothing

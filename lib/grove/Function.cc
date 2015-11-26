@@ -69,10 +69,10 @@ std::vector<Parameter *> Function::getParams() const
 	return m_params;
 }
 
-std::string Function::getMangledName() const
+OString Function::getMangledName() const
 {
 	std::stringstream ss;
-	ss << "_O" << getName().size() << getName();
+	ss << "_O" << getName().str().size() << getName().str();
 	ss << getType()->getSignature();
 	
 	return ss.str();
@@ -358,14 +358,14 @@ void Function::createFunction()
 	auto llvm_ty = (llvm::FunctionType *)(getType()->getLLVMType());
 	
 	auto linkage = llvm::GlobalValue::LinkageTypes::ExternalLinkage;
-	m_function = llvm::Function::Create(llvm_ty, linkage, getMangledName(),
+	m_function = llvm::Function::Create(llvm_ty, linkage, getMangledName().str(),
 									   getModule()->getLLVMModule());
 	
 	// Set argument names
 	auto arg_it = m_function->arg_begin();
 	for (unsigned int i = 0; i < m_params.size(); i++, arg_it++)
 	{
-		arg_it->setName(m_params[i]->getName());
+		arg_it->setName(m_params[i]->getName().str());
 	}
 	
 	m_entry = llvm::BasicBlock::Create(getModule()->getLLVMContext(),

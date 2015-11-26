@@ -109,7 +109,7 @@ void VarDecl::build()
 	}
 	
 	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), m_size,
-									   getName()));
+									   getName().str()));
 
 	if (getExpression())
 	{

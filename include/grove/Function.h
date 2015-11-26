@@ -67,7 +67,7 @@ public:
 	
 	void setReturnType(Type* ty);
 	
-	virtual std::string getMangledName() const override;
+	virtual OString getMangledName() const override;
 	
 	/// Indicates whether or not this function returns void.
 	bool isVoidFunction() const;
