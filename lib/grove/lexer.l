@@ -8,6 +8,7 @@
 
 %{
 	#include <grove/ASTNode.h>
+	#include <grove/Module.h>
 	#include <grove/Block.h>
 	#include <grove/Value.h>
 	#include <grove/OString.h>
@@ -23,9 +24,13 @@
 	#include <string.h>
 	#include "parser.hh"
 
+	#define SAVELOC(node) node->setLocation(CodeLocation(module->getFile(), \
+		yylloc.first_line, yylloc.last_line, yylloc.first_column, \
+		yylloc.last_column));
+		
 	#define STR (std::string(yytext, yyleng))
-	#define SAVESTR() yylval.str = new OString(std::string(yytext, yyleng));
-	#define CUSTSTR(custom) yylval.str = new OString(custom);
+	#define SAVESTR() yylval.str = new OString(std::string(yytext, yyleng)); SAVELOC(yylval.str);
+	#define CUSTSTR(custom) yylval.str = new OString(custom); SAVELOC(yylval.str);
 
 	// Get column and stuff for line information
 	int yycolumn = 1;
