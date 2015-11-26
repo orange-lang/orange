@@ -19,6 +19,7 @@ class file_error : public std::exception
 {
 private:
 	Module* m_module = nullptr;
+	std::string m_error; 
 public:
 	virtual const char* what() const noexcept override;
 	

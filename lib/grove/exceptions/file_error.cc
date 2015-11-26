@@ -13,15 +13,17 @@
 
 const char* file_error::what() const noexcept 
 {
-	std::stringstream ss;
-	ss << "fatal: could not open file " <<
-		m_module->getFile() << " for reading.";
-	
-	return ss.str().c_str();
+	return m_error.c_str();
 }
 
 file_error::file_error(Module* mod)
 {
 	assertExists(mod, "mod cannot be nullptr");
 	m_module = mod;
+	
+	std::stringstream ss;
+	ss << "fatal: could not open file " <<
+		m_module->getFile() << " for reading.";
+	
+	m_error = ss.str();
 }
