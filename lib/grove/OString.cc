@@ -13,6 +13,21 @@ OString::operator std::string() const
 	return m_str;
 }
 
+bool OString::operator!=(const OString& other)
+{
+	return m_str != other.m_str;
+}
+
+bool OString::operator!=(const std::string& other)
+{
+	return m_str != other;
+}
+
+bool OString::operator!=(const char* other)
+{
+	return m_str != other;
+}
+
 bool OString::operator==(const OString& other)
 {
 	return m_str == other.m_str;
