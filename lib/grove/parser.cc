@@ -288,7 +288,7 @@
 
 	#include <util/assertions.h>
 
-	extern struct YYLTYPE yyloc;
+	extern struct YYLTYPE yylloc;
 	extern void yyerror(Module* mod, const char *s);
 
 	extern int yylex(Module* module);
