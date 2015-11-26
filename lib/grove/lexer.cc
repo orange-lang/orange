@@ -688,7 +688,7 @@ char *yytext;
 	int yyonce = 0;
 
 	// defining this in here for C++
-	void yyflushbuffer() { YY_FLUSH_BUFFER; }
+	void yyflushbuffer() { YY_FLUSH_BUFFER; yylineno = 1; }
 #define YY_NO_UNISTD_H 1
 #define YY_NO_INPUT 1
 

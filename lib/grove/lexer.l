@@ -42,7 +42,7 @@
 	int yyonce = 0;
 
 	// defining this in here for C++
-	void yyflushbuffer() { YY_FLUSH_BUFFER; }
+	void yyflushbuffer() { YY_FLUSH_BUFFER; yylineno = 1; }
 %}
 
 %option noyywrap
