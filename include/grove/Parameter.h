@@ -23,5 +23,5 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
-	Parameter(Type* type, std::string name);
+	Parameter(Type* type, OString name);
 };

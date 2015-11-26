@@ -15,9 +15,9 @@
 class LoopTerminator : public Statement
 {
 private:
-	std::string m_terminator = "";
+	OString m_terminator = "";
 public:
-	std::string getTerminatorStr() const;
+	OString getTerminatorStr() const;
 	
 	virtual ASTNode* copy() const override;
 	
@@ -26,5 +26,5 @@ public:
 	
 	virtual bool isTerminator() const override;
 	
-	LoopTerminator(std::string terminator);
+	LoopTerminator(OString terminator);
 };

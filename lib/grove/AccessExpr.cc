@@ -21,7 +21,7 @@ Expression* AccessExpr::getLHS() const
 	return m_LHS;
 }
 
-std::string AccessExpr::getName() const
+OString AccessExpr::getName() const
 {
 	return m_name;
 }
@@ -53,7 +53,7 @@ bool AccessExpr::isAccessible() const
 			getAccessed()->ASTNode::as<Accessible *>()->isAccessible());
 }
 
-Expression* AccessExpr::access(std::string name, Type* hint) const
+Expression* AccessExpr::access(OString name, Type* hint) const
 {
 	if (isAccessible() == false)
 	{
@@ -63,7 +63,7 @@ Expression* AccessExpr::access(std::string name, Type* hint) const
 	return getAccessed()->ASTNode::as<Accessible *>()->access(name, hint);
 }
 
-AccessExpr::AccessExpr(Expression* LHS, std::string name)
+AccessExpr::AccessExpr(Expression* LHS, OString name)
 {
 	if (name == "")
 	{

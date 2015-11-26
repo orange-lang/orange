@@ -16,7 +16,7 @@ std::vector<ASTNode *> Block::getStatements() const
 	return m_statements;
 }
 
-Named* Block::getNamed(std::string name, const ASTNode *limit) const
+Named* Block::getNamed(OString name, const ASTNode *limit) const
 {
 	return getNamed(name, nullptr, limit, false, true);
 }
@@ -43,7 +43,7 @@ Named* Block::namedOrGenericInstance(Named* n, Type* t) const
 	return n;
 }
 
-Named* Block::getNamed(std::string name, Type* type,
+Named* Block::getNamed(OString name, Type* type,
 					   const ASTNode *limit, bool forceTypeMatch,
 					   bool createGeneric) const
 {
@@ -116,7 +116,7 @@ Named* Block::getNamed(std::string name, Type* type,
 	return nullptr;
 }
 
-std::vector<Named*> Block::getAllNamed(std::string name, const ASTNode *limit) const
+std::vector<Named*> Block::getAllNamed(OString name, const ASTNode *limit) const
 {
 	std::vector<Named *> matches;
 	

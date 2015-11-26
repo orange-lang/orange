@@ -66,7 +66,7 @@ Expression* BinOpExpr::getRHS() const
 	return m_RHS;
 }
 
-std::string BinOpExpr::getOperator() const
+OString BinOpExpr::getOperator() const
 {
 	return m_operator;
 }

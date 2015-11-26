@@ -457,7 +457,7 @@ bool Function::isTerminator() const
 	return false;
 }
 
-Function::Function(std::string name, std::vector<Parameter *> params)
+Function::Function(OString name, std::vector<Parameter *> params)
 : Block()
 {
 	if (name == "")
@@ -480,7 +480,7 @@ Function::Function(std::string name, std::vector<Parameter *> params)
 	m_params = params;
 }
 
-Function::Function(Module* module, std::string name,
+Function::Function(Module* module, OString name,
 				   std::vector<Parameter *> params)
 : Block(module)
 {

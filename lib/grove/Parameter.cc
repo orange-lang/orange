@@ -31,7 +31,7 @@ ASTNode* Parameter::copy() const
 	return new Parameter(m_type, getName());
 }
 
-Parameter::Parameter(Type* type, std::string name)
+Parameter::Parameter(Type* type, OString name)
 {
 	assertExists(type, "Type must not be null");
 	

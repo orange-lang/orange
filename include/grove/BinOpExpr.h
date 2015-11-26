@@ -31,7 +31,7 @@ public:
 	Expression* getLHS() const;
 	Expression* getRHS() const;
 	
-	std::string getOperator() const;
+	OString getOperator() const;
 	
 	virtual void resolve() override;
 	

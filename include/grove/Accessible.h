@@ -9,6 +9,7 @@
 #pragma once
 
 #include "ObjectBase.h"
+#include "OString.h"
 
 class Expression;
 class Type;
@@ -21,5 +22,5 @@ class Accessible : public ObjectBase
 public:
 	virtual bool isAccessible() const;
 	
-	virtual Expression* access(std::string name, Type* hint) const;
+	virtual Expression* access(OString name, Type* hint) const;
 };

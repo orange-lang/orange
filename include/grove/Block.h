@@ -44,13 +44,13 @@ public:
 	 *
 	 * @return The named node, if one was found.
 	 */
-	Named* getNamed(std::string name, const ASTNode* limit) const;
+	Named* getNamed(OString name, const ASTNode* limit) const;
 	
 	/**
 	 * Tries to find a Named node in the immediate list of chidlren. Does 
 	 * not search the whole tree.
 	 *
-	 * Unlike getNamed(std::string, const ASTNode*), this function allows 
+	 * Unlike getNamed(OString, const ASTNode*), this function allows
 	 * for a type hint to be passed in. It is used to narrow down results 
 	 * in the case of multiple nodes with the same name being found. The hint
 	 * can be a compound type (e.g., FunctionType) or a regular type (e.g.,
@@ -70,14 +70,14 @@ public:
 	 * were found, and using hint does not narrow down results to exactly 
 	 * ony node.
 	 */
-	Named* getNamed(std::string name, Type* type, const ASTNode* limit,
+	Named* getNamed(OString name, Type* type, const ASTNode* limit,
 					bool forceTypeMatch, bool createGeneric) const;
 	
 	/**
 	 * Tries to find all named nodes with a given name from the immediate 
 	 * list of children. Does not search the whole tree.
 	 */
-	std::vector<Named *> getAllNamed(std::string name, const ASTNode* limit)
+	std::vector<Named *> getAllNamed(OString name, const ASTNode* limit)
     	const;
 	
 	virtual ASTNode* copy() const override;

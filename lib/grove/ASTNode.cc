@@ -123,12 +123,12 @@ void ASTNode::build()
 	// Do nothing 
 }
 
-Named* ASTNode::findNamed(std::string name) const
+Named* ASTNode::findNamed(OString name) const
 {
 	return findNamed(name, nullptr, NamedSearchSettings());
 }
 
-Named* ASTNode::findNamed(std::string name, Type* type,
+Named* ASTNode::findNamed(OString name, Type* type,
 						  NamedSearchSettings settings)
 const
 {
@@ -196,7 +196,7 @@ const
 	return nullptr;
 }
 
-std::vector<Named*> ASTNode::findAllNamed(std::string name) const
+std::vector<Named*> ASTNode::findAllNamed(OString name) const
 {
 	std::vector<Named *> matches;
 	

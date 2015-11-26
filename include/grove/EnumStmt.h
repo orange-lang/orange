@@ -28,10 +28,10 @@ class EnumStmt : public Statement, public Typed, public Named,
 private:
 	struct EnumValPair
 	{
-		std::string name;
+		OString name;
 		Value* val = nullptr;
 		
-		EnumValPair(std::string name, Value* val)
+		EnumValPair(OString name, Value* val)
 		: name(name), val(val)
 		{
 			// Do nothing
@@ -46,9 +46,9 @@ public:
 	
 	virtual bool isAccessible() const override;
 	
-	virtual Expression* access(std::string name, Type* hint) const override;
+	virtual Expression* access(OString name, Type* hint) const override;
 	
-	void addMember(std::string name, Value* val);
+	void addMember(OString name, Value* val);
 	
-	EnumStmt(std::string name, Type* baseType);
+	EnumStmt(OString name, Type* baseType);
 };

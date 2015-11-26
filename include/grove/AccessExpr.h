@@ -10,19 +10,20 @@
 
 #include "Expression.h"
 #include "Accessible.h"
+#include "OString.h"
 
 class AccessExpr : public Expression, public Accessible
 {
 private:
 	Expression* m_LHS = nullptr;
-	std::string m_name;
+	OString m_name;
 	
 	Expression* m_accessed = nullptr;
 public:
 	virtual ASTNode* copy() const override;
 	
 	Expression* getLHS() const;
-	std::string getName() const;
+	OString getName() const;
 	Expression* getAccessed() const;
 	
 	virtual void resolve() override;
@@ -30,7 +31,7 @@ public:
 	
 	virtual bool isAccessible() const override;
 	
-	virtual Expression* access(std::string name, Type* hint) const override;
+	virtual Expression* access(OString name, Type* hint) const override;
 	
-	AccessExpr(Expression* LHS, std::string name);
+	AccessExpr(Expression* LHS, OString name);
 };

@@ -18,5 +18,5 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
-	BinOpAndOr(Expression* LHS, std::string op, Expression* RHS);
+	BinOpAndOr(Expression* LHS, OString op, Expression* RHS);
 };

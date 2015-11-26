@@ -22,7 +22,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Function.h>
 
-std::string FunctionCall::getName() const
+OString FunctionCall::getName() const
 {
 	return m_name;
 }
@@ -183,7 +183,7 @@ void FunctionCall::build()
 	setValue(res);
 }
 
-FunctionCall::FunctionCall(std::string name, std::vector<Expression *> args)
+FunctionCall::FunctionCall(OString name, std::vector<Expression *> args)
 {
 	if (name == "")
 	{

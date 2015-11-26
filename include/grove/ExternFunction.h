@@ -37,6 +37,6 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
-	ExternFunction(std::string name, std::vector<Parameter *> params,
+	ExternFunction(OString name, std::vector<Parameter *> params,
 				   Type* retType, bool vaarg = false);
 };

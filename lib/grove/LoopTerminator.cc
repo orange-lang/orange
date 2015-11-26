@@ -13,7 +13,7 @@
 
 #include <llvm/IR/IRBuilder.h>
 
-std::string LoopTerminator::getTerminatorStr() const
+OString LoopTerminator::getTerminatorStr() const
 {
 	return m_terminator;
 }
@@ -56,7 +56,7 @@ void LoopTerminator::build()
 	}
 }
 
-LoopTerminator::LoopTerminator(std::string terminator)
+LoopTerminator::LoopTerminator(OString terminator)
 {
 	if (terminator != "break" && terminator != "continue" &&
 		terminator != "loop")

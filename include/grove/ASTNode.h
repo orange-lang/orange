@@ -10,6 +10,7 @@
 
 #include <vector>
 #include "CodeBase.h"
+#include "OString.h"
 
 namespace llvm {
 	class ConstantFolder;
@@ -143,7 +144,7 @@ public:
 	 * @return The named node, if one was found.
 	 * @throws Throws an exception if multiple nodes were found.
 	 */
-	Named* findNamed(std::string name) const;
+	Named* findNamed(OString name) const;
 
 	struct NamedSearchSettings {
 		/// Whether or not to force type matching even if only one
@@ -182,14 +183,14 @@ public:
 	 * were found, and using hint does not narrow down results to exactly
 	 * one node.
 	 */
-	Named* findNamed(std::string name, Type* type,
+	Named* findNamed(OString name, Type* type,
 					 NamedSearchSettings settings = NamedSearchSettings())
 	const;
 
 	/**
 	 * Gets all Named nodes with a given name up the whole AST.
 	 */
-	std::vector<Named*> findAllNamed(std::string name) const;
+	std::vector<Named*> findAllNamed(OString name) const;
 
 	/// Constructs a new root node with a module.
 	ASTNode(Module* module);

@@ -35,5 +35,5 @@ public:
 	
 	Expression* getExpression() const;
 	
-	VarDecl(Type* type, std::string name, Expression* expression);
+	VarDecl(Type* type, OString name, Expression* expression);
 };

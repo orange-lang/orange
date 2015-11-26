@@ -18,7 +18,7 @@ class Valued;
  */
 class IDReference : public Expression, public Accessible {
 private:
-	std::string m_name;
+	OString m_name;
 	
 protected:
 	/// Find the named node in the block.
@@ -35,11 +35,11 @@ public:
 	virtual llvm::Value* getSize() const override;
 	
 	/// Gets the name that this node is referring to.
-	std::string getName() const;
+	OString getName() const;
 	
 	virtual bool isAccessible() const override;
 	
-	virtual Expression* access(std::string name, Type* hint) const override;
+	virtual Expression* access(OString name, Type* hint) const override;
 	
 	virtual void findDependencies() override;
 	
@@ -47,5 +47,5 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
-	IDReference(std::string name);
+	IDReference(OString name);
 };

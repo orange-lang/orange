@@ -28,7 +28,7 @@ Valued* IDReference::findNode() const
 	return m_node;
 }
 
-std::string IDReference::getName() const
+OString IDReference::getName() const
 {
 	return m_name;
 }
@@ -45,7 +45,7 @@ bool IDReference::isAccessible() const
 		findNode()->as<Accessible *>()->isAccessible();
 }
 
-Expression* IDReference::access(std::string name, Type* hint) const
+Expression* IDReference::access(OString name, Type* hint) const
 {
 	if (isAccessible() == false)
 	{
@@ -88,7 +88,7 @@ llvm::Value* IDReference::getSize() const
 	return findNode()->getSize();
 }
 
-IDReference::IDReference(std::string name)
+IDReference::IDReference(OString name)
 {
 	if (name == "")
 	{

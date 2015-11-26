@@ -40,7 +40,7 @@ bool EnumStmt::isAccessible() const
 	return true;
 }
 
-Expression* EnumStmt::access(std::string name, Type *hint) const
+Expression* EnumStmt::access(OString name, Type *hint) const
 {
 	auto it = std::find_if(m_members.begin(), m_members.end(),
 		[name] (EnumValPair pair) -> bool
@@ -58,7 +58,7 @@ Expression* EnumStmt::access(std::string name, Type *hint) const
 	}
 }
 
-void EnumStmt::addMember(std::string name, Value *val)
+void EnumStmt::addMember(OString name, Value *val)
 {
 	
 	auto it = std::find_if(m_members.begin(), m_members.end(),
@@ -102,7 +102,7 @@ void EnumStmt::addMember(std::string name, Value *val)
 	
 }
 
-EnumStmt::EnumStmt(std::string name, Type* baseType)
+EnumStmt::EnumStmt(OString name, Type* baseType)
 {
 	m_name = name;
 	

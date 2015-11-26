@@ -51,7 +51,7 @@ void ExternFunction::build()
 	setValue(func);
 }
 
-ExternFunction::ExternFunction(std::string name, std::vector<Parameter *> params,
+ExternFunction::ExternFunction(OString name, std::vector<Parameter *> params,
 							   Type* retType, bool vararg)
 {
 	if (name == "")

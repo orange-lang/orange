@@ -125,7 +125,7 @@ void VarDecl::build()
 	}
 }
 
-VarDecl::VarDecl(Type* type, std::string name, Expression* expression)
+VarDecl::VarDecl(Type* type, OString name, Expression* expression)
 {
 	assertExists(type, "Type must exist");
 

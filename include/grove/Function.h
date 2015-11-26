@@ -92,8 +92,8 @@ public:
 	virtual bool isTerminator() const override;
 	
 	/// Constructs a new orphaned function 
-	Function(std::string name, std::vector<Parameter *> params);
+	Function(OString name, std::vector<Parameter *> params);
 	
 	/// Constructs a new global function.
-	Function(Module* module, std::string name, std::vector<Parameter *> params);
+	Function(Module* module, OString name, std::vector<Parameter *> params);
 };

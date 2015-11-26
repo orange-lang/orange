@@ -118,7 +118,7 @@ void BinOpCompare::build()
 	setValue(value);
 }
 
-BinOpCompare::BinOpCompare(Expression* LHS, std::string op, Expression* RHS)
+BinOpCompare::BinOpCompare(Expression* LHS, OString op, Expression* RHS)
 :BinOpExpr(LHS, op, RHS)
 {
 	// Do nothing.

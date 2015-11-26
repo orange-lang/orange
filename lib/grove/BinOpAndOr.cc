@@ -90,7 +90,7 @@ void BinOpAndOr::build()
 	setValue(IRBuilder()->CreateLoad(ptr));
 }
 
-BinOpAndOr::BinOpAndOr(Expression* LHS, std::string op, Expression* RHS)
+BinOpAndOr::BinOpAndOr(Expression* LHS, OString op, Expression* RHS)
 : BinOpExpr(LHS, op, RHS)
 {
 	if (op != "&&" && op != "||")

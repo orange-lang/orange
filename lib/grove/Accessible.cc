@@ -13,7 +13,7 @@ bool Accessible::isAccessible() const
 	return false;
 }
 
-Expression* Accessible::access(std::string name, Type *hint) const
+Expression* Accessible::access(OString name, Type *hint) const
 {
 	// Do nothing by default.
 	return nullptr;

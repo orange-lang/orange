@@ -57,7 +57,7 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 
 bool BinOpAssign::doesArithmetic() const
 {
-	const std::vector<std::string> arith_op_list = {
+	const std::vector<OString> arith_op_list = {
 		"+=", "-=", "*=", "/=", "%=", "&=", "|=", "^="
 	};
 	
@@ -65,14 +65,14 @@ bool BinOpAssign::doesArithmetic() const
 					 getOperator()) != arith_op_list.end();
 }
 
-std::string BinOpAssign::getArithOp() const
+OString BinOpAssign::getArithOp() const
 {
 	if (doesArithmetic() == false)
 	{
 		throw std::runtime_error("operator does no arithmetic");
 	}
 	
-	return getOperator().substr(0, 1);
+	return getOperator().str().substr(0, 1);
 }
 
 ASTNode* BinOpAssign::copy() const
@@ -164,7 +164,7 @@ void BinOpAssign::build()
 	setValue(vRHS);
 }
 
-BinOpAssign::BinOpAssign(Expression* LHS, std::string op, Expression* RHS)
+BinOpAssign::BinOpAssign(Expression* LHS, OString op, Expression* RHS)
 :BinOpExpr(LHS, op, RHS)
 {
 	if (op != "="  && op != "+=" && op != "-=" && op != "*=" && op != "/=" &&

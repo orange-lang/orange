@@ -16,7 +16,7 @@ class FunctionType;
 
 class FunctionCall : public Expression {
 private:
-	std::string m_name;
+	OString m_name;
 	std::vector<Expression *> m_args;
 	
 	llvm::Function* getFunction() const;
@@ -26,7 +26,7 @@ private:
 	FunctionType* expectedFunctionTy() const;
 public:
 	/// Gets the name of the function that we are calling.
-	std::string getName() const;
+	OString getName() const;
 	
 	/// Gets the arguments in this function call.
 	std::vector<Expression *> getArgs() const;
@@ -41,5 +41,5 @@ public:
 	/// Constructs a new function call.
 	/// @param name The name of the function to call.
 	/// @param args The argument list of expressions. 
-	FunctionCall(std::string name, std::vector<Expression *> args);
+	FunctionCall(OString name, std::vector<Expression *> args);
 };
