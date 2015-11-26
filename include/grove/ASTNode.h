@@ -9,7 +9,7 @@
 #pragma once
 
 #include <vector>
-#include "ObjectBase.h"
+#include "CodeBase.h"
 
 namespace llvm {
 	class ConstantFolder;
@@ -31,7 +31,7 @@ class Type;
 /**
  * ASTNode is the root node for any element in the AST.
  */
-class ASTNode : public ObjectBase {
+class ASTNode : public CodeBase {
 private:
 	Module* m_module = nullptr;
 	ASTNode* m_parent = nullptr;
