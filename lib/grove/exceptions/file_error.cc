@@ -22,7 +22,7 @@ file_error::file_error(Module* mod)
 	m_module = mod;
 	
 	std::stringstream ss;
-	ss << "fatal: could not open file " <<
+	ss << "error: could not open file " <<
 		m_module->getFile() << " for reading.";
 	
 	m_error = ss.str();
