@@ -34,6 +34,10 @@ int TestNoProgram()
 	{
 		return pass();
 	}
+	catch (std::exception& e)
+	{
+		return fail();
+	}
 	
 	return fail();
 }
