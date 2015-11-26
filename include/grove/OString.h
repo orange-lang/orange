@@ -27,6 +27,7 @@ public:
 	const char* c_str() const; 
 	
 	// Constructors
+	OString();
 	OString(OString& str);
 	OString(std::string& str);
 	OString(const char* str);

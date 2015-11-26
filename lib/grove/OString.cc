@@ -38,6 +38,11 @@ const char* OString::c_str() const
 	return m_str.c_str();
 }
 
+OString::OString()
+{
+	m_str = "";
+}
+
 OString::OString(OString& str)
 {
 	m_str = str.str();
