@@ -33,6 +33,11 @@ std::string OString::str() const
 	return m_str;
 }
 
+const char* OString::c_str() const
+{
+	return m_str.c_str();
+}
+
 OString::OString(OString& str)
 {
 	m_str = str.str();

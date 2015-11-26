@@ -24,6 +24,7 @@ public:
 	
 	// Methods
 	std::string str() const;
+	const char* c_str() const; 
 	
 	// Constructors
 	OString(OString& str);
