@@ -7,10 +7,12 @@
 */
 
 #include <stdexcept>
+
 #include <grove/Module.h>
 #include <grove/Namespace.h>
 #include <grove/Builder.h>
 #include <grove/MainFunction.h>
+
 #include <grove/types/FunctionType.h>
 #include <grove/types/IntType.h>
 
