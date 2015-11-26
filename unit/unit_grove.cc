@@ -11,6 +11,8 @@
 
 #include <grove/Builder.h>
 
+#include <grove/exceptions/file_error.h>
+
 #include <util/file.h>
 
 #include <sstream>
@@ -19,6 +21,22 @@
 
 
 START_TEST_MODULE();
+
+ADD_TEST(TestNoProgram, "Test building a nonexistant program.");
+int TestNoProgram()
+{
+	try {
+		auto builder = new Builder("/fake_path_O123ZCVAQ.tmp");
+		builder->compile();
+		builder->run();
+	}
+	catch (file_error& e)
+	{
+		return pass();
+	}
+	
+	return fail();
+}
 
 ADD_TEST(TestBuildProgram, "Test building a simple program.");
 int TestBuildProgram()
