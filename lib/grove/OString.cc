@@ -46,6 +46,7 @@ OString::OString()
 OString::OString(OString const& str)
 {
 	m_str = str.str();
+	m_location = str.m_location;
 }
 
 OString::OString(std::string str)
