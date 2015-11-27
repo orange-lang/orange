@@ -207,6 +207,14 @@ TEST_EXCEPTION(TestSameNameStructsUnusedReverse, already_defined_error, R"EOF(
 	end
 )EOF");
 
+TEST_EXCEPTION(TestDuplicateEnumMembers, already_defined_error, R"EOF(
+	enum Testing
+		FOO = 0
+		BAR
+		FOO
+    end
+)EOF");
+
 #define ADD_TEST_FOLDER(name, folder)\
 ADD_TEST(name, "Test building " #folder " programs in test/" #folder ".")\
 int name(){\
