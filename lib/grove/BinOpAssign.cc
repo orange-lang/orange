@@ -95,7 +95,10 @@ void BinOpAssign::resolve()
 	
 	if (getLHS()->hasPointer() == false)
 	{
-		throw std::runtime_error("LHS doesn't refer to a memory address");
+		throw code_error(getLHS(), []() -> std::string
+			{
+				return "LHS is not an lvalue and cannot be assigned to";
+			});
 	}
 	
 	assertExists(getLHS()->getType(), "LHS doesn't have a type");
