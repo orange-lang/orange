@@ -191,19 +191,19 @@ Value::Value(std::string str, Type* t, int base)
 
 	switch (t->PODTy())
 	{
-		case INT8:
+		case TYINT8:
 			m_values.i = (int8_t)std::stoll(str, nullptr, base);
 			break;
-		case INT16:
+		case TYINT16:
 			m_values.i = (int16_t)std::stoll(str, nullptr, base);
 			break;
-		case INT32:
+		case TYINT32:
 			m_values.i = (int32_t)std::stoll(str, nullptr, base);
 			break;
-		case INT64:
+		case TYINT64:
 			m_values.i = (int64_t)std::stoll(str, nullptr, base);
 			break;
-		case UINT1:
+		case TYUINT1:
 			if (str == "false")
 			{
 				m_values.u = 0;
@@ -213,22 +213,22 @@ Value::Value(std::string str, Type* t, int base)
 				m_values.u = 1;
 			}
 			break;
-		case UINT8:
+		case TYUINT8:
 			m_values.u = (uint8_t)std::stoull(str, nullptr, base);
 			break;
-		case UINT16:
+		case TYUINT16:
 			m_values.u = (uint16_t)std::stoull(str, nullptr, base);
 			break;
-		case UINT32:
+		case TYUINT32:
 			m_values.u = (uint32_t)std::stoull(str, nullptr, base);
 			break;
-		case UINT64:
+		case TYUINT64:
 			m_values.u = (uint64_t)std::stoull(str, nullptr, base);
 			break;
-		case FLOAT:
+		case TYFLOAT:
 			m_values.d = (float)std::stof(str);
 			break;
-		case DOUBLE:
+		case TYDOUBLE:
 			m_values.d = (double)std::stod(str);
 			break;
 		default:

@@ -180,17 +180,17 @@ BasicType UIntType::PODTy() const
 	switch (m_width)
 	{
 		case 1:
-			return UINT1;
+			return TYUINT1;
 		case 8:
-			return UINT8;
+			return TYUINT8;
 		case 16:
-			return UINT16;
+			return TYUINT16;
 		case 32:
-			return UINT32;
+			return TYUINT32;
 		case 64:
-			return UINT64;
+			return TYUINT64;
 		default:
-			return OTHER;
+			return TYOTHER;
 	}
 }
 

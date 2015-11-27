@@ -37,7 +37,7 @@ bool VoidType::isVoidTy() const
 
 BasicType VoidType::PODTy() const
 {
-	return VOID;
+	return TYVOID;
 }
 
 VoidType* VoidType::get()

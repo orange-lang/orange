@@ -68,7 +68,7 @@ bool DoubleType::isFloatingPointTy() const
 
 BasicType DoubleType::PODTy() const
 {
-	return DOUBLE;
+	return TYDOUBLE;
 }
 
 Type* DoubleType::getConst() const

@@ -182,15 +182,15 @@ BasicType IntType::PODTy() const
 	switch (m_width)
 	{
 		case 8:
-			return INT8;
+			return TYINT8;
 		case 16:
-			return INT16;
+			return TYINT16;
 		case 32:
-			return INT32;
+			return TYINT32;
 		case 64:
-			return INT64;
+			return TYINT64;
 		default:
-			return OTHER;
+			return TYOTHER;
 	}
 }
 

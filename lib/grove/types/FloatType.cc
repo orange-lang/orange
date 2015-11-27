@@ -68,7 +68,7 @@ bool FloatType::isFloatingPointTy() const
 
 BasicType FloatType::PODTy() const
 {
-	return FLOAT;
+	return TYFLOAT;
 }
 
 Type* FloatType::getConst() const

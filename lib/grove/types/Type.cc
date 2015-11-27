@@ -129,7 +129,7 @@ bool Type::isConst() const
 
 BasicType Type::PODTy() const
 {
-	return OTHER;
+	return TYOTHER;
 }
 
 Type* Type::getPointerTo() const

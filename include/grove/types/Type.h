@@ -26,19 +26,19 @@ namespace llvm { class Value; }
 /// BasicTypes are plain old data types that are
 /// ordered by precedence, descending.
 typedef enum {
-	DOUBLE = 1,
-	FLOAT,
-	INT64,
-	INT32,
-	INT16,
-	INT8,
-	UINT64,
-	UINT32,
-	UINT16,
-	UINT8,
-	UINT1,
-	VOID,
-	OTHER
+	TYDOUBLE = 1,
+	TYFLOAT,
+	TYINT64,
+	TYINT32,
+	TYINT16,
+	TYINT8,
+	TYUINT64,
+	TYUINT32,
+	TYUINT16,
+	TYUINT8,
+	TYUINT1,
+	TYVOID,
+	TYOTHER
 } BasicType;
 
 class Type;
