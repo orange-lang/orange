@@ -43,8 +43,7 @@ Named* Block::namedOrGenericInstance(Named* n, Type* t) const
 }
 
 Named* Block::getNamed(OString name, Type* type,
-					   const ASTNode *limit, bool forceTypeMatch,
-					   bool createGeneric) const
+					   const ASTNode *limit, SearchSettings settings) const
 {
 	// First thing to do is get the list of names that match.
 	std::vector<Named *> matches;
@@ -64,7 +63,7 @@ Named* Block::getNamed(OString name, Type* type,
 		auto named = child->as<Named *>();
 		if (named->matchesName(name))
 		{
-			if (forceTypeMatch && type && named->is<Typed *>())
+			if (settings.forceTypeMatch && type && named->is<Typed *>())
 			{
 				if (named->as<Typed *>()->matchesType(type) == false)
 				{
@@ -84,7 +83,7 @@ Named* Block::getNamed(OString name, Type* type,
 	// If we only had one match, we can return it.
 	if (matches.size() == 1)
 	{
-		if (createGeneric)
+		if (settings.createGeneric)
 		{
     		return namedOrGenericInstance(matches.at(0), type);
 		}
@@ -127,7 +126,7 @@ Named* Block::getNamed(OString name, Type* type,
 		auto typed = match->as<Typed *>();
 		if (typed->matchesType(type))
 		{
-			if (createGeneric)
+			if (settings.createGeneric)
 			{
     			return namedOrGenericInstance(match, type);
 			}

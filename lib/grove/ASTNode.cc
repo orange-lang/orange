@@ -151,9 +151,7 @@ const
 			limit = limit->getParent();
 		}
 	
-		auto named = block->getNamed(name, type, limit,
-								 settings.forceTypeMatch,
-								 settings.createGeneric);
+		auto named = block->getNamed(name, type, limit, settings);
 		if (named != nullptr)
 		{
 			return named;

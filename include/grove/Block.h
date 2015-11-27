@@ -58,7 +58,7 @@ public:
 	 * ony node.
 	 */
 	Named* getNamed(OString name, Type* type, const ASTNode* limit,
-					bool forceTypeMatch, bool createGeneric) const;
+					SearchSettings settings) const;
 	
 	/**
 	 * Tries to find all named nodes with a given name from the immediate 
