@@ -30,12 +30,12 @@ static llvm::CmpInst::Predicate getPredicate(std::string op, bool FP, bool isSig
 	using namespace llvm;
 	
 	const static std::map<std::string, PredTuple> m_op_map = {
-		{"<",  {CmpInst::ICMP_ULT, CmpInst::ICMP_SLT, CmpInst::FCMP_OLT}},
-		{">",  {CmpInst::ICMP_UGT, CmpInst::ICMP_SGT, CmpInst::FCMP_OGT}},
-		{"<=", {CmpInst::ICMP_ULE, CmpInst::ICMP_SLE, CmpInst::FCMP_OLE}},
-		{">=", {CmpInst::ICMP_UGE, CmpInst::ICMP_SGE, CmpInst::FCMP_OGE}},
-		{"==", {CmpInst::ICMP_EQ,  CmpInst::ICMP_EQ,  CmpInst::FCMP_OEQ}},
-		{"!=", {CmpInst::ICMP_NE,  CmpInst::ICMP_NE,  CmpInst::FCMP_ONE}}
+		{"<",  std::make_tuple(CmpInst::ICMP_ULT, CmpInst::ICMP_SLT, CmpInst::FCMP_OLT)},
+		{">",  std::make_tuple(CmpInst::ICMP_UGT, CmpInst::ICMP_SGT, CmpInst::FCMP_OGT)},
+		{"<=", std::make_tuple(CmpInst::ICMP_ULE, CmpInst::ICMP_SLE, CmpInst::FCMP_OLE)},
+		{">=", std::make_tuple(CmpInst::ICMP_UGE, CmpInst::ICMP_SGE, CmpInst::FCMP_OGE)},
+		{"==", std::make_tuple(CmpInst::ICMP_EQ,  CmpInst::ICMP_EQ,  CmpInst::FCMP_OEQ)},
+		{"!=", std::make_tuple(CmpInst::ICMP_NE,  CmpInst::ICMP_NE,  CmpInst::FCMP_ONE)}
 	};
 	
 	auto it = m_op_map.find(op);

@@ -29,14 +29,14 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 	using namespace llvm;
 	
 	const static std::map<std::string, BinOpTuple> m_op_map = {
-		{"+", {BinOp::Add,  BinOp::Add,  BinOp::FAdd}},
-		{"-", {BinOp::Sub,  BinOp::Sub,  BinOp::FSub}},
-		{"*", {BinOp::Mul,  BinOp::Mul,  BinOp::FMul}},
-		{"/", {BinOp::UDiv, BinOp::SDiv, BinOp::FDiv}},
-		{"%", {BinOp::URem, BinOp::URem, BinOp::FRem}},
-		{"|", {BinOp::Or,   BinOp::Or,   BinOp::BinaryOpsEnd}},
-		{"&", {BinOp::And,  BinOp::And,  BinOp::BinaryOpsEnd}},
-		{"^", {BinOp::Xor,  BinOp::Xor,  BinOp::BinaryOpsEnd}}
+		{"+", std::make_tuple(BinOp::Add,  BinOp::Add,  BinOp::FAdd)},
+		{"-", std::make_tuple(BinOp::Sub,  BinOp::Sub,  BinOp::FSub)},
+		{"*", std::make_tuple(BinOp::Mul,  BinOp::Mul,  BinOp::FMul)},
+		{"/", std::make_tuple(BinOp::UDiv, BinOp::SDiv, BinOp::FDiv)},
+		{"%", std::make_tuple(BinOp::URem, BinOp::URem, BinOp::FRem)},
+		{"|", std::make_tuple(BinOp::Or,   BinOp::Or,   BinOp::BinaryOpsEnd)},
+		{"&", std::make_tuple(BinOp::And,  BinOp::And,  BinOp::BinaryOpsEnd)},
+		{"^", std::make_tuple(BinOp::Xor,  BinOp::Xor,  BinOp::BinaryOpsEnd)}
 	};
 	
 	auto it = m_op_map.find(op);
