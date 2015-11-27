@@ -3258,7 +3258,7 @@ yyreduce:
 		(yyval.ty) = (yyvsp[(1) - (2)].ty);
 
 		bool is_const = true;
-		for (int i = 0; i < (yyvsp[(2) - (2)].exprs)->size(); i++)
+		for (unsigned int i = 0; i < (yyvsp[(2) - (2)].exprs)->size(); i++)
 		{
 			auto def = (yyvsp[(2) - (2)].exprs)->at(i);
 

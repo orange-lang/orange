@@ -170,7 +170,7 @@ Genericable* Function::createInstance(Type *type)
 		throw fatal_error("params in type doesn't match function");
 	}
 	
-	for (int i = 0; i < clone->getParams().size(); i++)
+	for (unsigned int i = 0; i < clone->getParams().size(); i++)
 	{
 		auto param = clone->m_params[i];
 		auto ty = param->getType();
@@ -328,7 +328,7 @@ void Function::resolve()
 		auto highest = retStmts[0]->getType();
 		assertExists(highest, "Return statement missing type");
 		
-		for (int i = 1; i < retStmts.size(); i++)
+		for (unsigned int i = 1; i < retStmts.size(); i++)
 		{
 			auto cmp_ty = retStmts[i]->getType();
     		assertExists(cmp_ty, "Return statement missing type");

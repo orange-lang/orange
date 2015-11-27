@@ -866,7 +866,7 @@ array_type
 		$$ = $1;
 
 		bool is_const = true;
-		for (int i = 0; i < $2->size(); i++)
+		for (unsigned int i = 0; i < $2->size(); i++)
 		{
 			auto def = $2->at(i);
 

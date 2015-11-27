@@ -37,7 +37,7 @@ void ArrayValue::resolve()
 	auto highest = getElements()[0]->getType();
 	assertExists(highest, "Array element missing type");
 	
-	for (int i = 1; i < getElements().size(); i++)
+	for (unsigned int i = 1; i < getElements().size(); i++)
 	{
 		auto cmp_ty = getElements().at(i)->getType();
 		assertExists(cmp_ty, "Array element missing type");
