@@ -11,6 +11,10 @@
 #include <grove/Genericable.h>
 #include <grove/Module.h>
 
+#include <grove/exceptions/already_defined_error.h>
+
+#include <typeinfo>
+
 std::vector<ASTNode *> Block::getStatements() const
 {
 	return m_statements;
@@ -94,6 +98,22 @@ Named* Block::getNamed(OString name, Type* type,
 			return matches.at(0);
 		}
 	}
+	else
+	{
+		// Check to see if all elements are the same type.
+		auto original = matches.at(0)->as<CodeBase *>();
+		auto first = typeid(*original).hash_code();
+		
+		for (unsigned int i = 1; i < matches.size(); i++)
+		{
+			auto element = matches.at(i)->as<CodeBase *>();
+			if (typeid(*element).hash_code() != first)
+			{
+				throw already_defined_error(element, original, name, false);
+			}
+		}
+	}
+	
 	
 	// If we had more than one match, we need to see if we can find
 	// a match by type.
