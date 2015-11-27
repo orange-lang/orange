@@ -33,3 +33,41 @@ binop_error::binop_error(CodeBase* element, Type* LHS, OString op, Type* RHS)
 	
 	m_error = ss.str();
 }
+
+binop_error::binop_error(CodeBase* element, Type* LHS, OString op, Type* RHS,
+						 Type* expectLHS, Type* expectRHS)
+: code_error(element)
+{
+	if (LHS == nullptr)
+	{
+		throw fatal_error("LHS is nullptr");
+	}
+	
+	if (RHS == nullptr)
+	{
+		throw fatal_error("RHS is nullptr");
+	}
+	
+	if (expectLHS == nullptr)
+	{
+		throw fatal_error("expectLHS is nullptr");
+	}
+	
+	if (expectRHS == nullptr)
+	{
+		throw fatal_error("expectRHS is nullptr");
+	}
+	
+	
+	std::stringstream ss;
+	
+	ss << fileWithPosition(element) << ": error: "
+	   << "operator " << op.str() << " cannot be used with operands of "
+	   << "types " << LHS->getString() << " and " << RHS->getString() << " "
+	   << "(expected " << expectLHS->getString() << " and "
+	   << expectRHS->getString() << ")\n"
+	   << getContext(element);
+	
+	m_error = ss.str();
+}
+
