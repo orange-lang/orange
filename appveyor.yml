@@ -36,4 +36,4 @@ build_script:
   - mingw32-make
 
 test_script:
-  - env CTEST_OUTPUT_ON_FAILURE=1 ctest
+  - cmd /C "set CTEST_OUTPUT_ON_FAILURE=1 && ctest"
