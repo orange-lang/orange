@@ -8,7 +8,11 @@
 
 #include <grove/CondBlock.h>
 #include <grove/Expression.h>
+
 #include <grove/types/Type.h>
+
+#include <grove/exceptions/invalid_type_error.h>
+
 #include <util/assertions.h>
 
 ASTNode* CondBlock::copy() const
@@ -24,7 +28,8 @@ void CondBlock::resolve()
 	
 	if (getExpression()->getType()->isBoolTy() == false)
 	{
-		throw std::invalid_argument("expression must be a boolean");
+		throw invalid_type_error(getExpression(), "expression of condition was \
+								 non-boolean type", getExpression()->getType());
 	}
 }
 
