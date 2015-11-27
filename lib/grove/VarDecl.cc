@@ -12,6 +12,8 @@
 #include <grove/types/Type.h>
 #include <grove/types/UIntType.h>
 
+#include <grove/exceptions/already_defined_error.h>
+
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
 
@@ -54,9 +56,18 @@ void VarDecl::resolve()
 {
 	NamedSearchSettings settings;
 	settings.searchWholeTree = false;
-	if (findNamed(getName(), getType(), settings))
+	
+	auto existing = findNamed(getName(), getType(), settings);
+	if (existing != nullptr)
 	{
-		throw std::invalid_argument("Variable already exists.");
+		CodeBase* base = existing->as<CodeBase *>();
+		
+		if (existing->is<VarDecl *>())
+		{
+			base = &existing->as<VarDecl *>()->m_name;
+		}
+		
+		throw already_defined_error(&m_name, base, getName());
 	}
 
 	if (getType()->isVarTy() && getExpression() == nullptr)
