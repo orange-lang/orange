@@ -117,7 +117,7 @@ Named* Block::getNamed(OString name, Type* type,
 			return matches.at(0);
 		}
 	}
-	else
+	else if (type == nullptr)
 	{
 		// Check to see if all elements are the same type.
 		auto original = matches.at(0)->as<CodeBase *>();
@@ -131,11 +131,7 @@ Named* Block::getNamed(OString name, Type* type,
 				throw already_defined_error(element, original, name, false);
 			}
 		}
-	}
-	
-	// If we're not matching types, return null now.
-	if (type == nullptr)
-	{
+		
 		return nullptr;
 	}
 	
