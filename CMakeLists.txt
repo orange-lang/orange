@@ -28,6 +28,12 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	ADD_DEFINITIONS(-DDEBUG_BUILD)
 endif()
 
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	add_definitions( -DBOOTSTRAP_LOCATION="${CMAKE_SOURCE_DIR}/lib/libor/${objname}" )
+else()
+	add_definitions( -DBOOTSTRAP_LOCATION="${CMAKE_INSTALL_PREFIX}/lib/libor/${objname}" )
+endif()
+
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11")
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

@@ -19,8 +19,8 @@ elseif(${WIN32})
 endif()
 
 add_custom_command(OUTPUT ${objname}
-									 COMMENT "Building ${objname} for ${osname} ${CMAKE_CURRENT_LIST_DIR}/${objname}"
-								 COMMAND as -o ${CMAKE_CURRENT_LIST_DIR}/${objname} ${pathname}/boot.s)
+									 COMMENT "Building ${objname} for ${osname} ${CMAKE_CURRENT_LIST_DIR}/../${objname}"
+								 COMMAND as -o ${CMAKE_CURRENT_LIST_DIR}/../${objname} ${pathname}/boot.s)
 
 add_custom_target(boot DEPENDS ${objname})
 set_target_properties (boot PROPERTIES FOLDER lib)

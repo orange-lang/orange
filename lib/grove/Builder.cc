@@ -140,10 +140,6 @@ void Builder::link(std::string outputPath)
 	{
 		std::remove(temp.c_str());
 	}
-	
-	// Delete string at options[0], which is always going to be the only
-	// allocated string.
-	delete options.at(0);
 }
 
 void Builder::initializeLLVM()
@@ -186,13 +182,7 @@ std::vector<const char*> Builder::getLinkFlags() const
 {
 	std::vector<const char*> options;
 	
-#if defined(__APPLE__) || defined(__linux__)
-	auto root = combinePaths(INSTALL_LOCATION, "lib/libor/boot.o");
-	options.push_back(stringToCharArray(root));
-#elif defined(_WIN32)
-	auto root = combinePaths(INSTALL_LOCATION, "lib/libor/boot.obj");
-	options.push_back(stringToCharArray(root));
-#endif
+	options.push_back(BOOTSTRAP_LOCATION);
 	
 #if defined(__APPLE__)
 	options.push_back("-w");
