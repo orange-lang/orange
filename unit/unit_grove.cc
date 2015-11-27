@@ -222,7 +222,7 @@ TEST_EXCEPTION(TestInvalidBinOpOperands, binop_error, R"EOF(
 	var foo = ptr + 2.3
 )EOF");
 
-ADD_TEST(TestJITPrograms, "Test running programs in test JIT")
+ADD_TEST(TestJITPrograms, "Test running programs in test JIT");
 int TestJITPrograms()
 {
 	int exitCode = 0;
@@ -253,6 +253,7 @@ int TestJITPrograms()
 			exitCode = 1;
 		}
 	}
+	
 	return exitCode;
 }
 
