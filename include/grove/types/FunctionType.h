@@ -23,6 +23,7 @@ private:
 protected:
 	FunctionType(Type* retType, std::vector<Type*> args, bool vaarg);
 public:
+	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
 	virtual bool isSigned() const override;

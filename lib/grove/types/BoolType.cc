@@ -63,6 +63,20 @@ BoolType::BoolType(bool isConst)
 	defineCast(typeid(UIntType), BoolToUInt);
 }
 
+std::string BoolType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << "bool";
+	
+	return ss.str();
+}
+
 std::string BoolType::getSignature() const
 {
 	std::stringstream ss;

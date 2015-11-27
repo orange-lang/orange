@@ -28,6 +28,19 @@ EnumType::EnumType(Type* contained, bool isConst)
 	copyCasts(typeid(*contained));
 }
 
+std::string EnumType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << "enum<" << m_contained->getString() << ">";
+	return ss.str();
+}
+
 std::string EnumType::getSignature() const
 {
 	std::stringstream ss;

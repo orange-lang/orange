@@ -24,6 +24,19 @@ FloatType::FloatType(bool isConst)
 	defineCast(typeid(DoubleType), llvm::Instruction::CastOps::FPExt);
 }
 
+std::string FloatType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << "float";
+	return ss.str();
+}
+
 std::string FloatType::getSignature() const
 {
 	std::stringstream ss;

@@ -56,6 +56,21 @@ ArrayType::ArrayType(Type* contained, unsigned int size, bool isConst)
 			   	PointerCast);
 }
 
+std::string ArrayType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << m_contained->getString();
+	ss << "[" << m_size << "]";
+	
+	return ss.str();
+}
+
 std::string ArrayType::getSignature() const
 {
 	std::stringstream ss;

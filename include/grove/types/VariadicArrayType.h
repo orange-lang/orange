@@ -22,6 +22,7 @@ protected:
 public:
 	static std::string getSignature(Type* conatined, Expression* size,
 									bool isConst);
+	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
 	Expression* getSize() const;

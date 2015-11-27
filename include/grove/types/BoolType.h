@@ -15,6 +15,7 @@ class BoolType : public UIntType
 protected:
 	BoolType(bool isConst);
 public:
+	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
 	virtual Type* getConst() const override;

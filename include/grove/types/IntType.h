@@ -19,6 +19,7 @@ protected:
 	IntType(unsigned int width, bool isConst);
 public:
 	static std::string getSignature(unsigned int width, bool isConst);
+	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
 	virtual bool isPODTy() const override;

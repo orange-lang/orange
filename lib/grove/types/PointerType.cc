@@ -30,6 +30,19 @@ PointerType::PointerType(Type* contained, bool isConst)
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
 }
 
+std::string PointerType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << m_contained->getString() << "*";
+	return ss.str();
+}
+
 std::string PointerType::getSignature() const
 {
 	std::stringstream ss;
@@ -47,7 +60,6 @@ bool PointerType::isSigned() const
 {
 	return true;
 }
-
 
 bool PointerType::isPointerTy() const
 {

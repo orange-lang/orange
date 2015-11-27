@@ -57,6 +57,11 @@ void Type::copyCasts(const std::type_info &of)
 	}
 }
 
+std::string Type::getString() const
+{
+	throw fatal_error("Type::getString not overriden for type");
+}
+
 bool Type::isSigned() const
 {
 	return false;

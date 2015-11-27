@@ -135,6 +135,19 @@ std::string UIntType::getSignature(unsigned int width, bool isConst)
 	return ss.str();
 }
 
+std::string UIntType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << "uint" << m_width;
+	return ss.str();
+}
+
 std::string UIntType::getSignature() const
 {
 	return getSignature(m_width, isConst());

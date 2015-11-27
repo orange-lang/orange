@@ -15,6 +15,11 @@ VoidType::VoidType()
 	m_type = (llvm::Type *)llvm::Type::getVoidTy(*m_context);
 }
 
+std::string VoidType::getString() const
+{
+	return "void";
+}
+
 std::string VoidType::getSignature() const
 {
 	return "v";

@@ -24,8 +24,6 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Constants.h>
 
-
-
 static int IntToInt(Type* from, Type* to)
 {
 	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
@@ -136,6 +134,19 @@ std::string IntType::getSignature(unsigned int width, bool isConst)
 			break;
 	}
 	
+	return ss.str();
+}
+
+std::string IntType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << "int" << m_width;
 	return ss.str();
 }
 

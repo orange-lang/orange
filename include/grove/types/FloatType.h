@@ -15,6 +15,7 @@ class FloatType : public Type
 protected:
 	FloatType(bool isConst);
 public:
+	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
 	virtual bool isPODTy() const override;

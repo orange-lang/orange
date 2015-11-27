@@ -24,6 +24,19 @@ DoubleType::DoubleType(bool isConst)
 	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPTrunc);
 }
 
+std::string DoubleType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << "double";
+	return ss.str();
+}
+
 std::string DoubleType::getSignature() const
 {
 	std::stringstream ss;

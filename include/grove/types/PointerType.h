@@ -19,6 +19,7 @@ protected:
 	PointerType(Type* contained, bool isConst);
 	
 public:
+	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
 	virtual bool isSigned() const override;

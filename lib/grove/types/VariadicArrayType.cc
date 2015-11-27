@@ -56,6 +56,19 @@ VariadicArrayType::VariadicArrayType(Type* contained, Expression* size,
 			   PointerCast);
 }
 
+std::string VariadicArrayType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << m_contained->getString() << "[]";
+	return ss.str();
+}
+
 std::string VariadicArrayType::getSignature(Type *conatined, Expression *size,
 											bool isConst)
 {

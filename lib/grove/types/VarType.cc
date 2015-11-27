@@ -15,6 +15,19 @@ VarType::VarType(bool isConst)
 	m_type = (llvm::Type *)llvm::Type::getVoidTy(*m_context);
 }
 
+std::string VarType::getString() const
+{
+	std::stringstream ss;
+	
+	if (isConst())
+	{
+		ss << "const ";
+	}
+	
+	ss << "var";
+	return ss.str();
+}
+
 std::string VarType::getSignature() const
 {
 	std::stringstream ss;

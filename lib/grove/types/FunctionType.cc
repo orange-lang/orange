@@ -49,6 +49,25 @@ FunctionType::FunctionType(Type* retType, std::vector<Type*> args, bool vaarg)
 	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, vaarg);
 }
 
+std::string FunctionType::getString() const
+{
+	std::stringstream ss;
+	ss << "def(";
+	
+	for (unsigned int i = 0; i < m_args.size(); i++)
+	{
+		ss << m_args[i]->getString();
+		
+		if (i + 1 < m_args.size())
+		{
+			ss << ", ";
+		}
+	}
+	
+	ss << ") ->" << m_ret_type->getString();
+	return ss.str();
+}
+
 std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args,
 									   bool vaarg)
 {
