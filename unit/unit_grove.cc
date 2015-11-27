@@ -13,6 +13,7 @@
 
 #include <grove/exceptions/file_error.h>
 #include <grove/exceptions/already_defined_error.h>
+#include <grove/exceptions/already_defined_sig_error.h>
 
 #include <util/file.h>
 
@@ -202,7 +203,7 @@ int TestMatchingGenerics()
 		auto builder = new Builder(temp_path);
 		builder->compile();
 	}
-	catch (std::exception& e)
+	catch (already_defined_sig_error& e)
 	{
 		std::remove(temp_path.c_str());
 		return 0;
