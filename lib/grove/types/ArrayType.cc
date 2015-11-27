@@ -14,6 +14,8 @@
 #include <grove/Expression.h>
 #include <grove/Value.h>
 
+#include <grove/exceptions/fatal_error.h>
+
 #include <util/llvmassertions.h>
 #include <util/assertions.h>
 
@@ -44,7 +46,7 @@ ArrayType::ArrayType(Type* contained, unsigned int size, bool isConst)
 {
 	if (contained == nullptr)
 	{
-		throw std::invalid_argument("contained must not be null.");
+		throw fatal_error("contained was null");
 	}
 
 	m_contained = contained;
@@ -113,7 +115,7 @@ ArrayType* ArrayType::get(Type *contained, unsigned int size, bool isConst)
 {
 	if (contained == nullptr)
 	{
-		throw std::invalid_argument("contained must not be nullptr");
+		throw fatal_error("contained was null");
 	}
 
 	std::stringstream ss;

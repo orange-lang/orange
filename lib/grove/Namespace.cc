@@ -8,6 +8,8 @@
 
 #include <grove/Namespace.h>
 
+#include <grove/exceptions/fatal_error.h>
+
 std::string Namespace::getName() const
 {
 	return m_name;
@@ -22,7 +24,7 @@ Namespace::Namespace(std::string name)
 {
 	if (name == "")
 	{
-		throw std::invalid_argument("name must not be empty.");
+		throw fatal_error("name was empty");
 	}
 	
 	m_name = name;

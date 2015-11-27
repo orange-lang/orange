@@ -141,7 +141,7 @@ ArrayValue::ArrayValue(std::vector<Expression *> elements)
 {
 	if (elements.size() == 0)
 	{
-		throw std::invalid_argument("Arrays must have at least 1 element.");
+		throw fatal_error("arrays must be declared with at least 1 element");
 	}
 	
 	for (auto element : elements)

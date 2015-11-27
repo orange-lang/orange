@@ -14,6 +14,7 @@
 #include <grove/types/BoolType.h>
 
 #include <grove/exceptions/binop_error.h>
+#include <grove/exceptions/fatal_error.h>
 
 #include <util/assertions.h>
 
@@ -100,6 +101,6 @@ BinOpAndOr::BinOpAndOr(Expression* LHS, OString op, Expression* RHS)
 {
 	if (op != "&&" && op != "||")
 	{
-		throw std::invalid_argument("invalid operator for BinOpAndOr");
+		throw fatal_error("unknown operator given to BinOpAndOr");
 	}
 }

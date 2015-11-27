@@ -6,16 +6,19 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <grove/types/FunctionType.h>
-
 #include <grove/ExternFunction.h>
 #include <grove/Parameter.h>
-#include <util/assertions.h>
-#include <util/copy.h>
-#include <llvm/IR/IRBuilder.h>
-#include <llvm/IR/Function.h>
 #include <grove/Module.h>
 
+#include <grove/types/FunctionType.h>
+
+#include <grove/exceptions/fatal_error.h>
+
+#include <util/assertions.h>
+#include <util/copy.h>
+
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Function.h>
 
 std::vector<Type *> ExternFunction::getParamTys() const
 {
@@ -56,7 +59,7 @@ ExternFunction::ExternFunction(OString name, std::vector<Parameter *> params,
 {
 	if (name == "")
 	{
-		throw std::invalid_argument("name must not be empty.");
+		throw fatal_error("name of function was empty");
 	}
 	
 	for (auto param : params)

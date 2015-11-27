@@ -13,6 +13,8 @@
 #include <grove/Module.h>
 #include <grove/types/Type.h>
 
+#include <grove/exceptions/fatal_error.h>
+
 #include <util/assertions.h>
 #include <util/copy.h>
 
@@ -39,11 +41,11 @@ void IfStmt::addBlock(Block *block)
 	
 	if (m_if_blocks.size() == 0 && block->is<CondBlock *>() == false)
 	{
-		throw std::invalid_argument("First block must be a CondBlock!");
+		throw fatal_error("non conditional block added as first block");
 	}
 	else if (hasElse())
 	{
-		throw std::invalid_argument("No other blocks can be added!");
+		throw fatal_error("trying to add a block after an else block");
 	}
 	
 	m_if_blocks.push_back(block);
@@ -82,7 +84,7 @@ void IfStmt::resolve()
 {
 	if (m_if_blocks.size() == 0)
 	{
-		throw std::invalid_argument("IfStmt needs at least one block");
+		throw fatal_error("IfStmt created with no blocks added");
 	}
 }
 

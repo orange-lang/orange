@@ -43,7 +43,7 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 	
 	if (it == m_op_map.end())
 	{
-		throw std::invalid_argument("op " + op + " not supported.");
+		throw fatal_error("unkown operator given to BinOpArith");
 	}
 	
 	if (FP == true)

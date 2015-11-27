@@ -6,8 +6,9 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <stdexcept>
 #include <grove/types/NamedType.h>
+
+#include <grove/exceptions/fatal_error.h>
 
 Type* NamedType::getType() const
 {
@@ -23,12 +24,12 @@ NamedType::NamedType(std::string name, Type* type)
 {
 	if (name == "")
 	{
-		throw std::invalid_argument("name must not be empty");
+		throw fatal_error("name was empty");
 	}
 
 	if (type == nullptr)
 	{
-		throw std::invalid_argument("type must not be null");
+		throw fatal_error("type was null");
 	}
 
 	m_name = name;

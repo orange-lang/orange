@@ -14,6 +14,7 @@
 
 #include <grove/exceptions/already_defined_error.h>
 #include <grove/exceptions/invalid_type_error.h>
+#include <grove/exceptions/fatal_error.h>
 
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
@@ -157,7 +158,7 @@ VarDecl::VarDecl(Type* type, OString name, Expression* expression)
 
 	if (name == "")
 	{
-		throw std::invalid_argument("name cannot be empty");
+		throw fatal_error("name was empty");
 	}
 
 	m_name = name;

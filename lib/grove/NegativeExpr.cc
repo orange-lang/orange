@@ -10,6 +10,8 @@
 
 #include <grove/types/Type.h>
 
+#include <grove/exceptions/invalid_type_error.h>
+
 #include <util/assertions.h>
 
 #include <llvm/IR/IRBuilder.h>
@@ -28,17 +30,15 @@ void NegativeExpr::resolve()
 {
 	auto ty = getExpression()->getType();
 	
-	if (ty->isPODTy() == false)
+	if (ty->isPODTy() == false || ty->isVoidTy())
 	{
-		throw std::invalid_argument("can only negate a value that's numeric");
+		throw invalid_type_error(getExpression(), "cannot negate expression of \
+								 type", ty);
 	}
 	else if (ty->isIntTy() && ty->isSigned() == false)
 	{
-		throw std::invalid_argument("cannot negate an unsigned integer.");
-	}
-	else if (ty->isVoidTy())
-	{
-		throw std::invalid_argument("cannot negate a void value.");
+		throw invalid_type_error(getExpression(), "cannot negate expression of \
+						 unsigned type", ty);
 	}
 	
 	setType(ty);

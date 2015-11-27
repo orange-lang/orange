@@ -7,6 +7,9 @@
 */
 
 #include <grove/types/FunctionType.h>
+
+#include <grove/exceptions/fatal_error.h>
+
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DerivedTypes.h>
 
@@ -15,14 +18,14 @@ FunctionType::FunctionType(Type* retType, std::vector<Type*> args, bool vaarg)
 {
 	if (retType == nullptr)
 	{
-		throw std::invalid_argument("retType must not be null.");
+		throw fatal_error("retType was null");
 	}
 
 	for (auto arg : args)
 	{
 		if (arg == nullptr)
 		{
-			throw std::invalid_argument("must args must not be null.");
+    		throw fatal_error("argument in args was null");
 		}
 	}
 
@@ -73,7 +76,7 @@ std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args,
 {
 	if (retType == nullptr)
 	{
-		throw std::invalid_argument("retType must not be null.");
+		throw fatal_error("retType was null");
 	}
 
 	std::stringstream ss;
@@ -83,7 +86,7 @@ std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args,
 	{
 		if (args[i] == nullptr)
 		{
-			throw std::invalid_argument("every argument must not be null");
+    		throw fatal_error("argument in args was null");
 		}
 
 		ss << args[i]->getSignature();
@@ -147,14 +150,14 @@ FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args,
 {
 	if (retType == nullptr)
 	{
-		throw std::invalid_argument("retType must not be null.");
+		throw fatal_error("retType was null");
 	}
 
 	for (auto arg : args)
 	{
 		if (arg == nullptr)
 		{
-			throw std::invalid_argument("must args must not be null.");
+    		throw fatal_error("argument in args was null");
 		}
 	}
 

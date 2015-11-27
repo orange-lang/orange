@@ -7,7 +7,11 @@
 */
 
 #include <grove/BinOpCompare.h>
+
 #include <grove/types/BoolType.h>
+
+#include <grove/exceptions/fatal_error.h>
+
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
 
@@ -37,7 +41,7 @@ static llvm::CmpInst::Predicate getPredicate(std::string op, bool FP, bool isSig
 	
 	if (it == m_op_map.end())
 	{
-		throw std::invalid_argument("op not supported.");
+		throw fatal_error("Unkown operator given to BinOpCompare");
 	}
 	
 	if (FP == true)

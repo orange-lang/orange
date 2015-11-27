@@ -42,7 +42,7 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 	
 	if (it == m_op_map.end())
 	{
-		throw std::invalid_argument("op " + op + " not supported.");
+		throw fatal_error("unkown operator given to BinOpAssign");
 	}
 	
 	if (FP == true)
@@ -174,6 +174,6 @@ BinOpAssign::BinOpAssign(Expression* LHS, OString op, Expression* RHS)
 	if (op != "="  && op != "+=" && op != "-=" && op != "*=" && op != "/=" &&
 		op != "%=" && op != "|=" && op != "&=" && op != "^=")
 	{
-		throw std::invalid_argument("Unknown assign operator");
+		throw fatal_error("unkown assign operator given to BinOpAssign");
 	}
 }

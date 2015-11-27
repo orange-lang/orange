@@ -18,6 +18,7 @@
 #include <grove/types/PointerType.h>
 
 #include <grove/exceptions/already_defined_sig_error.h>
+#include <grove/exceptions/invalid_type_error.h>
 #include <grove/exceptions/fatal_error.h>
 
 #include <util/assertions.h>
@@ -337,7 +338,10 @@ void Function::resolve()
 					highest = cmp_ty;
 					break;
 				case INCOMPATIBLE:
-					throw std::invalid_argument("Found incompatible return statements");
+					throw invalid_type_error(retStmts[i], "function has \
+											 multiple return statements that \
+											 are incompatible with return \
+											 statement of type", cmp_ty);
 				default:
 					break;
 			}
@@ -471,7 +475,7 @@ Function::Function(OString name, std::vector<Parameter *> params)
 {
 	if (name == "")
 	{
-		throw std::invalid_argument("name must not be blank.");
+		throw fatal_error("name of function was empty");
 	}
 	
 	for (auto param : params)
@@ -495,7 +499,7 @@ Function::Function(Module* module, OString name,
 {
 	if (name == "")
 	{
-		throw std::invalid_argument("name must not be blank.");
+		throw fatal_error("name of function was empty");
 	}
 	
 	for (auto param : params)

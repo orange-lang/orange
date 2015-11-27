@@ -12,6 +12,7 @@
 #include <grove/types/IntType.h>
 
 #include <grove/exceptions/invalid_type_error.h>
+#include <grove/exceptions/fatal_error.h>
 
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Constants.h>
@@ -76,7 +77,7 @@ void Value::build()
 	}
 	else
 	{
-		throw std::invalid_argument("invalid type.");
+		throw fatal_error("invalid type for Value");
 	}
 }
 
@@ -84,7 +85,7 @@ void Value::convert(Type *new_ty)
 {
 	if (new_ty->isIntTy() == false && new_ty->isFloatingPointTy())
 	{
-		throw std::invalid_argument("invalid type to convert to");
+		throw fatal_error("invalid type for Value conversion");
 	}
 	
 	auto old_ty = getType();
@@ -183,7 +184,7 @@ Value::Value(std::string str, Type* t, int base)
 {
 	if (t == nullptr)
 	{
-		throw std::invalid_argument("type must not be null");
+		throw fatal_error("type was null");
 	}
 
 	m_type = t;
@@ -231,6 +232,6 @@ Value::Value(std::string str, Type* t, int base)
 			m_values.d = (double)std::stod(str);
 			break;
 		default:
-			throw std::invalid_argument("invalid type.");
+			throw fatal_error("invalid type to create Value");
 	}
 }

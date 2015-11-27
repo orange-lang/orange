@@ -86,7 +86,7 @@ void ASTNode::addChild(ASTNode *child, bool mustExist)
 	{
 		if (mustExist == true)
 		{
-    		throw std::invalid_argument("child must not be nullptr");
+			throw fatal_error("child cannot be nullptr");
 		}
 		else
 		{
@@ -265,7 +265,7 @@ ASTNode::ASTNode(Module* module)
 {
 	if (module == nullptr)
 	{
-		throw std::invalid_argument("module cannot be null.");
+		throw fatal_error("module was null");
 	}
 	
 	m_module = module;
@@ -275,7 +275,7 @@ ASTNode::ASTNode(ASTNode* parent)
 {
 	if (parent == nullptr)
 	{
-		throw std::invalid_argument("parent cannot be null.");
+		throw fatal_error("parent was null");
 	}
 	
 	m_parent = parent;

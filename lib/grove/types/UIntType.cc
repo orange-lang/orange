@@ -16,6 +16,8 @@
 #include <grove/ASTNode.h>
 #include <grove/Valued.h>
 
+#include <grove/exceptions/fatal_error.h>
+
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
 
@@ -80,7 +82,7 @@ UIntType::UIntType(unsigned int width, bool isConst)
 {
 	if (width == 0)
 	{
-		throw std::invalid_argument("width must not be 0.");
+		throw fatal_error("trying to create uint with width of 0");
 	}
 	
 	m_width = width;
@@ -201,7 +203,7 @@ UIntType* UIntType::get(unsigned int width, bool isConst)
 {
 	if (width == 0)
 	{
-		throw std::invalid_argument("width must not be 0.");
+		throw fatal_error("trying to create uint with width of 0");
 	}
 
 	auto sig = getSignature(width, isConst);

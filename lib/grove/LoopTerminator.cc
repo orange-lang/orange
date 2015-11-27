@@ -9,6 +9,8 @@
 #include <grove/LoopTerminator.h>
 #include <grove/Loop.h>
 
+#include <grove/exceptions/fatal_error.h>
+
 #include <util/assertions.h>
 
 #include <llvm/IR/IRBuilder.h>
@@ -61,7 +63,7 @@ LoopTerminator::LoopTerminator(OString terminator)
 	if (terminator != "break" && terminator != "continue" &&
 		terminator != "loop")
 	{
-		throw std::invalid_argument("Unknown terminator " + terminator);
+		throw fatal_error("unkown terminator passed to LoopTerminator");
 	}
 	
 	m_terminator = terminator;

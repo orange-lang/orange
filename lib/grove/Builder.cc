@@ -154,7 +154,7 @@ Builder::Builder(std::string path, BuildSettings* settings)
 {
 	if (settings == nullptr)
 	{
-		throw std::invalid_argument("Settings cannot be null.");
+		throw fatal_error("settings was null");
 	}
 	
 	m_build_path = path;

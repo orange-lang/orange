@@ -12,6 +12,7 @@
 #include <grove/Typed.h>
 
 #include <grove/exceptions/undefined_error.h>
+#include <grove/exceptions/fatal_error.h>
 
 #include <util/assertions.h>
 
@@ -102,7 +103,7 @@ IDReference::IDReference(OString name)
 {
 	if (name == "")
 	{
-		throw std::invalid_argument("name cannot be null.");
+		throw fatal_error("name for id reference was null");
 	}
 
 	m_name = name;

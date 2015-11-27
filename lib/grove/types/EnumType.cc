@@ -7,19 +7,21 @@
 */
 
 #include <grove/types/EnumType.h>
+#include <grove/types/UIntType.h>
+#include <grove/types/IntType.h>
+
+#include <grove/exceptions/fatal_error.h>
+
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Instruction.h>
-
-#include <grove/types/UIntType.h>
-#include <grove/types/IntType.h>
 
 EnumType::EnumType(Type* contained, bool isConst)
 : Type(isConst)
 {
 	if (contained == nullptr)
 	{
-		throw std::invalid_argument("contained must not be null.");
+		throw fatal_error("contained was null");
 	}
 	
 	m_contained = contained;
@@ -78,17 +80,17 @@ EnumType* EnumType::get(Type *contained, bool isConst)
 {
 	if (contained == nullptr)
 	{
-		throw std::invalid_argument("contained must not be null.");
+		throw fatal_error("contained was null");
 	}
 	
 	if (contained->isVoidTy())
 	{
-		throw std::invalid_argument("cannot get pointer to void");
+		throw fatal_error("cannot create enum of type void");
 	}
 	
 	if (contained->isVarTy())
 	{
-		throw std::invalid_argument("cannot get pointer to var");
+		throw fatal_error("cannot create enum of type var");
 	}
 	
 	std::stringstream ss;

@@ -179,12 +179,12 @@ void Type::define(std::string signature, Type *ty)
 {
 	if (getDefined(signature) != nullptr)
 	{
-		throw std::invalid_argument("signature is already defined.");
+		throw fatal_error("trying to redefine a signature");
 	}
 	
 	if (ty == nullptr)
 	{
-		throw std::invalid_argument("ty must not be null.");
+		throw fatal_error("ty was null");
 	}
 	
 	m_defined[signature] = ty;
@@ -305,7 +305,7 @@ llvm::Value* Type::cast(void *irBuilder, Valued *val, Type *target)
 	auto it = m_cast_map.find(key);
 	if (it == m_cast_map.end() && this != target)
 	{
-		throw std::invalid_argument("no cast defined.");
+		throw fatal_error("could not find cast to use");
 	}
 	else if (this == target)
 	{

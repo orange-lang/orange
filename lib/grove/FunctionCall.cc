@@ -19,6 +19,7 @@
 #include <grove/types/PointerType.h>
 
 #include <grove/exceptions/undefined_error.h>
+#include <grove/exceptions/fatal_error.h>
 
 #include <util/assertions.h>
 #include <util/copy.h>
@@ -46,7 +47,7 @@ llvm::Function* FunctionCall::getFunction() const
 
 	if (llvm::isa<llvm::Function>(value) == false)
 	{
-		throw std::invalid_argument("Object did not contain a function");
+		throw fatal_error("object did not contain a function");
 	}
 
 	return (llvm::Function *)value;
@@ -203,7 +204,7 @@ FunctionCall::FunctionCall(OString name, std::vector<Expression *> args)
 {
 	if (name == "")
 	{
-		throw std::invalid_argument("name cannot be empty");
+		throw fatal_error("name of function call was empty");
 	}
 
 	for (auto arg : args)

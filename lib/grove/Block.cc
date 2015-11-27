@@ -12,6 +12,7 @@
 #include <grove/Module.h>
 
 #include <grove/exceptions/already_defined_error.h>
+#include <grove/exceptions/fatal_error.h>
 
 #include <typeinfo>
 
@@ -191,7 +192,7 @@ void Block::addStatement(ASTNode *statement)
 {
 	if (statement == nullptr)
 	{
-		throw std::invalid_argument("statement cannot be null.");
+		throw fatal_error("statement was null");
 	}
 	
 	m_statements.push_back(statement);

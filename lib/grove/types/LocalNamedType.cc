@@ -6,8 +6,11 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <stdexcept>
 #include <grove/Types/LocalNamedType.h>
+
+#include <grove/exceptions/fatal_error.h>
+
+
 
 Module* LocalNamedType::getModule() const
 {
@@ -19,7 +22,7 @@ LocalNamedType::LocalNamedType(Module* mod, std::string name, Type* ty)
 {
 	if (mod == nullptr)
 	{
-		throw std::invalid_argument("module must not be nullptr");
+		throw fatal_error("module was null");
 	}
 	
 	m_module = mod;
