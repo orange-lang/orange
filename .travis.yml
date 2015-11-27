@@ -35,4 +35,4 @@ script:
   - cd build
   - cmake .. $CMAKE_LLVM_PATH
   - make all
-  - ./output/bin/orange test
+  - env CTEST_OUTPUT_ON_FAILURE=1 ctest
