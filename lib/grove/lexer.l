@@ -116,7 +116,7 @@
 "private"										SAVESTR(); return PRIVATE;
 "shared"										SAVESTR(); return SHARED;
 "extern"										SAVESTR(); return EXTERN;
-"const"											SAVESTR(); return CONST;
+"const"											SAVESTR(); return CONST_FLAG;
 "enum"											SAVESTR(); return ENUM;
 
 "var"											SAVESTR(); return TYPE_VAR;

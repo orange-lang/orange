@@ -1196,7 +1196,7 @@ SAVESTR(); return EXTERN;
 case 45:
 YY_RULE_SETUP
 #line 119 "/Users/robert/dev/orange/lib/grove/lexer.l"
-SAVESTR(); return CONST;
+SAVESTR(); return CONST_FLAG;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP

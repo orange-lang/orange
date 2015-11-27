@@ -98,7 +98,7 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
-%token CONST QUESTION COLON ENUM SIZEOF
+%token CONST_FLAG QUESTION COLON ENUM SIZEOF
 
 %type <nodes> opt_statements statements compound_statement var_decl valued
 %type <nodes> opt_valued
@@ -121,7 +121,7 @@
 %type <args> arg_list
 
 /* lowest to highest precedence */
-%right CONST
+%right CONST_FLAG
 %left COMMA
 
 %right ASSIGN ARROW_LEFT PLUS_ASSIGN MINUS_ASSIGN TIMES_ASSIGN DIVIDE_ASSIGN MOD_ASSIGN
@@ -846,7 +846,7 @@ non_agg_type
 	;
 
 type
-	: CONST type
+	: CONST_FLAG type
 	{
 		$$ = $2->getConst();
 	}

@@ -144,7 +144,7 @@
      BREAK = 333,
      DO = 334,
      WHILE = 335,
-     CONST = 336,
+     CONST_FLAG = 336,
      QUESTION = 337,
      COLON = 338,
      ENUM = 339,
@@ -230,7 +230,7 @@
 #define BREAK 333
 #define DO 334
 #define WHILE 335
-#define CONST 336
+#define CONST_FLAG 336
 #define QUESTION 337
 #define COLON 338
 #define ENUM 339
@@ -759,16 +759,16 @@ static const char *const yytname[] =
   "COMP_GT", "MOD", "VALUE", "STRING", "EXTERN", "VARARG", "EQUALS",
   "NEQUALS", "WHEN", "UNLESS", "LOGICAL_AND", "LOGICAL_OR", "BITWISE_AND",
   "BITWISE_OR", "BITWISE_XOR", "FOR", "FOREVER", "LOOP", "CONTINUE",
-  "BREAK", "DO", "WHILE", "CONST", "QUESTION", "COLON", "ENUM", "SIZEOF",
-  "$accept", "start", "statements", "opt_statements", "statement",
-  "compound_statement", "valued", "structures", "function", "type_hint",
-  "extern_function", "ifs", "else_if_or_end", "unless", "inline_if",
-  "inline_unless", "for_loop", "inline_for_loop", "opt_valued",
-  "opt_expression", "param_list", "arg_list", "controls", "expression",
-  "comparison", "arithmetic", "increment", "ternary", "call", "primary",
-  "expr_list", "return", "var_decl", "var_decl_list", "enum_stmt",
-  "enum_members", "pos_or_neg_value", "term", "non_agg_type", "type",
-  "array_type", "array_def_list", "basic_type", 0
+  "BREAK", "DO", "WHILE", "CONST_FLAG", "QUESTION", "COLON", "ENUM",
+  "SIZEOF", "$accept", "start", "statements", "opt_statements",
+  "statement", "compound_statement", "valued", "structures", "function",
+  "type_hint", "extern_function", "ifs", "else_if_or_end", "unless",
+  "inline_if", "inline_unless", "for_loop", "inline_for_loop",
+  "opt_valued", "opt_expression", "param_list", "arg_list", "controls",
+  "expression", "comparison", "arithmetic", "increment", "ternary", "call",
+  "primary", "expr_list", "return", "var_decl", "var_decl_list",
+  "enum_stmt", "enum_members", "pos_or_neg_value", "term", "non_agg_type",
+  "type", "array_type", "array_def_list", "basic_type", 0
 };
 #endif
 

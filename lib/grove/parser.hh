@@ -117,7 +117,7 @@
      BREAK = 333,
      DO = 334,
      WHILE = 335,
-     CONST = 336,
+     CONST_FLAG = 336,
      QUESTION = 337,
      COLON = 338,
      ENUM = 339,
@@ -203,7 +203,7 @@
 #define BREAK 333
 #define DO 334
 #define WHILE 335
-#define CONST 336
+#define CONST_FLAG 336
 #define QUESTION 337
 #define COLON 338
 #define ENUM 339
