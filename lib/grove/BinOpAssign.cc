@@ -73,7 +73,7 @@ OString BinOpAssign::getArithOp() const
 {
 	if (doesArithmetic() == false)
 	{
-		throw std::runtime_error("operator does no arithmetic");
+		throw fatal_error("unexpected non-arithmetic operator");
 	}
 	
 	return getOperator().str().substr(0, 1);

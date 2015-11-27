@@ -10,6 +10,8 @@
 
 #include <grove/types/Type.h>
 
+#include <grove/exceptions/invalid_type_error.h>
+
 #include <util/assertions.h>
 
 #include <llvm/IR/IRBuilder.h>
@@ -46,14 +48,15 @@ void IncrementExpr::resolve()
 	auto ty = getExpression()->getType();
 	assertExists(ty, "Expression has no type.");
 	
-	if (ty->isIntTy() == false && ty->isFloatingPointTy() == false)
-	{
-		throw std::runtime_error("cannot increment type");
-	}
-	
 	if (getExpression()->hasPointer() == false)
 	{
 		throw std::runtime_error("expression is not an lvalue");
+	}
+	
+	if (ty->isIntTy() == false && ty->isFloatingPointTy() == false)
+	{
+		throw invalid_type_error(getExpression(), "cannot increment expression \
+								 of type", ty);
 	}
 	
 	setType(ty);

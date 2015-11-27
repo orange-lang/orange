@@ -7,10 +7,15 @@
 */
 
 #include <grove/Value.h>
+
 #include <grove/types/Type.h>
 #include <grove/types/IntType.h>
+
+#include <grove/exceptions/invalid_type_error.h>
+
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Constants.h>
+
 #include <string>
 
 Value::Value()
@@ -155,7 +160,7 @@ void Value::negate()
 {
 	if (getType()->isIntTy() && getType()->isSigned() == false)
 	{
-		throw std::runtime_error("Can't negate an unsigned integer");
+		throw invalid_type_error(this, "cannot negate value of type", getType());
 	}
 	
 	if (getType()->isIntTy())

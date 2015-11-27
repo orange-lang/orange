@@ -13,6 +13,8 @@
 #include <grove/types/Type.h>
 #include <grove/types/UIntType.h>
 
+#include <grove/exceptions/invalid_type_error.h>
+
 #include <llvm/IR/Module.h>
 #include <llvm/IR/DataLayout.h>
 #include <llvm/IR/Constants.h>
@@ -51,8 +53,8 @@ void SizeofExpr::resolve()
 		{
 			if (size->getType()->isIntTy() == false)
 			{
-				throw std::runtime_error("variadic array type's sizes must all \
-										 be integers.");
+				throw invalid_type_error(size, "cannot create variadic array \
+										 with size of type", size->getType());
 			}
 		}
 	}

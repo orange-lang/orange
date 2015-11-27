@@ -11,6 +11,9 @@
 #include <grove/Function.h>
 
 #include <grove/types/Type.h>
+#include <grove/types/BoolType.h>
+
+#include <grove/exceptions/binop_error.h>
 
 #include <util/assertions.h>
 
@@ -34,7 +37,9 @@ void BinOpAndOr::resolve()
 
 	if (lhs_ty->isBoolTy() == false || rhs_ty->isBoolTy() == false)
 	{
-		throw std::runtime_error("both LHS and RHS must be bool");
+		auto bool_ty = BoolType::get();
+		throw binop_error(this, lhs_ty, getOperator(), rhs_ty,
+						  bool_ty, bool_ty);
 	}
 
 	// Just copy type from LHS here since it'll always be bool.

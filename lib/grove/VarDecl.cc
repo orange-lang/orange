@@ -13,6 +13,7 @@
 #include <grove/types/UIntType.h>
 
 #include <grove/exceptions/already_defined_error.h>
+#include <grove/exceptions/invalid_type_error.h>
 
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
@@ -92,8 +93,8 @@ void VarDecl::resolve()
 		{
 			if (size->getType()->isIntTy() == false)
 			{
-				throw std::runtime_error("variadic array type's sizes must all \
-										 be integers.");
+				throw invalid_type_error(size, "cannot create variadic array \
+										 with size of type", size->getType());
 			}
 		}
 	}
@@ -142,7 +143,8 @@ VarDecl::VarDecl(Type* type, OString name, Expression* expression)
 
 	if (type->isVoidTy())
 	{
-		throw std::runtime_error("type of variable cannot be void");
+		throw invalid_type_error(&name, "cannot declare variable of type",
+								 type);
 	}
 	
 	if (type->isVariadiclySized())

@@ -10,6 +10,8 @@
 
 #include <grove/types/Type.h>
 
+#include <grove/exceptions/invalid_type_error.h>
+
 #include <util/assertions.h>
 
 #include <llvm/IR/IRBuilder.h>
@@ -42,7 +44,8 @@ void DerefExpr::resolve()
 	
 	if (ty->isPointerTy() == false)
 	{
-		throw std::runtime_error("Cannot derefence type that's not a pointer");
+		throw invalid_type_error(getExpression(), "can not dereference non-\
+								 pointer type", ty);
 	}
 	
 	setType(ty->getBaseTy());
