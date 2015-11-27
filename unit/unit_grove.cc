@@ -17,6 +17,8 @@
 #include <grove/exceptions/undefined_error.h>
 #include <grove/exceptions/binop_error.h>
 
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
 #include <util/file.h>
 
 #include <sstream>
@@ -231,6 +233,11 @@ int TestJITPrograms()
 	
 	for (auto path : test_files)
 	{
+		if (llvm::sys::path::extension(path) != ".or")
+		{
+			continue;
+		}
+		
 		try
 		{
 			auto builder = new Builder(path);
