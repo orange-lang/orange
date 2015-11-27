@@ -127,11 +127,11 @@ void FunctionCall::resolve()
 
 	if (!func_ty->isVarArg() && m_args.size() != func_ty->getArgs().size())
 	{
-		throw std::invalid_argument("function args != caller args");
+		throw std::runtime_error("function args != caller args");
 	}
 	else if (func_ty->isVarArg() && m_args.size() < func_ty->getArgs().size())
 	{
-		throw std::invalid_argument("not enough arguments to call vaarg func");
+		throw std::runtime_error("not enough arguments to call vaarg func");
 	}
 
 	setType(func_ty->getReturnTy());

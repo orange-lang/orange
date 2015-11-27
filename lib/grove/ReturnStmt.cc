@@ -75,7 +75,7 @@ void ReturnStmt::build()
     				value = getExpression()->castTo(func->getReturnType());
     				break;
     			case INCOMPATIBLE:
-            		throw std::invalid_argument("ReturnStmt ty != func ty");
+					throw std::runtime_error("ReturnStmt ty != func ty");
     			default:
     				break;
     		}

@@ -93,7 +93,7 @@ void BinOpAssign::resolve()
 	
 	if (getLHS()->hasPointer() == false)
 	{
-		throw std::invalid_argument("LHS doesn't refer to a memory address");
+		throw std::runtime_error("LHS doesn't refer to a memory address");
 	}
 	
 	assertExists(getLHS()->getType(), "LHS doesn't have a type");
@@ -101,7 +101,7 @@ void BinOpAssign::resolve()
 	
 	if (getLHS()->getType()->isConst())
 	{
-		throw std::invalid_argument("Cann't assign to a const var");
+		throw std::runtime_error("Cann't assign to a const var");
 	}
 	
 	if (doesArithmetic())

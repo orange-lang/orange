@@ -46,7 +46,7 @@ void ArrayValue::resolve()
 				highest = cmp_ty;
 				break;
 			case INCOMPATIBLE:
-				throw std::invalid_argument("Incompatible array elements");
+				throw std::runtime_error("Incompatible array elements");
 			default:
 				break;
 		}
