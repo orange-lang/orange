@@ -98,11 +98,6 @@ UIntType::UIntType(unsigned int width, bool isConst)
 	defineCast(typeid(BoolType), UIntToUInt, BoolCast);
 }
 
-unsigned int IntType::getIntegerBitWidth() const
-{
-	return m_width;
-}
-
 std::string UIntType::getSignature(unsigned int width, bool isConst)
 {
 	std::stringstream ss;
