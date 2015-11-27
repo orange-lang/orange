@@ -6,7 +6,7 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <grove/Types/LocalNamedType.h>
+#include <grove/types/LocalNamedType.h>
 
 #include <grove/exceptions/fatal_error.h>
 
