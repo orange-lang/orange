@@ -33,9 +33,10 @@ void EnumStmt::resolve()
 {
 	SearchSettings settings;
 	settings.createGeneric = false;
+	settings.includeLimit = false;
 	
 	auto named = findNamed(getName(), nullptr, settings);
-	if (named != nullptr)
+	if (named != nullptr && named != this)
 	{
 		auto base = named->as<CodeBase *>();
 		throw already_defined_error(&m_name, base, m_name, false);
