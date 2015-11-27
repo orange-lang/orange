@@ -21,5 +21,5 @@ protected:
 	std::string m_name = "";
 public:
 	already_defined_error(CodeBase* element, CodeBase* original,
-						  std::string name);
+						  std::string name, bool isVariable = true);
 };

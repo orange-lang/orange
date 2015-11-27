@@ -11,7 +11,8 @@
 
 already_defined_error::already_defined_error(CodeBase* element,
 											 CodeBase* original,
-											 std::string name)
+											 std::string name,
+											 bool isVariable)
 : code_error(element)
 {
 	if (original == nullptr)
@@ -23,11 +24,23 @@ already_defined_error::already_defined_error(CodeBase* element,
 	m_name = name;
 	
 	std::stringstream ss;
-	ss << fileWithPosition(element) << ": error: "
-	   << "variable " << m_name << " cannot be redefined\n"
-	   << getContext(element) << "\n\n";
+	if (isVariable)
+	{
+    	ss << fileWithPosition(element) << ": error: "
+    	   << "variable " << m_name << " cannot be redefined\n"
+    	   << getContext(element) << "\n\n";
+		
+	}
+	else
+	{
+		ss << fileWithPosition(element) << ": error: "
+		   << m_name << " cannot be redefined when a structure "
+		   << " of a different type exists with the same name\n"
+		   << getContext(element) << "\n\n";
+	}
+
 	ss << fileWithPosition(original) << ": previous definition "
 	   << "is here\n" << getContext(original);
 	
-	m_error = ss.str();
+	m_error = ss.str();	
 }
