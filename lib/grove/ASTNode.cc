@@ -165,7 +165,7 @@ bool ASTNode::hasNamed(OString name, SearchSettings settings) const
 		}
 	}
 	
-	return nullptr;
+	return false;
 }
 
 Named* ASTNode::findNamed(OString name, Type* type,
