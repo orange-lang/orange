@@ -12,6 +12,7 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     - llvm-toolchain-precise
+    - kubuntu-backports
     - llvm-toolchain-precise-3.6
     packages:
     - llvm-3.6
