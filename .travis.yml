@@ -18,6 +18,7 @@ addons:
     - llvm-3.6-dev
     - libedit-dev
     - g++-4.8
+    - cmake
 matrix:
   include:
     - os: osx
