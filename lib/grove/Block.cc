@@ -77,6 +77,11 @@ Named* Block::getNamed(OString name, Type* type,
 		}
 	}
 	
+	if (matches.size() == 0)
+	{
+		return nullptr;
+	}
+	
 	// If we only had one match, we can return it.
 	if (matches.size() == 1)
 	{
