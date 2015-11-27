@@ -34,6 +34,6 @@ before_install:
 script:
   - mkdir build
   - cd build
-  - cmake .. $CMAKE_LLVM_PATH
+  - cmake .. $CMAKE_LLVM_PATH -DCMAKE_BUILD_TYPE=Debug
   - make all
   - env CTEST_OUTPUT_ON_FAILURE=1 ctest
