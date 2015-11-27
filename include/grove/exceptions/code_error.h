@@ -10,6 +10,7 @@
 
 #include <exception>
 #include <string>
+#include <functional>
 
 class CodeBase;
 
@@ -33,4 +34,6 @@ public:
 	virtual const char* what() const noexcept override;
 	
 	code_error(CodeBase* element);
+	
+	code_error(CodeBase* element, std::function<std::string()> cb);
 };

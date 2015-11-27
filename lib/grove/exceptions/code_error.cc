@@ -77,3 +77,18 @@ code_error::code_error(CodeBase* element)
 	
 	m_error = ss.str();
 }
+
+code_error::code_error(CodeBase* element, std::function<std::string()> cb)
+{
+	if (element == nullptr)
+	{
+		throw fatal_error("element cannot be nullptr");
+	}
+	
+	std::stringstream ss;
+	
+	ss << fileWithPosition(element) << ": error: " << cb() << "\n"
+	   << getContext(element);
+	
+	m_error = ss.str();
+}
