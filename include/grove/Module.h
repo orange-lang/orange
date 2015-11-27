@@ -110,6 +110,10 @@ public:
 	/// Generate code.
 	void build();
 	
+	/// Output built code into an object file.
+	/// Returns the path of the object file.
+	std::string compile();
+	
 	/// Constructs a new module with a specified builder and filepath.
 	Module(Builder* builder, std::string filePath);
 };

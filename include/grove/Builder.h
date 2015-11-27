@@ -33,6 +33,8 @@ private:
 	
 	void initialize();
 	void initializeLLVM();
+	
+	std::vector<const char *> getLinkFlags() const;
 public:
 	/// Returns the library.
 	Library* getLibrary() const;
@@ -59,6 +61,9 @@ public:
 	 *		Tell each module to generate code.
 	 */
 	void compile();
+	
+	/// Links the code into an executable.
+	void link(std::string outputPath);
 	
 	/// Runs the code JIT. Returns the exit status.
 	int run();

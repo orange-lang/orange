@@ -19,11 +19,16 @@
 #include <grove/exceptions/file_error.h>
 #include <grove/exceptions/fatal_error.h>
 
+#include <util/file.h>
+
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/Support/Host.h>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/FormattedStream.h>
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/Target/TargetSubtargetInfo.h>
+#include <llvm/IR/LegacyPassManager.h>
 
 
 llvm::Module* Module::getLLVMModule() const
@@ -188,6 +193,40 @@ void Module::resolve()
 void Module::build()
 {
 	getMain()->build();
+}
+
+std::string Module::compile()
+{
+	// Get the file
+	std::error_code ec;
+	auto path = getTempFile("module", "o");
+	llvm::raw_fd_ostream raw(path, ec, llvm::sys::fs::OpenFlags::F_RW);
+	
+	if (ec)
+	{
+		throw fatal_error(ec.message());
+	}
+	
+	llvm::formatted_raw_ostream strm(raw);
+	
+	auto pm = new llvm::legacy::PassManager;
+	pm->add(new llvm::DataLayoutPass());
+	
+	auto emission = llvm::LLVMTargetMachine::CGFT_ObjectFile;
+	
+	bool err = getBuilder()->getTargetMachine()->addPassesToEmitFile(*pm, strm,
+																	 emission);
+	if (err == true)
+	{
+		throw fatal_error("could not emit file");
+	}
+	
+	pm->run(*getLLVMModule());
+	strm.flush();
+	raw.flush();
+	raw.close();
+	
+	return path;
 }
 
 Module::Module(Builder* builder, std::string filePath)

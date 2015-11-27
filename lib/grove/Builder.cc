@@ -15,6 +15,8 @@
 #include <grove/exceptions/fatal_error.h>
 
 #include <util/assertions.h>
+#include <util/file.h>
+#include <util/link.h>
 
 #include <llvm/ExecutionEngine/GenericValue.h>
 #include <llvm/ExecutionEngine/MCJIT.h>
@@ -106,6 +108,39 @@ int Builder::run()
 	return status.IntVal.getSExtValue();
 }
 
+void Builder::link(std::string outputPath)
+{
+	auto options = getLinkFlags();
+	
+	if (outputPath == "")
+	{
+#ifdef _WIN32 
+		outputPath = "a.exe";
+#else
+		outputPath = "a.out";
+#endif
+	}
+	
+	options.push_back("-o");
+	options.push_back(outputPath.c_str());
+	
+	std::vector<std::string> tempFiles;
+	
+	for (auto mod : m_modules)
+	{
+		auto path = mod->compile();
+		options.push_back(path.c_str());
+		tempFiles.push_back(path);
+	}
+	
+	invokeLinkerWithOptions(options);
+	
+	for (auto temp : tempFiles)
+	{
+		std::remove(temp.c_str());
+	}
+}
+
 void Builder::initializeLLVM()
 {
 	LLVMInitializeNativeTarget();
@@ -140,6 +175,32 @@ void Builder::initialize()
 	
 	auto mod = new Module(this, m_build_path);
 	m_modules.push_back(mod);
+}
+
+std::vector<const char*> Builder::getLinkFlags() const
+{
+	std::vector<const char*> options;
+	
+#if defined(__APPLE__) || defined(__linux__)
+	auto root = combinePaths(INSTALL_LOCATION, "lib/libor/boot.o");
+	options.push_back(root.c_str());
+#elif defined(_WIN32)
+	auto root = combinePaths(INSTALL_LOCATION, "lib/libor/boot.obj");
+	options.push_back(root.c_str());
+#endif
+	
+#if defined(__APPLE__)
+	options.push_back("-w");
+	options.push_back("-ldylib1.o");
+#elif defined(__linux__)
+	options.push_back("-I/lib64/ld-linux-x86-64.so.2");
+#elif defined(_WIN32)
+	options.push_back("-LC:/Windows/System32");
+	options.push_back("-lmsvcrt");
+#endif
+	
+	options.push_back("-lc");
+	return options;
 }
 
 Builder::Builder(std::string path)
