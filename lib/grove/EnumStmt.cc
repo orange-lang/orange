@@ -84,8 +84,7 @@ void EnumStmt::addMember(OString name, Value *val)
 	
 	if (it != m_members.end())
 	{
-		throw std::runtime_error("Enum already has a value with this \
-							 name");
+		throw already_defined_error(&name, &it->name, name);
 	}
 	
 	if (val != nullptr)
