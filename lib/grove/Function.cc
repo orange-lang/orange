@@ -338,10 +338,10 @@ void Function::resolve()
 					highest = cmp_ty;
 					break;
 				case INCOMPATIBLE:
-					throw invalid_type_error(retStmts[i], "function has \
-											 multiple return statements that \
-											 are incompatible with return \
-											 statement of type", cmp_ty);
+					throw invalid_type_error(retStmts[i], "function has "
+											 "multiple return statements that "
+											 "are incompatible with return "
+											 "statement of type", cmp_ty);
 				default:
 					break;
 			}

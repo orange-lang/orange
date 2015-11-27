@@ -130,8 +130,8 @@ void FunctionCall::resolve()
 		throw code_error(this, getNode()->as<CodeBase *>(),
 						 []() -> std::string
 			{
-				return "number of arguments in function call do not match \
-					function parameters";
+				return "number of arguments in function call do not match "
+					"function parameters";
 			});
 	}
 	else if (func_ty->isVarArg() && m_args.size() < func_ty->getArgs().size())
@@ -139,8 +139,8 @@ void FunctionCall::resolve()
 		throw code_error(this, getNode()->as<CodeBase *>(),
 					 []() -> std::string
 		{
-			return "not enough arguments in function call to call \
-				variable argument sized function";
+			return "not enough arguments in function call to call "
+				"variable argument sized function";
 		});
 	}
 

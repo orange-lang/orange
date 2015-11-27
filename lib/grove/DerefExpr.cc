@@ -44,8 +44,8 @@ void DerefExpr::resolve()
 	
 	if (ty->isPointerTy() == false)
 	{
-		throw invalid_type_error(getExpression(), "can not dereference non-\
-								 pointer type", ty);
+		throw invalid_type_error(getExpression(), "can not dereference non-"
+								 "pointer type", ty);
 	}
 	
 	setType(ty->getBaseTy());

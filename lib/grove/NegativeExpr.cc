@@ -32,13 +32,13 @@ void NegativeExpr::resolve()
 	
 	if (ty->isPODTy() == false || ty->isVoidTy())
 	{
-		throw invalid_type_error(getExpression(), "cannot negate expression of \
-								 type", ty);
+		throw invalid_type_error(getExpression(), "cannot negate expression of "
+								 "type", ty);
 	}
 	else if (ty->isIntTy() && ty->isSigned() == false)
 	{
-		throw invalid_type_error(getExpression(), "cannot negate expression of \
-						 unsigned type", ty);
+		throw invalid_type_error(getExpression(), "cannot negate expression of "
+        						 "unsigned type", ty);
 	}
 	
 	setType(ty);

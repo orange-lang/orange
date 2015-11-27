@@ -53,8 +53,8 @@ void SizeofExpr::resolve()
 		{
 			if (size->getType()->isIntTy() == false)
 			{
-				throw invalid_type_error(size, "cannot create variadic array \
-										 with size of type", size->getType());
+				throw invalid_type_error(size, "cannot create variadic array "
+										 "with size of type", size->getType());
 			}
 		}
 	}

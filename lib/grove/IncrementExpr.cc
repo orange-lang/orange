@@ -58,8 +58,8 @@ void IncrementExpr::resolve()
 	
 	if (ty->isIntTy() == false && ty->isFloatingPointTy() == false)
 	{
-		throw invalid_type_error(getExpression(), "cannot increment expression \
-								 of type", ty);
+		throw invalid_type_error(getExpression(), "cannot increment expression "
+								 "of type", ty);
 	}
 	
 	setType(ty);

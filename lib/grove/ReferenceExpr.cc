@@ -30,8 +30,8 @@ void ReferenceExpr::resolve()
 	{
 		throw code_error(getExpression(), []() -> std::string
 			{
-				return "cannot get a pointer to expression that is not an \
-    				lvalue";
+				return "cannot get a pointer to expression that is not an "
+    				"lvalue";
 			});
 	}
 	

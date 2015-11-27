@@ -28,8 +28,8 @@ void CondBlock::resolve()
 	
 	if (getExpression()->getType()->isBoolTy() == false)
 	{
-		throw invalid_type_error(getExpression(), "expression of condition was \
-								 non-boolean type", getExpression()->getType());
+		throw invalid_type_error(getExpression(), "expression of condition was "
+								 "non-boolean type", getExpression()->getType());
 	}
 }
 
