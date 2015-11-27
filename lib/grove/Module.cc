@@ -68,6 +68,11 @@ void Module::parse()
 	extern int yyonce;
 	extern void yyflushbuffer();
 	
+	if (llvm::sys::fs::is_directory(llvm::Twine(getFile())) == true)
+	{
+		throw file_error(this);
+	}
+	
 	auto file = fopen(getFile().c_str(), "r");
 	if (file == nullptr)
 	{
