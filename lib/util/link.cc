@@ -50,15 +50,18 @@ int invokeProgramWithOptions(const char *program, std::vector<const char *> opti
 		std::cerr << "fatal: failed to create new process\n";
 		exit(1);
 	} else if (pid > 0) {
-		int status;
-		waitpid(pid, &status, 0);
-		return (int)WEXITSTATUS(status);
+		int status = 0;
+		waitpid(pid, &status, WUNTRACED);
+		auto retcode = WEXITSTATUS(status);
+		
+		return retcode;
 	} else {
 		if (do_close == true) {
 			close(0);
 			close(1);
 			close(2);
 		}
+		
 		execvp(program, (char **) &coptions[0]);
 		exit(1); // should never reach this
 	}
