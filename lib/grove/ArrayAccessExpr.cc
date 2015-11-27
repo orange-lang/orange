@@ -9,6 +9,8 @@
 #include <grove/ArrayAccessExpr.h>
 #include <grove/Module.h>
 
+#include <grove/exceptions/invalid_type_error.h>
+
 #include <grove/types/Type.h>
 
 #include <util/assertions.h>
@@ -41,7 +43,8 @@ void ArrayAccessExpr::resolve()
 	bool valid = array_ty->isArrayTy() || array_ty->isPointerTy();
 	if (valid == false)
 	{
-		throw std::runtime_error("Can only use [] with arrays or pointers");
+		throw invalid_type_error(this, "cannot access element of non-array type",
+								 array_ty);
 	}
 	
 	auto idx_ty = getIndex()->getType();
@@ -49,7 +52,8 @@ void ArrayAccessExpr::resolve()
 	
 	if (idx_ty->isIntTy() == false)
 	{
-		throw std::runtime_error("Can only use ints to access arrays");
+		throw invalid_type_error(this, "cannot get index of array using type",
+								 idx_ty);
 	}
 	
 	setType(array_ty->getBaseTy());
