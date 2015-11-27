@@ -224,4 +224,9 @@ Builder::~Builder()
 {
 	delete m_library;
 	delete m_settings;
+	
+	for (auto module : m_modules)
+	{
+		delete module;
+	}
 }

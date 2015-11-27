@@ -38,6 +38,7 @@ int TestNoProgram()
 		auto builder = new Builder("/fake_path_O123ZCVAQ.tmp");
 		builder->compile();
 		builder->run();
+		delete builder;
 	}
 	catch (file_error& e)
 	{
@@ -100,6 +101,7 @@ int TestRet1()
 	builder->compile();
 	
 	int result = builder->run();
+	delete builder;
 	
 	std::remove(temp_path.c_str());
 	return cmpEq(result, 1);
@@ -127,6 +129,7 @@ int TestRet2()
 	builder->compile();
 	
 	int result = builder->run();
+	delete builder;
 	
 	std::remove(temp_path.c_str());
 	return cmpEq(result, 2);
@@ -138,7 +141,7 @@ int TestName(){\
 auto temp_path = getTempFile("test", "or"); std::ofstream file(temp_path);\
 if (file.is_open() == false) { std::remove(temp_path.c_str()); return fail(); }\
 file << body; file.close();\
-try { auto builder = new Builder(temp_path); builder->compile(); }\
+try { auto builder = new Builder(temp_path); builder->compile(); delete builder; }\
 catch (catchException& e) { std::remove(temp_path.c_str()); return pass(); }\
 catch (std::exception& e) { std::remove(temp_path.c_str()); return fail(); }\
 ADD_ERROR(TestName, "No exception caught");\
@@ -254,6 +257,8 @@ int TestJITPrograms()
 				ss << path << " returned " << val;
 				ADD_ERROR(TestJITPrograms, ss.str());
 			}
+			
+			delete builder;
 		}
 		catch(std::exception& e)
 		{
@@ -307,6 +312,7 @@ int TestBuiltPrograms()
 			
         	std::remove(prog_path);
 			delete prog_path;
+			delete builder;
 		}
 		catch(std::exception& e)
 		{

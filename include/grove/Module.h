@@ -116,4 +116,6 @@ public:
 	
 	/// Constructs a new module with a specified builder and filepath.
 	Module(Builder* builder, std::string filePath);
+	
+	~Module();
 };

@@ -291,5 +291,8 @@ ASTNode::ASTNode()
 
 ASTNode::~ASTNode()
 {
-	// Do nothing 
+	for (auto child : m_children)
+	{
+		delete child;
+	}
 }

@@ -272,3 +272,10 @@ Module::Module(Builder* builder, std::string filePath)
 	
 	parse();
 }
+
+Module::~Module()
+{
+	delete m_llvm_module;
+	delete m_ir_builder;
+	delete m_main;
+}

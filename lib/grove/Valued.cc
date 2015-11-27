@@ -7,7 +7,7 @@
 */
 
 #include <grove/Valued.h>
-
+#include <llvm/IR/Value.h>
 
 llvm::Value* Valued::getPointer() const
 {
