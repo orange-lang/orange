@@ -309,7 +309,7 @@ int TestSameNameStructs()
 	}
 	
 	
-	ADD_ERROR(TestMatchingGenerics, "No exception caught");
+	ADD_ERROR(TestSameNameStructs, "No exception caught");
 	std::remove(temp_path.c_str());
 	return fail();
 }
