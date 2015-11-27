@@ -248,6 +248,66 @@ int TestSameVariable()
 		std::remove(temp_path.c_str());
 		return pass();
 	}
+	catch (std::exception& e)
+	{
+		std::remove(temp_path.c_str());
+		return fail();
+	}
+	
+	ADD_ERROR(TestMatchingGenerics, "No exception caught");
+	std::remove(temp_path.c_str());
+	return fail();
+}
+
+ADD_TEST(TestSameNameStructs, "Test program that has two different structures with the same name");
+int TestSameNameStructs()
+{
+	auto temp_path = getTempFile("test", "or");
+	std::ofstream file(temp_path);
+	
+	if (file.is_open() == false)
+	{
+		std::cerr << "Couldn't open " << temp_path << std::endl;
+		std::remove(temp_path.c_str());
+		return 1;
+	}
+	
+	// Write small orange program to file.
+	
+	file << R"EOF(
+	def foo()
+		return 5
+	end
+	
+	enum foo
+		TESTING = 0
+	end
+	
+	var a = 5
+	var b = 6
+	var c = foo.TESTING
+	var d = foo()
+	)EOF";
+	
+	file.close();
+	
+	// create our builder.
+	try
+	{
+		auto builder = new Builder(temp_path);
+		builder->compile();
+	}
+	catch (already_defined_error& e)
+	{
+		std::remove(temp_path.c_str());
+		return pass();
+	}
+	catch (std::exception& e)
+	{
+		std::remove(temp_path.c_str());
+		return fail();
+	}
+	
 	
 	ADD_ERROR(TestMatchingGenerics, "No exception caught");
 	std::remove(temp_path.c_str());
