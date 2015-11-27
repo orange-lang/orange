@@ -8,6 +8,9 @@
 
 #include <grove/BinOpArith.h>
 #include <grove/types/Type.h>
+
+#include <grove/exceptions/fatal_error.h>
+
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
 
@@ -88,7 +91,7 @@ void BinOpArith::resolve()
 	
 	if (op == llvm::Instruction::BinaryOpsEnd)
 	{
-		throw std::runtime_error("Cannot do operation");
+		throw fatal_error("Could not determine operation");
 	}
 }
 

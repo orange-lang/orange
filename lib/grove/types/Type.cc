@@ -9,6 +9,8 @@
 #include <grove/types/Type.h>
 #include <grove/types/PointerType.h>
 
+#include <grove/exceptions/fatal_error.h>
+
 #include <llvm/IR/Type.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/IRBuilder.h>
@@ -142,7 +144,7 @@ Type* Type::getRootTy() const
 
 Type* Type::getConst() const
 {
-	throw std::runtime_error("Cannot get const of this type");
+	throw fatal_error("getConst not overriden for type");
 }
 
 bool Type::matches(Type *ty) const
@@ -269,7 +271,7 @@ void Type::defineCast(const std::type_info& to, int cast, TypeCast func)
 
 std::string Type::getSignature() const
 {
-	throw std::runtime_error("Type::getSignature shouldn't be called.");
+	throw fatal_error("Type::getSignature not overriden");
 }
 
 int Type::castOperation(Type *to)
@@ -285,7 +287,7 @@ int Type::castOperation(Type *to)
 	auto it_cb = m_cast_ty_map.find(key);
 	if (it_cb == m_cast_ty_map.end())
 	{
-		throw std::runtime_error("No cast defined.");
+		throw fatal_error("Could not find cast");
 	}
 	
 	return it_cb->second(this, to);

@@ -8,6 +8,8 @@
 
 #include <grove/AccessExpr.h>
 
+#include <grove/exceptions/fatal_error.h>
+
 #include <util/assertions.h>
 
 ASTNode* AccessExpr::copy() const
@@ -67,7 +69,7 @@ AccessExpr::AccessExpr(Expression* LHS, OString name)
 {
 	if (name == "")
 	{
-		throw std::runtime_error("name must not be empty");
+		throw fatal_error("name must not be empty");
 	}
 	
 	m_LHS = LHS;

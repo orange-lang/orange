@@ -18,6 +18,7 @@
 #include <grove/types/PointerType.h>
 
 #include <grove/exceptions/already_defined_sig_error.h>
+#include <grove/exceptions/fatal_error.h>
 
 #include <util/assertions.h>
 #include <util/copy.h>
@@ -106,7 +107,7 @@ Type* Function::getReturnType() const
 	auto ty = getType();
 	if (ty == nullptr || ty->isFunctionTy() == false)
 	{
-		throw std::runtime_error("Function does not have a function type.");
+		throw fatal_error("function not assigned a function type.");
 	}
 	
 	return ty->getBaseTy();
@@ -132,7 +133,7 @@ bool Function::isVoidFunction() const
 	auto retType = getReturnType();
 	if (retType == nullptr)
 	{
-		throw std::runtime_error("Couldn't get function type.");
+		throw fatal_error("Couldn't get type of function");
 	}
 	
 	return retType->getLLVMType()->isVoidTy();
@@ -155,7 +156,7 @@ Genericable* Function::createInstance(Type *type)
 {
 	if (isGeneric() == false)
 	{
-		throw std::runtime_error("Cannot create instance of non-generic");
+		throw fatal_error("Cannot call createInstance on non-generic function");
 	}
 	
 	assertExists(type, "Type cannot be null");
@@ -185,7 +186,7 @@ Genericable* Function::createInstance(Type *type)
 	
 	if (clone->isGeneric())
 	{
-		throw std::runtime_error("instance is still generic!");
+		throw fatal_error("instance is still a generic!");
 	}
 	
 	clone->m_instance_of = this;
@@ -270,7 +271,7 @@ void Function::findDependencies()
 	
 	if (retStmts.size() > 0 && found_ret == false)
 	{
-		throw std::runtime_error("Could not determine return type for function");
+		throw fatal_error("could not determine return type for function");
 	}
 }
 
@@ -416,7 +417,7 @@ void Function::optimize()
 	{
 		if (it->getTerminator() == nullptr)
 		{
-			throw std::runtime_error("Block is missing terminator!");
+			throw fatal_error("block is missing terminator");
 		}
 	}
 	

@@ -9,6 +9,9 @@
 #include <grove/Genericable.h>
 #include <grove/Typed.h>
 #include <grove/Named.h>
+
+#include <grove/exceptions/fatal_error.h>
+
 #include <grove/types/Type.h>
 
 #include <util/assertions.h>
@@ -22,7 +25,7 @@ Genericable* Genericable::createInstance(Type *type)
 {
 	if (isGeneric() == false)
 	{
-		throw std::runtime_error("cannot create instance of non-generic");
+		throw fatal_error("cannot create instance of non-generic");
 	}
 	
 	return nullptr;
@@ -32,7 +35,7 @@ Genericable* Genericable::findInstance(Type *type) const
 {
 	if (isGeneric() == false)
 	{
-		throw std::runtime_error("cannot find instance of non-generic");
+		throw fatal_error("cannot find instance of non-generic");
 	}
 	
 	for (auto instance : m_instances)

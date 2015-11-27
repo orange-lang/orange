@@ -11,11 +11,13 @@
 #include <grove/Library.h>
 #include <grove/Module.h>
 #include <grove/Function.h>
-#include <llvm/IR/Module.h>
+
+#include <grove/exceptions/fatal_error.h>
+
+#include <util/assertions.h>
 
 #include <llvm/ExecutionEngine/GenericValue.h>
 #include <llvm/ExecutionEngine/MCJIT.h>
-
 #include <llvm/IR/Module.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Support/TargetRegistry.h>
@@ -24,7 +26,6 @@
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/Target/TargetMachine.h>
 
-#include <util/assertions.h>
 
 Library* Builder::getLibrary() const
 {
@@ -91,7 +92,7 @@ int Builder::run()
 	
 	if (engine == nullptr)
 	{
-		throw std::runtime_error("could not create engine");
+		throw fatal_error("could not create engine");
 	}
 	
 	engine->clearAllGlobalMappings();

@@ -17,6 +17,7 @@
 #include <grove/types/IntType.h>
 
 #include <grove/exceptions/file_error.h>
+#include <grove/exceptions/fatal_error.h>
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
@@ -80,7 +81,7 @@ Block* Module::getBlock() const
 {
 	if (m_ctx.size() == 0)
 	{
-		throw std::runtime_error("No blocks have been added to module.");
+		throw fatal_error("no blocks have been added to the module");
 	}
 	
 	return m_ctx.top();
@@ -95,7 +96,7 @@ void Module::pushBlock(Block *block)
 {
 	if (block == nullptr)
 	{
-		throw std::invalid_argument("block must not be nullptr.");
+		throw fatal_error("block must not be nullptr");
 	}
 	
 	m_ctx.push(block);
@@ -105,7 +106,7 @@ Block* Module::popBlock()
 {
 	if (m_ctx.size() == 0)
 	{
-		throw std::invalid_argument("No blocks have been added to module.");
+		throw fatal_error("no blocks have been added to the module");
 	}
 	
 	auto popped = m_ctx.top();
@@ -193,7 +194,7 @@ Module::Module(Builder* builder, std::string filePath)
 {
 	if (builder == nullptr)
 	{
-		throw std::invalid_argument("builder must not be null.");
+		throw fatal_error("builder must not be null");
 	}
 	
 	m_builder = builder;

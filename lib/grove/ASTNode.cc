@@ -7,9 +7,12 @@
 */
 
 #include <stdexcept>
+
 #include <grove/ASTNode.h>
 #include <grove/Module.h>
 #include <grove/Block.h>
+
+#include <grove/exceptions/fatal_error.h>
 
 void ASTNode::addAllChildrenAsDependencies()
 {
@@ -104,7 +107,7 @@ bool ASTNode::isRootNode() const
 
 ASTNode* ASTNode::copy() const
 {
-	throw std::runtime_error("ASTNode::copy() not overridden");
+	throw fatal_error("ASTNode::copy() not overriden");
 }
 
 void ASTNode::findDependencies()

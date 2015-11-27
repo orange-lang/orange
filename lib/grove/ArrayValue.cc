@@ -11,6 +11,8 @@
 #include <grove/types/Type.h>
 #include <grove/types/ArrayType.h>
 
+#include <grove/exceptions/fatal_error.h>
+
 #include <util/llvmassertions.h>
 #include <util/assertions.h>
 #include <util/copy.h>
@@ -74,7 +76,7 @@ void ArrayValue::build()
 			
 			if (llvm::isa<llvm::Constant>(ele) == false)
 			{
-				throw std::runtime_error("element was not a constant");
+				throw fatal_error("element was not a constant");
 			}
 				
 			consts.push_back((llvm::Constant *)ele);
