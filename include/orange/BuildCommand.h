@@ -15,6 +15,8 @@
  */
 class BuildCommand : public OptionsState
 {
+private:
+	std::shared_ptr<StateFlag> m_output;
 public:
 	virtual int run(std::vector<std::string> args) override;
 	

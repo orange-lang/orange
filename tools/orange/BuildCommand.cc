@@ -7,14 +7,18 @@
 */
 
 #include <iostream>
+#include <memory>
 #include <orange/BuildCommand.h>
 #include <grove/Builder.h>
+#include <cmd/StateFlag.h>
 
 int BuildCommand::run(std::vector<std::string> args)
 {
 	if (args.size() == 0)
 	{
-		throw std::runtime_error("build takes an argument");
+		std::cerr << "build cannot build a project at this time.\n";
+		std::cerr << "Pass in a file to build as an argument.\n";
+		return 1;
 	}
 	
 	// Run a thing.
@@ -24,7 +28,14 @@ int BuildCommand::run(std::vector<std::string> args)
 		auto builder = new Builder(program_to_run);
 		builder->compile();
 		
-		builder->link("");
+		if (m_output->getUsed())
+		{
+			builder->link(m_output->getValue());
+		}
+		else
+		{
+    		builder->link("");
+		}
 	}
 	catch (std::exception& e)
 	{
@@ -38,5 +49,7 @@ int BuildCommand::run(std::vector<std::string> args)
 BuildCommand::BuildCommand()
 : OptionsState("build")
 {
-	// Do nothing.
+	m_output = std::shared_ptr<StateFlag>(new StateFlag("o", "output", true));
+	
+	addFlag(m_output.get());
 }
