@@ -10,6 +10,7 @@
 #include <grove/types/Type.h>
 
 #include <grove/exceptions/fatal_error.h>
+#include <grove/exceptions/binop_error.h>
 
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
@@ -79,7 +80,8 @@ void BinOpArith::resolve()
 			setType(getLHS()->getType());
 			break;
 		case INCOMPATIBLE:
-			throw std::runtime_error("Cannot get type of expression.");
+			throw binop_error(this, getLHS()->getType(), getOperator(),
+							  getRHS()->getType());
 			break;
 		case EQUAL:
 			setType(getLHS()->getType());

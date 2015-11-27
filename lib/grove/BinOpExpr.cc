@@ -7,8 +7,13 @@
 */
 
 #include <grove/BinOpExpr.h>
-#include <util/assertions.h>
+
 #include <grove/types/Type.h>
+
+#include <grove/exceptions/binop_error.h>
+#include <grove/exceptions/fatal_error.h>
+
+#include <util/assertions.h>
 
 bool BinOpExpr::areTypesCompatible() const
 {
@@ -75,7 +80,8 @@ void BinOpExpr::resolve()
 {
 	if (areTypesCompatible() == false)
 	{
-		throw std::invalid_argument("LHS is not compatible with RHS");
+		throw binop_error(&m_operator, getLHS()->getType(), getOperator(),
+						  getRHS()->getType());
 	}
 }
 
@@ -86,7 +92,7 @@ BinOpExpr::BinOpExpr(Expression* LHS, OString op, Expression* RHS)
 	
 	if (op == "")
 	{
-		throw std::invalid_argument("op must not be empty");
+		throw fatal_error("op must not be empty");
 	}
 	
 	m_LHS = LHS;
