@@ -184,17 +184,23 @@ const
 			break;
 		}
 		
-		// Find closest node whose parent is that block.
-		auto limit = ptr;
-		while (limit != nullptr)
+		const ASTNode* limit = nullptr;
+		
+		if (settings.includeLimit)
 		{
-			if (limit->getParent() == block)
-			{
-				break;
-			}
-			
-			limit = limit->getParent();
+    		// Find closest node whose parent is that block.
+    		limit = ptr;
+    		while (limit != nullptr)
+    		{
+    			if (limit->getParent() == block)
+    			{
+    				break;
+    			}
+    			
+    			limit = limit->getParent();
+    		}	
 		}
+		
 	
 		auto named = block->getNamed(name, type, limit, settings);
 		if (named != nullptr)
