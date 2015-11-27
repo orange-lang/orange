@@ -314,6 +314,108 @@ int TestSameNameStructs()
 	return fail();
 }
 
+ADD_TEST(TestSameNameStructsUnused, "Test program that has two unused different structures with the same name (function, enum)");
+int TestSameNameStructsUnused()
+{
+	auto temp_path = getTempFile("test", "or");
+	std::ofstream file(temp_path);
+	
+	if (file.is_open() == false)
+	{
+		std::cerr << "Couldn't open " << temp_path << std::endl;
+		std::remove(temp_path.c_str());
+		return 1;
+	}
+	
+	// Write small orange program to file.
+	
+	file << R"EOF(
+	def foo()
+	return 5
+	end
+	
+	enum foo
+	TESTING = 0
+	end
+	)EOF";
+	
+	file.close();
+	
+	// create our builder.
+	try
+	{
+		auto builder = new Builder(temp_path);
+		builder->compile();
+	}
+	catch (already_defined_error& e)
+	{
+		std::remove(temp_path.c_str());
+		return pass();
+	}
+	catch (std::exception& e)
+	{
+		std::remove(temp_path.c_str());
+		return fail();
+	}
+	
+	
+	ADD_ERROR(TestSameNameStructsUnused, "No exception caught");
+	std::remove(temp_path.c_str());
+	return fail();
+}
+
+ADD_TEST(TestSameNameStructsUnusedReverse, "Test program that has two unused different structures with the same name (enum, function)");
+int TestSameNameStructsUnusedReverse()
+{
+	auto temp_path = getTempFile("test", "or");
+	std::ofstream file(temp_path);
+	
+	if (file.is_open() == false)
+	{
+		std::cerr << "Couldn't open " << temp_path << std::endl;
+		std::remove(temp_path.c_str());
+		return 1;
+	}
+	
+	// Write small orange program to file.
+	
+	file << R"EOF(
+	enum foo
+	TESTING = 0
+	end
+	
+	def foo()
+	return 5
+	end
+	)EOF";
+	
+	file.close();
+	
+	// create our builder.
+	try
+	{
+		auto builder = new Builder(temp_path);
+		builder->compile();
+	}
+	catch (already_defined_error& e)
+	{
+		std::remove(temp_path.c_str());
+		return pass();
+	}
+	catch (std::exception& e)
+	{
+		std::remove(temp_path.c_str());
+		return fail();
+	}
+	
+	
+	ADD_ERROR(TestSameNameStructsUnusedReverse, "No exception caught");
+	std::remove(temp_path.c_str());
+	return fail();
+}
+
+
+
 #define ADD_TEST_FOLDER(name, folder)\
 ADD_TEST(name, "Test building " #folder " programs in test/" #folder ".")\
 int name(){\
