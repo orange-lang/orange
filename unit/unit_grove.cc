@@ -185,6 +185,10 @@ TEST_EXCEPTION(UndefinedVariable, undefined_error, R"EOF(
 	var foo = a + 5
 )EOF");
 
+TEST_EXCEPTION(UndefinedFunction, undefined_error, R"EOF(
+   foobar();
+)EOF");
+
 TEST_EXCEPTION(TestSameNameStructsUnused, already_defined_error, R"EOF(
 	def foo()
 		return 5
