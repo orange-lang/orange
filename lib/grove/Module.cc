@@ -197,9 +197,14 @@ void Module::build()
 
 std::string Module::compile()
 {
+	auto suffix = "o";
+#ifdef _WIN32 
+	suffix = "obj";
+#endif
+	
 	// Get the file
 	std::error_code ec;
-	auto path = getTempFile("module", "o");
+	auto path = getTempFile("module", suffix);
 	llvm::raw_fd_ostream raw(path, ec, llvm::sys::fs::OpenFlags::F_RW);
 	
 	if (ec)
