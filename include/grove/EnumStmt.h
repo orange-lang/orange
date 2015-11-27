@@ -42,6 +42,7 @@ private:
 public:
 	virtual ASTNode* copy() const override;
 	
+	virtual void resolve() override;
 	virtual void build() override;
 	
 	virtual bool isAccessible() const override;

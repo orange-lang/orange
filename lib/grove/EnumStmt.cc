@@ -12,6 +12,8 @@
 #include <grove/types/Type.h>
 #include <grove/types/EnumType.h>
 
+#include <grove/exceptions/already_defined_error.h>
+
 #include <util/assertions.h>
 
 ASTNode* EnumStmt::copy() const
@@ -25,6 +27,19 @@ ASTNode* EnumStmt::copy() const
 	}
 	
 	return copied_enum;
+}
+
+void EnumStmt::resolve()
+{
+	NamedSearchSettings settings;
+	settings.createGeneric = false;
+	
+	auto named = findNamed(getName(), nullptr, settings);
+	if (named != nullptr)
+	{
+		auto base = named->as<CodeBase *>();
+		throw already_defined_error(&m_name, base, m_name, false);
+	}
 }
 
 void EnumStmt::build()
@@ -60,7 +75,6 @@ Expression* EnumStmt::access(OString name, Type *hint) const
 
 void EnumStmt::addMember(OString name, Value *val)
 {
-	
 	auto it = std::find_if(m_members.begin(), m_members.end(),
 		[name] (EnumValPair pair) -> bool
 		{
