@@ -11,6 +11,7 @@
 #include <grove/types/Type.h>
 #include <grove/types/ArrayType.h>
 
+#include <grove/exceptions/code_error.h>
 #include <grove/exceptions/fatal_error.h>
 
 #include <util/llvmassertions.h>
@@ -46,7 +47,16 @@ void ArrayValue::resolve()
 				highest = cmp_ty;
 				break;
 			case INCOMPATIBLE:
-				throw std::runtime_error("Incompatible array elements");
+				throw code_error(getElements().at(i),
+					[highest, cmp_ty]() -> std::string
+					{
+						std::stringstream ss;
+						ss << "element of type " << cmp_ty->getString()
+						   << " cannot be casted to array of implicit type "
+						   << highest->getString();
+						
+						return ss.str();
+					});
 			default:
 				break;
 		}

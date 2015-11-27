@@ -11,6 +11,7 @@
 #include <grove/types/BoolType.h>
 
 #include <grove/exceptions/fatal_error.h>
+#include <grove/exceptions/binop_error.h>
 
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
@@ -96,7 +97,8 @@ void BinOpCompare::build()
 				vRHS = getRHS()->castTo(getLHS());
 				break;
 			case INCOMPATIBLE:
-        		throw std::runtime_error("Cannot cast types.");
+				throw binop_error(this, getLHS()->getType(), getOperator(),
+								  getRHS()->getType());
 				break;
 			default:
 				// Do nothing

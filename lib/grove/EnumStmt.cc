@@ -124,7 +124,14 @@ EnumStmt::EnumStmt(OString name, Type* baseType)
 	
 	if (baseType->isIntTy() == false)
 	{
-		throw std::runtime_error("base type of enum has to be an integer");
+		throw code_error(&name, [name]() -> std::string
+			{
+				std::stringstream ss;
+				ss << "expected internal type of enum " << name.str()
+				   << " to be an integer type";
+				
+				return ss.str();
+			});
 	}
 	
 	setType(EnumType::get(baseType, false));

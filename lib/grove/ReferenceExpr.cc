@@ -10,6 +10,8 @@
 
 #include <grove/types/Type.h>
 
+#include <grove/exceptions/code_error.h>
+
 #include <util/assertions.h>
 
 ASTNode* ReferenceExpr::copy() const
@@ -26,7 +28,11 @@ void ReferenceExpr::resolve()
 {
 	if (getExpression()->hasPointer() == false)
 	{
-		throw std::runtime_error("Expression is not an l-value");
+		throw code_error(getExpression(), []() -> std::string
+			{
+				return "cannot get a pointer to expression that is not an \
+    				lvalue";
+			});
 	}
 	
 	auto ty = getExpression()->getType();

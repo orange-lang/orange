@@ -14,6 +14,8 @@
 
 #include <grove/types/Type.h>
 
+#include <grove/exceptions/code_error.h>
+
 #include <util/assertions.h>
 #include <util/copy.h>
 
@@ -90,8 +92,15 @@ void Loop::resolve()
 		
     	if (condition_ty->isBoolTy() == false)
     	{
-			throw std::runtime_error("The condition of a loop must be a boolean");
-    	}	
+			throw code_error(getCondition(), [condition_ty]() -> std::string
+				{
+					std::stringstream ss;
+					ss << "condition of loop is " << condition_ty->getString()
+					   << ", expected bool";
+					
+					return ss.str();
+				});
+    	}
 	}
 }
 

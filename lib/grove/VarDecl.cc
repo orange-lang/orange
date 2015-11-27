@@ -74,8 +74,10 @@ void VarDecl::resolve()
 
 	if (getType()->isVarTy() && getExpression() == nullptr)
 	{
-		throw std::runtime_error("A variable of type var must have \
-								 an expression");
+		throw code_error(m_expr, []() -> std::string
+			{
+				return "A variable of type var must have an initial value";
+			});
 	}
 
 	if (getExpression())

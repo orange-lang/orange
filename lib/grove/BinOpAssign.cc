@@ -9,6 +9,8 @@
 #include <grove/BinOpAssign.h>
 
 #include <grove/exceptions/fatal_error.h>
+#include <grove/exceptions/binop_error.h>
+#include <grove/exceptions/code_error.h>
 
 #include <grove/types/Type.h>
 
@@ -101,7 +103,10 @@ void BinOpAssign::resolve()
 	
 	if (getLHS()->getType()->isConst())
 	{
-		throw std::runtime_error("Cann't assign to a const var");
+		throw code_error(getLHS(), []() -> std::string
+			{
+				return "cannot assign a value to a constant variable";
+			});
 	}
 	
 	if (doesArithmetic())
@@ -140,7 +145,8 @@ void BinOpAssign::build()
 				vRHS = getRHS()->castTo(getLHS());
 				break;
 			case INCOMPATIBLE:
-				throw std::runtime_error("Cannot cast types.");
+				throw binop_error(this, getLHS()->getType(), getOperator(),
+								  getRHS()->getType());
 				break;
 			default:
 				// Do nothing

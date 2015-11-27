@@ -12,6 +12,8 @@
 
 #include <grove/types/Type.h>
 
+#include <grove/exceptions/code_error.h>
+
 #include <util/assertions.h>
 
 #include <llvm/IR/IRBuilder.h>
@@ -52,13 +54,27 @@ void TernaryExpr::resolve()
 	
 	if (cond_ty->isBoolTy() == false)
 	{
-		throw std::runtime_error("condition must be a boolean");
+		throw code_error(getCondition(), [cond_ty]() -> std::string
+			{
+				std::stringstream ss;
+				ss << "condition of ternary expression is "
+				   << cond_ty->getString() << ", expected boolean";
+				
+				return ss.str();
+			});
 	}
 	
 	if (true_ty != false_ty)
 	{
-		throw std::runtime_error("expressions in ternary statements do not \
-								 match types.");
+		throw code_error(getCondition(), [true_ty, false_ty]() -> std::string
+		{
+			std::stringstream ss;
+			ss << "expressions in ternary statements do not match types "
+			   << "(" << true_ty->getString() << " and "
+			   << false_ty->getString() << ")";
+			
+			return ss.str();
+		});
 	}
 	
 	setType(true_ty);

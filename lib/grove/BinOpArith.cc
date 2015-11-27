@@ -121,7 +121,8 @@ void BinOpArith::build()
 				vRHS = getRHS()->castTo(getLHS());
 				break;
 			case INCOMPATIBLE:
-				throw std::runtime_error("Cannot cast types.");
+				throw binop_error(this, getLHS()->getType(), getOperator(),
+								  getRHS()->getType());
 				break;
 			default:
 				// Do nothing

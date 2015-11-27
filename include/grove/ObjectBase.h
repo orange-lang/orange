@@ -10,6 +10,8 @@
 
 class Type;
 
+#include "exceptions/fatal_error.h"
+
 class ObjectBase
 {
 public:
@@ -26,14 +28,14 @@ public:
 		void* ptr = this;
 		if (ptr == nullptr)
 		{
-			throw std::runtime_error("this == nullptr");
+			throw fatal_error("trying casting a null object to a type");
 		}
 		
 		auto casted = dynamic_cast<T>(this);
 
 		if (casted == nullptr)
 		{
-			throw std::runtime_error("object could not be casted to type");
+			throw fatal_error("object could not be casted to wanted type");
 		}
 
 		return casted;

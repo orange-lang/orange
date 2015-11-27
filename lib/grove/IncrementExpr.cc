@@ -50,7 +50,10 @@ void IncrementExpr::resolve()
 	
 	if (getExpression()->hasPointer() == false)
 	{
-		throw std::runtime_error("expression is not an lvalue");
+		throw code_error(getExpression(), []() -> std::string
+			{
+				return "expression is not an lvalue and cannot be assigned";
+			});
 	}
 	
 	if (ty->isIntTy() == false && ty->isFloatingPointTy() == false)
