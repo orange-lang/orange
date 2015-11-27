@@ -14,6 +14,7 @@
 #include <grove/exceptions/file_error.h>
 #include <grove/exceptions/already_defined_error.h>
 #include <grove/exceptions/already_defined_sig_error.h>
+#include <grove/exceptions/undefined_error.h>
 
 #include <util/file.h>
 
@@ -125,297 +126,82 @@ int TestRet2()
 	return cmpEq(result, 2);
 }
 
-ADD_TEST(TestMatchingFunctions, "Test program that has two matching functions");
-int TestMatchingFunctions()
-{
-	auto temp_path = getTempFile("test", "or");
-	std::ofstream file(temp_path);
-	
-	if (file.is_open() == false)
-	{
-		std::cerr << "Couldn't open " << temp_path << std::endl;
-		std::remove(temp_path.c_str());
-		return 1;
-	}
-	
-	// Write small orange program to file.
-	file << R"EOF(
-		def foo(int a)
-			return 1
-		end
+#define TEST_EXCEPTION(TestName, catchException, body)\
+ADD_TEST(TestName, "Test catching " #catchException " for " #TestName ".")\
+int TestName(){\
+auto temp_path = getTempFile("test", "or"); std::ofstream file(temp_path);\
+if (file.is_open() == false) { std::remove(temp_path.c_str()); return fail(); }\
+file << body; file.close();\
+try { auto builder = new Builder(temp_path); builder->compile(); }\
+catch (catchException& e) { std::remove(temp_path.c_str()); return pass(); }\
+catch (std::exception& e) { std::remove(temp_path.c_str()); return fail(); }\
+ADD_ERROR(TestName, "No exception caught");\
+std::remove(temp_path.c_str()); return fail(); }
 
-		def foo(int a)
-			return 1
-		end
+TEST_EXCEPTION(TestMatchingGenerics, already_defined_sig_error, R"EOF(
+	def foo(var f, int a)
+		return 1
+	end
+	def foo(var f, int a)
+		return 1
+	end
+	return 0
+)EOF");
 
-		return 0
-	)EOF";
-	
-	file.close();
-	
-	// create our builder.
-	try
-	{
-		auto builder = new Builder(temp_path);
-		builder->compile();
-	}
-	catch (std::exception& e)
-	{
-		std::remove(temp_path.c_str());
-		return 0;
-	}
-	
-	ADD_ERROR(TestMatchingFunctions, "No exception caught");
-	std::remove(temp_path.c_str());
-	return 1;
-}
+TEST_EXCEPTION(TestSameVariable, already_defined_error, R"EOF(
+   var a = 5
+   var b = 6
+   var c = 7
+   var a = 8
+)EOF");
 
-ADD_TEST(TestMatchingGenerics, "Test program that has two matching generics");
-int TestMatchingGenerics()
-{
-	auto temp_path = getTempFile("test", "or");
-	std::ofstream file(temp_path);
-	
-	if (file.is_open() == false)
-	{
-		std::cerr << "Couldn't open " << temp_path << std::endl;
-		std::remove(temp_path.c_str());
-		return 1;
-	}
-	
-	// Write small orange program to file.
-	
-	file << R"EOF(
-    	def foo(var f, int a)
-    		return 1
-    	end
-    	def foo(var f, int a)
-    		return 1
-    	end
-    	return 0
-	)EOF";
-	
-	file.close();
-	
-	// create our builder.
-	try
-	{
-		auto builder = new Builder(temp_path);
-		builder->compile();
-	}
-	catch (already_defined_sig_error& e)
-	{
-		std::remove(temp_path.c_str());
-		return 0;
-	}
-	
-	ADD_ERROR(TestMatchingGenerics, "No exception caught");
-	std::remove(temp_path.c_str());
-	return 1;
-}
+TEST_EXCEPTION(TestSameNameStructs, already_defined_error, R"EOF(
+   def foo()
+	   return 5
+   end
+   
+   enum foo
+	   TESTING = 0
+   end
+   
+   var a = 5
+   var b = 6
+   var c = foo.TESTING
+   var d = foo()
+)EOF");
 
-ADD_TEST(TestSameVariable, "Test program that has two variables with the same name");
-int TestSameVariable()
-{
-	auto temp_path = getTempFile("test", "or");
-	std::ofstream file(temp_path);
-	
-	if (file.is_open() == false)
-	{
-		std::cerr << "Couldn't open " << temp_path << std::endl;
-		std::remove(temp_path.c_str());
-		return 1;
-	}
-	
-	// Write small orange program to file.
-	
-	file << R"EOF(
-	var a = 5
-	var b = 6
-	var c = 7
-	var a = 8
-	)EOF";
-	
-	file.close();
-	
-	// create our builder.
-	try
-	{
-		auto builder = new Builder(temp_path);
-		builder->compile();
-	}
-	catch (already_defined_error& e)
-	{
-		std::remove(temp_path.c_str());
-		return pass();
-	}
-	catch (std::exception& e)
-	{
-		std::remove(temp_path.c_str());
-		return fail();
-	}
-	
-	ADD_ERROR(TestMatchingGenerics, "No exception caught");
-	std::remove(temp_path.c_str());
-	return fail();
-}
+TEST_EXCEPTION(TestMatchingFunctions, already_defined_sig_error, R"EOF(
+	def foo(int a)
+		return 1
+	end
+	def foo(int a)
+		return 1
+	end
+	return 0
+)EOF");
 
-ADD_TEST(TestSameNameStructs, "Test program that has two different structures with the same name");
-int TestSameNameStructs()
-{
-	auto temp_path = getTempFile("test", "or");
-	std::ofstream file(temp_path);
-	
-	if (file.is_open() == false)
-	{
-		std::cerr << "Couldn't open " << temp_path << std::endl;
-		std::remove(temp_path.c_str());
-		return 1;
-	}
-	
-	// Write small orange program to file.
-	
-	file << R"EOF(
+
+TEST_EXCEPTION(UndefinedVariable, undefined_error, R"EOF(
+	var foo = a + 5
+)EOF");
+
+TEST_EXCEPTION(TestSameNameStructsUnused, already_defined_error, R"EOF(
 	def foo()
 		return 5
 	end
-	
 	enum foo
 		TESTING = 0
 	end
-	
-	var a = 5
-	var b = 6
-	var c = foo.TESTING
-	var d = foo()
-	)EOF";
-	
-	file.close();
-	
-	// create our builder.
-	try
-	{
-		auto builder = new Builder(temp_path);
-		builder->compile();
-	}
-	catch (already_defined_error& e)
-	{
-		std::remove(temp_path.c_str());
-		return pass();
-	}
-	catch (std::exception& e)
-	{
-		std::remove(temp_path.c_str());
-		return fail();
-	}
-	
-	
-	ADD_ERROR(TestSameNameStructs, "No exception caught");
-	std::remove(temp_path.c_str());
-	return fail();
-}
+)EOF");
 
-ADD_TEST(TestSameNameStructsUnused, "Test program that has two unused different structures with the same name (function, enum)");
-int TestSameNameStructsUnused()
-{
-	auto temp_path = getTempFile("test", "or");
-	std::ofstream file(temp_path);
-	
-	if (file.is_open() == false)
-	{
-		std::cerr << "Couldn't open " << temp_path << std::endl;
-		std::remove(temp_path.c_str());
-		return 1;
-	}
-	
-	// Write small orange program to file.
-	
-	file << R"EOF(
-	def foo()
-	return 5
-	end
-	
+TEST_EXCEPTION(TestSameNameStructsUnusedReverse, already_defined_error, R"EOF(
 	enum foo
-	TESTING = 0
+		TESTING = 0
 	end
-	)EOF";
-	
-	file.close();
-	
-	// create our builder.
-	try
-	{
-		auto builder = new Builder(temp_path);
-		builder->compile();
-	}
-	catch (already_defined_error& e)
-	{
-		std::remove(temp_path.c_str());
-		return pass();
-	}
-	catch (std::exception& e)
-	{
-		std::remove(temp_path.c_str());
-		return fail();
-	}
-	
-	
-	ADD_ERROR(TestSameNameStructsUnused, "No exception caught");
-	std::remove(temp_path.c_str());
-	return fail();
-}
-
-ADD_TEST(TestSameNameStructsUnusedReverse, "Test program that has two unused different structures with the same name (enum, function)");
-int TestSameNameStructsUnusedReverse()
-{
-	auto temp_path = getTempFile("test", "or");
-	std::ofstream file(temp_path);
-	
-	if (file.is_open() == false)
-	{
-		std::cerr << "Couldn't open " << temp_path << std::endl;
-		std::remove(temp_path.c_str());
-		return 1;
-	}
-	
-	// Write small orange program to file.
-	
-	file << R"EOF(
-	enum foo
-	TESTING = 0
-	end
-	
 	def foo()
-	return 5
+		return 5
 	end
-	)EOF";
-	
-	file.close();
-	
-	// create our builder.
-	try
-	{
-		auto builder = new Builder(temp_path);
-		builder->compile();
-	}
-	catch (already_defined_error& e)
-	{
-		std::remove(temp_path.c_str());
-		return pass();
-	}
-	catch (std::exception& e)
-	{
-		std::remove(temp_path.c_str());
-		return fail();
-	}
-	
-	
-	ADD_ERROR(TestSameNameStructsUnusedReverse, "No exception caught");
-	std::remove(temp_path.c_str());
-	return fail();
-}
-
-
+)EOF");
 
 #define ADD_TEST_FOLDER(name, folder)\
 ADD_TEST(name, "Test building " #folder " programs in test/" #folder ".")\
