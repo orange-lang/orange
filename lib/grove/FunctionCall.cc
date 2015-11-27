@@ -8,6 +8,7 @@
 
 #include <grove/FunctionCall.h>
 #include <grove/Named.h>
+
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
 #include <grove/types/IntType.h>
@@ -16,8 +17,12 @@
 #include <grove/types/VarType.h>
 #include <grove/types/ArrayType.h>
 #include <grove/types/PointerType.h>
+
+#include <grove/exceptions/undefined_error.h>
+
 #include <util/assertions.h>
 #include <util/copy.h>
+
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Function.h>
@@ -97,8 +102,14 @@ void FunctionCall::findDependencies()
 
 void FunctionCall::resolve()
 {
+	auto def = findNamed(getName(), expectedFunctionTy());
+	if (def == nullptr)
+	{
+		throw undefined_error(&m_name, m_name);
+	}
+	
 	// Determine type
-	auto typed = findNamed(getName(), expectedFunctionTy())->as<Typed *>();
+	auto typed = def->as<Typed *>();
 	auto ty = typed->getType();
 
 	if (ty == nullptr || ty->isFunctionTy() == false)
