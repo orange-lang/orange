@@ -123,6 +123,51 @@ void ASTNode::build()
 	// Do nothing 
 }
 
+bool ASTNode::hasNamed(OString name, SearchSettings settings) const
+{
+	auto ptr = this;
+	
+	while (ptr != nullptr)
+	{
+		// Find the nearest block from this pointer.
+		auto block = ptr->findParent<Block *>();
+		
+		if (block == nullptr)
+		{
+			break;
+		}
+		
+		// Find closest node whose parent is that block.
+		auto limit = ptr;
+		while (limit != nullptr)
+		{
+			if (limit->getParent() == block)
+			{
+				break;
+			}
+			
+			limit = limit->getParent();
+		}
+		
+		if (block->hasNamed(name, limit, settings))
+		{
+			return true;
+		}
+		
+		if (settings.searchWholeTree == false)
+		{
+			break;
+		}
+		else
+		{
+			// If we didn't find one, start looking from the block.
+			ptr = block;
+		}
+	}
+	
+	return nullptr;
+}
+
 Named* ASTNode::findNamed(OString name, Type* type,
 						  SearchSettings settings)
 const

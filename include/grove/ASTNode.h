@@ -135,6 +135,12 @@ public:
 	}
 
 	/**
+	 * Determines whether or not a named node by a given name exists 
+	 * in the tree, up to this node. 
+	 */
+	bool hasNamed(OString name, SearchSettings settings) const;
+	
+	/**
 	 * Tries to find a Named node in the AST. Searches up to this node.
 	 *
 	 * This function allows for a type hint to be passed in to narrow

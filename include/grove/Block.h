@@ -33,6 +33,11 @@ public:
 	
 	void addStatement(ASTNode* statement);
 	
+	/// Determines whether or not this block has a named node by
+	/// a given name.
+	bool hasNamed(OString name, const ASTNode* limit,
+				  SearchSettings settings) const;
+	
 	/**
 	 * Tries to find a Named node in the immediate list of chidlren. Does 
 	 * not search the whole tree.

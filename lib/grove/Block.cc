@@ -42,6 +42,31 @@ Named* Block::namedOrGenericInstance(Named* n, Type* t) const
 	return n;
 }
 
+bool Block::hasNamed(OString name, const ASTNode *limit,
+					 SearchSettings settings) const
+{
+	for (auto child : getChildren())
+	{
+		if (child == limit)
+		{
+			break;
+		}
+		
+		if (child->is<Named *>() == false)
+		{
+			continue;
+		}
+		
+		auto named = child->as<Named *>();
+		if (named->matchesName(name))
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 Named* Block::getNamed(OString name, Type* type,
 					   const ASTNode *limit, SearchSettings settings) const
 {
