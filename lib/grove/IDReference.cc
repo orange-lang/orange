@@ -11,6 +11,8 @@
 #include <grove/Named.h>
 #include <grove/Typed.h>
 
+#include <grove/exceptions/undefined_error.h>
+
 #include <util/assertions.h>
 
 llvm::Value* IDReference::getPointer() const
@@ -59,7 +61,11 @@ Expression* IDReference::access(OString name, Type* hint) const
 void IDReference::findDependencies()
 {
 	auto ref = findNamed(getName(), nullptr);
-	assertExists(ref, "No variable with this name exists.");
+	
+	if (ref == nullptr)
+	{
+		throw undefined_error(&m_name, m_name);
+	}
 	
 	addDependency(ref->as<ASTNode *>());
 }
@@ -67,9 +73,13 @@ void IDReference::findDependencies()
 
 void IDReference::resolve()
 {
-	m_node = findNamed(getName(), nullptr)->as<Valued *>();
+	auto ref = findNamed(getName(), nullptr);
+	if (ref == nullptr)
+	{
+		throw undefined_error(&m_name, m_name);
+	}
 	
-	assertExists(m_node, "No variable with this name exists.");
+	m_node = ref->as<Valued *>();
 
 	auto typed = m_node->as<Typed *>();
 	auto ty = typed->getType();
