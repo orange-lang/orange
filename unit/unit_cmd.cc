@@ -224,7 +224,7 @@ ADD_TEST(TestNestedArgs, "Test arguments on nested state.");
 int TestNestedArgs()
 {
 	TestEnvironment env("a a_nested foobar");
-	ASSERT_EQ(env.a_nested->args.size(), 1);
+	ASSERT_EQ(env.a_nested->args.size(), (unsigned long)1);
 	return cmpEq(env.a_nested->args[0], "foobar");
 }
 
@@ -232,7 +232,7 @@ ADD_TEST(TestArgumentWithTransition, "Test argument and transition");
 int TestArgumentWithTransition()
 {
     TestEnvironment env("a foobar a_nested");
-    ASSERT_EQ(env.a_nested->args.size(), 1);
+    ASSERT_EQ(env.a_nested->args.size(), (unsigned long)1);
     return env.a_nested->args[0] != "foobar";
 }
 
