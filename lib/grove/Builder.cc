@@ -125,12 +125,12 @@ void Builder::link(std::string outputPath)
 	options.push_back("-o");
 	options.push_back(outputPath.c_str());
 	
-	std::vector<std::string> tempFiles;
+	std::vector<const char*> tempFiles;
 	
 	for (auto mod : m_modules)
 	{
-		auto path = mod->compile();
-		options.push_back(path.c_str());
+		auto path = stringToCharArray(mod->compile());
+		options.push_back(path);
 		tempFiles.push_back(path);
 	}
 	
@@ -138,7 +138,8 @@ void Builder::link(std::string outputPath)
 	
 	for (auto temp : tempFiles)
 	{
-		std::remove(temp.c_str());
+		std::remove(temp);
+		delete temp;
 	}
 }
 
