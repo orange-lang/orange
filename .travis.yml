@@ -20,6 +20,7 @@ addons:
     - libedit-dev
     - g++-4.9
     - cmake
+    - clang-3.5
 matrix:
   include:
     - os: osx
