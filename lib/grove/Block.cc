@@ -114,6 +114,11 @@ Named* Block::getNamed(OString name, Type* type,
 		}
 	}
 	
+	// If we're not matching types, return null now.
+	if (type == nullptr)
+	{
+		return nullptr;
+	}
 	
 	// If we had more than one match, we need to see if we can find
 	// a match by type.
