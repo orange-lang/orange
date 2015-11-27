@@ -40,7 +40,7 @@ std::vector<Expression *> FunctionCall::getArgs() const
 llvm::Function* FunctionCall::getFunction() const
 {
 	// Determine type
-	auto valued = findNamed(getName(), expectedFunctionTy())->as<Valued *>();
+	auto valued = getNode()->as<Valued *>();
 	auto value = valued->getValue();
 	assertExists(value, "value did not exist");
 
@@ -54,7 +54,7 @@ llvm::Function* FunctionCall::getFunction() const
 
 FunctionType* FunctionCall::getFunctionTy() const
 {
-	auto typed = findNamed(getName(), expectedFunctionTy())->as<Typed *>();
+	auto typed = getNode()->as<Typed *>();
 	auto ty = typed->getType();
 
 	if (ty == nullptr || ty->isFunctionTy() == false)
@@ -100,6 +100,11 @@ void FunctionCall::findDependencies()
 	}
 }
 
+Typed* FunctionCall::getNode() const
+{
+	return m_node;
+}
+
 void FunctionCall::resolve()
 {
 	auto def = findNamed(getName(), expectedFunctionTy());
@@ -109,8 +114,8 @@ void FunctionCall::resolve()
 	}
 	
 	// Determine type
-	auto typed = def->as<Typed *>();
-	auto ty = typed->getType();
+	m_node = def->as<Typed *>();
+	auto ty = getNode()->getType();
 
 	if (ty == nullptr || ty->isFunctionTy() == false)
 	{

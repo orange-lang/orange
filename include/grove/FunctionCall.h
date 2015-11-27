@@ -24,6 +24,8 @@ private:
 	
 	/// Get the function type we're expecting.
 	FunctionType* expectedFunctionTy() const;
+	
+	Typed* m_node = nullptr;
 public:
 	/// Gets the name of the function that we are calling.
 	OString getName() const;
@@ -32,6 +34,9 @@ public:
 	std::vector<Expression *> getArgs() const;
 	
 	virtual void findDependencies() override;
+	
+	/// Gets node that we're going to call as a function.
+	Typed* getNode() const;
 	
 	virtual void resolve() override;
 	virtual void build() override;
