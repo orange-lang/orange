@@ -15,6 +15,7 @@
 #include <grove/exceptions/already_defined_error.h>
 #include <grove/exceptions/already_defined_sig_error.h>
 #include <grove/exceptions/undefined_error.h>
+#include <grove/exceptions/binop_error.h>
 
 #include <util/file.h>
 
@@ -213,6 +214,12 @@ TEST_EXCEPTION(TestDuplicateEnumMembers, already_defined_error, R"EOF(
 		BAR
 		FOO
     end
+)EOF");
+
+TEST_EXCEPTION(TestInvalidBinOpOperands, binop_error, R"EOF(
+	var a = 5
+	var ptr = &a
+	var foo = ptr + 2.3
 )EOF");
 
 #define ADD_TEST_FOLDER(name, folder)\
