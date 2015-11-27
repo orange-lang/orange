@@ -58,7 +58,7 @@ Expression* IDReference::access(OString name, Type* hint) const
 
 void IDReference::findDependencies()
 {
-	auto ref = findNamed(getName());
+	auto ref = findNamed(getName(), nullptr);
 	assertExists(ref, "No variable with this name exists.");
 	
 	addDependency(ref->as<ASTNode *>());
@@ -67,7 +67,7 @@ void IDReference::findDependencies()
 
 void IDReference::resolve()
 {
-	m_node = findNamed(getName())->as<Valued *>();
+	m_node = findNamed(getName(), nullptr)->as<Valued *>();
 	
 	assertExists(m_node, "No variable with this name exists.");
 

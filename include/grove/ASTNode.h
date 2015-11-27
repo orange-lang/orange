@@ -133,19 +133,6 @@ public:
 		return children;
 	}
 
-	/**
-	 * Tries to find a Named node in the AST. Searches up to this node.
-	 *
-	 * If multiple matching nodes are found, an exception is thrown.
-	 *
-	 * @param name The name of the node to look for.
-	 * @param limit The child to stop searching at, if any.
-	 *
-	 * @return The named node, if one was found.
-	 * @throws Throws an exception if multiple nodes were found.
-	 */
-	Named* findNamed(OString name) const;
-
 	struct NamedSearchSettings {
 		/// Whether or not to force type matching even if only one
 		/// node with a name is found.

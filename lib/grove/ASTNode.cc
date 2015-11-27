@@ -123,11 +123,6 @@ void ASTNode::build()
 	// Do nothing 
 }
 
-Named* ASTNode::findNamed(OString name) const
-{
-	return findNamed(name, nullptr, NamedSearchSettings());
-}
-
 Named* ASTNode::findNamed(OString name, Type* type,
 						  NamedSearchSettings settings)
 const

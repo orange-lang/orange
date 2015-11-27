@@ -34,19 +34,6 @@ public:
 	void addStatement(ASTNode* statement);
 	
 	/**
-	 * Tries to find a Named node in the immediate list of children. Does 
-	 * not search the whole tree.
-	 *
-	 * If multiple matching nodes are found, an exception is thrown. 
-	 *
-	 * @param name The name of the node to look for.
-	 * @param limit The child to stop searching at, if any. 
-	 *
-	 * @return The named node, if one was found.
-	 */
-	Named* getNamed(OString name, const ASTNode* limit) const;
-	
-	/**
 	 * Tries to find a Named node in the immediate list of chidlren. Does 
 	 * not search the whole tree.
 	 *

@@ -20,11 +20,6 @@ std::vector<ASTNode *> Block::getStatements() const
 	return m_statements;
 }
 
-Named* Block::getNamed(OString name, const ASTNode *limit) const
-{
-	return getNamed(name, nullptr, limit, false, true);
-}
-
 Named* Block::namedOrGenericInstance(Named* n, Type* t) const
 {
 	if (n->is<Genericable *>() &&
