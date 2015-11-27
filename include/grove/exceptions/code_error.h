@@ -23,6 +23,9 @@ protected:
 	
 	CodeBase* m_element = nullptr;
 	
+	/// Gets the context of an element from its file.
+	std::string getContext(CodeBase* element);
+	
 	/// Gets the string for a CodeBase where
 	/// it is in the format of fileName:firstLine:firstCol.
 	std::string fileWithPosition(CodeBase* element);

@@ -11,6 +11,34 @@
 
 #include <grove/CodeBase.h>
 
+#include <fstream>
+
+std::string code_error::getContext(CodeBase *element)
+{
+	if (element == nullptr)
+	{
+		throw fatal_error("element cannot be nullptr");
+	}
+	
+	std::ifstream file(element->getLocation().file);
+	if (file.is_open() == false)
+	{
+		throw fatal_error("couldn't open file for context");
+	}
+	
+	for (int i = 0; i < element->getLocation().first_line - 1; i++)
+	{
+		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	}
+	
+	std::string line;
+	std::getline(file, line);
+	
+	file.close();
+	
+	return line;
+}
+
 std::string code_error::fileWithPosition(CodeBase *element)
 {
 	if (element == nullptr)
@@ -20,7 +48,8 @@ std::string code_error::fileWithPosition(CodeBase *element)
 	
 	std::stringstream ss;
 	ss << element->getLocation().file << ":"
-       << element->getLocation().first_line << ":";
+       << element->getLocation().first_line << ":"
+	   << element->getLocation().first_column;
 	
 	return ss.str();
 }
