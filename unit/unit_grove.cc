@@ -19,7 +19,10 @@
 
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
+
 #include <util/file.h>
+#include <util/link.h>
+#include <util/string.h>
 
 #include <sstream>
 #include <cstdio>
@@ -257,6 +260,62 @@ int TestJITPrograms()
 			std::stringstream ss;
 			ss << path << ": " << e.what();
 			ADD_ERROR(TestJITPrograms, ss.str());
+			exitCode = 1;
+		}
+	}
+	
+	return exitCode;
+}
+
+ADD_TEST(TestBuiltPrograms, "Test running programs in test");
+int TestBuiltPrograms()
+{
+	int exitCode = 0;
+	auto test_path = combinePaths(getWorkingDirectory(), "test/");
+	auto test_files = getFilesRecursive(test_path);
+	
+	
+	auto extension = "";
+#ifdef _WIN32 
+	extension = "exe";
+#endif
+	
+	for (auto path : test_files)
+	{
+		auto prog_path = stringToCharArray(getTempFile("test", extension));
+		
+		if (llvm::sys::path::extension(path) != ".or")
+		{
+			continue;
+		}
+		
+		try
+		{
+			auto builder = new Builder(path);
+			builder->compile();
+			builder->link(prog_path);
+			
+			std::vector<const char*> opts;
+			int val = invokeProgramWithOptions(prog_path, opts, true);
+			if (val != 0)
+			{
+				exitCode = 1;
+				std::stringstream ss;
+				ss << path << " returned " << val;
+				ADD_ERROR(TestBuiltPrograms, ss.str());
+			}
+			
+        	std::remove(prog_path);
+			delete prog_path;
+		}
+		catch(std::exception& e)
+		{
+			std::remove(prog_path);
+			delete prog_path;
+			
+			std::stringstream ss;
+			ss << path << ": " << e.what();
+			ADD_ERROR(TestBuiltPrograms, ss.str());
 			exitCode = 1;
 		}
 	}
