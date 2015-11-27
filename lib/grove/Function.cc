@@ -17,6 +17,8 @@
 #include <grove/types/VarType.h>
 #include <grove/types/PointerType.h>
 
+#include <grove/exceptions/already_defined_sig_error.h>
+
 #include <util/assertions.h>
 #include <util/copy.h>
 
@@ -288,9 +290,11 @@ void Function::resolve()
 		search_settings.forceTypeMatch = true;
 		search_settings.createGeneric = false;
 		
-		if (findNamed(getName(), getType(), search_settings) != nullptr)
+		auto found = findNamed(getName(), getType(), search_settings);
+		if (found != nullptr)
 		{
-			throw std::runtime_error("A function with this signature already exists");
+			auto base = found->as<CodeBase *>();
+			throw already_defined_sig_error(&m_name, base, m_name);
 		}
 		
 		return;
@@ -344,10 +348,14 @@ void Function::resolve()
 	auto search_settings = SearchSettings();
 	search_settings.forceTypeMatch = true;
 	
-	if (isInstance() == false &&
-		findNamed(getName(), getType(), search_settings) != nullptr)
+	if (isInstance() == false)
 	{
-		throw std::runtime_error("A function with this signature already exists");
+		auto found = findNamed(getName(), getType(), search_settings);
+		if (found != nullptr)
+		{
+			throw already_defined_sig_error(&m_name, found->as<CodeBase *>(),
+											m_name);
+		}
 	}
 }
 
