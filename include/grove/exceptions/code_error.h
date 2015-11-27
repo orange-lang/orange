@@ -36,4 +36,7 @@ public:
 	code_error(CodeBase* element);
 	
 	code_error(CodeBase* element, std::function<std::string()> cb);
+	
+	code_error(CodeBase* element, CodeBase* ref,
+			   std::function<std::string()> cb);
 };

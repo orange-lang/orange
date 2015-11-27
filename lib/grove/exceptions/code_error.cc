@@ -92,3 +92,26 @@ code_error::code_error(CodeBase* element, std::function<std::string()> cb)
 	
 	m_error = ss.str();
 }
+
+code_error::code_error(CodeBase* element, CodeBase* ref,
+					   std::function<std::string()> cb)
+{
+	if (element == nullptr)
+	{
+		throw fatal_error("element cannot be nullptr");
+	}
+	
+	if (ref == nullptr)
+	{
+		throw fatal_error("ref was nullptr");
+	}
+	
+	std::stringstream ss;
+	
+	ss << fileWithPosition(element) << ": error: " << cb() << "\n"
+	   << getContext(element) << "\n\n"
+	   << fileWithPosition(ref) << ": initially defined here\n"
+	   << getContext(ref);
+	m_error = ss.str();
+}
+
