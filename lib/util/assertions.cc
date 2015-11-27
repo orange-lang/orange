@@ -7,12 +7,13 @@
 */
 
 #include <util/assertions.h>
+#include <grove/exceptions/fatal_error.h>
 
 void assertExists(const void* ptr, std::string str)
 {
 	if (ptr == nullptr)
 	{
-		throw std::runtime_error(str);
+		throw fatal_error(str);
 	}
 }
 
@@ -20,6 +21,6 @@ void assertEqual(const void* ptr_a, const void* ptr_b, std::string str)
 {
 	if (ptr_a != ptr_b)
 	{
-		throw std::runtime_error(str);
+		throw fatal_error(str);
 	}
 }
