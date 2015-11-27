@@ -222,40 +222,39 @@ TEST_EXCEPTION(TestInvalidBinOpOperands, binop_error, R"EOF(
 	var foo = ptr + 2.3
 )EOF");
 
-#define ADD_TEST_FOLDER(name, folder)\
-ADD_TEST(name, "Test building " #folder " programs in test/" #folder ".")\
-int name(){\
-	int exitCode = 0;\
-	auto test_path = combinePaths(getWorkingDirectory(), "test/" #folder);\
-	auto test_files = getFilesRecursive(test_path);\
-	for (auto path : test_files){\
-		try{\
-			auto builder = new Builder(path); builder->compile();\
-			int val = builder->run();\
-			if (val != 0) {exitCode = 1; \
-				std::stringstream ss; ss << path << " returned " << val;\
-				ADD_ERROR(name, ss.str()); }\
-		}\
-		catch(std::exception& e){\
-			std::stringstream ss; ss << path << ": " << e.what();\
-			ADD_ERROR(name, ss.str()); exitCode = 1;}}\
-	return exitCode;}
+ADD_TEST(TestJITPrograms, "Test running programs in test JIT")
+int TestJITPrograms()
+{
+	int exitCode = 0;
+	auto test_path = combinePaths(getWorkingDirectory(), "test/");
+	auto test_files = getFilesRecursive(test_path);
+	
+	for (auto path : test_files)
+	{
+		try
+		{
+			auto builder = new Builder(path);
+			builder->compile();
+			
+			int val = builder->run();
+			if (val != 0)
+			{
+				exitCode = 1;
+				std::stringstream ss;
+				ss << path << " returned " << val;
+				ADD_ERROR(TestJITPrograms, ss.str());
+			}
+		}
+		catch(std::exception& e)
+		{
+			std::stringstream ss;
+			ss << path << ": " << e.what();
+			ADD_ERROR(TestJITPrograms, ss.str());
+			exitCode = 1;
+		}
+	}
+	return exitCode;
+}
 
-ADD_TEST_FOLDER(TestEmptyPrograms, empty);
-ADD_TEST_FOLDER(TestReturnPrograms, return);
-ADD_TEST_FOLDER(TestMathPrograms, math);
-ADD_TEST_FOLDER(TestFunctionPrograms, functions);
-ADD_TEST_FOLDER(TestVariablePrograms, variables);
-ADD_TEST_FOLDER(TestGenericFunctions, generic_functions);
-ADD_TEST_FOLDER(TestIfPrograms, if);
-ADD_TEST_FOLDER(TestRecursionPrograms, recursion);
-ADD_TEST_FOLDER(TestLoopPrograms, loops);
-ADD_TEST_FOLDER(TestPointerPrograms, pointers);
-ADD_TEST_FOLDER(TestArrayPrograms, array);
-ADD_TEST_FOLDER(TestTernaryPrograms, ternary);
-ADD_TEST_FOLDER(TestEnumPrograms, enum);
-ADD_TEST_FOLDER(TestBuiltinPrograms, builtin);
-ADD_TEST_FOLDER(TestProgramPrograms, programs);
-ADD_TEST_FOLDER(TestBugPrograms, bugs);
 
 RUN_TESTS();
