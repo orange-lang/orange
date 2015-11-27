@@ -132,9 +132,6 @@ Named* ASTNode::findNamed(OString name, Type* type,
 						  NamedSearchSettings settings)
 const
 {
-	std::exception error;
-	bool caught_error = false;
-	
 	auto ptr = this;
 	
 	while (ptr != nullptr)
@@ -144,7 +141,7 @@ const
 		
 		if (block == nullptr)
 		{
-			return nullptr;
+			break;
 		}
 		
 		// Find closest node whose parent is that block.
@@ -159,24 +156,14 @@ const
 			limit = limit->getParent();
 		}
 	
-		// Try to get the named node, but catch errors for now,
-		// since a proper node may be found later up the tree.
-		try
+		auto named = block->getNamed(name, type, limit,
+								 settings.forceTypeMatch,
+								 settings.createGeneric);
+		if (named != nullptr)
 		{
-			auto named = block->getNamed(name, type, limit,
-										 settings.forceTypeMatch,
-										 settings.createGeneric);
-			if (named != nullptr)
-			{
-				return named;
-			}
-		}
-		catch (std::exception& e)
-		{
-			error = e;
-			caught_error = true;
-		}
-		
+			return named;
+		}		
+
 		if (settings.searchWholeTree == false)
 		{
 			break;
@@ -186,11 +173,6 @@ const
     		// If we didn't find it, start looking from the block.
     		ptr = block;
 		}
-	}
-	
-	if (caught_error == true)
-	{
-		throw error;
 	}
 	
 	return nullptr;
