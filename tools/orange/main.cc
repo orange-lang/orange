@@ -10,12 +10,14 @@
 #include <cmd/ProgramOptions.h>
 #include <cmd/OptionsState.h>
 #include <orange/RunCommand.h>
+#include <orange/BuildCommand.h>
+
 
 int main(int argc, char** argv) {
 	auto options = new ProgramOptions("Orange WIP");
 
 	auto runState = new RunCommand();
-	auto buildState = new OptionsState("build");
+	auto buildState = new BuildCommand();
 	auto testState = new OptionsState("test");
 
 	options->addState(runState);
