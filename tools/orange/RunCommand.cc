@@ -14,7 +14,9 @@ int RunCommand::run(std::vector<std::string> args)
 {
 	if (args.size() == 0)
 	{
-		throw std::runtime_error("run takes an argument");
+		std::cerr << "run cannot run a project at this time.\n";
+		std::cerr << "Pass in a file to run as an argument.\n";
+		return 1;
 	}
 
 	// Run a thing.
