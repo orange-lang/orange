@@ -127,11 +127,21 @@ void FunctionCall::resolve()
 
 	if (!func_ty->isVarArg() && m_args.size() != func_ty->getArgs().size())
 	{
-		throw std::runtime_error("function args != caller args");
+		throw code_error(this, getNode()->as<CodeBase *>(),
+						 []() -> std::string
+			{
+				return "number of arguments in function call do not match \
+					function parameters";
+			});
 	}
 	else if (func_ty->isVarArg() && m_args.size() < func_ty->getArgs().size())
 	{
-		throw std::runtime_error("not enough arguments to call vaarg func");
+		throw code_error(this, getNode()->as<CodeBase *>(),
+					 []() -> std::string
+		{
+			return "not enough arguments in function call to call \
+				variable argument sized function";
+		});
 	}
 
 	setType(func_ty->getReturnTy());

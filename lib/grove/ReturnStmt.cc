@@ -9,9 +9,14 @@
 #include <grove/ReturnStmt.h>
 #include <grove/Function.h>
 #include <grove/Expression.h>
+
 #include <grove/types/VoidType.h>
+
+#include <grove/exceptions/code_error.h>
+
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
+
 #include <llvm/IR/IRBuilder.h>
 
 Expression* ReturnStmt::getExpression()
@@ -66,7 +71,8 @@ void ReturnStmt::build()
 	
     	auto value = getExpression()->getValue();
 		
-    	if (getType() != func->getReturnType())
+		auto ret_ty = getType();
+    	if (ret_ty != func->getReturnType())
     	{
     		switch (Type::compare(getType(), func->getReturnType()))
     		{
@@ -75,7 +81,17 @@ void ReturnStmt::build()
     				value = getExpression()->castTo(func->getReturnType());
     				break;
     			case INCOMPATIBLE:
-					throw std::runtime_error("ReturnStmt ty != func ty");
+					throw code_error(this, func, [ret_ty, func]() -> std::string
+						{
+							std::stringstream ss;
+							ss << "Return type with value "
+							   << ret_ty->getString() << " cannot be converted "
+							   << "to function return type "
+							   << func->getReturnType()->getString();
+							
+							return ss.str();
+						});
+					break;
     			default:
     				break;
     		}

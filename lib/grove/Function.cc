@@ -167,7 +167,7 @@ Genericable* Function::createInstance(Type *type)
 	
 	if (func_ty->getArgs().size() != clone->getParams().size())
 	{
-		throw std::runtime_error("params in type doesn't match function");
+		throw fatal_error("params in type doesn't match function");
 	}
 	
 	for (int i = 0; i < clone->getParams().size(); i++)
