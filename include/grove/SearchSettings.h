@@ -22,10 +22,14 @@ struct SearchSettings {
 	/// Whether to search up the whole tree or just the current block.
 	bool searchWholeTree;
 	
+	/// Whether or not to include a limit to stop searching.
+	bool includeLimit;
+	
 	SearchSettings()
 	{
 		forceTypeMatch = false;
 		createGeneric = true;
 		searchWholeTree = true;
+		includeLimit = true;
 	}
 };
