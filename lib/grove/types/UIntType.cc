@@ -66,7 +66,7 @@ static llvm::Value* BoolCast(void* irBuilder, Valued* val, Type* from,
 	assertExists(from, "from must exist");
 	assertExists(to, "to must exist");
 	
-	IRBuilder* IRB = (IRBuilder *)irBuilder;
+	LLVMBuilder* IRB = (LLVMBuilder *)irBuilder;
 	
 	auto llvm_val = val->getValue();
 	assertExists(llvm_val, "llvm_val is nullptr");

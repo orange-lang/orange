@@ -69,7 +69,7 @@ static llvm::Value* BoolCast(void* irBuilder, Valued* val, Type* from,
 	auto llvm_val = val->getValue();
 	assertExists(llvm_val, "valued didn't have value");
 	
-	IRBuilder* IRB = (IRBuilder *)irBuilder;
+	LLVMBuilder* IRB = (LLVMBuilder *)irBuilder;
 	
 	auto zero = llvm::ConstantInt::get(from->getLLVMType(), 0, true);
 	assertEqual(zero, llvm_val, "Could not create bool cast");

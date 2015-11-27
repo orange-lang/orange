@@ -24,7 +24,7 @@ namespace llvm {
 }
 
 typedef llvm::IRBuilder<true, llvm::ConstantFolder,
-	llvm::IRBuilderDefaultInserter<true> > IRBuilder;
+	llvm::IRBuilderDefaultInserter<true> > LLVMBuilder;
 
 class Module;
 class Named;
@@ -58,7 +58,7 @@ public:
 	bool dependsOn(ASTNode* node) const;
 
 	/// Gets the IR builder in the module.
-	IRBuilder* IRBuilder() const;
+	LLVMBuilder* IRBuilder() const;
 
 	void addDependency(ASTNode* dependency);
 

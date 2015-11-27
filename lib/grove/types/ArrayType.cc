@@ -36,7 +36,7 @@ static llvm::Value* PointerCast(void* irBuilder, Valued* val, Type* from,
 	auto llvm_val = val->getPointer();
 	assertExists(llvm_val, "valued didn't have pointer");
 	
-	IRBuilder* IRB = (IRBuilder *)irBuilder;
+	LLVMBuilder* IRB = (LLVMBuilder *)irBuilder;
 	
 	return IRB->CreateBitCast(llvm_val, to->getLLVMType());
 }
