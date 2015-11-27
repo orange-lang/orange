@@ -54,7 +54,7 @@ ASTNode* VarDecl::copy() const
 
 void VarDecl::resolve()
 {
-	NamedSearchSettings settings;
+	SearchSettings settings;
 	settings.searchWholeTree = false;
 	
 	auto existing = findNamed(getName(), getType(), settings);

@@ -284,7 +284,7 @@ void Function::resolve()
 	{
 		setType(FunctionType::get(VarType::get(), getParamTys()));
 		
-		auto search_settings = NamedSearchSettings();
+		auto search_settings = SearchSettings();
 		search_settings.forceTypeMatch = true;
 		search_settings.createGeneric = false;
 		
@@ -341,7 +341,7 @@ void Function::resolve()
 		setType(FunctionType::get(highest, getParamTys()));
 	}
 	
-	auto search_settings = NamedSearchSettings();
+	auto search_settings = SearchSettings();
 	search_settings.forceTypeMatch = true;
 	
 	if (isInstance() == false &&

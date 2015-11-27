@@ -11,6 +11,7 @@
 #include <vector>
 #include "CodeBase.h"
 #include "OString.h"
+#include "SearchSettings.h"
 
 namespace llvm {
 	class ConstantFolder;
@@ -133,25 +134,6 @@ public:
 		return children;
 	}
 
-	struct NamedSearchSettings {
-		/// Whether or not to force type matching even if only one
-		/// node with a name is found.
-		bool forceTypeMatch;
-		
-		/// Whether or not to create generics on nodes found.
-		bool createGeneric;
-		
-		/// Whether to search up the whole tree or just the current block.
-		bool searchWholeTree;
-		
-		NamedSearchSettings()
-		{
-			forceTypeMatch = false;
-			createGeneric = true;
-			searchWholeTree = true;
-		}
-	};
-
 	/**
 	 * Tries to find a Named node in the AST. Searches up to this node.
 	 *
@@ -171,7 +153,7 @@ public:
 	 * one node.
 	 */
 	Named* findNamed(OString name, Type* type,
-					 NamedSearchSettings settings = NamedSearchSettings())
+					 SearchSettings settings = SearchSettings())
 	const;
 
 	/**

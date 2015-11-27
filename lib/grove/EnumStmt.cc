@@ -31,7 +31,7 @@ ASTNode* EnumStmt::copy() const
 
 void EnumStmt::resolve()
 {
-	NamedSearchSettings settings;
+	SearchSettings settings;
 	settings.createGeneric = false;
 	
 	auto named = findNamed(getName(), nullptr, settings);

@@ -124,7 +124,7 @@ void ASTNode::build()
 }
 
 Named* ASTNode::findNamed(OString name, Type* type,
-						  NamedSearchSettings settings)
+						  SearchSettings settings)
 const
 {
 	auto ptr = this;
