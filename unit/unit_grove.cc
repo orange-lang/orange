@@ -12,6 +12,7 @@
 #include <grove/Builder.h>
 
 #include <grove/exceptions/file_error.h>
+#include <grove/exceptions/already_defined_error.h>
 
 #include <util/file.h>
 
@@ -210,6 +211,47 @@ int TestMatchingGenerics()
 	ADD_ERROR(TestMatchingGenerics, "No exception caught");
 	std::remove(temp_path.c_str());
 	return 1;
+}
+
+ADD_TEST(TestSameVariable, "Test program that has two variables with the same name");
+int TestSameVariable()
+{
+	auto temp_path = getTempFile("test", "or");
+	std::ofstream file(temp_path);
+	
+	if (file.is_open() == false)
+	{
+		std::cerr << "Couldn't open " << temp_path << std::endl;
+		std::remove(temp_path.c_str());
+		return 1;
+	}
+	
+	// Write small orange program to file.
+	
+	file << R"EOF(
+	var a = 5
+	var b = 6
+	var c = 7
+	var a = 8
+	)EOF";
+	
+	file.close();
+	
+	// create our builder.
+	try
+	{
+		auto builder = new Builder(temp_path);
+		builder->compile();
+	}
+	catch (already_defined_error& e)
+	{
+		std::remove(temp_path.c_str());
+		return pass();
+	}
+	
+	ADD_ERROR(TestMatchingGenerics, "No exception caught");
+	std::remove(temp_path.c_str());
+	return fail();
 }
 
 #define ADD_TEST_FOLDER(name, folder)\
