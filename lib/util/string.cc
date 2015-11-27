@@ -42,7 +42,7 @@ std::vector<const char*> strToArgs(std::string str)
 	char split_char = ' ';
 
 	std::string curArgument = "";
-	for (int i = 0; i < str.length(); i++)
+	for (unsigned int i = 0; i < str.length(); i++)
 	{
 		if (str[i] == split_char && curArgument != "")
 		{
