@@ -26,6 +26,14 @@ int main(int argc, char** argv) {
 
 	options->getMainState()->setRunDelegate(runState);
 
-	// Run our program.
-	return options->parse(argc, argv);
+	try
+	{
+    	// Run our program.
+    	return options->parse(argc, argv);
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return 1;
+	}
 }
