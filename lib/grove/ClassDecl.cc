@@ -10,6 +10,9 @@
 #include <grove/ClassTopLevel.h>
 #include <grove/MemberVarDecl.h>
 #include <grove/ClassMethod.h>
+#include <grove/ReturnStmt.h>
+#include <grove/IDReference.h>
+#include <grove/Module.h>
 
 #include <grove/exceptions/code_error.h>
 #include <grove/exceptions/already_defined_error.h>
@@ -71,6 +74,48 @@ std::vector<ClassMethod *> ClassDecl::getCtors() const
 	
 	return ret;
 }
+
+void ClassDecl::createCtor(ClassMethod *method) const
+{
+	assertExists(getParent(), "class has no parent!");
+	
+	std::vector<Parameter *> params;
+	
+	if (method != nullptr)
+	{
+		params = method->getBasicParams();
+	}
+	
+	auto func = new Function(getName(), params);
+	
+	// The functions return type is this class' type.
+	func->setReturnType(getType());
+	
+	// The class constructor needs to create an instance of its return
+	// type, then instantiate all of its variables that have values,
+	// and finally call the method, if one exists.
+	
+	// Create the instance
+	auto class_instance = new VarDecl(getType(), "instance", nullptr);
+	
+	/// @todo: Instantiate members with default values
+	/// @todo: Call the method if one exists.
+	
+	auto load_instance = new IDReference("instance");
+	auto ret_stmt = new ReturnStmt(load_instance);
+	
+	// Add all the statements to the class.
+	func->addStatement(class_instance);
+	func->addStatement(load_instance);
+	func->addStatement(ret_stmt);
+	
+	// Add the function to our parent after this class.
+	getParent()->addChild(func, this, 1);
+	
+	// Request a resolve of our function.
+	getModule()->resolve(func);
+}
+
 void ClassDecl::resolve()
 {
 	// Make sure that the class's name is unique.
@@ -107,6 +152,21 @@ void ClassDecl::resolve()
 	}
 	
 	setType(ClassType::get(member_types));
+	
+	// Create all of our constructors.
+	auto ctors = getCtors();
+	if (ctors.size() == 0)
+	{
+		/// Create a default constructor that does nothing.
+		createCtor(nullptr);
+	}
+	else
+	{
+		for (auto ctor : ctors)
+		{
+			createCtor(ctor);
+		}
+	}
 }
 
 void ClassDecl::build()

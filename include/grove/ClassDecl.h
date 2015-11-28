@@ -20,6 +20,8 @@ class ClassMethod;
  */
 class ClassDecl : public Block, public Named, public Typed
 {
+protected:
+	void createCtor(ClassMethod* method) const;
 public:
 	virtual ASTNode* copy() const override;
 	
