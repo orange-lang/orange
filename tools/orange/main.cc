@@ -26,14 +26,21 @@ int main(int argc, char** argv) {
 
 	options->getMainState()->setRunDelegate(runState);
 
+	int retCode = 0;
+	
 	try
 	{
     	// Run our program.
-    	return options->parse(argc, argv);
+    	retCode = options->parse(argc, argv);
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		return 1;
+		retCode = 1;
 	}
+	
+	delete runState;
+	delete buildState;
+	delete testState;
+	delete options;
 }
