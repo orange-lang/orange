@@ -28,6 +28,8 @@ public:
 	virtual void resolve() override;
 	virtual void build() override;
 	
+	virtual bool matchesType(Type* other) const override;
+	
 	std::vector<MemberVarDecl*> getMembers() const;
 	std::vector<ClassMethod*> getMethods() const;
 	

@@ -21,7 +21,6 @@
 
 #include <util/assertions.h>
 
-
 ASTNode* ClassDecl::copy() const
 {
 	auto class_copy = new ClassDecl(getName());
@@ -172,6 +171,16 @@ void ClassDecl::resolve()
 void ClassDecl::build()
 {
 	buildStatements();
+}
+
+bool ClassDecl::matchesType(Type *other) const
+{
+	if (other->isClassTy() == false)
+	{
+		return false;
+	}
+	
+	return getType()->matches(other);
 }
 
 ClassDecl::ClassDecl(OString name)
