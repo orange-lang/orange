@@ -201,7 +201,6 @@ std::vector<const char*> Builder::getLinkFlags() const
 #elif defined(_WIN32)
 	options.push_back("-LC:/Windows/System32");
 	options.push_back("-lmsvcrt");
-	options.push_back("-lgcc");
 #endif
 
 	return options;
