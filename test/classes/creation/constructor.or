@@ -1,0 +1,5 @@
+# tests for parsing the class statement with a constructor.
+class TestClass
+	def TestClass()
+	end
+end

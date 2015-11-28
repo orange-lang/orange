@@ -1,0 +1,8 @@
+class TestClass 
+	def foo()
+		return 5 
+	end
+end 
+
+var obj = TestClass()
+return 1 if obj.foo() != 5 

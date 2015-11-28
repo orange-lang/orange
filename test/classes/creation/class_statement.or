@@ -1,0 +1,4 @@
+# tests for parsing the class statement with no 
+# methods or members. 
+class TestClass
+end

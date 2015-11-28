@@ -1,0 +1,24 @@
+class ParentClass 
+	int a
+
+	def ParentClass(int n)
+		a = n
+	end 
+end 
+
+class ChildClass from ParentClass
+	int b 
+
+	def test()
+		return 1 if (a + b) != 8 
+		return 0 
+	end  
+
+	def ChildClass()
+		super(5)
+		b = 3 
+	end 
+end 
+
+var obj = ChildClass()
+return obj.test()

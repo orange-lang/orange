@@ -1,0 +1,9 @@
+class TestClass 
+	public int a 
+	protected float b 
+	private double c 
+
+	def add()
+		return a + b + c
+	end 
+end

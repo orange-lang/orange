@@ -1,0 +1,12 @@
+# tests assigning members of a class
+class TestClass 
+	int a
+
+	def TestClass()
+		a = 5
+	end
+end
+
+TestClass obj = TestClass()
+obj.a = 10 
+return 1 if obj.a != 10

@@ -1,0 +1,4 @@
+class TestClass 
+end 
+
+var obj = TestClass()

@@ -1,0 +1,7 @@
+# tests caling the constructor of a class
+class TestClass 
+	def TestClass()
+	end
+end
+
+TestClass obj = TestClass()

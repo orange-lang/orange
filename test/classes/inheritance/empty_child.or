@@ -1,0 +1,13 @@
+class ParentClass 
+	int a
+
+	def ParentClass()
+		a = 5 
+	end 
+end 
+
+class ChildClass from ParentClass
+end 
+
+var obj = ChildClass()
+return 1 if obj.a != 5

@@ -1,0 +1,8 @@
+# tests for parsing the class statement with multiple constructors.
+class TestClass
+	def TestClass(int a)
+	end
+
+	def TestClass()
+	end
+end

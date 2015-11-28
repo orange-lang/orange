@@ -1,0 +1,21 @@
+class TestClass 
+	int a 
+
+	def foo() 
+		return a 
+	end 
+
+	def TestClass()
+		a = 5 
+	end 
+
+	def TestClass(int a)
+		this.a = a 
+	end 
+end
+
+TestClass obj = TestClass()
+return 1 if obj.foo() != 5 
+
+obj = TestClass(10)
+return 1 if obj.foo() != 10

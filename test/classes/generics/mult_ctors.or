@@ -1,0 +1,21 @@
+class TestClass 
+	var a, b 
+
+	def TestClass()
+		a = 5.3
+		b = 9
+	end 
+
+	def TestClass(var n, var f)
+		a = n
+		b = f 
+	end 
+end 
+
+var obj = TestClass(5, 5.3)
+return 1 if obj.a != 5 
+return 1 if obj.b < 5.3
+
+var obj2 = TestClass()
+return 1 if obj2.a < 5.3
+return 1 if obj2.b != 9 

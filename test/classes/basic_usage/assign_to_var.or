@@ -1,0 +1,15 @@
+class TestClass
+	int a 
+
+	def inc()
+		a++
+	end 
+
+	def TestClass(int a)
+		this.a = a 
+	end 
+end 
+
+var foo = TestClass(23)
+foo.inc()
+return 1 if foo.a != 24 

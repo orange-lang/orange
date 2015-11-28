@@ -1,0 +1,47 @@
+# test a various amount of member types
+class TestClass 
+	uint8 a
+	uint16 b 
+	uint32 c 
+	uint64 d 
+	int8 e, ne
+	int16 f, nf 
+	int32 g, ng
+	int64 h, nh 
+	float i
+	double j 
+
+	def test()
+		return 1 if a != 1
+		return 1 if b != 2 
+		return 1 if c != 3 
+		return 1 if d != 4 
+		return 1 if e != 5 
+		return 1 if ne != -5 
+		return 1 if f != 6 
+		return 1 if nf != -6 
+		return 1 if g != 7 
+		return 1 if ng != -7 
+		return 1 if h != 8 
+		return 1 if nh != -8 
+		return 1 if i < 9.2f 
+		return 1 if j < 10.2
+		return 0 
+	end 
+
+	def TestClass()
+		a = 1
+		b = 2 
+		c = 3 
+		d = 4 
+		e = 5, ne = -e 
+		f = 6, nf = -f 
+		g = 7, ng = -g 
+		h = 8, nh = -h 
+		i = 9.2 
+		j = 10.2 
+	end
+end 
+
+TestClass obj = TestClass()
+return obj.test()

@@ -1,0 +1,4 @@
+# tests for parsing the class statement with a member.
+class TestClass
+	int a
+end

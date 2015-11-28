@@ -1,0 +1,15 @@
+class ParentClass 
+	int a = 5 
+end 
+
+class ChildClass from ParentClass
+	int b = 3 
+
+	def test()
+		return 1 if (a + b) != 8 
+		return 0 
+	end  
+end 
+
+var obj = ChildClass()
+return obj.test()

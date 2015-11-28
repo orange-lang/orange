@@ -1,0 +1,5 @@
+# tests for parsing the class statement with methods.
+class TestClass
+	def foo()
+	end
+end

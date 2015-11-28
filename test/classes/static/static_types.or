@@ -1,0 +1,24 @@
+class TestClass 
+	static int8 a = 1 
+	static int16 b = 2 
+	static int32 c = 3 
+	static int64 d = 4 
+	static uint8 e = 5 
+	static uint16 f = 6 
+	static uint32 g = 7 
+	static uint64 h = 8 
+	static float i = 9.1f 
+	static double j = 10.1
+end 
+
+return 1 if TestClass.a != 1 
+return 1 if TestClass.b != 2 
+return 1 if TestClass.c != 3 
+return 1 if TestClass.d != 4 
+return 1 if TestClass.e != 5 
+return 1 if TestClass.f != 6 
+return 1 if TestClass.g != 7 
+return 1 if TestClass.h != 8 
+return 1 if TestClass.i < 9.1 
+return 1 if TestClass.j < 10.1 
+

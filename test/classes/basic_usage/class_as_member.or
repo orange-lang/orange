@@ -1,0 +1,18 @@
+class SmallClass 
+	int num
+
+	def SmallClass()
+		num = 5 
+	end 
+end 
+
+class BigClass 
+	SmallClass small 
+
+	def BigClass()
+		small = SmallClass()
+	end 
+end 
+
+BigClass big = BigClass() 
+return 1 if big.small.num != 5

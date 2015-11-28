@@ -1,0 +1,7 @@
+class TestClass 
+	int a 
+end 
+
+TestClass obj = TestClass()
+obj.a = 5 
+return 1 if obj.a != 5  

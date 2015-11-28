@@ -1,0 +1,15 @@
+# tests accessing members 
+class TestClass 
+	int a 
+
+	def foo() 
+		return a 
+	end 
+
+	def TestClass()
+		a = 5 
+	end 
+end
+
+TestClass obj = TestClass()
+return 1 if obj.foo() != 5 

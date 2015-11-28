@@ -1,0 +1,12 @@
+class TestClass
+	int a 
+
+	def TestClass(int a)
+		this.a = a 
+	end 
+end 
+
+var arr = [TestClass(1), TestClass(5), TestClass(9)]
+return 1 if arr[0].a != 1 
+return 1 if arr[1].a != 5 
+return 1 if arr[2].a != 9
