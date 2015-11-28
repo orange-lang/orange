@@ -9,11 +9,12 @@
 #pragma once 
 
 #include "Expression.h"
+#include "Accessible.h"
 
 /**
  * Represents an instance of a class or a pointer to an instance.
  */
-class ClassValue : public Expression
+class ClassValue : public Expression, public Accessible
 {
 	
 };
