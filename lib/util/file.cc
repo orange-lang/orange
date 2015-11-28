@@ -15,7 +15,7 @@
 //using namespace llvm;
 
 
-std::string findProjectDirectory()
+std::string findProjectDirectory(std::string target)
 {
 	llvm::SmallString<50> current_path_s;
 	llvm::sys::fs::current_path(current_path_s);
@@ -34,7 +34,7 @@ std::string findProjectDirectory()
 		auto end = llvm_dir_it();
 		for (auto it = llvm_dir_it(path_twine, ec); it != end; it.increment(ec))
 		{
-			if (llvm::sys::path::filename(it->path()).str() == ORANGE_SETTINGS)
+			if (llvm::sys::path::filename(it->path()).str() == target)
 			{
 				return current_path;
 			}
