@@ -114,6 +114,7 @@ public:
 	virtual bool isPointerTy() const;
 	virtual bool isVoidTy() const;
 	virtual bool isVarTy() const;
+	virtual bool isClassTy() const;
 	
 	virtual unsigned int getIntegerBitWidth() const;
 

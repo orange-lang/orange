@@ -122,6 +122,11 @@ bool Type::isVarTy() const
 	return false;
 }
 
+bool Type::isClassTy() const
+{
+	return false;
+}
+
 bool Type::isConst() const
 {
 	return m_const;
