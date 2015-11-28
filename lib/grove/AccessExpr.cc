@@ -9,6 +9,7 @@
 #include <grove/AccessExpr.h>
 
 #include <grove/exceptions/fatal_error.h>
+#include <grove/exceptions/code_error.h>
 
 #include <util/assertions.h>
 
@@ -37,7 +38,18 @@ void AccessExpr::resolve()
 {
 	auto a_lhs = getLHS()->ASTNode::as<Accessible *>();
 	m_accessed = a_lhs->access(getName(), nullptr);
-	assertExists(m_accessed, "No member found");
+	
+	if (m_accessed == nullptr)
+	{
+		auto name = getName();
+		throw code_error(m_LHS, [name] () -> std::string
+			{
+				std::stringstream ss;
+				ss << "object does not have accessible member named " <<
+					name.str();
+				return ss.str();
+			});
+	}
 	
 	setType(m_accessed->getType());
 }
