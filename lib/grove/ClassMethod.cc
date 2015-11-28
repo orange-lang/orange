@@ -14,6 +14,12 @@ Type* ClassMethod::getBasicType() const
 	return getType();
 }
 
+std::vector<Parameter *> ClassMethod::getBasicParams() const
+{
+	/// Just return getParams until a this parameter is added.
+	return getParams();
+}
+
 ClassMethod::ClassMethod(OString name, std::vector<Parameter *> params)
 : Function(name, params)
 {

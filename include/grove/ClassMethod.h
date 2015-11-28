@@ -22,5 +22,8 @@ public:
 	/// Gets the type of this method without the this parameter
 	virtual Type* getBasicType() const;
 	
+	/// Gets the parameter list without the this parameter
+	virtual std::vector<Parameter *> getBasicParams() const;
+	
 	ClassMethod(OString name, std::vector<Parameter *> params);
 };
