@@ -16,6 +16,8 @@
 
 #include <grove/exceptions/fatal_error.h>
 
+#include <util/assertions.h>
+
 void ASTNode::addAllChildrenAsDependencies()
 {
 	for (auto child : getChildren())
@@ -102,6 +104,29 @@ void ASTNode::addChild(ASTNode *child, bool mustExist)
 	}
 	
 	m_children.push_back(child);
+	
+	child->m_parent = this;
+	child->m_module = getModule();
+}
+
+void ASTNode::addChild(ASTNode *child, const ASTNode *ref, int delta)
+{
+	assertExists(child, "Child must exist");
+	assertExists(ref, "Ref must exist");
+	
+	if (this->is<ClassDecl *>() == false && child->is<ClassTopLevel*>())
+	{
+		throw fatal_error("Adding a ClassTopLevel in a non-class context");
+	}
+	
+	
+	auto pos = std::find(m_children.begin(), m_children.end(), ref);
+	if (pos == m_children.end())
+	{
+		throw fatal_error("reference was not found in list of children");
+	}
+	
+	m_children.insert(pos + delta, child);
 	
 	child->m_parent = this;
 	child->m_module = getModule();

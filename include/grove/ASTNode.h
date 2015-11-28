@@ -63,6 +63,9 @@ public:
 	void addDependency(ASTNode* dependency);
 
 	void addChild(ASTNode* child, bool mustExist = false);
+	
+	/// Add a child relative to a reference child plus a delta.
+	void addChild(ASTNode* child, const ASTNode* ref, int delta);
 
 	bool isRootNode() const;
 
