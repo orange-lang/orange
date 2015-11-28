@@ -56,6 +56,21 @@ std::vector<ClassMethod *> ClassDecl::getMethods() const
 	return ret;
 }
 
+std::vector<ClassMethod *> ClassDecl::getCtors() const
+{
+	std::vector<ClassMethod *> ret;
+	
+	for (auto child : getChildren())
+	{
+		if (child->is<ClassMethod *>() &&
+			child->as<ClassMethod *>()->getName() == getName())
+		{
+			ret.push_back(child->as<ClassMethod *>());
+		}
+	}
+	
+	return ret;
+}
 void ClassDecl::resolve()
 {
 	// Make sure that the class's name is unique.
