@@ -110,6 +110,7 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	
 	// Add the function to our parent after this class.
 	getParent()->addChild(func, this, 1);
+	findParent<Block *>()->addStatement(func, this, 1);
 	
 	// Request a resolve of our function.
 	getModule()->resolve(func);
