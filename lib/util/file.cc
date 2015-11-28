@@ -96,6 +96,12 @@ std::vector<std::string> getFilesRecursive(std::string path)
 			continue;
 		}
 		
+		// If it's a dotfile, continue on
+		auto fname = llvm::sys::path::filename(entry.path());
+		if (fname[0] == '.')
+		{
+			continue;
+		}
 		ret.push_back(entry.path());
 	}
 	
