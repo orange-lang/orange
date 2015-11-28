@@ -105,7 +105,6 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	
 	// Add all the statements to the class.
 	func->addStatement(class_instance);
-	func->addStatement(load_instance);
 	func->addStatement(ret_stmt);
 	
 	// Add the function to our parent after this class.
