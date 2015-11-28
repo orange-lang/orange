@@ -10,6 +10,8 @@
 
 #include <grove/exceptions/fatal_error.h>
 
+#include <grove/types/NodeType.h>
+
 #include <util/assertions.h>
 
 #include <llvm/IR/IRBuilder.h>
@@ -41,6 +43,11 @@ Parameter::Parameter(Type* type, OString name)
 	if (name == "")
 	{
 		throw fatal_error("name was null");
+	}
+	
+	if (type->is<NodeType *>())
+	{
+		addChild(type->as<NodeType *>());
 	}
 	
 	setType(type);
