@@ -106,3 +106,8 @@ OptionsState::OptionsState(std::string stateName)
 	
 	m_state_name = stateName;
 }
+
+OptionsState::~OptionsState()
+{
+	// Do nothing.
+}

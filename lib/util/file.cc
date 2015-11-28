@@ -15,7 +15,7 @@
 //using namespace llvm;
 
 
-std::string findProjectDirectory()
+std::string findProjectDirectory(std::string target)
 {
 	llvm::SmallString<50> current_path_s;
 	llvm::sys::fs::current_path(current_path_s);
@@ -34,7 +34,7 @@ std::string findProjectDirectory()
 		auto end = llvm_dir_it();
 		for (auto it = llvm_dir_it(path_twine, ec); it != end; it.increment(ec))
 		{
-			if (llvm::sys::path::filename(it->path()).str() == ORANGE_SETTINGS)
+			if (llvm::sys::path::filename(it->path()).str() == target)
 			{
 				return current_path;
 			}
@@ -70,7 +70,7 @@ std::string getTempFile(std::string prefix, std::string suffix)
 	return llvm::Twine(buf).str();
 }
 
-std::vector<std::string> getFilesRecursive(std::string path)
+std::vector<std::string> getFilesRecursive(std::string path, std::string ext)
 {
 	std::vector<std::string> ret;
 	
@@ -81,7 +81,8 @@ std::vector<std::string> getFilesRecursive(std::string path)
 	
 	if (ec.value() != 0)
 	{
-		throw std::runtime_error(ec.message());
+		std::string err = "No such file or directory: " + path;
+		throw std::runtime_error(err);
 	}
 	
 	for ( ; it != llvm_rdir_it(); it.increment(ec))
@@ -92,6 +93,19 @@ std::vector<std::string> getFilesRecursive(std::string path)
 		entry.status(status);
 		
 		if (status.type() != llvm::sys::fs::file_type::regular_file)
+		{
+			continue;
+		}
+		
+		// If it's a dotfile, continue on
+		auto fname = llvm::sys::path::filename(entry.path());
+		if (fname[0] == '.')
+		{
+			continue;
+		}
+		
+		auto fext = llvm::sys::path::extension(entry.path());
+		if (ext != "" && fext != ext)
 		{
 			continue;
 		}

@@ -11,6 +11,7 @@
 #include <cmd/OptionsState.h>
 #include <orange/RunCommand.h>
 #include <orange/BuildCommand.h>
+#include <orange/TestCommand.h>
 
 
 int main(int argc, char** argv) {
@@ -18,7 +19,7 @@ int main(int argc, char** argv) {
 
 	auto runState = new RunCommand();
 	auto buildState = new BuildCommand();
-	auto testState = new OptionsState("test");
+	auto testState = new TestCommand();
 
 	options->addState(runState);
 	options->addState(buildState);
@@ -26,14 +27,21 @@ int main(int argc, char** argv) {
 
 	options->getMainState()->setRunDelegate(runState);
 
+	int retCode = 0;
+	
 	try
 	{
     	// Run our program.
-    	return options->parse(argc, argv);
+    	retCode = options->parse(argc, argv);
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		return 1;
+		retCode = 1;
 	}
+	
+	delete runState;
+	delete buildState;
+	delete testState;
+	delete options;
 }

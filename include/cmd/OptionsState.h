@@ -94,4 +94,6 @@ public:
 	virtual int run(std::vector<std::string> args);
 
 	OptionsState(std::string stateName);
+	
+	virtual ~OptionsState();
 };
