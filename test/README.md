@@ -31,6 +31,7 @@ array: test arrays
 ternary: test ternary statement
 enum: test enums
 builtin: builtin function tests.
+classes: test classes
 programs: test programs
 bugs: test bugs found at some point
 ```
