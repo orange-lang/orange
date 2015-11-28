@@ -32,6 +32,7 @@ public:
 	std::vector<ASTNode *> getStatements() const;
 	
 	void addStatement(ASTNode* statement);
+	void addStatement(ASTNode* statement, const ASTNode* ref, int delta);
 	
 	/// Determines whether or not this block has a named node by
 	/// a given name.

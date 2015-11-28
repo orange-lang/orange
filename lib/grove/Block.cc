@@ -14,6 +14,8 @@
 #include <grove/exceptions/already_defined_error.h>
 #include <grove/exceptions/fatal_error.h>
 
+#include <util/assertions.h>
+
 #include <typeinfo>
 
 std::vector<ASTNode *> Block::getStatements() const
@@ -197,6 +199,21 @@ void Block::addStatement(ASTNode *statement)
 	
 	m_statements.push_back(statement);
 	addChild(statement, true);
+}
+
+void Block::addStatement(ASTNode* statement, const ASTNode *ref, int delta)
+{
+	assertExists(statement, "statement was null");
+	assertExists(ref, "ref was null");
+	
+	auto pos = std::find(m_statements.begin(), m_statements.end(), ref);
+	if (pos == m_statements.end())
+	{
+		throw fatal_error("reference was not found in list of statements");
+	}
+	
+	m_statements.insert(pos + delta, statement);
+	addChild(statement, ref, delta);
 }
 
 bool Block::isTerminator() const
