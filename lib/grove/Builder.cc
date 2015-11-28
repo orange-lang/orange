@@ -105,6 +105,8 @@ int Builder::run()
 
 	std::vector<llvm::GenericValue> args;
 	auto status = engine->runFunction(func, args);
+	
+	delete engine;
 
 	return status.IntVal.getSExtValue();
 }
@@ -231,6 +233,7 @@ Builder::~Builder()
 {
 	delete m_library;
 	delete m_settings;
+	delete m_target_machine;
 
 	for (auto module : m_modules)
 	{

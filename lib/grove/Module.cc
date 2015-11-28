@@ -251,6 +251,8 @@ std::string Module::compile()
 	strm.flush();
 	raw.flush();
 	raw.close();
+	
+	delete pm;
 
 	return path;
 }
@@ -291,7 +293,6 @@ Module::Module(Builder* builder, std::string filePath)
 
 Module::~Module()
 {
-	delete m_llvm_module;
 	delete m_ir_builder;
 	delete m_main;
 }
