@@ -12,10 +12,22 @@
 #include "Named.h"
 #include "Typed.h"
 
+class MemberVarDecl;
+class ClassMethod;
+
 /**
  * Represents a class declaration.
  */
 class ClassDecl : public Block, public Named, public Typed
 {
+public:
+	virtual ASTNode* copy() const override;
 	
+	virtual void resolve() override;
+	virtual void build() override;
+	
+	std::vector<MemberVarDecl*> getMembers() const;
+	std::vector<ClassMethod*> getMethods() const;
+	
+	ClassDecl(OString name);
 };
