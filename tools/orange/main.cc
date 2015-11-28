@@ -11,6 +11,7 @@
 #include <cmd/OptionsState.h>
 #include <orange/RunCommand.h>
 #include <orange/BuildCommand.h>
+#include <orange/TestCommand.h>
 
 
 int main(int argc, char** argv) {
@@ -18,7 +19,7 @@ int main(int argc, char** argv) {
 
 	auto runState = new RunCommand();
 	auto buildState = new BuildCommand();
-	auto testState = new OptionsState("test");
+	auto testState = new TestCommand();
 
 	options->addState(runState);
 	options->addState(buildState);
