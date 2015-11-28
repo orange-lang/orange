@@ -42,6 +42,7 @@
 	#include <grove/OString.h>
 	#include <grove/ClassDecl.h>
 	#include <grove/ClassMethod.h>
+	#include <grove/MemberVarDecl.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -777,7 +778,17 @@ var_decl
 
 		for (auto tupl : *$2)
 		{
-			auto decl = new VarDecl($1, std::get<0>(tupl), std::get<1>(tupl));
+			VarDecl* decl = nullptr;
+
+			if (module->getBlock()->is<ClassDecl*>())
+			{
+				decl = new MemberVarDecl($1, std::get<0>(tupl), std::get<1>(tupl));
+			}
+			else
+			{
+				decl = new VarDecl($1, std::get<0>(tupl), std::get<1>(tupl));
+			}
+
 			$$->push_back(decl);
     		SET_LOCATION(decl, @1, @2);
 		}

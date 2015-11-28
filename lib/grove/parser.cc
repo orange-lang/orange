@@ -277,6 +277,7 @@
 	#include <grove/OString.h>
 	#include <grove/ClassDecl.h>
 	#include <grove/ClassMethod.h>
+	#include <grove/MemberVarDecl.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -321,7 +322,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 74 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 75 "/Users/robert/dev/orange/lib/grove/parser.y"
 {
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
@@ -339,7 +340,7 @@ typedef union YYSTYPE
 	Type* ty;
 }
 /* Line 193 of yacc.c.  */
-#line 343 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 344 "/Users/robert/dev/orange/lib/grove/parser.cc"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -364,7 +365,7 @@ typedef struct YYLTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 368 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 369 "/Users/robert/dev/orange/lib/grove/parser.cc"
 
 #ifdef short
 # undef short
@@ -725,22 +726,22 @@ static const yytype_int16 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   152,   152,   164,   173,   185,   194,   209,   210,   214,
-     215,   216,   217,   221,   228,   232,   239,   240,   241,   242,
-     243,   244,   245,   246,   247,   248,   252,   278,   308,   309,
-     313,   321,   329,   341,   340,   362,   389,   405,   421,   428,
-     446,   457,   471,   482,   496,   512,   526,   540,   557,   567,
-     577,   584,   591,   598,   608,   609,   613,   614,   618,   627,
-     638,   643,   650,   651,   652,   653,   657,   658,   659,   660,
-     661,   662,   666,   667,   668,   669,   670,   671,   673,   674,
-     678,   679,   680,   681,   682,   684,   685,   686,   688,   689,
-     690,   691,   692,   693,   697,   698,   699,   700,   704,   712,
-     720,   731,   732,   733,   734,   735,   736,   737,   738,   739,
-     740,   741,   742,   743,   747,   752,   761,   766,   774,   790,
-     797,   804,   811,   820,   836,   841,   846,   852,   860,   865,
-     874,   875,   879,   883,   887,   894,   898,   902,   909,   944,
-     949,   957,   958,   959,   960,   961,   962,   963,   964,   965,
-     966,   967,   968,   969,   970,   971
+       0,   153,   153,   165,   174,   186,   195,   210,   211,   215,
+     216,   217,   218,   222,   229,   233,   240,   241,   242,   243,
+     244,   245,   246,   247,   248,   249,   253,   279,   309,   310,
+     314,   322,   330,   342,   341,   363,   390,   406,   422,   429,
+     447,   458,   472,   483,   497,   513,   527,   541,   558,   568,
+     578,   585,   592,   599,   609,   610,   614,   615,   619,   628,
+     639,   644,   651,   652,   653,   654,   658,   659,   660,   661,
+     662,   663,   667,   668,   669,   670,   671,   672,   674,   675,
+     679,   680,   681,   682,   683,   685,   686,   687,   689,   690,
+     691,   692,   693,   694,   698,   699,   700,   701,   705,   713,
+     721,   732,   733,   734,   735,   736,   737,   738,   739,   740,
+     741,   742,   743,   744,   748,   753,   762,   767,   775,   801,
+     808,   815,   822,   831,   847,   852,   857,   863,   871,   876,
+     885,   886,   890,   894,   898,   905,   909,   913,   920,   955,
+     960,   968,   969,   970,   971,   972,   973,   974,   975,   976,
+     977,   978,   979,   980,   981,   982
 };
 #endif
 
@@ -2192,7 +2193,7 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 153 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 154 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		for (auto stmt : *(yyvsp[(1) - (1)].nodes))
 		{
@@ -2204,7 +2205,7 @@ yyreduce:
     break;
 
   case 3:
-#line 165 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 166 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = (yyvsp[(1) - (2)].nodes);
 
@@ -2216,7 +2217,7 @@ yyreduce:
     break;
 
   case 4:
-#line 174 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 175 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = (yyvsp[(1) - (2)].nodes);
 
@@ -2231,7 +2232,7 @@ yyreduce:
     break;
 
   case 5:
-#line 186 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 187 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = new std::vector<ASTNode *>();
 
@@ -2243,7 +2244,7 @@ yyreduce:
     break;
 
   case 6:
-#line 195 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 196 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = new std::vector<ASTNode *>();
 
@@ -2258,51 +2259,51 @@ yyreduce:
     break;
 
   case 7:
-#line 209 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 210 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.nodes) = (yyvsp[(1) - (1)].nodes); ;}
     break;
 
   case 8:
-#line 210 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 211 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.nodes) = new std::vector<ASTNode *>(); ;}
     break;
 
   case 9:
-#line 214 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 215 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = (yyvsp[(1) - (2)].stmt); ;}
     break;
 
   case 10:
-#line 215 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 216 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = (yyvsp[(1) - (2)].node); ;}
     break;
 
   case 11:
-#line 216 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 217 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = (yyvsp[(1) - (2)].expr); ;}
     break;
 
   case 12:
-#line 217 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 218 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = nullptr; ;}
     break;
 
   case 13:
-#line 222 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 223 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = (yyvsp[(1) - (2)].nodes);
 	;}
     break;
 
   case 14:
-#line 229 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 230 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = (yyvsp[(1) - (1)].nodes);
 	;}
     break;
 
   case 15:
-#line 233 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 234 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = new std::vector<ASTNode *>();
 		(yyval.nodes)->push_back((yyvsp[(1) - (1)].expr));
@@ -2310,57 +2311,57 @@ yyreduce:
     break;
 
   case 16:
-#line 239 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
-    break;
-
-  case 17:
 #line 240 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
-  case 18:
+  case 17:
 #line 241 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
-  case 19:
+  case 18:
 #line 242 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
-  case 20:
+  case 19:
 #line 243 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
-  case 21:
+  case 20:
 #line 244 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
-  case 22:
+  case 21:
 #line 245 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
-  case 23:
+  case 22:
 #line 246 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
-  case 24:
+  case 23:
 #line 247 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
-  case 25:
+  case 24:
 #line 248 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
     break;
 
+  case 25:
+#line 249 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.stmt) = (yyvsp[(1) - (1)].stmt); ;}
+    break;
+
   case 26:
-#line 253 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 254 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		Function* func = nullptr;
 
@@ -2389,7 +2390,7 @@ yyreduce:
     break;
 
   case 27:
-#line 279 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 280 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		Function* func = nullptr;
 
@@ -2419,17 +2420,17 @@ yyreduce:
     break;
 
   case 28:
-#line 308 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 309 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = (yyvsp[(2) - (2)].ty); ;}
     break;
 
   case 29:
-#line 309 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 310 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = nullptr; ;}
     break;
 
   case 30:
-#line 314 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 315 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		std::vector<Parameter *> params;
 		(yyval.stmt) = new ExternFunction(*(yyvsp[(2) - (6)].str), params, (yyvsp[(6) - (6)].ty));
@@ -2440,7 +2441,7 @@ yyreduce:
     break;
 
   case 31:
-#line 322 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 323 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.stmt) = new ExternFunction(*(yyvsp[(2) - (7)].str), *(yyvsp[(4) - (7)].params), (yyvsp[(7) - (7)].ty));
 		SET_LOCATION((yyval.stmt), (yylsp[(1) - (7)]), (yylsp[(7) - (7)]));
@@ -2451,7 +2452,7 @@ yyreduce:
     break;
 
   case 32:
-#line 330 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 331 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.stmt) = new ExternFunction(*(yyvsp[(2) - (9)].str), *(yyvsp[(4) - (9)].params), (yyvsp[(9) - (9)].ty), true);
 		SET_LOCATION((yyval.stmt), (yylsp[(1) - (9)]), (yylsp[(9) - (9)]));
@@ -2462,7 +2463,7 @@ yyreduce:
     break;
 
   case 33:
-#line 341 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 342 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.stmt) = new ClassDecl(*(yyvsp[(2) - (3)].str));
 		module->pushBlock((Block *)(yyval.stmt));
@@ -2471,7 +2472,7 @@ yyreduce:
     break;
 
   case 34:
-#line 346 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 347 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		ClassDecl* inst = (ClassDecl *)(yyvsp[(4) - (6)].stmt);
 
@@ -2489,7 +2490,7 @@ yyreduce:
     break;
 
   case 35:
-#line 363 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 364 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto blocks = (yyvsp[(5) - (5)].blocks);
 
@@ -2516,7 +2517,7 @@ yyreduce:
     break;
 
   case 36:
-#line 390 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 391 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.blocks) = (yyvsp[(5) - (5)].blocks);
 
@@ -2535,7 +2536,7 @@ yyreduce:
     break;
 
   case 37:
-#line 406 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 407 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.blocks) = new std::vector<Block *>();
 
@@ -2554,14 +2555,14 @@ yyreduce:
     break;
 
   case 38:
-#line 422 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 423 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.blocks) = new std::vector<Block *>();
 	;}
     break;
 
   case 39:
-#line 429 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 430 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto block = new CondBlock((yyvsp[(2) - (5)].expr), true);
 		for (auto stmt : *(yyvsp[(4) - (5)].nodes))
@@ -2580,7 +2581,7 @@ yyreduce:
     break;
 
   case 40:
-#line 447 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 448 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto block = new CondBlock((yyvsp[(3) - (3)].expr));
 		block->addStatement((yyvsp[(1) - (3)].node));
@@ -2594,7 +2595,7 @@ yyreduce:
     break;
 
   case 41:
-#line 458 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 459 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto block = new CondBlock((yyvsp[(3) - (3)].expr));
 		block->addStatement((yyvsp[(1) - (3)].expr));
@@ -2608,7 +2609,7 @@ yyreduce:
     break;
 
   case 42:
-#line 472 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 473 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto block = new CondBlock((yyvsp[(3) - (3)].expr), true);
 		block->addStatement((yyvsp[(1) - (3)].node));
@@ -2622,7 +2623,7 @@ yyreduce:
     break;
 
   case 43:
-#line 483 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 484 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto block = new CondBlock((yyvsp[(3) - (3)].expr), true);
 		block->addStatement((yyvsp[(1) - (3)].expr));
@@ -2636,7 +2637,7 @@ yyreduce:
     break;
 
   case 44:
-#line 498 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 499 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(*(yyvsp[(3) - (11)].nodes), (yyvsp[(5) - (11)].expr), (yyvsp[(7) - (11)].expr), false);
 
@@ -2654,7 +2655,7 @@ yyreduce:
     break;
 
   case 45:
-#line 513 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 514 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(std::vector<ASTNode*>(), (yyvsp[(2) - (5)].expr), nullptr, false);
 
@@ -2671,7 +2672,7 @@ yyreduce:
     break;
 
   case 46:
-#line 527 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 528 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
 
@@ -2688,7 +2689,7 @@ yyreduce:
     break;
 
   case 47:
-#line 541 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 542 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(std::vector<ASTNode*>(), (yyvsp[(6) - (6)].expr), nullptr, true);
 
@@ -2705,7 +2706,7 @@ yyreduce:
     break;
 
   case 48:
-#line 559 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 560 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(*(yyvsp[(4) - (9)].nodes), (yyvsp[(6) - (9)].expr), (yyvsp[(8) - (9)].expr), false);
 		loop->addStatement((yyvsp[(1) - (9)].node));
@@ -2717,7 +2718,7 @@ yyreduce:
     break;
 
   case 49:
-#line 569 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 570 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(*(yyvsp[(4) - (9)].nodes), (yyvsp[(6) - (9)].expr), (yyvsp[(8) - (9)].expr), false);
 		loop->addStatement((yyvsp[(1) - (9)].expr));
@@ -2729,7 +2730,7 @@ yyreduce:
     break;
 
   case 50:
-#line 578 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 579 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(std::vector<ASTNode*>(), (yyvsp[(3) - (3)].expr), nullptr, false);
 		loop->addStatement((yyvsp[(1) - (3)].node));
@@ -2739,7 +2740,7 @@ yyreduce:
     break;
 
   case 51:
-#line 585 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 586 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(std::vector<ASTNode*>(), (yyvsp[(3) - (3)].expr), nullptr, false);
 		loop->addStatement((yyvsp[(1) - (3)].expr));
@@ -2749,7 +2750,7 @@ yyreduce:
     break;
 
   case 52:
-#line 592 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 593 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
 		loop->addStatement((yyvsp[(1) - (2)].node));
@@ -2759,7 +2760,7 @@ yyreduce:
     break;
 
   case 53:
-#line 599 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 600 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
 		loop->addStatement((yyvsp[(1) - (2)].expr));
@@ -2769,27 +2770,27 @@ yyreduce:
     break;
 
   case 54:
-#line 608 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 609 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.nodes) = (yyvsp[(1) - (1)].nodes); ;}
     break;
 
   case 55:
-#line 609 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 610 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.nodes) = new std::vector<ASTNode*>(); ;}
     break;
 
   case 56:
-#line 613 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 614 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
   case 57:
-#line 614 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 615 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = nullptr; ;}
     break;
 
   case 58:
-#line 619 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 620 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.params) = (yyvsp[(1) - (4)].params);
 		auto param = new Parameter((yyvsp[(3) - (4)].ty), *(yyvsp[(4) - (4)].str));
@@ -2801,7 +2802,7 @@ yyreduce:
     break;
 
   case 59:
-#line 628 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 629 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.params) = new std::vector<Parameter *>();
 		auto param = new Parameter((yyvsp[(1) - (2)].ty), *(yyvsp[(2) - (2)].str));
@@ -2813,7 +2814,7 @@ yyreduce:
     break;
 
   case 60:
-#line 639 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 640 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.args) = (yyvsp[(1) - (3)].args);
 		(yyval.args)->push_back((yyvsp[(3) - (3)].expr));
@@ -2821,7 +2822,7 @@ yyreduce:
     break;
 
   case 61:
-#line 644 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 645 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.args) = new std::vector<Expression *>();
 		(yyval.args)->push_back((yyvsp[(1) - (1)].expr));
@@ -2829,187 +2830,187 @@ yyreduce:
     break;
 
   case 62:
-#line 650 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 651 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 63:
-#line 651 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.node) = new LoopTerminator(*(yyvsp[(1) - (1)].str)); SET_LOCATION((yyval.node), (yylsp[(1) - (1)]), (yylsp[(1) - (1)])); delete (yyvsp[(1) - (1)].str); ;}
-    break;
-
-  case 64:
 #line 652 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = new LoopTerminator(*(yyvsp[(1) - (1)].str)); SET_LOCATION((yyval.node), (yylsp[(1) - (1)]), (yylsp[(1) - (1)])); delete (yyvsp[(1) - (1)].str); ;}
     break;
 
-  case 65:
+  case 64:
 #line 653 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.node) = new LoopTerminator(*(yyvsp[(1) - (1)].str)); SET_LOCATION((yyval.node), (yylsp[(1) - (1)]), (yylsp[(1) - (1)])); delete (yyvsp[(1) - (1)].str); ;}
     break;
 
-  case 66:
-#line 657 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
+  case 65:
+#line 654 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.node) = new LoopTerminator(*(yyvsp[(1) - (1)].str)); SET_LOCATION((yyval.node), (yylsp[(1) - (1)]), (yylsp[(1) - (1)])); delete (yyvsp[(1) - (1)].str); ;}
     break;
 
-  case 67:
+  case 66:
 #line 658 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
-  case 68:
+  case 67:
 #line 659 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
-  case 69:
+  case 68:
 #line 660 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
-  case 70:
+  case 69:
 #line 661 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
-  case 71:
+  case 70:
 #line 662 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
-  case 72:
-#line 666 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
+  case 71:
+#line 663 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = (yyvsp[(1) - (1)].expr); ;}
     break;
 
-  case 73:
+  case 72:
 #line 667 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 74:
+  case 73:
 #line 668 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 75:
+  case 74:
 #line 669 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 76:
+  case 75:
 #line 670 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 77:
+  case 76:
 #line 671 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 78:
-#line 673 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpAndOr((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
+  case 77:
+#line 672 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpCompare((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 79:
+  case 78:
 #line 674 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpAndOr((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 80:
-#line 678 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
+  case 79:
+#line 675 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpAndOr((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 81:
+  case 80:
 #line 679 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 82:
+  case 81:
 #line 680 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 83:
+  case 82:
 #line 681 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 84:
+  case 83:
 #line 682 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 85:
-#line 684 "/Users/robert/dev/orange/lib/grove/parser.y"
+  case 84:
+#line 683 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 86:
+  case 85:
 #line 685 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 87:
+  case 86:
 #line 686 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 88:
-#line 688 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
+  case 87:
+#line 687 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpArith((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 89:
+  case 88:
 #line 689 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 90:
+  case 89:
 #line 690 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 91:
+  case 90:
 #line 691 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 92:
+  case 91:
 #line 692 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
-  case 93:
+  case 92:
 #line 693 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
     break;
 
+  case 93:
+#line 694 "/Users/robert/dev/orange/lib/grove/parser.y"
+    { (yyval.expr) = new BinOpAssign((yyvsp[(1) - (3)].expr), *(yyvsp[(2) - (3)].str), (yyvsp[(3) - (3)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].str); ;}
+    break;
+
   case 94:
-#line 697 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 698 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new IncrementExpr((yyvsp[(1) - (2)].expr),  1, false); SET_LOCATION((yyval.expr), (yylsp[(1) - (2)]), (yylsp[(2) - (2)])); ;}
     break;
 
   case 95:
-#line 698 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 699 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new IncrementExpr((yyvsp[(1) - (2)].expr), -1, false); SET_LOCATION((yyval.expr), (yylsp[(1) - (2)]), (yylsp[(2) - (2)])); ;}
     break;
 
   case 96:
-#line 699 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 700 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new IncrementExpr((yyvsp[(2) - (2)].expr),  1, true); SET_LOCATION((yyval.expr), (yylsp[(1) - (2)]), (yylsp[(2) - (2)])); ;}
     break;
 
   case 97:
-#line 700 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 701 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new IncrementExpr((yyvsp[(2) - (2)].expr), -1, true); SET_LOCATION((yyval.expr), (yylsp[(1) - (2)]), (yylsp[(2) - (2)])); ;}
     break;
 
   case 98:
-#line 705 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 706 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.expr) = new TernaryExpr((yyvsp[(1) - (5)].expr), (yyvsp[(3) - (5)].expr), (yyvsp[(5) - (5)].expr));
 		SET_LOCATION((yyval.expr), (yylsp[(1) - (5)]), (yylsp[(5) - (5)]));
@@ -3017,7 +3018,7 @@ yyreduce:
     break;
 
   case 99:
-#line 713 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 714 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		std::vector<Expression *> params;
 		(yyval.expr) = new FunctionCall(*(yyvsp[(1) - (3)].str), params);
@@ -3028,7 +3029,7 @@ yyreduce:
     break;
 
   case 100:
-#line 721 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 722 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.expr) = new FunctionCall(*(yyvsp[(1) - (4)].str), *(yyvsp[(3) - (4)].args));
 		SET_LOCATION((yyval.expr), (yylsp[(1) - (4)]), (yylsp[(4) - (4)]));
@@ -3039,72 +3040,72 @@ yyreduce:
     break;
 
   case 101:
-#line 731 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 732 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(2) - (3)].expr); ;}
     break;
 
   case 102:
-#line 732 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 733 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = (yyvsp[(1) - (1)].val); SET_LOCATION((yyval.expr), (yylsp[(1) - (1)]), (yylsp[(1) - (1)])); ;}
     break;
 
   case 103:
-#line 733 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 734 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new NegativeExpr((yyvsp[(2) - (2)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (2)]), (yylsp[(2) - (2)])); ;}
     break;
 
   case 104:
-#line 734 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 735 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new StrValue(*(yyvsp[(1) - (1)].str)); SET_LOCATION((yyval.expr), (yylsp[(1) - (1)]), (yylsp[(1) - (1)])); delete (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 105:
-#line 735 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 736 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new IDReference(*(yyvsp[(1) - (1)].str)); SET_LOCATION((yyval.expr), (yylsp[(1) - (1)]), (yylsp[(1) - (1)])); delete (yyvsp[(1) - (1)].str); ;}
     break;
 
   case 106:
-#line 736 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 737 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new DerefExpr((yyvsp[(2) - (2)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (2)]), (yylsp[(2) - (2)])); ;}
     break;
 
   case 107:
-#line 737 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 738 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new ReferenceExpr((yyvsp[(2) - (2)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (2)]), (yylsp[(2) - (2)])); ;}
     break;
 
   case 108:
-#line 738 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 739 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new CastExpr((yyvsp[(2) - (4)].ty), (yyvsp[(4) - (4)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (4)]), (yylsp[(4) - (4)])); ;}
     break;
 
   case 109:
-#line 739 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 740 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new ArrayValue(*(yyvsp[(2) - (3)].exprs)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(2) - (3)].exprs); ;}
     break;
 
   case 110:
-#line 740 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 741 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new ArrayAccessExpr((yyvsp[(1) - (4)].expr), (yyvsp[(3) - (4)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (4)]), (yylsp[(4) - (4)])); ;}
     break;
 
   case 111:
-#line 741 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 742 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new AccessExpr((yyvsp[(1) - (3)].expr), *(yyvsp[(3) - (3)].str)); SET_LOCATION((yyval.expr), (yylsp[(1) - (3)]), (yylsp[(3) - (3)])); delete (yyvsp[(3) - (3)].str); ;}
     break;
 
   case 112:
-#line 742 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 743 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new SizeofExpr((yyvsp[(3) - (4)].expr)); SET_LOCATION((yyval.expr), (yylsp[(1) - (4)]), (yylsp[(4) - (4)])); ;}
     break;
 
   case 113:
-#line 743 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 744 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.expr) = new SizeofExpr((yyvsp[(3) - (4)].ty)); SET_LOCATION((yyval.expr), (yylsp[(1) - (4)]), (yylsp[(4) - (4)])); ;}
     break;
 
   case 114:
-#line 748 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 749 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.exprs) = (yyvsp[(1) - (3)].exprs);
 		(yyval.exprs)->push_back((yyvsp[(3) - (3)].expr));
@@ -3112,7 +3113,7 @@ yyreduce:
     break;
 
   case 115:
-#line 753 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 754 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.exprs) = new std::vector<Expression *>();
 		(yyval.exprs)->push_back((yyvsp[(1) - (1)].expr));
@@ -3120,7 +3121,7 @@ yyreduce:
     break;
 
   case 116:
-#line 762 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 763 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.node) = new ReturnStmt(nullptr);
 		SET_LOCATION((yyval.node), (yylsp[(1) - (1)]), (yylsp[(1) - (1)]));
@@ -3128,7 +3129,7 @@ yyreduce:
     break;
 
   case 117:
-#line 767 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 768 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.node) = new ReturnStmt((yyvsp[(2) - (2)].expr));
 		SET_LOCATION((yyval.node), (yylsp[(1) - (2)]), (yylsp[(2) - (2)]));
@@ -3136,13 +3137,23 @@ yyreduce:
     break;
 
   case 118:
-#line 775 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 776 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.nodes) = new std::vector<ASTNode*>();
 
 		for (auto tupl : *(yyvsp[(2) - (2)].pairs))
 		{
-			auto decl = new VarDecl((yyvsp[(1) - (2)].ty), std::get<0>(tupl), std::get<1>(tupl));
+			VarDecl* decl = nullptr;
+
+			if (module->getBlock()->is<ClassDecl*>())
+			{
+				decl = new MemberVarDecl((yyvsp[(1) - (2)].ty), std::get<0>(tupl), std::get<1>(tupl));
+			}
+			else
+			{
+				decl = new VarDecl((yyvsp[(1) - (2)].ty), std::get<0>(tupl), std::get<1>(tupl));
+			}
+
 			(yyval.nodes)->push_back(decl);
     		SET_LOCATION(decl, (yylsp[(1) - (2)]), (yylsp[(2) - (2)]));
 		}
@@ -3152,7 +3163,7 @@ yyreduce:
     break;
 
   case 119:
-#line 791 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 802 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.pairs) = (yyvsp[(1) - (3)].pairs);
 		(yyval.pairs)->push_back(std::make_tuple(*(yyvsp[(3) - (3)].str), nullptr));
@@ -3162,7 +3173,7 @@ yyreduce:
     break;
 
   case 120:
-#line 798 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 809 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.pairs) = (yyvsp[(1) - (5)].pairs);
 		(yyval.pairs)->push_back(std::make_tuple(*(yyvsp[(3) - (5)].str), (yyvsp[(5) - (5)].expr)));
@@ -3172,7 +3183,7 @@ yyreduce:
     break;
 
   case 121:
-#line 805 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 816 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.pairs) = new std::vector<std::tuple<OString, Expression*>>();
 		(yyval.pairs)->push_back(std::make_tuple(*(yyvsp[(1) - (1)].str), nullptr));
@@ -3182,7 +3193,7 @@ yyreduce:
     break;
 
   case 122:
-#line 812 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 823 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.pairs) = new std::vector<std::tuple<OString, Expression*>>();
 		(yyval.pairs)->push_back(std::make_tuple(*(yyvsp[(1) - (3)].str), (yyvsp[(3) - (3)].expr)));
@@ -3192,7 +3203,7 @@ yyreduce:
     break;
 
   case 123:
-#line 821 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 832 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		auto estmt = new EnumStmt(*(yyvsp[(2) - (5)].str), IntType::get(64));
 		for (auto pair : *(yyvsp[(4) - (5)].vpairs))
@@ -3209,7 +3220,7 @@ yyreduce:
     break;
 
   case 124:
-#line 837 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 848 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.vpairs)->push_back(std::make_tuple(*(yyvsp[(2) - (3)].str), (Value *)nullptr));
 		delete (yyvsp[(2) - (3)].str);
@@ -3217,7 +3228,7 @@ yyreduce:
     break;
 
   case 125:
-#line 842 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 853 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.vpairs)->push_back(std::make_tuple(*(yyvsp[(2) - (5)].str), (yyvsp[(4) - (5)].val)));
 		delete (yyvsp[(2) - (5)].str);
@@ -3225,7 +3236,7 @@ yyreduce:
     break;
 
   case 126:
-#line 847 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 858 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.vpairs) = new std::vector<std::tuple<OString, Value*>>();
 		(yyval.vpairs)->push_back(std::make_tuple(*(yyvsp[(1) - (2)].str), (Value *)nullptr));
@@ -3234,7 +3245,7 @@ yyreduce:
     break;
 
   case 127:
-#line 853 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 864 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.vpairs) = new std::vector<std::tuple<OString, Value*>>();
 		(yyval.vpairs)->push_back(std::make_tuple(*(yyvsp[(1) - (4)].str), (yyvsp[(3) - (4)].val)));
@@ -3243,7 +3254,7 @@ yyreduce:
     break;
 
   case 128:
-#line 861 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 872 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.val) = (yyvsp[(1) - (1)].val);
 		SET_LOCATION((yyval.val), (yylsp[(1) - (1)]), (yylsp[(1) - (1)]));
@@ -3251,7 +3262,7 @@ yyreduce:
     break;
 
   case 129:
-#line 866 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 877 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.val) = (yyvsp[(2) - (2)].val);
 		(yyvsp[(2) - (2)].val)->negate();
@@ -3260,49 +3271,49 @@ yyreduce:
     break;
 
   case 132:
-#line 880 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 891 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.ty) = PointerType::get((yyvsp[(1) - (3)].ty));
 	;}
     break;
 
   case 133:
-#line 884 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 895 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.ty) = PointerType::get((yyvsp[(1) - (2)].ty));
 	;}
     break;
 
   case 134:
-#line 888 "/Users/robert/dev/orange/lib/grove/parser.y"
-    {
-		(yyval.ty) = (yyvsp[(1) - (1)].ty);
-	;}
-    break;
-
-  case 135:
-#line 895 "/Users/robert/dev/orange/lib/grove/parser.y"
-    {
-		(yyval.ty) = (yyvsp[(2) - (2)].ty)->getConst();
-	;}
-    break;
-
-  case 136:
 #line 899 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.ty) = (yyvsp[(1) - (1)].ty);
 	;}
     break;
 
+  case 135:
+#line 906 "/Users/robert/dev/orange/lib/grove/parser.y"
+    {
+		(yyval.ty) = (yyvsp[(2) - (2)].ty)->getConst();
+	;}
+    break;
+
+  case 136:
+#line 910 "/Users/robert/dev/orange/lib/grove/parser.y"
+    {
+		(yyval.ty) = (yyvsp[(1) - (1)].ty);
+	;}
+    break;
+
   case 137:
-#line 903 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 914 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.ty) = (yyvsp[(1) - (1)].ty);
 	;}
     break;
 
   case 138:
-#line 910 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 921 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.ty) = (yyvsp[(1) - (2)].ty);
 
@@ -3337,7 +3348,7 @@ yyreduce:
     break;
 
   case 139:
-#line 945 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 956 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.exprs) = (yyvsp[(1) - (4)].exprs);
 		(yyval.exprs)->push_back((yyvsp[(3) - (4)].expr));
@@ -3345,7 +3356,7 @@ yyreduce:
     break;
 
   case 140:
-#line 950 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 961 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
 		(yyval.exprs) = new std::vector<Expression *>();
 		(yyval.exprs)->push_back((yyvsp[(2) - (3)].expr));
@@ -3353,83 +3364,83 @@ yyreduce:
     break;
 
   case 141:
-#line 957 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 968 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = IntType::get(64); ;}
     break;
 
   case 142:
-#line 958 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 969 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = UIntType::get(64); ;}
     break;
 
   case 143:
-#line 959 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 970 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = FloatType::get(); ;}
     break;
 
   case 144:
-#line 960 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 971 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = DoubleType::get(); ;}
     break;
 
   case 145:
-#line 961 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 972 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = IntType::get(8); ;}
     break;
 
   case 146:
-#line 962 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 973 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = IntType::get(16); ;}
     break;
 
   case 147:
-#line 963 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 974 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = IntType::get(32); ;}
     break;
 
   case 148:
-#line 964 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 975 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = IntType::get(64); ;}
     break;
 
   case 149:
-#line 965 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 976 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = UIntType::get(8); ;}
     break;
 
   case 150:
-#line 966 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 977 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = UIntType::get(16); ;}
     break;
 
   case 151:
-#line 967 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 978 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = UIntType::get(32); ;}
     break;
 
   case 152:
-#line 968 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 979 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = UIntType::get(64); ;}
     break;
 
   case 153:
-#line 969 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 980 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = IntType::get(8); ;}
     break;
 
   case 154:
-#line 970 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 981 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = VoidType::get(); ;}
     break;
 
   case 155:
-#line 971 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 982 "/Users/robert/dev/orange/lib/grove/parser.y"
     { (yyval.ty) = VarType::get(); ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 3433 "/Users/robert/dev/orange/lib/grove/parser.cc"
+#line 3444 "/Users/robert/dev/orange/lib/grove/parser.cc"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -3649,6 +3660,6 @@ yyreturn:
 }
 
 
-#line 974 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 985 "/Users/robert/dev/orange/lib/grove/parser.y"
 
 
