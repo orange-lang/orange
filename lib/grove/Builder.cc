@@ -194,14 +194,15 @@ std::vector<const char*> Builder::getLinkFlags() const
 #if defined(__APPLE__)
 	options.push_back("-w");
 	options.push_back("-ldylib1.o");
+	options.push_back("-lc");
 #elif defined(__linux__)
 	options.push_back("-I/lib64/ld-linux-x86-64.so.2");
+	options.push_back("-lc");
 #elif defined(_WIN32)
 	options.push_back("-LC:/Windows/System32");
 	options.push_back("-lmsvcrt");
 #endif
 
-	options.push_back("-lc");
 	return options;
 }
 
