@@ -38,9 +38,23 @@ void TestCommand::enableOutput()
 
 int TestCommand::run(std::vector<std::string> args)
 {
+	std::vector<std::string> test_files;
 	auto proj_dir = findProjectDirectory("orange.settings.json");
-	auto test_path = combinePaths(proj_dir, "test/");
-	auto test_files = getFilesRecursive(test_path, ".or");
+	
+	if (args.size() == 0)
+	{
+		auto test_path = combinePaths(proj_dir, "test/");
+    	test_files = getFilesRecursive(test_path, ".or");
+	}
+	else
+	{
+		for (unsigned int i = 0; i < args.size(); i++)
+		{
+			auto test_path = combinePaths(proj_dir, "test/" + args.at(i));
+			auto files = getFilesRecursive(test_path, ".or");
+			test_files.insert(test_files.end(), files.begin(), files.end());
+		}
+	}
 	
 	// Number of results (. or F) printed to the screen.
 	int nres_printed = 0;
