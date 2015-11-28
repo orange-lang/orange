@@ -1,3 +1,0 @@
-var b = 3.14
-var a = 3 - (int)b
-return a

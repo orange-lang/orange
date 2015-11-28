@@ -1,9 +1,0 @@
-extern puts(char *s) -> int32
-
-def foo(int a)
-	puts("hello!")
-	return a
-end 
-
-foo(1)
-return foo(0)

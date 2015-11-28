@@ -6,56 +6,34 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 #include <iostream>
-#include <stdexcept>
-#include <fstream>
-#include <sstream>
-#include <helper/args.h>
-#include <helper/link.h>
-#include <orange/file.h>
-#include <orange/orange.h>
+#include <util/link.h>
+#include <cmd/ProgramOptions.h>
+#include <cmd/OptionsState.h>
+#include <orange/RunCommand.h>
+#include <orange/BuildCommand.h>
 
-#include <orange/commands/CodeExecutor.h>
-#include <orange/commands/RunCommand.h>
-#include <orange/commands/BuildCommand.h>
-#include <orange/commands/TestCommand.h>
 
 int main(int argc, char** argv) {
-	cOptions options("Orange WIP");
+	auto options = new ProgramOptions("Orange WIP");
 
-  cCommandOption* debug = new cCommandOption({"debug", "D"}, "Print debugging info", true, true);
-  cCommandOption* dump = new cCommandOption({"dump"}, "Dump module after building", false, true);
-  cCommandOption* output = new cCommandOption({"o", "output"}, "Specify output name", true);
-  cCommandOption* assem = new cCommandOption({"assem", "S"}, "Output assembly instead of a binary", false);
-  cCommandOption* skipl = new cCommandOption({"nolink", "c"}, "Skip linking the binary, leaving obj files", false);
+	auto runState = new RunCommand();
+	auto buildState = new BuildCommand();
+	auto testState = new OptionsState("test");
 
-	RunCommand* runCommand = new RunCommand();
- 	runCommand->add(debug);
- 	runCommand->add(dump);
-	options.mainState.addState(runCommand);
+	options->addState(runState);
+	options->addState(buildState);
+	options->addState(testState);
 
-	BuildCommand* buildCommand = new BuildCommand();
-	buildCommand->add(debug);
-	buildCommand->add(dump);
-	buildCommand->add(output);
-	buildCommand->add(assem);
-	buildCommand->add(skipl);
-	options.mainState.addState(buildCommand);
+	options->getMainState()->setRunDelegate(runState);
 
-	TestCommand* testCommand = new TestCommand();
-  options.mainState.addState(testCommand);
-
-	// Parse our options
-	options.parse(argc, argv);
-
-	options.currentState()->run();
-
-	delete testCommand;
-	delete buildCommand;
-	delete runCommand;
-	delete debug;
-	delete output;
-	delete dump;
-	delete assem;
-
-	return 0;
+	try
+	{
+    	// Run our program.
+    	return options->parse(argc, argv);
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return 1;
+	}
 }

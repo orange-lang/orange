@@ -1,0 +1,8 @@
+# void_no_parameters.or
+#
+# Test creating and calling a function that returns nothing and has no parameters.
+
+def foo()
+end
+
+foo()

@@ -1,0 +1,8 @@
+# void_parameters.or
+#
+# Test creating and calling a function that returns nothing but has parameters.
+
+def foo(int a)
+end
+
+foo(3)

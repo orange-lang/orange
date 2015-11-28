@@ -1,0 +1,5 @@
+# const_uint.or
+#
+# Test returning a constant 64-bit unsigned integer.
+
+return 0u64

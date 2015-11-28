@@ -1,21 +1,21 @@
 /*
-** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level 
+** Copyright 2014-2015 Robert Fratto. See the LICENSE.txt file at the top-level
 ** directory of this distribution.
 **
-** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file 
+** Licensed under the MIT license <http://opensource.org/licenses/MIT>. This file
 ** may not be copied, modified, or distributed except according to those terms.
-*/ 
+*/
 
-.globl _start 
+.globl _start
 
-.text 
+.text
 _start:
 	xor %rax, %rax
 	andq $0xfffffffffffffff0, %rsp
-	callq __INTERNAL_main
-	movq %rax, %rdi 
+	callq _main
+	movq %rax, %rdi
 
-	movq $60, %rax 
-	syscall 
+	movq $60, %rax
+	syscall
 .exit:
-	jmp .exit 
+	jmp .exit

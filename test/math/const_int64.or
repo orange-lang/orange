@@ -1,0 +1,5 @@
+# const_int.or
+#
+# Test returning a constant 64-bit signed integer.
+
+return 0i64

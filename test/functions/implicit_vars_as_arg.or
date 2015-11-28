@@ -1,6 +1,0 @@
-def foo(int a)
-	return a
-end
-
-var a = 0
-return foo(a)

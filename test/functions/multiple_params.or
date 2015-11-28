@@ -1,0 +1,9 @@
+# multiple_params.or
+#
+# Test creating and calling a function with multiple parameters.
+
+def sub(int a, int b)
+	return a - b
+end
+
+return sub(3, 3)

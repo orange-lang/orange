@@ -1,0 +1,5 @@
+# return.or
+#
+# Test an expressionless return.
+
+return

@@ -1,52 +1,10 @@
-if (0 && 0) == 1
-	return 1
-end
-
-if (0 && 1) == 1
-	return 2
-end
-
-if (1 && 0) == 1
-	return 3
-end
-
-if (1 && 1) != 1
-	return 4
-end
-
-# coerce 3 and 5 to booleans
-if (3 and 5) != 1
-	return 5
-end
-
 if (3 > 5) and (5 > 3) == 1
-	return 6 
-end 
-
-if (0 || 0) == 1
-	return 7
-end
-
-if (0 || 1) != 1
-	return 8
-end
-
-if (1 || 0) != 1
-	return 9
-end
-
-if (1 || 1) != 1
-	return 10
-end
-
-# coerce 3 and 5 to booleans
-if (3 or 5) != 1 
-	return 11
+	return 6
 end
 
 if (3 > 5) or (2 > 3) != 0
-	return 12 
-end 
+	return 12
+end
 
 # inline test
 return 13 if (3 > 5) || (2 > 3) != 0

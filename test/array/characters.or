@@ -1,0 +1,4 @@
+var str = "orangelang"
+return 1 if str[0] != 'o'
+return 1 if *str != 'o'
+return 0

@@ -1,5 +1,0 @@
-def foo(int a)
-	return (a + 3) * a
-end
-
-return foo(-3)

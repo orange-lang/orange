@@ -1,5 +1,6 @@
 /oc
 *.o
+*.obj
 CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
@@ -9,3 +10,4 @@ Makefile
 /build*
 /.ycm_extra_conf.py*
 *.swp
+/.clang_complete

@@ -1,0 +1,11 @@
+# extern_func_nested.or
+#
+# Test calling an external function from inside a function
+
+extern puts(char* s) -> int32
+
+def foo()
+	return puts("hi") - puts("hi")
+end
+
+return foo()

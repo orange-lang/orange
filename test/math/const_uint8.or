@@ -1,0 +1,5 @@
+# const_uint.or
+#
+# Test returning a constant 8-bit unsigned integer.
+
+return 0u8

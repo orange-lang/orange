@@ -1,0 +1,5 @@
+# const_float.or
+#
+# Test returning a constant float.
+
+return 0.0f

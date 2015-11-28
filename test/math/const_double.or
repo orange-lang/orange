@@ -1,0 +1,5 @@
+# const_double.or
+#
+# Test returning a constant double.
+
+return 0.0

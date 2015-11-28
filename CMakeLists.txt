@@ -9,6 +9,10 @@ endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 set(oc_SOURCE_DIR ${CMAKE_SOURCE_DIR}/tools/oc)
 set(gen_SOURCE_DIR ${CMAKE_SOURCE_DIR}/lib/gen)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
+
+include(cotire)
+include(clang_complete)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output/lib)
@@ -21,7 +25,7 @@ add_definitions( -DINSTALL_LOCATION="${CMAKE_INSTALL_PREFIX}" )
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	message(STATUS "Setting DEBUG mode...")
-	ADD_DEFINITIONS(-DDEBUG)
+	ADD_DEFINITIONS(-DDEBUG_BUILD)
 endif()
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
@@ -32,7 +36,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-deprecated-register")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wno-deprecated-register -Wsign-compare")
 
 # unix specific flags
 if(${APPLE})
@@ -84,6 +88,14 @@ else()
 	include_directories(${LLVM_INCLUDE_DIRS})
 endif()
 
+add_subdirectory(lib/test)
 add_subdirectory(lib/libor)
-add_subdirectory(lib/helper)
+add_subdirectory(lib/cmd)
+add_subdirectory(lib/util)
+add_subdirectory(lib/grove)
 add_subdirectory(tools/orange)
+add_subdirectory(unit)
+
+if (${BUILD_CLANG_COMPLETE})
+	clang_complete(${CMAKE_SOURCE_DIR}/.clang_complete)
+endif()

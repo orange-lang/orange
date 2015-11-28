@@ -1,3 +1,7 @@
+# nested_functions.or
+#
+# Test creating and calling nested functions.
+
 def foo(int a)
 	def bar(int b)
 		return b * b

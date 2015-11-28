@@ -1,5 +1,0 @@
-def foo()
-	return
-end
-
-return 0
