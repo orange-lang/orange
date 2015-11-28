@@ -70,7 +70,7 @@ std::string getTempFile(std::string prefix, std::string suffix)
 	return llvm::Twine(buf).str();
 }
 
-std::vector<std::string> getFilesRecursive(std::string path)
+std::vector<std::string> getFilesRecursive(std::string path, std::string ext)
 {
 	std::vector<std::string> ret;
 	
@@ -102,6 +102,13 @@ std::vector<std::string> getFilesRecursive(std::string path)
 		{
 			continue;
 		}
+		
+		auto fext = llvm::sys::path::extension(entry.path());
+		if (ext != "" && fext != ext)
+		{
+			continue;
+		}
+		
 		ret.push_back(entry.path());
 	}
 	

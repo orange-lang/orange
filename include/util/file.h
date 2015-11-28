@@ -30,5 +30,6 @@ std::string combinePaths(std::string a, std::string b);
 std::string getTempFile(std::string prefix, std::string suffix);
 
 /// Recursively get all files in path and return it in a vector
-std::vector<std::string> getFilesRecursive(std::string path);
+std::vector<std::string> getFilesRecursive(std::string path,
+										   std::string ext = "");
 
