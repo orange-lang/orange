@@ -17,5 +17,6 @@
  */	
 class MemberVarDecl : public VarDecl, public ClassTopLevel, public ExprFactory
 {
-	
+public:
+	MemberVarDecl(Type* type, OString name, Expression* expression);
 };
