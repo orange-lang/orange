@@ -81,7 +81,8 @@ std::vector<std::string> getFilesRecursive(std::string path, std::string ext)
 	
 	if (ec.value() != 0)
 	{
-		throw std::runtime_error(ec.message());
+		std::string err = "No such file or directory: " + path;
+		throw std::runtime_error(err);
 	}
 	
 	for ( ; it != llvm_rdir_it(); it.increment(ec))
