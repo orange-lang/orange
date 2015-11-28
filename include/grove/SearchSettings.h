@@ -8,6 +8,8 @@
 
 #pragma once 
 
+class Named;
+
 /**
  * Defines a struct of settings to use when searching for a named node.
  */
@@ -25,11 +27,16 @@ struct SearchSettings {
 	/// Whether or not to include a limit to stop searching.
 	bool includeLimit;
 	
+	/// Optionally filter findings.
+	std::function<bool(Named *)> filter;
+	
 	SearchSettings()
 	{
 		forceTypeMatch = false;
 		createGeneric = true;
 		searchWholeTree = true;
 		includeLimit = true;
+		
+		filter = [](Named* named) { return true; };
 	}
 };
