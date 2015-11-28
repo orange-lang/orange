@@ -8,14 +8,14 @@
 
 #pragma once 
 
-#include "Statement.h"
+#include "Block.h"
 #include "Named.h"
 #include "Typed.h"
 
 /**
  * Represents a class declaration.
  */
-class ClassDecl : public Statement, public Named, public Typed
+class ClassDecl : public Block, public Named, public Typed
 {
 	
 };
