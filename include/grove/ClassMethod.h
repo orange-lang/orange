@@ -18,5 +18,6 @@
  */
 class ClassMethod : public Function, public ClassTopLevel, public HintProvider
 {
-	
+public:
+	ClassMethod(OString name, std::vector<Parameter *> params);
 };
