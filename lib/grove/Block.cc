@@ -91,6 +91,11 @@ Named* Block::getNamed(OString name, Type* type,
 		auto named = child->as<Named *>();
 		if (named->matchesName(name))
 		{
+			if (settings.filter(named) == false)
+			{
+				continue;
+			}
+			
 			if (settings.forceTypeMatch && type && named->is<Typed *>())
 			{
 				if (named->as<Typed *>()->matchesType(type) == false)
