@@ -11,6 +11,7 @@
 #include "Block.h"
 #include "Named.h"
 #include "Typed.h"
+#include "TypeProvider.h"
 
 class MemberVarDecl;
 class ClassMethod;
@@ -18,7 +19,8 @@ class ClassMethod;
 /**
  * Represents a class declaration.
  */
-class ClassDecl : public Block, public Named, public Typed
+class ClassDecl : public Block, public Named, public Typed,
+	public TypeProvider
 {
 protected:
 	void createCtor(ClassMethod* method) const;
