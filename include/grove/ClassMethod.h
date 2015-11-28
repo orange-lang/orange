@@ -19,5 +19,8 @@
 class ClassMethod : public Function, public ClassTopLevel, public HintProvider
 {
 public:
+	/// Gets the type of this method without the this parameter
+	virtual Type* getBasicType() const;
+	
 	ClassMethod(OString name, std::vector<Parameter *> params);
 };

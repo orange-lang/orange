@@ -8,6 +8,12 @@
 
 #include <grove/ClassMethod.h>
 
+Type* ClassMethod::getBasicType() const
+{
+	/// Just return getType until a this parameter is added.
+	return getType();
+}
+
 ClassMethod::ClassMethod(OString name, std::vector<Parameter *> params)
 : Function(name, params)
 {
