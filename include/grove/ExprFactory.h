@@ -8,6 +8,8 @@
 
 #pragma once 
 
+#include "CodeBase.h"
+
 class Expression;
 class HintProvider;
 
