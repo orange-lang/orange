@@ -112,6 +112,7 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	findParent<Block *>()->addStatement(func, this, 1);
 	
 	// Request a resolve of our function.
+	getModule()->findDependencies(func);
 	getModule()->resolve(func);
 }
 
