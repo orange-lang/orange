@@ -40,6 +40,8 @@
 	#include <grove/EnumStmt.h>
 	#include <grove/SizeofExpr.h>
 	#include <grove/OString.h>
+	#include <grove/ClassDecl.h>
+	#include <grove/ClassMethod.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -110,7 +112,7 @@
 %type <expr> expression primary comparison arithmetic call increment
 %type <expr> opt_expression ternary
 %type <stmt> structures function extern_function ifs inline_if unless
-%type <stmt> inline_unless for_loop inline_for_loop enum_stmt
+%type <stmt> inline_unless for_loop inline_for_loop enum_stmt class_stmt
 %type <val> VALUE pos_or_neg_value
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
@@ -236,6 +238,7 @@ valued
 structures
 	: function { $$ = $1; }
 	| extern_function { $$ = $1; }
+	| class_stmt { $$ = $1; }
 	| ifs { $$ = $1; }
 	| unless { $$ = $1; }
 	| inline_if { $$ = $1; }
@@ -248,7 +251,17 @@ structures
 function
  	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN type_hint term opt_statements END
 	{
-		auto func = new Function(*$2, std::vector<Parameter *>());
+		Function* func = nullptr;
+
+		if (module->getBlock()->is<ClassDecl *>())
+		{
+			func = new ClassMethod(*$2, std::vector<Parameter *>());
+		}
+		else
+		{
+			func = new Function(*$2, std::vector<Parameter *>());
+		}
+
 		func->setReturnType($5);
 
 		for (auto stmt : *$7)
@@ -264,7 +277,17 @@ function
 	}
 	| DEF TYPE_ID OPEN_PAREN param_list CLOSE_PAREN type_hint term opt_statements END
 	{
-		auto func = new Function(*$2, *$4);
+		Function* func = nullptr;
+
+		if (module->getBlock()->is<ClassDecl *>())
+		{
+			func = new ClassMethod(*$2, *$4);
+		}
+		else
+		{
+			func = new Function(*$2, *$4);
+		}
+
 		func->setReturnType($6);
 
 		for (auto stmt : *$8)
@@ -312,6 +335,28 @@ extern_function
 		delete $4;
 	}
 	;
+
+class_stmt
+	: CLASS TYPE_ID term
+	{
+		$<stmt>$ = new ClassDecl(*$2);
+		module->pushBlock((Block *)$<stmt>$);
+		delete $2;
+	} opt_statements END
+	{
+		ClassDecl* inst = (ClassDecl *)$<stmt>4;
+
+		for (auto stmt : *$5)
+		{
+			inst->addStatement(stmt);
+		}
+
+		$$ = inst;
+		SET_LOCATION($$, @1, @6);
+
+		delete $5;
+		module->popBlock();
+	}
 
 ifs
 	: IF expression term statements else_if_or_end
