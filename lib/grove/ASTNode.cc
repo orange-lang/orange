@@ -11,6 +11,8 @@
 #include <grove/ASTNode.h>
 #include <grove/Module.h>
 #include <grove/Block.h>
+#include <grove/ClassTopLevel.h>
+#include <grove/ClassDecl.h>
 
 #include <grove/exceptions/fatal_error.h>
 
@@ -92,6 +94,11 @@ void ASTNode::addChild(ASTNode *child, bool mustExist)
 		{
 			return;
 		}
+	}
+	
+	if (this->is<ClassDecl *>() == false && child->is<ClassTopLevel*>())
+	{
+		throw fatal_error("Adding a ClassTopLevel in a non-class context");
 	}
 	
 	m_children.push_back(child);
