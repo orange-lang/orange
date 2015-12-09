@@ -54,7 +54,6 @@
 	#include <grove/types/VarType.h>
 	#include <grove/types/ArrayType.h>
 	#include <grove/types/VariadicArrayType.h>
-	#include <grove/types/ReferenceType.h>
 
 	#include <util/assertions.h>
 
@@ -981,14 +980,6 @@ basic_type
 	| TYPE_CHAR { $$ = IntType::get(8); }
 	| TYPE_VOID { $$ = VoidType::get(); }
 	| TYPE_VAR { $$ = VarType::get(); }
-	| TYPE_ID
-	{
-		auto ty = new ReferenceType(*$1);
-		delete $1;
-
-		$$ = ty;
-		SET_LOCATION(ty, @1, @1);
-	}
 	;
 
 %%
