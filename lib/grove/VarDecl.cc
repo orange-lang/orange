@@ -11,7 +11,7 @@
 
 #include <grove/types/Type.h>
 #include <grove/types/UIntType.h>
-#include <grove/types/ReferenceType.h>
+#include <grove/types/NodeType.h>
 
 #include <grove/exceptions/already_defined_error.h>
 #include <grove/exceptions/invalid_type_error.h>
@@ -159,9 +159,9 @@ VarDecl::VarDecl(Type* type, OString name, Expression* expression)
 		}
 	}
 	
-	if (type->is<ReferenceType *>())
+	if (type->is<NodeType *>())
 	{
-		addChild(type->as<ReferenceType *>());
+		addChild(type->as<NodeType *>());
 	}
 
 	if (name == "")
