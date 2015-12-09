@@ -27,7 +27,7 @@
 	#define SAVELOC(node) node->setLocation(CodeLocation(module->getFile(), \
 		yylloc.first_line, yylloc.last_line, yylloc.first_column, \
 		yylloc.last_column));
-		
+
 	#define STR (std::string(yytext, yyleng))
 	#define SAVESTR() yylval.str = new OString(std::string(yytext, yyleng)); SAVELOC(yylval.str);
 	#define CUSTSTR(custom) yylval.str = new OString(custom); SAVELOC(yylval.str);
@@ -193,7 +193,7 @@
 "sizeof"										SAVESTR(); return SIZEOF;
 
 \"(\\.|[^\\"])*\"								SAVESTR(); return STRING;
-[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 		SAVESTR(); return TYPE_ID;
+[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 		SAVESTR(); return IDENTIFIER;
 
 .												yyerror(module, "invalid token");
 

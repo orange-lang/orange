@@ -71,7 +71,7 @@
      IF = 260,
      ELIF = 261,
      ELSE = 262,
-     TYPE_ID = 263,
+     IDENTIFIER = 263,
      OPEN_PAREN = 264,
      CLOSE_PAREN = 265,
      TYPE = 266,
@@ -157,7 +157,7 @@
 #define IF 260
 #define ELIF 261
 #define ELSE 262
-#define TYPE_ID 263
+#define IDENTIFIER 263
 #define OPEN_PAREN 264
 #define CLOSE_PAREN 265
 #define TYPE 266
@@ -751,7 +751,7 @@ static const yytype_uint16 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "DEF", "END", "IF", "ELIF", "ELSE",
-  "TYPE_ID", "OPEN_PAREN", "CLOSE_PAREN", "TYPE", "COMMA", "TIMES",
+  "IDENTIFIER", "OPEN_PAREN", "CLOSE_PAREN", "TYPE", "COMMA", "TIMES",
   "NUMBER", "DIVIDE", "MINUS", "PLUS", "NEWLINE", "SEMICOLON", "TYPE_INT",
   "TYPE_UINT", "TYPE_FLOAT", "TYPE_DOUBLE", "TYPE_INT8", "TYPE_UINT8",
   "TYPE_INT16", "TYPE_UINT16", "TYPE_INT32", "TYPE_UINT32", "TYPE_INT64",

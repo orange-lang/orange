@@ -673,7 +673,7 @@ char *yytext;
 	#define SAVELOC(node) node->setLocation(CodeLocation(module->getFile(), \
 		yylloc.first_line, yylloc.last_line, yylloc.first_column, \
 		yylloc.last_column));
-		
+
 	#define STR (std::string(yytext, yyleng))
 	#define SAVESTR() yylval.str = new OString(std::string(yytext, yyleng)); SAVELOC(yylval.str);
 	#define CUSTSTR(custom) yylval.str = new OString(custom); SAVELOC(yylval.str);
@@ -1503,7 +1503,7 @@ SAVESTR(); return STRING;
 case 106:
 YY_RULE_SETUP
 #line 196 "/Users/robert/dev/orange/lib/grove/lexer.l"
-SAVESTR(); return TYPE_ID;
+SAVESTR(); return IDENTIFIER;
 	YY_BREAK
 case 107:
 YY_RULE_SETUP

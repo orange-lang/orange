@@ -44,7 +44,7 @@
      IF = 260,
      ELIF = 261,
      ELSE = 262,
-     TYPE_ID = 263,
+     IDENTIFIER = 263,
      OPEN_PAREN = 264,
      CLOSE_PAREN = 265,
      TYPE = 266,
@@ -130,7 +130,7 @@
 #define IF 260
 #define ELIF 261
 #define ELSE 262
-#define TYPE_ID 263
+#define IDENTIFIER 263
 #define OPEN_PAREN 264
 #define CLOSE_PAREN 265
 #define TYPE 266

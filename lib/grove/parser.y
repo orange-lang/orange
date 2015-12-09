@@ -91,7 +91,7 @@
 
 %start start
 
-%token DEF END IF ELIF ELSE TYPE_ID OPEN_PAREN CLOSE_PAREN TYPE COMMA
+%token DEF END IF ELIF ELSE IDENTIFIER OPEN_PAREN CLOSE_PAREN TYPE COMMA
 %token TIMES NUMBER DIVIDE MINUS PLUS NEWLINE SEMICOLON
 %token TYPE_INT TYPE_UINT TYPE_FLOAT TYPE_DOUBLE TYPE_INT8 TYPE_UINT8 TYPE_INT16
 %token TYPE_UINT16 TYPE_INT32 TYPE_UINT32 TYPE_INT64 TYPE_UINT64 TYPE_CHAR TYPE_VOID TYPE_VAR
@@ -115,7 +115,7 @@
 %type <stmt> structures function extern_function ifs inline_if unless
 %type <stmt> inline_unless for_loop inline_for_loop enum_stmt class_stmt
 %type <val> VALUE pos_or_neg_value
-%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS TYPE_ID STRING TIMES DIVIDE ASSIGN
+%type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS IDENTIFIER STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK
@@ -250,7 +250,7 @@ structures
 	;
 
 function
- 	: DEF TYPE_ID OPEN_PAREN CLOSE_PAREN type_hint term opt_statements END
+ 	: DEF IDENTIFIER OPEN_PAREN CLOSE_PAREN type_hint term opt_statements END
 	{
 		Function* func = nullptr;
 
@@ -276,7 +276,7 @@ function
 		delete $2;
 		delete $7;
 	}
-	| DEF TYPE_ID OPEN_PAREN param_list CLOSE_PAREN type_hint term opt_statements END
+	| DEF IDENTIFIER OPEN_PAREN param_list CLOSE_PAREN type_hint term opt_statements END
 	{
 		Function* func = nullptr;
 
@@ -311,7 +311,7 @@ type_hint
 	;
 
 extern_function
-	: EXTERN TYPE_ID OPEN_PAREN CLOSE_PAREN ARROW type
+	: EXTERN IDENTIFIER OPEN_PAREN CLOSE_PAREN ARROW type
 	{
 		std::vector<Parameter *> params;
 		$$ = new ExternFunction(*$2, params, $6);
@@ -319,7 +319,7 @@ extern_function
 
 		delete $2;
 	}
-	| EXTERN TYPE_ID OPEN_PAREN param_list CLOSE_PAREN ARROW type
+	| EXTERN IDENTIFIER OPEN_PAREN param_list CLOSE_PAREN ARROW type
 	{
 		$$ = new ExternFunction(*$2, *$4, $7);
 		SET_LOCATION($$, @1, @7);
@@ -327,7 +327,7 @@ extern_function
 		delete $2;
 		delete $4;
 	}
-	| EXTERN TYPE_ID OPEN_PAREN param_list COMMA VARARG CLOSE_PAREN ARROW type
+	| EXTERN IDENTIFIER OPEN_PAREN param_list COMMA VARARG CLOSE_PAREN ARROW type
 	{
 		$$ = new ExternFunction(*$2, *$4, $9, true);
 		SET_LOCATION($$, @1, @9);
@@ -338,7 +338,7 @@ extern_function
 	;
 
 class_stmt
-	: CLASS TYPE_ID term
+	: CLASS IDENTIFIER term
 	{
 		$<stmt>$ = new ClassDecl(*$2);
 		module->pushBlock((Block *)$<stmt>$);
@@ -616,7 +616,7 @@ opt_expression
 	;
 
 param_list
-	: param_list COMMA type TYPE_ID
+	: param_list COMMA type IDENTIFIER
 	{
 		$$ = $1;
 		auto param = new Parameter($3, *$4);
@@ -625,7 +625,7 @@ param_list
 
 		delete $4;
 	}
-	| type TYPE_ID
+	| type IDENTIFIER
 	{
 		$$ = new std::vector<Parameter *>();
 		auto param = new Parameter($1, *$2);
@@ -710,7 +710,7 @@ ternary
 	;
 
 call
-	: TYPE_ID OPEN_PAREN CLOSE_PAREN
+	: IDENTIFIER OPEN_PAREN CLOSE_PAREN
 	{
 		std::vector<Expression *> params;
 		$$ = new FunctionCall(*$1, params);
@@ -718,7 +718,7 @@ call
 
 		delete $1;
 	}
-	| TYPE_ID OPEN_PAREN arg_list CLOSE_PAREN
+	| IDENTIFIER OPEN_PAREN arg_list CLOSE_PAREN
 	{
 		$$ = new FunctionCall(*$1, *$3);
 		SET_LOCATION($$, @1, @4);
@@ -733,13 +733,13 @@ primary
 	| VALUE { $$ = $1; SET_LOCATION($$, @1, @1); }
 	| MINUS expression { $$ = new NegativeExpr($2); SET_LOCATION($$, @1, @2); }
 	| STRING { $$ = new StrValue(*$1); SET_LOCATION($$, @1, @1); delete $1; }
-	| TYPE_ID { $$ = new IDReference(*$1); SET_LOCATION($$, @1, @1); delete $1; }
+	| IDENTIFIER { $$ = new IDReference(*$1); SET_LOCATION($$, @1, @1); delete $1; }
 	| TIMES expression { $$ = new DerefExpr($2); SET_LOCATION($$, @1, @2); }
 	| BITWISE_AND expression { $$ = new ReferenceExpr($2); SET_LOCATION($$, @1, @2); }
 	| OPEN_PAREN type CLOSE_PAREN expression { $$ = new CastExpr($2, $4); SET_LOCATION($$, @1, @4); }
 	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayValue(*$2); SET_LOCATION($$, @1, @3); delete $2; }
 	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); SET_LOCATION($$, @1, @4); }
-	| expression DOT TYPE_ID { $$ = new AccessExpr($1, *$3); SET_LOCATION($$, @1, @3); delete $3; }
+	| expression DOT IDENTIFIER { $$ = new AccessExpr($1, *$3); SET_LOCATION($$, @1, @3); delete $3; }
 	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
 	| SIZEOF OPEN_PAREN type CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
 	;
@@ -798,28 +798,28 @@ var_decl
 	;
 
 var_decl_list
-	: var_decl_list COMMA TYPE_ID
+	: var_decl_list COMMA IDENTIFIER
 	{
 		$$ = $1;
 		$$->push_back(std::make_tuple(*$3, nullptr));
 
 		delete $3;
 	}
-	| var_decl_list COMMA TYPE_ID ASSIGN expression
+	| var_decl_list COMMA IDENTIFIER ASSIGN expression
 	{
 		$$ = $1;
 		$$->push_back(std::make_tuple(*$3, $5));
 
 		delete $3;
 	}
-	| TYPE_ID
+	| IDENTIFIER
 	{
 		$$ = new std::vector<std::tuple<OString, Expression*>>();
 		$$->push_back(std::make_tuple(*$1, nullptr));
 
 		delete $1;
 	}
-	| TYPE_ID ASSIGN expression
+	| IDENTIFIER ASSIGN expression
 	{
 		$$ = new std::vector<std::tuple<OString, Expression*>>();
 		$$->push_back(std::make_tuple(*$1, $3));
@@ -828,7 +828,7 @@ var_decl_list
 	}
 
 enum_stmt
-	: ENUM TYPE_ID term enum_members END
+	: ENUM IDENTIFIER term enum_members END
 	{
 		auto estmt = new EnumStmt(*$2, IntType::get(64));
 		for (auto pair : *$4)
@@ -844,23 +844,23 @@ enum_stmt
 	}
 
 enum_members
-	: enum_members TYPE_ID term
+	: enum_members IDENTIFIER term
 	{
 		$$->push_back(std::make_tuple(*$2, (Value *)nullptr));
 		delete $2;
 	}
-	| enum_members TYPE_ID ASSIGN pos_or_neg_value term
+	| enum_members IDENTIFIER ASSIGN pos_or_neg_value term
 	{
 		$$->push_back(std::make_tuple(*$2, $4));
 		delete $2;
 	}
-	| TYPE_ID term
+	| IDENTIFIER term
 	{
 		$$ = new std::vector<std::tuple<OString, Value*>>();
 		$$->push_back(std::make_tuple(*$1, (Value *)nullptr));
 		delete $1;
 	}
-	| TYPE_ID ASSIGN pos_or_neg_value term
+	| IDENTIFIER ASSIGN pos_or_neg_value term
 	{
 		$$ = new std::vector<std::tuple<OString, Value*>>();
 		$$->push_back(std::make_tuple(*$1, $3));
