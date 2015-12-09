@@ -43,6 +43,7 @@
 	#include <grove/ClassDecl.h>
 	#include <grove/ClassMethod.h>
 	#include <grove/MemberVarDecl.h>
+	#include <grove/types/ReferenceType.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -101,7 +102,7 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
-%token CONST_FLAG QUESTION COLON ENUM SIZEOF
+%token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID
 
 %type <nodes> opt_statements statements compound_statement var_decl valued
 %type <nodes> opt_valued
@@ -118,7 +119,7 @@
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS IDENTIFIER STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
-%type <str> LOGICAL_OR LOOP CONTINUE BREAK
+%type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID
 %type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list
 %type <args> arg_list
@@ -980,6 +981,13 @@ basic_type
 	| TYPE_CHAR { $$ = IntType::get(8); }
 	| TYPE_VOID { $$ = VoidType::get(); }
 	| TYPE_VAR { $$ = VarType::get(); }
+	| TYPE_ID {
+		auto ty = new ReferenceType(*$1);
+		delete $1;
+
+		$$ = ty;
+		SET_LOCATION(ty, @1, @1);
+	}
 	;
 
 %%
