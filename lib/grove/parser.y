@@ -251,7 +251,7 @@ structures
 	;
 
 function
-	: DEF IDENTIFIER OPEN_PAREN opt_param_list CLOSE_PAREN type_hint term opt_statements END
+	: DEF IDENTIFIER OPEN_PAREN opt_param_list CLOSE_PAREN type_hint term
 	{
 		Function* func = nullptr;
 
@@ -266,17 +266,26 @@ function
 
 		func->setReturnType($6);
 
-		for (auto stmt : *$8)
+		module->pushBlock(func);
+		$<stmt>$ = func;
+	}
+	opt_statements END
+	{
+		auto func = (Function *)$<stmt>8;
+
+		for (auto stmt : *$9)
 		{
 			func->addStatement(stmt);
 		}
 
 		$$ = func;
-        SET_LOCATION($$, @1, @9);
+        SET_LOCATION($$, @1, @10);
+
+		module->popBlock();
 
 		delete $2;
 		delete $4;
-		delete $8;
+		delete $9;
 	}
 	;
 
