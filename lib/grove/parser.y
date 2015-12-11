@@ -295,15 +295,7 @@ type_hint
 	;
 
 extern_function
-	: EXTERN IDENTIFIER OPEN_PAREN CLOSE_PAREN ARROW type
-	{
-		std::vector<Parameter *> params;
-		$$ = new ExternFunction(*$2, params, $6);
-		SET_LOCATION($$, @1, @6);
-
-		delete $2;
-	}
-	| EXTERN IDENTIFIER OPEN_PAREN param_list CLOSE_PAREN ARROW type
+	: EXTERN IDENTIFIER OPEN_PAREN opt_param_list CLOSE_PAREN ARROW type
 	{
 		$$ = new ExternFunction(*$2, *$4, $7);
 		SET_LOCATION($$, @1, @7);
