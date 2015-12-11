@@ -121,7 +121,7 @@
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID
 %type <ty> type basic_type type_hint non_agg_type array_type
-%type <params> param_list
+%type <params> param_list opt_param_list
 %type <args> arg_list
 
 /* lowest to highest precedence */
@@ -251,33 +251,7 @@ structures
 	;
 
 function
- 	: DEF IDENTIFIER OPEN_PAREN CLOSE_PAREN type_hint term opt_statements END
-	{
-		Function* func = nullptr;
-
-		if (module->getBlock()->is<ClassDecl *>())
-		{
-			func = new ClassMethod(*$2, std::vector<Parameter *>());
-		}
-		else
-		{
-			func = new Function(*$2, std::vector<Parameter *>());
-		}
-
-		func->setReturnType($5);
-
-		for (auto stmt : *$7)
-		{
-			func->addStatement(stmt);
-		}
-
-		$$ = func;
-        SET_LOCATION($$, @1, @8);
-
-		delete $2;
-		delete $7;
-	}
-	| DEF IDENTIFIER OPEN_PAREN param_list CLOSE_PAREN type_hint term opt_statements END
+	: DEF IDENTIFIER OPEN_PAREN opt_param_list CLOSE_PAREN type_hint term opt_statements END
 	{
 		Function* func = nullptr;
 
@@ -635,6 +609,12 @@ param_list
 
 		delete $2;
 	}
+	;
+
+opt_param_list
+	: param_list { $$ = $1; }
+	| { $$ = new std::vector<Parameter *>(); }
+	;
 
 arg_list
 	: arg_list COMMA expression
