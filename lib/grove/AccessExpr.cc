@@ -36,7 +36,8 @@ Expression* AccessExpr::getAccessed() const
 
 void AccessExpr::resolve()
 {
-	if (isAccessible() == false)
+	if (getLHS()->ASTNode::is<Accessible *>() == false ||
+		getLHS()->ASTNode::as<Accessible *>()->isAccessible() == false)
 	{
 		throw code_error(m_LHS, []() -> std::string
 			{
