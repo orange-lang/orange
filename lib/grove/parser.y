@@ -424,10 +424,16 @@ else_if_or_end
 	;
 
 unless
-	: UNLESS expression term statements END
+	: UNLESS expression
 	{
 		auto block = new CondBlock($2, true);
-		for (auto stmt : *$4)
+		module->pushBlock(block);
+		$<stmt>$ = block;
+	}
+	term statements END
+	{
+		auto block = (CondBlock *)$<stmt>3;
+		for (auto stmt : *$5)
 		{
 			block->addStatement(stmt);
 		}
@@ -436,9 +442,10 @@ unless
 		if_stmt->addBlock(block);
 
 		$$ = if_stmt;
-		SET_LOCATION($$, @1, @5);
+		SET_LOCATION($$, @1, @6);
+		module->popBlock();
 
-		delete $4;
+		delete $5;
 	}
 
 inline_if
