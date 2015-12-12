@@ -261,7 +261,7 @@ std::string Module::compile()
 
 ASTNode* Module::getLatestNode() const
 {
-	if (getBlock()->getChildren().size() == 0)
+	if (getBlock()->getStatements().size() == 0)
 	{
 		return getBlock();
 	}
