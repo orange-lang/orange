@@ -21,6 +21,23 @@ OString ReferenceType::getName() const
 	return m_name;
 }
 
+Type* ReferenceType::getComparisonTy() const
+{
+	return m_ref_type;
+}
+
+std::string ReferenceType::getString() const
+{
+	assertExists(m_ref_type, "ref type never set!");
+	return m_ref_type->getString();
+}
+
+std::string ReferenceType::getSignature() const
+{
+	assertExists(m_ref_type, "ref type never set!");
+	return m_ref_type->getSignature();
+}
+
 void ReferenceType::findReference()
 {
 	SearchSettings settings;
@@ -75,4 +92,5 @@ ReferenceType::ReferenceType(const ASTNode* reference)
 {
 	assertExists(reference, "reference for ReferenceType was emtpy");
 	m_reference = (ASTNode *)reference;
+	m_location = reference->getLocation();
 }

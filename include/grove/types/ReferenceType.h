@@ -21,9 +21,14 @@ protected:
 public:
 	OString getName() const;
 	
+	virtual Type* getComparisonTy() const override;
+	
+	virtual std::string getString() const override;
+	virtual std::string getSignature() const override;
+	
 	ASTNode* getReference() const;
 	
-	virtual void resolve();
+	virtual void resolve() override;
 	
 	ReferenceType(OString name);
 	ReferenceType(const ASTNode* reference);
