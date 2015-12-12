@@ -482,6 +482,7 @@ void Module::addChild(ASTNode *child)
 	if (it == m_children.end())
 	{
 		m_children.push_back(child);
+		child->m_module = this;
 	}
 }
 
