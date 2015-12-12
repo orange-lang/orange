@@ -543,19 +543,26 @@ for_loop
 
 		delete $5;
 	}
-	| FOREVER DO term statements END
+	| FOREVER DO term
 	{
 		auto loop = new Loop(std::vector<ASTNode*>(), nullptr, nullptr, false);
+		module->pushBlock(loop);
+		$<stmt>$ = loop;
+	}
+	statements END
+	{
+		auto loop = (Loop *)$<stmt>4;
 
-		for (auto stmt : *$4)
+		for (auto stmt : *$5)
 		{
 			loop->addStatement(stmt);
 		}
 
 		$$ = loop;
-		SET_LOCATION($$, @1, @5);
+		SET_LOCATION($$, @1, @6);
+		module->popBlock();
 
-		delete $4;
+		delete $5;
 	}
 	| DO term statements END WHILE expression
 	{
