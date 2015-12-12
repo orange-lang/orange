@@ -82,9 +82,11 @@ private:
 		const SearchSettings& m_settings;
 		std::stack<Block *> m_ctx_stack;
 		unsigned int m_step;
+		
+		bool useContextStack() const;
 	public:
 	 	bool hasNext() const;
-	 	Block* getNext();
+	 	const Block* getNext();
 		const ASTNode* getLimit() const;
 	 
 		BlockIterator(const Module* mod, const ASTNode* from,

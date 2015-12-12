@@ -36,27 +36,56 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/Transforms/Scalar.h>
 
-bool Module::BlockIterator::hasNext() const
+bool Module::BlockIterator::useContextStack() const
 {
-	// We search through the nearest parent block, so if there aren't
-	// any more parent blocks, there's nothing next.
-	auto block = m_ptr->findParent<Block *>();
-	if (block == nullptr)
-	{
-		return false;
-	}
-	
-	// If we're not searching the whole tree and we've already
-	// given one, then there's nothing next.
-	if (m_step > 0 && m_settings.searchWholeTree == false)
-	{
-		return false;
-	}
-	
-	return true;
+	// We want to use the context stack if and only if
+	// the module is parsing and (the m_ptr is not
+	// the top block or m_ptr it's a block in general).
+	return m_module->getParsing() &&
+		(m_ptr != m_module->getBlock() ||
+		 dynamic_cast<Block *>((ASTNode *)m_ptr) != nullptr);
 }
 
-Block* Module::BlockIterator::getNext()
+bool Module::BlockIterator::hasNext() const
+{
+	if (useContextStack())
+	{
+		return m_ctx_stack.size() > 0;
+	}
+	else
+	{
+#ifdef DEBUG_BUILD
+		// If we fell back here but there's no next,
+		// there's an issue.
+		if (m_module->getParsing() &&
+			m_ptr->findParent<Block *>() == nullptr)
+		{
+			throw fatal_error("Fell back to alternative get next, but no "
+							  "parent was found.");
+		}
+#endif
+		
+		// We search through the nearest parent block, so if there aren't
+    	// any more parent blocks, there's nothing next.
+    	auto block = m_ptr->findParent<Block *>();
+    	if (block == nullptr)
+    	{
+    		return false;
+    	}
+	
+    	// If we're not searching the whole tree and we've already
+    	// given one, then there's nothing next.
+    	if (m_step > 0 && m_settings.searchWholeTree == false)
+    	{
+    		return false;
+    	}
+    	
+    	return true;	
+	}
+
+}
+
+const Block* Module::BlockIterator::getNext()
 {
 	if (hasNext() == false)
 	{
@@ -65,13 +94,46 @@ Block* Module::BlockIterator::getNext()
 	
 	m_step++;
 	
-	m_ptr = m_ptr->findParent<Block *>();
-	return (Block *)m_ptr;
+	// There is a chance that while in parsing mode,
+	// m_ptr is NOT just the top block. If it IS
+	// the top block, we want to get its parent first,
+	// which should exist.
+	if (useContextStack())
+	{
+		m_ptr = m_ctx_stack.top();
+		m_ctx_stack.pop();
+		
+		return (Block *)m_ptr;
+	}
+	else
+	{
+#ifdef DEBUG_BUILD
+		// If we fell back here but there's no next,
+		// there's an issue.
+		if (m_module->getParsing() &&
+			m_ptr->findParent<Block *>() == nullptr)
+		{
+			throw fatal_error("Fell back to alternative get next, but no "
+							  "parent was found.");
+		}
+#endif
+		
+    	m_ptr = m_ptr->findParent<Block *>();
+    	return (Block *)m_ptr;
+	}
+	
+
 }
 
 const ASTNode* Module::BlockIterator::getLimit() const
 {
 	if (m_settings.includeLimit == false)
+	{
+		return nullptr;
+	}
+	
+	// There are no limits when in parsing mode.
+	if (m_module->getParsing() == true)
 	{
 		return nullptr;
 	}
