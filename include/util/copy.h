@@ -9,7 +9,7 @@
 #pragma once 
 
 template <typename T>
-std::vector<T> copyVector(std::vector<T> orig)
+std::vector<T> copyVector(std::vector<T>&& orig)
 {
 	std::vector<T> ret;
 	
@@ -20,3 +20,4 @@ std::vector<T> copyVector(std::vector<T> orig)
 	
 	return ret;
 }
+

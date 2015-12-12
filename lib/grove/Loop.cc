@@ -33,7 +33,7 @@ ASTNode* Loop::copyIfNonNull(ASTNode *node) const
 
 ASTNode* Loop::copy() const
 {
-	auto initializers = copyVector(m_initializers);
+	auto initializers = copyVector(getInitializers());
 	
 	auto condition = copyIfNonNull(getCondition())->as<Expression *>();
 	auto afterthought = copyIfNonNull(getAfterthought());

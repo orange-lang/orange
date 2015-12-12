@@ -71,7 +71,7 @@ ASTNode* IfStmt::copy() const
 {
 	auto ret = new IfStmt();
 	
-	auto copied_blocks = copyVector(m_if_blocks);
+	auto copied_blocks = copyVector(getBlocks());
 	for (auto block : copied_blocks)
 	{
 		ret->addBlock(block);
