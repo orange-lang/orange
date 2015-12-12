@@ -43,6 +43,7 @@ void ReferenceType::resolve()
 	
 	assertExists(named->as<Typed *>()->getType(), "node has no type");
 	m_type = named->as<Typed *>()->getType()->getLLVMType();
+	m_reference = named->as<ASTNode *>();
 }
 
 ReferenceType::ReferenceType(OString name)

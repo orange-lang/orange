@@ -14,8 +14,11 @@ class ReferenceType : public NodeType
 {
 protected:
 	OString m_name;
+	ASTNode* m_reference = nullptr;
 public:
 	OString getName() const;
+	
+	ASTNode* getReference() const;
 	
 	virtual void resolve();
 	
