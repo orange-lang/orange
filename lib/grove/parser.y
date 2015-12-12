@@ -336,12 +336,18 @@ class_stmt
 	}
 
 ifs
-	: IF expression term statements else_if_or_end
+	: IF expression
 	{
-		auto blocks = $5;
-
 		auto block = new CondBlock($2);
-		for (auto stmt : *$4)
+		$<stmt>$ = block;
+		module->pushBlock(block);
+	}
+	term statements else_if_or_end
+	{
+		auto blocks = $6;
+
+		auto block = (CondBlock *)$<stmt>3;
+		for (auto stmt : *$5)
 		{
 			block->addStatement(stmt);
 		}
@@ -355,9 +361,11 @@ ifs
 		}
 
 		$$ = if_stmt;
-		SET_LOCATION($$, @1, @5);
+		SET_LOCATION($$, @1, @6);
 
-		delete $4;
+		module->popBlock();
+
+		delete $5;
 		delete blocks;
 	}
 	;
