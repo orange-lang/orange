@@ -36,6 +36,14 @@ Expression* AccessExpr::getAccessed() const
 
 void AccessExpr::resolve()
 {
+	if (isAccessible() == false)
+	{
+		throw code_error(m_LHS, []() -> std::string
+			{
+				return "object is not accessible.";
+			});
+	}
+	
 	auto a_lhs = getLHS()->ASTNode::as<Accessible *>();
 	m_accessed = a_lhs->access(getName(), nullptr);
 	
