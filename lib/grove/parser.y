@@ -500,20 +500,27 @@ inline_unless
 
 for_loop
 	: FOR OPEN_PAREN opt_valued SEMICOLON opt_expression SEMICOLON opt_expression
-	  CLOSE_PAREN term statements END
+	  CLOSE_PAREN term
 	{
 		auto loop = new Loop(*$3, $5, $7, false);
+		module->pushBlock(loop);
+		$<stmt>$ = loop;
+	}
+	statements END
+	{
+		auto loop = (Loop *)$<stmt>10;
 
-	  	for (auto stmt : *$10)
+	  	for (auto stmt : *$11)
 		{
 			loop->addStatement(stmt);
 		}
 
 		$$ = loop;
-		SET_LOCATION($$, @1, @11);
+		SET_LOCATION($$, @1, @12);
+		module->popBlock();
 
 		delete $3;
-		delete $10;
+		delete $11;
 	}
 	| WHILE expression term statements END
 	{
