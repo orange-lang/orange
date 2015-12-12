@@ -36,6 +36,7 @@ public:
 	virtual void build() override;
 	
 	virtual bool isAccessible() const override;
+	virtual Expression* access(OString name, const ASTNode* hint) const override;
 	
 	Expression* getExpression() const;
 	

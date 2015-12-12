@@ -69,6 +69,18 @@ bool VarDecl::isAccessible() const
 	return ref->is<Accessible *>() && ref->as<Accessible *>()->isAccessible();
 }
 
+Expression* VarDecl::access(OString name, const ASTNode *hint) const
+{
+	if (isAccessible() == false)
+	{
+		return nullptr;
+	}
+	
+	auto ref = getType()->as<ReferenceType *>()->getReference();
+	auto accessible_ref = ref->as<Accessible *>();
+	return accessible_ref->access(name, this);
+}
+
 void VarDecl::resolve()
 {
 	SearchSettings settings;
