@@ -123,6 +123,20 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	getModule()->resolve(func);
 }
 
+MemberVarDecl* ClassDecl::getMember(OString &name) const
+{
+	auto&& members = getMembers();
+	for (const auto& member : members)
+	{
+		if (member->getName() == name)
+		{
+			return member;
+		}
+	}
+	
+	return nullptr;
+}
+
 void ClassDecl::resolve()
 {
 	// Make sure that the class's name is unique.
