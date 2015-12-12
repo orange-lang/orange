@@ -14,6 +14,7 @@
 #include <grove/IDReference.h>
 #include <grove/Module.h>
 #include <grove/Parameter.h>
+#include <grove/MemberAccess.h>
 
 #include <grove/exceptions/code_error.h>
 #include <grove/exceptions/already_defined_error.h>
@@ -209,6 +210,24 @@ bool ClassDecl::isAccessible() const
 {
 	// Classes are always accessible.
 	return true;
+}
+
+Expression* ClassDecl::access(OString name, const ASTNode *hint) const
+{
+	assertExists(hint, "ClassDecl::access requires hint");
+	if (((ASTNode *)hint)->is<Valued *>() == false)
+	{
+		throw fatal_error("ClassDecl::access requires Valued hint");
+	}
+	
+	auto valued = ((ASTNode *)hint)->as<Valued *>();
+	auto memAccess = new MemberAccess(this, valued, name);
+	
+	getModule()->findDependencies(memAccess);
+	getModule()->resolve(memAccess);
+	getModule()->addChild(memAccess);
+	
+	return memAccess;
 }
 
 ClassDecl::ClassDecl(OString name)

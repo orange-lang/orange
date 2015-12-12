@@ -34,6 +34,8 @@ public:
 	virtual bool matchesType(Type* other) const override;
 	
 	virtual bool isAccessible() const override;
+	virtual Expression* access(OString name, const ASTNode* hint)
+		const override;
 	
 	std::vector<MemberVarDecl*> getMembers() const;
 	std::vector<ClassMethod*> getMethods() const;
