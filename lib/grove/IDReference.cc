@@ -10,6 +10,7 @@
 #include <grove/Valued.h>
 #include <grove/Named.h>
 #include <grove/Typed.h>
+#include <grove/Function.h>
 
 #include <grove/exceptions/undefined_error.h>
 #include <grove/exceptions/fatal_error.h>
@@ -75,7 +76,9 @@ void IDReference::findDependencies()
 void IDReference::resolve()
 {
 	auto ref = findNamed(getName(), nullptr);
-	if (ref == nullptr)
+	if (ref == nullptr ||
+		ref->as<ASTNode *>()->findParent<Function *>() !=
+		findParent<Function *>())
 	{
 		throw undefined_error(&m_name, m_name);
 	}
