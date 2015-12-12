@@ -287,16 +287,21 @@ bool Module::hasNamed(OString name, const ASTNode *from,
 			break;
 		}
 		
-		// Find closest node whose parent is that block.
-		auto limit = ptr;
-		while (limit != nullptr)
+		const ASTNode* limit = nullptr;
+		
+		if (settings.includeLimit)
 		{
-			if (limit->getParent() == block)
+			// Find closest node whose parent is that block.
+			limit = ptr;
+			while (limit != nullptr)
 			{
-				break;
+				if (limit->getParent() == block)
+				{
+					break;
+				}
+				
+				limit = limit->getParent();
 			}
-			
-			limit = limit->getParent();
 		}
 		
 		if (block->hasNamed(name, limit, settings))
