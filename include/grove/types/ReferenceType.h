@@ -15,6 +15,7 @@ class ReferenceType : public NodeType
 protected:
 	OString m_name;
 	ASTNode* m_reference = nullptr;
+	Type* m_ref_type = nullptr;
 	
 	void findReference();
 public:
@@ -25,5 +26,5 @@ public:
 	virtual void resolve();
 	
 	ReferenceType(OString name);
-	ReferenceType(ASTNode* reference);
+	ReferenceType(const ASTNode* reference);
 };

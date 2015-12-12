@@ -55,7 +55,8 @@ void ReferenceType::resolve()
 	
 	auto typed = m_reference->as<Typed *>();
 	assertExists(typed->getType(), "node has no type");
-	m_type = typed->getType()->getLLVMType();
+	m_ref_type = typed->getType();
+	m_type = m_ref_type->getLLVMType();
 }
 
 ReferenceType::ReferenceType(OString name)
@@ -69,9 +70,9 @@ ReferenceType::ReferenceType(OString name)
 	m_name = name;
 }
 
-ReferenceType::ReferenceType(ASTNode* reference)
+ReferenceType::ReferenceType(const ASTNode* reference)
 : NodeType(false)
 {
 	assertExists(reference, "reference for ReferenceType was emtpy");
-	m_reference = reference;
+	m_reference = (ASTNode *)reference;
 }
