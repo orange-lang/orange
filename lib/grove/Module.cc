@@ -451,6 +451,11 @@ bool Module::isDefinedTypeName(OString name) const
 	SearchSettings settings;
 	settings.createGeneric = false;
 	
+	// There's no reason to include a limit as there are no nodes past
+	// getLatestNode(), and we want to be able to include getLatestNode()
+	// in the search.
+	settings.includeLimit = false;
+	
 	settings.filter = [](Named *named) -> bool
 	{
 		return named->is<TypeProvider *>();
