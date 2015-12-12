@@ -36,6 +36,77 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/Transforms/Scalar.h>
 
+bool Module::BlockIterator::hasNext() const
+{
+	// We search through the nearest parent block, so if there aren't
+	// any more parent blocks, there's nothing next.
+	auto block = m_ptr->findParent<Block *>();
+	if (block == nullptr)
+	{
+		return false;
+	}
+	
+	// If we're not searching the whole tree and we've already
+	// given one, then there's nothing next.
+	if (m_step > 0 && m_settings.searchWholeTree == false)
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+Block* Module::BlockIterator::getNext()
+{
+	if (hasNext() == false)
+	{
+		return nullptr;
+	}
+	
+	m_step++;
+	
+	m_ptr = m_ptr->findParent<Block *>();
+	return (Block *)m_ptr;
+}
+
+const ASTNode* Module::BlockIterator::getLimit() const
+{
+	if (m_settings.includeLimit == false)
+	{
+		return nullptr;
+	}
+	
+	const ASTNode* limit = m_ptr;
+	auto block = m_ptr->findParent<Block *>();
+	
+	while (limit != nullptr)
+	{
+		if (limit->getParent() == block)
+		{
+			break;
+		}
+		
+		limit = limit->getParent();
+	}
+	
+	return limit;
+}
+
+Module::BlockIterator::BlockIterator(const Module* mod, const ASTNode* from,
+									 const SearchSettings& settings)
+: m_module(mod), m_ptr(from), m_settings(settings)
+{
+	assertExists(mod, "BlockIterator created without a module");
+	assertExists(m_ptr, "BlockIterator created without a from");
+	
+	if (m_module->getParsing())
+	{
+		m_ctx_stack = mod->m_ctx;
+	}
+	
+	m_step = 0;
+}
+
 llvm::Module* Module::getLLVMModule() const
 {
 	return m_llvm_module;
@@ -283,50 +354,19 @@ bool Module::hasNamed(OString name, const ASTNode *from,
 					  SearchSettings settings) const
 {
 	assertExists(from, "From cannot be nullptr");
-	auto ptr = from;
 	
-	while (ptr != nullptr)
+	BlockIterator it(this, from, settings);
+	while (it.hasNext())
 	{
-		// Find the nearest block from this pointer.
-		auto block = ptr->findParent<Block *>();
+		// Get the limit from the current element of it.
+		const ASTNode* limit = it.getLimit();
 		
-		if (block == nullptr)
-		{
-			break;
-		}
-		
-		const ASTNode* limit = nullptr;
-		
-		if (settings.includeLimit)
-		{
-			// Find closest node whose parent is that block.
-			limit = ptr;
-			while (limit != nullptr)
-			{
-				if (limit->getParent() == block)
-				{
-					break;
-				}
-				
-				limit = limit->getParent();
-			}
-		}
-		
-		if (block->hasNamed(name, limit, settings))
+		if (it.getNext()->hasNamed(name, limit, settings))
 		{
 			return true;
 		}
-		
-		if (settings.searchWholeTree == false)
-		{
-			break;
-		}
-		else
-		{
-			// If we didn't find one, start looking from the block.
-			ptr = block;
-		}
 	}
+	
 	
 	return false;
 }
@@ -334,49 +374,16 @@ bool Module::hasNamed(OString name, const ASTNode *from,
 Named* Module::findNamed(OString name, Type *type, const ASTNode *from,
 					   SearchSettings settings) const
 {
-	auto ptr = from;
-	
-	while (ptr != nullptr)
+	BlockIterator it(this, from, settings);
+	while (it.hasNext())
 	{
-		// Find the nearest block from this pointer.
-		auto block = ptr->findParent<Block *>();
+		// Get the limit from the current element of it.
+		const ASTNode* limit = it.getLimit();
 		
-		if (block == nullptr)
-		{
-			break;
-		}
-		
-		const ASTNode* limit = nullptr;
-		
-		if (settings.includeLimit)
-		{
-			// Find closest node whose parent is that block.
-			limit = ptr;
-			while (limit != nullptr)
-			{
-				if (limit->getParent() == block)
-				{
-					break;
-				}
-				
-				limit = limit->getParent();
-			}
-		}
-		
-		auto named = block->getNamed(name, type, limit, settings);
+		auto named = it.getNext()->getNamed(name, type, limit, settings);
 		if (named != nullptr)
 		{
 			return named;
-		}
-		
-		if (settings.searchWholeTree == false)
-		{
-			break;
-		}
-		else
-		{
-			// If we didn't find it, start looking from the block.
-			ptr = block;
 		}
 	}
 	
@@ -388,33 +395,20 @@ const
 {
 	std::vector<Named *> matches;
 	
-	auto ptr = from;
-	while (ptr != nullptr)
+	SearchSettings settings;
+	settings.createGeneric = false;
+	settings.forceTypeMatch = false;
+	settings.includeLimit = true;
+	settings.searchWholeTree = true;
+	
+	BlockIterator it(this, from, settings);
+	while (it.hasNext())
 	{
-		// Find the nearest block from this pointer.
-		auto block = ptr->findParent<Block *>();
+		// Get the limit from the current element of it.
+		const ASTNode* limit = it.getLimit();
 		
-		if (block == nullptr)
-		{
-			break;
-		}
-		
-		// Find closest node whose parent is that block.
-		auto limit = ptr;
-		while (limit != nullptr)
-		{
-			if (limit->getParent() == block)
-			{
-				break;
-			}
-			
-			limit = limit->getParent();
-		}
-		
-		auto found = block->getAllNamed(name, limit);
+		auto found = it.getNext()->getAllNamed(name, limit);
 		matches.insert(matches.end(), found.begin(), found.end());
-		
-		ptr = block;
 	}
 	
 	return matches;

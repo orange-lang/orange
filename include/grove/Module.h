@@ -68,6 +68,28 @@ private:
 	bool m_parsing = false;
 	
 	void parse();
+	
+	/**
+	 * Iterates through blocks. Uses SearchSettings to determine which 
+	 * blocks will be next. If m_module is in parsing mode, module's 
+	 * m_ctx will be used. Otherwise, AST parentage will be used.
+	 */
+	class BlockIterator
+	{
+	private:
+		const Module* m_module;
+		const ASTNode* m_ptr;
+		const SearchSettings& m_settings;
+		std::stack<Block *> m_ctx_stack;
+		unsigned int m_step;
+	public:
+	 	bool hasNext() const;
+	 	Block* getNext();
+		const ASTNode* getLimit() const;
+	 
+		BlockIterator(const Module* mod, const ASTNode* from,
+					  const SearchSettings& settings);
+	};
 public:
 	/// Gets the LLVM module.
 	llvm::Module* getLLVMModule() const;
