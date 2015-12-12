@@ -7,6 +7,26 @@
 */
 
 #include <grove/MemberVarDecl.h>
+#include <grove/ClassDecl.h>
+
+#include <util/assertions.h>
+
+unsigned int MemberVarDecl::getOffset() const
+{
+	auto parentClass = findParent<ClassDecl *>();
+	assertExists(parentClass, "couldn't find a parent class for "
+				 "MemberVarDecl");
+	
+	auto&& members = parentClass->getMembers();
+	auto it = std::find(members.begin(), members.end(), this);
+
+	if (it == members.end())
+	{
+		throw fatal_error("couldn't find member's offset in parent");
+	}
+	
+	return (unsigned int)std::distance(members.begin(), it);
+}
 
 MemberVarDecl::MemberVarDecl(Type* type, OString name, Expression* expression)
 : VarDecl(type, name, expression)

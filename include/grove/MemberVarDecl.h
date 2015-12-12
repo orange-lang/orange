@@ -18,5 +18,8 @@
 class MemberVarDecl : public VarDecl, public ClassTopLevel, public ExprFactory
 {
 public:
+	/// Gets the offset of this member in the list of members of the class.
+	unsigned int getOffset() const;
+	
 	MemberVarDecl(Type* type, OString name, Expression* expression);
 };
