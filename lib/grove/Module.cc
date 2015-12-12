@@ -12,6 +12,7 @@
 #include <grove/Namespace.h>
 #include <grove/Builder.h>
 #include <grove/MainFunction.h>
+#include <grove/TypeProvider.h>
 
 #include <grove/types/FunctionType.h>
 #include <grove/types/IntType.h>
@@ -449,6 +450,12 @@ bool Module::isDefinedTypeName(OString name) const
 {
 	SearchSettings settings;
 	settings.createGeneric = false;
+	
+	settings.filter = [](Named *named) -> bool
+	{
+		return named->is<TypeProvider *>();
+	};
+	
 	return hasNamed(name, getLatestNode(), settings);
 }
 
