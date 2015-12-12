@@ -307,17 +307,20 @@ llvm::Value* Type::cast(void *irBuilder, Valued *val, Type *target)
 {
 	TypeTuple key(typeid(*this).hash_code(), typeid(*target).hash_code());
 	
+	auto src = (Type *)getComparisonTy();
+	target = (Type *)target->getComparisonTy();
+	
 	auto it = m_cast_map.find(key);
-	if (it == m_cast_map.end() && this != target)
+	if (it == m_cast_map.end() && src != target)
 	{
 		throw fatal_error("could not find cast to use");
 	}
-	else if (this == target)
+	else if (src == target)
 	{
 		return val->getValue();
 	}
 	
-	return it->second(irBuilder, val, this, target);
+	return it->second(irBuilder, val, src, target);
 }
 
 llvm::Type* Type::getLLVMType() const
@@ -325,10 +328,18 @@ llvm::Type* Type::getLLVMType() const
 	return m_type;
 }
 
-Comparison Type::compare(Type *source, Type *target)
+const Type* Type::getComparisonTy() const
+{
+	return this;
+}
+
+Comparison Type::compare(const Type *source, const Type *target)
 {
 	assertExists(source, "Source type must exist");
 	assertExists(target, "Target type must exist");
+	
+	source = source->getComparisonTy();
+	target = target->getComparisonTy();
 	
 	if (source == target)
 	{

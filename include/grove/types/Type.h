@@ -120,6 +120,9 @@ public:
 
 	/// Gets plain old data type.
 	virtual BasicType PODTy() const;
+	
+	/// Gets type for comparison. Returns this by default.
+	virtual const Type* getComparisonTy() const;
 
 	/// Gets a pointer to this type.
 	Type* getPointerTo() const;
@@ -150,7 +153,7 @@ public:
 	/// Compare the precedence of two types.
 	/// @param source The source type to check.
 	/// @param target The target type to check against.
-	static Comparison compare(Type* source, Type* target);
+	static Comparison compare(const Type* source, const Type* target);
 
 	/// Gets the internal LLVM type of this type.
 	llvm::Type* getLLVMType() const;
