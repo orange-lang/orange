@@ -175,137 +175,19 @@ void ASTNode::build()
 
 bool ASTNode::hasNamed(OString name, SearchSettings settings) const
 {
-	auto ptr = this;
-	
-	while (ptr != nullptr)
-	{
-		// Find the nearest block from this pointer.
-		auto block = ptr->findParent<Block *>();
-		
-		if (block == nullptr)
-		{
-			break;
-		}
-		
-		// Find closest node whose parent is that block.
-		auto limit = ptr;
-		while (limit != nullptr)
-		{
-			if (limit->getParent() == block)
-			{
-				break;
-			}
-			
-			limit = limit->getParent();
-		}
-		
-		if (block->hasNamed(name, limit, settings))
-		{
-			return true;
-		}
-		
-		if (settings.searchWholeTree == false)
-		{
-			break;
-		}
-		else
-		{
-			// If we didn't find one, start looking from the block.
-			ptr = block;
-		}
-	}
-	
-	return false;
+	return getModule()->hasNamed(name, this, settings);
 }
 
 Named* ASTNode::findNamed(OString name, Type* type,
 						  SearchSettings settings)
 const
 {
-	auto ptr = this;
-	
-	while (ptr != nullptr)
-	{
-		// Find the nearest block from this pointer.
-		auto block = ptr->findParent<Block *>();
-		
-		if (block == nullptr)
-		{
-			break;
-		}
-		
-		const ASTNode* limit = nullptr;
-		
-		if (settings.includeLimit)
-		{
-    		// Find closest node whose parent is that block.
-    		limit = ptr;
-    		while (limit != nullptr)
-    		{
-    			if (limit->getParent() == block)
-    			{
-    				break;
-    			}
-    			
-    			limit = limit->getParent();
-    		}	
-		}
-		
-	
-		auto named = block->getNamed(name, type, limit, settings);
-		if (named != nullptr)
-		{
-			return named;
-		}		
-
-		if (settings.searchWholeTree == false)
-		{
-			break;
-		}
-		else
-		{
-    		// If we didn't find it, start looking from the block.
-    		ptr = block;
-		}
-	}
-	
-	return nullptr;
+	return getModule()->findNamed(name, type, this, settings);
 }
 
 std::vector<Named*> ASTNode::findAllNamed(OString name) const
 {
-	std::vector<Named *> matches;
-	
-	auto ptr = this;
-	while (ptr != nullptr)
-	{
-		// Find the nearest block from this pointer.
-		auto block = ptr->findParent<Block *>();
-		
-		if (block == nullptr)
-		{
-			break;
-		}
-		
-		// Find closest node whose parent is that block.
-		auto limit = ptr;
-		while (limit != nullptr)
-		{
-			if (limit->getParent() == block)
-			{
-				break;
-			}
-			
-			limit = limit->getParent();
-		}
-		
-		auto found = block->getAllNamed(name, limit);
-		matches.insert(matches.end(), found.begin(), found.end());
-		
-		ptr = block;
-	}
-	
-	return matches;
+	return getModule()->findAllNamed(name, this);
 }
 
 ASTNode::ASTNode(Module* module)
