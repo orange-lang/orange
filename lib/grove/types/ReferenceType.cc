@@ -38,6 +38,11 @@ std::string ReferenceType::getSignature() const
 	return m_ref_type->getSignature();
 }
 
+ASTNode* ReferenceType::getReference() const
+{
+	return m_reference;
+}
+
 void ReferenceType::findReference()
 {
 	SearchSettings settings;
