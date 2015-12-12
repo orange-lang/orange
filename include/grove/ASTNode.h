@@ -67,13 +67,16 @@ public:
 	/// Add a child relative to a reference child plus a delta.
 	void addChild(ASTNode* child, const ASTNode* ref, int delta);
 	
+	/// Removes a child from this node.
 	void removeChild(ASTNode* child);
 
+	/// Returns true if this node is a root node (i.e., has no parent).
 	bool isRootNode() const;
 
 	/// Creates a copy of this node.
 	virtual ASTNode* copy() const;
 
+	/// Populates the depdencies list of this node.
 	virtual void findDependencies();
 
 	/// Resolve node. Sets type if applicable.
