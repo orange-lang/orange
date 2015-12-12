@@ -13,6 +13,7 @@
 #include <grove/ReturnStmt.h>
 #include <grove/IDReference.h>
 #include <grove/Module.h>
+#include <grove/Parameter.h>
 
 #include <grove/exceptions/code_error.h>
 #include <grove/exceptions/already_defined_error.h>
@@ -20,6 +21,7 @@
 #include <grove/types/ClassType.h>
 
 #include <util/assertions.h>
+#include <util/copy.h>
 
 ASTNode* ClassDecl::copy() const
 {
@@ -82,7 +84,7 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	
 	if (method != nullptr)
 	{
-		params = method->getBasicParams();
+		params = copyVector(method->getBasicParams());
 	}
 	
 	auto func = new Function(getName(), params);
@@ -107,8 +109,9 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	func->addStatement(class_instance);
 	func->addStatement(ret_stmt);
 	
-	// Add the function to our parent after this class.
-	getParent()->addChild(func, this, 1);
+	// Add the function to our parent block after this class.
+	// There's never a reason to add it to our parent as well, since
+	// our parent will always be the parent block.
 	findParent<Block *>()->addStatement(func, this, 1);
 	
 	// Request a resolve of our function.

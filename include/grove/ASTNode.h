@@ -61,7 +61,7 @@ public:
 	LLVMBuilder* IRBuilder() const;
 
 	void addDependency(ASTNode* dependency);
-
+	
 	void addChild(ASTNode* child, bool mustExist = false);
 	
 	/// Add a child relative to a reference child plus a delta.
@@ -102,7 +102,7 @@ public:
 
 		return nullptr;
 	}
-
+	
 	/// Finds the first child, depth-first, of a type T.
 	template <typename T> T findChild() const
 	{
