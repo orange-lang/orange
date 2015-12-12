@@ -26,6 +26,9 @@ public:
 	OString getName() const;
 	Expression* getAccessed() const;
 	
+	virtual bool hasPointer() const override;
+	virtual llvm::Value* getPointer() const override;
+	
 	virtual void resolve() override;
 	virtual void build() override;
 	

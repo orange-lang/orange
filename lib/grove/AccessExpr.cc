@@ -34,6 +34,16 @@ Expression* AccessExpr::getAccessed() const
 	return m_accessed;
 }
 
+bool AccessExpr::hasPointer() const
+{
+	return m_accessed->hasPointer();
+}
+
+llvm::Value* AccessExpr::getPointer() const
+{
+	return m_accessed->getPointer();
+}
+
 void AccessExpr::resolve()
 {
 	if (getLHS()->ASTNode::is<Accessible *>() == false ||
@@ -66,6 +76,13 @@ void AccessExpr::resolve()
 void AccessExpr::build()
 {
 	getLHS()->build();
+	
+	// If our access node is a root node, we need to build it.
+	// Otherwise, it's already been built.
+	if (getAccessed()->isRootNode())
+	{
+		getAccessed()->build();
+	}
 	
 	setValue(getAccessed()->getValue());
 }
