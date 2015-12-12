@@ -34,10 +34,8 @@ std::string ReferenceType::getString() const
 
 std::string ReferenceType::getSignature() const
 {
-	assertExists(m_ref_type, "ref type never set!");
-	
 	std::stringstream ss;
-	ss << this << m_ref_type->getSignature();
+	ss << this;
 	return ss.str();
 }
 
