@@ -17,8 +17,13 @@
 class MemberVarDecl : public VarDecl, public ClassTopLevel
 {
 public:
+	virtual llvm::Value* getValue() const override;
+	virtual llvm::Value* getPointer() const override;
+	
 	/// Gets the offset of this member in the list of members of the class.
 	unsigned int getOffset() const;
+	
+	virtual void build() override;
 	
 	MemberVarDecl(Type* type, OString name, Expression* expression);
 };

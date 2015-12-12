@@ -11,6 +11,16 @@
 
 #include <util/assertions.h>
 
+llvm::Value* MemberVarDecl::getValue() const
+{
+	throw fatal_error("MemberVarDecl::getValue used directly!");
+}
+
+llvm::Value* MemberVarDecl::getPointer() const
+{
+	throw fatal_error("MemberVarDecl::getPointer used directly!");
+}
+
 unsigned int MemberVarDecl::getOffset() const
 {
 	auto parentClass = findParent<ClassDecl *>();
@@ -26,6 +36,11 @@ unsigned int MemberVarDecl::getOffset() const
 	}
 	
 	return (unsigned int)std::distance(members.begin(), it);
+}
+
+void MemberVarDecl::build()
+{
+	// Do nothing.
 }
 
 MemberVarDecl::MemberVarDecl(Type* type, OString name, Expression* expression)
