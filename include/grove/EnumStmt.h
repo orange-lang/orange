@@ -47,7 +47,7 @@ public:
 	
 	virtual bool isAccessible() const override;
 	
-	virtual Expression* access(OString name, Type* hint) const override;
+	virtual Expression* access(OString name, const ASTNode* hint) const override;
 	
 	void addMember(OString name, Value* val);
 	

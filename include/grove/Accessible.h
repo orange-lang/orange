@@ -12,6 +12,7 @@
 #include "OString.h"
 
 class Expression;
+class ASTNode;
 class Type;
 
 /**
@@ -22,5 +23,5 @@ class Accessible : public ObjectBase
 public:
 	virtual bool isAccessible() const;
 	
-	virtual Expression* access(OString name, Type* hint) const;
+	virtual Expression* access(OString name, const ASTNode* hint) const;
 };

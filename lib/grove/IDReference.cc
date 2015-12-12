@@ -48,7 +48,7 @@ bool IDReference::isAccessible() const
 		findNode()->as<Accessible *>()->isAccessible();
 }
 
-Expression* IDReference::access(OString name, Type* hint) const
+Expression* IDReference::access(OString name, const ASTNode* hint) const
 {
 	if (isAccessible() == false)
 	{

@@ -56,7 +56,7 @@ bool EnumStmt::isAccessible() const
 	return true;
 }
 
-Expression* EnumStmt::access(OString name, Type *hint) const
+Expression* EnumStmt::access(OString name, const ASTNode* hint) const
 {
 	auto it = std::find_if(m_members.begin(), m_members.end(),
 		[name] (EnumValPair pair) -> bool
