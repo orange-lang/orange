@@ -14,7 +14,7 @@
 
 /**
  * Represents a method for a class.
- * Provides a hint that is the this method.
+ * Provides a hint that is the this parameter.
  */
 class ClassMethod : public Function, public ClassTopLevel, public HintProvider
 {

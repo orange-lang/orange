@@ -11,10 +11,11 @@
 #include "CodeBase.h"
 
 class Expression;
-class HintProvider;
+class ASTNode;
 
 class ExprFactory : public CodeBase
 {
 public:
-	virtual Expression* produce(HintProvider* provider);
+	/// Produce a new expression from a given context.
+	virtual Expression* produce(const ASTNode* context);
 };

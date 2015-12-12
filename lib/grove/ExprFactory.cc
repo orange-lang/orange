@@ -10,7 +10,7 @@
 
 #include <grove/exceptions/fatal_error.h>
 
-Expression* ExprFactory::produce(HintProvider *provider)
+Expression* ExprFactory::produce(const ASTNode* provider)
 {
 	throw fatal_error("ExprFactory::produce not overriden");
 }
