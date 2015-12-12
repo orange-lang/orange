@@ -118,7 +118,7 @@ public:
 	/// Gets the latest node in the tree. If the current
 	/// block has children, returns the last child of that block.
 	/// Otherwise, returns the block.
-	ASTNode* getLatestNode();
+	ASTNode* getLatestNode() const;
 	
 	/// Returns whether or not a named node with a given name,
 	/// up to from, exists in the AST.
@@ -134,6 +134,10 @@ public:
 	/// including from.
 	std::vector<Named *> findAllNamed(OString name,
 									  const ASTNode* from) const;
+	
+	/// Returns whether or not a name is a defined type name.
+	/// Uses the block stack to search up the AST.
+	bool isDefinedTypeName(OString name) const;
 	
 	/// Output built code into an object file.
 	/// Returns the path of the object file.

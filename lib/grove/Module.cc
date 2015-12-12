@@ -258,6 +258,18 @@ std::string Module::compile()
 	return path;
 }
 
+ASTNode* Module::getLatestNode() const
+{
+	if (getBlock()->getChildren().size() == 0)
+	{
+		return getBlock();
+	}
+	else
+	{
+		return getBlock()->getChildren().back();
+	}
+}
+
 bool Module::hasNamed(OString name, const ASTNode *from,
 					  SearchSettings settings) const
 {
@@ -431,6 +443,13 @@ Module::Module(Builder* builder, std::string filePath)
 	{
 		throw fatal_error("Parsing didn't clean up blocks!");
 	}
+}
+
+bool Module::isDefinedTypeName(OString name) const
+{
+	SearchSettings settings;
+	settings.createGeneric = false;
+	return hasNamed(name, getLatestNode(), settings);
 }
 
 Module::~Module()
