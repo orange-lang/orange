@@ -119,7 +119,7 @@
 %type <str> COMP_LT COMP_GT LEQ GEQ PLUS MINUS IDENTIFIER STRING TIMES DIVIDE ASSIGN
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
-%type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID
+%type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID typename_or_identifier
 %type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list opt_param_list
 %type <args> arg_list
@@ -251,7 +251,7 @@ structures
 	;
 
 function
-	: DEF IDENTIFIER OPEN_PAREN opt_param_list CLOSE_PAREN type_hint term
+	: DEF typename_or_identifier OPEN_PAREN opt_param_list CLOSE_PAREN type_hint term
 	{
 		Function* func = nullptr;
 
@@ -750,7 +750,7 @@ ternary
 	;
 
 call
-	: IDENTIFIER OPEN_PAREN CLOSE_PAREN
+	: typename_or_identifier OPEN_PAREN CLOSE_PAREN
 	{
 		std::vector<Expression *> params;
 		$$ = new FunctionCall(*$1, params);
@@ -758,7 +758,7 @@ call
 
 		delete $1;
 	}
-	| IDENTIFIER OPEN_PAREN arg_list CLOSE_PAREN
+	| typename_or_identifier OPEN_PAREN arg_list CLOSE_PAREN
 	{
 		$$ = new FunctionCall(*$1, *$3);
 		SET_LOCATION($$, @1, @4);
@@ -766,6 +766,11 @@ call
 		delete $1;
 		delete $3;
 	}
+	;
+
+typename_or_identifier
+	: IDENTIFIER { $$ = $1; }
+	| TYPE_ID { $$ = $1; }
 	;
 
 primary
