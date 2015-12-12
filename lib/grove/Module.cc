@@ -87,7 +87,10 @@ void Module::parse()
 	yyflushbuffer();
 	yyonce = 0;
 	yyin = file;
+	
+	m_parsing = true;
 	yyparse(this);
+	m_parsing = false;
 
 	fclose(file);
 }
@@ -105,6 +108,11 @@ Block* Module::getBlock() const
 Function* Module::getMain() const
 {
 	return m_main;
+}
+
+bool Module::getParsing() const
+{
+	return m_parsing;
 }
 
 void Module::pushBlock(Block *block)

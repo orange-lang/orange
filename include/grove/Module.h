@@ -64,6 +64,9 @@ private:
 	std::vector<ASTNode *> m_resolved;
 	std::vector<ASTNode *> m_searched;
 	
+	/// Indicates whether or not we are currently parsing.
+	bool m_parsing = false;
+	
 	void parse();
 public:
 	/// Gets the LLVM module.
@@ -88,6 +91,9 @@ public:
 	
 	/// Gets the main function for this module.
 	Function* getMain() const;
+	
+	/// Returns whether or not this module is currently parsing.
+	bool getParsing() const;
 	
 	/// Push a block to the stack.
 	void pushBlock(Block *);
