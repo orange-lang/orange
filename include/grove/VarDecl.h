@@ -12,6 +12,7 @@
 #include "Typed.h"
 #include "Named.h"
 #include "Valued.h"
+#include "Accessible.h"
 
 class Expression;
 
@@ -19,7 +20,8 @@ class Expression;
  * VarDecl is a statement that represents a variable declaration. 
  * It is named, typed, and valued. Its value is the variable created.
  */
-class VarDecl : public Statement, public Named, public Typed, public Valued
+class VarDecl : public Statement, public Named, public Typed, public Valued,
+	public Accessible
 {
 private:
 	Expression* m_expr = nullptr;
@@ -32,6 +34,8 @@ public:
 	
 	virtual void resolve() override;
 	virtual void build() override;
+	
+	virtual bool isAccessible() const override;
 	
 	Expression* getExpression() const;
 	

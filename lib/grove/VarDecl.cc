@@ -12,6 +12,7 @@
 #include <grove/types/Type.h>
 #include <grove/types/UIntType.h>
 #include <grove/types/NodeType.h>
+#include <grove/types/ReferenceType.h>
 
 #include <grove/exceptions/already_defined_error.h>
 #include <grove/exceptions/invalid_type_error.h>
@@ -53,6 +54,19 @@ ASTNode* VarDecl::copy() const
 	{
 		return new VarDecl(m_type, m_name, nullptr);
 	}
+}
+
+bool VarDecl::isAccessible() const
+{
+	// We can have members accessed if we're a reference type,
+	// and our reference type is also accessible.
+	if (getType()->is<ReferenceType *>() == false)
+	{
+		return false;
+	}
+	
+	auto ref = getType()->as<ReferenceType *>()->getReference();
+	return ref->is<Accessible *>() && ref->as<Accessible *>()->isAccessible();
 }
 
 void VarDecl::resolve()
