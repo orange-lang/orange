@@ -66,6 +66,8 @@ public:
 	
 	/// Add a child relative to a reference child plus a delta.
 	void addChild(ASTNode* child, const ASTNode* ref, int delta);
+	
+	void removeChild(ASTNode* child);
 
 	bool isRootNode() const;
 

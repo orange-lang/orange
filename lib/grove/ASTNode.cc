@@ -132,6 +132,21 @@ void ASTNode::addChild(ASTNode *child, const ASTNode *ref, int delta)
 	child->m_module = getModule();
 }
 
+void ASTNode::removeChild(ASTNode *child)
+{
+	assertExists(child, "Child must not be null!");
+	
+	auto it = std::find(m_children.begin(), m_children.end(), child);
+	if (it == m_children.end())
+	{
+		throw fatal_error("element was not found in list of children");
+	}
+	
+	m_children.erase(it);
+	child->m_parent = nullptr;
+	child->m_module = nullptr;
+}
+
 bool ASTNode::isRootNode() const
 {
 	return getParent() == nullptr;
