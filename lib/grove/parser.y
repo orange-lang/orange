@@ -376,7 +376,8 @@ else_if_or_end
 		auto block = new CondBlock($2);
 		module->pushBlock(block);
 		$<stmt>$ = block;
-	} term statements else_if_or_end
+	}
+	term statements else_if_or_end
 	{
 		$$ = $6;
 
@@ -393,21 +394,28 @@ else_if_or_end
 
 		delete $5;
 	}
-	| ELSE term statements END
+	| ELSE
+	{
+		auto block = new Block();
+		module->pushBlock(block);
+		$<stmt>$ = block;
+	}
+	term statements END
 	{
 		$$ = new std::vector<Block *>();
 
-		auto block = new Block();
-		for (auto stmt : *$3)
+		auto block = (Block *)$<stmt>2;
+		for (auto stmt : *$4)
 		{
 			block->addStatement(stmt);
 		}
 
 		$$->insert($$->begin(), block);
 
-		SET_LOCATION(block, @1, @4);
+		SET_LOCATION(block, @1, @5);
+		module->popBlock();
 
-		delete $3;
+		delete $4;
 	}
 	| END
 	{
