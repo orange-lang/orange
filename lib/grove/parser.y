@@ -371,21 +371,27 @@ ifs
 	;
 
 else_if_or_end
-	: ELIF expression term statements else_if_or_end
+	: ELIF expression
 	{
-		$$ = $5;
-
 		auto block = new CondBlock($2);
-		for (auto stmt : *$4)
+		module->pushBlock(block);
+		$<stmt>$ = block;
+	} term statements else_if_or_end
+	{
+		$$ = $6;
+
+		auto block = (CondBlock *)$<stmt>3;
+		for (auto stmt : *$5)
 		{
 			block->addStatement(stmt);
 		}
 
 		$$->insert($$->begin(), block);
 
-		SET_LOCATION(block, @1, @5);
+		SET_LOCATION(block, @1, @6);
+		module->popBlock();
 
-		delete $4;
+		delete $5;
 	}
 	| ELSE term statements END
 	{
