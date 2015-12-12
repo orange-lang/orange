@@ -61,7 +61,7 @@ bool Block::hasNamed(OString name, const ASTNode *limit,
 		}
 		
 		auto named = child->as<Named *>();
-		if (named->matchesName(name))
+		if (named->matchesName(name) && settings.filter(named))
 		{
 			return true;
 		}
