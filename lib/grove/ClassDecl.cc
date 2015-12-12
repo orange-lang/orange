@@ -191,6 +191,12 @@ bool ClassDecl::matchesType(Type *other) const
 	return getType()->matches(other);
 }
 
+bool ClassDecl::isAccessible() const
+{
+	// Classes are always accessible.
+	return true;
+}
+
 ClassDecl::ClassDecl(OString name)
 {
 	if (name == "")
