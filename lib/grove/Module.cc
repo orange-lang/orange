@@ -289,6 +289,11 @@ Module::Module(Builder* builder, std::string filePath)
 	pushBlock(m_main);
 
 	parse();
+	
+	if (m_ctx.size() != 1 || getBlock() != m_main)
+	{
+		throw fatal_error("Parsing didn't clean up blocks!");
+	}
 }
 
 Module::~Module()
