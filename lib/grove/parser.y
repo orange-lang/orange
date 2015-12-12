@@ -153,11 +153,6 @@
 start
   : statements
 	{
-		for (auto stmt : *$1)
-		{
-			module->getMain()->addStatement(stmt);
-		}
-
 		delete $1;
 	}
 	;
@@ -170,6 +165,7 @@ statements
 		if ($2 != nullptr)
 		{
     		$$->push_back($2);
+			module->getBlock()->addStatement($2);
 		}
 	}
 	| statements compound_statement
@@ -180,6 +176,7 @@ statements
 		{
 			if (stmt == nullptr) continue;
 			$$->push_back(stmt);
+			module->getBlock()->addStatement(stmt);
 		}
 
 		delete $2;
@@ -191,6 +188,7 @@ statements
 		if ($1 != nullptr)
 		{
 			$$->push_back($1);
+			module->getBlock()->addStatement($1);
 		}
 	}
 	| compound_statement
@@ -201,6 +199,7 @@ statements
 		{
 			if (stmt == nullptr) continue;
 			$$->push_back(stmt);
+			module->getBlock()->addStatement(stmt);
 		}
 
 		delete $1;
@@ -273,11 +272,6 @@ function
 	{
 		auto func = (Function *)$<stmt>8;
 
-		for (auto stmt : *$9)
-		{
-			func->addStatement(stmt);
-		}
-
 		$$ = func;
         SET_LOCATION($$, @1, @10);
 
@@ -323,11 +317,6 @@ class_stmt
 	{
 		ClassDecl* inst = (ClassDecl *)$<stmt>4;
 
-		for (auto stmt : *$5)
-		{
-			inst->addStatement(stmt);
-		}
-
 		$$ = inst;
 		SET_LOCATION($$, @1, @6);
 
@@ -347,10 +336,6 @@ ifs
 		auto blocks = $6;
 
 		auto block = (CondBlock *)$<stmt>3;
-		for (auto stmt : *$5)
-		{
-			block->addStatement(stmt);
-		}
 
 		blocks->insert(blocks->begin(), block);
 
@@ -382,10 +367,6 @@ else_if_or_end
 		$$ = $6;
 
 		auto block = (CondBlock *)$<stmt>3;
-		for (auto stmt : *$5)
-		{
-			block->addStatement(stmt);
-		}
 
 		$$->insert($$->begin(), block);
 
@@ -405,10 +386,6 @@ else_if_or_end
 		$$ = new std::vector<Block *>();
 
 		auto block = (Block *)$<stmt>2;
-		for (auto stmt : *$4)
-		{
-			block->addStatement(stmt);
-		}
 
 		$$->insert($$->begin(), block);
 
@@ -433,10 +410,6 @@ unless
 	term statements END
 	{
 		auto block = (CondBlock *)$<stmt>3;
-		for (auto stmt : *$5)
-		{
-			block->addStatement(stmt);
-		}
 
 		auto if_stmt = new IfStmt();
 		if_stmt->addBlock(block);
@@ -510,11 +483,6 @@ for_loop
 	{
 		auto loop = (Loop *)$<stmt>10;
 
-	  	for (auto stmt : *$11)
-		{
-			loop->addStatement(stmt);
-		}
-
 		$$ = loop;
 		SET_LOCATION($$, @1, @12);
 		module->popBlock();
@@ -532,11 +500,6 @@ for_loop
 	{
 		auto loop = (Loop *)$<stmt>4;
 
-		for (auto stmt : *$5)
-		{
-			loop->addStatement(stmt);
-		}
-
 		$$ = loop;
 		SET_LOCATION($$, @1, @6);
 		module->popBlock();
@@ -552,11 +515,6 @@ for_loop
 	statements END
 	{
 		auto loop = (Loop *)$<stmt>4;
-
-		for (auto stmt : *$5)
-		{
-			loop->addStatement(stmt);
-		}
 
 		$$ = loop;
 		SET_LOCATION($$, @1, @6);
@@ -574,11 +532,6 @@ for_loop
 	{
 		auto loop = (Loop *)$<stmt>3;
 		loop->setCondition($7);
-
-		for (auto stmt : *$4)
-		{
-			loop->addStatement(stmt);
-		}
 
 		$$ = loop;
 		SET_LOCATION($$, @1, @7);
