@@ -21,7 +21,7 @@ OString ReferenceType::getName() const
 	return m_name;
 }
 
-void ReferenceType::resolve()
+void ReferenceType::findReference()
 {
 	SearchSettings settings;
 	settings.filter = [] (Named *named)
@@ -34,16 +34,28 @@ void ReferenceType::resolve()
 	{
 		auto name = m_name;
 		throw code_error(this, [name] () -> std::string
-			{
-				std::stringstream ss;
-				ss << "no type named " << name.str() << " found";
-				return ss.str();
-			});
+						 {
+							 std::stringstream ss;
+							 ss << "no type named " << name.str() << " found";
+							 return ss.str();
+						 });
 	}
 	
-	assertExists(named->as<Typed *>()->getType(), "node has no type");
-	m_type = named->as<Typed *>()->getType()->getLLVMType();
 	m_reference = named->as<ASTNode *>();
+}
+
+void ReferenceType::resolve()
+{
+	if (m_reference == nullptr)
+	{
+		findReference();
+	}
+	
+	assertExists(m_reference, "reference has no value");
+	
+	auto typed = m_reference->as<Typed *>();
+	assertExists(typed->getType(), "node has no type");
+	m_type = typed->getType()->getLLVMType();
 }
 
 ReferenceType::ReferenceType(OString name)
@@ -55,4 +67,11 @@ ReferenceType::ReferenceType(OString name)
 	}
 	
 	m_name = name;
+}
+
+ReferenceType::ReferenceType(ASTNode* reference)
+: NodeType(false)
+{
+	assertExists(reference, "reference for ReferenceType was emtpy");
+	m_reference = reference;
 }
