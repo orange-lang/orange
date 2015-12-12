@@ -41,6 +41,10 @@ public:
 	Expression* getCondition() const;
 	ASTNode* getAfterthought() const;
 	
+	void setInitializers(std::vector<ASTNode *> initializers);
+	void setCondition(Expression* condition);
+	void setAfterthought(ASTNode* afterthought);
+	
 	llvm::BasicBlock* getConditionBlock() const;
 	llvm::BasicBlock* getBodyBlock() const;
 	llvm::BasicBlock* getAfterthoughtBlock() const;

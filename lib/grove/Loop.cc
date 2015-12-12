@@ -58,6 +58,43 @@ ASTNode* Loop::getAfterthought() const
 	return m_afterthought;
 }
 
+void Loop::setInitializers(std::vector<ASTNode *> initializers)
+{
+	for (auto initializer : m_initializers)
+	{
+		removeChild(initializer);
+	}
+		
+	m_initializers = initializers;
+	
+	for (auto initializer : initializers)
+	{
+		addChild(initializer, true);
+	}
+}
+
+void Loop::setCondition(Expression *condition)
+{
+	if (m_condition)
+	{
+		removeChild(m_condition);
+	}
+	
+	m_condition = condition;
+	addChild(m_condition);
+}
+
+void Loop::setAfterthought(ASTNode *afterthought)
+{
+	if (m_afterthought)
+	{
+		removeChild(m_afterthought);
+	}
+	
+	m_afterthought = afterthought;
+	addChild(m_afterthought);
+}
+
 llvm::BasicBlock* Loop::getConditionBlock() const
 {
 	return m_condition_block;
