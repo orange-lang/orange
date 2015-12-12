@@ -35,7 +35,10 @@ std::string ReferenceType::getString() const
 std::string ReferenceType::getSignature() const
 {
 	assertExists(m_ref_type, "ref type never set!");
-	return m_ref_type->getSignature();
+	
+	std::stringstream ss;
+	ss << this << m_ref_type->getSignature();
+	return ss.str();
 }
 
 ASTNode* ReferenceType::getReference() const
