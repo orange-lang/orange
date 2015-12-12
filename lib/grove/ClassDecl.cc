@@ -19,6 +19,7 @@
 #include <grove/exceptions/already_defined_error.h>
 
 #include <grove/types/ClassType.h>
+#include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
 #include <util/copy.h>
@@ -90,7 +91,10 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	auto func = new Function(getName(), params);
 	
 	// The functions return type is this class' type.
-	func->setReturnType(getType());
+	auto refType = new ReferenceType(this);
+	func->addChild(refType);
+	func->addDependency(refType);
+	func->setReturnType(refType);
 	
 	// The class constructor needs to create an instance of its return
 	// type, then instantiate all of its variables that have values,
