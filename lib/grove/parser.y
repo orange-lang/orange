@@ -582,6 +582,7 @@ for_loop
 
 		$$ = loop;
 		SET_LOCATION($$, @1, @7);
+		module->popBlock();
 
 		delete $4;
 	}
