@@ -104,7 +104,7 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID
 
-%type <nodes> opt_statements statements compound_statement var_decl valued
+%type <nodes> compound_statement var_decl valued
 %type <nodes> opt_valued
 %type <node> statement return controls
 %type <exprs> expr_list array_def_list
@@ -152,30 +152,21 @@
 
 start
   : statements
-	{
-		delete $1;
-	}
 	;
 
 statements
 	: statements statement
 	{
-		$$ = $1;
-
 		if ($2 != nullptr)
 		{
-    		$$->push_back($2);
 			module->getBlock()->addStatement($2);
 		}
 	}
 	| statements compound_statement
 	{
-		$$ = $1;
-
 		for (auto stmt : *$2)
 		{
 			if (stmt == nullptr) continue;
-			$$->push_back(stmt);
 			module->getBlock()->addStatement(stmt);
 		}
 
@@ -183,22 +174,16 @@ statements
 	}
 	| statement
 	{
-		$$ = new std::vector<ASTNode *>();
-
 		if ($1 != nullptr)
 		{
-			$$->push_back($1);
 			module->getBlock()->addStatement($1);
 		}
 	}
 	| compound_statement
 	{
-		$$ = new std::vector<ASTNode *>();
-
 		for (auto stmt : *$1)
 		{
 			if (stmt == nullptr) continue;
-			$$->push_back(stmt);
 			module->getBlock()->addStatement(stmt);
 		}
 
@@ -207,8 +192,8 @@ statements
 	;
 
 opt_statements
-	: statements { $$ = $1; }
-	| { $$ = new std::vector<ASTNode *>(); }
+	: statements
+	|
 	;
 
 statement
@@ -279,7 +264,6 @@ function
 
 		delete $2;
 		delete $4;
-		delete $9;
 	}
 	;
 
@@ -320,7 +304,6 @@ class_stmt
 		$$ = inst;
 		SET_LOCATION($$, @1, @6);
 
-		delete $5;
 		module->popBlock();
 	}
 
@@ -350,7 +333,6 @@ ifs
 
 		module->popBlock();
 
-		delete $5;
 		delete blocks;
 	}
 	;
@@ -372,8 +354,6 @@ else_if_or_end
 
 		SET_LOCATION(block, @1, @6);
 		module->popBlock();
-
-		delete $5;
 	}
 	| ELSE
 	{
@@ -391,8 +371,6 @@ else_if_or_end
 
 		SET_LOCATION(block, @1, @5);
 		module->popBlock();
-
-		delete $4;
 	}
 	| END
 	{
@@ -417,8 +395,6 @@ unless
 		$$ = if_stmt;
 		SET_LOCATION($$, @1, @6);
 		module->popBlock();
-
-		delete $5;
 	}
 
 inline_if
@@ -488,7 +464,6 @@ for_loop
 		module->popBlock();
 
 		delete $3;
-		delete $11;
 	}
 	| WHILE expression term
 	{
@@ -503,8 +478,6 @@ for_loop
 		$$ = loop;
 		SET_LOCATION($$, @1, @6);
 		module->popBlock();
-
-		delete $5;
 	}
 	| FOREVER DO term
 	{
@@ -519,8 +492,6 @@ for_loop
 		$$ = loop;
 		SET_LOCATION($$, @1, @6);
 		module->popBlock();
-
-		delete $5;
 	}
 	| DO term
 	{
@@ -536,8 +507,6 @@ for_loop
 		$$ = loop;
 		SET_LOCATION($$, @1, @7);
 		module->popBlock();
-
-		delete $4;
 	}
 	;
 
