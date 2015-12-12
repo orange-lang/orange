@@ -1503,24 +1503,33 @@ SAVESTR(); return STRING;
 case 106:
 YY_RULE_SETUP
 #line 196 "/Users/robert/dev/orange/lib/grove/lexer.l"
-SAVESTR(); return IDENTIFIER;
+SAVESTR(); {
+	if (module->isDefinedTypeName(* yylval.str))
+	{
+		return TYPE_ID;
+	}
+	else
+	{
+		return IDENTIFIER;
+	}
+}
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 198 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 207 "/Users/robert/dev/orange/lib/grove/lexer.l"
 yyerror(module, "invalid token");
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(HEX):
-#line 200 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 209 "/Users/robert/dev/orange/lib/grove/lexer.l"
 { return yyonce++ ? 0 : NEWLINE; }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 202 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 211 "/Users/robert/dev/orange/lib/grove/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1524 "/Users/robert/dev/orange/lib/grove/lexer.cc"
+#line 1533 "/Users/robert/dev/orange/lib/grove/lexer.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2483,7 +2492,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 202 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 211 "/Users/robert/dev/orange/lib/grove/lexer.l"
 
 
 

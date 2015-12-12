@@ -193,7 +193,16 @@
 "sizeof"										SAVESTR(); return SIZEOF;
 
 \"(\\.|[^\\"])*\"								SAVESTR(); return STRING;
-[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 		SAVESTR(); return IDENTIFIER;
+[A-Za-z\x80-\xf3][A-Za-z0-9_\x80-\xf3]* 		SAVESTR(); {
+	if (module->isDefinedTypeName(* yylval.str))
+	{
+		return TYPE_ID;
+	}
+	else
+	{
+		return IDENTIFIER;
+	}
+}
 
 .												yyerror(module, "invalid token");
 
