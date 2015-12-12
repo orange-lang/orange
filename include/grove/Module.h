@@ -64,6 +64,10 @@ private:
 	std::vector<ASTNode *> m_resolved;
 	std::vector<ASTNode *> m_searched;
 	
+	// Children of the module are nodes that are used in the AST
+	// but have no parents, and are destroyed here.
+	std::vector<ASTNode *> m_children;
+	
 	/// Indicates whether or not we are currently parsing.
 	bool m_parsing = false;
 	
@@ -118,6 +122,8 @@ public:
 	
 	/// Returns whether or not this module is currently parsing.
 	bool getParsing() const;
+	
+	void addChild(ASTNode *child);
 	
 	/// Push a block to the stack.
 	void pushBlock(Block *);

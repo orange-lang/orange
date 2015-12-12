@@ -476,6 +476,15 @@ const
 	return matches;
 }
 
+void Module::addChild(ASTNode *child)
+{
+	auto it = std::find(m_children.begin(), m_children.end(), child);
+	if (it == m_children.end())
+	{
+		m_children.push_back(child);
+	}
+}
+
 Module::Module(Builder* builder, std::string filePath)
 {
 	if (builder == nullptr)
@@ -537,4 +546,9 @@ Module::~Module()
 {
 	delete m_ir_builder;
 	delete m_main;
+	
+	for (auto child : m_children)
+	{
+		delete child;
+	}
 }
