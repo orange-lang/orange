@@ -12,11 +12,16 @@
 #include <stack>
 #include <vector>
 
+#include "SearchSettings.h"
+#include "OString.h"
+
 class Builder;
 class Namespace;
 class Block;
 class Function;
 class ASTNode;
+class Named;
+class Type;
 
 namespace llvm { class Module; }
 namespace llvm { class LLVMContext; }
@@ -109,6 +114,26 @@ public:
 	
 	/// Generate code.
 	void build();
+	
+	/// Gets the latest node in the tree. If the current
+	/// block has children, returns the last child of that block.
+	/// Otherwise, returns the block.
+	ASTNode* getLatestNode();
+	
+	/// Returns whether or not a named node with a given name,
+	/// up to from, exists in the AST.
+	bool hasNamed(OString name, const ASTNode* from,
+				  SearchSettings settings) const;
+	
+	/// Returns a named node with a given name, optional type settings
+	/// and search settings from the AST, up to but not including from.
+	Named* findNamed(OString name, Type* type, const ASTNode* from,
+					 SearchSettings settings = SearchSettings()) const;
+	
+	/// Returns all named nodes with a given name in the AST, up to but not
+	/// including from.
+	std::vector<Named *> findAllNamed(OString name,
+									  const ASTNode* from) const;
 	
 	/// Output built code into an object file.
 	/// Returns the path of the object file.

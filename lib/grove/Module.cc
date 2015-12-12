@@ -20,6 +20,7 @@
 #include <grove/exceptions/fatal_error.h>
 
 #include <util/file.h>
+#include <util/assertions.h>
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
@@ -255,6 +256,142 @@ std::string Module::compile()
 	delete pm;
 
 	return path;
+}
+
+bool Module::hasNamed(OString name, const ASTNode *from,
+					  SearchSettings settings) const
+{
+	assertExists(from, "From cannot be nullptr");
+	auto ptr = from;
+	
+	while (ptr != nullptr)
+	{
+		// Find the nearest block from this pointer.
+		auto block = ptr->findParent<Block *>();
+		
+		if (block == nullptr)
+		{
+			break;
+		}
+		
+		// Find closest node whose parent is that block.
+		auto limit = ptr;
+		while (limit != nullptr)
+		{
+			if (limit->getParent() == block)
+			{
+				break;
+			}
+			
+			limit = limit->getParent();
+		}
+		
+		if (block->hasNamed(name, limit, settings))
+		{
+			return true;
+		}
+		
+		if (settings.searchWholeTree == false)
+		{
+			break;
+		}
+		else
+		{
+			// If we didn't find one, start looking from the block.
+			ptr = block;
+		}
+	}
+	
+	return false;
+}
+
+Named* Module::findNamed(OString name, Type *type, const ASTNode *from,
+					   SearchSettings settings) const
+{
+	auto ptr = from;
+	
+	while (ptr != nullptr)
+	{
+		// Find the nearest block from this pointer.
+		auto block = ptr->findParent<Block *>();
+		
+		if (block == nullptr)
+		{
+			break;
+		}
+		
+		const ASTNode* limit = nullptr;
+		
+		if (settings.includeLimit)
+		{
+			// Find closest node whose parent is that block.
+			limit = ptr;
+			while (limit != nullptr)
+			{
+				if (limit->getParent() == block)
+				{
+					break;
+				}
+				
+				limit = limit->getParent();
+			}
+		}
+		
+		auto named = block->getNamed(name, type, limit, settings);
+		if (named != nullptr)
+		{
+			return named;
+		}
+		
+		if (settings.searchWholeTree == false)
+		{
+			break;
+		}
+		else
+		{
+			// If we didn't find it, start looking from the block.
+			ptr = block;
+		}
+	}
+	
+	return nullptr;
+}
+
+std::vector<Named*> Module::findAllNamed(OString name, const ASTNode *from)
+const
+{
+	std::vector<Named *> matches;
+	
+	auto ptr = from;
+	while (ptr != nullptr)
+	{
+		// Find the nearest block from this pointer.
+		auto block = ptr->findParent<Block *>();
+		
+		if (block == nullptr)
+		{
+			break;
+		}
+		
+		// Find closest node whose parent is that block.
+		auto limit = ptr;
+		while (limit != nullptr)
+		{
+			if (limit->getParent() == block)
+			{
+				break;
+			}
+			
+			limit = limit->getParent();
+		}
+		
+		auto found = block->getAllNamed(name, limit);
+		matches.insert(matches.end(), found.begin(), found.end());
+		
+		ptr = block;
+	}
+	
+	return matches;
 }
 
 Module::Module(Builder* builder, std::string filePath)
