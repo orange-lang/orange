@@ -44,4 +44,6 @@ int main(int argc, char** argv) {
 	delete buildState;
 	delete testState;
 	delete options;
+	
+	return retCode;
 }
