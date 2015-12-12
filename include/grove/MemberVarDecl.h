@@ -10,12 +10,11 @@
 
 #include "VarDecl.h"
 #include "ClassTopLevel.h"
-#include "ExprFactory.h"
 
 /**
  * Represents a class member variable declaration.
  */	
-class MemberVarDecl : public VarDecl, public ClassTopLevel, public ExprFactory
+class MemberVarDecl : public VarDecl, public ClassTopLevel
 {
 public:
 	/// Gets the offset of this member in the list of members of the class.
