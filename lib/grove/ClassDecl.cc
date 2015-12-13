@@ -15,6 +15,7 @@
 #include <grove/Module.h>
 #include <grove/Parameter.h>
 #include <grove/MemberAccess.h>
+#include <grove/Constructor.h>
 
 #include <grove/exceptions/code_error.h>
 #include <grove/exceptions/already_defined_error.h>
@@ -89,7 +90,7 @@ void ClassDecl::createCtor(ClassMethod *method) const
 		params = copyVector(method->getBasicParams());
 	}
 	
-	auto func = new Function(getName(), params);
+	auto func = new Constructor(this, getName(), params);
 	
 	// The functions return type is this class' type.
 	auto refType = new ReferenceType(this);
