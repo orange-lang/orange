@@ -28,6 +28,7 @@ public:
 	
 	virtual llvm::Value* getValue() const override;
 	virtual llvm::Value* getPointer() const override;
+	virtual bool transferrable() const override;
 	
 	virtual void resolve() override;
 	virtual void build() override;
