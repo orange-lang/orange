@@ -9,8 +9,10 @@
 #include <grove/CtorCall.h>
 #include <grove/Constructor.h>
 #include <grove/ClassDecl.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
+#include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
 
@@ -60,14 +62,19 @@ void CtorCall::resolve()
 	
 	m_this_param->setType(class_ty->getPointerTo());
 	
-	// For now, this doesn't need to be any different:
-	// the value of the constructor will be copied
 	FunctionCall::resolve();
 	
 	if (getNode()->is<Constructor *>() == false)
 	{
 		throw fatal_error("CtorCall not looking at a Constructor!");
 	}
+
+	auto refType = new ReferenceType(the_class);
+	addChild(refType);
+	
+	getModule()->resolve(refType);
+
+	setType(refType);
 }
 
 void CtorCall::build()
@@ -77,7 +84,6 @@ void CtorCall::build()
 	
 	FunctionCall::build();
 	
-	IRBuilder()->CreateStore(FunctionCall::getValue(), val);
 	setValue(val);
 }
 
