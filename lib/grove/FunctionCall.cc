@@ -107,7 +107,7 @@ Typed* FunctionCall::getNode() const
 	return m_node;
 }
 
-void FunctionCall::resolve()
+void FunctionCall::findNode()
 {
 	auto def = findNamed(getName(), expectedFunctionTy());
 	if (def == nullptr)
@@ -117,6 +117,15 @@ void FunctionCall::resolve()
 	
 	// Determine type
 	m_node = def->as<Typed *>();
+}
+
+void FunctionCall::resolve()
+{
+	if (getNode() == nullptr)
+	{
+		findNode();
+	}
+	
 	auto ty = getNode()->getType();
 
 	if (ty == nullptr || ty->isFunctionTy() == false)

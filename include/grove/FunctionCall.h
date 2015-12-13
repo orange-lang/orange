@@ -26,6 +26,8 @@ private:
 	FunctionType* expectedFunctionTy() const;
 	
 	Typed* m_node = nullptr;
+	
+	void findNode();
 public:
 	/// Gets the name of the function that we are calling.
 	OString getName() const;
