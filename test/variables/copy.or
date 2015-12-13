@@ -1,0 +1,7 @@
+# copy.or
+# test to make sure copying a variable works and does not hold a
+# reference to the original value
+var orig = 5
+var copy = orig
+orig = 6
+return copy - 5
