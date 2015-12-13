@@ -19,6 +19,11 @@ bool Valued::hasPointer() const
 	return false;
 }
 
+bool Valued::transferrable() const
+{
+	return hasPointer();
+}
+
 llvm::Value* Valued::getSize() const
 {
 	return m_size;

@@ -29,6 +29,10 @@ public:
 	/// True in the case of pointers.
 	virtual bool hasPointer() const;
 	
+	/// Returns whether or not the pointer of this Value can be
+	/// transferred and used as the value for another Valued.
+	virtual bool transferrable() const;
+	
 	/// If this value was allocated with an array size,
 	/// returns that size.
 	virtual llvm::Value* getSize() const;
