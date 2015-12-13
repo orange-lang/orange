@@ -125,7 +125,7 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	getModule()->resolve(func);
 }
 
-MemberVarDecl* ClassDecl::getMember(OString &name) const
+MemberVarDecl* ClassDecl::getMember(const OString &name) const
 {
 	auto&& members = getMembers();
 	for (const auto& member : members)

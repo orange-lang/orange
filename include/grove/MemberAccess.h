@@ -23,7 +23,7 @@ private:
 	MemberVarDecl* m_member = nullptr;
 	Valued* m_valued = nullptr;
 	
-	OString& m_name;
+	OString m_name;
 public:
 	virtual ASTNode* copy() const override;
 	
@@ -44,5 +44,6 @@ public:
 	virtual void resolve() override;
 	virtual void build() override;
 	
-	MemberAccess(const ClassDecl* classDecl, Valued* valued, OString& name);
+	MemberAccess(const ClassDecl* classDecl, Valued* valued,
+				 const OString& name);
 };

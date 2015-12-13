@@ -97,7 +97,7 @@ void MemberAccess::build()
 }
 
 MemberAccess::MemberAccess(const ClassDecl* classDecl, Valued* valued,
-						   OString& name)
+						   const OString& name)
 : m_name(name)
 {
 	if (name == "")
