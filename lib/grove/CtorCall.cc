@@ -33,6 +33,22 @@ bool CtorCall::transferrable() const
 	return true;
 }
 
+ClassDecl* CtorCall::findClass() const
+{
+	SearchSettings settings;
+	settings.createGeneric = false;
+	settings.forceTypeMatch = false;
+	settings.includeLimit = true;
+	settings.searchWholeTree = true;
+	
+	settings.filter = [](Named* named)
+	{
+		return named->is<TypeProvider *>();
+	};
+	
+	return findNamed(getName(), nullptr, settings)->as<ClassDecl *>();
+}
+
 void CtorCall::resolve()
 {
 	findNode();

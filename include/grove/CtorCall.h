@@ -10,8 +10,12 @@
 
 #include "FunctionCall.h"
 
+class ClassDecl;
+
 class CtorCall : public FunctionCall
 {
+private:
+	ClassDecl* findClass() const;
 public:
 	virtual bool hasPointer() const override;
 	virtual llvm::Value* getPointer() const override;
