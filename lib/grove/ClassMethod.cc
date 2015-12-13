@@ -7,6 +7,7 @@
 */
 
 #include <grove/ClassMethod.h>
+#include <grove/ClassDecl.h>
 
 Type* ClassMethod::getBasicType() const
 {
@@ -18,6 +19,14 @@ std::vector<Parameter *> ClassMethod::getBasicParams() const
 {
 	/// Just return getParams until a this parameter is added.
 	return getParams();
+}
+
+void ClassMethod::findDependencies()
+{
+	Function::findDependencies();
+	
+	auto parentClass = getParent()->as<ClassDecl *>();
+	addDependency(parentClass);
 }
 
 ClassMethod::ClassMethod(OString name, std::vector<Parameter *> params)

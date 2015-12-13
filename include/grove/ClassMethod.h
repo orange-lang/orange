@@ -24,5 +24,6 @@ public:
 	/// Gets the parameter list without the this parameter
 	virtual std::vector<Parameter *> getBasicParams() const;
 	
+	virtual void findDependencies() override;
 	ClassMethod(OString name, std::vector<Parameter *> params);
 };
