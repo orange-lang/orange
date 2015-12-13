@@ -27,6 +27,7 @@ private:
 	
 	Typed* m_node = nullptr;
 	
+protected:
 	void findNode();
 public:
 	/// Gets the name of the function that we are calling.
