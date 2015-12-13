@@ -216,13 +216,13 @@ bool ClassDecl::isAccessible() const
 Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 {
 	assertExists(hint, "ClassDecl::access requires hint");
-	if (((ASTNode *)hint)->is<Valued *>() == false)
+	if (hint->is<const Valued *>() == false)
 	{
 		throw fatal_error("ClassDecl::access requires Valued hint");
 	}
 	
-	auto valued = ((ASTNode *)hint)->as<Valued *>();
-	auto memAccess = new MemberAccess(this, valued, name);
+	auto valued = hint->as<const Valued *>();
+	auto memAccess = new MemberAccess(this, (Valued *)valued, name);
 	
 	getModule()->findDependencies(memAccess);
 	getModule()->resolve(memAccess);
