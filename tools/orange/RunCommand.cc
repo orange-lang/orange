@@ -9,6 +9,7 @@
 #include <iostream>
 #include <orange/RunCommand.h>
 #include <grove/Builder.h>
+#include <cmd/StateFlag.h>
 
 int RunCommand::run(std::vector<std::string> args)
 {
@@ -24,6 +25,12 @@ int RunCommand::run(std::vector<std::string> args)
 
 	try {
 		auto builder = new Builder(program_to_run);
+		
+		if (m_debug->getUsed())
+		{
+			builder->setDebug(true);
+		}
+		
 		builder->compile();
 
 		int result = builder->run();
@@ -45,5 +52,6 @@ int RunCommand::run(std::vector<std::string> args)
 RunCommand::RunCommand()
 : OptionsState("run")
 {
-	// Do nothing.
+	m_debug = std::shared_ptr<StateFlag>(new StateFlag("D", "debug", false));
+	addFlag(m_debug.get());
 }

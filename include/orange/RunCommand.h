@@ -15,6 +15,8 @@
  */
 class RunCommand : public OptionsState
 {
+private:
+	std::shared_ptr<StateFlag> m_debug;
 public:
 	virtual int run(std::vector<std::string> args) override;
 
