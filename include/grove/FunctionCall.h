@@ -17,7 +17,6 @@ class FunctionType;
 class FunctionCall : public Expression {
 private:
 	OString m_name;
-	std::vector<Expression *> m_args;
 	
 	llvm::Function* getFunction() const;
 	FunctionType* getFunctionTy() const;
@@ -28,6 +27,8 @@ private:
 	Typed* m_node = nullptr;
 	
 protected:
+	std::vector<Expression *> m_args;
+	
 	void findNode();
 public:
 	/// Gets the name of the function that we are calling.
