@@ -8,8 +8,11 @@
 
 #include <grove/CtorCall.h>
 #include <grove/Constructor.h>
+#include <grove/ClassDecl.h>
 
 #include <grove/types/Type.h>
+
+#include <util/assertions.h>
 
 #include <llvm/IR/IRBuilder.h>
 
@@ -51,7 +54,11 @@ ClassDecl* CtorCall::findClass() const
 
 void CtorCall::resolve()
 {
-	findNode();
+	auto the_class = findClass();
+	auto class_ty = the_class->getType();
+	assertExists(class_ty, "Class has no defined type");
+	
+	m_this_param->setType(class_ty->getPointerTo());
 	
 	// For now, this doesn't need to be any different:
 	// the value of the constructor will be copied
@@ -66,6 +73,7 @@ void CtorCall::resolve()
 void CtorCall::build()
 {
 	auto val = IRBuilder()->CreateAlloca(getType()->getLLVMType());
+	m_this_param->setValue(val);
 	
 	FunctionCall::build();
 	
@@ -76,5 +84,16 @@ void CtorCall::build()
 CtorCall::CtorCall(OString name, std::vector<Expression *> args)
 : FunctionCall(name, args)
 {
-	// Do nothing.
+	m_this_param = new Expression();
+	
+	if (args.size() == 0)
+	{
+		addChild(m_this_param);
+	}
+	else
+	{
+		addChild(m_this_param, m_args.at(0), 0);
+	}
+	
+	m_args.insert(m_args.begin(), m_this_param);
 }

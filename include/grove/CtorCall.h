@@ -15,6 +15,8 @@ class ClassDecl;
 class CtorCall : public FunctionCall
 {
 private:
+	Expression* m_this_param = nullptr;
+	
 	ClassDecl* findClass() const;
 public:
 	virtual bool hasPointer() const override;
