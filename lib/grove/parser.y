@@ -43,7 +43,7 @@
 	#include <grove/ClassDecl.h>
 	#include <grove/ClassMethod.h>
 	#include <grove/MemberVarDecl.h>
-	#include <grove/types/ReferenceType.h>
+	#include <grove/CtorCall.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -55,6 +55,7 @@
 	#include <grove/types/VarType.h>
 	#include <grove/types/ArrayType.h>
 	#include <grove/types/VariadicArrayType.h>
+	#include <grove/types/ReferenceType.h>
 
 	#include <util/assertions.h>
 
@@ -677,9 +678,17 @@ ternary
 	;
 
 call
-	: typename_or_identifier OPEN_PAREN opt_arg_list CLOSE_PAREN
+	: IDENTIFIER OPEN_PAREN opt_arg_list CLOSE_PAREN
 	{
 		$$ = new FunctionCall(*$1, *$3);
+		SET_LOCATION($$, @1, @4);
+
+		delete $1;
+		delete $3;
+	}
+	| TYPE_ID OPEN_PAREN opt_arg_list CLOSE_PAREN
+	{
+		$$ = new CtorCall(*$1, *$3);
 		SET_LOCATION($$, @1, @4);
 
 		delete $1;
