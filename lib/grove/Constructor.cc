@@ -7,12 +7,35 @@
 */
 
 #include <grove/Constructor.h>
+#include <grove/ClassDecl.h>
+#include <grove/Parameter.h>
 
 #include <util/assertions.h>
 
 const ClassDecl* Constructor::getClass() const
 {
 	return m_class;
+}
+
+void Constructor::resolve()
+{
+	auto this_type = getClass()->getType();
+	assertExists(this_type, "Class has no defined type");
+	
+	auto this_param = new Parameter(this_type, "this");
+	
+	if (m_params.size() == 0)
+	{
+		addChild(this_param);
+	}
+	else
+	{
+		addChild(this_param, m_params.at(0), 0);
+	}
+	
+	m_params.insert(m_params.begin(), this_param);
+	
+	Function::resolve();
 }
 
 Constructor::Constructor(const ClassDecl* theClass, OString name,

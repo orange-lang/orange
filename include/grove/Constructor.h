@@ -19,6 +19,8 @@ private:
 public:
 	const ClassDecl* getClass() const;
 	
+	virtual void resolve() override;
+	
 	Constructor(const ClassDecl* theClass, OString name,
 				std::vector<Parameter *> params);
 };
