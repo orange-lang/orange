@@ -21,7 +21,7 @@ bool Valued::hasPointer() const
 
 bool Valued::transferrable() const
 {
-	return hasPointer();
+	return false;
 }
 
 llvm::Value* Valued::getSize() const
