@@ -139,7 +139,7 @@ BasicType Type::PODTy() const
 
 Type* Type::getPointerTo() const
 {
-	return PointerType::get((Type *)this);
+	return PointerType::get(m_module, (Type *)this);
 }
 
 Type* Type::getBaseTy() const
@@ -163,9 +163,9 @@ bool Type::matches(Type *ty) const
 		this->getBaseTy()->isVarTy() || ty->getBaseTy()->isVarTy();
 }
 
-Type* Type::getDefined(std::string signature)
+Type* Type::getDefined(Module* mod, std::string signature)
 {
-	auto it = m_defined.find(std::make_tuple(nullptr, signature));
+	auto it = m_defined.find(std::make_tuple(mod, signature));
 	
 	if (it == m_defined.end())
 	{
@@ -180,9 +180,11 @@ unsigned int Type::getIntegerBitWidth() const
 	return 0;
 }
 
-void Type::define(std::string signature, Type *ty)
+void Type::define(Module* mod, std::string signature, Type *ty)
 {
-	if (getDefined(signature) != nullptr)
+	assertExists(mod, "Mod cannot be nullptr");
+	
+	if (getDefined(mod, signature) != nullptr)
 	{
 		throw fatal_error("trying to redefine a signature");
 	}
@@ -192,7 +194,8 @@ void Type::define(std::string signature, Type *ty)
 		throw fatal_error("ty was null");
 	}
 	
-	m_defined[std::make_tuple(nullptr, signature)] = ty;
+	m_defined[std::make_tuple(mod, signature)] = ty;
+	ty->m_module = mod;
 }
 
 void Type::defineCast(const std::type_info &to, TypeCallback cb)

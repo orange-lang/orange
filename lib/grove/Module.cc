@@ -486,6 +486,23 @@ void Module::addChild(ASTNode *child)
 	}
 }
 
+Module::Module()
+{
+	m_namespace = new Namespace("local");
+	m_file = "";
+	
+	m_llvm_module = new llvm::Module(m_file, getLLVMContext());
+	m_ir_builder = new IRBuilder(getLLVMContext());
+	
+	m_main = new MainFunction(this, "_main");
+	
+	auto mainFunctionTy = FunctionType::get(this, IntType::get(this, 32),
+											std::vector<Type*>());
+	getMain()->setType(mainFunctionTy);
+	
+	pushBlock(m_main);
+}
+
 Module::Module(Builder* builder, std::string filePath)
 {
 	if (builder == nullptr)
@@ -510,7 +527,7 @@ Module::Module(Builder* builder, std::string filePath)
 
 	m_main = new MainFunction(this, "_main");
 
-	auto mainFunctionTy = FunctionType::get(IntType::get(32),
+	auto mainFunctionTy = FunctionType::get(this, IntType::get(this, 32),
 											std::vector<Type*>());
 	getMain()->setType(mainFunctionTy);
 

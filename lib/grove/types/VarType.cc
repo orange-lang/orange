@@ -49,10 +49,10 @@ bool VarType::isVarTy() const
 
 Type* VarType::getConst() const
 {
-	return VarType::get(true);
+	return VarType::get(m_module, true);
 }
 
-VarType* VarType::get(bool isConst)
+VarType* VarType::get(Module* mod, bool isConst)
 {
 	std::stringstream ss;
 	
@@ -63,14 +63,14 @@ VarType* VarType::get(bool isConst)
 	
 	ss << "V";
 	
-	auto defined = getDefined(ss.str());
+	auto defined = getDefined(mod, ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<VarType*>();
 	}
 	
 	VarType* ty = new VarType(isConst);
-	define(ss.str(), ty);
+	define(mod, ss.str(), ty);
 	
 	return ty;
 }

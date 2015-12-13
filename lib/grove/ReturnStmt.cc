@@ -56,7 +56,7 @@ void ReturnStmt::resolve()
 	}
 	else
 	{
-		setType(VoidType::get());
+		setType(VoidType::get(getModule()));
 	}
 }
 

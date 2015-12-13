@@ -73,10 +73,10 @@ BasicType FloatType::PODTy() const
 
 Type* FloatType::getConst() const
 {
-	return FloatType::get(true);
+	return FloatType::get(m_module, true);
 }
 
-FloatType* FloatType::get(bool isConst)
+FloatType* FloatType::get(Module* mod, bool isConst)
 {
 	std::stringstream ss;
 	
@@ -87,14 +87,14 @@ FloatType* FloatType::get(bool isConst)
 	
 	ss << "f";
 	
-	auto defined = getDefined(ss.str());
+	auto defined = getDefined(mod, ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<FloatType*>();
 	}
 
 	FloatType* ty = new FloatType(isConst);
-	define(ss.str(), ty);
+	define(mod, ss.str(), ty);
 
 	return ty;
 }

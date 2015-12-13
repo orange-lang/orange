@@ -287,7 +287,8 @@ void Function::resolve()
 	
 	if (isGeneric())
 	{
-		setType(FunctionType::get(VarType::get(), getParamTys()));
+		setType(FunctionType::get(getModule(), VarType::get(getModule()),
+								  getParamTys()));
 		
 		auto search_settings = SearchSettings();
 		search_settings.forceTypeMatch = true;
@@ -303,9 +304,18 @@ void Function::resolve()
 		return;
 	}
 	
+	for (auto param : m_params)
+	{
+		if (param->getType()->isArrayTy())
+		{
+			auto ty = param->getType();
+			param->setType(PointerType::get(getModule(), ty->getRootTy()));
+		}
+	}
+	
 	if (m_ret_type != nullptr)
 	{
-		setType(FunctionType::get(m_ret_type, getParamTys()));
+		setType(FunctionType::get(getModule(), m_ret_type, getParamTys()));
 		return;
 	}
 	
@@ -321,7 +331,8 @@ void Function::resolve()
 	
 	if (retStmts.size() == 0)
 	{
-		setType(FunctionType::get(VoidType::get(), getParamTys()));
+		setType(FunctionType::get(getModule(), VoidType::get(getModule()),
+								  getParamTys()));
 	}
 	else
 	{
@@ -348,7 +359,7 @@ void Function::resolve()
 			}
 		}
 		
-		setType(FunctionType::get(highest, getParamTys()));
+		setType(FunctionType::get(getModule(), highest, getParamTys()));
 	}
 	
 	auto search_settings = SearchSettings();
@@ -487,12 +498,6 @@ Function::Function(OString name, std::vector<Parameter *> params)
 	
 	for (auto param : params)
 	{
-		if (param->getType()->isArrayTy())
-		{
-			auto ty = param->getType();
-			param->setType(PointerType::get(ty->getRootTy()));
-		}
-		
 		addChild(param, true);
 	}
 	

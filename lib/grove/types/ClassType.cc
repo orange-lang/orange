@@ -64,7 +64,7 @@ std::string ClassType::getSignature() const
 	return getSignature(m_members);
 }
 
-ClassType* ClassType::get(std::vector<Type *> members)
+ClassType* ClassType::get(Module* mod, std::vector<Type *> members)
 {
 	for (auto member : members)
 	{
@@ -83,14 +83,14 @@ ClassType* ClassType::get(std::vector<Type *> members)
 	}
 	
 	auto sig = getSignature(members);
-	auto defined = getDefined(sig);
+	auto defined = getDefined(mod, sig);
 	if (defined != nullptr)
 	{
 		return defined->as<ClassType *>();
 	}
 	
 	ClassType* ty = new ClassType(members);
-	define(sig, ty);
+	define(mod, sig, ty);
 	
 	return ty;
 }

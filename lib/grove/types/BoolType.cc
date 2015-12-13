@@ -93,7 +93,7 @@ std::string BoolType::getSignature() const
 
 Type* BoolType::getConst() const
 {
-	return BoolType::get(true);
+	return BoolType::get(m_module, true);
 }
 
 bool BoolType::isBoolTy() const
@@ -106,7 +106,7 @@ bool BoolType::isIntTy() const
 	return false; 
 }
 
-BoolType* BoolType::get(bool isConst)
+BoolType* BoolType::get(Module* mod, bool isConst)
 {
 	std::stringstream ss;
 	
@@ -117,14 +117,14 @@ BoolType* BoolType::get(bool isConst)
 	
 	ss << "b";
 	
-	auto defined = getDefined(ss.str());
+	auto defined = getDefined(mod, ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<BoolType*>();
 	}
 
 	BoolType* ty = new BoolType(isConst);
-	define(ss.str(), ty);
+	define(mod, ss.str(), ty);
 
 	return ty;
 }

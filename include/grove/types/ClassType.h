@@ -24,5 +24,5 @@ public:
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
-	static ClassType* get(std::vector<Type *> members);
+	static ClassType* get(Module* mod, std::vector<Type *> members);
 };

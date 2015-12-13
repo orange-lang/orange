@@ -62,7 +62,7 @@ void ArrayValue::resolve()
 		}
 	}
 	
-	setType(ArrayType::get(highest, getElements().size()));
+	setType(ArrayType::get(getModule(), highest, getElements().size()));
 }
 
 void ArrayValue::build()

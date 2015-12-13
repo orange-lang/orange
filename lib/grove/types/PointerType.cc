@@ -90,10 +90,10 @@ Type* PointerType::getRootTy() const
 
 Type* PointerType::getConst() const
 {
-	return PointerType::get(m_contained, true);
+	return PointerType::get(m_module, m_contained, true);
 }
 
-PointerType* PointerType::get(Type *contained, bool isConst)
+PointerType* PointerType::get(Module* mod, Type *contained, bool isConst)
 {
 	if (contained == nullptr)
 	{
@@ -119,14 +119,14 @@ PointerType* PointerType::get(Type *contained, bool isConst)
 	
 	ss << "p" << contained->getSignature();
 	
-	auto defined = getDefined(ss.str());
+	auto defined = getDefined(mod, ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<PointerType *>();
 	}
 
 	PointerType* ty = new PointerType(contained, isConst);
-	define(ss.str(), ty);
+	define(mod, ss.str(), ty);
 
 	return ty;
 }

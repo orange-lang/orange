@@ -35,6 +35,7 @@ public:
 	/// Gets the list of parameters.
 	std::vector<Parameter *> getParams() const;
 	
+	virtual void resolve() override;
 	virtual ASTNode* copy() const override;
 	
 	ExternFunction(OString name, std::vector<Parameter *> params,

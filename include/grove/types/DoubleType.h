@@ -26,5 +26,5 @@ public:
 	
 	virtual Type* getConst() const override;
 	
-	static DoubleType* get(bool isConst = false);
+	static DoubleType* get(Module* mod, bool isConst = false);
 };

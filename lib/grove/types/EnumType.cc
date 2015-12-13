@@ -73,10 +73,10 @@ Type* EnumType::getRootTy() const
 
 Type* EnumType::getConst() const
 {
-	return EnumType::get(m_contained, true);
+	return EnumType::get(m_module, m_contained, true);
 }
 
-EnumType* EnumType::get(Type *contained, bool isConst)
+EnumType* EnumType::get(Module* mod, Type *contained, bool isConst)
 {
 	if (contained == nullptr)
 	{
@@ -102,14 +102,14 @@ EnumType* EnumType::get(Type *contained, bool isConst)
 	
 	ss << "e" << contained->getSignature();
 	
-	auto defined = getDefined(ss.str());
+	auto defined = getDefined(mod, ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<EnumType *>();
 	}
 	
 	EnumType* ty = new EnumType(contained, isConst);
-	define(ss.str(), ty);
+	define(mod, ss.str(), ty);
 	
 	return ty;
 }

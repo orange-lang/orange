@@ -47,6 +47,8 @@ Type* SizeofExpr::getTypeArg() const
 
 void SizeofExpr::resolve()
 {
+	setType(UIntType::get(getModule(), 64));
+	
 	if (getTypeArg() != nullptr && getTypeArg()->isVariadiclySized())
 	{
 		for (auto size : getTypeArg()->getVariadicSizes())
@@ -76,7 +78,7 @@ void SizeofExpr::build()
 			for (auto s : getTypeArg()->getVariadicSizes())
 			{
 				s->build();
-				auto s_val = s->castTo(UIntType::get(64));
+				auto s_val = s->castTo(UIntType::get(getModule(), 64));
 				
 				val = IRBuilder()->CreateMul(val, s_val);
 			}
@@ -116,8 +118,6 @@ SizeofExpr::SizeofExpr(Type* typeArg)
 			addChild(s, true);
 		}
 	}
-	
-	setType(UIntType::get(64));
 }
 
 SizeofExpr::SizeofExpr(Expression* expr)
@@ -125,6 +125,4 @@ SizeofExpr::SizeofExpr(Expression* expr)
 	m_expression_arg = expr;
 	
 	addChild(m_expression_arg, true);
-	
-	setType(UIntType::get(64));
 }

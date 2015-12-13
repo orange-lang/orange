@@ -40,16 +40,16 @@ BasicType VoidType::PODTy() const
 	return TYVOID;
 }
 
-VoidType* VoidType::get()
+VoidType* VoidType::get(Module* mod)
 {
-	auto defined = getDefined("v");
+	auto defined = getDefined(mod, "v");
 	if (defined != nullptr)
 	{
 		return defined->as<VoidType*>();
 	}
 
 	VoidType* ty = new VoidType();
-	define("v", ty);
+	define(mod, "v", ty);
 
 	return ty;
 }

@@ -117,7 +117,7 @@ Type* VariadicArrayType::getRootTy() const
 
 Type* VariadicArrayType::getConst() const
 {
-	return get(m_contained, m_size, true);
+	return get(m_module, m_contained, m_size, true);
 }
 
 bool VariadicArrayType::isVariadiclySized() const
@@ -141,22 +141,22 @@ std::vector<Expression *> VariadicArrayType::getVariadicSizes() const
 	return sizes;
 }
 
-VariadicArrayType* VariadicArrayType::get(Type *contained, Expression *expr,
-										  bool isConst)
+VariadicArrayType* VariadicArrayType::get(Module* mod, Type *contained,
+										  Expression *expr, bool isConst)
 {
 	assertExists(contained, "contained cannot be null");
 	assertExists(expr, "expr cannot be null");
 	
 	auto sig = getSignature(contained, expr, isConst);
 	
-	auto defined = getDefined(sig);
+	auto defined = getDefined(mod, sig);
 	if (defined != nullptr)
 	{
 		return defined->as<VariadicArrayType *>();
 	}
 	
 	VariadicArrayType* ty = new VariadicArrayType(contained, expr, isConst);
-	define(sig, ty);
+	define(mod, sig, ty);
 	
 	return ty;
 }

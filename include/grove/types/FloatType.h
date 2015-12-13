@@ -26,5 +26,5 @@ public:
 	
 	virtual Type* getConst() const override;
 	
-	static FloatType* get(bool isConst = false);
+	static FloatType* get(Module* mod, bool isConst = false);
 };

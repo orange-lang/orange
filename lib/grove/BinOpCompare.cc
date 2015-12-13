@@ -70,7 +70,7 @@ ASTNode* BinOpCompare::copy() const
 void BinOpCompare::resolve()
 {
 	BinOpExpr::resolve();
-	setType(BoolType::get());
+	setType(BoolType::get(getModule()));
 }
 
 void BinOpCompare::build()

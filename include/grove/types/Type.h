@@ -65,15 +65,16 @@ private:
 protected:
 	llvm::Type* m_type = nullptr;
 	llvm::LLVMContext* m_context = nullptr;
+	Module* m_module = nullptr;
 	bool m_const = false;
 
 	/// Gets a type given by a signature, if it is defined.
 	/// Returns nullptr otherwise.
-	static Type* getDefined(std::string signature);
+	static Type* getDefined(Module* mod, std::string signature);
 
 	/// Defines a type with a given signature.
 	/// ty must not be null.
-	static void define(std::string signature, Type* ty);
+	static void define(Module* mod, std::string signature, Type* ty);
 
 	/// Defines a direct mapping from a type to an operation.
 	void defineCast(const std::type_info& to, int cast);

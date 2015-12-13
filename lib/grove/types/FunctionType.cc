@@ -145,8 +145,8 @@ std::vector<Type *> FunctionType::getArgs() const
 	return m_args;
 }
 
-FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args,
-								bool vaarg)
+FunctionType* FunctionType::get(Module* mod, Type *retType,
+								std::vector<Type *> args, bool vaarg)
 {
 	if (retType == nullptr)
 	{
@@ -162,7 +162,7 @@ FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args,
 	}
 
 	std::string signature = getSignature(retType, args, vaarg);
-	auto defined = getDefined(signature);
+	auto defined = getDefined(mod, signature);
 
 	if (defined != nullptr)
 	{
@@ -170,7 +170,7 @@ FunctionType* FunctionType::get(Type *retType, std::vector<Type *> args,
 	}
 
 	auto ty = new FunctionType(retType, args, vaarg);
-	define(signature, ty);
+	define(mod, signature, ty);
 
 	return ty;
 }

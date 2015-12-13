@@ -23,5 +23,5 @@ public:
 	
 	virtual BasicType PODTy() const override;
 	
-	static VoidType* get();
+	static VoidType* get(Module* mod);
 };

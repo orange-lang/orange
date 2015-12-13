@@ -33,5 +33,5 @@ public:
 	
 	virtual Type* getConst() const override;
 	
-	static UIntType* get(unsigned int width, bool isConst = false);
+	static UIntType* get(Module* mod, unsigned int width, bool isConst = false);
 };

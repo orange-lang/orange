@@ -22,5 +22,5 @@ public:
 	
 	virtual Type* getConst() const override;
 	
-	static VarType* get(bool isConst = false);
+	static VarType* get(Module* mod, bool isConst = false);
 };

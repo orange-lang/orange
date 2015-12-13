@@ -40,6 +40,6 @@ public:
 	
 	bool isVarArg() const;
 	
-	static FunctionType* get(Type* retType, std::vector<Type*> args,
-							 bool vaarg = false);
+	static FunctionType* get(Module* mod, Type* retType,
+							 std::vector<Type*> args, bool vaarg = false);
 };

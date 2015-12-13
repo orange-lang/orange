@@ -52,6 +52,14 @@ double Value::getDouble() const
 	return m_values.d;
 }
 
+void Value::resolve()
+{
+	if (m_char_const)
+	{
+    	m_type = IntType::get(getModule(),8);
+	}
+}
+
 void Value::build()
 {
 	auto ty = getType();
@@ -177,7 +185,7 @@ void Value::negate()
 Value::Value(char c)
 {
 	m_values.i = (int)c;
-	m_type = IntType::get(8);
+	m_char_const = true;
 }
 
 Value::Value(std::string str, Type* t, int base)

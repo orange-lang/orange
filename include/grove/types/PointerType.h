@@ -32,5 +32,5 @@ public:
 	
 	virtual Type* getConst() const override;
 	
-	static PointerType* get(Type* contained, bool isConst = false);
+	static PointerType* get(Module* mod, Type* contained, bool isConst = false);
 };

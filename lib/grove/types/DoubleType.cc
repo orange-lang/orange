@@ -73,10 +73,10 @@ BasicType DoubleType::PODTy() const
 
 Type* DoubleType::getConst() const
 {
-	return DoubleType::get(true);
+	return DoubleType::get(m_module, true);
 }
 
-DoubleType* DoubleType::get(bool isConst)
+DoubleType* DoubleType::get(Module* mod, bool isConst)
 {
 	std::stringstream ss;
 	
@@ -87,14 +87,14 @@ DoubleType* DoubleType::get(bool isConst)
 	
 	ss << "F";
 	
-	auto defined = getDefined(ss.str());
+	auto defined = getDefined(mod, ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<DoubleType*>();
 	}
 
 	DoubleType* ty = new DoubleType(isConst);
-	define(ss.str(), ty);
+	define(mod, ss.str(), ty);
 
 	return ty;
 }

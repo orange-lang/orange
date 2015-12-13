@@ -108,10 +108,11 @@ Type* ArrayType::getRootTy() const
 
 Type* ArrayType::getConst() const
 {
-	return ArrayType::get(m_contained, m_size, true);
+	return ArrayType::get(m_module, m_contained, m_size, true);
 }
 
-ArrayType* ArrayType::get(Type *contained, unsigned int size, bool isConst)
+ArrayType* ArrayType::get(Module* mod, Type *contained, unsigned int size,
+						  bool isConst)
 {
 	if (contained == nullptr)
 	{
@@ -126,14 +127,14 @@ ArrayType* ArrayType::get(Type *contained, unsigned int size, bool isConst)
 		ss << getConstIdentifier();
 	}
 
-	auto defined = getDefined(ss.str());
+	auto defined = getDefined(mod, ss.str());
 	if (defined != nullptr)
 	{
 		return defined->as<ArrayType *>();
 	}
 
 	ArrayType* ty = new ArrayType(contained, size, isConst);
-	define(ss.str(), ty);
+	define(mod, ss.str(), ty);
 
 	return ty;
 }

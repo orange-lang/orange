@@ -74,7 +74,8 @@ FunctionType* FunctionCall::expectedFunctionTy() const
 		// Cast arrays to pointers so we can pass-by-reference
 		if (arg->getType()->isArrayTy())
 		{
-			ty_list.push_back(PointerType::get(arg->getType()->getBaseTy()));
+			ty_list.push_back(PointerType::get(getModule(),
+											   arg->getType()->getBaseTy()));
 			continue;
 		}
 		
@@ -82,7 +83,7 @@ FunctionType* FunctionCall::expectedFunctionTy() const
 	}
 	
 	// Put a wildcard on the return type.
-	return FunctionType::get(VarType::get(), ty_list);
+	return FunctionType::get(getModule(), VarType::get(getModule()), ty_list);
 }
 
 ASTNode* FunctionCall::copy() const
@@ -189,16 +190,18 @@ void FunctionCall::build()
 		{
 			if (arg_ty->isSigned())
 			{
-    			llvm_args.push_back(arg->castTo(IntType::get(32)));
+    			llvm_args.push_back(arg->castTo(IntType::get(getModule(),
+															 32)));
 			}
 			else
 			{
-    			llvm_args.push_back(arg->castTo(UIntType::get(32)));
+    			llvm_args.push_back(arg->castTo(UIntType::get(getModule(),
+															  32)));
 			}
 		}
 		else if (arg_ty->isFloatTy())
 		{
-			llvm_args.push_back(arg->castTo(DoubleType::get()));
+			llvm_args.push_back(arg->castTo(DoubleType::get(getModule())));
 		}
 		else
 		{

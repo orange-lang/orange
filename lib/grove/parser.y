@@ -803,7 +803,7 @@ var_decl_list
 enum_stmt
 	: ENUM IDENTIFIER term enum_members END
 	{
-		auto estmt = new EnumStmt(*$2, IntType::get(64));
+		auto estmt = new EnumStmt(*$2, module, IntType::get(module, 64));
 		for (auto pair : *$4)
 		{
 			estmt->addMember(std::get<0>(pair), std::get<1>(pair));
@@ -862,11 +862,11 @@ term
 non_agg_type
 	: non_agg_type OPEN_BRACKET CLOSE_BRACKET
 	{
-		$$ = PointerType::get($1);
+		$$ = PointerType::get(module, $1);
 	}
 	| type TIMES
 	{
-		$$ = PointerType::get($1);
+		$$ = PointerType::get(module, $1);
 	}
 	| basic_type
 	{
@@ -914,11 +914,11 @@ array_type
 			if (is_const)
 			{
 				auto arr_sz = Type::exprAsArrSize(def);
-				$$ = ArrayType::get($$, arr_sz, false);
+				$$ = ArrayType::get(module, $$, arr_sz, false);
 			}
 			else
 			{
-				$$ = VariadicArrayType::get($$, def, false);
+				$$ = VariadicArrayType::get(module, $$, def, false);
 			}
 		}
 	}
@@ -938,21 +938,21 @@ array_def_list
 	;
 
 basic_type
-	: TYPE_INT { $$ = IntType::get(64); }
-	| TYPE_UINT { $$ = UIntType::get(64); }
-	| TYPE_FLOAT { $$ = FloatType::get(); }
-	| TYPE_DOUBLE { $$ = DoubleType::get(); }
-	| TYPE_INT8 { $$ = IntType::get(8); }
-	| TYPE_INT16 { $$ = IntType::get(16); }
-	| TYPE_INT32 { $$ = IntType::get(32); }
-	| TYPE_INT64 { $$ = IntType::get(64); }
-	| TYPE_UINT8 { $$ = UIntType::get(8); }
-	| TYPE_UINT16 { $$ = UIntType::get(16); }
-	| TYPE_UINT32 { $$ = UIntType::get(32); }
-	| TYPE_UINT64 { $$ = UIntType::get(64); }
-	| TYPE_CHAR { $$ = IntType::get(8); }
-	| TYPE_VOID { $$ = VoidType::get(); }
-	| TYPE_VAR { $$ = VarType::get(); }
+	: TYPE_INT { $$ = IntType::get(module, 64); }
+	| TYPE_UINT { $$ = UIntType::get(module, 64); }
+	| TYPE_FLOAT { $$ = FloatType::get(module); }
+	| TYPE_DOUBLE { $$ = DoubleType::get(module); }
+	| TYPE_INT8 { $$ = IntType::get(module, 8); }
+	| TYPE_INT16 { $$ = IntType::get(module, 16); }
+	| TYPE_INT32 { $$ = IntType::get(module, 32); }
+	| TYPE_INT64 { $$ = IntType::get(module, 64); }
+	| TYPE_UINT8 { $$ = UIntType::get(module, 8); }
+	| TYPE_UINT16 { $$ = UIntType::get(module, 16); }
+	| TYPE_UINT32 { $$ = UIntType::get(module, 32); }
+	| TYPE_UINT64 { $$ = UIntType::get(module, 64); }
+	| TYPE_CHAR { $$ = IntType::get(module, 8); }
+	| TYPE_VOID { $$ = VoidType::get(module); }
+	| TYPE_VAR { $$ = VarType::get(module); }
 	| TYPE_ID {
 		auto ty = new ReferenceType(*$1);
 		delete $1;

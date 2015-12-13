@@ -196,10 +196,10 @@ BasicType IntType::PODTy() const
 
 Type* IntType::getConst() const
 {
-	return IntType::get(m_width, true);
+	return IntType::get(m_module, m_width, true);
 }
 
-IntType* IntType::get(unsigned int width, bool isConst)
+IntType* IntType::get(Module* mod, unsigned int width, bool isConst)
 {
 	if (width == 0)
 	{
@@ -207,14 +207,14 @@ IntType* IntType::get(unsigned int width, bool isConst)
 	}
 
 	auto sig = getSignature(width, isConst);
-	auto defined = getDefined(sig);
+	auto defined = getDefined(mod, sig);
 	if (defined != nullptr)
 	{
 		return defined->as<IntType*>();
 	}
 
 	IntType* ty = new IntType(width, isConst);
-	define(sig, ty);
+	define(mod, sig, ty);
 
 	return ty;
 }

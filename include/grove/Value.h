@@ -26,7 +26,10 @@ private:
 	} m_values;
 	
 	Value();
+	
+	bool m_char_const = false;
 public:
+	virtual void resolve() override;
 	virtual void build() override;
 	
 	virtual ASTNode* copy() const override;

@@ -47,6 +47,11 @@ ASTNode* StrValue::copy() const
 	return new StrValue("\"" + m_str + "\"");
 }
 
+void StrValue::resolve()
+{
+	setType(PointerType::get(getModule(), IntType::get(getModule(), 8)));
+}
+
 void StrValue::build()
 {
 	auto val = IRBuilder()->CreateGlobalString(m_str);
@@ -59,6 +64,4 @@ StrValue::StrValue(std::string value)
 	replaceAll(m_str, "\\n", "\n");
 	replaceAll(m_str, "\\t", "\t");
 	replaceAll(m_str, "\\r", "\r");
-
-	setType(PointerType::get(IntType::get(8)));
 }

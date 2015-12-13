@@ -174,7 +174,7 @@ void ClassDecl::resolve()
 		member_types.push_back(member->getType());
 	}
 	
-	setType(ClassType::get(member_types));
+	setType(ClassType::get(getModule(), member_types));
 	
 	// Create all of our constructors.
 	auto ctors = getCtors();

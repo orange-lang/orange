@@ -191,10 +191,10 @@ BasicType UIntType::PODTy() const
 
 Type* UIntType::getConst() const
 {
-	return UIntType::get(m_width, true);
+	return UIntType::get(m_module, m_width, true);
 }
 
-UIntType* UIntType::get(unsigned int width, bool isConst)
+UIntType* UIntType::get(Module* mod, unsigned int width, bool isConst)
 {
 	if (width == 0)
 	{
@@ -203,14 +203,14 @@ UIntType* UIntType::get(unsigned int width, bool isConst)
 
 	auto sig = getSignature(width, isConst);
 	
-	auto defined = getDefined(sig);
+	auto defined = getDefined(mod, sig);
 	if (defined != nullptr)
 	{
 		return dynamic_cast<UIntType*>(defined);
 	}
 	
 	UIntType* ty = new UIntType(width, isConst);
-	define(sig, ty);
+	define(mod, sig, ty);
 	
 	return ty;
 }

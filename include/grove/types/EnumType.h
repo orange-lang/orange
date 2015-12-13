@@ -28,5 +28,5 @@ public:
 	
 	virtual Type* getConst() const override;
 	
-	static EnumType* get(Type* contained, bool isConst = false);
+	static EnumType* get(Module* mod, Type* contained, bool isConst = false);
 };

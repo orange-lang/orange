@@ -43,6 +43,12 @@ ASTNode* ExternFunction::copy() const
 							  m_ret_type, m_vararg);
 }
 
+void ExternFunction::resolve()
+{
+		setType(FunctionType::get(getModule(), m_ret_type, getParamTys(),
+								  m_vararg));
+}
+
 void ExternFunction::build()
 {
 	auto func_ty = (llvm::FunctionType *)getType()->getLLVMType();
@@ -75,5 +81,4 @@ ExternFunction::ExternFunction(OString name, std::vector<Parameter *> params,
 	m_ret_type = retType;
 	m_vararg = vararg;
 	
-	setType(FunctionType::get(retType, getParamTys(), vararg));
 }
