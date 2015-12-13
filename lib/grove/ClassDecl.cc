@@ -17,6 +17,8 @@
 #include <grove/MemberAccess.h>
 #include <grove/Constructor.h>
 
+#include <grove/types/VoidType.h>
+
 #include <grove/exceptions/code_error.h>
 #include <grove/exceptions/already_defined_error.h>
 
@@ -93,26 +95,18 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	auto func = new Constructor(this, getName(), params);
 	
 	// The functions return type is this class' type.
-	auto refType = new ReferenceType(this);
-	func->addChild(refType);
-	func->addDependency(refType);
-	func->setReturnType(refType);
+	func->setReturnType(VoidType::get(getModule()));
 	
-	// The class constructor needs to create an instance of its return
-	// type, then instantiate all of its variables that have values,
-	// and finally call the method, if one exists.
-	
-	// Create the instance
-	auto class_instance = new VarDecl(getType(), "instance", nullptr);
+	// The class constructor needs to nstantiate all of its variables that have
+	// values, and call the method, if one exists.
 	
 	/// @todo: Instantiate members with default values
 	/// @todo: Call the method if one exists.
 	
-	auto load_instance = new IDReference("instance");
-	auto ret_stmt = new ReturnStmt(load_instance);
+	// Return nothing.
+	auto ret_stmt = new ReturnStmt(nullptr);
 	
 	// Add all the statements to the class.
-	func->addStatement(class_instance);
 	func->addStatement(ret_stmt);
 	
 	// Add the function to our parent block after this class.
