@@ -8,6 +8,7 @@
 
 #include <grove/Function.h>
 #include <grove/Module.h>
+#include <grove/Builder.h>
 #include <grove/ReturnStmt.h>
 #include <grove/Parameter.h>
 
@@ -415,6 +416,12 @@ void Function::setupFunction()
 
 void Function::optimize()
 {
+	if (getModule()->getBuilder()->getDebug())
+	{
+		m_function->dump();
+	}
+	
+	
 	// Validate all blocks have terminators.
 	auto it = m_function->getBasicBlockList().begin();
 	for ( ; it != m_function->getBasicBlockList().end(); it++)
