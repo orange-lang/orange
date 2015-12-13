@@ -10,13 +10,12 @@
 
 #include "Function.h"
 #include "ClassTopLevel.h"
-#include "HintProvider.h"
 
 /**
  * Represents a method for a class.
  * Provides a hint that is the this parameter.
  */
-class ClassMethod : public Function, public ClassTopLevel, public HintProvider
+class ClassMethod : public Function, public ClassTopLevel
 {
 public:
 	/// Gets the type of this method without the this parameter
