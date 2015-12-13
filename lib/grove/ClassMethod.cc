@@ -8,6 +8,7 @@
 
 #include <grove/ClassMethod.h>
 #include <grove/ClassDecl.h>
+#include <grove/Parameter.h>
 
 Type* ClassMethod::getBasicType() const
 {
@@ -27,6 +28,27 @@ void ClassMethod::findDependencies()
 	
 	auto parentClass = getParent()->as<ClassDecl *>();
 	addDependency(parentClass);
+}
+
+void ClassMethod::resolve()
+{
+	auto parentClass = getParent()->as<ClassDecl *>();
+	auto this_type = parentClass->getType();
+	
+	auto this_param = new Parameter(this_type, "this");
+	
+	if (m_params.size() == 0)
+	{
+		addChild(this_param);
+	}
+	else
+	{
+		addChild(this_param, m_params.at(0), 0);
+	}
+	
+	m_params.insert(m_params.begin(), this_param);
+	
+	Function::resolve();
 }
 
 ClassMethod::ClassMethod(OString name, std::vector<Parameter *> params)

@@ -25,5 +25,7 @@ public:
 	virtual std::vector<Parameter *> getBasicParams() const;
 	
 	virtual void findDependencies() override;
+	virtual void resolve() override;
+	
 	ClassMethod(OString name, std::vector<Parameter *> params);
 };
