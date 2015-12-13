@@ -193,8 +193,6 @@ void VarDecl::build()
 			setValue(getExpression()->getPointer());
 			m_value->setName(getName().str());
 		}
-		
-
 	}
 }
 
