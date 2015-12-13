@@ -96,9 +96,11 @@ protected:
 
 	Type(bool isConst);
 public:
+	/// Deletes all defined types for a specific module.
+	static void clear(Module* mod);
+	
 	/// Gets the string representation of this type.
 	virtual std::string getString() const;
-	
 	
 	/// Returns whether or not this type is signed.
 	virtual bool isSigned() const;

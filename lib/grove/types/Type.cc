@@ -27,6 +27,24 @@ std::map<std::tuple<Module *, std::string>, Type*> Type::m_defined;
 std::map<TypeTuple, TypeCast> Type::m_cast_map;
 std::map<TypeTuple, TypeCallback> Type::m_cast_ty_map;
 
+void Type::clear(Module *mod)
+{
+	std::map<std::tuple<Module *, std::string>, Type*> copy;
+	
+	for (auto& pair : m_defined)
+	{
+		if (std::get<0>(pair.first) != mod)
+		{
+			copy[pair.first] = pair.second;
+			continue;
+		}
+		
+		delete pair.second;
+	}
+	
+	m_defined = copy;
+}
+
 std::string Type::getConstIdentifier()
 {
 	return "U";
