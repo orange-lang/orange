@@ -569,4 +569,6 @@ Module::~Module()
 	{
 		delete child;
 	}
+	
+	Type::clear(this);
 }
