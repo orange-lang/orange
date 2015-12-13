@@ -129,6 +129,11 @@ llvm::Value* ArrayValue::getValue() const
 	return IRBuilder()->CreateLoad(m_value);
 }
 
+bool ArrayValue::transferrable() const
+{
+	return true;
+}
+
 bool ArrayValue::isConstant() const
 {
 	for (auto element : getElements())

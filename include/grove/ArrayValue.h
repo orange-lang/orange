@@ -25,8 +25,8 @@ public:
 	virtual bool hasPointer() const override;
 	
 	virtual llvm::Value* getPointer() const override;
-	
 	virtual llvm::Value* getValue() const override;
+	virtual bool transferrable() const override;
 	
 	/// Returns whether or not all of the expressions are constant values.
 	virtual bool isConstant() const override;
