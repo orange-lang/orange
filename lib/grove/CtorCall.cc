@@ -35,6 +35,8 @@ bool CtorCall::transferrable() const
 
 void CtorCall::resolve()
 {
+	findNode();
+	
 	// For now, this doesn't need to be any different:
 	// the value of the constructor will be copied
 	FunctionCall::resolve();
