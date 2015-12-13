@@ -50,6 +50,16 @@ llvm::TargetMachine* Builder::getTargetMachine() const
 	return m_target_machine;
 }
 
+bool Builder::getDebug() const
+{
+	return m_debug;
+}
+
+void Builder::setDebug(bool debug)
+{
+	m_debug = debug;
+}
+
 void Builder::compile()
 {
 	/// @todo Gather the nodes for library registration.

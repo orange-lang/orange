@@ -29,6 +29,8 @@ private:
 	
 	std::vector<Module *> m_modules;
 	
+	bool m_debug = false;
+	
 	llvm::TargetMachine* m_target_machine;
 	
 	void initialize();
@@ -47,6 +49,12 @@ public:
 	
 	/// Gets the machine being targeted.
 	llvm::TargetMachine* getTargetMachine() const;
+	
+	/// Gets whether or not to print out debug info.
+	bool getDebug() const;
+	
+	/// Sets whether or not to pritn out debug info.
+	void setDebug(bool debug);
 	
 	/*
 	 * Does the following steps:
