@@ -34,9 +34,16 @@ std::string ReferenceType::getString() const
 
 std::string ReferenceType::getSignature() const
 {
-	std::stringstream ss;
-	ss << this;
-	return ss.str();
+	if (m_ref_type == nullptr)
+	{
+		std::stringstream ss;
+    	ss << this;
+    	return ss.str();
+	}
+	else
+	{
+		return m_ref_type->getSignature();
+	}
 }
 
 ASTNode* ReferenceType::getReference() const
