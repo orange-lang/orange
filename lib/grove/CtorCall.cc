@@ -28,6 +28,11 @@ llvm::Value* CtorCall::getValue() const
 	return IRBuilder()->CreateLoad(m_value);
 }
 
+bool CtorCall::transferrable() const
+{
+	return true;
+}
+
 void CtorCall::resolve()
 {
 	// For now, this doesn't need to be any different:
