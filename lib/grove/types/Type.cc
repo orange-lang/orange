@@ -23,7 +23,7 @@
 
 #include <util/assertions.h>
 
-std::map<std::string, Type*> Type::m_defined;
+std::map<std::tuple<Module *, std::string>, Type*> Type::m_defined;
 std::map<TypeTuple, TypeCast> Type::m_cast_map;
 std::map<TypeTuple, TypeCallback> Type::m_cast_ty_map;
 
@@ -165,7 +165,7 @@ bool Type::matches(Type *ty) const
 
 Type* Type::getDefined(std::string signature)
 {
-	auto it = m_defined.find(signature);
+	auto it = m_defined.find(std::make_tuple(nullptr, signature));
 	
 	if (it == m_defined.end())
 	{
@@ -192,7 +192,7 @@ void Type::define(std::string signature, Type *ty)
 		throw fatal_error("ty was null");
 	}
 	
-	m_defined[signature] = ty;
+	m_defined[std::make_tuple(nullptr, signature)] = ty;
 }
 
 void Type::defineCast(const std::type_info &to, TypeCallback cb)

@@ -57,7 +57,7 @@ const int NO_CAST = 0;
 class Type : public ObjectBase {
 private:
 	/// The map of defined types, where the key is a unique identifier.
-	static std::map<std::string, Type *> m_defined;
+	static std::map<std::tuple<Module*,std::string>, Type *> m_defined;
 	
 	/// The map of type uples to a cast function.
 	static std::map<TypeTuple, TypeCast> m_cast_map;
