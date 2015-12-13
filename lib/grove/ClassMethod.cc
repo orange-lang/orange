@@ -10,6 +10,10 @@
 #include <grove/ClassDecl.h>
 #include <grove/Parameter.h>
 
+#include <grove/types/Type.h>
+
+#include <util/assertions.h>
+
 Type* ClassMethod::getBasicType() const
 {
 	/// Just return getType until a this parameter is added.
@@ -33,7 +37,8 @@ void ClassMethod::findDependencies()
 void ClassMethod::resolve()
 {
 	auto parentClass = getParent()->as<ClassDecl *>();
-	auto this_type = parentClass->getType();
+	assertExists(parentClass->getType(), "Class has no defined type");
+	auto this_type = parentClass->getType()->getPointerTo();
 	
 	auto this_param = new Parameter(this_type, "this");
 	

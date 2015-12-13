@@ -10,6 +10,8 @@
 #include <grove/ClassDecl.h>
 #include <grove/Parameter.h>
 
+#include <grove/types/Type.h>
+
 #include <util/assertions.h>
 
 const ClassDecl* Constructor::getClass() const
@@ -19,8 +21,8 @@ const ClassDecl* Constructor::getClass() const
 
 void Constructor::resolve()
 {
-	auto this_type = getClass()->getType();
-	assertExists(this_type, "Class has no defined type");
+	assertExists(getClass()->getType(), "Class has no defined type");
+	auto this_type = getClass()->getType()->getPointerTo();
 	
 	auto this_param = new Parameter(this_type, "this");
 	
