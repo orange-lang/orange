@@ -27,6 +27,11 @@ bool IDReference::hasPointer() const
 	return findNode()->hasPointer();
 }
 
+bool IDReference::transferrable() const
+{
+	return findNode()->transferrable();
+}
+
 Valued* IDReference::findNode() const
 {
 	return m_node;

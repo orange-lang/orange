@@ -30,6 +30,8 @@ public:
 	
 	virtual bool hasPointer() const override;
 	
+	virtual bool transferrable() const override;
+	
 	virtual llvm::Value* getValue() const override;
 	
 	virtual llvm::Value* getSize() const override;
