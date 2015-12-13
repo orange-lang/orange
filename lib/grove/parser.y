@@ -122,7 +122,7 @@
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID typename_or_identifier
 %type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list opt_param_list
-%type <args> arg_list
+%type <args> opt_arg_list arg_list
 
 /* lowest to highest precedence */
 %right CONST_FLAG
@@ -597,6 +597,11 @@ opt_param_list
 	| { $$ = new std::vector<Parameter *>(); }
 	;
 
+opt_arg_list
+	: arg_list { $$ = $1; }
+	| { $$ = new std::vector<Expression *>(); }
+	;
+
 arg_list
 	: arg_list COMMA expression
 	{
@@ -672,15 +677,7 @@ ternary
 	;
 
 call
-	: typename_or_identifier OPEN_PAREN CLOSE_PAREN
-	{
-		std::vector<Expression *> params;
-		$$ = new FunctionCall(*$1, params);
-		SET_LOCATION($$, @1, @3);
-
-		delete $1;
-	}
-	| typename_or_identifier OPEN_PAREN arg_list CLOSE_PAREN
+	: typename_or_identifier OPEN_PAREN opt_arg_list CLOSE_PAREN
 	{
 		$$ = new FunctionCall(*$1, *$3);
 		SET_LOCATION($$, @1, @4);
