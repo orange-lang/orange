@@ -31,12 +31,11 @@ private:
 	llvm::Value* m_ret_value = nullptr;
 	llvm::Function* m_function = nullptr;
 	
-	Type* m_ret_type = nullptr;
-	
 	Function* m_instance_of = nullptr;
-	
-	std::vector<Parameter *> m_params;
 protected:
+	Type* m_ret_type = nullptr;
+	std::vector<Parameter *> m_params;
+	
 	virtual void createFunction();
 	virtual void createReturn();
 	virtual void setupFunction();
