@@ -43,6 +43,8 @@ public:
 	/// Gets methods where the name is equal to the class name
 	std::vector<ClassMethod*> getCtors() const;
 	
+	virtual void findDependencies() override;
+	
 	MemberVarDecl* getMember(const OString& name) const;
 	
 	ClassDecl(OString name);

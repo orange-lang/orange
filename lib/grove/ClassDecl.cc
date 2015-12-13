@@ -139,6 +139,14 @@ MemberVarDecl* ClassDecl::getMember(const OString &name) const
 	return nullptr;
 }
 
+void ClassDecl::findDependencies()
+{
+	for (auto& member : getMembers())
+	{
+		addDependency(member);
+	}
+}
+
 void ClassDecl::resolve()
 {
 	// Make sure that the class's name is unique.
