@@ -11,8 +11,9 @@
 #include "Expression.h"
 #include "Accessible.h"
 #include "OString.h"
+#include "HintProvider.h"
 
-class AccessExpr : public Expression, public Accessible
+class AccessExpr : public Expression, public Accessible, public HintProvider
 {
 private:
 	Expression* m_LHS = nullptr;
@@ -33,6 +34,9 @@ public:
 	virtual void build() override;
 	
 	virtual bool isAccessible() const override;
+	
+	virtual bool providesHint() const override;
+	virtual CodeBase* getHint() const override;
 	
 	virtual Expression* access(OString name, const ASTNode* hint) const override;
 	
