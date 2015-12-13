@@ -17,5 +17,6 @@
 class HintProvider : public CodeBase
 {
 public:
+	virtual bool providesHint() const;
 	virtual CodeBase* getHint() const;
 };

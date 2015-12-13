@@ -8,6 +8,11 @@
 
 #include <grove/HintProvider.h>
 
+bool HintProvider::providesHint() const
+{
+	return false;
+}
+
 CodeBase* HintProvider::getHint() const
 {
 	throw fatal_error("HintProvider::getHint not overriden");
