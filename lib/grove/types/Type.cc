@@ -177,8 +177,19 @@ Type* Type::getConst() const
 
 bool Type::matches(Type *ty) const
 {
-	return ty == this || ty->isVarTy() || this->isVarTy() ||
+	bool does_match = ty == this || ty->isVarTy() || this->isVarTy() ||
 		this->getBaseTy()->isVarTy() || ty->getBaseTy()->isVarTy();
+	
+	if (does_match == false && ty->getComparisonTy() != ty)
+	{
+		return matches((Type *)ty->getComparisonTy());
+	}
+	else if (does_match == false && getComparisonTy() != this)
+	{
+		return getComparisonTy()->matches(ty);
+	}
+	
+	return does_match;
 }
 
 Type* Type::getDefined(Module* mod, std::string signature)
