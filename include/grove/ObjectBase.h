@@ -16,22 +16,22 @@ class ObjectBase
 {
 public:
 	/// Returns whether or not this node is a type.
-	template <typename T> bool is()
+	template <typename T> bool is() const
 	{
-		return dynamic_cast<T>(this) != nullptr;
+		return dynamic_cast<T>((ObjectBase *)this) != nullptr;
 	}
 
 	/// Casts this node to a certain type.
-	template <typename T> T as()
+	template <typename T> T as() const
 	{
 		// Hack out a way to check if this == nullptr
-		void* ptr = this;
+		void* ptr = (ObjectBase *)this;
 		if (ptr == nullptr)
 		{
 			throw fatal_error("trying casting a null object to a type");
 		}
 		
-		auto casted = dynamic_cast<T>(this);
+		auto casted = dynamic_cast<T>((ObjectBase *)this);
 
 		if (casted == nullptr)
 		{
