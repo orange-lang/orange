@@ -29,6 +29,7 @@ public:
 	virtual llvm::Value* getValue() const override;
 	virtual llvm::Value* getPointer() const override;
 	virtual bool hasPointer() const override;
+	virtual bool transferrable() const override;
 	
 	virtual ASTNode* copy() const override;
 	

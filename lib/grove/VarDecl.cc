@@ -39,6 +39,11 @@ bool VarDecl::hasPointer() const
 	return true;
 }
 
+bool VarDecl::transferrable() const
+{
+	return false;
+}
+
 Expression* VarDecl::getExpression() const
 {
 	return m_expr;
