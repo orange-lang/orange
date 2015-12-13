@@ -35,6 +35,14 @@ void ReferenceExpr::resolve()
 			});
 	}
 	
+	if (getExpression()->transferrable())
+	{
+		throw code_error(getExpression(), []() -> std::string
+		{
+			return "cannot get a pointer to a temporary expression";
+		});
+	}
+	
 	auto ty = getExpression()->getType();
 	assertExists(ty, "Expression has no type");
 	
