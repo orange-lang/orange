@@ -74,11 +74,6 @@ llvm::Value* ArrayAccessExpr::getValue() const
 	return IRBuilder()->CreateLoad(m_value);
 }
 
-bool ArrayAccessExpr::transferrable() const
-{
-	return false;
-}
-
 void ArrayAccessExpr::build()
 {
 	getArray()->build();

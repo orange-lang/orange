@@ -32,11 +32,6 @@ bool DerefExpr::hasPointer() const
 	return true;
 }
 
-bool DerefExpr::transferrable() const
-{
-	return false;
-}
-
 llvm::Value* DerefExpr::getPointer() const
 {
 	return m_expression->getValue();
