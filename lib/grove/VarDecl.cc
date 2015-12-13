@@ -86,6 +86,18 @@ Expression* VarDecl::access(OString name, const ASTNode *hint) const
 	return accessible_ref->access(name, this);
 }
 
+bool VarDecl::allocateVariable()
+{
+	// We want to allocate our variable explicitly in the following cases:
+	// 	1. We don't have an expression.
+	//  2. The expression isn't transferrable (e.g., it memory can't be
+	//     transferred)
+	//  3. Our types don't match and we need to do a cast.
+	return getExpression() == nullptr ||
+		getExpression()->transferrable() == false ||
+		getType()->matches(getExpression()->getType()) == false;
+}
+
 void VarDecl::resolve()
 {
 	SearchSettings settings;
@@ -155,20 +167,34 @@ void VarDecl::build()
 		}
 	}
 	
-	setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), m_size,
-									   getName().str()));
-
+	if (allocateVariable())
+	{
+		setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), m_size,
+									   getName().str()));	
+	}
+	
 	if (getExpression())
 	{
 		getExpression()->build();
-		auto val = getExpression()->getValue();
-		assertExists(val, "Built expression has no value.");
+		
+		if (allocateVariable())
+		{
+    		auto val = getExpression()->getValue();
+    		assertExists(val, "Built expression has no value.");
 
-		val = getExpression()->castTo(getType());
+    		val = getExpression()->castTo(getType());
 
-		assertEqual<VAL, PTR>(val, getPointer(), "value does not match variable");
+    		assertEqual<VAL, PTR>(val, getPointer(), "value does not match variable");
 
-		IRBuilder()->CreateStore(val, getPointer());
+    		IRBuilder()->CreateStore(val, getPointer());		
+		}
+		else
+		{
+			setValue(getExpression()->getPointer());
+			m_value->setName(getName().str());
+		}
+		
+
 	}
 }
 

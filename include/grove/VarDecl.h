@@ -25,6 +25,9 @@ class VarDecl : public Statement, public Named, public Typed, public Valued,
 {
 private:
 	Expression* m_expr = nullptr;
+	
+	/// Returns whether or not to allocate a variable.
+	bool allocateVariable();
 public:
 	virtual llvm::Value* getValue() const override;
 	virtual llvm::Value* getPointer() const override;
