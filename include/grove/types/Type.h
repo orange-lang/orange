@@ -159,7 +159,7 @@ public:
 	static Comparison compare(const Type* source, const Type* target);
 
 	/// Gets the internal LLVM type of this type.
-	llvm::Type* getLLVMType() const;
+	virtual llvm::Type* getLLVMType() const;
 	
 	static bool exprValidForArrSize(Expression* expr);
 	static unsigned int exprAsArrSize(Expression* expr);
