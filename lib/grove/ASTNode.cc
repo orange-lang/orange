@@ -86,6 +86,30 @@ void ASTNode::addDependency(ASTNode *dependency)
     	m_dependencies.push_back(dependency);
 	}
 }
+
+void ASTNode::addChild(ASTNode *child, int idx, bool mustExist)
+{
+	if (child == nullptr)
+	{
+		if (mustExist == true)
+		{
+			throw fatal_error("child cannot be nullptr");
+		}
+		else
+		{
+			return;
+		}
+	}
+	
+	if (this->is<ClassDecl *>() == false && child->is<ClassTopLevel*>())
+	{
+		throw fatal_error("Adding a ClassTopLevel in a non-class context");
+	}
+	
+	m_children.insert(m_children.begin()+idx, child);
+	
+	child->m_parent = this;
+	child->m_module = getModule();
 }
 
 void ASTNode::addChild(ASTNode *child, bool mustExist)
