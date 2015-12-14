@@ -80,8 +80,7 @@ void IDReference::findDependencies()
 	} else if (ref->is<MemberVarDecl *>() &&
 			   findParent<ClassMethod *>() != nullptr)
 	{
-		auto parent_class = findParent<ClassDecl *>();
-		auto access = new MemberAccess(parent_class, getName());
+		auto access = new MemberAccess(getName());
 		addChild(access);
 		
 		getModule()->findDependencies(access);
