@@ -75,6 +75,29 @@ void MemberAccess::findDependencies()
 {
 	ASTNode::findDependencies();
 	
+	// If we have no class, we should look for all the content now.
+	if (m_class == nullptr)
+	{
+		m_class = findParent<ClassDecl *>();
+		assertExists(m_class, "Not in a class!");
+		m_member = m_class->getMember(m_name);
+		
+    	if (m_member == nullptr)
+    	{
+			auto name = m_name;
+			auto classDecl = m_class;
+			throw code_error((ASTNode *)classDecl,
+							 [&name, classDecl] () -> std::string
+							 {
+								 std::stringstream ss;
+								 ss << "Object of class "
+								    << classDecl->getName().str()
+								    << " has no member " << name.str();
+								 return ss.str();
+							 });
+    	}
+	}
+
 	addDependency((ASTNode *)m_class);
 	addDependency(m_member);
 	
@@ -168,28 +191,11 @@ MemberAccess::MemberAccess(const ClassDecl* classDecl, Valued* valued,
 	}
 }
 
-MemberAccess::MemberAccess(const ClassDecl* classDecl, const OString& name)
+MemberAccess::MemberAccess(const OString& name)
 : m_name(name)
 {
 	if (name == "")
 	{
 		throw fatal_error("MemberAccess ctor called with empty name");
-	}
-	
-	assertExists(classDecl, "MemberAccess ctor called with no ClassDecl");
-	
-	m_class = classDecl;
-	m_member = m_class->getMember(name);
-	
-	if (m_member == nullptr)
-	{
-		throw code_error((ASTNode *)classDecl,
-						 [&name, classDecl] () -> std::string
-						 {
-							 std::stringstream ss;
-							 ss << "Object of class " << classDecl->getName().str()
-							 << " has no member " << name.str();
-							 return ss.str();
-						 });
 	}
 }

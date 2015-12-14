@@ -49,5 +49,5 @@ public:
 	
 	/// Creates a member access that will look for the this
 	/// parameter. Only valid for use inside of a method.
-	MemberAccess(const ClassDecl* classDecl, const OString& name);
+	MemberAccess(const OString& name);
 };
