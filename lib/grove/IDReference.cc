@@ -69,18 +69,6 @@ void IDReference::findDependencies()
 {
 	auto ref = findNamed(getName(), nullptr);
 	
-	if (ref == nullptr)
-	{
-		throw undefined_error(&m_name, m_name);
-	}
-	
-	addDependency(ref->as<ASTNode *>());
-}
-
-
-void IDReference::resolve()
-{
-	auto ref = findNamed(getName(), nullptr);
 	if (ref == nullptr ||
 		ref->as<ASTNode *>()->findParent<Function *>() !=
 		findParent<Function *>())
@@ -89,7 +77,12 @@ void IDReference::resolve()
 	}
 	
 	m_node = ref->as<Valued *>();
+	addDependency(ref->as<ASTNode *>());
+}
 
+
+void IDReference::resolve()
+{
 	auto typed = m_node->as<Typed *>();
 	auto ty = typed->getType();
 	assertExists(ty, "Could not assign type.");
