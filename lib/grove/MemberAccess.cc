@@ -159,6 +159,11 @@ void MemberAccess::build()
 		val = IRBuilder()->CreateLoad(val);
 	}
 	
+	if (val->getType()->getPointerElementType()->isIntegerTy())
+	{
+		throw fatal_error("Not a pointer to a class!");
+	}
+	
 	m_value = IRBuilder()->CreateInBoundsGEP(val, offsets);
 }
 
