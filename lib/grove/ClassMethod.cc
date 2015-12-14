@@ -42,14 +42,7 @@ void ClassMethod::resolve()
 	
 	auto this_param = new Parameter(this_type, "this");
 	
-	if (m_params.size() == 0)
-	{
-		addChild(this_param);
-	}
-	else
-	{
-		addChild(this_param, m_params.at(0), 0);
-	}
+	addChild(this_param, 0);
 	
 	m_params.insert(m_params.begin(), this_param);
 	
