@@ -70,7 +70,7 @@ Expression* EnumStmt::access(OString name, const ASTNode* hint) const
 	}
 	else
 	{
-		return it->val;
+		return (Expression *)it->val->copy();
 	}
 }
 
