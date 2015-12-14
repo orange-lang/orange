@@ -7,6 +7,7 @@
 */
 
 #include <grove/AccessExpr.h>
+#include <grove/Module.h>
 
 #include <grove/exceptions/fatal_error.h>
 #include <grove/exceptions/code_error.h>
@@ -70,19 +71,17 @@ void AccessExpr::resolve()
 			});
 	}
 	
+	addChild(m_accessed);
+	getModule()->findDependencies(m_accessed);
+	getModule()->resolve(m_accessed);
+	
 	setType(m_accessed->getType());
 }
 
 void AccessExpr::build()
 {
 	getLHS()->build();
-	
-	// If our access node is a root node, we need to build it.
-	// Otherwise, it's already been built.
-	if (getAccessed()->isRootNode())
-	{
-		getAccessed()->build();
-	}
+	getAccessed()->build();
 	
 	setValue(getAccessed()->getValue());
 }
