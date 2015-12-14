@@ -225,11 +225,6 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 	
 	auto valued = hint->as<const Valued *>();
 	auto memAccess = new MemberAccess(this, (Valued *)valued, name);
-	
-	getModule()->findDependencies(memAccess);
-	getModule()->resolve(memAccess);
-	getModule()->addChild(memAccess);
-	
 	return memAccess;
 }
 
