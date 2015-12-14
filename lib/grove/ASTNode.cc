@@ -81,7 +81,11 @@ bool ASTNode::dependsOn(ASTNode *node) const
 
 void ASTNode::addDependency(ASTNode *dependency)
 {
-	m_dependencies.push_back(dependency);
+	if (dependency != nullptr)
+	{
+    	m_dependencies.push_back(dependency);
+	}
+}
 }
 
 void ASTNode::addChild(ASTNode *child, bool mustExist)
