@@ -9,9 +9,11 @@
 #include <grove/MemberAccess.h>
 #include <grove/MemberVarDecl.h>
 #include <grove/ClassDecl.h>
+#include <grove/ClassMethod.h>
 #include <grove/Valued.h>
 #include <grove/ASTNode.h>
 #include <grove/Module.h>
+#include <grove/IDReference.h>
 
 #include <grove/exceptions/code_error.h>
 
@@ -75,11 +77,39 @@ void MemberAccess::findDependencies()
 	
 	addDependency((ASTNode *)m_class);
 	addDependency(m_member);
-	addDependency(m_valued->as<ASTNode *>());
+	
+	if (m_valued != nullptr)
+	{
+    	addDependency(m_valued->as<ASTNode *>());
+	}
+	else
+	{
+		auto method = findParent<ClassMethod *>();
+		if (method == nullptr)
+		{
+			throw code_error(this, [] () -> std::string
+				{
+					return "Cannot use 'this' outside of a function.";
+				});
+		}
+	
+		addDependency(method);
+	}
 }
 
 void MemberAccess::resolve()
 {
+	if (m_valued == nullptr)
+	{
+		auto this_param = new IDReference("this");
+		addChild(this_param);
+		
+		getModule()->findDependencies(this_param);
+		getModule()->resolve(this_param);
+		
+		m_valued = this_param;
+	}
+	
 	setType(m_member->getType());
 }
 
@@ -87,13 +117,26 @@ void MemberAccess::build()
 {
 	auto offset = getMember()->getOffset();
 	
+	for (auto& child : getChildren())
+	{
+		child->build();
+	}
+	
 	std::vector<llvm::Value *> offsets;
 	offsets.push_back(llvm::ConstantInt::get(getModule()->getLLVMContext(),
 											 llvm::APInt(32, 0)));
 	offsets.push_back(llvm::ConstantInt::get(getModule()->getLLVMContext(),
 											 llvm::APInt(32, offset)));
 	
-	m_value = IRBuilder()->CreateInBoundsGEP(m_valued->getPointer(), offsets);
+	// Continously load val until it is a single pointer.
+	auto val = m_valued->getPointer();
+	while (val->getType()->isPointerTy() &&
+		   val->getType()->getPointerElementType()->isPointerTy())
+	{
+		val = IRBuilder()->CreateLoad(val);
+	}
+	
+	m_value = IRBuilder()->CreateInBoundsGEP(val, offsets);
 }
 
 MemberAccess::MemberAccess(const ClassDecl* classDecl, Valued* valued,
@@ -122,5 +165,31 @@ MemberAccess::MemberAccess(const ClassDecl* classDecl, Valued* valued,
 				   << " has no member " << name.str();
 				return ss.str();
 			});
+	}
+}
+
+MemberAccess::MemberAccess(const ClassDecl* classDecl, const OString& name)
+: m_name(name)
+{
+	if (name == "")
+	{
+		throw fatal_error("MemberAccess ctor called with empty name");
+	}
+	
+	assertExists(classDecl, "MemberAccess ctor called with no ClassDecl");
+	
+	m_class = classDecl;
+	m_member = m_class->getMember(name);
+	
+	if (m_member == nullptr)
+	{
+		throw code_error((ASTNode *)classDecl,
+						 [&name, classDecl] () -> std::string
+						 {
+							 std::stringstream ss;
+							 ss << "Object of class " << classDecl->getName().str()
+							 << " has no member " << name.str();
+							 return ss.str();
+						 });
 	}
 }
