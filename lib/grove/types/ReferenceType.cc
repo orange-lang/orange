@@ -87,6 +87,7 @@ void ReferenceType::resolve()
 	assertExists(typed->getType(), "node has no type");
 	m_ref_type = typed->getType();
 	m_type = m_ref_type->getLLVMType();
+	Type::m_module = getModule();
 }
 
 ReferenceType::ReferenceType(OString name)
