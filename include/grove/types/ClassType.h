@@ -9,20 +9,24 @@
 #pragma once 
 
 #include "Type.h"
+#include "../OString.h"
 
 class ClassType : public Type
 {
 private:
 	std::vector<Type *> m_members;
+	OString m_name;
 protected:
-	ClassType(std::vector<Type *> members);
+	ClassType(OString& name, std::vector<Type *> members);
 public:
-	static std::string getSignature(std::vector<Type *> members);
+	static std::string getSignature(const OString& name,
+									const std::vector<Type *> members);
 	
 	virtual bool isClassTy() const override;
 	
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
-	static ClassType* get(Module* mod, std::vector<Type *> members);
+	static ClassType* get(Module* mod, OString& name,
+						  std::vector<Type *> members);
 };

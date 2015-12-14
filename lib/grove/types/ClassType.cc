@@ -10,7 +10,7 @@
 
 #include <llvm/IR/DerivedTypes.h>
 
-ClassType::ClassType(std::vector<Type *> members)
+ClassType::ClassType(OString& name, std::vector<Type *> members)
 : Type(false)
 {
 	m_members = members;
@@ -21,10 +21,12 @@ ClassType::ClassType(std::vector<Type *> members)
 		elements.push_back(member->getLLVMType());
 	}
 	
-	m_type = llvm::StructType::get(*m_context, elements);
+	m_name = name;
+	m_type = llvm::StructType::create(*m_context, elements, m_name.str());
 }
 
-std::string ClassType::getSignature(std::vector<Type *> members)
+std::string ClassType::getSignature(const OString& name,
+									const std::vector<Type *> members)
 {
 	std::stringstream ss;
 	ss << "T" << members.size();
@@ -61,11 +63,14 @@ std::string ClassType::getString() const
 
 std::string ClassType::getSignature() const
 {
-	return getSignature(m_members);
+	return getSignature(m_name, m_members);
 }
 
-ClassType* ClassType::get(Module* mod, std::vector<Type *> members)
+ClassType* ClassType::get(Module* mod, OString& name,
+						  std::vector<Type *> members)
 {
+	auto full_name = "class." + name;
+	
 	for (auto member : members)
 	{
 		if (member == nullptr)
@@ -82,14 +87,14 @@ ClassType* ClassType::get(Module* mod, std::vector<Type *> members)
 		}
 	}
 	
-	auto sig = getSignature(members);
+	auto sig = getSignature(full_name, members);
 	auto defined = getDefined(mod, sig);
 	if (defined != nullptr)
 	{
 		return defined->as<ClassType *>();
 	}
 	
-	ClassType* ty = new ClassType(members);
+	ClassType* ty = new ClassType(full_name, members);
 	define(mod, sig, ty);
 	
 	return ty;
