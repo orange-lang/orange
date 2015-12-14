@@ -43,6 +43,7 @@
 	#include <grove/ClassDecl.h>
 	#include <grove/ClassMethod.h>
 	#include <grove/MemberVarDecl.h>
+	#include <grove/MemberAccess.h>
 	#include <grove/CtorCall.h>
 
 	#include <grove/types/Type.h>
@@ -103,7 +104,7 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
-%token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID
+%token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID THIS AT
 
 %type <nodes> compound_statement var_decl valued
 %type <nodes> opt_valued
@@ -121,6 +122,7 @@
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID typename_or_identifier
+%type <str> THIS AT
 %type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list opt_param_list
 %type <args> opt_arg_list arg_list
@@ -713,6 +715,8 @@ primary
 	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayValue(*$2); SET_LOCATION($$, @1, @3); delete $2; }
 	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); SET_LOCATION($$, @1, @4); }
 	| expression DOT IDENTIFIER { $$ = new AccessExpr($1, *$3); SET_LOCATION($$, @1, @3); delete $3; }
+	| THIS DOT IDENTIFIER { $$ = new MemberAccess(*$3); SET_LOCATION($$, @1, @3); delete $1; delete $3; }
+	| AT IDENTIFIER { $$ = new MemberAccess(*$2); SET_LOCATION($$, @1, @2); delete $1; delete $2; }
 	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
 	| SIZEOF OPEN_PAREN type CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
 	;

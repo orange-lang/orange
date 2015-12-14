@@ -118,6 +118,8 @@
 "extern"										SAVESTR(); return EXTERN;
 "const"											SAVESTR(); return CONST_FLAG;
 "enum"											SAVESTR(); return ENUM;
+"this"											SAVESTR(); return THIS;
+"@"												SAVESTR(); return AT;
 
 "var"											SAVESTR(); return TYPE_VAR;
 "char"											SAVESTR(); return TYPE_CHAR;

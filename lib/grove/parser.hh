@@ -122,7 +122,9 @@
      COLON = 338,
      ENUM = 339,
      SIZEOF = 340,
-     TYPE_ID = 341
+     TYPE_ID = 341,
+     THIS = 342,
+     AT = 343
    };
 #endif
 /* Tokens.  */
@@ -210,13 +212,15 @@
 #define ENUM 339
 #define SIZEOF 340
 #define TYPE_ID 341
+#define THIS 342
+#define AT 343
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 77 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 78 "/Users/robert/dev/orange/lib/grove/parser.y"
 {
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
@@ -234,7 +238,7 @@ typedef union YYSTYPE
 	Type* ty;
 }
 /* Line 1529 of yacc.c.  */
-#line 238 "/Users/robert/dev/orange/lib/grove/parser.hh"
+#line 242 "/Users/robert/dev/orange/lib/grove/parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
