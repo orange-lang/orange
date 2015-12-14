@@ -26,20 +26,14 @@ PointerType::PointerType(Type* contained, bool isConst)
 
 	m_contained = contained;
 
-	// We'll be a void type if we're a NodeType, which
-	// will generally mean to be a pointer to memory anyway.
-	if (m_contained->getLLVMType()->isVoidTy())
-	{
-		m_type = llvm::Type::getInt64PtrTy(*m_context);
-    }
-	else
-	{
-    	m_type = m_contained->getLLVMType()->getPointerTo();
-	}
-
 	defineCast(typeid(IntType), llvm::Instruction::CastOps::PtrToInt);
 	defineCast(typeid(UIntType), llvm::Instruction::CastOps::PtrToInt);
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
+}
+
+llvm::Type* PointerType::getLLVMType() const
+{
+	return m_contained->getLLVMType()->getPointerTo();
 }
 
 std::string PointerType::getString() const
