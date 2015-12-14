@@ -11,6 +11,11 @@
 #include <grove/Named.h>
 #include <grove/Typed.h>
 #include <grove/Function.h>
+#include <grove/MemberVarDecl.h>
+#include <grove/MemberAccess.h>
+#include <grove/ClassDecl.h>
+#include <grove/ClassMethod.h>
+#include <grove/Module.h>
 
 #include <grove/exceptions/undefined_error.h>
 #include <grove/exceptions/fatal_error.h>
@@ -69,15 +74,33 @@ void IDReference::findDependencies()
 {
 	auto ref = findNamed(getName(), nullptr);
 	
-	if (ref == nullptr ||
-		ref->as<ASTNode *>()->findParent<Function *>() !=
-		findParent<Function *>())
+	if (ref == nullptr)
+	{
+		throw undefined_error(&m_name, m_name);
+	} else if (ref->is<MemberVarDecl *>() &&
+			   findParent<ClassMethod *>() != nullptr)
+	{
+		auto parent_class = findParent<ClassDecl *>();
+		auto access = new MemberAccess(parent_class, getName());
+		addChild(access);
+		
+		getModule()->findDependencies(access);
+		getModule()->resolve(access);
+		
+		m_node = access;
+		//throw fatal_error("Can't handle member accesses yet");
+	}
+	else if (ref->as<ASTNode *>()->findParent<Function *>() !=
+			 findParent<Function *>())
 	{
 		throw undefined_error(&m_name, m_name);
 	}
+	else
+	{
+    	m_node = ref->as<Valued *>();
+	}
 	
-	m_node = ref->as<Valued *>();
-	addDependency(ref->as<ASTNode *>());
+	addDependency(m_node->as<ASTNode *>());
 }
 
 
@@ -88,6 +111,14 @@ void IDReference::resolve()
 	assertExists(ty, "Could not assign type.");
 
 	setType(ty);
+}
+
+void IDReference::build()
+{
+	for (auto& child : getChildren())
+	{
+		child->build();
+	}
 }
 
 llvm::Value* IDReference::getValue() const

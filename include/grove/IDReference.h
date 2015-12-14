@@ -47,6 +47,8 @@ public:
 	
 	virtual void resolve() override;
 	
+	virtual void build() override;
+	
 	virtual ASTNode* copy() const override;
 	
 	IDReference(OString name);
