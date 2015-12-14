@@ -23,5 +23,10 @@ class Accessible : public ObjectBase
 public:
 	virtual bool isAccessible() const;
 	
+	/**
+	 * Returns an expression that is representative of a value 
+	 * from an access of a member by a given name. The expression 
+	 * is a new node and must be resolved and built.
+	 */
 	virtual Expression* access(OString name, const ASTNode* hint) const;
 };
