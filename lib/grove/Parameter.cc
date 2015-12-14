@@ -45,9 +45,9 @@ Parameter::Parameter(Type* type, OString name)
 		throw fatal_error("name was null");
 	}
 	
-	if (type->is<NodeType *>())
+	if (type->getRootTy()->is<NodeType *>())
 	{
-		addChild(type->as<NodeType *>());
+		addChild(type->getRootTy()->as<NodeType *>());
 	}
 	
 	setType(type);

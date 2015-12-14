@@ -60,12 +60,12 @@ bool VarDecl::isAccessible() const
 {
 	// We can have members accessed if we're a reference type,
 	// and our reference type is also accessible.
-	if (getType()->is<ReferenceType *>() == false)
+	if (getType()->getRootTy()->is<ReferenceType *>() == false)
 	{
 		return false;
 	}
 	
-	auto ref = getType()->as<ReferenceType *>()->getReference();
+	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
 	return ref->is<Accessible *>() && ref->as<Accessible *>()->isAccessible();
 }
 
@@ -76,7 +76,7 @@ Expression* VarDecl::access(OString name, const ASTNode *hint) const
 		return nullptr;
 	}
 	
-	auto ref = getType()->as<ReferenceType *>()->getReference();
+	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
 	auto accessible_ref = ref->as<Accessible *>();
 	return accessible_ref->access(name, this);
 }
@@ -209,9 +209,9 @@ VarDecl::VarDecl(Type* type, OString name, Expression* expression)
 		}
 	}
 	
-	if (type->is<NodeType *>())
+	if (type->getRootTy()->is<NodeType *>())
 	{
-		addChild(type->as<NodeType *>());
+		addChild(type->getRootTy()->as<NodeType *>());
 	}
 
 	if (name == "")
