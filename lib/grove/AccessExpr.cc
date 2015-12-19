@@ -57,7 +57,7 @@ void AccessExpr::resolve()
 	}
 	
 	auto a_lhs = getLHS()->ASTNode::as<Accessible *>();
-	m_accessed = a_lhs->access(getName(), nullptr);
+	m_accessed = a_lhs->access(getName(), getLHS());
 	
 	if (m_accessed == nullptr)
 	{
