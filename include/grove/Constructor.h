@@ -17,12 +17,8 @@ class Constructor : public Function
 {
 private:
 	const ClassDecl* m_class = nullptr;
-	
-	Parameter* m_this_param = nullptr;
 public:
 	const ClassDecl* getClass() const;
-	
-	virtual void resolve() override;
 	
 	Constructor(const ClassDecl* theClass, OString name,
 				std::vector<Parameter *> params);
