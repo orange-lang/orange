@@ -76,9 +76,15 @@ Expression* VarDecl::access(OString name, const ASTNode *hint) const
 		return nullptr;
 	}
 	
+	const ASTNode* hint_to_use = hint;
+	if (hint_to_use == nullptr)
+	{
+		hint_to_use = this;
+	}
+	
 	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
 	auto accessible_ref = ref->as<Accessible *>();
-	return accessible_ref->access(name, this);
+	return accessible_ref->access(name, hint_to_use);
 }
 
 bool VarDecl::allocateVariable()
