@@ -92,16 +92,6 @@ bool AccessExpr::isAccessible() const
 			getAccessed()->ASTNode::as<Accessible *>()->isAccessible());
 }
 
-bool AccessExpr::providesHint() const
-{
-	return getLHS()->hasPointer();
-}
-
-CodeBase* AccessExpr::getHint() const
-{
-	return getLHS();
-}
-
 Expression* AccessExpr::access(OString name, const ASTNode* hint) const
 {
 	if (isAccessible() == false)
