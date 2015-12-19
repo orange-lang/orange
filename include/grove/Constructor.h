@@ -22,9 +22,6 @@ private:
 public:
 	const ClassDecl* getClass() const;
 	
-	// Returns true if parameters OTHER than this are var.
-	virtual bool isGeneric() const override;
-	
 	virtual void resolve() override;
 	
 	Constructor(const ClassDecl* theClass, OString name,

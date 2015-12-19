@@ -11,34 +11,13 @@
 #include <grove/Parameter.h>
 
 #include <grove/types/Type.h>
-#include <grove/types/VarType.h>
+#include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
 
 const ClassDecl* Constructor::getClass() const
 {
 	return m_class;
-}
-
-bool Constructor::isGeneric() const
-{
-	for (auto& param : getParams())
-	{
-		// Skip over m_this_param, which will always be
-		// var until resolved.
-		if (param == m_this_param)
-		{
-			continue;
-		}
-		
-		auto ty = param->getType();
-		if (ty->isVarTy())
-		{
-			return true;
-		}
-	}
-	
-	return false;
 }
 
 void Constructor::resolve()
@@ -57,7 +36,7 @@ Constructor::Constructor(const ClassDecl* theClass, OString name,
 	assertExists(theClass, "Constructor created with no class");
 	m_class = theClass;
 	
-	m_this_param = new Parameter(VarType::get(theClass->getModule()), "this");
+	m_this_param = new Parameter(new ReferenceType(theClass), "this");
 	if (m_params.size() == 0)
 	{
 		addChild(m_this_param);
