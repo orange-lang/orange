@@ -31,6 +31,23 @@ PointerType::PointerType(Type* contained, bool isConst)
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
 }
 
+
+bool PointerType::matches(Type *ty) const
+{
+	// If our contained is a node type, and
+	// we're looking at a pointer type that contains a node
+	// type, let's compare those instead.
+	if (m_contained->isNodeTy() && ty->isPointerTy() &&
+		ty->getBaseTy()->isNodeTy())
+	{
+		// Compare the reference types...
+		return m_contained->matches(ty->getBaseTy());
+	}
+	
+	
+	return Type::matches(ty);
+}
+
 llvm::Type* PointerType::getLLVMType() const
 {
 	if (m_contained->getLLVMType()->isVoidTy())
