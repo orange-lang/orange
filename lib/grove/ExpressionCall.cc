@@ -136,6 +136,24 @@ const ASTNode* ExpressionCall::getExpr() const
 	return m_expr;
 }
 
+void ExpressionCall::addArgument(Expression *arg, int idx)
+{
+	assertExists(arg, "Adding an null argument to expression");
+	
+	if (idx == -1)
+	{
+		addChild(arg);
+		m_args.push_back(arg);
+	}
+	else
+	{
+		addChild(arg, idx);
+    	m_args.insert(m_args.begin() + idx, arg);
+	}
+	
+	addDependency(arg);
+}
+
 std::vector<Expression *> ExpressionCall::getArgs() const
 {
 	return m_args;

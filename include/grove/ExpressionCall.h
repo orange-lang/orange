@@ -51,6 +51,11 @@ public:
 	/// Gets the expression we're calling.
 	const ASTNode* getExpr() const;
 	
+	/// Adds an argument to the list of arguments.
+	/// @param arg The argument to add. This class will take ownership.
+	/// @param idx The index to add. If -1, adds to the end.
+	void addArgument(Expression* arg, int idx = -1);
+	
 	/// Gest the arguments in this expression call.
 	std::vector<Expression *> getArgs() const;
 	
