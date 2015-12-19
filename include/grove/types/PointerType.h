@@ -32,6 +32,8 @@ public:
 	
 	virtual Type* getConst() const override;
 	
+	virtual bool matches(Type* ty) const override;
+	
 	virtual llvm::Type* getLLVMType() const override;
 	
 	static PointerType* get(Module* mod, Type* contained, bool isConst = false);
