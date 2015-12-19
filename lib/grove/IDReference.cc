@@ -84,7 +84,6 @@ void IDReference::findDependencies()
 		addChild(access);
 		
 		getModule()->findDependencies(access);
-		getModule()->resolve(access);
 		
 		m_node = access;
 		//throw fatal_error("Can't handle member accesses yet");
