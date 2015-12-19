@@ -90,7 +90,7 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	
 	if (method != nullptr)
 	{
-		params = copyVector(method->getBasicParams());
+		params = copyVector(method->getParams());
 	}
 	
 	// If we don't have a method, we have to manually

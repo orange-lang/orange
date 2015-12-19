@@ -15,18 +15,6 @@
 
 #include <util/assertions.h>
 
-Type* ClassMethod::getBasicType() const
-{
-	/// Just return getType until a this parameter is added.
-	return getType();
-}
-
-std::vector<Parameter *> ClassMethod::getBasicParams() const
-{
-	/// Just return getParams until a this parameter is added.
-	return getParams();
-}
-
 void ClassMethod::findDependencies()
 {
 	Function::findDependencies();
