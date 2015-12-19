@@ -14,6 +14,7 @@
 #include <grove/ASTNode.h>
 #include <grove/Module.h>
 #include <grove/IDReference.h>
+#include <grove/Parameter.h>
 
 #include <grove/types/Type.h>
 
@@ -118,8 +119,9 @@ void MemberAccess::findDependencies()
 					return "Cannot use 'this' outside of a function.";
 				});
 		}
-	
-		addDependency(method);
+		
+		// We need to depend on the this parameter of the method.
+		addDependency(method->getThisParam());
 	}
 }
 
