@@ -46,6 +46,21 @@ std::string ReferenceType::getSignature() const
 	}
 }
 
+Module* ReferenceType::getModule() const
+{
+	if (Type::m_module != nullptr)
+	{
+		return Type::m_module;
+	}
+	
+	if (m_reference != nullptr)
+	{
+		return m_reference->getModule();
+	}
+	
+	return nullptr;
+}
+
 ASTNode* ReferenceType::getReference() const
 {
 	return m_reference;
@@ -87,7 +102,7 @@ void ReferenceType::resolve()
 	assertExists(typed->getType(), "node has no type");
 	m_ref_type = typed->getType();
 	m_type = m_ref_type->getLLVMType();
-	Type::m_module = getModule();
+	Type::m_module = ASTNode::getModule();
 }
 
 ReferenceType::ReferenceType(OString name)

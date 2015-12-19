@@ -49,7 +49,7 @@ bool VarType::isVarTy() const
 
 Type* VarType::getConst() const
 {
-	return VarType::get(m_module, true);
+	return VarType::get(getModule(), true);
 }
 
 VarType* VarType::get(Module* mod, bool isConst)

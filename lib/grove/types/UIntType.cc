@@ -191,7 +191,7 @@ BasicType UIntType::PODTy() const
 
 Type* UIntType::getConst() const
 {
-	return UIntType::get(m_module, m_width, true);
+	return UIntType::get(getModule(), m_width, true);
 }
 
 UIntType* UIntType::get(Module* mod, unsigned int width, bool isConst)

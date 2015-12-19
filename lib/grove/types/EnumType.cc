@@ -73,7 +73,7 @@ Type* EnumType::getRootTy() const
 
 Type* EnumType::getConst() const
 {
-	return EnumType::get(m_module, m_contained, true);
+	return EnumType::get(getModule(), m_contained, true);
 }
 
 EnumType* EnumType::get(Module* mod, Type *contained, bool isConst)

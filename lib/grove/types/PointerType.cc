@@ -84,7 +84,7 @@ Type* PointerType::getRootTy() const
 
 Type* PointerType::getConst() const
 {
-	return PointerType::get(m_module, m_contained, true);
+	return PointerType::get(getModule(), m_contained, true);
 }
 
 PointerType* PointerType::get(Module* mod, Type *contained, bool isConst)

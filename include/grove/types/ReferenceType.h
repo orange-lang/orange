@@ -21,6 +21,8 @@ protected:
 public:
 	OString getName() const;
 	
+	virtual Module* getModule() const override;
+	
 	virtual Type* getComparisonTy() const override;
 	
 	virtual std::string getString() const override;

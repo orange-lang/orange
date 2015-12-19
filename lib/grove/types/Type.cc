@@ -50,6 +50,11 @@ std::string Type::getConstIdentifier()
 	return "U";
 }
 
+Module* Type::getModule() const
+{
+	return m_module;
+}
+
 void Type::copyCasts(const std::type_info &of)
 {
 	for (auto pair : m_cast_map)
@@ -157,7 +162,7 @@ BasicType Type::PODTy() const
 
 Type* Type::getPointerTo() const
 {
-	return PointerType::get(m_module, (Type *)this);
+	return PointerType::get(getModule(), (Type *)this);
 }
 
 Type* Type::getBaseTy() const

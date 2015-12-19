@@ -93,7 +93,7 @@ std::string BoolType::getSignature() const
 
 Type* BoolType::getConst() const
 {
-	return BoolType::get(m_module, true);
+	return BoolType::get(getModule(), true);
 }
 
 bool BoolType::isBoolTy() const

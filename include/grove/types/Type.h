@@ -104,6 +104,9 @@ public:
 	
 	/// Returns whether or not this type is signed.
 	virtual bool isSigned() const;
+	
+	/// Gets the module used with this type.
+	virtual Module* getModule() const;
 
 	/// Determines whether or not type is plain (int, float, not a pointer).
 	virtual bool isPODTy() const;

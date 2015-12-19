@@ -73,7 +73,7 @@ BasicType FloatType::PODTy() const
 
 Type* FloatType::getConst() const
 {
-	return FloatType::get(m_module, true);
+	return FloatType::get(getModule(), true);
 }
 
 FloatType* FloatType::get(Module* mod, bool isConst)

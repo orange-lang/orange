@@ -196,7 +196,7 @@ BasicType IntType::PODTy() const
 
 Type* IntType::getConst() const
 {
-	return IntType::get(m_module, m_width, true);
+	return IntType::get(getModule(), m_width, true);
 }
 
 IntType* IntType::get(Module* mod, unsigned int width, bool isConst)

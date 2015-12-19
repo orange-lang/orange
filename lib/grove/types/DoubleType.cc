@@ -73,7 +73,7 @@ BasicType DoubleType::PODTy() const
 
 Type* DoubleType::getConst() const
 {
-	return DoubleType::get(m_module, true);
+	return DoubleType::get(getModule(), true);
 }
 
 DoubleType* DoubleType::get(Module* mod, bool isConst)

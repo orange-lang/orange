@@ -117,7 +117,7 @@ Type* VariadicArrayType::getRootTy() const
 
 Type* VariadicArrayType::getConst() const
 {
-	return get(m_module, m_contained, m_size, true);
+	return get(getModule(), m_contained, m_size, true);
 }
 
 bool VariadicArrayType::isVariadiclySized() const

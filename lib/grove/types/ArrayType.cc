@@ -108,7 +108,7 @@ Type* ArrayType::getRootTy() const
 
 Type* ArrayType::getConst() const
 {
-	return ArrayType::get(m_module, m_contained, m_size, true);
+	return ArrayType::get(getModule(), m_contained, m_size, true);
 }
 
 ArrayType* ArrayType::get(Module* mod, Type *contained, unsigned int size,
