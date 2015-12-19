@@ -15,6 +15,8 @@
 #include <grove/Module.h>
 #include <grove/IDReference.h>
 
+#include <grove/types/Type.h>
+
 #include <grove/exceptions/code_error.h>
 
 #include <util/assertions.h>
@@ -108,7 +110,8 @@ void MemberAccess::findDependencies()
 	else
 	{
 		auto method = findParent<ClassMethod *>();
-		if (method == nullptr)
+		auto pclass = findParent<ClassDecl *>();
+		if (method == nullptr || pclass == nullptr)
 		{
 			throw code_error(this, [] () -> std::string
 				{
@@ -131,6 +134,11 @@ void MemberAccess::resolve()
 		getModule()->resolve(this_param);
 		
 		m_valued = this_param;
+		
+		if (m_valued->as<Typed *>()->getType()->isVarTy())
+		{
+			throw fatal_error("this param never resolved type");
+		}
 	}
 	
 	setType(m_member->getType());
