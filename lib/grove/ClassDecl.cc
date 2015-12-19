@@ -15,6 +15,7 @@
 #include <grove/Module.h>
 #include <grove/Parameter.h>
 #include <grove/MemberAccess.h>
+#include <grove/MethodAccess.h>
 #include <grove/Constructor.h>
 #include <grove/ExpressionCall.h>
 
@@ -274,14 +275,19 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 		throw fatal_error("ClassDecl::access requires Valued hint");
 	}
 	
-	if (getMember(name) == nullptr)
+	if (hasMethod(name))
 	{
-		return nullptr;
+		return new MethodAccess(this, name);
 	}
 	
-	auto valued = hint->as<const Valued *>();
-	auto memAccess = new MemberAccess(this, (Valued *)valued, name);
-	return memAccess;
+	if (hasMember(name))
+	{
+		auto valued = hint->as<const Valued *>();
+    	auto memAccess = new MemberAccess(this, (Valued *)valued, name);
+    	return memAccess;
+	}
+	
+	return nullptr;
 }
 
 ClassDecl::ClassDecl(OString name)
