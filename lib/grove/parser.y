@@ -128,6 +128,7 @@
 %type <args> opt_arg_list arg_list
 
 /* lowest to highest precedence */
+%left IDENTIFIER
 %right CONST_FLAG
 %left COMMA
 
@@ -694,6 +695,13 @@ call
 		SET_LOCATION($$, @1, @4);
 
 		delete $1;
+		delete $3;
+	}
+	| expression OPEN_PAREN opt_arg_list CLOSE_PAREN
+	{
+		$$ = new ExpressionCall($1, *$3);
+		SET_LOCATION($$, @1, @4);
+
 		delete $3;
 	}
 	;
