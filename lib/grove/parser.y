@@ -245,7 +245,8 @@ function
 
 		if (module->getBlock()->is<ClassDecl *>())
 		{
-			func = new ClassMethod(*$2, *$4);
+			func = new ClassMethod(*$2, module->getBlock()->as<ClassDecl *>(),
+								   *$4);
 		}
 		else
 		{

@@ -30,15 +30,13 @@ void ClassMethod::findDependencies()
 {
 	Function::findDependencies();
 	
-	auto parentClass = getParent()->as<ClassDecl *>();
-	addDependency(parentClass);
+	addDependency(m_class);
 }
 
 void ClassMethod::resolve()
 {
-	auto parentClass = getParent()->as<ClassDecl *>();
-	assertExists(parentClass->getType(), "Class has no defined type");
-	auto this_type = parentClass->getType()->getPointerTo();
+	assertExists(m_class->getType(), "Class has no defined type");
+	auto this_type = m_class->getType()->getPointerTo();
 	
 	auto this_param = new Parameter(this_type, "this");
 	
@@ -49,8 +47,11 @@ void ClassMethod::resolve()
 	Function::resolve();
 }
 
-ClassMethod::ClassMethod(OString name, std::vector<Parameter *> params)
+ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
+						 std::vector<Parameter *> params)
 : Function(name, params)
 {
-	// Do nothing.
+	assertExists(theClass, "ClassMethod created with no class");
+	
+	m_class = theClass;
 }

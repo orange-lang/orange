@@ -11,12 +11,16 @@
 #include "Function.h"
 #include "ClassTopLevel.h"
 
+class ClassDecl;
+
 /**
  * Represents a method for a class.
  * Provides a hint that is the this parameter.
  */
 class ClassMethod : public Function, public ClassTopLevel
 {
+private:
+	ClassDecl* m_class = nullptr;
 public:
 	/// Gets the type of this method without the this parameter
 	virtual Type* getBasicType() const;
@@ -27,5 +31,6 @@ public:
 	virtual void findDependencies() override;
 	virtual void resolve() override;
 	
-	ClassMethod(OString name, std::vector<Parameter *> params);
+	ClassMethod(OString name, ClassDecl* theClass,
+				std::vector<Parameter *> params);
 };
