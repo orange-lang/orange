@@ -159,6 +159,11 @@ FunctionType* FunctionType::get(Module* mod, Type *retType,
 		{
     		throw fatal_error("argument in args was null");
 		}
+		
+		if (arg->getLLVMType()->isVoidTy() && arg->isVarTy() == false)
+		{
+			throw fatal_error("adding void argument to function");
+		}
 	}
 
 	std::string signature = getSignature(retType, args, vaarg);
