@@ -64,5 +64,6 @@ public:
 	/// Constructs a new expression call.
 	/// @param expr A node. Expected implement Typed and Valued.
 	/// @param args The argument list for this call.
-	ExpressionCall(ASTNode* expr, std::vector<Expression *> args);
+	ExpressionCall(ASTNode* expr, std::vector<Expression *> args,
+				   bool addAsChild = false);
 };

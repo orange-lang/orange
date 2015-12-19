@@ -31,7 +31,8 @@ ExpressionCall::ExpressionCall(std::vector<Expression *> args)
 	m_args = args;
 }
 
-ExpressionCall::ExpressionCall(ASTNode* expr, std::vector<Expression *> args)
+ExpressionCall::ExpressionCall(ASTNode* expr, std::vector<Expression *> args,
+							   bool addAsChild)
 {
 	assertExists(expr, "ExpressionCall created with no expression");
 	
@@ -51,6 +52,11 @@ ExpressionCall::ExpressionCall(ASTNode* expr, std::vector<Expression *> args)
 		{
 			return "Calling a typeless element";
 		});
+	}
+	
+	if (addAsChild)
+	{
+		addChild(expr, true);
 	}
 	
 	for (auto& arg : args)
