@@ -154,6 +154,20 @@ bool ClassDecl::hasMethod(const OString &name) const
 	return false;
 }
 
+bool ClassDecl::hasMember(const OString &name) const
+{
+	auto&& members = getMembers();
+	for (const auto& member : members)
+	{
+		if (member->getName() == name)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 MemberVarDecl* ClassDecl::getMember(const OString &name) const
 {
 	auto&& members = getMembers();

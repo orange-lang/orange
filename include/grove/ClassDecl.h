@@ -47,6 +47,8 @@ public:
 	
 	bool hasMethod(const OString& name) const;
 	
+	bool hasMember(const OString& name) const;
+	
 	MemberVarDecl* getMember(const OString& name) const;
 	
 	ClassDecl(OString name);
