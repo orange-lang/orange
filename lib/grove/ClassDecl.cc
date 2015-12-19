@@ -190,7 +190,9 @@ void ClassDecl::resolve()
 		member_types.push_back(member->getType());
 	}
 	
-	setType(ClassType::get(getModule(), m_name, member_types));
+	// Set our type to an explicit reference type to this class.
+	auto classTy = ClassType::get(getModule(), m_name, member_types);
+	setType(new ReferenceType(this, classTy));
 	
 	// Create all of our constructors.
 	auto ctors = getCtors();
