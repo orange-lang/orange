@@ -25,6 +25,8 @@ private:
 public:
 	virtual void findDependencies() override;
 	
+	Parameter* getThisParam() const;
+	
 	ClassMethod(OString name, ClassDecl* theClass,
 				std::vector<Parameter *> params);
 };

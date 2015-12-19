@@ -22,6 +22,11 @@ void ClassMethod::findDependencies()
 	addDependency(m_class);
 }
 
+Parameter* ClassMethod::getThisParam() const
+{
+	return m_this_param;
+}
+
 ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
 						 std::vector<Parameter *> params)
 : Function(name, params)
