@@ -33,6 +33,11 @@ PointerType::PointerType(Type* contained, bool isConst)
 
 llvm::Type* PointerType::getLLVMType() const
 {
+	if (m_contained->getLLVMType()->isVoidTy())
+	{
+		throw fatal_error("Getting a pointer to a void type");
+	}
+	
 	return m_contained->getLLVMType()->getPointerTo();
 }
 
