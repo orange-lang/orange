@@ -8,46 +8,19 @@
 
 #pragma once
 
-#include "Expression.h"
-#include "Accessible.h"
-
-class Valued;
+#include "NodeReference.h"
 
 /**
  * IDReference is a class that can refer to any ID by name.
  */
-class IDReference : public Expression, public Accessible {
+class IDReference : public NodeReference {
 private:
 	OString m_name;
-	
-protected:
-	/// Find the named node in the block.
-	Valued* findNode() const;
-	
-	Valued* m_node = nullptr;
 public:
-	virtual llvm::Value* getPointer() const override;
-	
-	virtual bool hasPointer() const override;
-	
-	virtual bool transferrable() const override;
-	
-	virtual llvm::Value* getValue() const override;
-	
-	virtual llvm::Value* getSize() const override;
-	
 	/// Gets the name that this node is referring to.
 	OString getName() const;
 	
-	virtual bool isAccessible() const override;
-	
-	virtual Expression* access(OString name, const ASTNode* hint) const override;
-	
 	virtual void findDependencies() override;
-	
-	virtual void resolve() override;
-	
-	virtual void build() override;
 	
 	virtual ASTNode* copy() const override;
 	

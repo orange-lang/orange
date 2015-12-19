@@ -22,26 +22,6 @@
 
 #include <util/assertions.h>
 
-llvm::Value* IDReference::getPointer() const
-{
-	return findNode()->getPointer();
-}
-
-bool IDReference::hasPointer() const
-{
-	return findNode()->hasPointer();
-}
-
-bool IDReference::transferrable() const
-{
-	return findNode()->transferrable();
-}
-
-Valued* IDReference::findNode() const
-{
-	return m_node;
-}
-
 OString IDReference::getName() const
 {
 	return m_name;
@@ -51,24 +31,6 @@ ASTNode* IDReference::copy() const
 {
 	return new IDReference(m_name);
 }
-
-
-bool IDReference::isAccessible() const
-{
-	return findNode()->is<Accessible *>() &&
-		findNode()->as<Accessible *>()->isAccessible();
-}
-
-Expression* IDReference::access(OString name, const ASTNode* hint) const
-{
-	if (isAccessible() == false)
-	{
-		return nullptr;
-	}
-	
-	return findNode()->as<Accessible *>()->access(name, hint);
-}
-
 
 void IDReference::findDependencies()
 {
@@ -84,9 +46,7 @@ void IDReference::findDependencies()
 		addChild(access);
 		
 		getModule()->findDependencies(access);
-		
-		m_node = access;
-		//throw fatal_error("Can't handle member accesses yet");
+		setNode(access);
 	}
 	else if (ref->as<ASTNode *>()->findParent<Function *>() !=
 			 findParent<Function *>())
@@ -95,39 +55,12 @@ void IDReference::findDependencies()
 	}
 	else
 	{
-    	m_node = ref->as<Valued *>();
+		setNode(ref->as<ASTNode *>());
 	}
 	
-	addDependency(m_node->as<ASTNode *>());
+	addDependency(getNode()->as<ASTNode *>());
 }
 
-
-void IDReference::resolve()
-{
-	auto typed = m_node->as<Typed *>();
-	auto ty = typed->getType();
-	assertExists(ty, "Could not assign type.");
-
-	setType(ty);
-}
-
-void IDReference::build()
-{
-	for (auto& child : getChildren())
-	{
-		child->build();
-	}
-}
-
-llvm::Value* IDReference::getValue() const
-{
-	return findNode()->getValue();
-}
-
-llvm::Value* IDReference::getSize() const
-{
-	return findNode()->getSize();
-}
 
 IDReference::IDReference(OString name)
 {
