@@ -701,7 +701,7 @@ call
 	}
 	| expression OPEN_PAREN opt_arg_list CLOSE_PAREN
 	{
-		$$ = new ExpressionCall($1, *$3);
+		$$ = new ExpressionCall($1, *$3, true);
 		SET_LOCATION($$, @1, @4);
 
 		delete $3;

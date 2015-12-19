@@ -3090,7 +3090,7 @@ yyreduce:
   case 112:
 #line 703 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
-		(yyval.expr) = new ExpressionCall((yyvsp[(1) - (4)].expr), *(yyvsp[(3) - (4)].args));
+		(yyval.expr) = new ExpressionCall((yyvsp[(1) - (4)].expr), *(yyvsp[(3) - (4)].args), true);
 		SET_LOCATION((yyval.expr), (yylsp[(1) - (4)]), (yylsp[(4) - (4)]));
 
 		delete (yyvsp[(3) - (4)].args);
