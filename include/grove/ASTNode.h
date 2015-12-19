@@ -47,7 +47,11 @@ protected:
 public:
 	/// Gets the module this node resides in.
 	Module* getModule() const;
-
+	
+	/// Overrides the module for this node.
+	/// Use with extreme caution.
+	void setModule(Module* module);
+	
 	/// Gets the parent of this node.
 	ASTNode* getParent() const;
 

@@ -36,6 +36,11 @@ Module* ASTNode::getModule() const
 	return m_module;
 }
 
+void ASTNode::setModule(Module *module)
+{
+	m_module = module;
+}
+
 ASTNode* ASTNode::getParent() const
 {
 	return m_parent;
