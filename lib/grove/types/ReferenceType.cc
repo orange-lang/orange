@@ -98,10 +98,14 @@ void ReferenceType::resolve()
 	
 	assertExists(m_reference, "reference has no value");
 	
-	auto typed = m_reference->as<Typed *>();
-	assertExists(typed->getType(), "node has no type");
-	m_ref_type = typed->getType();
-	m_type = m_ref_type->getLLVMType();
+	if (m_ref_type == nullptr)
+	{
+		auto typed = m_reference->as<Typed *>();
+    	assertExists(typed->getType(), "node has no type");
+    	m_ref_type = typed->getType();
+    	m_type = m_ref_type->getLLVMType();
+	}
+		
 	Type::m_module = ASTNode::getModule();
 }
 
@@ -123,3 +127,16 @@ ReferenceType::ReferenceType(const ASTNode* reference)
 	m_reference = (ASTNode *)reference;
 	m_location = reference->getLocation();
 }
+
+ReferenceType::ReferenceType(const ASTNode* reference, Type* refType)
+: NodeType(false)
+{
+	assertExists(reference, "reference for ReferenceType was emtpy");
+	m_reference = (ASTNode *)reference;
+	m_location = reference->getLocation();
+	
+	assertExists(refType, "refType for ReferenceType was empty");
+	m_ref_type = refType;
+	m_type = m_ref_type->getLLVMType();
+}
+

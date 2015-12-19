@@ -34,4 +34,5 @@ public:
 	
 	ReferenceType(OString name);
 	ReferenceType(const ASTNode* reference);
+	ReferenceType(const ASTNode* reference, Type* refType);
 };
