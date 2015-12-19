@@ -140,6 +140,20 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	getModule()->resolve(func);
 }
 
+bool ClassDecl::hasMethod(const OString &name) const
+{
+	auto&& methods = getMethods();
+	for (const auto& method : methods)
+	{
+		if (method->getName() == name)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 MemberVarDecl* ClassDecl::getMember(const OString &name) const
 {
 	auto&& members = getMembers();
