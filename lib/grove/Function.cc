@@ -284,6 +284,11 @@ void Function::findDependencies()
 		found_ret = true;
 	}
 	
+	for (auto param : getParams())
+	{
+		addDependency(param);
+	}
+	
 	if (retStmts.size() > 0 && found_ret == false)
 	{
 		throw fatal_error("could not determine return type for function");
