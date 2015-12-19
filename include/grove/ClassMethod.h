@@ -21,6 +21,7 @@ class ClassMethod : public Function, public ClassTopLevel
 {
 private:
 	ClassDecl* m_class = nullptr;
+	Parameter* m_this_param = nullptr;
 public:
 	/// Gets the type of this method without the this parameter
 	virtual Type* getBasicType() const;
@@ -29,7 +30,6 @@ public:
 	virtual std::vector<Parameter *> getBasicParams() const;
 	
 	virtual void findDependencies() override;
-	virtual void resolve() override;
 	
 	ClassMethod(OString name, ClassDecl* theClass,
 				std::vector<Parameter *> params);

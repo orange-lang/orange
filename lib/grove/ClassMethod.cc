@@ -11,6 +11,7 @@
 #include <grove/Parameter.h>
 
 #include <grove/types/Type.h>
+#include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
 
@@ -33,25 +34,24 @@ void ClassMethod::findDependencies()
 	addDependency(m_class);
 }
 
-void ClassMethod::resolve()
-{
-	assertExists(m_class->getType(), "Class has no defined type");
-	auto this_type = m_class->getType()->getPointerTo();
-	
-	auto this_param = new Parameter(this_type, "this");
-	
-	addChild(this_param, 0);
-	
-	m_params.insert(m_params.begin(), this_param);
-	
-	Function::resolve();
-}
-
 ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
 						 std::vector<Parameter *> params)
 : Function(name, params)
 {
 	assertExists(theClass, "ClassMethod created with no class");
+	
+	auto ty = new ReferenceType(theClass);
+	m_this_param = new Parameter(ty->getPointerTo(), "this");
+	if (m_params.size() == 0)
+	{
+		addChild(m_this_param);
+	}
+	else
+	{
+		addChild(m_this_param, m_params.at(0), 0);
+	}
+	
+	m_params.insert(m_params.begin(), m_this_param);
 	
 	m_class = theClass;
 }
