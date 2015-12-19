@@ -300,6 +300,7 @@ class_stmt
 	: CLASS IDENTIFIER term
 	{
 		$<stmt>$ = new ClassDecl(*$2);
+		$<stmt>$->setModule(module);
 		module->pushBlock((Block *)$<stmt>$);
 		delete $2;
 	} opt_statements END
