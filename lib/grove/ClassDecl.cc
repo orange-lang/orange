@@ -16,6 +16,7 @@
 #include <grove/Parameter.h>
 #include <grove/MemberAccess.h>
 #include <grove/Constructor.h>
+#include <grove/ExpressionCall.h>
 
 #include <grove/types/VoidType.h>
 
@@ -102,6 +103,19 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	
 	/// @todo: Instantiate members with default values
 	/// @todo: Call the method if one exists.
+	
+	if (method != nullptr)
+	{
+		std::vector<Expression *> arg_list;
+		arg_list.push_back(new IDReference("this"));
+		
+		for (auto param : params)
+		{
+			arg_list.push_back(new IDReference(param->getName()));
+		}
+		
+		func->addStatement(new ExpressionCall(method, arg_list));
+	}
 	
 	// Return nothing.
 	auto ret_stmt = new ReturnStmt(nullptr);
