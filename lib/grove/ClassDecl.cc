@@ -93,6 +93,14 @@ void ClassDecl::createCtor(ClassMethod *method) const
 		params = copyVector(method->getBasicParams());
 	}
 	
+	// If we don't have a method, we have to manually
+	// add in the this param.
+	if (method == nullptr)
+	{
+		auto this_ty = new ReferenceType(this);
+		params.push_back(new Parameter(this_ty->getPointerTo(), "this"));
+	}
+	
 	auto func = new Constructor(this, getName(), params);
 	
 	// The functions return type is this class' type.
@@ -107,11 +115,10 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	if (method != nullptr)
 	{
 		std::vector<Expression *> arg_list;
-		arg_list.push_back(new IDReference("this"));
 		
 		for (auto param : params)
 		{
-			arg_list.push_back(new IDReference(param->getName()));
+			 arg_list.push_back(new IDReference(param->getName()));
 		}
 		
 		func->addStatement(new ExpressionCall(method, arg_list));
