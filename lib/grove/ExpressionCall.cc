@@ -214,12 +214,16 @@ void ExpressionCall::build()
 	auto func_ty = getFunctionTy();
 	auto num_args = func_ty->getArgs().size();
 	
+	for (auto& child : getChildren())
+	{
+		child->build();
+	}
+	
 	for (unsigned int i = 0; i < num_args; i++)
 	{
 		auto param_ty = func_ty->getArgs()[i];
 		
 		auto arg = m_args[i];
-		arg->build();
 		
 		// Cast the argument if it doesn't match the parameter.
 		if (arg->getType() != param_ty)
