@@ -155,7 +155,7 @@ public:
 	
 	/// Gets whether or not this type matches another type.
 	/// Returns true if either of the types are VarType.
-	bool matches(Type* ty) const;
+	virtual bool matches(Type* ty) const;
 	
 	/// Compare the precedence of two types.
 	/// @param source The source type to check.
