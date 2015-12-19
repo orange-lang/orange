@@ -20,6 +20,27 @@ const ClassDecl* Constructor::getClass() const
 	return m_class;
 }
 
+bool Constructor::isGeneric() const
+{
+	for (auto& param : getParams())
+	{
+		// Skip over m_this_param, which will always be
+		// var until resolved.
+		if (param == m_this_param)
+		{
+			continue;
+		}
+		
+		auto ty = param->getType();
+		if (ty->isVarTy())
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 void Constructor::resolve()
 {
 	assertExists(getClass()->getType(), "Class has no defined type");
