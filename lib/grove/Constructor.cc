@@ -11,6 +11,7 @@
 #include <grove/Parameter.h>
 
 #include <grove/types/Type.h>
+#include <grove/types/VarType.h>
 
 #include <util/assertions.h>
 
@@ -23,19 +24,7 @@ void Constructor::resolve()
 {
 	assertExists(getClass()->getType(), "Class has no defined type");
 	auto this_type = getClass()->getType()->getPointerTo();
-	
-	auto this_param = new Parameter(this_type, "this");
-	
-	if (m_params.size() == 0)
-	{
-		addChild(this_param);
-	}
-	else
-	{
-		addChild(this_param, m_params.at(0), 0);
-	}
-	
-	m_params.insert(m_params.begin(), this_param);
+	m_this_param->setType(this_type);
 	
 	Function::resolve();
 }
@@ -46,4 +35,16 @@ Constructor::Constructor(const ClassDecl* theClass, OString name,
 {
 	assertExists(theClass, "Constructor created with no class");
 	m_class = theClass;
+	
+	m_this_param = new Parameter(VarType::get(theClass->getModule()), "this");
+	if (m_params.size() == 0)
+	{
+		addChild(m_this_param);
+	}
+	else
+	{
+		addChild(m_this_param, m_params.at(0), 0);
+	}
+	
+	m_params.insert(m_params.begin(), m_this_param);
 }

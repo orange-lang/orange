@@ -11,11 +11,14 @@
 #include "Function.h"
 
 class ClassDecl;
+class Parameter;
 
 class Constructor : public Function
 {
 private:
 	const ClassDecl* m_class = nullptr;
+	
+	Parameter* m_this_param = nullptr;
 public:
 	const ClassDecl* getClass() const;
 	
