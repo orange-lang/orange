@@ -54,6 +54,19 @@ llvm::Function* Function::getLLVMFunction() const
 	return m_function;
 }
 
+Parameter* Function::getParam(std::string name) const
+{
+	for (auto& param : getParams())
+	{
+		if (param->getName() == name)
+		{
+			return param;
+		}
+	}
+	
+	return nullptr;
+}
+
 std::vector<Type *> Function::getParamTys() const
 {
 	std::vector<Type *> tys;
