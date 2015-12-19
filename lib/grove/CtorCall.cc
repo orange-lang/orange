@@ -64,7 +64,7 @@ void CtorCall::resolve()
 	
 	FunctionCall::resolve();
 	
-	if (getNode()->is<Constructor *>() == false)
+	if (getExpr()->is<Constructor *>() == false)
 	{
 		throw fatal_error("CtorCall not looking at a Constructor!");
 	}

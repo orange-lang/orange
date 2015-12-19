@@ -8,42 +8,24 @@
 
 #pragma once 
 
-#include "Expression.h"
+#include "ExpressionCall.h"
 
-namespace llvm { class Function; }
-
-class FunctionType;
-
-class FunctionCall : public Expression {
+class FunctionCall : public ExpressionCall {
 private:
 	OString m_name;
-	
-	llvm::Function* getFunction() const;
-	FunctionType* getFunctionTy() const;
 	
 	/// Get the function type we're expecting.
 	FunctionType* expectedFunctionTy() const;
 	
-	Typed* m_node = nullptr;
-	
 protected:
-	std::vector<Expression *> m_args;
-	
 	void findNode();
 public:
 	/// Gets the name of the function that we are calling.
 	OString getName() const;
 	
-	/// Gets the arguments in this function call.
-	std::vector<Expression *> getArgs() const;
-	
 	virtual void findDependencies() override;
 	
-	/// Gets node that we're going to call as a function.
-	Typed* getNode() const;
-	
 	virtual void resolve() override;
-	virtual void build() override;
 	
 	virtual ASTNode* copy() const override;
 	
