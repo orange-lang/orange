@@ -246,6 +246,11 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 		throw fatal_error("ClassDecl::access requires Valued hint");
 	}
 	
+	if (getMember(name) == nullptr)
+	{
+		return nullptr;
+	}
+	
 	auto valued = hint->as<const Valued *>();
 	auto memAccess = new MemberAccess(this, (Valued *)valued, name);
 	return memAccess;
