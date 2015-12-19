@@ -8,6 +8,11 @@
 
 #include <grove/types/NodeType.h>
 
+bool NodeType::isNodeTy() const
+{
+	return true;
+}
+
 NodeType::NodeType(bool isConst)
 : Type(isConst)
 {

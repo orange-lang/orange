@@ -121,6 +121,7 @@ public:
 	virtual bool isVoidTy() const;
 	virtual bool isVarTy() const;
 	virtual bool isClassTy() const;
+	virtual bool isNodeTy() const;
 	
 	virtual unsigned int getIntegerBitWidth() const;
 

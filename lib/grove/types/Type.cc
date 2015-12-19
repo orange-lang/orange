@@ -150,6 +150,11 @@ bool Type::isClassTy() const
 	return false;
 }
 
+bool Type::isNodeTy() const
+{
+	return false;
+}
+
 bool Type::isConst() const
 {
 	return m_const;

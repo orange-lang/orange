@@ -17,5 +17,7 @@
 class NodeType : public Type, public ASTNode
 {
 public:
+	virtual bool isNodeTy() const;
+	
 	NodeType(bool isConst);
 };
