@@ -1,0 +1,10 @@
+class TestClass
+	int a
+
+	def TestClass()
+		a = 5
+	end
+end
+
+TestClass instance
+return 1 if instance.a != 5 
