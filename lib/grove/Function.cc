@@ -177,7 +177,12 @@ Genericable* Function::createInstance(const Type *type)
 	assertExists(type, "Type cannot be null");
 	
 	auto func_ty = type->as<FunctionType *>();
+	
+	getModule()->beginCopy();
+	
 	auto clone = copy()->as<Function *>();
+	
+	getModule()->endCopy();
 	
 	if (func_ty->getArgs().size() != clone->getParams().size())
 	{
