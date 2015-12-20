@@ -10,10 +10,11 @@
 
 #include "Expression.h"
 #include "Named.h"
+#include "Accessible.h"
 
 class Type;
 
-class Parameter : public Expression, public Named {
+class Parameter : public Expression, public Named, public Accessible {
 public:
 	virtual llvm::Value* getPointer() const override;
 	
@@ -22,6 +23,11 @@ public:
 	virtual llvm::Value* getValue() const override;
 	
 	virtual ASTNode* copy() const override;
+	
+	virtual bool isAccessible() const override;
+	
+	virtual Expression* access(OString name, const ASTNode* hint)
+		const override;
 	
 	Parameter(Type* type, OString name);
 };

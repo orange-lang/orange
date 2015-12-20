@@ -11,6 +11,7 @@
 #include <grove/exceptions/fatal_error.h>
 
 #include <grove/types/NodeType.h>
+#include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
 
@@ -34,6 +35,37 @@ llvm::Value* Parameter::getValue() const
 ASTNode* Parameter::copy() const
 {
 	return new Parameter(m_type, getName());
+}
+
+bool Parameter::isAccessible() const
+{
+	// We can have members accessed if we're a reference type,
+	// and our reference type is also accessible.
+	if (getType()->getRootTy()->is<ReferenceType *>() == false)
+	{
+		return false;
+	}
+	
+	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
+	return ref->is<Accessible *>() && ref->as<Accessible *>()->isAccessible();
+}
+
+Expression* Parameter::access(OString name, const ASTNode *hint) const
+{
+	if (isAccessible() == false)
+	{
+		return nullptr;
+	}
+	
+	const ASTNode* hint_to_use = hint;
+	if (hint_to_use == nullptr)
+	{
+		hint_to_use = this;
+	}
+	
+	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
+	auto accessible_ref = ref->as<Accessible *>();
+	return accessible_ref->access(name, hint_to_use);
 }
 
 Parameter::Parameter(Type* type, OString name)
