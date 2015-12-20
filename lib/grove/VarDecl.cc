@@ -8,6 +8,7 @@
 
 #include <grove/VarDecl.h>
 #include <grove/Expression.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/UIntType.h>
@@ -129,10 +130,26 @@ void VarDecl::resolve()
 	{
 		assertExists(getExpression()->getType(), "Expression has no type.");
 
-    	if (getType()->isVarTy())
-    	{
-    		setType(getExpression()->getType());
-    	}
+		if (getType()->isVarTy())
+		{
+			setType(getExpression()->getType());
+		}
+	}
+	else if (getType()->getRootTy()->is<NodeType *>())
+	{
+		if (getType()->getRootTy()->as<NodeType *>()->canInitializeVar())
+		{
+			m_expr = getType()->getRootTy()->as<NodeType *>()->initializeVar();
+			addChild(m_expr, true);
+			getModule()->findDependencies(m_expr);
+			getModule()->resolve(m_expr);
+		}
+		else
+		{
+			auto ty = getType();
+			throw code_error(this, [ty] () { return "no default value exists "
+				"for type " + ty->getString(); });
+		}
 	}
 	
 	if (getType()->isVariadiclySized())
