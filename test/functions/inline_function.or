@@ -1,0 +1,8 @@
+def add(var a, var b) -> int32: return a + b
+def subtract(var a, var b): return a - b
+def multiply(var a, var b): return a * b
+
+return 1 if add(3, 10) != 13
+return 1 if add(5, 12) != 17
+return 1 if subtract(20, 15) != 5
+return 1 if multiply(10, 13) != 130
