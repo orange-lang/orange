@@ -165,27 +165,27 @@ BasicType Type::PODTy() const
 	return TYOTHER;
 }
 
-Type* Type::getPointerTo() const
+const Type* Type::getPointerTo() const
 {
 	return PointerType::get(getModule(), (Type *)this);
 }
 
-Type* Type::getBaseTy() const
+const Type* Type::getBaseTy() const
 {
 	return (Type *)this;
 }
 
-Type* Type::getRootTy() const
+const Type* Type::getRootTy() const
 {
 	return (Type *)this;
 }
 
-Type* Type::getConst() const
+const Type* Type::getConst() const
 {
 	throw fatal_error("getConst not overriden for type");
 }
 
-bool Type::matches(Type *ty) const
+bool Type::matches(const Type *ty) const
 {
 	bool does_match = ty == this || ty->isVarTy() || this->isVarTy() ||
 		this->getBaseTy()->isVarTy() || ty->getBaseTy()->isVarTy();
@@ -240,7 +240,7 @@ void Type::define(Module* mod, std::string signature, Type *ty)
 void Type::defineCast(const std::type_info &to, TypeCallback cb)
 {
 	TypeCast tc = [cb](void* build, Valued* val,
-					   Type* from, Type* to) -> llvm::Value*
+					   const Type* from, const Type* to) -> llvm::Value*
 	{
 		assertExists(build, "build must exist");
 		assertExists(from, "from must exist");
@@ -270,13 +270,13 @@ void Type::defineCast(const std::type_info &to, TypeCallback cb)
 
 void Type::defineCast(const std::type_info &to, int cast)
 {
-	TypeCallback cb = [cast](Type*, Type*) -> int
+	TypeCallback cb = [cast](const Type*, const Type*) -> int
 	{
 		return cast;
 	};
 	
 	TypeCast tc = [cb](void* build, Valued* val,
-					 Type* from, Type* to) -> llvm::Value*
+					 const Type* from, const Type* to) -> llvm::Value*
 	{
 		assertExists(build, "build must exist");
 		assertExists(from, "from must exist");
@@ -315,7 +315,7 @@ void Type::defineCast(const std::type_info& to, int cast, TypeCast func)
 {
 	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
 	m_cast_map[tuple] = func;
-	m_cast_ty_map[tuple] = [cast](Type*, Type*) -> int
+	m_cast_ty_map[tuple] = [cast](const Type*, const Type*) -> int
 	{
 		return cast;
 	};
@@ -326,7 +326,7 @@ std::string Type::getSignature() const
 	throw fatal_error("Type::getSignature not overriden");
 }
 
-int Type::castOperation(Type *to)
+int Type::castOperation(const Type *to) const
 {
 	if (this == to)
 	{
@@ -345,7 +345,7 @@ int Type::castOperation(Type *to)
 	return it_cb->second(this, to);
 }
 
-llvm::Value* Type::cast(void *irBuilder, Valued *val, Type *target)
+llvm::Value* Type::cast(void *irBuilder, Valued *val, const Type *target) const
 {
 	TypeTuple key(typeid(*this).hash_code(), typeid(*target).hash_code());
 	

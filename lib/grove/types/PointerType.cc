@@ -16,7 +16,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Instruction.h>
 
-PointerType::PointerType(Type* contained, bool isConst)
+PointerType::PointerType(const Type* contained, bool isConst)
 : Type(isConst)
 {
 	if (contained == nullptr)
@@ -32,7 +32,7 @@ PointerType::PointerType(Type* contained, bool isConst)
 }
 
 
-bool PointerType::matches(Type *ty) const
+bool PointerType::matches(const Type *ty) const
 {
 	// If our contained is a node type, and
 	// we're looking at a pointer type that contains a node
@@ -94,22 +94,22 @@ bool PointerType::isPointerTy() const
 	return true;
 }
 
-Type* PointerType::getBaseTy() const
+const Type* PointerType::getBaseTy() const
 {
 	return m_contained;
 }
 
-Type* PointerType::getRootTy() const
+const Type* PointerType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-Type* PointerType::getConst() const
+const Type* PointerType::getConst() const
 {
 	return PointerType::get(getModule(), m_contained, true);
 }
 
-PointerType* PointerType::get(Module* mod, Type *contained, bool isConst)
+PointerType* PointerType::get(Module* mod, const Type *contained, bool isConst)
 {
 	if (contained == nullptr)
 	{

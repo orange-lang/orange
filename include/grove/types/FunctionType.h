@@ -13,15 +13,16 @@
 class FunctionType : public Type
 {
 private:
-	Type* m_ret_type = nullptr;
+	const Type* m_ret_type = nullptr;
 	bool m_var_arg = false;
 	
-	std::vector<Type*> m_args;
+	std::vector<const Type*> m_args;
 	
-	static std::string getSignature(Type* retType, std::vector<Type*> args,
+	static std::string getSignature(const Type* retType,
+									std::vector<const Type*> args,
 									bool vaarg);
 protected:
-	FunctionType(Type* retType, std::vector<Type*> args, bool vaarg);
+	FunctionType(const Type* retType, std::vector<const Type*> args, bool vaarg);
 public:
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
@@ -30,16 +31,17 @@ public:
 	
 	virtual bool isFunctionTy() const override;
 	
-	virtual Type* getBaseTy() const override;
+	virtual const Type* getBaseTy() const override;
 	
-	virtual Type* getRootTy() const override;
+	virtual const Type* getRootTy() const override;
 	
-	virtual Type* getReturnTy() const;
+	virtual const Type* getReturnTy() const;
 	
-	std::vector<Type *> getArgs() const;
+	std::vector<const Type *> getArgs() const;
 	
 	bool isVarArg() const;
 	
-	static FunctionType* get(Module* mod, Type* retType,
-							 std::vector<Type*> args, bool vaarg = false);
+	static FunctionType* get(Module* mod, const Type* retType,
+							 std::vector<const Type*> args,
+							 bool vaarg = false);
 };

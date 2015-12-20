@@ -19,5 +19,5 @@ class Type;
 class invalid_type_error : public code_error
 {
 public:
-	invalid_type_error(CodeBase* element, std::string desc, Type* ty);
+	invalid_type_error(CodeBase* element, std::string desc, const Type* ty);
 };

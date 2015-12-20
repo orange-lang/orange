@@ -31,17 +31,17 @@ public:
 	/// Throws an error if isGeneric() returns false.
 	/// @param type The type of the instance.
 	/// @return The instance created.
-	virtual Genericable* createInstance(Type* type);
+	virtual Genericable* createInstance(const Type* type);
 	
 	/// Returns an instance with a given list of types.
 	/// Returns nullptr if an instance does not exist,
 	/// Throws an error if isGeneric() returns false.
 	/// @param type The type the instance should have.
-	Genericable* findInstance(Type* type) const;
+	Genericable* findInstance(const Type* type) const;
 	
 	/// Returns true if an instance with a given list of types
 	/// exists. Throws an error if isGeneric() returns false.
 	/// @param type The type the instance should have.
 	/// @return True if an instance exists, false otherwise.
-	bool hasInstance(Type* type) const;
+	bool hasInstance(const Type* type) const;
 };

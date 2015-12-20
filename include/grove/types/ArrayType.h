@@ -15,11 +15,11 @@ class Expression;
 class ArrayType : public Type
 {
 private:
-	Type* m_contained = nullptr;
+	const Type* m_contained = nullptr;
 	unsigned int m_size = 0;
 	
 protected:
-	ArrayType(Type* contained, unsigned int size, bool isConst);
+	ArrayType(const Type* contained, unsigned int size, bool isConst);
 	
 public:
 	virtual std::string getString() const override;
@@ -30,12 +30,12 @@ public:
 	
 	virtual bool isArrayTy() const override;
 	
-	virtual Type* getBaseTy() const override;
+	virtual const Type* getBaseTy() const override;
 	
-	virtual Type* getRootTy() const override;
+	virtual const Type* getRootTy() const override;
 	
-	virtual Type* getConst() const override;
+	virtual const Type* getConst() const override;
 	
-	static ArrayType* get(Module* mod, Type* contained, unsigned int size,
-						  bool isConst = false);
+	static ArrayType* get(Module* mod, const Type* contained,
+						  unsigned int size, bool isConst = false);
 };

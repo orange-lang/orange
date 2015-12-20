@@ -25,5 +25,5 @@ public:
 	
 	virtual void build() override;
 	
-	MemberVarDecl(Type* type, OString name, Expression* expression);
+	MemberVarDecl(const Type* type, OString name, Expression* expression);
 };

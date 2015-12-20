@@ -23,7 +23,7 @@ OString ReferenceType::getName() const
 	return m_name;
 }
 
-Type* ReferenceType::getComparisonTy() const
+const Type* ReferenceType::getComparisonTy() const
 {
 	return m_ref_type;
 }
@@ -166,7 +166,7 @@ ReferenceType::ReferenceType(const ASTNode* reference)
 	m_location = reference->getLocation();
 }
 
-ReferenceType::ReferenceType(const ASTNode* reference, Type* refType)
+ReferenceType::ReferenceType(const ASTNode* reference, const Type* refType)
 : NodeType(false)
 {
 	assertExists(reference, "reference for ReferenceType was emtpy");

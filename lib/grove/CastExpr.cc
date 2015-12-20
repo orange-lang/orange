@@ -44,7 +44,7 @@ void CastExpr::build()
 	setValue(casted);
 }
 
-CastExpr::CastExpr(Type* ty, Expression* expr)
+CastExpr::CastExpr(const Type* ty, Expression* expr)
 {
 	m_type = ty;
 	m_expression = expr;

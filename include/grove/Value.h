@@ -41,7 +41,7 @@ public:
 	double getDouble() const;
 	
 	/// Converts to a new type.
-	void convert(Type* newty);
+	void convert(const Type* newty);
 	
 	/// Gets a new value from this value with the added
 	/// delta as the value.
@@ -58,5 +58,5 @@ public:
 	 * @param str The string to convert to a value.
 	 * @param t The type of the value.
 	 */
-	Value(std::string str, Type* t, int base = 10);
+	Value(std::string str, const Type* t, int base = 10);
 };

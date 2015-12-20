@@ -26,7 +26,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Constants.h>
 
-static int IntToInt(Type* from, Type* to)
+static int IntToInt(const Type* from, const Type* to)
 {
 	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
@@ -42,7 +42,7 @@ static int IntToInt(Type* from, Type* to)
     }
 }
 
-static int IntToUInt(Type* from, Type* to)
+static int IntToUInt(const Type* from, const Type* to)
 {
 	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
@@ -58,8 +58,8 @@ static int IntToUInt(Type* from, Type* to)
 	}
 }
 
-static llvm::Value* BoolCast(void* irBuilder, Valued* val, Type* from,
-							 Type* to)
+static llvm::Value* BoolCast(void* irBuilder, Valued* val, const Type* from,
+							 const Type* to)
 {
 	assertExists(irBuilder, "irbuilder must exist");
 	assertExists(val, "val must exist");

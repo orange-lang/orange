@@ -33,7 +33,7 @@ private:
 	
 	Function* m_instance_of = nullptr;
 protected:
-	Type* m_ret_type = nullptr;
+	const Type* m_ret_type = nullptr;
 	std::vector<Parameter *> m_params;
 	
 	virtual void createFunction();
@@ -57,17 +57,17 @@ public:
 	Parameter* getParam(std::string name) const;
 	
 	/// Gets the list of parameters as a list of types.
-	std::vector<Type *> getParamTys() const;
+	std::vector<const Type *> getParamTys() const;
 	
 	/// Gets the parameters of this function.
 	std::vector<Parameter *> getParams() const;
 	
 	/// Gets this function's return type.
-	Type* getReturnType() const;
+	const Type* getReturnType() const;
 	
 	Function* getInstanceParent() const;
 	
-	void setReturnType(Type* ty);
+	void setReturnType(const Type* ty);
 	
 	virtual OString getMangledName() const override;
 	
@@ -81,7 +81,7 @@ public:
 	
 	virtual bool isGeneric() const override;
 	
-	virtual Genericable* createInstance(Type* type) override;
+	virtual Genericable* createInstance(const Type* type) override;
 	
 	virtual void findDependencies() override;
 	
@@ -89,7 +89,7 @@ public:
 	
 	virtual void build() override;
 	
-	virtual bool matchesType(Type* type) const override;
+	virtual bool matchesType(const Type* type) const override;
 	
 	virtual bool isTerminator() const override;
 	

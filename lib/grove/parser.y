@@ -89,7 +89,7 @@
 	Statement* stmt;
 	Value* val;
 	OString* str;
-	Type* ty;
+	const Type* ty;
 }
 
 %start start

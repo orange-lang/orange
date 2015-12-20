@@ -15,7 +15,7 @@ class ReferenceType : public NodeType
 protected:
 	OString m_name;
 	ASTNode* m_reference = nullptr;
-	Type* m_ref_type = nullptr;
+	const Type* m_ref_type = nullptr;
 	
 	void findReference();
 public:
@@ -23,7 +23,7 @@ public:
 	
 	virtual Module* getModule() const override;
 	
-	virtual Type* getComparisonTy() const override;
+	virtual const Type* getComparisonTy() const override;
 	
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
@@ -38,5 +38,5 @@ public:
 	
 	ReferenceType(OString name);
 	ReferenceType(const ASTNode* reference);
-	ReferenceType(const ASTNode* reference, Type* refType);
+	ReferenceType(const ASTNode* reference, const Type* refType);
 };

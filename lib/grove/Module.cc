@@ -433,7 +433,7 @@ bool Module::hasNamed(OString name, const ASTNode *from,
 	return false;
 }
 
-Named* Module::findNamed(OString name, Type *type, const ASTNode *from,
+Named* Module::findNamed(OString name, const Type *type, const ASTNode *from,
 					   SearchSettings settings) const
 {
 	BlockIterator it(this, from, settings);
@@ -497,7 +497,7 @@ Module::Module()
 	m_main = new MainFunction(this, "_main");
 	
 	auto mainFunctionTy = FunctionType::get(this, IntType::get(this, 32),
-											std::vector<Type*>());
+											std::vector<const Type*>());
 	getMain()->setType(mainFunctionTy);
 	
 	pushBlock(m_main);
@@ -528,7 +528,7 @@ Module::Module(Builder* builder, std::string filePath)
 	m_main = new MainFunction(this, "_main");
 
 	auto mainFunctionTy = FunctionType::get(this, IntType::get(this, 32),
-											std::vector<Type*>());
+											std::vector<const Type*>());
 	getMain()->setType(mainFunctionTy);
 
 

@@ -43,5 +43,5 @@ public:
 	
 	Expression* getExpression() const;
 	
-	VarDecl(Type* type, OString name, Expression* expression);
+	VarDecl(const Type* type, OString name, Expression* expression);
 };

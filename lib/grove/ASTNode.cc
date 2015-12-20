@@ -211,7 +211,7 @@ bool ASTNode::hasNamed(OString name, SearchSettings settings) const
 	return getModule()->hasNamed(name, this, settings);
 }
 
-Named* ASTNode::findNamed(OString name, Type* type,
+Named* ASTNode::findNamed(OString name, const Type* type,
 						  SearchSettings settings)
 const
 {

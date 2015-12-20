@@ -43,7 +43,8 @@ void MemberVarDecl::build()
 	// Do nothing.
 }
 
-MemberVarDecl::MemberVarDecl(Type* type, OString name, Expression* expression)
+MemberVarDecl::MemberVarDecl(const Type* type, OString name,
+							 Expression* expression)
 : VarDecl(type, name, expression)
 {
 	// Do nothing.

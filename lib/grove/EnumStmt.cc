@@ -116,7 +116,7 @@ void EnumStmt::addMember(OString name, Value *val)
 	
 }
 
-EnumStmt::EnumStmt(OString name, Module* mod, Type* baseType)
+EnumStmt::EnumStmt(OString name, Module* mod, const Type* baseType)
 {
 	m_name = name;
 	

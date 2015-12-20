@@ -20,8 +20,9 @@ class Type;
 class binop_error : public code_error
 {
 public:
-	binop_error(CodeBase* element, Type* LHS, OString op, Type* RHS);
+	binop_error(CodeBase* element, const Type* LHS, OString op,
+				const Type* RHS);
 	
-	binop_error(CodeBase* element, Type* LHS, OString op, Type* RHS,
-				Type* expectLHS, Type* expectRHS);
+	binop_error(CodeBase* element, const Type* LHS, OString op,
+				const Type* RHS, const Type* expectLHS, const Type* expectRHS);
 };

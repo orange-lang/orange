@@ -163,7 +163,7 @@ public:
 	
 	/// Returns a named node with a given name, optional type settings
 	/// and search settings from the AST, up to but not including from.
-	Named* findNamed(OString name, Type* type, const ASTNode* from,
+	Named* findNamed(OString name, const Type* type, const ASTNode* from,
 					 SearchSettings settings = SearchSettings()) const;
 	
 	/// Returns all named nodes with a given name in the AST, up to but not

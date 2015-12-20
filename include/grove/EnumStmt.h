@@ -38,7 +38,7 @@ private:
 		}
 	};
 	
-	Type* m_base_type = nullptr;
+	const Type* m_base_type = nullptr;
 	std::vector<EnumValPair> m_members;
 public:
 	virtual ASTNode* copy() const override;
@@ -52,5 +52,5 @@ public:
 	
 	void addMember(OString name, Value* val);
 	
-	EnumStmt(OString name, Module* mod, Type* baseType);
+	EnumStmt(OString name, Module* mod, const Type* baseType);
 };

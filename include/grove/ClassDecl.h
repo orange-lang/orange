@@ -31,7 +31,7 @@ public:
 	virtual void resolve() override;
 	virtual void build() override;
 	
-	virtual bool matchesType(Type* other) const override;
+	virtual bool matchesType(const Type* other) const override;
 	
 	virtual bool isAccessible() const override;
 	virtual Expression* access(OString name, const ASTNode* hint)

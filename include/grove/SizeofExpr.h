@@ -17,7 +17,7 @@ class SizeofExpr : public Expression
 {
 private:
 	Expression* m_expression_arg = nullptr;
-	Type* m_type_arg = nullptr;
+	const Type* m_type_arg = nullptr;
 public:
 	virtual ASTNode* copy() const override;
 	
@@ -25,11 +25,11 @@ public:
 	Expression* getExpressionArg() const;
 	
 	/// Gets the type, if any, to get the size of.
-	Type* getTypeArg() const;
+	const Type* getTypeArg() const;
 	
 	virtual void resolve() override;
 	virtual void build() override;
 	
-	SizeofExpr(Type* typeArg);
+	SizeofExpr(const Type* typeArg);
 	SizeofExpr(Expression* expr);
 };

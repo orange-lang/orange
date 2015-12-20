@@ -10,7 +10,7 @@
 
 #include <llvm/IR/DerivedTypes.h>
 
-ClassType::ClassType(OString& name, std::vector<Type *> members)
+ClassType::ClassType(OString& name, std::vector<const Type *> members)
 : Type(false)
 {
 	m_members = members;
@@ -26,7 +26,7 @@ ClassType::ClassType(OString& name, std::vector<Type *> members)
 }
 
 std::string ClassType::getSignature(const OString& name,
-									const std::vector<Type *> members)
+									const std::vector<const Type *> members)
 {
 	std::stringstream ss;
 	ss << "T" << members.size();
@@ -67,7 +67,7 @@ std::string ClassType::getSignature() const
 }
 
 ClassType* ClassType::get(Module* mod, OString& name,
-						  std::vector<Type *> members)
+						  std::vector<const Type *> members)
 {
 	auto full_name = "class." + name;
 	

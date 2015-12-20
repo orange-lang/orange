@@ -235,7 +235,7 @@ typedef union YYSTYPE
 	Statement* stmt;
 	Value* val;
 	OString* str;
-	Type* ty;
+	const Type* ty;
 }
 /* Line 1529 of yacc.c.  */
 #line 242 "/Users/robert/dev/orange/lib/grove/parser.hh"

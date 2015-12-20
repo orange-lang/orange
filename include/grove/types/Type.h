@@ -45,9 +45,9 @@ class Type;
 class Valued;
 typedef std::tuple<size_t, size_t> TypeTuple;
 
-typedef std::function<int(Type*,Type*)> TypeCallback;
-typedef std::function<llvm::Value*(void*, Valued*, Type*,
-								   Type*)> TypeCast;
+typedef std::function<int(const Type*, const Type*)> TypeCallback;
+typedef std::function<llvm::Value*(void*, Valued*, const Type*,
+								   const Type*)> TypeCast;
 
 const int NO_CAST = 0;
 
@@ -132,16 +132,16 @@ public:
 	virtual const Type* getComparisonTy() const;
 
 	/// Gets a pointer to this type.
-	Type* getPointerTo() const;
+	const Type* getPointerTo() const;
 
 	/// Gets the contained type, or this
-	virtual Type* getBaseTy() const;
+	virtual const Type* getBaseTy() const;
 
 	/// Gets the root type.
-	virtual Type* getRootTy() const;
+	virtual const Type* getRootTy() const;
 	
 	/// Gets a const version of this type.
-	virtual Type* getConst() const;
+	virtual const Type* getConst() const;
 
 	/// Gets the unique signature of this type.
 	virtual std::string getSignature() const;
@@ -155,7 +155,7 @@ public:
 	
 	/// Gets whether or not this type matches another type.
 	/// Returns true if either of the types are VarType.
-	virtual bool matches(Type* ty) const;
+	virtual bool matches(const Type* ty) const;
 	
 	/// Compare the precedence of two types.
 	/// @param source The source type to check.
@@ -168,8 +168,8 @@ public:
 	static bool exprValidForArrSize(Expression* expr);
 	static unsigned int exprAsArrSize(Expression* expr);
 	
-	int castOperation(Type* to);
-	llvm::Value* cast(void *irBuilder, Valued* val, Type* target);
+	int castOperation(const Type* to) const;
+	llvm::Value* cast(void *irBuilder, Valued* val, const Type* target) const;
 
 	virtual ~Type();
 };

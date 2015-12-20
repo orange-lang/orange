@@ -68,7 +68,7 @@ Expression* Parameter::access(OString name, const ASTNode *hint) const
 	return accessible_ref->access(name, hint_to_use);
 }
 
-Parameter::Parameter(Type* type, OString name)
+Parameter::Parameter(const Type* type, OString name)
 {
 	assertExists(type, "Type must not be null");
 	

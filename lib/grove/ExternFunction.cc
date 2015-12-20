@@ -20,9 +20,9 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Function.h>
 
-std::vector<Type *> ExternFunction::getParamTys() const
+std::vector<const Type *> ExternFunction::getParamTys() const
 {
-	std::vector<Type *> tys;
+	std::vector<const Type *> tys;
 	
 	for (auto param : getParams())
 	{
@@ -45,8 +45,8 @@ ASTNode* ExternFunction::copy() const
 
 void ExternFunction::resolve()
 {
-		setType(FunctionType::get(getModule(), m_ret_type, getParamTys(),
-								  m_vararg));
+	setType(FunctionType::get(getModule(), m_ret_type, getParamTys(),
+							  m_vararg));
 }
 
 void ExternFunction::build()
@@ -61,7 +61,7 @@ void ExternFunction::build()
 }
 
 ExternFunction::ExternFunction(OString name, std::vector<Parameter *> params,
-							   Type* retType, bool vararg)
+							   const Type* retType, bool vararg)
 {
 	if (name == "")
 	{

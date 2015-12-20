@@ -29,5 +29,5 @@ public:
 	virtual Expression* access(OString name, const ASTNode* hint)
 		const override;
 	
-	Parameter(Type* type, OString name);
+	Parameter(const Type* type, OString name);
 };

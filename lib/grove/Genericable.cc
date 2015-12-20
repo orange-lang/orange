@@ -21,7 +21,7 @@ bool Genericable::isGeneric() const
 	return false;
 }
 
-Genericable* Genericable::createInstance(Type *type)
+Genericable* Genericable::createInstance(const Type *type)
 {
 	if (isGeneric() == false)
 	{
@@ -31,7 +31,7 @@ Genericable* Genericable::createInstance(Type *type)
 	return nullptr;
 }
 
-Genericable* Genericable::findInstance(Type *type) const
+Genericable* Genericable::findInstance(const Type *type) const
 {
 	if (isGeneric() == false)
 	{
@@ -52,7 +52,7 @@ Genericable* Genericable::findInstance(Type *type) const
 	return nullptr;
 }
 
-bool Genericable::hasInstance(Type *type) const
+bool Genericable::hasInstance(const Type *type) const
 {
 	return findInstance(type) != nullptr;
 }

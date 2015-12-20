@@ -23,7 +23,7 @@ private:
 	
 	/// Returns the named node or a generic instance
 	/// of the named node.
-	Named* namedOrGenericInstance(Named* n, Type* t) const;
+	Named* namedOrGenericInstance(Named* n, const Type* t) const;
 protected:
 	void buildStatements();
 	
@@ -63,7 +63,7 @@ public:
 	 * were found, and using hint does not narrow down results to exactly 
 	 * ony node.
 	 */
-	Named* getNamed(OString name, Type* type, const ASTNode* limit,
+	Named* getNamed(OString name, const Type* type, const ASTNode* limit,
 					SearchSettings settings) const;
 	
 	/**

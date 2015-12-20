@@ -20,20 +20,20 @@ namespace llvm { class Type; }
  */
 class Typed : public ObjectBase {
 protected:
-	Type* m_type = nullptr;
+	const Type* m_type = nullptr;
 public:
 	/// Returns the current type.
-	Type* getType() const;
+	const Type* getType() const;
 
 	/// Returns the LLVM type. Equivalent to getType()->getLLVMType().
 	llvm::Type* getLLVMType() const;
 	
 	/// Determines whether or not this type matches another type.
-	virtual bool matchesType(Type* ty) const;
+	virtual bool matchesType(const Type* ty) const;
 
 	/// Compare the types of a source against a target.
-	static Comparison compare(Typed* source, Typed* target);
+	static Comparison compare(const Typed* source, const Typed* target);
 
 	/// Overrides the type.
-	void setType(Type* type);
+	void setType(const Type* type);
 };

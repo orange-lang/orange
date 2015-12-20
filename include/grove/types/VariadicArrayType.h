@@ -15,12 +15,12 @@ class Expression;
 class VariadicArrayType : public Type
 {
 private:
-	Type* m_contained = nullptr;
+	const Type* m_contained = nullptr;
 	Expression* m_size = nullptr;
 protected:
-	VariadicArrayType(Type* contained, Expression* size, bool isConst);
+	VariadicArrayType(const Type* contained, Expression* size, bool isConst);
 public:
-	static std::string getSignature(Type* conatined, Expression* size,
+	static std::string getSignature(const Type* conatined, Expression* size,
 									bool isConst);
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
@@ -31,16 +31,16 @@ public:
 	
 	virtual bool isArrayTy() const override;
 	
-	virtual Type* getBaseTy() const override;
+	virtual const Type* getBaseTy() const override;
 	
-	virtual Type* getRootTy() const override;
+	virtual const Type* getRootTy() const override;
 	
-	virtual Type* getConst() const override;
+	virtual const Type* getConst() const override;
 	
 	virtual bool isVariadiclySized() const override;
 	
 	virtual std::vector<Expression*> getVariadicSizes() const override;
 	
-	static VariadicArrayType* get(Module* mod, Type* contained,
+	static VariadicArrayType* get(Module* mod, const Type* contained,
 								  Expression* expr, bool isConst = false);
 };

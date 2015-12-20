@@ -18,7 +18,7 @@
 
 const int BOOL_WIDTH = 1;
 
-static int BoolToInt(Type* f, Type* t)
+static int BoolToInt(const Type* f, const Type* t)
 {
 	auto from = f->as<BoolType*>();
 	auto to = t->as<IntType*>();
@@ -37,7 +37,7 @@ static int BoolToInt(Type* f, Type* t)
 	}
 }
 
-static int BoolToUInt(Type* f, Type* t)
+static int BoolToUInt(const Type* f, const Type* t)
 {
 	auto from = f->as<BoolType*>();
 	auto to = t->as<UIntType*>();

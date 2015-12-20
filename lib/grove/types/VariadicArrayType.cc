@@ -17,8 +17,8 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/IRBuilder.h>
 
-static llvm::Value* PointerCast(void* irBuilder, Valued* val, Type* from,
-							 Type* to)
+static llvm::Value* PointerCast(void* irBuilder, Valued* val, const Type* from,
+								const Type* to)
 {
 	assertExists(irBuilder, "irbuilder must exist");
 	assertExists(val, "val must exist");
@@ -33,7 +33,7 @@ static llvm::Value* PointerCast(void* irBuilder, Valued* val, Type* from,
 	return IRB->CreateBitCast(llvm_val, to->getLLVMType());
 }
 
-VariadicArrayType::VariadicArrayType(Type* contained, Expression* size,
+VariadicArrayType::VariadicArrayType(const Type* contained, Expression* size,
 									 bool isConst)
 : Type(isConst)
 {
@@ -69,8 +69,8 @@ std::string VariadicArrayType::getString() const
 	return ss.str();
 }
 
-std::string VariadicArrayType::getSignature(Type *conatined, Expression *size,
-											bool isConst)
+std::string VariadicArrayType::getSignature(const Type *conatined,
+											Expression *size, bool isConst)
 {
 	std::stringstream ss;
 	
@@ -105,17 +105,17 @@ bool VariadicArrayType::isArrayTy() const
 }
 
 
-Type* VariadicArrayType::getBaseTy() const
+const Type* VariadicArrayType::getBaseTy() const
 {
 	return m_contained;
 }
 
-Type* VariadicArrayType::getRootTy() const
+const Type* VariadicArrayType::getRootTy() const
 {
 	return m_contained->getRootTy();
 }
 
-Type* VariadicArrayType::getConst() const
+const Type* VariadicArrayType::getConst() const
 {
 	return get(getModule(), m_contained, m_size, true);
 }
@@ -141,7 +141,7 @@ std::vector<Expression *> VariadicArrayType::getVariadicSizes() const
 	return sizes;
 }
 
-VariadicArrayType* VariadicArrayType::get(Module* mod, Type *contained,
+VariadicArrayType* VariadicArrayType::get(Module* mod, const Type *contained,
 										  Expression *expr, bool isConst)
 {
 	assertExists(contained, "contained cannot be null");

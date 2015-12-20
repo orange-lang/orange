@@ -67,9 +67,9 @@ Parameter* Function::getParam(std::string name) const
 	return nullptr;
 }
 
-std::vector<Type *> Function::getParamTys() const
+std::vector<const Type *> Function::getParamTys() const
 {
-	std::vector<Type *> tys;
+	std::vector<const Type *> tys;
 	
 	for (auto param : getParams())
 	{
@@ -117,7 +117,7 @@ void Function::createReturn()
 	}
 }
 
-Type* Function::getReturnType() const
+const Type* Function::getReturnType() const
 {
 	auto ty = getType();
 	if (ty == nullptr || ty->isFunctionTy() == false)
@@ -128,7 +128,7 @@ Type* Function::getReturnType() const
 	return ty->getBaseTy();
 }
 
-void Function::setReturnType(Type *ty)
+void Function::setReturnType(const Type *ty)
 {
 	m_ret_type = ty;
 }
@@ -167,7 +167,7 @@ bool Function::isGeneric() const
 	return false;
 }
 
-Genericable* Function::createInstance(Type *type)
+Genericable* Function::createInstance(const Type *type)
 {
 	if (isGeneric() == false)
 	{
@@ -213,7 +213,7 @@ Genericable* Function::createInstance(Type *type)
 }
 
 
-bool Function::matchesType(Type *type) const
+bool Function::matchesType(const Type *type) const
 {
 	auto arg_ty = type->as<FunctionType *>();
 	auto param_tys = getParamTys();

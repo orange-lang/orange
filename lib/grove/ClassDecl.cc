@@ -268,7 +268,7 @@ void ClassDecl::resolve()
 	}
 	
 	// Get all the members types
-	std::vector<Type *> member_types;
+	std::vector<const Type *> member_types;
 	
 	for (auto member : getMembers())
 	{
@@ -301,7 +301,7 @@ void ClassDecl::build()
 	buildStatements();
 }
 
-bool ClassDecl::matchesType(Type *other) const
+bool ClassDecl::matchesType(const Type *other) const
 {
 	if (other->isClassTy() == false)
 	{

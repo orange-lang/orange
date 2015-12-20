@@ -23,7 +23,7 @@ std::vector<ASTNode *> Block::getStatements() const
 	return m_statements;
 }
 
-Named* Block::namedOrGenericInstance(Named* n, Type* t) const
+Named* Block::namedOrGenericInstance(Named* n, const Type* t) const
 {
 	if (n->is<Genericable *>() &&
 		n->as<Genericable *>()->isGeneric())
@@ -70,7 +70,7 @@ bool Block::hasNamed(OString name, const ASTNode *limit,
 	return false;
 }
 
-Named* Block::getNamed(OString name, Type* type,
+Named* Block::getNamed(OString name, const Type* type,
 					   const ASTNode *limit, SearchSettings settings) const
 {
 	// First thing to do is get the list of names that match.

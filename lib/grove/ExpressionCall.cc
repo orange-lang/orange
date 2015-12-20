@@ -72,7 +72,7 @@ ExpressionCall::ExpressionCall(ASTNode* expr, std::vector<Expression *> args,
 
 FunctionType* ExpressionCall::expectedFunctionTy() const
 {
-	auto ty_list = std::vector<Type *>();
+	auto ty_list = std::vector<const Type *>();
 	for (auto arg : m_args)
 	{
 		// Cast arrays to pointers so we can pass-by-reference

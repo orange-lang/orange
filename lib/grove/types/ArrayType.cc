@@ -25,8 +25,8 @@
 #include <llvm/IR/IRBuilder.h>
 
 
-static llvm::Value* PointerCast(void* irBuilder, Valued* val, Type* from,
-							 Type* to)
+static llvm::Value* PointerCast(void* irBuilder, Valued* val, const Type* from,
+							 const Type* to)
 {
 	assertExists(irBuilder, "irbuilder must exist");
 	assertExists(val, "val must exist");
@@ -41,7 +41,7 @@ static llvm::Value* PointerCast(void* irBuilder, Valued* val, Type* from,
 	return IRB->CreateBitCast(llvm_val, to->getLLVMType());
 }
 
-ArrayType::ArrayType(Type* contained, unsigned int size, bool isConst)
+ArrayType::ArrayType(const Type* contained, unsigned int size, bool isConst)
 : Type(isConst)
 {
 	if (contained == nullptr)
@@ -96,23 +96,23 @@ bool ArrayType::isArrayTy() const
 	return true;
 }
 
-Type* ArrayType::getBaseTy() const
+const Type* ArrayType::getBaseTy() const
 {
 	return m_contained;
 }
 
-Type* ArrayType::getRootTy() const
+const Type* ArrayType::getRootTy() const
 {
 	return m_contained->getRootTy();
 }
 
-Type* ArrayType::getConst() const
+const Type* ArrayType::getConst() const
 {
 	return ArrayType::get(getModule(), m_contained, m_size, true);
 }
 
-ArrayType* ArrayType::get(Module* mod, Type *contained, unsigned int size,
-						  bool isConst)
+ArrayType* ArrayType::get(Module* mod, const Type *contained,
+						  unsigned int size, bool isConst)
 {
 	if (contained == nullptr)
 	{

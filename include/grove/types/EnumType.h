@@ -13,20 +13,20 @@
 class EnumType : public Type
 {
 private:
-	Type* m_contained = nullptr;
+	const Type* m_contained = nullptr;
 protected:
-	EnumType(Type* contained, bool isConst);
+	EnumType(const Type* contained, bool isConst);
 public:
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
 	virtual bool isSigned() const override;
 	
-	virtual Type* getBaseTy() const override;
+	virtual const Type* getBaseTy() const override;
 	
-	virtual Type* getRootTy() const override;
+	virtual const Type* getRootTy() const override;
 	
-	virtual Type* getConst() const override;
+	virtual const Type* getConst() const override;
 	
-	static EnumType* get(Module* mod, Type* contained, bool isConst = false);
+	static EnumType* get(Module* mod, const Type* contained, bool isConst = false);
 };

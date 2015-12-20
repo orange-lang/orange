@@ -13,7 +13,7 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DerivedTypes.h>
 
-FunctionType::FunctionType(Type* retType, std::vector<Type*> args, bool vaarg)
+FunctionType::FunctionType(const Type* retType, std::vector<const Type*> args, bool vaarg)
 : Type(false)
 {
 	if (retType == nullptr)
@@ -71,7 +71,8 @@ std::string FunctionType::getString() const
 	return ss.str();
 }
 
-std::string FunctionType::getSignature(Type* retType, std::vector<Type*> args,
+std::string FunctionType::getSignature(const Type* retType,
+									   std::vector<const Type*> args,
 									   bool vaarg)
 {
 	if (retType == nullptr)
@@ -125,28 +126,28 @@ bool FunctionType::isVarArg() const
 	return m_var_arg;
 }
 
-Type* FunctionType::getBaseTy() const
+const Type* FunctionType::getBaseTy() const
 {
 	return m_ret_type;
 }
 
-Type* FunctionType::getRootTy() const
+const Type* FunctionType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-Type* FunctionType::getReturnTy() const
+const Type* FunctionType::getReturnTy() const
 {
 	return m_ret_type;
 }
 
-std::vector<Type *> FunctionType::getArgs() const
+std::vector<const Type *> FunctionType::getArgs() const
 {
 	return m_args;
 }
 
-FunctionType* FunctionType::get(Module* mod, Type *retType,
-								std::vector<Type *> args, bool vaarg)
+FunctionType* FunctionType::get(Module* mod, const Type *retType,
+								std::vector<const Type *> args, bool vaarg)
 {
 	if (retType == nullptr)
 	{

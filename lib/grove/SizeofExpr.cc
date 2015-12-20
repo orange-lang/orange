@@ -40,7 +40,7 @@ Expression* SizeofExpr::getExpressionArg() const
 	return m_expression_arg;
 }
 
-Type* SizeofExpr::getTypeArg() const
+const Type* SizeofExpr::getTypeArg() const
 {
 	return m_type_arg;
 }
@@ -105,7 +105,7 @@ void SizeofExpr::build()
 	setValue(val);
 }
 
-SizeofExpr::SizeofExpr(Type* typeArg)
+SizeofExpr::SizeofExpr(const Type* typeArg)
 {
 	assertExists(typeArg, "typeArg cannot be null");
 	

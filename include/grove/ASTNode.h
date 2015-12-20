@@ -173,7 +173,7 @@ public:
 	 * were found, and using hint does not narrow down results to exactly
 	 * one node.
 	 */
-	Named* findNamed(OString name, Type* type,
+	Named* findNamed(OString name, const Type* type,
 					 SearchSettings settings = SearchSettings())
 	const;
 
