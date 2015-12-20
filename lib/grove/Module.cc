@@ -557,7 +557,30 @@ bool Module::isDefinedTypeName(OString name) const
 		return named->is<TypeProvider *>();
 	};
 	
-	return hasNamed(name, getLatestNode(), settings);
+	auto defined = hasNamed(name, getLatestNode(), settings);
+	
+	if (defined == false && m_parsing)
+	{
+		// If we didn't find one, let's see if we can
+		// look up the context stack.
+		auto ctx_copy = m_ctx;
+		while (ctx_copy.empty() == false)
+		{
+			auto block = ctx_copy.top();
+			
+			if (block->is<Named *>() &&
+				block->as<Named *>()->matchesName(name) &&
+				block->is<TypeProvider *>())
+			{
+				return true;
+			}
+			
+			ctx_copy.pop();
+		}
+		
+	}
+	
+	return defined;
 }
 
 Module::~Module()
