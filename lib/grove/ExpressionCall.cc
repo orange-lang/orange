@@ -13,6 +13,8 @@
 #include <grove/types/IntType.h>
 #include <grove/types/UIntType.h>
 #include <grove/types/DoubleType.h>
+#include <grove/types/VarType.h>
+#include <grove/types/PointerType.h>
 
 #include <grove/exceptions/code_error.h>
 
@@ -66,6 +68,26 @@ ExpressionCall::ExpressionCall(ASTNode* expr, std::vector<Expression *> args,
 	
 	m_expr = expr;
 	m_args = args;
+}
+
+FunctionType* ExpressionCall::expectedFunctionTy() const
+{
+	auto ty_list = std::vector<Type *>();
+	for (auto arg : m_args)
+	{
+		// Cast arrays to pointers so we can pass-by-reference
+		if (arg->getType()->isArrayTy())
+		{
+			ty_list.push_back(PointerType::get(getModule(),
+											   arg->getType()->getBaseTy()));
+			continue;
+		}
+		
+		ty_list.push_back(arg->getType());
+	}
+	
+	// Put a wildcard on the return type.
+	return FunctionType::get(getModule(), VarType::get(getModule()), ty_list);
 }
 
 void ExpressionCall::assertCallingFunction(llvm::Value* function)

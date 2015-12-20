@@ -42,6 +42,9 @@ protected:
 	/// which can be set by child classes during resolve.
 	ExpressionCall(std::vector<Expression *> args);
 public:
+	/// Returns the function type this expression expects.
+	FunctionType* expectedFunctionTy() const;
+	
 	/// Gets the expression we're calling as a valued node.
 	const Valued* exprAsValued() const;
 	

@@ -33,26 +33,6 @@ OString FunctionCall::getName() const
 	return m_name;
 }
 
-FunctionType* FunctionCall::expectedFunctionTy() const
-{
-	auto ty_list = std::vector<Type *>();
-	for (auto arg : m_args)
-	{
-		// Cast arrays to pointers so we can pass-by-reference
-		if (arg->getType()->isArrayTy())
-		{
-			ty_list.push_back(PointerType::get(getModule(),
-											   arg->getType()->getBaseTy()));
-			continue;
-		}
-		
-		ty_list.push_back(arg->getType());
-	}
-	
-	// Put a wildcard on the return type.
-	return FunctionType::get(getModule(), VarType::get(getModule()), ty_list);
-}
-
 ASTNode* FunctionCall::copy() const
 {
 	return new FunctionCall(getName(), copyVector(getArgs()));

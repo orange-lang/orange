@@ -13,10 +13,6 @@
 class FunctionCall : public ExpressionCall {
 private:
 	OString m_name;
-	
-	/// Get the function type we're expecting.
-	FunctionType* expectedFunctionTy() const;
-	
 protected:
 	void findNode();
 public:
