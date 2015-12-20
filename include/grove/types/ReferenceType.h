@@ -39,6 +39,7 @@ public:
 	virtual bool canInitializeVar() const override;
 	virtual Expression* initializeVar() const override;
 	
+	virtual ASTNode* copy() const override;
 	virtual const Type* copyType() const override;
 	
 	ReferenceType(OString name);

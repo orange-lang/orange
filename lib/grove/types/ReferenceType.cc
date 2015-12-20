@@ -147,6 +147,40 @@ Expression* ReferenceType::initializeVar() const
 	return new CtorCall(m_name, std::vector<Expression *>());
 }
 
+ASTNode* ReferenceType::copy() const
+{
+	ASTNode* clone = nullptr;
+	
+	if (m_name != "")
+	{
+		clone = new ReferenceType(m_name);
+	}
+	else
+	{
+		const ASTNode* reference = nullptr;
+		if (getModule()->hasCopy(m_reference))
+		{
+			reference = getModule()->getCopy(m_reference);
+		}
+		else
+		{
+			reference = m_reference;
+		}
+		
+		if (m_sticky_ref_type)
+		{
+			clone = new ReferenceType(reference, m_ref_type);
+		}
+		else
+		{
+			clone = new ReferenceType(reference);
+		}
+	}
+	
+	defineCopy(clone);
+	return clone;
+}
+
 const Type* ReferenceType::copyType() const
 {
 	throw fatal_error("NYI: ReferenceType::copyType()");
