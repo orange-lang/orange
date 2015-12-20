@@ -507,6 +507,22 @@ void Module::defineCopy(const ASTNode *original, const ASTNode *copy)
 	m_copy_stack.top()[original] = copy;
 }
 
+bool Module::hasCopy(const ASTNode *original)
+{
+	if (m_copy_stack.size() == 0)
+	{
+		throw fatal_error("Not in a copy state");
+	}
+	
+	auto it = m_copy_stack.top().find(original);
+	if (it != m_copy_stack.top().end())
+	{
+		return true;
+	}
+	
+	return false;
+}
+
 const ASTNode* Module::getCopy(const ASTNode *original)
 {
 	if (m_copy_stack.size() == 0)

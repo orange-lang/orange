@@ -192,6 +192,8 @@ public:
 	/// exists for the original.
 	void defineCopy(const ASTNode* original, const ASTNode* copy);
 	
+	bool hasCopy(const ASTNode* original);
+	
 	/// Gets a copy from the copy map.
 	const ASTNode* getCopy(const ASTNode* original);
 	
