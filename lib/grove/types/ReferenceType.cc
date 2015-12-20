@@ -11,6 +11,8 @@
 #include <grove/Typed.h>
 #include <grove/Named.h>
 #include <grove/TypeProvider.h>
+#include <grove/ClassDecl.h>
+#include <grove/CtorCall.h>
 
 #include <grove/exceptions/code_error.h>
 
@@ -28,8 +30,7 @@ Type* ReferenceType::getComparisonTy() const
 
 std::string ReferenceType::getString() const
 {
-	assertExists(m_ref_type, "ref type never set!");
-	return m_ref_type->getString();
+	return m_name;
 }
 
 std::string ReferenceType::getSignature() const
@@ -123,6 +124,27 @@ void ReferenceType::resolve()
 	}
 		
 	Type::m_module = ASTNode::getModule();
+}
+
+bool ReferenceType::canInitializeVar() const
+{
+	return m_reference->is<ClassDecl *>();
+}
+
+Expression* ReferenceType::initializeVar() const
+{
+	if (canInitializeVar() == false)
+	{
+		return nullptr;
+	}
+	
+	auto class_decl = m_reference->as<ClassDecl *>();
+	if (class_decl->hasDefaultCtor() == false)
+	{
+		return nullptr;
+	}
+	
+	return new CtorCall(m_name, std::vector<Expression *>());
 }
 
 ReferenceType::ReferenceType(OString name)

@@ -33,6 +33,9 @@ public:
 	virtual void findDependencies() override;
 	virtual void resolve() override;
 	
+	virtual bool canInitializeVar() const override;
+	virtual Expression* initializeVar() const override;
+	
 	ReferenceType(OString name);
 	ReferenceType(const ASTNode* reference);
 	ReferenceType(const ASTNode* reference, Type* refType);
