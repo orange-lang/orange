@@ -45,7 +45,7 @@ protected:
 	/// Adds all children as dependencies.
 	void addAllChildrenAsDependencies();
 	
-	void defineCopy(const ASTNode* copy) const;
+	void defineCopy(ASTNode* copy) const;
 public:
 	/// Gets the module this node resides in.
 	Module* getModule() const;
