@@ -17,6 +17,9 @@ protected:
 	ASTNode* m_reference = nullptr;
 	const Type* m_ref_type = nullptr;
 	
+	/// True if constructed with a ref type.
+	bool m_sticky_ref_type = false;
+	
 	void findReference();
 public:
 	OString getName() const;

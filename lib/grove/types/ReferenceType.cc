@@ -181,5 +181,7 @@ ReferenceType::ReferenceType(const ASTNode* reference, const Type* refType)
 	assertExists(refType, "refType for ReferenceType was empty");
 	m_ref_type = refType;
 	m_type = m_ref_type->getLLVMType();
+	
+	m_sticky_ref_type = true;
 }
 
