@@ -89,6 +89,16 @@ void ReferenceType::findReference()
 	m_reference = named->as<ASTNode *>();
 }
 
+void ReferenceType::findDependencies()
+{
+	if (m_reference == nullptr)
+	{
+		findReference();
+	}
+	
+	addDependency(m_reference);
+}
+
 void ReferenceType::resolve()
 {
 	if (m_reference == nullptr)

@@ -30,6 +30,7 @@ public:
 	
 	ASTNode* getReference() const;
 	
+	virtual void findDependencies() override;
 	virtual void resolve() override;
 	
 	ReferenceType(OString name);
