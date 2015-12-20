@@ -13,6 +13,7 @@
 #include <grove/TypeProvider.h>
 #include <grove/ClassDecl.h>
 #include <grove/CtorCall.h>
+#include <grove/Module.h>
 
 #include <grove/exceptions/code_error.h>
 
@@ -183,7 +184,7 @@ ASTNode* ReferenceType::copy() const
 
 const Type* ReferenceType::copyType() const
 {
-	throw fatal_error("NYI: ReferenceType::copyType()");
+	return copy()->as<Type *>();
 }
 
 ReferenceType::ReferenceType(OString name)
