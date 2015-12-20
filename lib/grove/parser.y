@@ -106,7 +106,7 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID THIS AT
 
-%type <nodes> compound_statement var_decl valued
+%type <nodes> compound_statement var_decl valued statement_no_term
 %type <nodes> opt_valued
 %type <node> statement return controls
 %type <exprs> expr_list array_def_list
@@ -200,6 +200,13 @@ opt_statements
 	|
 	;
 
+statement_no_term
+	: structures { $$ = new std::vector<ASTNode*>(); $$->push_back($1); }
+	| controls { $$ = new std::vector<ASTNode*>(); $$->push_back($1); }
+	| expression { $$ = new std::vector<ASTNode*>(); $$->push_back($1); }
+	| var_decl { $$ = $1; }
+	;
+
 statement
 	: structures term { $$ = $1; } /* structures: if, loops, functions, etc */
 	| controls term { $$ = $1; } /* controls: return, break, continue */
@@ -269,6 +276,43 @@ function
 
 		delete $2;
 		delete $4;
+	}
+	| DEF typename_or_identifier OPEN_PAREN opt_param_list CLOSE_PAREN type_hint COLON
+	{
+		Function* func = nullptr;
+
+		if (module->getBlock()->is<ClassDecl *>())
+		{
+			func = new ClassMethod(*$2, module->getBlock()->as<ClassDecl *>(),
+								   *$4);
+		}
+		else
+		{
+			func = new Function(*$2, *$4);
+		}
+
+		func->setReturnType($6);
+
+		module->pushBlock(func);
+		$<stmt>$ = func;
+	}
+	statement_no_term
+	{
+		auto func = (Function *)$<stmt>8;
+
+		for (auto statement : *$9)
+		{
+			func->addStatement(statement);
+		}
+
+		$$ = func;
+        SET_LOCATION($$, @1, @9);
+
+		module->popBlock();
+
+		delete $2;
+		delete $4;
+		delete $9;
 	}
 	;
 
