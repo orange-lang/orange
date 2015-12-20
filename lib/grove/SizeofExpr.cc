@@ -26,7 +26,7 @@ ASTNode* SizeofExpr::copy() const
 {
 	if (getTypeArg() != nullptr)
 	{
-		return new SizeofExpr(getTypeArg());
+		return new SizeofExpr(getTypeArg()->copyType());
 	}
 	else
 	{

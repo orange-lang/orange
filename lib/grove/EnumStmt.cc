@@ -18,7 +18,8 @@
 
 ASTNode* EnumStmt::copy() const
 {
-	auto copied_enum = new EnumStmt(getName(), getModule(), getType()->getBaseTy());
+	auto copied_enum = new EnumStmt(getName(), getModule(),
+									getType()->getBaseTy()->copyType());
 	
 	for (auto pair : m_members)
 	{

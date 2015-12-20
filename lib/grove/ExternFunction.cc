@@ -40,7 +40,7 @@ std::vector<Parameter *> ExternFunction::getParams() const
 ASTNode* ExternFunction::copy() const
 {
 	return new ExternFunction(getName(), copyVector(getParams()),
-							  m_ret_type, m_vararg);
+							  m_ret_type->copyType(), m_vararg);
 }
 
 void ExternFunction::resolve()

@@ -14,7 +14,8 @@
 
 ASTNode* CastExpr::copy() const
 {
-	return new CastExpr(getType(), getExpression()->copy()->as<Expression *>());
+	return new CastExpr(getType()->copyType(),
+						getExpression()->copy()->as<Expression *>());
 }
 
 Expression* CastExpr::getExpression() const

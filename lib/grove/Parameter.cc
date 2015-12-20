@@ -34,7 +34,7 @@ llvm::Value* Parameter::getValue() const
 
 ASTNode* Parameter::copy() const
 {
-	return new Parameter(m_type, getName());
+	return new Parameter(m_type->copyType(), getName());
 }
 
 bool Parameter::isAccessible() const

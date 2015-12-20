@@ -49,11 +49,12 @@ ASTNode* VarDecl::copy() const
 {
 	if (m_expr)
 	{
-		return new VarDecl(m_type, m_name, m_expr->copy()->as<Expression *>());
+		return new VarDecl(m_type->copyType(), m_name,
+						   m_expr->copy()->as<Expression *>());
 	}
 	else
 	{
-		return new VarDecl(m_type, m_name, nullptr);
+		return new VarDecl(m_type->copyType(), m_name, nullptr);
 	}
 }
 
