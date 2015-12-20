@@ -18,6 +18,19 @@
 
 #include <llvm/IR/IRBuilder.h>
 
+ASTNode* CtorCall::copy() const
+{
+	std::vector<Expression *> args;
+	
+	// Copy everything past the this arg
+	for (unsigned int i = 1; i < m_args.size(); i++)
+	{
+		args.push_back(m_args.at(i)->copy()->as<Expression *>());
+	}
+	
+	return new CtorCall(getName(), args);
+}
+
 bool CtorCall::hasPointer() const
 {
 	return true;

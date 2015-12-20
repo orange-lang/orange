@@ -19,6 +19,8 @@ private:
 	
 	ClassDecl* findClass() const;
 public:
+	virtual ASTNode* copy() const override;
+	
 	virtual bool hasPointer() const override;
 	virtual llvm::Value* getPointer() const override;
 	virtual llvm::Value* getValue() const override;
