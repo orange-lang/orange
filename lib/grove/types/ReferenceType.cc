@@ -116,6 +116,11 @@ void ReferenceType::resolve()
     	m_ref_type = typed->getType();
     	m_type = m_ref_type->getLLVMType();
 	}
+	
+	if (m_type == nullptr)
+	{
+		throw fatal_error("Never got type for ReferenceType!");
+	}
 		
 	Type::m_module = ASTNode::getModule();
 }
