@@ -7,6 +7,7 @@
 */
 
 #include <grove/ExpressionCall.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
@@ -19,6 +20,7 @@
 #include <grove/exceptions/code_error.h>
 
 #include <util/assertions.h>
+#include <util/copy.h>
 
 #include <llvm/IR/IRBuilder.h>
 
@@ -112,12 +114,26 @@ const FunctionType* ExpressionCall::getFunctionTy() const
 
 ASTNode* ExpressionCall::copy() const
 {
-	/// @todo Figure out how to copy nodes that are constructed
-	/// with references to other nodes.
-	///
-	/// We can't just copy m_expr; we need to construct
-	/// a copy with
-	throw fatal_error("NYI: ExpressionCall::copy()");
+	ASTNode* expr = nullptr;
+	
+	if (isChild(m_expr))
+	{
+		expr = m_expr->copy();
+	}
+	else if (getModule()->hasCopy(m_expr))
+	{
+		expr = getModule()->getCopy(m_expr);
+	}
+	else
+	{
+		expr = m_expr;
+	}
+	
+	auto clone = new ExpressionCall(expr, copyVector(getArgs()),
+									isChild(m_expr));
+	
+	defineCopy(clone);
+	return clone;
 }
 
 void ExpressionCall::setExpr(ASTNode *expr)
