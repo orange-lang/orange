@@ -69,6 +69,7 @@ ASTNode* ReferenceType::getReference() const
 void ReferenceType::findReference()
 {
 	SearchSettings settings;
+	settings.includeLimit = false;
 	settings.filter = [] (Named *named)
 	{
 		return named->is<TypeProvider *>();
