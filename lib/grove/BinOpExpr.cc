@@ -22,6 +22,12 @@ bool BinOpExpr::areTypesCompatible() const
 		return true;
 	}
 	
+	if (getLHS()->getType() && getRHS()->getType()
+		&& getLHS()->matchesType(getRHS()->getType()))
+	{	
+		return true;
+	}
+	
 	// If they're not the same type, determine if we can
 	// cast them.
 	return areTypesCastable();
