@@ -147,6 +147,11 @@ Expression* ReferenceType::initializeVar() const
 	return new CtorCall(m_name, std::vector<Expression *>());
 }
 
+const Type* ReferenceType::copyType() const
+{
+	throw fatal_error("NYI: ReferenceType::copyType()");
+}
+
 ReferenceType::ReferenceType(OString name)
 : NodeType(false)
 {

@@ -36,6 +36,8 @@ public:
 	
 	virtual const Type* getConst() const override;
 	
+	virtual const Type* copyType() const override;
+	
 	static ArrayType* get(Module* mod, const Type* contained,
 						  unsigned int size, bool isConst = false);
 };

@@ -30,6 +30,11 @@ EnumType::EnumType(const Type* contained, bool isConst)
 	copyCasts(typeid(*contained));
 }
 
+const Type* EnumType::copyType() const
+{
+	return EnumType::get(getModule(), m_contained->copyType(), isConst());
+}
+
 std::string EnumType::getString() const
 {
 	std::stringstream ss;

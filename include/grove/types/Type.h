@@ -170,6 +170,10 @@ public:
 	
 	int castOperation(const Type* to) const;
 	llvm::Value* cast(void *irBuilder, Valued* val, const Type* target) const;
+	
+	/// Returns a copy of this type, if this type contains a NodeType.
+	/// Otherwise, just returns this.
+	virtual const Type* copyType() const;
 
 	virtual ~Type();
 };

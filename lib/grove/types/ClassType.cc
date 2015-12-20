@@ -10,8 +10,8 @@
 
 #include <llvm/IR/DerivedTypes.h>
 
-ClassType::ClassType(OString& name, std::vector<const Type *> members)
-: Type(false)
+ClassType::ClassType(const OString& name, std::vector<const Type *> members)
+: Type(false), m_name(name)
 {
 	m_members = members;
 	
@@ -21,8 +21,18 @@ ClassType::ClassType(OString& name, std::vector<const Type *> members)
 		elements.push_back(member->getLLVMType());
 	}
 	
-	m_name = name;
 	m_type = llvm::StructType::create(*m_context, elements, m_name.str());
+}
+
+const Type* ClassType::copyType() const
+{
+	std::vector<const Type*> members;
+	for (auto& member : m_members)
+	{
+		members.push_back(member->copyType());
+	}
+	
+	return ClassType::get(getModule(), m_name, members);
 }
 
 std::string ClassType::getSignature(const OString& name,
@@ -66,7 +76,7 @@ std::string ClassType::getSignature() const
 	return getSignature(m_name, m_members);
 }
 
-ClassType* ClassType::get(Module* mod, OString& name,
+ClassType* ClassType::get(Module* mod, const OString& name,
 						  std::vector<const Type *> members)
 {
 	auto full_name = "class." + name;

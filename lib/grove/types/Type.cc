@@ -470,6 +470,11 @@ std::vector<Expression *> Type::getVariadicSizes() const
 	return std::vector<Expression *>();
 }
 
+const Type* Type::copyType() const
+{
+	return this;
+}
+
 Type::Type(bool isConst)
 {
 	m_context = & llvm::getGlobalContext();

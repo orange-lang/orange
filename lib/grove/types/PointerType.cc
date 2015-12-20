@@ -31,6 +31,11 @@ PointerType::PointerType(const Type* contained, bool isConst)
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
 }
 
+const Type* PointerType::copyType() const
+{
+	return PointerType::get(getModule(), m_contained->copyType(),
+							isConst());
+}
 
 bool PointerType::matches(const Type *ty) const
 {

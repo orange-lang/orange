@@ -56,6 +56,13 @@ VariadicArrayType::VariadicArrayType(const Type* contained, Expression* size,
 			   PointerCast);
 }
 
+const Type* VariadicArrayType::copyType() const
+{
+	return VariadicArrayType::get(getModule(), m_contained->copyType(),
+								  m_size->copy()->as<Expression *>(),
+								  isConst());
+}
+
 std::string VariadicArrayType::getString() const
 {
 	std::stringstream ss;

@@ -36,5 +36,7 @@ public:
 	
 	virtual llvm::Type* getLLVMType() const override;
 	
+	virtual const Type* copyType() const override;
+	
 	static PointerType* get(Module* mod, const Type* contained, bool isConst = false);
 };

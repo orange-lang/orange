@@ -41,6 +41,8 @@ public:
 	
 	bool isVarArg() const;
 	
+	virtual const Type* copyType() const override;
+	
 	static FunctionType* get(Module* mod, const Type* retType,
 							 std::vector<const Type*> args,
 							 bool vaarg = false);

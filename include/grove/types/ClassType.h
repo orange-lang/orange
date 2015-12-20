@@ -15,9 +15,9 @@ class ClassType : public Type
 {
 private:
 	std::vector<const Type *> m_members;
-	OString m_name;
+	const OString m_name;
 protected:
-	ClassType(OString& name, std::vector<const Type *> members);
+	ClassType(const OString& name, std::vector<const Type *> members);
 public:
 	static std::string getSignature(const OString& name,
 									const std::vector<const Type *> members);
@@ -27,6 +27,8 @@ public:
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
-	static ClassType* get(Module* mod, OString& name,
+	virtual const Type* copyType() const override;
+	
+	static ClassType* get(Module* mod, const OString& name,
 						  std::vector<const Type *> members);
 };

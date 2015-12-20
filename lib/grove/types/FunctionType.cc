@@ -52,6 +52,18 @@ FunctionType::FunctionType(const Type* retType, std::vector<const Type*> args, b
 	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, vaarg);
 }
 
+const Type* FunctionType::copyType() const
+{
+	std::vector<const Type*> args;
+	for (auto& arg : m_args)
+	{
+		args.push_back(arg->copyType());
+	}
+	
+	return FunctionType::get(getModule(), m_ret_type->copyType(),
+							 args, m_var_arg);
+}
+
 std::string FunctionType::getString() const
 {
 	std::stringstream ss;

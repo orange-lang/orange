@@ -58,6 +58,12 @@ ArrayType::ArrayType(const Type* contained, unsigned int size, bool isConst)
 			   	PointerCast);
 }
 
+const Type* ArrayType::copyType() const
+{
+	return ArrayType::get(getModule(), m_contained->copyType(),
+						  m_size, isConst());
+}
+
 std::string ArrayType::getString() const
 {
 	std::stringstream ss;
