@@ -14,6 +14,7 @@
 #include <grove/ReferenceExpr.h>
 
 #include <grove/types/Type.h>
+#include <grove/types/FunctionType.h>
 
 #include <grove/exceptions/code_error.h>
 
@@ -66,7 +67,7 @@ void MethodAccess::resolve()
 	settings.includeLimit = false;
 	settings.searchWholeTree = false;
 	
-	auto named = m_class->getNamed(m_name, nullptr, nullptr, settings);
+	auto named = m_class->getNamed(m_name, call->expectedFunctionTy(), nullptr, settings);
 	setNode(named->as<ASTNode *>());
 	
 	NodeReference::resolve();
