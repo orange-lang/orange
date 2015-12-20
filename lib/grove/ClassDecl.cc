@@ -282,6 +282,8 @@ void ClassDecl::resolve()
 	setType(new ReferenceType(this, classTy));
 	
 	// Create all of our constructors.
+	getModule()->beginCopy();
+	
 	auto ctors = getCtors();
 	if (ctors.size() == 0)
 	{
@@ -295,6 +297,8 @@ void ClassDecl::resolve()
 			createCtor(ctor);
 		}
 	}
+	
+	getModule()->endCopy();
 }
 
 void ClassDecl::build()
