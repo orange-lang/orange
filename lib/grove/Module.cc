@@ -486,6 +486,53 @@ void Module::addChild(ASTNode *child)
 	}
 }
 
+void Module::beginCopy()
+{
+	m_copy_stack.push(CopyMap());
+}
+
+void Module::defineCopy(const ASTNode *original, const ASTNode *copy)
+{
+	if (m_copy_stack.size() == 0)
+	{
+		throw fatal_error("Not in a copy state");
+	}
+	
+	auto it = m_copy_stack.top().find(original);
+	if (it != m_copy_stack.top().end())
+	{
+		throw fatal_error("Redefining a copy mapping");
+	}
+	
+	m_copy_stack.top()[original] = copy;
+}
+
+const ASTNode* Module::getCopy(const ASTNode *original)
+{
+	if (m_copy_stack.size() == 0)
+	{
+		throw fatal_error("Not in a copy state");
+	}
+	
+	auto it = m_copy_stack.top().find(original);
+	if (it != m_copy_stack.top().end())
+	{
+		return it->second;
+	}
+	
+	throw fatal_error("Copy mapping not found");
+}
+
+void Module::endCopy()
+{
+	if (m_copy_stack.size() == 0)
+	{
+		throw fatal_error("copy state stack is empty");
+	}
+	
+	m_copy_stack.pop();
+}
+
 Module::Module()
 {
 	m_namespace = new Namespace("local");

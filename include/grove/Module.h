@@ -11,6 +11,7 @@
 #include <string>
 #include <stack>
 #include <vector>
+#include <map>
 
 #include "SearchSettings.h"
 #include "OString.h"
@@ -38,6 +39,8 @@ namespace llvm {
 
 typedef llvm::IRBuilder<true, llvm::ConstantFolder,
 llvm::IRBuilderDefaultInserter<true> > IRBuilder;
+
+typedef std::map<const ASTNode *, const ASTNode *> CopyMap;
 
 /**
  * Module hosts methods for compiling a specific object file. It accepts 
@@ -67,6 +70,12 @@ private:
 	// Children of the module are nodes that are used in the AST
 	// but have no parents, and are destroyed here.
 	std::vector<ASTNode *> m_children;
+	
+	// A stack of copy states. Nodes that initiate copy on nodes request
+	// for a new copy stack, which nodes will register their created copies
+	// to the stack. Then, nodes that were referencing the original node
+	// can look at the copy stack and get their newly created copy.
+	std::stack<CopyMap> m_copy_stack;
 	
 	/// Indicates whether or not we are currently parsing.
 	bool m_parsing = false;
@@ -174,6 +183,21 @@ public:
 	/// Returns whether or not a name is a defined type name.
 	/// Uses the block stack to search up the AST.
 	bool isDefinedTypeName(OString name) const;
+	
+	/// Informs the module that we are about to copy some nodes.
+	/// Adds a new CopyMap onto a stack.
+	void beginCopy();
+	
+	/// Defines a copy mapping. Throws an error if one already
+	/// exists for the original.
+	void defineCopy(const ASTNode* original, const ASTNode* copy);
+	
+	/// Gets a copy from the copy map.
+	const ASTNode* getCopy(const ASTNode* original);
+	
+	/// Informs the module that we are finished copying.
+	/// Removes the top CopyMap from the stack.
+	void endCopy();
 	
 	/// Output built code into an object file.
 	/// Returns the path of the object file.
