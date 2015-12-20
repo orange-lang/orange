@@ -9,8 +9,9 @@
 #pragma once 
 
 #include "Expression.h"
+#include "Accessible.h"
 
-class ArrayAccessExpr : public Expression
+class ArrayAccessExpr : public Expression, public Accessible
 {
 private:
 	Expression* m_array = nullptr;
@@ -28,6 +29,11 @@ public:
 	
 	virtual llvm::Value* getValue() const override;
 	virtual llvm::Value* getPointer() const override;
+	
+	virtual bool isAccessible() const override;
+	
+	virtual Expression* access(OString name, const ASTNode* hint)
+		const override;
 	
 	virtual void resolve() override;
 	virtual void build() override;

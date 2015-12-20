@@ -12,6 +12,7 @@
 #include <grove/exceptions/invalid_type_error.h>
 
 #include <grove/types/Type.h>
+#include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
 
@@ -33,6 +34,37 @@ Expression* ArrayAccessExpr::getArray() const
 Expression* ArrayAccessExpr::getIndex() const
 {
 	return m_idx;
+}
+
+bool ArrayAccessExpr::isAccessible() const
+{
+	// We can have members accessed if we're a reference type,
+	// and our reference type is also accessible.
+	if (getType()->getRootTy()->is<ReferenceType *>() == false)
+	{
+		return false;
+	}
+	
+	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
+	return ref->is<Accessible *>() && ref->as<Accessible *>()->isAccessible();
+}
+
+Expression* ArrayAccessExpr::access(OString name, const ASTNode *hint) const
+{
+	if (isAccessible() == false)
+	{
+		return nullptr;
+	}
+	
+	const ASTNode* hint_to_use = hint;
+	if (hint_to_use == nullptr)
+	{
+		hint_to_use = this;
+	}
+	
+	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
+	auto accessible_ref = ref->as<Accessible *>();
+	return accessible_ref->access(name, hint_to_use);
 }
 
 void ArrayAccessExpr::resolve()
