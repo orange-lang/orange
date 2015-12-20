@@ -49,6 +49,8 @@ llvm::Value* AccessExpr::getPointer() const
 
 void AccessExpr::resolve()
 {
+	getModule()->beginCopy();
+	
 	if (getLHS()->ASTNode::is<Accessible *>() == false ||
 		getLHS()->ASTNode::as<Accessible *>()->isAccessible() == false)
 	{
@@ -78,6 +80,8 @@ void AccessExpr::resolve()
 	getModule()->resolve(m_accessed);
 	
 	setType(m_accessed->getType());
+	
+	getModule()->endCopy();
 }
 
 void AccessExpr::build()
