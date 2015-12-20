@@ -44,8 +44,21 @@ bool NodeReference::transferrable() const
 
 ASTNode* NodeReference::copy() const
 {
-	/// @todo: Handle creating a NodeReference
-	throw fatal_error("NYI: NodeReference::copy");
+	ASTNode* node = nullptr;
+	
+	if (getModule()->hasCopy(m_node))
+	{
+		node = getModule()->getCopy(m_node);
+	}
+	else
+	{
+		node = m_node;
+	}
+	
+	auto clone = new NodeReference(node);
+	
+	defineCopy(clone);
+	return clone;
 }
 
 bool NodeReference::isAccessible() const
