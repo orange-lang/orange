@@ -43,6 +43,8 @@ public:
 	/// Gets methods where the name is equal to the class name
 	std::vector<ClassMethod*> getCtors() const;
 	
+	bool hasDefaultCtor() const;
+	
 	virtual void findDependencies() override;
 	
 	bool hasMethod(const OString& name) const;

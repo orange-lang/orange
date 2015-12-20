@@ -85,6 +85,39 @@ std::vector<ClassMethod *> ClassDecl::getCtors() const
 	return ret;
 }
 
+bool ClassDecl::hasDefaultCtor() const
+{
+	auto&& ctors = getCtors();
+	if (ctors.size() == 0)
+	{
+		return true;
+	}
+	
+	// For each ctor, see if there's a ctor that has params that are only
+	// the this parameter. 
+	for (auto& ctor : ctors)
+	{
+		bool defaultable = true;
+		
+		auto&& params = ctor->getParams();
+		for (auto param : params)
+		{
+			if (param != ctor->getThisParam())
+			{
+				defaultable = false;
+				break;
+			}
+		}
+		
+		if (defaultable == true)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 void ClassDecl::createCtor(ClassMethod *method) const
 {
 	assertExists(getParent(), "class has no parent!");
