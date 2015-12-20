@@ -18,6 +18,8 @@
 #include <grove/MethodAccess.h>
 #include <grove/Constructor.h>
 #include <grove/ExpressionCall.h>
+#include <grove/AccessExpr.h>
+#include <grove/BinOpAssign.h>
 
 #include <grove/types/VoidType.h>
 
@@ -107,11 +109,26 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	// The functions return type is this class' type.
 	func->setReturnType(VoidType::get(getModule()));
 	
-	// The class constructor needs to nstantiate all of its variables that have
+	// The class constructor needs to instantiate all of its variables that have
 	// values, and call the method, if one exists.
 	
-	/// @todo: Instantiate members with default values
-	/// @todo: Call the method if one exists.
+	auto&& members = getMembers();
+	for (auto& member : members)
+	{
+		if (member->getExpression() == nullptr)
+		{
+			continue;
+		}
+		
+		// this.[member] = member->getExpression()
+		
+		auto this_ref = new IDReference("this");
+		auto access = new AccessExpr(this_ref, member->getName());
+		auto value = member->getExpression()->copy()->as<Expression *>();
+		auto assign = new BinOpAssign(access, "=", value);
+		
+		func->addStatement(assign);
+	}
 	
 	if (method != nullptr)
 	{
