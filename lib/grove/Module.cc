@@ -491,7 +491,7 @@ void Module::beginCopy()
 	m_copy_stack.push(CopyMap());
 }
 
-void Module::defineCopy(const ASTNode *original, const ASTNode *copy)
+void Module::defineCopy(const ASTNode *original, ASTNode *copy)
 {
 	if (m_copy_stack.size() == 0)
 	{
@@ -523,7 +523,7 @@ bool Module::hasCopy(const ASTNode *original)
 	return false;
 }
 
-const ASTNode* Module::getCopy(const ASTNode *original)
+ASTNode* Module::getCopy(const ASTNode *original)
 {
 	if (m_copy_stack.size() == 0)
 	{
