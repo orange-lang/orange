@@ -67,6 +67,8 @@ public:
 	/// Gets the IR builder in the module.
 	LLVMBuilder* IRBuilder() const;
 
+	bool isChild(const ASTNode* child) const;
+	
 	void addDependency(ASTNode* dependency);
 	
 	void addChild(ASTNode* child, int idx, bool mustExist = false);

@@ -89,6 +89,12 @@ bool ASTNode::dependsOn(ASTNode *node) const
 	return false;
 }
 
+bool ASTNode::isChild(const ASTNode *child) const
+{
+	auto it = std::find(m_children.begin(), m_children.end(), child);
+	return it != m_children.end();
+}
+
 void ASTNode::addDependency(ASTNode *dependency)
 {
 	if (dependency != nullptr)
