@@ -19,5 +19,8 @@ class NodeType : public Type, public ASTNode
 public:
 	virtual bool isNodeTy() const;
 	
+	virtual bool canInitializeVar() const;
+	virtual Expression* initializeVar() const;
+	
 	NodeType(bool isConst);
 };

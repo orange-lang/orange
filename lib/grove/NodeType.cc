@@ -13,6 +13,16 @@ bool NodeType::isNodeTy() const
 	return true;
 }
 
+bool NodeType::canInitializeVar() const
+{
+	return false;
+}
+
+Expression* NodeType::initializeVar() const
+{
+	return nullptr;
+}
+
 NodeType::NodeType(bool isConst)
 : Type(isConst)
 {
