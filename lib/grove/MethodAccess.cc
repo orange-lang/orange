@@ -59,6 +59,13 @@ void MethodAccess::resolve()
 		getModule()->resolve(this_arg);
 	}
 	
+	// We depend on all the arguments of the function, so
+	// let's just ask module to resolve them for us.
+	for (auto arg : call->getArgs())
+	{
+		getModule()->resolve(arg);
+	}
+	
 	call->addArgument(this_arg, 0);
 	
 	SearchSettings settings;
