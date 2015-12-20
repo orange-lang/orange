@@ -64,7 +64,10 @@ ASTNode* BinOpCompare::copy() const
 	auto copiedLHS = getLHS()->copy()->as<Expression *>();
 	auto copiedRHS = getRHS()->copy()->as<Expression *>();
 	
-	return new BinOpCompare(copiedLHS, getOperator(), copiedRHS);
+	auto copy = new BinOpCompare(copiedLHS, getOperator(), copiedRHS);
+	defineCopy(copy);
+	
+	return copy;
 }
 
 void BinOpCompare::resolve()

@@ -263,6 +263,7 @@ ASTNode* Function::copy() const
 {
 	auto func = new Function(getModule(), getName(), copyVector(getParams()));
 	func->copyStatements(this);
+	defineCopy(func);
 	return func;
 }
 

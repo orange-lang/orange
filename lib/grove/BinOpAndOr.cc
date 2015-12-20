@@ -25,7 +25,9 @@ ASTNode* BinOpAndOr::copy() const
 {
 	auto copiedLHS = getLHS()->copy()->as<Expression *>();
 	auto copiedRHS = getRHS()->copy()->as<Expression *>();
-	return new BinOpAndOr(copiedLHS, getOperator(), copiedRHS);
+	auto copy = new BinOpAndOr(copiedLHS, getOperator(), copiedRHS);
+	defineCopy(copy);
+	return copy;
 }
 
 void BinOpAndOr::resolve()

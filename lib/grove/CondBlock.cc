@@ -19,6 +19,7 @@ ASTNode* CondBlock::copy() const
 {
 	auto clone = new CondBlock(m_expr->copy()->as<Expression *>(), m_invert);
 	clone->copyStatements(this);
+	defineCopy(clone);
 	return clone;
 }
 

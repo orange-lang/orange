@@ -77,6 +77,7 @@ ASTNode* IfStmt::copy() const
 		ret->addBlock(block);
 	}
 	
+	defineCopy(ret);
 	return ret;
 }
 

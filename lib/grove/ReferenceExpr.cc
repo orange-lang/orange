@@ -16,7 +16,10 @@
 
 ASTNode* ReferenceExpr::copy() const
 {
-	return new ReferenceExpr(getExpression()->copy()->as<Expression *>());
+	auto clone = new ReferenceExpr(getExpression()->copy()->as<Expression *>());
+	
+	defineCopy(clone);
+	return clone;
 }
 
 Expression* ReferenceExpr::getExpression() const

@@ -24,15 +24,20 @@
 
 ASTNode* SizeofExpr::copy() const
 {
+	ASTNode* clone = nullptr;
+	
 	if (getTypeArg() != nullptr)
 	{
-		return new SizeofExpr(getTypeArg()->copyType());
+		clone = new SizeofExpr(getTypeArg()->copyType());
 	}
 	else
 	{
 		auto expr_copy = getExpressionArg()->copy()->as<Expression *>();
-		return new SizeofExpr(expr_copy);
+		clone = new SizeofExpr(expr_copy);
 	}
+	
+	defineCopy(clone);
+	return clone;
 }
 
 Expression* SizeofExpr::getExpressionArg() const

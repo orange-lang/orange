@@ -35,7 +35,9 @@ OString FunctionCall::getName() const
 
 ASTNode* FunctionCall::copy() const
 {
-	return new FunctionCall(getName(), copyVector(getArgs()));
+	auto clone = new FunctionCall(getName(), copyVector(getArgs()));
+	defineCopy(clone);
+	return clone;
 }
 
 void FunctionCall::findDependencies()

@@ -34,7 +34,10 @@ llvm::Value* Parameter::getValue() const
 
 ASTNode* Parameter::copy() const
 {
-	return new Parameter(m_type->copyType(), getName());
+	auto clone = new Parameter(m_type->copyType(), getName());
+	
+	defineCopy(clone);
+	return clone;
 }
 
 bool Parameter::isAccessible() const

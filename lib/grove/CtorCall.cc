@@ -28,7 +28,10 @@ ASTNode* CtorCall::copy() const
 		args.push_back(m_args.at(i)->copy()->as<Expression *>());
 	}
 	
-	return new CtorCall(getName(), args);
+	auto clone = new CtorCall(getName(), args);
+	defineCopy(clone);
+	
+	return clone;
 }
 
 bool CtorCall::hasPointer() const

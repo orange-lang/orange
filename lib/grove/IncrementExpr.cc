@@ -25,7 +25,10 @@ Expression* IncrementExpr::getExpression() const
 ASTNode* IncrementExpr::copy() const
 {
 	auto expr = m_expr->copy()->as<Expression *>();
-	return new IncrementExpr(expr, m_delta, m_preincrement);
+	auto clone = new IncrementExpr(expr, m_delta, m_preincrement);
+	
+	defineCopy(clone);
+	return clone;
 }
 
 int IncrementExpr::getDelta() const

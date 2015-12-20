@@ -40,6 +40,8 @@ ASTNode* Loop::copy() const
 	
 	auto loop = new Loop(initializers, condition, afterthought, m_post_check);
 	loop->copyStatements(this);
+	
+	defineCopy(loop);
 	return loop;
 }
 

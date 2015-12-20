@@ -29,6 +29,8 @@ ASTNode* Value::copy() const
 	auto val = new Value();
 	val->setType(getType()->copyType());
 	val->m_values = m_values;
+	
+	defineCopy(val);
 	return val;
 }
 

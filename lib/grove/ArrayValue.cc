@@ -23,7 +23,9 @@
 
 ASTNode* ArrayValue::copy() const
 {
-	return new ArrayValue(copyVector(getElements()));
+	auto copy = new ArrayValue(copyVector(getElements()));
+	defineCopy(copy);
+	return copy;
 }
 
 std::vector<Expression *> ArrayValue::getElements() const

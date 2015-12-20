@@ -251,6 +251,8 @@ ASTNode* Block::copy() const
 {
 	auto copy = new Block(getModule());
 	copy->copyStatements(this);
+	
+	defineCopy(copy);
 	return copy;
 }
 

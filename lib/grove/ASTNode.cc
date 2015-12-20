@@ -26,6 +26,11 @@ void ASTNode::addAllChildrenAsDependencies()
 	}
 }
 
+void ASTNode::defineCopy(const ASTNode *copy) const
+{
+	getModule()->defineCopy(this, copy);
+}
+
 Module* ASTNode::getModule() const
 {
 	if (m_module == nullptr && getParent() != nullptr)

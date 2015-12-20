@@ -27,6 +27,7 @@ ASTNode* EnumStmt::copy() const
 		copied_enum->addMember(pair.name, copied_val);
 	}
 	
+	defineCopy(copied_enum);
 	return copied_enum;
 }
 

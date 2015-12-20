@@ -26,7 +26,10 @@
 
 ASTNode* MemberAccess::copy() const
 {
-	return new MemberAccess(m_class, m_valued, m_name);
+	auto clone = new MemberAccess(m_class, m_valued, m_name);
+	
+	defineCopy(clone);
+	return clone;
 }
 
 const ClassDecl* MemberAccess::getClass() const

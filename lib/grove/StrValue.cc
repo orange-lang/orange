@@ -44,7 +44,10 @@ llvm::Value* StrValue::getValue() const
 
 ASTNode* StrValue::copy() const
 {
-	return new StrValue("\"" + m_str + "\"");
+	auto clone = new StrValue("\"" + m_str + "\"");
+	
+	defineCopy(clone);
+	return clone;
 }
 
 void StrValue::resolve()

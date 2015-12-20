@@ -47,15 +47,20 @@ Expression* VarDecl::getExpression() const
 
 ASTNode* VarDecl::copy() const
 {
+	ASTNode* clone = nullptr;
+	
 	if (m_expr)
 	{
-		return new VarDecl(m_type->copyType(), m_name,
-						   m_expr->copy()->as<Expression *>());
+		clone = new VarDecl(m_type->copyType(), m_name,
+							m_expr->copy()->as<Expression *>());
 	}
 	else
 	{
-		return new VarDecl(m_type->copyType(), m_name, nullptr);
+		clone = new VarDecl(m_type->copyType(), m_name, nullptr);
 	}
+	
+	defineCopy(clone);
+	return clone;
 }
 
 bool VarDecl::isAccessible() const

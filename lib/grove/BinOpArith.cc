@@ -64,7 +64,9 @@ ASTNode* BinOpArith::copy() const
 {
 	auto copiedLHS = getLHS()->copy()->as<Expression *>();
 	auto copiedRHS = getRHS()->copy()->as<Expression *>();
-	return new BinOpArith(copiedLHS, getOperator(), copiedRHS);
+	auto copy = new BinOpArith(copiedLHS, getOperator(), copiedRHS);
+	defineCopy(copy);
+	return copy;
 }
 
 void BinOpArith::resolve()

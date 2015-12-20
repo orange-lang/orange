@@ -36,6 +36,7 @@ ASTNode* ClassDecl::copy() const
 {
 	auto class_copy = new ClassDecl(getName());
 	class_copy->copyStatements(this);
+	defineCopy(class_copy);
 	return class_copy;
 }
 

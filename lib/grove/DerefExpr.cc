@@ -19,7 +19,10 @@
 ASTNode* DerefExpr::copy() const
 {
 	auto expr = getExpression()->copy()->as<Expression *>();
-	return new DerefExpr(expr);
+	auto clone = new DerefExpr(expr);
+	
+	defineCopy(clone);
+	return clone;
 }
 
 Expression* DerefExpr::getExpression() const
