@@ -27,6 +27,7 @@ file(GLOB SRC_INCLUDES )
 file(GLOB INCLUDES "${CMAKE_SOURCE_DIR}/include/grove/*.h")
 file(GLOB TYPE_INCLUDES "${CMAKE_SOURCE_DIR}/include/grove/types/*.h")
 file(GLOB EXCEPTION_INCLUDES "${CMAKE_SOURCE_DIR}/include/grove/exceptions/*.h")
+file(GLOB_RECURSE TEST_FILES "${CMAKE_SOURCE_DIR}/test/*.or")
 
 source_group(parser FILES
 	${CMAKE_SOURCE_DIR}/lib/grove/parser.y
@@ -45,11 +46,20 @@ source_group(headers FILES ${INCLUDES})
 source_group(headers\\types FILES ${TYPE_INCLUDES})
 source_group(headers\\exceptions FILES ${EXCEPTION_INCLUDES})
 
+# Add test files to their relative path in the source_group
+foreach(test_file ${TEST_FILES})
+    file(RELATIVE_PATH relative_file ${CMAKE_SOURCE_DIR} ${test_file})
+    get_filename_component(relative_path ${relative_file} DIRECTORY)
+    string(REPLACE "/" "\\" relative_path ${relative_path})
+    source_group(${relative_path} FILES ${test_file})
+endforeach()
+
 add_library(grove ${GROVE_SOURCES} ${GROVE_TYPES_SOURCES} ${GROVE_EXCEPTIONS_SOURCES}
 	${INCLUDES} ${TYPE_INCLUDES} ${EXCEPTION_INCLUDES}
 	${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS}
 	${CMAKE_SOURCE_DIR}/lib/grove/lexer.l
 	${CMAKE_SOURCE_DIR}/lib/grove/parser.y
+    ${TEST_FILES}
 )
 
 set_target_properties (grove PROPERTIES FOLDER lib)
