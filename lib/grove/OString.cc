@@ -70,18 +70,48 @@ OString::OString()
 	m_str = "";
 }
 
-OString::OString(OString const& str)
+OString::OString(const OString& str)
 {
-	m_str = str.str();
+	m_str = str.m_str;
 	m_location = str.m_location;
 }
 
-OString::OString(std::string str)
+OString::OString(OString&& str) noexcept
+: CodeBase(str), m_str(str.m_str)
+{
+	str.m_str = "";
+	str.m_location = CodeLocation("", 0, 0, 0, 0);
+}
+
+OString::OString(const std::string& str)
 {
 	m_str = str;
+}
+
+OString::OString(std::string&& str) noexcept
+{
+	m_str = str;
+	
+	str = "";
 }
 
 OString::OString(const char* str)
 {
 	m_str = str;
+}
+
+OString& OString::operator=(const OString& str)
+{
+	OString tmp(str);
+	*this = std::move(tmp);
+	return *this;
+}
+
+OString& OString::operator=(OString&& str) noexcept
+{
+	m_str = str.m_str;
+	m_location = str.m_location;
+	str.m_str = "";
+	str.m_location = CodeLocation("", 0, 0, 0, 0);
+	return *this;
 }

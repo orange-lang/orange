@@ -35,7 +35,18 @@ public:
 	
 	// Constructors
 	OString();
-	OString(OString const& str);
-	OString(std::string str);
+	
+	OString(const OString& str);
+	OString(OString&& str) noexcept;
+	
+	OString(const std::string& str);
+	OString(std::string&& str) noexcept;
+	
 	OString(const char* str);
+	
+	OString& operator=(const OString& str);
+	OString& operator=(OString&& str) noexcept;
+	
+	OString& operator=(const std::string& str);
+	OString& operator=(const std::string&& str) noexcept;
 };
