@@ -24,4 +24,10 @@ public:
 	void setLocation(CodeLocation loc);
 	
 	CodeBase();
+	
+	CodeBase(const CodeBase& other);
+	CodeBase(CodeBase&& other) noexcept;
+	
+	CodeBase& operator=(const CodeBase& other);
+	CodeBase& operator=(CodeBase&& other) noexcept;
 };

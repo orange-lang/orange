@@ -18,6 +18,32 @@ void CodeBase::setLocation(CodeLocation loc)
 	m_location = loc;
 }
 
+CodeBase::CodeBase(const CodeBase& other)
+: m_location(other.m_location)
+{
+}
+
+CodeBase::CodeBase(CodeBase&& other) noexcept
+: m_location(other.m_location)
+{
+	other.m_location = CodeLocation("", 0, 0, 0, 0);
+}
+
+CodeBase& CodeBase::operator=(const CodeBase& other)
+{
+	CodeBase tmp(other);
+	*this = std::move(tmp);
+	return *this;
+}
+
+CodeBase& CodeBase::operator=(CodeBase&& other) noexcept
+{
+	m_location = other.m_location;
+	other.m_location = CodeLocation("", 0, 0, 0, 0);
+	
+	return *this;
+}
+
 CodeBase::CodeBase()
 : m_location("", 0, 0, 0, 0)
 {
