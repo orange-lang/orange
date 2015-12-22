@@ -115,7 +115,7 @@ int Builder::run()
 
 	std::vector<llvm::GenericValue> args;
 	auto status = engine->runFunction(func, args);
-	
+
 	delete engine;
 
 	return status.IntVal.getSExtValue();
@@ -167,7 +167,7 @@ void Builder::initializeLLVM()
 #ifdef _WIN32
 	// Required to run JIT code
 	target_triple += "-elf";
-#endif 
+#endif
 
 	llvm::Triple triple = llvm::Triple(target_triple);
 
@@ -187,14 +187,26 @@ void Builder::initializeLLVM()
 	  llvm::CodeModel::Default);
 }
 
+void Builder::clearModules()
+{
+	for (auto mod : m_modules)
+	{
+		delete mod;
+	}
+	
+	m_modules = std::vector<Module *>();
+}
+
+void Builder::addModule(Module* mod)
+{
+	m_modules.push_back(mod);
+}
+
 void Builder::initialize()
 {
 	m_library = new Library();
 
 	initializeLLVM();
-
-	auto mod = new Module(this, m_build_path);
-	m_modules.push_back(mod);
 }
 
 std::vector<const char*> Builder::getLinkFlags() const
@@ -218,12 +230,20 @@ std::vector<const char*> Builder::getLinkFlags() const
 	return options;
 }
 
+Builder::Builder()
+{
+	initialize();
+}
+
 Builder::Builder(std::string path)
 {
 	m_build_path = path;
 	m_settings = new BuildSettings();
 
 	initialize();
+	
+	auto mod = new Module(this, m_build_path);
+	m_modules.push_back(mod);
 }
 
 Builder::Builder(std::string path, BuildSettings* settings)
@@ -237,6 +257,9 @@ Builder::Builder(std::string path, BuildSettings* settings)
 	m_settings = settings;
 
 	initialize();
+	
+	auto mod = new Module(this, m_build_path);
+	m_modules.push_back(mod);
 }
 
 Builder::~Builder()

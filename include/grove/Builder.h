@@ -56,6 +56,10 @@ public:
 	/// Sets whether or not to pritn out debug info.
 	void setDebug(bool debug);
 	
+	void clearModules();
+	
+	void addModule(Module* mod);
+	
 	/*
 	 * Does the following steps:
 	 * 		Gathers the nodes for library registration in each module.
@@ -75,6 +79,8 @@ public:
 	
 	/// Runs the code JIT. Returns the exit status.
 	int run();
+	
+	Builder();
 	
 	/// Constructs a builder with the default settings.
 	Builder(std::string path);
