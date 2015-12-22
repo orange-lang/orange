@@ -19,4 +19,10 @@ struct CodeLocation
 	
 	CodeLocation(std::string file, int first_line, int last_line,
 				 int first_column, int last_column);
+	
+	CodeLocation(const CodeLocation& other);
+	CodeLocation(CodeLocation&& other) noexcept;
+	
+	CodeLocation& operator=(const CodeLocation& other);
+	CodeLocation& operator=(CodeLocation&& other) noexcept;
 };
