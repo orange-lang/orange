@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <orange/TestCommand.h>
 #include <grove/Builder.h>
+#include <grove/Module.h>
 
 #include <util/file.h>
 
@@ -38,6 +39,8 @@ void TestCommand::enableOutput()
 
 int TestCommand::run(std::vector<std::string> args)
 {
+	auto builder = new Builder();
+	
 	std::vector<std::string> test_files;
 	auto proj_dir = findProjectDirectory("orange.settings.json");
 	
@@ -70,10 +73,11 @@ int TestCommand::run(std::vector<std::string> args)
 	
 	for (auto test : test_files)
 	{
+		builder->clearModules();
+		
 		// Have path be relative from project directory
 		auto short_path = test.substr(proj_dir.length() + 1);
 		
-		Builder* builder = nullptr;
 		int statusCode = 0;
 		
 		disableOutput();
@@ -82,7 +86,7 @@ int TestCommand::run(std::vector<std::string> args)
 		
 		try
 		{
-			builder = new Builder(test);
+			builder->addModule(new Module(builder, test));
 			builder->compile();
 			
 			statusCode = builder->run();
