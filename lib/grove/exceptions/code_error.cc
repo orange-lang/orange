@@ -13,7 +13,7 @@
 
 #include <fstream>
 
-std::string code_error::getContext(CodeBase *element)
+std::string code_error::getContext(const CodeBase *element)
 {
 	if (element == nullptr)
 	{
@@ -39,7 +39,7 @@ std::string code_error::getContext(CodeBase *element)
 	return line;
 }
 
-std::string code_error::fileWithPosition(CodeBase *element)
+std::string code_error::fileWithPosition(const CodeBase *element)
 {
 	if (element == nullptr)
 	{
@@ -59,7 +59,7 @@ const char* code_error::what() const noexcept
 	return m_error.c_str();
 }
 
-code_error::code_error(CodeBase* element)
+code_error::code_error(const CodeBase* element)
 {
 	if (element == nullptr)
 	{
@@ -78,7 +78,7 @@ code_error::code_error(CodeBase* element)
 	m_error = ss.str();
 }
 
-code_error::code_error(CodeBase* element, std::function<std::string()> cb)
+code_error::code_error(const CodeBase* element, std::function<std::string()> cb)
 {
 	if (element == nullptr)
 	{
@@ -93,7 +93,7 @@ code_error::code_error(CodeBase* element, std::function<std::string()> cb)
 	m_error = ss.str();
 }
 
-code_error::code_error(CodeBase* element, CodeBase* ref,
+code_error::code_error(const CodeBase* element, const CodeBase* ref,
 					   std::function<std::string()> cb)
 {
 	if (element == nullptr)
