@@ -491,7 +491,7 @@ void Module::beginCopy()
 	m_copy_stack.push(CopyMap());
 }
 
-void Module::defineCopy(const ASTNode *original, ASTNode *copy)
+void Module::defineCopy(const ASTNode *original, const ASTNode *copy)
 {
 	if (m_copy_stack.size() == 0)
 	{
@@ -533,7 +533,7 @@ ASTNode* Module::getCopy(const ASTNode *original)
 	auto it = m_copy_stack.top().find(original);
 	if (it != m_copy_stack.top().end())
 	{
-		return it->second;
+		return (ASTNode *)it->second;
 	}
 	
 	throw fatal_error("Copy mapping not found");

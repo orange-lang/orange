@@ -40,7 +40,7 @@ namespace llvm {
 typedef llvm::IRBuilder<true, llvm::ConstantFolder,
 llvm::IRBuilderDefaultInserter<true> > IRBuilder;
 
-typedef std::map<const ASTNode *, ASTNode *> CopyMap;
+typedef std::map<const ASTNode *, const ASTNode *> CopyMap;
 
 /**
  * Module hosts methods for compiling a specific object file. It accepts 
@@ -190,7 +190,7 @@ public:
 	
 	/// Defines a copy mapping. Throws an error if one already
 	/// exists for the original.
-	void defineCopy(const ASTNode* original, ASTNode* copy);
+	void defineCopy(const ASTNode* original, const ASTNode* copy);
 	
 	bool hasCopy(const ASTNode* original);
 	
