@@ -26,4 +26,5 @@ public:
 	virtual void build() override;
 	
 	CastExpr(const Type* ty, Expression* expr);
+	CastExpr(const CastExpr& other);
 };

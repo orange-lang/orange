@@ -16,10 +16,7 @@
 
 ASTNode* AccessExpr::copy() const
 {
-	auto lhs_copy = getLHS()->copy()->as<Expression *>();
-	auto copy = new AccessExpr(lhs_copy, getName());
-	defineCopy(copy);
-	return copy;
+	return new AccessExpr(*this);
 }
 
 Expression* AccessExpr::getLHS() const
@@ -119,4 +116,14 @@ AccessExpr::AccessExpr(Expression* LHS, OString name)
 	m_name = name;
 	
 	addChild(m_LHS, true);
+}
+
+AccessExpr::AccessExpr(const AccessExpr& other)
+{
+	m_LHS = (Expression *)other.m_LHS->copy();
+	m_name = other.m_name;
+	
+	addChild(m_LHS, true);
+	
+	other.defineCopy(this);
 }

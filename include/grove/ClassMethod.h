@@ -25,8 +25,11 @@ private:
 public:
 	virtual void findDependencies() override;
 	
+	virtual ASTNode* copy() const override;
+	
 	Parameter* getThisParam() const;
 	
 	ClassMethod(OString name, ClassDecl* theClass,
 				std::vector<Parameter *> params);
+	ClassMethod(const ClassMethod& other);
 };

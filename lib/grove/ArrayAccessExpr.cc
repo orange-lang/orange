@@ -21,11 +21,7 @@
 
 ASTNode* ArrayAccessExpr::copy() const
 {
-	auto array_copy = getArray()->copy()->as<Expression *>();
-	auto idx_copy = getIndex()->copy()->as<Expression *>();
-	auto copy = new ArrayAccessExpr(array_copy, idx_copy);
-	defineCopy(copy);
-	return copy;
+	return new ArrayAccessExpr(*this);
 }
 
 Expression* ArrayAccessExpr::getArray() const
@@ -150,4 +146,15 @@ ArrayAccessExpr::ArrayAccessExpr(Expression* array, Expression* idx)
 	
 	addChild(m_array, true);
 	addChild(m_idx, true);
+}
+
+ArrayAccessExpr::ArrayAccessExpr(const ArrayAccessExpr& other)
+{
+	m_array = (Expression *)other.m_array->copy();
+	m_idx = (Expression *)other.m_idx->copy();
+	
+	addChild(m_array, true);
+	addChild(m_idx, true);
+	
+	other.defineCopy(this);
 }

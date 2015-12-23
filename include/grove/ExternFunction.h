@@ -40,4 +40,5 @@ public:
 	
 	ExternFunction(OString name, std::vector<Parameter *> params,
 				   const Type* retType, bool vaarg = false);
+	ExternFunction(const ExternFunction& other);
 };

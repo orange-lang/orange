@@ -74,4 +74,5 @@ public:
 	/// @param args The argument list for this call.
 	ExpressionCall(ASTNode* expr, std::vector<Expression *> args,
 				   bool addAsChild = false);
+	ExpressionCall(const ExpressionCall& other);
 };

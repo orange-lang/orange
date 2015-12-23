@@ -35,9 +35,7 @@ OString FunctionCall::getName() const
 
 ASTNode* FunctionCall::copy() const
 {
-	auto clone = new FunctionCall(getName(), copyVector(getArgs()));
-	defineCopy(clone);
-	return clone;
+	return new FunctionCall(*this);
 }
 
 void FunctionCall::findDependencies()
@@ -82,4 +80,11 @@ FunctionCall::FunctionCall(OString name, std::vector<Expression *> args)
 	}
 
 	m_name = name;
+}
+
+FunctionCall::FunctionCall(const FunctionCall& other)
+: ExpressionCall(copyVector(other.getArgs()))
+{
+	m_name = other.m_name;
+	other.defineCopy(this);
 }

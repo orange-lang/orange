@@ -32,4 +32,5 @@ public:
 	bool invertCondition() const; 
 	
 	CondBlock(Expression* expr, bool invert = false);
+	CondBlock(const CondBlock& other);
 };

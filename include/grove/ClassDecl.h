@@ -54,4 +54,5 @@ public:
 	MemberVarDecl* getMember(const OString& name) const;
 	
 	ClassDecl(OString name);
+	ClassDecl(const ClassDecl& other);
 };

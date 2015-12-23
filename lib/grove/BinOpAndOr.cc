@@ -23,11 +23,7 @@
 
 ASTNode* BinOpAndOr::copy() const
 {
-	auto copiedLHS = getLHS()->copy()->as<Expression *>();
-	auto copiedRHS = getRHS()->copy()->as<Expression *>();
-	auto copy = new BinOpAndOr(copiedLHS, getOperator(), copiedRHS);
-	defineCopy(copy);
-	return copy;
+	return new BinOpAndOr(*this);
 }
 
 void BinOpAndOr::resolve()
@@ -105,4 +101,12 @@ BinOpAndOr::BinOpAndOr(Expression* LHS, OString op, Expression* RHS)
 	{
 		throw fatal_error("unknown operator given to BinOpAndOr");
 	}
+}
+
+BinOpAndOr::BinOpAndOr(const BinOpAndOr& other)
+: BinOpExpr((Expression *)other.getLHS()->copy(),
+			other.getOperator(),
+			(Expression *)other.getRHS()->copy())
+{
+	other.defineCopy(this);
 }

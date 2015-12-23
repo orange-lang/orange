@@ -29,4 +29,5 @@ public:
 	/// @param name The name of the function to call.
 	/// @param args The argument list of expressions. 
 	FunctionCall(OString name, std::vector<Expression *> args);
+	FunctionCall(const FunctionCall& other);
 };

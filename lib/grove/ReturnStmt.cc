@@ -36,19 +36,7 @@ bool ReturnStmt::isTerminator() const
 
 ASTNode* ReturnStmt::copy() const
 {
-	ASTNode* clone = nullptr;
-	
-	if (m_expr)
-	{
-		clone = new ReturnStmt(m_expr->copy()->as<Expression *>());
-	}
-	else
-	{
-		clone = new ReturnStmt(nullptr);
-	}
-	
-	defineCopy(clone);
-	return clone;
+	return new ReturnStmt(*this);
 }
 
 void ReturnStmt::resolve()
@@ -117,4 +105,15 @@ ReturnStmt::ReturnStmt(Expression* expression)
 	addChild(expression);
 	
 	m_expr = expression;
+}
+
+ReturnStmt::ReturnStmt(const ReturnStmt& other)
+{
+	if (other.m_expr)
+	{
+		m_expr = (Expression *)other.m_expr->copy();
+	}
+	
+	addChild(m_expr);
+	other.defineCopy(this);
 }

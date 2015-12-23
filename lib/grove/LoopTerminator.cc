@@ -22,10 +22,7 @@ OString LoopTerminator::getTerminatorStr() const
 
 ASTNode* LoopTerminator::copy() const
 {
-	auto clone = new LoopTerminator(m_terminator);
-	
-	defineCopy(clone);
-	return clone;
+	return new LoopTerminator(*this);
 }
 
 bool LoopTerminator::isTerminator() const
@@ -70,4 +67,10 @@ LoopTerminator::LoopTerminator(OString terminator)
 	}
 	
 	m_terminator = terminator;
+}
+
+LoopTerminator::LoopTerminator(const LoopTerminator& other)
+{
+	m_terminator = other.m_terminator;
+	other.defineCopy(this);
 }

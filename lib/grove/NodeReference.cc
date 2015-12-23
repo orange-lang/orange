@@ -44,21 +44,7 @@ bool NodeReference::transferrable() const
 
 ASTNode* NodeReference::copy() const
 {
-	ASTNode* node = nullptr;
-	
-	if (getModule()->hasCopy(m_node))
-	{
-		node = getModule()->getCopy(m_node);
-	}
-	else
-	{
-		node = m_node;
-	}
-	
-	auto clone = new NodeReference(node);
-	
-	defineCopy(clone);
-	return clone;
+	return new NodeReference(*this);
 }
 
 bool NodeReference::isAccessible() const
@@ -143,4 +129,18 @@ NodeReference::NodeReference(ASTNode* node)
 	}
 	
 	m_node = node;
+}
+
+NodeReference::NodeReference(const NodeReference& other)
+{
+	if (getModule()->hasCopy(other.m_node))
+	{
+		m_node = getModule()->getCopy(other.m_node);
+	}
+	else
+	{
+		m_node = other.m_node->copy();
+	}
+	
+	other.defineCopy(this);
 }

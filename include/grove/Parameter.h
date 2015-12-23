@@ -30,4 +30,5 @@ public:
 		const override;
 	
 	Parameter(const Type* type, OString name);
+	Parameter(const Parameter& other);
 };

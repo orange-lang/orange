@@ -18,17 +18,7 @@
 
 ASTNode* EnumStmt::copy() const
 {
-	auto copied_enum = new EnumStmt(getName(), getModule(),
-									getType()->getBaseTy()->copyType());
-	
-	for (auto pair : m_members)
-	{
-		auto copied_val = pair.val->copy()->as<Value *>();
-		copied_enum->addMember(pair.name, copied_val);
-	}
-	
-	defineCopy(copied_enum);
-	return copied_enum;
+	return new EnumStmt(*this);
 }
 
 void EnumStmt::resolve()
@@ -138,4 +128,18 @@ EnumStmt::EnumStmt(OString name, Module* mod, const Type* baseType)
 
 	m_base_type = baseType;
 	setType(EnumType::get(mod, m_base_type, false));
+}
+
+EnumStmt::EnumStmt(const EnumStmt& other)
+{
+	m_name = other.m_name;
+	m_base_type = other.m_base_type->copyType();
+	setType(EnumType::get(other.getModule(), m_base_type, false));
+	
+	for (auto pair : m_members)
+	{
+		addMember(pair.name, (Value *)pair.val->copy());
+	}
+	
+	other.defineCopy(this);
 }

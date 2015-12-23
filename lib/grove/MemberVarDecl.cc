@@ -8,8 +8,16 @@
 
 #include <grove/MemberVarDecl.h>
 #include <grove/ClassDecl.h>
+#include <grove/Expression.h>
+
+#include <grove/types/Type.h>
 
 #include <util/assertions.h>
+
+ASTNode* MemberVarDecl::copy() const
+{
+	return new MemberVarDecl(*this);
+}
 
 llvm::Value* MemberVarDecl::getValue() const
 {
@@ -48,4 +56,11 @@ MemberVarDecl::MemberVarDecl(const Type* type, OString name,
 : VarDecl(type, name, expression)
 {
 	// Do nothing.
+}
+
+MemberVarDecl::MemberVarDecl(const MemberVarDecl& other)
+: VarDecl(other.m_type->copyType(), other.m_name,
+		  (Expression *)other.getExpression()->copy())
+{
+	other.defineCopy(this);
 }

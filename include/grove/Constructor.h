@@ -20,6 +20,9 @@ private:
 public:
 	const ClassDecl* getClass() const;
 	
+	virtual ASTNode* copy() const override;
+	
 	Constructor(const ClassDecl* theClass, OString name,
 				std::vector<Parameter *> params);
+	Constructor(const Constructor& other);
 };

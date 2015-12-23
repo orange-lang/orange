@@ -53,4 +53,5 @@ public:
 	void addMember(OString name, Value* val);
 	
 	EnumStmt(OString name, Module* mod, const Type* baseType);
+	EnumStmt(const EnumStmt& other);
 };

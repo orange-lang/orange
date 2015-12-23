@@ -13,25 +13,16 @@
 
 #include <grove/types/Type.h>
 #include <grove/types/ReferenceType.h>
+#include <grove/types/VarType.h>
 
 #include <util/assertions.h>
+#include <util/copy.h>
 
 #include <llvm/IR/IRBuilder.h>
 
 ASTNode* CtorCall::copy() const
 {
-	std::vector<Expression *> args;
-	
-	// Copy everything past the this arg
-	for (unsigned int i = 1; i < m_args.size(); i++)
-	{
-		args.push_back(m_args.at(i)->copy()->as<Expression *>());
-	}
-	
-	auto clone = new CtorCall(getName(), args);
-	defineCopy(clone);
-	
-	return clone;
+	return new CtorCall(*this);
 }
 
 bool CtorCall::hasPointer() const
@@ -118,4 +109,33 @@ CtorCall::CtorCall(OString name, std::vector<Expression *> args)
 	}
 	
 	m_args.insert(m_args.begin(), m_this_param);
+}
+
+CtorCall::CtorCall(const CtorCall& other)
+: FunctionCall(other.getName(), std::vector<Expression *>())
+{
+	for (auto arg : other.getArgs())
+	{
+		if (arg == other.m_this_param)
+		{
+			continue;
+		}
+		
+		addArgument((Expression *)arg->copy());
+	}
+	
+	m_this_param = new Expression();
+	
+	if (getArgs().size() == 0)
+	{
+		addChild(m_this_param);
+	}
+	else
+	{
+		addChild(m_this_param, m_args.at(0), 0);
+	}
+	
+	m_args.insert(m_args.begin(), m_this_param);
+	
+	other.defineCopy(this);
 }

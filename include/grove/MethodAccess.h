@@ -24,5 +24,8 @@ public:
 	/// Finds the exact method.
 	virtual void resolve() override;
 	
+	virtual ASTNode* copy() const override;
+	
 	MethodAccess(const ClassDecl* theClass, OString name);
+	MethodAccess(const MethodAccess& other);
 };

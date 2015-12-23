@@ -39,11 +39,7 @@ std::vector<Parameter *> ExternFunction::getParams() const
 
 ASTNode* ExternFunction::copy() const
 {
-	auto clone = new ExternFunction(getName(), copyVector(getParams()),
-									m_ret_type->copyType(), m_vararg);
-	
-	defineCopy(clone);
-	return clone;
+	return new ExternFunction(*this);
 }
 
 void ExternFunction::resolve()
@@ -75,6 +71,7 @@ ExternFunction::ExternFunction(OString name, std::vector<Parameter *> params,
 	{
 		assertExists(param, "Param must not be null");
 		assertExists(param->getType(), "Param must have type.");
+		addChild(param, true);
 	}
 	
 	assertExists(retType, "return type must exist");
@@ -83,5 +80,20 @@ ExternFunction::ExternFunction(OString name, std::vector<Parameter *> params,
 	m_params = params;
 	m_ret_type = retType;
 	m_vararg = vararg;
-	
 }
+
+ExternFunction::ExternFunction(const ExternFunction& other)
+{
+	m_name = other.m_name;
+	m_params = copyVector(other.getParams());
+	m_ret_type = other.m_ret_type->copyType();
+	m_vararg = other.m_vararg;
+	
+	for (auto& param : m_params)
+	{
+		addChild(param, true);
+	}
+	
+	other.defineCopy(this);
+}
+

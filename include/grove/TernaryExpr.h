@@ -28,4 +28,5 @@ public:
 	
 	TernaryExpr(Expression* condition, Expression* trueval,
 				Expression* falseval);
+	TernaryExpr(const TernaryExpr& other);
 };

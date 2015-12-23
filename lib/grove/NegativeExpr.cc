@@ -23,10 +23,7 @@ Expression* NegativeExpr::getExpression() const
 
 ASTNode* NegativeExpr::copy() const
 {
-	auto clone = new NegativeExpr(m_expr->copy()->as<Expression *>());
-	
-	defineCopy(clone);
-	return clone;
+	return new NegativeExpr(*this);
 }
 
 void NegativeExpr::resolve()
@@ -72,4 +69,12 @@ NegativeExpr::NegativeExpr(Expression* expr)
 	m_expr = expr;
 	
 	addChild(expr);
+}
+
+NegativeExpr::NegativeExpr(const NegativeExpr& other)
+{
+	m_expr = (Expression *)other.m_expr->copy();
+	addChild(m_expr, true);
+	
+	other.defineCopy(this);
 }

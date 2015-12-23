@@ -98,4 +98,6 @@ public:
 	
 	/// Constructs a new global function.
 	Function(Module* module, OString name, std::vector<Parameter *> params);
+	
+	Function(const Function& other);
 };

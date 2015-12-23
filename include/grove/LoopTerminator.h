@@ -27,4 +27,5 @@ public:
 	virtual bool isTerminator() const override;
 	
 	LoopTerminator(OString terminator);
+	LoopTerminator(const LoopTerminator& other);
 };

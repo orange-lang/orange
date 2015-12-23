@@ -39,4 +39,5 @@ public:
 	virtual void build() override;
 	
 	ArrayAccessExpr(Expression* array, Expression* idx);
+	ArrayAccessExpr(const ArrayAccessExpr& other);
 };

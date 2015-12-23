@@ -30,4 +30,5 @@ public:
 	virtual void build() override;
 	
 	CtorCall(OString name, std::vector<Expression *> args);
+	CtorCall(const CtorCall& other);
 };

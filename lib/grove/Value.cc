@@ -26,12 +26,7 @@ Value::Value()
 
 ASTNode* Value::copy() const
 {
-	auto val = new Value();
-	val->setType(getType()->copyType());
-	val->m_values = m_values;
-	
-	defineCopy(val);
-	return val;
+	return new Value(*this);
 }
 
 bool Value::isConstant() const
@@ -244,4 +239,12 @@ Value::Value(std::string str, const Type* t, int base)
 		default:
 			throw fatal_error("invalid type to create Value");
 	}
+}
+
+Value::Value(const Value& other)
+{
+	m_values = other.m_values;
+	m_type = other.m_type;
+	
+	other.defineCopy(this);
 }

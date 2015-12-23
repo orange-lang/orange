@@ -24,11 +24,7 @@ Expression* IncrementExpr::getExpression() const
 
 ASTNode* IncrementExpr::copy() const
 {
-	auto expr = m_expr->copy()->as<Expression *>();
-	auto clone = new IncrementExpr(expr, m_delta, m_preincrement);
-	
-	defineCopy(clone);
-	return clone;
+	return new IncrementExpr(*this);
 }
 
 int IncrementExpr::getDelta() const
@@ -114,3 +110,12 @@ IncrementExpr::IncrementExpr(Expression* expr, int delta, bool preincrement)
 	addChild(expr);
 }
 
+IncrementExpr::IncrementExpr(const IncrementExpr& other)
+{
+	m_preincrement = other.m_preincrement;
+	m_expr = (Expression *)other.m_expr->copy();
+	m_delta = other.m_delta;
+	
+	addChild(m_expr, true);
+	other.defineCopy(this);
+}

@@ -47,20 +47,7 @@ Expression* VarDecl::getExpression() const
 
 ASTNode* VarDecl::copy() const
 {
-	ASTNode* clone = nullptr;
-	
-	if (m_expr)
-	{
-		clone = new VarDecl(m_type->copyType(), m_name,
-							m_expr->copy()->as<Expression *>());
-	}
-	else
-	{
-		clone = new VarDecl(m_type->copyType(), m_name, nullptr);
-	}
-	
-	defineCopy(clone);
-	return clone;
+	return new VarDecl(*this);
 }
 
 bool VarDecl::isAccessible() const
@@ -253,4 +240,31 @@ VarDecl::VarDecl(const Type* type, OString name, Expression* expression)
 
 	setType(type);
 	addChild(m_expr, false);
+}
+
+VarDecl::VarDecl(const VarDecl& other)
+{
+	m_type = other.m_type->copyType();
+	m_name = other.m_name;
+	
+	if (other.m_expr)
+	{
+		m_expr = (Expression *)other.m_expr->copy();
+		addChild(m_expr);
+	}
+	
+	if (m_type->isVariadiclySized())
+	{
+		for (auto size : m_type->getVariadicSizes())
+		{
+			addChild(size, true);
+		}
+	}
+	
+	if (m_type->getRootTy()->is<NodeType *>())
+	{
+		addChild(m_type->getRootTy()->as<NodeType *>());
+	}
+
+	other.defineCopy(this);
 }

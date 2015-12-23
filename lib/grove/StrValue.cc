@@ -44,10 +44,7 @@ llvm::Value* StrValue::getValue() const
 
 ASTNode* StrValue::copy() const
 {
-	auto clone = new StrValue("\"" + m_str + "\"");
-	
-	defineCopy(clone);
-	return clone;
+	return new StrValue(*this);
 }
 
 void StrValue::resolve()
@@ -67,4 +64,10 @@ StrValue::StrValue(std::string value)
 	replaceAll(m_str, "\\n", "\n");
 	replaceAll(m_str, "\\t", "\t");
 	replaceAll(m_str, "\\r", "\r");
+}
+
+StrValue::StrValue(const StrValue& other)
+{
+	m_str = other.m_str;
+	other.defineCopy(this);
 }

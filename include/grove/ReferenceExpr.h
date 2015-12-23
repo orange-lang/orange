@@ -23,4 +23,5 @@ public:
 	virtual void build() override;
 	
 	ReferenceExpr(Expression* expr);
+	ReferenceExpr(const ReferenceExpr& other);
 };

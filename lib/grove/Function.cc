@@ -261,10 +261,7 @@ bool Function::matchesType(const Type *type) const
 
 ASTNode* Function::copy() const
 {
-	auto func = new Function(getModule(), getName(), copyVector(getParams()));
-	func->copyStatements(this);
-	defineCopy(func);
-	return func;
+	return new Function(*this);
 }
 
 void Function::findDependencies()
@@ -545,4 +542,18 @@ Function::Function(Module* module, OString name,
 	
 	m_name = name;
 	m_params = params;
+}
+
+Function::Function(const Function& other)
+{
+	m_name = other.m_name;
+	m_params = copyVector(other.getParams());
+	
+	for (auto& param : m_params)
+	{
+		addChild(param, true);
+	}
+	
+	copyStatements(&other);
+	other.defineCopy(this);
 }

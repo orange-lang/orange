@@ -26,4 +26,5 @@ public:
 	virtual void build() override;
 	
 	DerefExpr(Expression* expr);
+	DerefExpr(const DerefExpr& other);
 };

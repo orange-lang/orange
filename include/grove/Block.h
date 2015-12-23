@@ -84,4 +84,5 @@ public:
 	
 	Block();
 	Block(Module* module);
+	Block(const Block& other);
 };

@@ -29,9 +29,7 @@ OString IDReference::getName() const
 
 ASTNode* IDReference::copy() const
 {
-	auto clone = new IDReference(m_name);
-	defineCopy(clone);
-	return clone;
+	return new IDReference(*this);
 }
 
 void IDReference::findDependencies()
@@ -72,4 +70,10 @@ IDReference::IDReference(OString name)
 	}
 
 	m_name = name;
+}
+
+IDReference::IDReference(const IDReference& other)
+{
+	m_name = other.m_name;
+	other.defineCopy(this);
 }

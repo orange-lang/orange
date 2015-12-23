@@ -69,16 +69,7 @@ bool IfStmt::isElse(Block *block)
 
 ASTNode* IfStmt::copy() const
 {
-	auto ret = new IfStmt();
-	
-	auto copied_blocks = copyVector(getBlocks());
-	for (auto block : copied_blocks)
-	{
-		ret->addBlock(block);
-	}
-	
-	defineCopy(ret);
-	return ret;
+	return new IfStmt(*this);
 }
 
 void IfStmt::resolve()
@@ -212,4 +203,16 @@ bool IfStmt::hasElse() const
 IfStmt::IfStmt()
 {
 	// Do nothing.
+}
+
+IfStmt::IfStmt(const IfStmt& other)
+{
+	m_if_blocks = copyVector(other.getBlocks());
+	
+	for (auto block : m_if_blocks)
+	{
+		addChild(block, true);
+	}
+	
+	other.defineCopy(this);
 }

@@ -19,4 +19,5 @@ public:
 	virtual ASTNode* copy() const override;
 	
 	BinOpAndOr(Expression* LHS, OString op, Expression* RHS);
+	BinOpAndOr(const BinOpAndOr& other);
 };

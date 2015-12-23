@@ -12,6 +12,7 @@
 
 #include <grove/types/Type.h>
 #include <grove/types/UIntType.h>
+#include <grove/types/NodeType.h>
 
 #include <grove/exceptions/invalid_type_error.h>
 
@@ -24,20 +25,7 @@
 
 ASTNode* SizeofExpr::copy() const
 {
-	ASTNode* clone = nullptr;
-	
-	if (getTypeArg() != nullptr)
-	{
-		clone = new SizeofExpr(getTypeArg()->copyType());
-	}
-	else
-	{
-		auto expr_copy = getExpressionArg()->copy()->as<Expression *>();
-		clone = new SizeofExpr(expr_copy);
-	}
-	
-	defineCopy(clone);
-	return clone;
+	return new SizeofExpr(*this);
 }
 
 Expression* SizeofExpr::getExpressionArg() const
@@ -130,4 +118,36 @@ SizeofExpr::SizeofExpr(Expression* expr)
 	m_expression_arg = expr;
 	
 	addChild(m_expression_arg, true);
+}
+
+SizeofExpr::SizeofExpr(const SizeofExpr& other)
+{
+	if (other.m_expression_arg != nullptr)
+	{
+		m_expression_arg = (Expression *)other.m_expression_arg->copy();
+	}
+	else if (other.m_type_arg != nullptr)
+	{
+		m_type_arg = other.m_type_arg->copyType();
+	}
+	
+	addChild(m_expression_arg);
+	
+	if (m_type_arg)
+	{
+		if (m_type_arg->isVariadiclySized())
+		{
+			for (auto s : m_type_arg->getVariadicSizes())
+			{
+				addChild(s, true);
+			}
+		}
+		
+		if (m_type_arg->is<NodeType *>())
+		{
+			addChild(m_type_arg->as<NodeType *>());
+		}
+	}
+	
+	other.defineCopy(this);
 }

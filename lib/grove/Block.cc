@@ -249,11 +249,7 @@ void Block::buildStatements()
 
 ASTNode* Block::copy() const
 {
-	auto copy = new Block(getModule());
-	copy->copyStatements(this);
-	
-	defineCopy(copy);
-	return copy;
+	return new Block(*this);
 }
 
 void Block::build()
@@ -279,4 +275,10 @@ Block::Block(Module* module)
 : Statement(module)
 {
 	// Do nothing 
+}
+
+Block::Block(const Block& other)
+{
+	copyStatements(&other);
+	other.defineCopy(this);
 }

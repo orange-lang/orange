@@ -59,4 +59,5 @@ public:
 	 * @param t The type of the value.
 	 */
 	Value(std::string str, const Type* t, int base = 10);
+	Value(const Value& other);
 };

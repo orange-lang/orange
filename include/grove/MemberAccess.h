@@ -24,6 +24,7 @@ private:
 	Valued* m_valued = nullptr;
 	
 	OString m_name;
+	bool m_local = false;
 public:
 	virtual ASTNode* copy() const override;
 	
@@ -50,4 +51,6 @@ public:
 	/// Creates a member access that will look for the this
 	/// parameter. Only valid for use inside of a method.
 	MemberAccess(const OString& name);
+	
+	MemberAccess(const MemberAccess& other);
 };

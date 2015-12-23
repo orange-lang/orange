@@ -34,10 +34,7 @@
 
 ASTNode* ClassDecl::copy() const
 {
-	auto class_copy = new ClassDecl(getName());
-	class_copy->copyStatements(this);
-	defineCopy(class_copy);
-	return class_copy;
+	return new ClassDecl(*this);
 }
 
 std::vector<MemberVarDecl *> ClassDecl::getMembers() const
@@ -354,4 +351,10 @@ ClassDecl::ClassDecl(OString name)
 	
 	// Do nothing
 	m_name = name;
+}
+
+ClassDecl::ClassDecl(const ClassDecl& other)
+{
+	copyStatements(&other);
+	other.defineCopy(this);
 }

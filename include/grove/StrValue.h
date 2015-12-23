@@ -31,4 +31,5 @@ public:
 	virtual bool isConstant() const override;
 	
 	StrValue(std::string value);
+	StrValue(const StrValue& other);
 };

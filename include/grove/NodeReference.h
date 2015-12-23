@@ -51,4 +51,5 @@ public:
 	virtual ASTNode* copy() const override;
 	
 	NodeReference(ASTNode* node);
+	NodeReference(const NodeReference& other);
 };

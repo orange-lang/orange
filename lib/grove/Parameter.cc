@@ -34,10 +34,7 @@ llvm::Value* Parameter::getValue() const
 
 ASTNode* Parameter::copy() const
 {
-	auto clone = new Parameter(m_type->copyType(), getName());
-	
-	defineCopy(clone);
-	return clone;
+	return new Parameter(*this);
 }
 
 bool Parameter::isAccessible() const
@@ -87,4 +84,17 @@ Parameter::Parameter(const Type* type, OString name)
 	
 	setType(type);
 	m_name = name;
+}
+
+Parameter::Parameter(const Parameter& other)
+{
+	m_type = other.m_type->copyType();
+	m_name = other.m_name;
+	
+	if (m_type->getRootTy()->is<NodeType *>())
+	{
+		addChild(m_type->getRootTy()->as<NodeType *>());
+	}
+	
+	other.defineCopy(this);
 }

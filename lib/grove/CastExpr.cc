@@ -14,11 +14,7 @@
 
 ASTNode* CastExpr::copy() const
 {
-	auto copy = new CastExpr(getType()->copyType(),
-							 getExpression()->copy()->as<Expression *>());
-	
-	defineCopy(copy);
-	return copy;
+	return new CastExpr(*this);
 }
 
 Expression* CastExpr::getExpression() const
@@ -54,4 +50,14 @@ CastExpr::CastExpr(const Type* ty, Expression* expr)
 	m_expression = expr;
 	
 	addChild(m_expression, true);
+}
+
+CastExpr::CastExpr(const CastExpr& other)
+{
+	m_type = other.m_type->copyType();
+	m_expression = (Expression *)other.m_expression->copy();
+	
+	addChild(m_expression, true);
+	
+	other.defineCopy(this);
 }

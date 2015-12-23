@@ -31,4 +31,5 @@ public:
 	virtual void build() override;
 	
 	ReturnStmt(Expression* expression);
+	ReturnStmt(const ReturnStmt& other);
 };

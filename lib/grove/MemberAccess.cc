@@ -26,10 +26,7 @@
 
 ASTNode* MemberAccess::copy() const
 {
-	auto clone = new MemberAccess(m_class, m_valued, m_name);
-	
-	defineCopy(clone);
-	return clone;
+	return new MemberAccess(*this);
 }
 
 const ClassDecl* MemberAccess::getClass() const
@@ -216,4 +213,20 @@ MemberAccess::MemberAccess(const OString& name)
 	{
 		throw fatal_error("MemberAccess ctor called with empty name");
 	}
+	
+	m_local = true;
 }
+
+MemberAccess::MemberAccess(const MemberAccess& other)
+{
+	if (other.m_local == false)
+	{
+		m_class = other.m_class;
+		m_valued = other.m_valued;
+	}
+	
+	m_name = other.m_name;
+	other.defineCopy(this);
+}
+
+

@@ -29,6 +29,11 @@ void MethodAccess::findDependencies()
 	}
 }
 
+ASTNode* MethodAccess::copy() const
+{
+	return new MethodAccess(*this);
+}
+
 void MethodAccess::resolve()
 {
 	// The first thing to do is verify that we're being used in the
@@ -91,4 +96,11 @@ MethodAccess::MethodAccess(const ClassDecl* theClass, OString name)
 	
 	m_class = theClass;
 	m_name = name;
+}
+
+MethodAccess::MethodAccess(const MethodAccess& other)
+{
+	m_class = other.m_class;
+	m_name = other.m_name;
+	other.defineCopy(this);
 }

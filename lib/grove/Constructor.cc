@@ -14,10 +14,16 @@
 #include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
+#include <util/copy.h>
 
 const ClassDecl* Constructor::getClass() const
 {
 	return m_class;
+}
+
+ASTNode* Constructor::copy() const
+{
+	return new Constructor(*this);
 }
 
 Constructor::Constructor(const ClassDecl* theClass, OString name,
@@ -26,4 +32,12 @@ Constructor::Constructor(const ClassDecl* theClass, OString name,
 {
 	assertExists(theClass, "Constructor created with no class");
 	m_class = theClass;
+}
+
+Constructor::Constructor(const Constructor& other)
+: Function(other.m_name, copyVector(other.getParams()))
+{
+	m_class = other.getClass();
+	
+	other.defineCopy(this);
 }

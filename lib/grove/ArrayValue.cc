@@ -23,9 +23,7 @@
 
 ASTNode* ArrayValue::copy() const
 {
-	auto copy = new ArrayValue(copyVector(getElements()));
-	defineCopy(copy);
-	return copy;
+	return new ArrayValue(*this);
 }
 
 std::vector<Expression *> ArrayValue::getElements() const
@@ -167,4 +165,16 @@ ArrayValue::ArrayValue(std::vector<Expression *> elements)
 	}
 	
 	m_elements = elements;
+}
+
+ArrayValue::ArrayValue(const ArrayValue& other)
+{
+	m_elements = copyVector(other.getElements());
+	
+	for (auto element : m_elements)
+	{
+		addChild(element, true);
+	}
+	
+	other.defineCopy(this);
 }

@@ -14,12 +14,18 @@
 #include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
+#include <util/copy.h>
 
 void ClassMethod::findDependencies()
 {
 	Function::findDependencies();
 	
 	addDependency(m_class);
+}
+
+ASTNode* ClassMethod::copy() const
+{
+	return new ClassMethod(*this);
 }
 
 Parameter* ClassMethod::getThisParam() const
@@ -47,4 +53,13 @@ ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
 	m_params.insert(m_params.begin(), m_this_param);
 	
 	m_class = theClass;
+}
+
+ClassMethod::ClassMethod(const ClassMethod& other)
+: Function(other.m_name, copyVector(other.getParams()))
+{
+	m_this_param = getParams().at(0);
+	m_class = other.m_class;
+	
+	other.defineCopy(this);
 }

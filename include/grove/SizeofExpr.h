@@ -32,4 +32,5 @@ public:
 	
 	SizeofExpr(const Type* typeArg);
 	SizeofExpr(Expression* expr);
+	SizeofExpr(const SizeofExpr& other);
 };

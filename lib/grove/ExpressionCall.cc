@@ -72,6 +72,38 @@ ExpressionCall::ExpressionCall(ASTNode* expr, std::vector<Expression *> args,
 	m_args = args;
 }
 
+ExpressionCall::ExpressionCall(const ExpressionCall& other)
+{
+	if (other.isChild(other.m_expr))
+	{
+		m_expr = (Expression *)other.m_expr->copy();
+	}
+	else if (other.getModule()->hasCopy(other.m_expr))
+	{
+		m_expr = other.getModule()->getCopy(other.m_expr);
+	}
+	else
+	{
+		m_expr = other.m_expr;
+	}
+	
+	m_args = copyVector(other.getArgs());
+	
+	if (other.isChild(other.m_expr))
+	{
+		addChild(m_expr, true);
+	}
+	
+	for (auto& arg : m_args)
+	{
+		addChild(arg, true);
+	}
+	
+	other.defineCopy(this);
+}
+
+
+
 FunctionType* ExpressionCall::expectedFunctionTy() const
 {
 	auto ty_list = std::vector<const Type *>();
@@ -114,26 +146,7 @@ const FunctionType* ExpressionCall::getFunctionTy() const
 
 ASTNode* ExpressionCall::copy() const
 {
-	ASTNode* expr = nullptr;
-	
-	if (isChild(m_expr))
-	{
-		expr = m_expr->copy();
-	}
-	else if (getModule()->hasCopy(m_expr))
-	{
-		expr = getModule()->getCopy(m_expr);
-	}
-	else
-	{
-		expr = m_expr;
-	}
-	
-	auto clone = new ExpressionCall(expr, copyVector(getArgs()),
-									isChild(m_expr));
-	
-	defineCopy(clone);
-	return clone;
+	return new ExpressionCall(*this);
 }
 
 void ExpressionCall::setExpr(ASTNode *expr)

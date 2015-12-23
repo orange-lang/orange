@@ -30,4 +30,5 @@ public:
 	bool isPostIncrement() const;
 	
 	IncrementExpr(Expression* expr, int delta, bool preincrement);
+	IncrementExpr(const IncrementExpr& other);
 };

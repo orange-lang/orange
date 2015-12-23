@@ -33,16 +33,7 @@ ASTNode* Loop::copyIfNonNull(ASTNode *node) const
 
 ASTNode* Loop::copy() const
 {
-	auto initializers = copyVector(getInitializers());
-	
-	auto condition = copyIfNonNull(getCondition())->as<Expression *>();
-	auto afterthought = copyIfNonNull(getAfterthought());
-	
-	auto loop = new Loop(initializers, condition, afterthought, m_post_check);
-	loop->copyStatements(this);
-	
-	defineCopy(loop);
-	return loop;
+	return new Loop(*this);
 }
 
 std::vector<ASTNode*> Loop::getInitializers() const
@@ -290,4 +281,23 @@ Loop::Loop(std::vector<ASTNode*> initializers, Expression* condition,
 	
 	addChild(m_condition);
 	addChild(m_afterthought);
+}
+
+Loop::Loop(const Loop& other)
+{
+	m_initializers = copyVector(other.getInitializers());
+	
+	for (auto initializer : m_initializers)
+	{
+		addChild(initializer, true);
+	}
+	
+	m_condition = (Expression *)copyIfNonNull(other.m_condition);
+	m_afterthought = (Expression *)copyIfNonNull(other.m_afterthought);
+	
+	addChild(m_condition);
+	addChild(m_afterthought);
+	
+	copyStatements(&other);
+	other.defineCopy(this);
 }

@@ -22,4 +22,5 @@ public:
 	virtual void build() override;
 	
 	NegativeExpr(Expression* expr);
+	NegativeExpr(const NegativeExpr& other);
 };

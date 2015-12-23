@@ -32,4 +32,5 @@ public:
 	virtual bool isConstant() const override;
 	
 	ArrayValue(std::vector<Expression *> elements);
+	ArrayValue(const ArrayValue& other);
 };

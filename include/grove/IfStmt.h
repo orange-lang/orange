@@ -59,4 +59,5 @@ public:
 	virtual void build() override;
 	
 	IfStmt();
+	IfStmt(const IfStmt& other);
 };

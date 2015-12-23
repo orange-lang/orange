@@ -60,4 +60,5 @@ public:
 	
 	Loop(std::vector<ASTNode*> initializer, Expression* condition,
 		 ASTNode* afterthought, bool postCheck);
+	Loop(const Loop& other);
 };

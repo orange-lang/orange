@@ -61,13 +61,7 @@ static llvm::CmpInst::Predicate getPredicate(std::string op, bool FP, bool isSig
 
 ASTNode* BinOpCompare::copy() const
 {
-	auto copiedLHS = getLHS()->copy()->as<Expression *>();
-	auto copiedRHS = getRHS()->copy()->as<Expression *>();
-	
-	auto copy = new BinOpCompare(copiedLHS, getOperator(), copiedRHS);
-	defineCopy(copy);
-	
-	return copy;
+	return new BinOpCompare(*this);
 }
 
 void BinOpCompare::resolve()
@@ -131,4 +125,12 @@ BinOpCompare::BinOpCompare(Expression* LHS, OString op, Expression* RHS)
 :BinOpExpr(LHS, op, RHS)
 {
 	// Do nothing.
+}
+
+BinOpCompare::BinOpCompare(const BinOpCompare& other)
+: BinOpExpr((Expression *)other.getLHS()->copy(),
+			other.getOperator(),
+			(Expression *)other.getRHS()->copy())
+{
+	other.defineCopy(this);
 }

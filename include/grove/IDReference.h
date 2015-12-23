@@ -25,4 +25,5 @@ public:
 	virtual ASTNode* copy() const override;
 	
 	IDReference(OString name);
+	IDReference(const IDReference& other);
 };

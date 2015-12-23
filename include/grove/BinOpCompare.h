@@ -23,4 +23,5 @@ public:
 	virtual ASTNode* copy() const override;
 	
 	BinOpCompare(Expression* LHS, OString op, Expression* RHS);
+	BinOpCompare(const BinOpCompare& other);
 };

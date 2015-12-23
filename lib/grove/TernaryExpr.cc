@@ -20,14 +20,7 @@
 
 ASTNode* TernaryExpr::copy() const
 {
-	auto condition_copy = getCondition()->copy()->as<Expression *>();
-	auto true_val_copy = getTrueVal()->copy()->as<Expression *>();
-	auto false_val_copy = getFalseVal()->copy()->as<Expression *>();
-	
-	auto clone = new TernaryExpr(condition_copy, true_val_copy, false_val_copy);
-	
-	defineCopy(clone);
-	return clone;
+	return new TernaryExpr(*this);
 }
 
 Expression* TernaryExpr::getCondition() const
@@ -132,4 +125,17 @@ TernaryExpr::TernaryExpr(Expression* condition, Expression* trueval,
 	addChild(condition, true);
 	addChild(trueval, true);
 	addChild(falseval, true);
+}
+
+TernaryExpr::TernaryExpr(const TernaryExpr& other)
+{
+	m_condition = (Expression *)other.m_condition->copy();
+	m_true_val = (Expression *)other.m_true_val->copy();
+	m_false_val = (Expression *)other.m_false_val->copy();
+	
+	addChild(m_condition, true);
+	addChild(m_true_val, true);
+	addChild(m_false_val, true);
+	
+	other.defineCopy(this);
 }

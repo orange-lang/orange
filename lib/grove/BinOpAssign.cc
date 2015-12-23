@@ -83,13 +83,7 @@ OString BinOpAssign::getArithOp() const
 
 ASTNode* BinOpAssign::copy() const
 {
-	auto copiedLHS = getLHS()->copy()->as<Expression *>();
-	auto copiedRHS = getRHS()->copy()->as<Expression *>();
-	
-	auto copy = new BinOpAssign(copiedLHS, getOperator(), copiedRHS);
-	
-	defineCopy(copy);
-	return copy;
+	return new BinOpAssign(*this);
 }
 
 void BinOpAssign::resolve()
@@ -188,4 +182,12 @@ BinOpAssign::BinOpAssign(Expression* LHS, OString op, Expression* RHS)
 	{
 		throw fatal_error("unkown assign operator given to BinOpAssign");
 	}
+}
+
+BinOpAssign::BinOpAssign(const BinOpAssign& other)
+: BinOpExpr((Expression *)other.getLHS()->copy(),
+			other.getOperator(),
+			(Expression *)other.getRHS()->copy())
+{
+	other.defineCopy(this);
 }
