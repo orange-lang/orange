@@ -122,6 +122,11 @@ void ASTNode::addChild(ASTNode *child, int idx, bool mustExist)
 		throw fatal_error("Adding a ClassTopLevel in a non-class context");
 	}
 	
+	if (child->m_parent != nullptr)
+	{
+		throw fatal_error("Child already has a parent");
+	}
+	
 	m_children.insert(m_children.begin()+idx, child);
 	
 	child->m_parent = this;
@@ -147,6 +152,11 @@ void ASTNode::addChild(ASTNode *child, bool mustExist)
 		throw fatal_error("Adding a ClassTopLevel in a non-class context");
 	}
 	
+	if (child->m_parent != nullptr)
+	{
+		throw fatal_error("Child already has a parent");
+	}
+	
 	m_children.push_back(child);
 	
 	child->m_parent = this;
@@ -163,11 +173,15 @@ void ASTNode::addChild(ASTNode *child, const ASTNode *ref, int delta)
 		throw fatal_error("Adding a ClassTopLevel in a non-class context");
 	}
 	
-	
 	auto pos = std::find(m_children.begin(), m_children.end(), ref);
 	if (pos == m_children.end())
 	{
 		throw fatal_error("reference was not found in list of children");
+	}
+	
+	if (child->m_parent != nullptr)
+	{
+		throw fatal_error("Child already has a parent");
 	}
 	
 	m_children.insert(pos + delta, child);
