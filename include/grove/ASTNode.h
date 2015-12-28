@@ -57,8 +57,10 @@ public:
 	/// Gets the parent of this node.
 	ASTNode* getParent() const;
 
+	/// Gets all children of this node.
 	std::vector<ASTNode *> getChildren() const;
 
+	/// Gets all dependencies of this node.
 	std::vector<ASTNode *> getDependencies() const;
 
 	/// Gets whether or not this node depends on a specified node.
@@ -67,12 +69,16 @@ public:
 	/// Gets the IR builder in the module.
 	LLVMBuilder* IRBuilder() const;
 
+	/// Returns whether or not a node is a child of this node.
 	bool isChild(const ASTNode* child) const;
 	
+	/// Adds a node as a dependency to this node.
 	void addDependency(ASTNode* dependency);
 	
+	/// Adds a child to this node.
 	void addChild(ASTNode* child, int idx, bool mustExist = false);
 	
+	/// Adds a child to this node.
 	void addChild(ASTNode* child, bool mustExist = false);
 	
 	/// Add a child relative to a reference child plus a delta.
