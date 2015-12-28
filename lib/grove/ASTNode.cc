@@ -241,6 +241,28 @@ void ASTNode::build()
 	// Do nothing 
 }
 
+void ASTNode::replace(ASTNode *with)
+{
+	for (auto node : getParent()->getMemberNodes())
+	{
+		if (*node == this)
+		{
+			*node = with;
+		}
+	}
+	
+	for (auto vec : getParent()->getMemberLists())
+	{
+		for (auto& element : *vec)
+		{
+			if (element == this)
+			{
+				element = with;
+			}
+		}
+	}
+}
+
 bool ASTNode::hasNamed(OString name, SearchSettings settings) const
 {
 	return getModule()->hasNamed(name, this, settings);

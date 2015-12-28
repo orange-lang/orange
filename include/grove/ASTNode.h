@@ -170,6 +170,10 @@ public:
 
 		return children;
 	}
+	
+	/// Replaces instances of this node in a parent, across all members
+	/// and vectors, with another node.
+	void replace(ASTNode *with);
 
 	/**
 	 * Determines whether or not a named node by a given name exists 
