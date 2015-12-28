@@ -72,6 +72,20 @@ ASTNode* IfStmt::copy() const
 	return new IfStmt(*this);
 }
 
+std::vector<ObjectBase**> IfStmt::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> IfStmt::getMemberLists()
+{
+	auto list = defMemberLists();
+	list.insert(list.end(), {
+		(std::vector<ObjectBase *>*)&m_blocks
+	});
+	return list;
+}
+
 void IfStmt::resolve()
 {
 	if (m_if_blocks.size() == 0)

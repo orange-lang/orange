@@ -29,6 +29,22 @@ ASTNode* MemberAccess::copy() const
 	return new MemberAccess(*this);
 }
 
+std::vector<ObjectBase**> MemberAccess::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase**)&m_class,
+		(ObjectBase**)&m_member,
+		(ObjectBase**)&m_valued
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> MemberAccess::getMemberLists()
+{
+	return defMemberLists();
+}
+
 const ClassDecl* MemberAccess::getClass() const
 {
 	return m_class;

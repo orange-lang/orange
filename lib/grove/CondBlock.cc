@@ -20,6 +20,20 @@ ASTNode* CondBlock::copy() const
 	return new CondBlock(*this);
 }
 
+std::vector<ObjectBase**> CondBlock::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_expr
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> CondBlock::getMemberLists()
+{
+	return defMemberLists();
+}
+
 void CondBlock::resolve()
 {
 	assertExists(getExpression()->getType(), "Expression has no type!");

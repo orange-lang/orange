@@ -149,6 +149,20 @@ ASTNode* ExpressionCall::copy() const
 	return new ExpressionCall(*this);
 }
 
+std::vector<ObjectBase**> ExpressionCall::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_expr
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> ExpressionCall::getMemberLists()
+{
+	return defMemberLists();
+}
+
 void ExpressionCall::setExpr(ASTNode *expr)
 {
 	if (expr->is<Valued *>() == false)

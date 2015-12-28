@@ -69,6 +69,10 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	/// Constructs a new expression call.
 	/// @param expr A node. Expected implement Typed and Valued.
 	/// @param args The argument list for this call.

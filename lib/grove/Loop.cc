@@ -36,6 +36,25 @@ ASTNode* Loop::copy() const
 	return new Loop(*this);
 }
 
+std::vector<ObjectBase**> Loop::getMemberNodes()
+{
+	auto list = Block::getMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_condition,
+		(ObjectBase **)&m_afterthought
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> Loop::getMemberLists()
+{
+	auto list = Block::getMemberLists();
+	list.insert(list.end(), {
+		(std::vector<ObjectBase *>*)&m_initializers
+	});
+	return list;
+}
+
 std::vector<ASTNode*> Loop::getInitializers() const
 {
 	return m_initializers;

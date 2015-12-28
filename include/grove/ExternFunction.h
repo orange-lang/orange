@@ -38,6 +38,10 @@ public:
 	virtual void resolve() override;
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	ExternFunction(OString name, std::vector<Parameter *> params,
 				   const Type* retType, bool vaarg = false);
 	ExternFunction(const ExternFunction& other);

@@ -27,6 +27,20 @@ ASTNode* IncrementExpr::copy() const
 	return new IncrementExpr(*this);
 }
 
+std::vector<ObjectBase**> IncrementExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_expr
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> IncrementExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 int IncrementExpr::getDelta() const
 {
 	return m_delta;

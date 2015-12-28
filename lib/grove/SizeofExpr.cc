@@ -28,6 +28,20 @@ ASTNode* SizeofExpr::copy() const
 	return new SizeofExpr(*this);
 }
 
+std::vector<ObjectBase**> SizeofExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase**)&m_expression_arg
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> SizeofExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 Expression* SizeofExpr::getExpressionArg() const
 {
 	return m_expression_arg;

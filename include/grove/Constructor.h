@@ -22,6 +22,10 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	Constructor(const ClassDecl* theClass, OString name,
 				std::vector<Parameter *> params);
 	Constructor(const Constructor& other);

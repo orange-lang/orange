@@ -31,6 +31,21 @@ void ASTNode::defineCopy(const ASTNode *copy) const
 	getModule()->defineCopy(this, copy);
 }
 
+std::vector<ObjectBase**> ASTNode::defMemberNodes()
+{
+	return std::vector<ObjectBase**>();
+}
+
+std::vector<std::vector<ObjectBase*>*> ASTNode::defMemberLists()
+{
+	auto list = std::vector<std::vector<ObjectBase *>*>();
+	list.insert(list.end(), {
+		(std::vector<ObjectBase*>*)&m_children,
+		(std::vector<ObjectBase*>*)&m_dependencies
+	});
+	return list;
+}
+
 Module* ASTNode::getModule() const
 {
 	if (m_module == nullptr && getParent() != nullptr)

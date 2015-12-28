@@ -42,6 +42,20 @@ ASTNode* ExternFunction::copy() const
 	return new ExternFunction(*this);
 }
 
+std::vector<ObjectBase**> ExternFunction::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> ExternFunction::getMemberLists()
+{
+	auto list = defMemberLists();
+	list.insert(list.end(), {
+		(std::vector<ObjectBase *>*)&m_params
+	});
+	return list;
+}
+
 void ExternFunction::resolve()
 {
 	setType(FunctionType::get(getModule(), m_ret_type, getParamTys(),

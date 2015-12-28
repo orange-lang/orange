@@ -28,6 +28,21 @@ ASTNode* ClassMethod::copy() const
 	return new ClassMethod(*this);
 }
 
+std::vector<ObjectBase**> ClassMethod::getMemberNodes()
+{
+	auto list = Function::getMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_class,
+		(ObjectBase **)&m_this_param
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> ClassMethod::getMemberLists()
+{
+	return Function::getMemberLists();
+}
+
 Parameter* ClassMethod::getThisParam() const
 {
 	return m_this_param;

@@ -47,6 +47,16 @@ ASTNode* StrValue::copy() const
 	return new StrValue(*this);
 }
 
+std::vector<ObjectBase**> StrValue::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> StrValue::getMemberLists()
+{
+	return defMemberLists();
+}
+
 void StrValue::resolve()
 {
 	setType(PointerType::get(getModule(), IntType::get(getModule(), 8)));

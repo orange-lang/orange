@@ -21,6 +21,10 @@ private:
 public:
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	/// Gets the expression, if any, to get the size of.
 	Expression* getExpressionArg() const;
 	

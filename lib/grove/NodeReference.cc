@@ -47,6 +47,20 @@ ASTNode* NodeReference::copy() const
 	return new NodeReference(*this);
 }
 
+std::vector<ObjectBase**> NodeReference::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase**)&m_node
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> NodeReference::getMemberLists()
+{
+	return defMemberLists();
+}
+
 bool NodeReference::isAccessible() const
 {
 	return m_node->is<Accessible *>() &&

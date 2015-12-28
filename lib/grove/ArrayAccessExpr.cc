@@ -24,6 +24,21 @@ ASTNode* ArrayAccessExpr::copy() const
 	return new ArrayAccessExpr(*this);
 }
 
+std::vector<ObjectBase**> ArrayAccessExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_array,
+		(ObjectBase **)&m_idx
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> ArrayAccessExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 Expression* ArrayAccessExpr::getArray() const
 {
 	return m_array;

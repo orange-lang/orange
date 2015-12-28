@@ -21,6 +21,20 @@ ASTNode* DerefExpr::copy() const
 	return new DerefExpr(*this);
 }
 
+std::vector<ObjectBase**> DerefExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_expression
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> DerefExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 Expression* DerefExpr::getExpression() const
 {
 	return m_expression;

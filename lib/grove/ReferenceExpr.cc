@@ -19,6 +19,20 @@ ASTNode* ReferenceExpr::copy() const
 	return new ReferenceExpr(*this);
 }
 
+std::vector<ObjectBase**> ReferenceExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_expression
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> ReferenceExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 Expression* ReferenceExpr::getExpression() const
 {
 	return m_expression;

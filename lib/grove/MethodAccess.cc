@@ -34,6 +34,16 @@ ASTNode* MethodAccess::copy() const
 	return new MethodAccess(*this);
 }
 
+std::vector<ObjectBase**> MethodAccess::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> MethodAccess::getMemberLists()
+{
+	return defMemberLists();
+}
+
 void MethodAccess::resolve()
 {
 	// The first thing to do is verify that we're being used in the

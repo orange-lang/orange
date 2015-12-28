@@ -26,6 +26,20 @@ ASTNode* NegativeExpr::copy() const
 	return new NegativeExpr(*this);
 }
 
+std::vector<ObjectBase**> NegativeExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_expr
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> NegativeExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 void NegativeExpr::resolve()
 {
 	auto ty = getExpression()->getType();

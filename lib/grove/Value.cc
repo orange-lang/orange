@@ -29,6 +29,16 @@ ASTNode* Value::copy() const
 	return new Value(*this);
 }
 
+std::vector<ObjectBase**> Value::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> Value::getMemberLists()
+{
+	return defMemberLists();
+}
+
 bool Value::isConstant() const
 {
 	return true;

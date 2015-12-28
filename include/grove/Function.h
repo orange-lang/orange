@@ -79,6 +79,10 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	virtual bool isGeneric() const override;
 	
 	virtual Genericable* createInstance(const Type* type) override;

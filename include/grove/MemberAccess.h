@@ -28,6 +28,10 @@ private:
 public:
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	const ClassDecl* getClass() const;
 	const Valued* getValued() const;
 	const MemberVarDecl* getMember() const;

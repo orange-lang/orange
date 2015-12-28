@@ -17,6 +17,20 @@ ASTNode* CastExpr::copy() const
 	return new CastExpr(*this);
 }
 
+std::vector<ObjectBase**> CastExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_expression
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> CastExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 Expression* CastExpr::getExpression() const
 {
 	return m_expression;

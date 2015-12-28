@@ -42,6 +42,10 @@ public:
 	virtual ASTNode* copy() const override;
 	virtual const Type* copyType() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	ReferenceType(OString name);
 	ReferenceType(const ASTNode* reference);
 	ReferenceType(const ASTNode* reference, const Type* refType);

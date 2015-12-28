@@ -50,6 +50,20 @@ ASTNode* VarDecl::copy() const
 	return new VarDecl(*this);
 }
 
+std::vector<ObjectBase**> VarDecl::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase**)&m_expr
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> VarDecl::getMemberLists()
+{
+	return defMemberLists();
+}
+
 bool VarDecl::isAccessible() const
 {
 	// We can have members accessed if we're a reference type,

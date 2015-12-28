@@ -26,6 +26,20 @@ ASTNode* ArrayValue::copy() const
 	return new ArrayValue(*this);
 }
 
+std::vector<ObjectBase**> ArrayValue::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> ArrayValue::getMemberLists()
+{
+	auto list = defMemberLists();
+	list.insert(list.end(), {
+		(std::vector<ObjectBase *>*)&m_elements
+	});
+	return list;
+}
+
 std::vector<Expression *> ArrayValue::getElements() const
 {
 	return m_elements;

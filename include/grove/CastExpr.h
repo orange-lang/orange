@@ -16,9 +16,13 @@
 class CastExpr : public Expression
 {
 private:
-	Expression* m_expression;
+	Expression* m_expression = nullptr;
 public:
 	virtual ASTNode* copy() const override;
+	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
 	
 	Expression* getExpression() const;
 	

@@ -21,6 +21,10 @@ private:
 public:
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	virtual bool hasPointer() const override;
 	virtual llvm::Value* getPointer() const override;
 	virtual llvm::Value* getValue() const override;

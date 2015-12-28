@@ -25,6 +25,20 @@ ASTNode* CtorCall::copy() const
 	return new CtorCall(*this);
 }
 
+std::vector<ObjectBase**> CtorCall::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_this_param
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> CtorCall::getMemberLists()
+{
+	return defMemberLists();
+}
+
 bool CtorCall::hasPointer() const
 {
 	return true;

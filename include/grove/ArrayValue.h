@@ -17,6 +17,10 @@ private:
 public:
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	std::vector<Expression *> getElements() const;
 	
 	virtual void resolve() override;

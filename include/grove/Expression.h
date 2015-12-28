@@ -29,6 +29,10 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	/// Returns whether or not this expression represents a constant value.
 	virtual bool isConstant() const;
 };

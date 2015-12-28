@@ -252,6 +252,20 @@ ASTNode* Block::copy() const
 	return new Block(*this);
 }
 
+std::vector<ObjectBase**> Block::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> Block::getMemberLists()
+{
+	auto list = defMemberLists();
+	list.insert(list.end(), {
+		(std::vector<ObjectBase *>*)&m_statements
+	});
+	return list;
+}
+
 void Block::build()
 {
 	buildStatements();

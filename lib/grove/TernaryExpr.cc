@@ -23,6 +23,22 @@ ASTNode* TernaryExpr::copy() const
 	return new TernaryExpr(*this);
 }
 
+std::vector<ObjectBase**> TernaryExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase**)&m_condition,
+		(ObjectBase**)&m_true_val,
+		(ObjectBase**)&m_false_val
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> TernaryExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 Expression* TernaryExpr::getCondition() const
 {
 	return m_condition;

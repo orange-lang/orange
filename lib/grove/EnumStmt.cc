@@ -21,6 +21,25 @@ ASTNode* EnumStmt::copy() const
 	return new EnumStmt(*this);
 }
 
+std::vector<ObjectBase**> EnumStmt::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	
+	auto values = std::vector<ObjectBase **>();
+	for (auto vp : m_members)
+	{
+		values.push_back((ObjectBase **)&vp.val);
+	}
+	
+	list.insert(list.end(), values.begin(), values.end());
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> EnumStmt::getMemberLists()
+{
+	return defMemberLists();
+}
+
 void EnumStmt::resolve()
 {
 	SearchSettings settings;

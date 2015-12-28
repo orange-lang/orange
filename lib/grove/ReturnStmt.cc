@@ -39,6 +39,20 @@ ASTNode* ReturnStmt::copy() const
 	return new ReturnStmt(*this);
 }
 
+std::vector<ObjectBase**> ReturnStmt::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_expr
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> ReturnStmt::getMemberLists()
+{
+	return defMemberLists();
+}
+
 void ReturnStmt::resolve()
 {
 	Statement::resolve();

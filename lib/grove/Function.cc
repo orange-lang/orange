@@ -264,6 +264,20 @@ ASTNode* Function::copy() const
 	return new Function(*this);
 }
 
+std::vector<ObjectBase**> Function::getMemberNodes()
+{
+	return Block::getMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> Function::getMemberLists()
+{
+	auto list = Block::getMemberLists();
+	list.insert(list.end(), {
+		(std::vector<ObjectBase *>*)&m_params
+	});
+	return list;
+}
+
 void Function::findDependencies()
 {
 	// Find all return statements that don't depend on this function.

@@ -26,6 +26,16 @@ ASTNode* Constructor::copy() const
 	return new Constructor(*this);
 }
 
+std::vector<ObjectBase**> Constructor::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> Constructor::getMemberLists()
+{
+	return defMemberLists();
+}
+
 Constructor::Constructor(const ClassDecl* theClass, OString name,
 						 std::vector<Parameter *> params)
 : Function(name, params)

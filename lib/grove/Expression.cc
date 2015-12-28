@@ -35,6 +35,16 @@ ASTNode* Expression::copy() const
 	return nullptr;
 }
 
+std::vector<ObjectBase**> Expression::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> Expression::getMemberLists()
+{
+	return defMemberLists();
+}
+
 bool Expression::isConstant() const
 {
 	return false;

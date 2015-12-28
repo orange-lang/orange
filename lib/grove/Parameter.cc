@@ -37,6 +37,16 @@ ASTNode* Parameter::copy() const
 	return new Parameter(*this);
 }
 
+std::vector<ObjectBase**> Parameter::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> Parameter::getMemberLists()
+{
+	return defMemberLists();
+}
+
 bool Parameter::isAccessible() const
 {
 	// We can have members accessed if we're a reference type,

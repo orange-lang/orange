@@ -15,6 +15,21 @@
 
 #include <util/assertions.h>
 
+std::vector<ObjectBase**> BinOpExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_LHS,
+		(ObjectBase **)&m_RHS
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> BinOpExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 bool BinOpExpr::areTypesCompatible() const
 {
 	if (getLHS()->getType() == getRHS()->getType())

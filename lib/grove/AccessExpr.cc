@@ -19,6 +19,21 @@ ASTNode* AccessExpr::copy() const
 	return new AccessExpr(*this);
 }
 
+std::vector<ObjectBase**> AccessExpr::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_LHS,
+		(ObjectBase **)&m_accessed
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> AccessExpr::getMemberLists()
+{
+	return defMemberLists();
+}
+
 Expression* AccessExpr::getLHS() const
 {
 	return m_LHS;

@@ -63,6 +63,18 @@ public:
 	/// Gets all dependencies of this node.
 	std::vector<ASTNode *> getDependencies() const;
 
+	/// Gets the default base member nodes from an ASTNode.
+	std::vector<ObjectBase**> defMemberNodes();
+	
+	/// Gets the default member lists from an ASTNode.
+	std::vector<std::vector<ObjectBase*>*> defMemberLists();
+	
+	/// Gets pointers to member nodes from this ASTNode, including defaults.
+	virtual std::vector<ObjectBase**> getMemberNodes() = 0;
+	
+	/// Gets pointers to member lists from this ASTNode, including defaults.
+	virtual std::vector<std::vector<ObjectBase*>*> getMemberLists() = 0;
+	
 	/// Gets whether or not this node depends on a specified node.
 	bool dependsOn(ASTNode* node) const;
 

@@ -37,5 +37,9 @@ public:
 	
 	virtual ASTNode* copy() const override = 0;
 	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
 	BinOpExpr(Expression* LHS, OString op, Expression* RHS);
 };

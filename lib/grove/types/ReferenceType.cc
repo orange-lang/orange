@@ -182,6 +182,20 @@ ASTNode* ReferenceType::copy() const
 	return clone;
 }
 
+std::vector<ObjectBase**> ReferenceType::getMemberNodes()
+{
+	auto list = defMemberNodes();
+	list.insert(list.end(), {
+		(ObjectBase **)&m_reference
+	});
+	return list;
+}
+
+std::vector<std::vector<ObjectBase *>*> ReferenceType::getMemberLists()
+{
+	return defMemberLists();
+}
+
 const Type* ReferenceType::copyType() const
 {
 	return copy()->as<Type *>();

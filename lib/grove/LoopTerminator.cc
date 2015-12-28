@@ -25,6 +25,16 @@ ASTNode* LoopTerminator::copy() const
 	return new LoopTerminator(*this);
 }
 
+std::vector<ObjectBase**> LoopTerminator::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
+std::vector<std::vector<ObjectBase *>*> LoopTerminator::getMemberLists()
+{
+	return defMemberLists();
+}
+
 bool LoopTerminator::isTerminator() const
 {
 	return true;
