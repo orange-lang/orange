@@ -85,7 +85,7 @@ public:
 	bool isRootNode() const;
 
 	/// Creates a copy of this node.
-	virtual ASTNode* copy() const;
+	virtual ASTNode* copy() const = 0;
 
 	/// Populates the depdencies list of this node.
 	virtual void findDependencies();

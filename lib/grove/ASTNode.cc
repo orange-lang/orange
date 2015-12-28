@@ -210,11 +210,6 @@ bool ASTNode::isRootNode() const
 	return getParent() == nullptr;
 }
 
-ASTNode* ASTNode::copy() const
-{
-	throw fatal_error("ASTNode::copy() not overriden");
-}
-
 void ASTNode::findDependencies()
 {
 	// By default, add all children as dependencies.

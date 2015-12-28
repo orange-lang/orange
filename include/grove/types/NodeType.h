@@ -17,10 +17,12 @@
 class NodeType : public Type, public ASTNode
 {
 public:
-	virtual bool isNodeTy() const;
+	virtual bool isNodeTy() const override;
 	
 	virtual bool canInitializeVar() const;
 	virtual Expression* initializeVar() const;
+	
+	virtual ASTNode* copy() const override = 0;
 	
 	NodeType(bool isConst);
 };

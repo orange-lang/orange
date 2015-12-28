@@ -29,6 +29,12 @@ llvm::Value* Expression::castTo(Expression *expr) const
 	return castTo(expr_ty);
 }
 
+ASTNode* Expression::copy() const
+{
+	throw fatal_error("Cannot copy generic Expression");
+	return nullptr;
+}
+
 bool Expression::isConstant() const
 {
 	return false;

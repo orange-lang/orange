@@ -27,6 +27,8 @@ public:
 	/// Returns the result of that cast. The original value is untouched.
 	llvm::Value* castTo(Expression* expr) const;
 	
+	virtual ASTNode* copy() const override;
+	
 	/// Returns whether or not this expression represents a constant value.
 	virtual bool isConstant() const;
 };

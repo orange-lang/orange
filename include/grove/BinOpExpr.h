@@ -35,5 +35,7 @@ public:
 	
 	virtual void resolve() override;
 	
+	virtual ASTNode* copy() const override = 0;
+	
 	BinOpExpr(Expression* LHS, OString op, Expression* RHS);
 };

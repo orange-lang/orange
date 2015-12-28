@@ -36,6 +36,8 @@ public:
 	/// code can follow it.
 	virtual bool isTerminator() const;
 	
+	virtual ASTNode* copy() const override = 0;
+	
 	Statement();
 	Statement(Module* module);
 };
