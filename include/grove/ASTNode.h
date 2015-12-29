@@ -175,37 +175,17 @@ public:
 	/// and vectors, with another node.
 	void replace(ASTNode *with);
 
-	/**
-	 * Determines whether or not a named node by a given name exists 
-	 * in the tree, up to this node. 
-	 */
+	/// Determines whether or not there is a named node up the AST accessible
+	/// from this node.
 	bool hasNamed(OString name, SearchSettings settings) const;
 	
-	/**
-	 * Tries to find a Named node in the AST. Searches up to this node.
-	 *
-	 * This function allows for a type hint to be passed in to narrow
-	 * down results if more than one node was found by name. The hint can
-	 * be any type, including VarType and compound types (like FunctionType).
-	 * VarType is used as a wildcard.
-	 *
-	 * @param name The name of the node to look for.
-	 * @param hint The type hint to narrow down search results.
-	 * @param limit The child to stop searching at, if any.
-	 *
-	 * @return The named node, if one was found.
-	 *
-	 * @throws Throws an exception if multiple nodes with the same name
-	 * were found, and using hint does not narrow down results to exactly
-	 * one node.
-	 */
+	/// Returns a named node from the AST, searched from this node, using
+	/// all the parent blocks.
 	Named* findNamed(OString name, const Type* type,
 					 SearchSettings settings = SearchSettings())
 	const;
 
-	/**
-	 * Gets all Named nodes with a given name up the whole AST.
-	 */
+	/// Gets all Named nodes with a given name from all AST parents.
 	std::vector<Named*> findAllNamed(OString name) const;
 
 	/// Constructs a new root node with a module.
