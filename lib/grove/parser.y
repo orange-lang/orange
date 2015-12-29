@@ -821,6 +821,16 @@ primary
 	| OPEN_BRACKET expr_list CLOSE_BRACKET { $$ = new ArrayValue(*$2); SET_LOCATION($$, @1, @3); delete $2; }
 	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); SET_LOCATION($$, @1, @4); }
 	| expression DOT IDENTIFIER { $$ = new AccessExpr($1, *$3); SET_LOCATION($$, @1, @3); delete $3; }
+	| TYPE_ID DOT IDENTIFIER {
+		auto ref = new IDReference(*$1);
+		SET_LOCATION(ref, @1, @1);
+		
+		$$ = new AccessExpr(ref, *$3);
+		SET_LOCATION($$, @1, @3);
+		
+		delete $1;
+		delete $3;
+	}
 	| THIS DOT IDENTIFIER { $$ = new MemberAccess(*$3); SET_LOCATION($$, @1, @3); delete $1; delete $3; }
 	| AT IDENTIFIER { $$ = new MemberAccess(*$2); SET_LOCATION($$, @1, @2); delete $1; delete $2; }
 	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
