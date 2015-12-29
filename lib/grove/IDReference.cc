@@ -39,15 +39,7 @@ void IDReference::findDependencies()
 	if (ref == nullptr)
 	{
 		throw undefined_error(&m_name, m_name);
-	} else if (ref->is<MemberVarDecl *>() &&
-			   findParent<ClassMethod *>() != nullptr)
-	{
-		auto access = new MemberAccess(getName());
-		addChild(access);
-		
-		getModule()->findDependencies(access);
-		setNode(access);
-	}
+	} 
 	else if (ref->as<ASTNode *>()->findParent<Function *>() !=
 			 findParent<Function *>())
 	{
