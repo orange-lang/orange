@@ -22,11 +22,13 @@ include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/lib/grove)
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/lib/grove GROVE_SOURCES)
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/lib/grove/types GROVE_TYPES_SOURCES)
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/lib/grove/exceptions GROVE_EXCEPTIONS_SOURCES)
+AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/lib/grove/transformations GROVE_TRANSFORMATIONS_SOURCES)
 
 file(GLOB SRC_INCLUDES )
 file(GLOB INCLUDES "${CMAKE_SOURCE_DIR}/include/grove/*.h")
 file(GLOB TYPE_INCLUDES "${CMAKE_SOURCE_DIR}/include/grove/types/*.h")
 file(GLOB EXCEPTION_INCLUDES "${CMAKE_SOURCE_DIR}/include/grove/exceptions/*.h")
+file(GLOB TRANSFORMATION_INCLUDES "${CMAKE_SOURCE_DIR}/include/grove/transformations/*.h")
 file(GLOB_RECURSE TEST_FILES "${CMAKE_SOURCE_DIR}/test/*.or")
 
 source_group(parser FILES
@@ -41,10 +43,12 @@ source_group(parser\\generated FILES
 source_group(src FILES ${GROVE_SOURCES})
 source_group(src\\types FILES ${GROVE_TYPES_SOURCES})
 source_group(src\\exceptions FILES ${GROVE_EXCEPTIONS_SOURCES})
+source_group(src\\transformations FILES ${GROVE_TRANSFORMATIONS_SOURCES})
 
 source_group(headers FILES ${INCLUDES})
 source_group(headers\\types FILES ${TYPE_INCLUDES})
 source_group(headers\\exceptions FILES ${EXCEPTION_INCLUDES})
+source_group(headers\\transformations FILES ${TRANSFORMATION_INCLUDES})
 
 # Add test files to their relative path in the source_group
 foreach(test_file ${TEST_FILES})
@@ -55,7 +59,8 @@ foreach(test_file ${TEST_FILES})
 endforeach()
 
 add_library(grove ${GROVE_SOURCES} ${GROVE_TYPES_SOURCES} ${GROVE_EXCEPTIONS_SOURCES}
-	${INCLUDES} ${TYPE_INCLUDES} ${EXCEPTION_INCLUDES}
+    ${GROVE_TRANSFORMATIONS_SOURCES}
+	${INCLUDES} ${TYPE_INCLUDES} ${EXCEPTION_INCLUDES} ${TRANSFORMATION_INCLUDES}
 	${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS}
 	${CMAKE_SOURCE_DIR}/lib/grove/lexer.l
 	${CMAKE_SOURCE_DIR}/lib/grove/parser.y
