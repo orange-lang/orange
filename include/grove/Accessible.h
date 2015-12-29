@@ -18,7 +18,7 @@ class Type;
 /**
  * Accessible defines classes that can have their members accessed.
  */
-class Accessible : public ObjectBase
+class Accessible : virtual public ObjectBase
 {
 public:
 	virtual bool isAccessible() const;

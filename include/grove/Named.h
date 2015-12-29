@@ -23,7 +23,7 @@ class Type;
  * underlying types. For nodes such as these, a type hint must be used to 
  * determine the node to match. Type hints can use var types to be a wildcard.
  */
-class Named : public ObjectBase {
+class Named : virtual public ObjectBase {
 protected:
 	OString m_name;
 public:

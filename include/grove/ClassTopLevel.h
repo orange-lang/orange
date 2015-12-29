@@ -13,7 +13,7 @@
 /**
  * Represents a node that is valid as a top-level child node of a class.
  */
-class ClassTopLevel : public CodeBase
+class ClassTopLevel : virtual public CodeBase
 {
 
 };

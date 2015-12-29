@@ -15,7 +15,7 @@
  * CodeBase is the base class for any code element. It contains references to 
  * location of an element in a file.
  */
-class CodeBase : public ObjectBase
+class CodeBase : virtual public ObjectBase
 {
 protected:
 	CodeLocation m_location;

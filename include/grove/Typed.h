@@ -18,7 +18,7 @@ namespace llvm { class Type; }
 /**
  * Typed is an interface for elements that do have a type.
  */
-class Typed : public ObjectBase {
+class Typed : virtual public ObjectBase {
 protected:
 	const Type* m_type = nullptr;
 public:

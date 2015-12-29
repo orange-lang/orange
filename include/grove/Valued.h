@@ -16,7 +16,7 @@ namespace llvm { class Value; }
  * Valued is an interface to define any node with a value.
  * Those nodes are not necessarily expressions.
  */
-class Valued : public ObjectBase {
+class Valued : virtual public ObjectBase {
 protected:
 	llvm::Value* m_value = nullptr;
 	llvm::Value* m_size = nullptr;

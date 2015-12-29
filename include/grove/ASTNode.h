@@ -33,7 +33,7 @@ class Type;
 /**
  * ASTNode is the root node for any element in the AST.
  */
-class ASTNode : public CodeBase {
+class ASTNode : virtual public CodeBase {
 	friend Module;
 private:
 	Module* m_module = nullptr;
