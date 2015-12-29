@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.8.7)
 project(orange)
 
+set(CMAKE_CONFIGURATION_TYPES "${CMAKE_CONFIGURATION_TYPES};DebugBison")
+
 enable_testing()
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
@@ -61,6 +63,7 @@ endif(${WIN32})
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
+set(CMAKE_CXX_FLAGS_DEBUGBISON "${CMAKE_CXX_FLAGS_DEBUG} -DYYDEBUG=1")
 
 # If we don't have LLVM installed, add the subdirectory to get it
 find_package(LLVM QUIET 3.6)
