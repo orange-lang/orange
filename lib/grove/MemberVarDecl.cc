@@ -16,7 +16,13 @@
 
 bool MemberVarDecl::usableFrom(const ASTNode *from) const
 {
-	return getProtectionLevel() == ProtectionLevel::PROTECTION_PUBLIC;
+	if (getProtectionLevel() == ProtectionLevel::PROTECTION_PUBLIC)
+	{
+		return true;
+	}
+	
+	auto parent_class = findParent<ClassDecl*>();
+	return (parent_class == from->findParent<ClassDecl*>());
 }
 
 ProtectionLevel MemberVarDecl::defaultProtectionLevel() const
