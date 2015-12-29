@@ -58,6 +58,8 @@
 	#include <grove/types/ArrayType.h>
 	#include <grove/types/VariadicArrayType.h>
 	#include <grove/types/ReferenceType.h>
+	
+	#include <grove/exceptions/code_error.h>
 
 	#include <util/assertions.h>
 
@@ -84,6 +86,7 @@
 	std::vector<Expression*>* exprs;
 	std::vector<std::tuple<OString, Expression*>>* pairs;
 	std::vector<std::tuple<OString, Value*>>* vpairs;
+	std::tuple<OString, ProtectionLevel>* ppair;
 	ASTNode* node;
 	Block* block;
 	Expression* expr;
@@ -91,7 +94,6 @@
 	Value* val;
 	OString* str;
 	const Type* ty;
-	ProtectionLevel plevel;
 }
 
 %start start
@@ -124,11 +126,11 @@
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID typename_or_identifier
-%type <str> THIS AT
+%type <str> THIS AT PUBLIC PROTECTED PRIVATE
 %type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list opt_param_list
 %type <args> opt_arg_list arg_list
-%type <plevel> protection_level
+%type <ppair> protection_level
 
 /* lowest to highest precedence */
 %left IDENTIFIER
@@ -201,12 +203,43 @@ statements
 	;
 
 flagged_statement
-	: protection_level statement { $$ = $2; }
+	: protection_level statement {
+		$$ = $2;
+		if ($$->is<Protectable*>() == false)
+		{
+			auto pair = *$1;
+			throw code_error($2, [pair]() -> std::string
+			{
+				std::stringstream ss;
+				ss << "Keyword " << std::get<0>(pair).str()
+				   << " can't be used here";
+				return ss.str();
+			});
+		}
+		delete $1;
+	}
 	| statement { $$ = $1; }
 	;
 
 flagged_compound_statement
-	: protection_level compound_statement { $$ = $2; }
+	: protection_level compound_statement {
+		$$ = $2;
+		for (auto stmt : *$$)
+		{
+			if (stmt->is<Protectable*>() == false)
+			{
+				auto pair = *$1;
+				throw code_error(stmt, [pair]() -> std::string
+				{
+					std::stringstream ss;
+					ss << "Keyword " << std::get<0>(pair).str()
+					   << " can't be used here";
+					return ss.str();
+				});
+			}		
+		}
+		delete $1;
+	}
 	| compound_statement { $$ = $1; }
 	;
 
@@ -1011,9 +1044,9 @@ array_def_list
 	;
 
 protection_level
-	: PRIVATE { $$ = ProtectionLevel::PROTECTION_PRIVATE; }
-	| PROTECTED { $$ = ProtectionLevel::PROTECTION_PROTECTED; }
-	| PUBLIC { $$ = ProtectionLevel::PROTECTION_PUBLIC; }
+	: PRIVATE { $$ = new std::tuple<OString,ProtectionLevel>(std::make_tuple(*$1, ProtectionLevel::PROTECTION_PRIVATE)); delete $1;}
+	| PROTECTED { $$ = new std::tuple<OString,ProtectionLevel>(std::make_tuple(*$1, ProtectionLevel::PROTECTION_PROTECTED)); delete $1; }
+	| PUBLIC { $$ = new std::tuple<OString,ProtectionLevel>(std::make_tuple(*$1, ProtectionLevel::PROTECTION_PUBLIC)); delete $1; }
 	;
 
 basic_type

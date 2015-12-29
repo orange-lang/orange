@@ -1,17 +1,17 @@
-class TestClass 
-	public int a 
-	protected int b 
-	private int c 
+class TestClass
+	public int a
+	protected int b
+	private int c
 
 	def add()
 		return a + b + c
-	end 
+	end
 
 	def TestClass()
-		a = 5 
-		b = 6 
-		c = 7 
-	end 
+		a = 5
+		b = 6
+		c = 7
+	end
 end
 
 TestClass obj = TestClass()
