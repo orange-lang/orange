@@ -58,7 +58,7 @@
 	#include <grove/types/ArrayType.h>
 	#include <grove/types/VariadicArrayType.h>
 	#include <grove/types/ReferenceType.h>
-	
+
 	#include <grove/exceptions/code_error.h>
 
 	#include <util/assertions.h>
@@ -216,6 +216,8 @@ flagged_statement
 				return ss.str();
 			});
 		}
+
+		$$->as<Protectable*>()->setProtectionLevel(std::get<1>(*$1));
 		delete $1;
 	}
 	| statement { $$ = $1; }
@@ -236,7 +238,9 @@ flagged_compound_statement
 					   << " can't be used here";
 					return ss.str();
 				});
-			}		
+			}
+
+			stmt->as<Protectable*>()->setProtectionLevel(std::get<1>(*$1));
 		}
 		delete $1;
 	}
