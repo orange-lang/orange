@@ -13,7 +13,12 @@ void Protectable::setProtectionLevel(ProtectionLevel &level)
 	m_level = level;
 }
 
-const ProtectionLevel& Protectable::getProtectionLevel() const
+const ProtectionLevel Protectable::getProtectionLevel() const
 {
+	if (m_level == PROTECTION_DEFAULT)
+	{
+		return defaultProtectionLevel();
+	}
+	
 	return m_level;
 }

@@ -12,6 +12,7 @@
 
 enum ProtectionLevel
 {
+	PROTECTION_DEFAULT,
 	PROTECTION_PRIVATE,
 	PROTECTION_PROTECTED,
 	PROTECTION_PUBLIC
@@ -24,11 +25,11 @@ enum ProtectionLevel
 class Protectable : virtual public ObjectBase
 {
 protected:
-	ProtectionLevel m_level = defaultProtectionLevel();
+	ProtectionLevel m_level = ProtectionLevel::PROTECTION_DEFAULT;
 public:
 	void setProtectionLevel(ProtectionLevel& level);
 	
-	const ProtectionLevel& getProtectionLevel() const;
+	const ProtectionLevel getProtectionLevel() const;
 	
 	virtual ProtectionLevel defaultProtectionLevel() const = 0;
 };
