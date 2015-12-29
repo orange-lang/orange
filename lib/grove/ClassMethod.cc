@@ -16,6 +16,11 @@
 #include <util/assertions.h>
 #include <util/copy.h>
 
+ProtectionLevel ClassMethod::defaultProtectionLevel() const
+{
+	return ProtectionLevel::PROTECTION_PUBLIC;
+}
+
 void ClassMethod::findDependencies()
 {
 	Function::findDependencies();

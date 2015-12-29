@@ -13,6 +13,7 @@
 #include "Typed.h"
 #include "TypeProvider.h"
 #include "Accessible.h"
+#include "Protectable.h"
 
 class MemberVarDecl;
 class ClassMethod;
@@ -21,11 +22,13 @@ class ClassMethod;
  * Represents a class declaration.
  */
 class ClassDecl : public Block, public Named, public Typed,
-	public TypeProvider, public Accessible
+	public TypeProvider, public Accessible, public Protectable
 {
 protected:
 	void createCtor(ClassMethod* method) const;
 public:
+  	virtual ProtectionLevel defaultProtectionLevel() const override;
+	
 	virtual ASTNode* copy() const override;
 	
 	virtual void resolve() override;

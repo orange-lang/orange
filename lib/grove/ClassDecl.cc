@@ -32,6 +32,11 @@
 #include <util/assertions.h>
 #include <util/copy.h>
 
+ProtectionLevel ClassDecl::defaultProtectionLevel() const
+{
+	return ProtectionLevel::PROTECTION_PUBLIC;
+}
+
 ASTNode* ClassDecl::copy() const
 {
 	return new ClassDecl(*this);

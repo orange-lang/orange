@@ -10,13 +10,16 @@
 
 #include "VarDecl.h"
 #include "ClassTopLevel.h"
+#include "Protectable.h"
 
 /**
  * Represents a class member variable declaration.
  */	
-class MemberVarDecl : public VarDecl, public ClassTopLevel
+class MemberVarDecl : public VarDecl, public ClassTopLevel, public Protectable
 {
 public:
+  	virtual ProtectionLevel defaultProtectionLevel() const override;
+	
 	virtual llvm::Value* getValue() const override;
 	virtual llvm::Value* getPointer() const override;
 	

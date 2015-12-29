@@ -14,6 +14,11 @@
 
 #include <util/assertions.h>
 
+ProtectionLevel MemberVarDecl::defaultProtectionLevel() const
+{
+	return ProtectionLevel::PROTECTION_PUBLIC;
+}
+
 ASTNode* MemberVarDecl::copy() const
 {
 	return new MemberVarDecl(*this);
