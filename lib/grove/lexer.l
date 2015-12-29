@@ -20,6 +20,7 @@
 	#include <grove/types/BoolType.h>
 
 	#include <grove/Parameter.h>
+	#include <grove/Protectable.h>
 
 	#include <string.h>
 	#include "parser.hh"
@@ -114,7 +115,7 @@
 "using"											SAVESTR(); return USING;
 "public"										SAVESTR(); return PUBLIC;
 "private"										SAVESTR(); return PRIVATE;
-"shared"										SAVESTR(); return SHARED;
+"protected"										SAVESTR(); return PROTECTED;
 "extern"										SAVESTR(); return EXTERN;
 "const"											SAVESTR(); return CONST_FLAG;
 "enum"											SAVESTR(); return ENUM;

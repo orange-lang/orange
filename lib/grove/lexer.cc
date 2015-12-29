@@ -386,7 +386,7 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[246] =
+static yyconst flex_int16_t yy_accept[248] =
     {   0,
         0,    0,    0,    0,  111,  109,    1,   92,  109,  109,
         2,  102,   79,  109,   64,   65,  100,   98,   93,   99,
@@ -400,21 +400,21 @@ static yyconst flex_int16_t yy_accept[246] =
       108,  108,  108,  108,   35,  108,  108,  108,  108,  108,
 
       108,   29,  108,  108,  108,   78,  108,  108,  108,  108,
-      108,  108,  108,  108,  108,  108,  108,  108,  108,   76,
-        5,   21,   70,    9,    0,    0,    0,   11,    0,    0,
-        0,   10,   77,  108,  108,  108,  108,   24,  108,  108,
-      108,   28,  108,  108,  108,  108,   30,   51,  108,  105,
-      108,  108,  108,  108,  108,  108,  108,  108,  108,  108,
-       49,  108,  108,  108,    8,    7,   13,   15,   17,   12,
-       14,   16,  108,   50,  108,  108,  108,  108,   26,   27,
-       46,  108,  108,  108,  108,  108,  108,  108,   55,   32,
-      108,  108,  108,  108,  108,   47,   23,   52,  108,  108,
+      108,  108,  108,  108,  108,  108,  108,  108,   76,    5,
+       21,   70,    9,    0,    0,    0,   11,    0,    0,    0,
+       10,   77,  108,  108,  108,  108,   24,  108,  108,  108,
+       28,  108,  108,  108,  108,   30,   51,  108,  105,  108,
+      108,  108,  108,  108,  108,  108,  108,  108,  108,   49,
+      108,  108,  108,    8,    7,   13,   15,   17,   12,   14,
+       16,  108,   50,  108,  108,  108,  108,   26,   27,   46,
+      108,  108,  108,  108,  108,  108,  108,   55,   32,  108,
+      108,  108,  108,  108,   47,   23,   52,  108,  108,   63,
 
-       63,   37,  108,   34,   39,   45,  108,  108,  108,   22,
-       53,  108,   57,   59,   61,  108,  108,  108,  108,  108,
-      108,  108,  108,   56,  108,   40,   36,  108,   54,   44,
-      108,  108,   41,   25,   43,  106,   58,   60,   62,   38,
-      108,   31,   42,   33,    0
+       37,  108,   34,   39,   45,  108,  108,  108,   22,   53,
+      108,   57,   59,   61,  108,  108,  108,  108,  108,  108,
+      108,  108,   56,  108,   40,   36,  108,   54,   44,  108,
+      108,  108,   41,   25,  106,   58,   60,   62,   38,  108,
+       31,   42,  108,   33,  108,   43,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -460,71 +460,71 @@ static yyconst flex_int32_t yy_meta[67] =
         6,    6,    6,    1,    1,    1
     } ;
 
-static yyconst flex_int16_t yy_base[253] =
+static yyconst flex_int16_t yy_base[255] =
     {   0,
-        0,    0,   64,  108,  340,  341,  341,  341,  309,   62,
-        0,  308,  328,    0,  341,  341,  306,   61,  341,   62,
-      318,  304,  138,  271,   52,  341,  341,   65,  302,  301,
-      341,  341,    0,  341,  341,  341,  277,  273,   22,   58,
-       51,   28,   69,  274,  273,  270,   18,  280,   48,   68,
-       86,   82,  276,  341,  106,  341,  341,  341,    0,  341,
-      131,  341,  320,    0,  341,  341,  312,  341,  341,  341,
-      341,  341,  341,  304,  341,  153,  258,    0,  341,  163,
-      170,  341,  162,  341,  341,  341,  341,    0,  275,  273,
-      276,  275,  262,  268,  254,   89,   97,  254,  260,  256,
+        0,    0,   64,  108,  342,  343,  343,  343,  311,   62,
+        0,  310,  330,    0,  343,  343,  308,   61,  343,   62,
+      320,  306,  138,  273,   52,  343,  343,   65,  304,  303,
+      343,  343,    0,  343,  343,  343,  279,  275,   22,   58,
+       51,   28,   69,  276,  275,  272,   18,  282,  277,   68,
+       86,   82,  277,  343,  106,  343,  343,  343,    0,  343,
+      131,  343,  321,    0,  343,  343,  313,  343,  343,  343,
+      343,  343,  343,  305,  343,  153,  259,    0,  343,  163,
+      170,  343,  162,  343,  343,  343,  343,    0,  276,  274,
+      277,  276,  263,  269,  255,   89,   97,  255,  261,  257,
 
-      253,    0,  250,  253,  262,    0,  256,  262,  245,  261,
-      238,  251,  240,  245,  246,  247,  239,  245,   95,  174,
-        0,  341,  341,   74,  268,  271,  268,  341,  265,  268,
-      265,  341,    0,  246,  230,  228,   43,    0,  242,  237,
-      237,    0,  229,  235,  222,  237,  232,  185,  221,    0,
-      215,  223,  214,  216,  226,  213,  224,  201,  209,  200,
-        0,  194,  184,  185,  341,  341,  341,  341,  341,  341,
-      341,  341,  185,    0,  177,  175,  183,  180,    0,    0,
-        0,  174,  184,  170,  166,  200,  203,  200,    0,    0,
-      181,  172,  164,  174,  161,    0,    0,  192,  156,  162,
+      254,    0,  251,  254,  263,    0,   47,  264,  247,  241,
+      254,  243,  248,  249,  250,  242,  248,   95,  174,    0,
+      343,  343,   74,  271,  274,  271,  343,  268,  271,  268,
+      343,    0,  249,  233,  231,  108,    0,  245,  240,  240,
+        0,  232,  238,  225,  240,  235,  185,  224,    0,  218,
+      219,  225,  216,  229,  216,  227,  213,  225,  216,    0,
+      215,  201,  202,  343,  343,  343,  343,  343,  343,  343,
+      343,  188,    0,  180,  178,  186,  183,    0,    0,    0,
+      177,  187,  173,  170,  204,  207,  203,    0,    0,  184,
+      179,  174,  166,  167,    0,    0,  192,  163,  172,    0,
 
-        0,    0,  163,    0,    0,    0,  153,  157,  148,    0,
-        0,  154,    0,    0,    0,  140,  148,  133,  140,  124,
-      144,  146,  143,    0,  108,    0,    0,   88,    0,    0,
-       89,   76,    0,    0,    0,    0,    0,    0,    0,    0,
-       74,    0,    0,    0,  341,  239,  245,  251,  257,  260,
-      263,   76
+        0,  170,    0,    0,    0,  160,  164,  155,    0,    0,
+      161,    0,    0,    0,  144,  158,  156,  145,  145,  161,
+      163,  147,    0,  112,    0,    0,  108,    0,    0,   91,
+      100,   63,    0,    0,    0,    0,    0,    0,    0,   74,
+        0,    0,   55,    0,   53,    0,  343,  239,  245,  251,
+      257,  260,  263,   76
     } ;
 
-static yyconst flex_int16_t yy_def[253] =
+static yyconst flex_int16_t yy_def[255] =
     {   0,
-      245,    1,  246,  246,  245,  245,  245,  245,  245,  247,
-      248,  245,  245,  249,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,   23,   23,  245,  245,  245,  245,  245,
-      245,  245,  250,  245,  245,  245,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  245,  245,  245,  245,  245,  251,  245,
-      247,  245,  247,  248,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,   23,   25,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
+      247,    1,  248,  248,  247,  247,  247,  247,  247,  249,
+      250,  247,  247,  251,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,   23,   23,  247,  247,  247,  247,  247,
+      247,  247,  252,  247,  247,  247,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  247,  247,  247,  247,  247,  253,  247,
+      249,  247,  249,  250,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,   23,   25,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
 
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  245,
-      251,  245,  245,  252,  245,  245,  245,  245,  245,  245,
-      245,  245,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  245,  245,  245,  245,  245,  245,
-      245,  245,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  247,  253,
+      247,  247,  254,  247,  247,  247,  247,  247,  247,  247,
+      247,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  247,  247,  247,  247,  247,  247,  247,
+      247,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
 
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,  250,  250,  250,  250,  250,  250,
-      250,  250,  250,  250,    0,  245,  245,  245,  245,  245,
-      245,  245
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,  252,  252,  252,  252,
+      252,  252,  252,  252,  252,  252,    0,  247,  247,  247,
+      247,  247,  247,  247
     } ;
 
-static yyconst flex_int16_t yy_nxt[408] =
+static yyconst flex_int16_t yy_nxt[410] =
     {   0,
         6,    7,    8,    7,    9,   10,   11,   12,   13,   14,
        15,   16,   17,   18,   19,   20,   21,   22,   23,   24,
@@ -533,47 +533,47 @@ static yyconst flex_int16_t yy_nxt[408] =
        37,   38,   39,   40,   41,   42,   33,   33,   43,   33,
        44,   45,   33,   46,   47,   48,   49,   50,   51,   52,
        53,   33,   33,   54,   55,   56,   58,   62,   99,   91,
-       78,   78,   92,  107,   69,   93,  108,   71,  100,  124,
+       78,   78,   92,  107,   69,   93,  108,   71,  100,  123,
        84,  101,   59,   59,   59,   59,   59,   59,   59,   59,
-       70,   72,   73,  245,   85,  110,  111,   59,   63,  176,
+       70,   72,   73,  247,   85,  150,  246,   59,   63,  245,
 
-      177,   96,   94,   97,   59,   59,   59,   59,   59,   59,
-       58,   95,   98,  245,  102,  112,  245,  165,  244,  166,
-      243,  103,  117,  113,   83,   83,   59,   59,   59,   59,
-       59,   59,   59,   59,  114,  118,   62,  140,  115,  163,
-      142,   59,  116,  164,  242,  141,  241,   79,   59,   59,
-       59,   59,   59,   59,   76,  143,   77,   77,   78,   78,
-       78,   78,   78,   78,  240,  239,  238,   63,  237,  236,
-      120,  124,  124,  124,  124,  124,  124,  124,  124,   79,
-       83,   83,  125,  235,  126,  234,   80,  127,  128,  129,
-      233,  130,   83,   83,  131,  132,   81,  232,  231,   82,
+      151,   96,   94,   97,   59,   59,   59,   59,   59,   59,
+       58,   95,   98,  247,  102,  111,  247,  164,  244,  165,
+      243,  103,  116,  112,   83,   83,   59,   59,   59,   59,
+       59,   59,   59,   59,  113,  117,   62,  139,  114,  162,
+      141,   59,  115,  163,  242,  140,  241,   79,   59,   59,
+       59,   59,   59,   59,   76,  142,   77,   77,   78,   78,
+       78,   78,   78,   78,  175,  176,  240,   63,  239,  238,
+      119,  123,  123,  123,  123,  123,  123,  123,  123,   79,
+       83,   83,  124,  237,  125,  236,   80,  126,  127,  128,
+      235,  129,   83,   83,  130,  131,   81,  234,  233,   82,
 
-      230,  229,   83,   79,  186,  228,  187,  227,  226,  188,
-      189,  221,  225,  222,  220,   79,  223,  224,  219,  218,
-      217,  216,  215,  214,  213,  212,   83,  211,  210,  209,
-      208,  207,  206,  205,  204,  203,  202,  201,   83,   57,
+      232,  231,   83,   79,  185,  230,  186,  229,  228,  187,
+      188,  220,  227,  221,  226,   79,  222,  223,  225,  224,
+      219,  218,  217,  216,  215,  214,   83,  213,  212,  211,
+      210,  209,  208,  207,  206,  205,  204,  203,   83,   57,
        57,   57,   57,   57,   57,   61,   61,   61,   61,   61,
-       61,   64,  200,  199,   64,   64,   64,   67,  198,   67,
-       67,   67,   67,   88,   88,   88,  121,  121,  197,  196,
-      195,  194,  193,  192,  191,  190,  185,  184,  183,  182,
-      181,  180,  179,  178,  175,  174,  173,  172,  171,  170,
-      169,  168,  167,  162,  161,  160,  159,  158,  157,  156,
+       61,   64,  202,  201,   64,   64,   64,   67,  200,   67,
+       67,   67,   67,   88,   88,   88,  120,  120,  199,  198,
+      197,  196,  195,  194,  193,  192,  191,  190,  189,  184,
+      183,  182,  181,  180,  179,  178,  177,  174,  173,  172,
+      171,  170,  169,  168,  167,  166,  161,  160,  159,  158,
 
-      155,  154,  153,  152,  151,  150,  149,  148,  147,  146,
-      145,  144,  139,  138,  137,  136,  135,  134,  133,  245,
-      123,  122,  245,  119,  109,  106,  105,  104,   90,   89,
-       87,   86,  245,   75,   74,   68,   66,   65,   60,  245,
-        5,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
+      157,  156,  155,  154,  153,  152,  149,  148,  147,  146,
+      145,  144,  143,  138,  137,  136,  135,  134,  133,  132,
+      247,  122,  121,  247,  118,  110,  109,  106,  105,  104,
+       90,   89,   87,   86,  247,   75,   74,   68,   66,   65,
+       60,  247,    5,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
 
-      245,  245,  245,  245,  245,  245,  245
+      247,  247,  247,  247,  247,  247,  247,  247,  247
     } ;
 
-static yyconst flex_int16_t yy_chk[408] =
+static yyconst flex_int16_t yy_chk[410] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -582,44 +582,44 @@ static yyconst flex_int16_t yy_chk[408] =
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    3,   10,   42,   39,
-       25,   25,   39,   47,   18,   39,   47,   20,   42,  252,
+       25,   25,   39,   47,   18,   39,   47,   20,   42,  254,
        28,   42,    3,    3,    3,    3,    3,    3,    3,    3,
-       18,   20,   20,   25,   28,   49,   49,    3,   10,  137,
+       18,   20,   20,   25,   28,  107,  245,    3,   10,  243,
 
-      137,   41,   40,   41,    3,    3,    3,    3,    3,    3,
-        4,   40,   41,   25,   43,   50,   25,  124,  241,  124,
+      107,   41,   40,   41,    3,    3,    3,    3,    3,    3,
+        4,   40,   41,   25,   43,   50,   25,  123,  240,  123,
       232,   43,   52,   50,   55,   55,    4,    4,    4,    4,
-        4,    4,    4,    4,   51,   52,   61,   96,   51,  119,
-       97,    4,   51,  119,  231,   96,  228,   55,    4,    4,
+        4,    4,    4,    4,   51,   52,   61,   96,   51,  118,
+       97,    4,   51,  118,  231,   96,  230,   55,    4,    4,
         4,    4,    4,    4,   23,   97,   23,   23,   23,   23,
-       23,   23,   23,   23,  225,  223,  222,   61,  221,  220,
+       23,   23,   23,   23,  136,  136,  227,   61,  224,  222,
        55,   76,   76,   76,   76,   76,   76,   76,   76,   23,
-       83,   83,   80,  219,   80,  218,   23,   80,   80,   81,
-      217,   81,  120,  120,   81,   81,   23,  216,  212,   23,
+       83,   83,   80,  221,   80,  220,   23,   80,   80,   81,
+      219,   81,  119,  119,   81,   81,   23,  218,  217,   23,
 
-      209,  208,   23,   83,  148,  207,  148,  203,  200,  148,
-      148,  198,  199,  198,  195,  120,  198,  198,  194,  193,
-      192,  191,  188,  187,  186,  185,   83,  184,  183,  182,
-      178,  177,  176,  175,  173,  164,  163,  162,  120,  246,
-      246,  246,  246,  246,  246,  247,  247,  247,  247,  247,
-      247,  248,  160,  159,  248,  248,  248,  249,  158,  249,
-      249,  249,  249,  250,  250,  250,  251,  251,  157,  156,
-      155,  154,  153,  152,  151,  149,  147,  146,  145,  144,
-      143,  141,  140,  139,  136,  135,  134,  131,  130,  129,
-      127,  126,  125,  118,  117,  116,  115,  114,  113,  112,
+      216,  215,   23,   83,  147,  211,  147,  208,  207,  147,
+      147,  197,  206,  197,  202,  119,  197,  197,  199,  198,
+      194,  193,  192,  191,  190,  187,   83,  186,  185,  184,
+      183,  182,  181,  177,  176,  175,  174,  172,  119,  248,
+      248,  248,  248,  248,  248,  249,  249,  249,  249,  249,
+      249,  250,  163,  162,  250,  250,  250,  251,  161,  251,
+      251,  251,  251,  252,  252,  252,  253,  253,  159,  158,
+      157,  156,  155,  154,  153,  152,  151,  150,  148,  146,
+      145,  144,  143,  142,  140,  139,  138,  135,  134,  133,
+      130,  129,  128,  126,  125,  124,  117,  116,  115,  114,
 
-      111,  110,  109,  108,  107,  105,  104,  103,  101,  100,
-       99,   98,   95,   94,   93,   92,   91,   90,   89,   77,
-       74,   67,   63,   53,   48,   46,   45,   44,   38,   37,
-       30,   29,   24,   22,   21,   17,   13,   12,    9,    5,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
-      245,  245,  245,  245,  245,  245,  245,  245,  245,  245,
+      113,  112,  111,  110,  109,  108,  105,  104,  103,  101,
+      100,   99,   98,   95,   94,   93,   92,   91,   90,   89,
+       77,   74,   67,   63,   53,   49,   48,   46,   45,   44,
+       38,   37,   30,   29,   24,   22,   21,   17,   13,   12,
+        9,    5,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
+      247,  247,  247,  247,  247,  247,  247,  247,  247,  247,
 
-      245,  245,  245,  245,  245,  245,  245
+      247,  247,  247,  247,  247,  247,  247,  247,  247
     } ;
 
 /* Table of booleans, true if rule could match eol. */
@@ -668,6 +668,7 @@ char *yytext;
 	#include <grove/types/BoolType.h>
 
 	#include <grove/Parameter.h>
+	#include <grove/Protectable.h>
 
 	#include <string.h>
 	#include "parser.hh"
@@ -700,7 +701,7 @@ char *yytext;
 #define YY_NO_UNISTD_H 1
 #define YY_NO_INPUT 1
 
-#line 704 "/Users/robert/dev/orange/lib/grove/lexer.cc"
+#line 705 "/Users/robert/dev/orange/lib/grove/lexer.cc"
 
 #define INITIAL 0
 #define HEX 1
@@ -881,10 +882,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 63 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 64 "/Users/robert/dev/orange/lib/grove/lexer.l"
 
 
-#line 888 "/Users/robert/dev/orange/lib/grove/lexer.cc"
+#line 889 "/Users/robert/dev/orange/lib/grove/lexer.cc"
 
 	if ( !(yy_init) )
 		{
@@ -937,13 +938,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 246 )
+				if ( yy_current_state >= 248 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_current_state != 245 );
+		while ( yy_current_state != 247 );
 		yy_cp = (yy_last_accepting_cpos);
 		yy_current_state = (yy_last_accepting_state);
 
@@ -975,546 +976,546 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 65 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 66 "/Users/robert/dev/orange/lib/grove/lexer.l"
 ;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 67 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 68 "/Users/robert/dev/orange/lib/grove/lexer.l"
 yycolumn = 1; // Reset column as we're on a new line.
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 69 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 70 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL_BASE(UIntType::get(module, 64), 2); return VALUE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 71 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 72 "/Users/robert/dev/orange/lib/grove/lexer.l"
 BEGIN(HEX);
 	YY_BREAK
 
 case 5:
 YY_RULE_SETUP
-#line 73 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 74 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL_BASE(UIntType::get(module, 64), 16); BEGIN(INITIAL); return VALUE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 74 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 75 "/Users/robert/dev/orange/lib/grove/lexer.l"
 yyerror(module, "Invalid hex constant"); BEGIN(INITIAL);
 	YY_BREAK
 
 case 7:
 YY_RULE_SETUP
-#line 77 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 78 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(FloatType::get(module)); return VALUE;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 78 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 79 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(DoubleType::get(module)); return VALUE;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 79 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 80 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(DoubleType::get(module)); return VALUE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 81 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 82 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(UIntType::get(module, 8)); return VALUE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 82 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 83 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(IntType::get(module, 8)); return VALUE;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 83 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 84 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(UIntType::get(module, 16)); return VALUE;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 84 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 85 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(IntType::get(module, 16)); return VALUE;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 85 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 86 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(UIntType::get(module, 32)); return VALUE;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 86 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 87 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(IntType::get(module, 32)); return VALUE;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 87 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 88 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(UIntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 88 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 89 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(IntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 89 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 90 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(UIntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 90 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 91 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(IntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 91 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 92 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(IntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 93 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 94 "/Users/robert/dev/orange/lib/grove/lexer.l"
 yylval.val = new Value(yytext[1]); return VALUE;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 95 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 96 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(BoolType::get(module)); return VALUE;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 96 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 97 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CREATE_VAL(BoolType::get(module)); return VALUE;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 98 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 99 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return DEF;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 99 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 100 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return RETURN;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 100 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 101 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return ELIF;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 101 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 102 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return ELSE;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 102 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 103 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return END;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 103 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 104 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return IF;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 104 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 105 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return FOR;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 105 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 106 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return FOREVER;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 106 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 107 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return LOOP;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 107 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 108 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return CONTINUE;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 108 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 109 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return BREAK;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 109 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 110 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return DO;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 110 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 111 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return WHILE;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 111 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 112 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return WHEN;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 112 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 113 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return UNLESS;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 113 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 114 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return CLASS;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 114 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 115 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return USING;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 115 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 116 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return PUBLIC;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 116 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 117 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return PRIVATE;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 117 "/Users/robert/dev/orange/lib/grove/lexer.l"
-SAVESTR(); return SHARED;
+#line 118 "/Users/robert/dev/orange/lib/grove/lexer.l"
+SAVESTR(); return PROTECTED;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 118 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 119 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return EXTERN;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 119 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 120 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return CONST_FLAG;
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 120 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 121 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return ENUM;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 121 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 122 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return THIS;
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 122 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 123 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return AT;
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 124 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 125 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_VAR;
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 125 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 126 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_CHAR;
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 126 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 127 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_INT;
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 127 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 128 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_UINT;
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 128 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 129 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_FLOAT;
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 129 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 130 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_DOUBLE;
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 130 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 131 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_INT8;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 131 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 132 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_UINT8;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 132 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 133 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_INT16;
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 133 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 134 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_UINT16;
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 134 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 135 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_INT32;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 135 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 136 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_UINT32;
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 136 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 137 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_INT64;
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 137 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 138 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_UINT64;
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 138 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 139 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TYPE_VOID;
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 140 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 141 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return OPEN_PAREN;
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 141 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 142 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return CLOSE_PAREN;
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 142 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 143 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return OPEN_BRACE;
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 143 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 144 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return CLOSE_BRACE;
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 144 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 145 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return OPEN_BRACKET;
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 145 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 146 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return CLOSE_BRACKET;
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 147 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 148 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return VARARG;
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 149 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 150 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return INCREMENT;
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 150 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 151 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return DECREMENT;
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 152 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 153 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return NEQUALS;
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 153 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 154 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return EQUALS;
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 155 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 156 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return LOGICAL_AND;
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 156 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 157 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return LOGICAL_OR;
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 157 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 158 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CUSTSTR("&&"); return LOGICAL_AND;
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 158 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 159 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CUSTSTR("||"); return LOGICAL_OR;
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 160 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 161 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return BITWISE_AND;
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 161 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 162 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return BITWISE_OR;
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 162 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 163 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return BITWISE_XOR;
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 164 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 165 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return ASSIGN;
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 165 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 166 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return PLUS_ASSIGN;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 166 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 167 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return MINUS_ASSIGN;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 167 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 168 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TIMES_ASSIGN;
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 168 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 169 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return DIVIDE_ASSIGN;
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 169 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 170 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return MOD_ASSIGN;
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 171 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 172 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return ARROW;
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 172 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 173 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return ARROW_LEFT;
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 173 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 174 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return DOT;
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 174 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 175 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return SEMICOLON;
 	YY_BREAK
 case 92:
 /* rule 92 can match eol */
 YY_RULE_SETUP
-#line 175 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 176 "/Users/robert/dev/orange/lib/grove/lexer.l"
 yycolumn = 1; return NEWLINE; // Reset column as we're on a new line.
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 176 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 177 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return COMMA;
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 178 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 179 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return LEQ;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 179 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 180 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return GEQ;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 181 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 182 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return COMP_LT;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 182 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 183 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return COMP_GT;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 184 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 185 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return PLUS;
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 185 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 186 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return MINUS;
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 186 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 187 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return TIMES;
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 187 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 188 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return DIVIDE;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 188 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 189 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return MOD;
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 190 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 191 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return QUESTION;
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 191 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 192 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return COLON;
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 193 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 194 "/Users/robert/dev/orange/lib/grove/lexer.l"
 CUSTSTR("%"); return MOD;
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 195 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 196 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return SIZEOF;
 	YY_BREAK
 case 107:
 /* rule 107 can match eol */
 YY_RULE_SETUP
-#line 197 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 198 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); return STRING;
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 198 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 199 "/Users/robert/dev/orange/lib/grove/lexer.l"
 SAVESTR(); {
 	if (module->isDefinedTypeName(* yylval.str))
 	{
@@ -1528,20 +1529,20 @@ SAVESTR(); {
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 209 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 210 "/Users/robert/dev/orange/lib/grove/lexer.l"
 yyerror(module, "invalid token");
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(HEX):
-#line 211 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 212 "/Users/robert/dev/orange/lib/grove/lexer.l"
 { return yyonce++ ? 0 : NEWLINE; }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 213 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 214 "/Users/robert/dev/orange/lib/grove/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1545 "/Users/robert/dev/orange/lib/grove/lexer.cc"
+#line 1546 "/Users/robert/dev/orange/lib/grove/lexer.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1832,7 +1833,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 246 )
+			if ( yy_current_state >= 248 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1860,11 +1861,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 246 )
+		if ( yy_current_state >= 248 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 245);
+	yy_is_jam = (yy_current_state == 247);
 
 	return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2504,7 +2505,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 213 "/Users/robert/dev/orange/lib/grove/lexer.l"
+#line 214 "/Users/robert/dev/orange/lib/grove/lexer.l"
 
 
 
