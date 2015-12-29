@@ -15,7 +15,7 @@
 class AccessExpr : public Expression, public Accessible
 {
 private:
-	Expression* m_LHS = nullptr;
+	ASTNode* m_LHS = nullptr;
 	OString m_name;
 	
 	Expression* m_accessed = nullptr;
@@ -26,7 +26,7 @@ public:
 	
 	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
 	
-	Expression* getLHS() const;
+	ASTNode* getLHS() const;
 	OString getName() const;
 	Expression* getAccessed() const;
 	
@@ -40,6 +40,6 @@ public:
 	
 	virtual Expression* access(OString name, const ASTNode* hint) const override;
 	
-	AccessExpr(Expression* LHS, OString name);
+	AccessExpr(ASTNode* LHS, OString name);
 	AccessExpr(const AccessExpr& other);
 };

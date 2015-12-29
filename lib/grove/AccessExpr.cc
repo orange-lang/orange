@@ -34,7 +34,7 @@ std::vector<std::vector<ObjectBase *>*> AccessExpr::getMemberLists()
 	return defMemberLists();
 }
 
-Expression* AccessExpr::getLHS() const
+ASTNode* AccessExpr::getLHS() const
 {
 	return m_LHS;
 }
@@ -121,7 +121,7 @@ Expression* AccessExpr::access(OString name, const ASTNode* hint) const
 	return getAccessed()->ASTNode::as<Accessible *>()->access(name, hint);
 }
 
-AccessExpr::AccessExpr(Expression* LHS, OString name)
+AccessExpr::AccessExpr(ASTNode* LHS, OString name)
 {
 	if (name == "")
 	{
