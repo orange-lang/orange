@@ -348,7 +348,8 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 	assertExists(hint, "ClassDecl::access requires hint");
 	if (hint->is<const Valued *>() == false)
 	{
-		throw fatal_error("ClassDecl::access requires Valued hint");
+		throw fatal_error("ClassDecl::access doesn't know how to handle "
+						  "non-valued hints.");
 	}
 	
 	if (hasMethod(name))
