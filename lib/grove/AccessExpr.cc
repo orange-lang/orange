@@ -87,6 +87,7 @@ void AccessExpr::resolve()
 			});
 	}
 	
+	m_accessed->setLocation(getLocation());
 	addChild(m_accessed);
 	getModule()->findDependencies(m_accessed);
 	getModule()->resolve(m_accessed);

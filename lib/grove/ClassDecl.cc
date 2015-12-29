@@ -150,6 +150,15 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	// The functions return type is this class' type.
 	func->setReturnType(VoidType::get(getModule()));
 	
+	if (method != nullptr)
+	{
+		func->setLocation(method->getLocation());
+	}
+	else
+	{
+		func->setLocation(ASTNode::getLocation());
+	}
+	
 	// The class constructor needs to instantiate all of its variables that have
 	// values, and call the method, if one exists.
 	
@@ -167,6 +176,11 @@ void ClassDecl::createCtor(ClassMethod *method) const
 		auto access = new AccessExpr(this_ref, member->getName());
 		auto value = member->getExpression()->copy()->as<Expression *>();
 		auto assign = new BinOpAssign(access, "=", value);
+		
+		this_ref->setLocation(member->getLocation());
+		access->setLocation(member->getLocation());
+		value->setLocation(member->getExpression()->getLocation());
+		assign->setLocation(member->getLocation());
 		
 		func->addStatement(assign);
 	}

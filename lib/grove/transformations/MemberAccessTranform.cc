@@ -47,6 +47,8 @@ public:
 			// a MemberVarDecl; replace it with a MemberAccess and process it.
 			auto this_ref = new IDReference("this");
 			auto access = new AccessExpr(this_ref, child->getName());
+			this_ref->setLocation(child->getLocation());
+			access->setLocation(child->getLocation());
 			child->replace(access);
 		}
 	}
