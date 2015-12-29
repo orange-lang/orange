@@ -822,7 +822,7 @@ primary
 	| expression OPEN_BRACKET expression CLOSE_BRACKET { $$ = new ArrayAccessExpr($1, $3); SET_LOCATION($$, @1, @4); }
 	| expression DOT IDENTIFIER { $$ = new AccessExpr($1, *$3); SET_LOCATION($$, @1, @3); delete $3; }
 	| TYPE_ID DOT IDENTIFIER {
-		auto ref = new IDReference(*$1);
+		auto ref = new ReferenceType(*$1);
 		SET_LOCATION(ref, @1, @1);
 		
 		$$ = new AccessExpr(ref, *$3);

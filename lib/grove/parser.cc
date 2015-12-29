@@ -3344,7 +3344,7 @@ yyreduce:
   case 136:
 #line 824 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
-		auto ref = new IDReference(*(yyvsp[(1) - (3)].str));
+		auto ref = new ReferenceType(*(yyvsp[(1) - (3)].str));
 		SET_LOCATION(ref, (yylsp[(1) - (3)]), (yylsp[(1) - (3)]));
 		
 		(yyval.expr) = new AccessExpr(ref, *(yyvsp[(3) - (3)].str));
