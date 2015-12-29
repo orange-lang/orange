@@ -10,9 +10,11 @@
 #include <grove/Named.h>
 #include <grove/Genericable.h>
 #include <grove/Module.h>
+#include <grove/Protectable.h>
 
 #include <grove/exceptions/already_defined_error.h>
 #include <grove/exceptions/fatal_error.h>
+#include <grove/exceptions/access_denied_error.h>
 
 #include <util/assertions.h>
 
@@ -23,7 +25,30 @@ std::vector<ASTNode *> Block::getStatements() const
 	return m_statements;
 }
 
-Named* Block::namedOrGenericInstance(Named* n, const Type* t) const
+bool Block::usable(Named *n, const ASTNode *from) const
+{
+	if (from == nullptr)
+	{
+		return true;
+	}
+	
+	if (n->is<Protectable *>())
+	{
+		return n->as<Protectable *>()->usableFrom(from);
+	}
+	
+	return true;
+}
+
+Named* Block::verify(Named *n, const ASTNode *from) const
+{
+	if (usable(n, from)) return n;
+	
+	throw access_denied_error(n->as<CodeBase*>(), from, n->getName().str());
+}
+
+Named* Block::namedOrGenericInstance(Named* n, const Type* t,
+									 const ASTNode* from) const
 {
 	if (n->is<Genericable *>() &&
 		n->as<Genericable *>()->isGeneric())
@@ -31,14 +56,14 @@ Named* Block::namedOrGenericInstance(Named* n, const Type* t) const
 		auto generic = n->as<Genericable *>();
 		if (generic->hasInstance(t))
 		{
-			return generic->findInstance(t)->as<Named *>();
+			return verify(generic->findInstance(t)->as<Named *>(), from);
 		}
 		else
 		{
 			auto inst = generic->createInstance(t)->as<Named *>();
 			getModule()->findDependencies(inst->as<ASTNode *>());
 			getModule()->resolve(inst->as<ASTNode *>());
-			return inst;
+			return verify(inst, from);
 		}
 	}
 	
@@ -118,11 +143,11 @@ Named* Block::getNamed(OString name, const Type* type,
 	{
 		if (settings.createGeneric)
 		{
-    		return namedOrGenericInstance(matches.at(0), type);
+    		return namedOrGenericInstance(matches.at(0), type, limit);
 		}
 		else
 		{
-			return matches.at(0);
+			return verify(matches.at(0), limit);
 		}
 	}
 	else if (type == nullptr)
@@ -157,11 +182,11 @@ Named* Block::getNamed(OString name, const Type* type,
 		{
 			if (settings.createGeneric)
 			{
-    			return namedOrGenericInstance(match, type);
+    			return namedOrGenericInstance(match, type, limit);
 			}
 			else
 			{
-				return matches.at(0);
+				return verify(matches.at(0), limit);
 			}
 		}
 	}

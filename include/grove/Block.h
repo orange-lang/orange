@@ -23,7 +23,10 @@ private:
 	
 	/// Returns the named node or a generic instance
 	/// of the named node.
-	Named* namedOrGenericInstance(Named* n, const Type* t) const;
+	Named* namedOrGenericInstance(Named* n, const Type* t,
+								  const ASTNode* from) const;
+	bool usable(Named* n, const ASTNode* from) const;
+	Named* verify(Named* n, const ASTNode* from) const;
 protected:
 	void buildStatements();
 	
