@@ -18,7 +18,7 @@ public:
 		TransformRegistry::get()->registerTransform(this);
 	}
 	
-	void transform(ASTNode* root) const
+	void transform(TransformPhase phase, ASTNode* root) const
 	{
 		/// @todo: implement 
 	}

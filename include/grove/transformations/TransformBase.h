@@ -10,11 +10,18 @@
 
 class ASTNode;
 
+enum TransformPhase
+{
+	PRE_FIND_DEPENDENCIES,
+	PRE_RESOLVE,
+	PRE_BUILD
+};
+
 class TransformBase
 {
 public:
 	/// Transforms the AST.
-	virtual void transform(ASTNode* root) const = 0;
+	virtual void transform(TransformPhase phase, ASTNode* root) const = 0;
 };
 
 extern void InitMemberAccessTransform();
