@@ -1,6 +1,6 @@
 # Orange  
 
-Orange is a systems programming language made to be as powerful as C++ with none of the headache. It aims to be very productive by baking the most important low- and high-level features directly into the language, instead of dealing with them through obtuse function calls.
+Orange is a statically typed, multi-paradigm (imperative, object-oriented, reflective) systems programming language with focus on high productivity, features for DRY code, and a smooth syntax.
 
 # Status
 
