@@ -18,7 +18,12 @@
 
 bool ClassMethod::usableFrom(const ASTNode *from) const
 {
-	return getProtectionLevel() == ProtectionLevel::PROTECTION_PUBLIC;
+	if (getProtectionLevel() == ProtectionLevel::PROTECTION_PUBLIC)
+	{
+		return true;
+	}
+	
+	return (m_class == from->findParent<ClassDecl*>());
 }
 
 ProtectionLevel ClassMethod::defaultProtectionLevel() const
