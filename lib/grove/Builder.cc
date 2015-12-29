@@ -75,26 +75,35 @@ void Builder::compile()
 	// Find dependencies for all modules.
 	for (auto mod : getModules())
 	{
+		for (auto transform : TransformRegistry::get()->getTransforms())
+		{
+			transform->transform(TransformPhase::PRE_FIND_DEPENDENCIES,
+								 mod->getMain());
+		}
+		
 		mod->findDependencies();
 	}
 
 	// Resolve the remaining nodes
 	for (auto mod : getModules())
 	{
+		for (auto transform : TransformRegistry::get()->getTransforms())
+		{
+			transform->transform(TransformPhase::PRE_RESOLVE,
+								 mod->getMain());
+		}
+	
 		mod->resolve();
 	}
 	
-	// Tranform all main functions of modules
 	for (auto mod : getModules())
 	{
 		for (auto transform : TransformRegistry::get()->getTransforms())
 		{
-			transform->transform(mod->getMain());
+			transform->transform(TransformPhase::PRE_BUILD,
+								 mod->getMain());
 		}
-	}
-
-	for (auto mod : getModules())
-	{
+		
 		mod->build();
 	}
 }
