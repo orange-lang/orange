@@ -75,7 +75,7 @@
      CLASS = 291,
      USING = 292,
      PUBLIC = 293,
-     SHARED = 294,
+     PROTECTED = 294,
      PRIVATE = 295,
      OPEN_BRACE = 296,
      CLOSE_BRACE = 297,
@@ -164,7 +164,7 @@
 #define CLASS 291
 #define USING 292
 #define PUBLIC 293
-#define SHARED 294
+#define PROTECTED 294
 #define PRIVATE 295
 #define OPEN_BRACE 296
 #define CLOSE_BRACE 297
@@ -220,7 +220,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 78 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 79 "/Users/robert/dev/orange/lib/grove/parser.y"
 {
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
@@ -236,9 +236,10 @@ typedef union YYSTYPE
 	Value* val;
 	OString* str;
 	const Type* ty;
+	ProtectionLevel plevel;
 }
 /* Line 1529 of yacc.c.  */
-#line 242 "/Users/robert/dev/orange/lib/grove/parser.hh"
+#line 243 "/Users/robert/dev/orange/lib/grove/parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

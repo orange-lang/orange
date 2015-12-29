@@ -14,6 +14,7 @@
 #include <grove/Value.h>
 #include <grove/Statement.h>
 #include <grove/OString.h>
+#include <grove/Protectable.h>
 #include "parser.hh"
 
 extern struct YYLTYPE yylloc;

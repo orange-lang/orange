@@ -45,6 +45,7 @@
 	#include <grove/MemberVarDecl.h>
 	#include <grove/MemberAccess.h>
 	#include <grove/CtorCall.h>
+	#include <grove/Protectable.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -90,6 +91,7 @@
 	Value* val;
 	OString* str;
 	const Type* ty;
+	ProtectionLevel plevel;
 }
 
 %start start
@@ -106,9 +108,9 @@
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
 %token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID THIS AT
 
-%type <nodes> compound_statement var_decl valued statement_no_term
+%type <nodes> compound_statement var_decl valued statement_no_term flagged_compound_statement
 %type <nodes> opt_valued
-%type <node> statement return controls
+%type <node> statement return controls flagged_statement
 %type <exprs> expr_list array_def_list
 %type <pairs> var_decl_list
 %type <vpairs> enum_members
@@ -126,6 +128,7 @@
 %type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list opt_param_list
 %type <args> opt_arg_list arg_list
+%type <plevel> protection_level
 
 /* lowest to highest precedence */
 %left IDENTIFIER
@@ -152,21 +155,23 @@
 %left INCREMENT DECREMENT OPEN_BRACKET DOT
 %right SIZEOF
 
+%right PUBLIC PROTECTED PRIVATE
+
 %%
 
 start
-  : statements
+	: statements
 	;
 
 statements
-	: statements statement
+	: statements flagged_statement
 	{
 		if ($2 != nullptr)
 		{
 			module->getBlock()->addStatement($2);
 		}
 	}
-	| statements compound_statement
+	| statements flagged_compound_statement
 	{
 		for (auto stmt : *$2)
 		{
@@ -176,14 +181,14 @@ statements
 
 		delete $2;
 	}
-	| statement
+	| flagged_statement
 	{
 		if ($1 != nullptr)
 		{
 			module->getBlock()->addStatement($1);
 		}
 	}
-	| compound_statement
+	| flagged_compound_statement
 	{
 		for (auto stmt : *$1)
 		{
@@ -193,6 +198,16 @@ statements
 
 		delete $1;
 	}
+	;
+
+flagged_statement
+	: protection_level statement { $$ = $2; }
+	| statement { $$ = $1; }
+	;
+
+flagged_compound_statement
+	: protection_level compound_statement { $$ = $2; }
+	| compound_statement { $$ = $1; }
 	;
 
 opt_statements
@@ -993,6 +1008,12 @@ array_def_list
 		$$ = new std::vector<Expression *>();
 		$$->push_back($2);
 	}
+	;
+
+protection_level
+	: PRIVATE { $$ = ProtectionLevel::PROTECTION_PRIVATE; }
+	| PROTECTED { $$ = ProtectionLevel::PROTECTION_PROTECTED; }
+	| PUBLIC { $$ = ProtectionLevel::PROTECTION_PUBLIC; }
 	;
 
 basic_type
