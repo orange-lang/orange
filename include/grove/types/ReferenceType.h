@@ -9,8 +9,9 @@
 #pragma once 
 
 #include "NodeType.h"
+#include "../Accessible.h"
 
-class ReferenceType : public NodeType
+class ReferenceType : public NodeType, public Accessible
 {
 protected:
 	OString m_name;
@@ -32,6 +33,10 @@ public:
 	virtual std::string getSignature() const override;
 	
 	ASTNode* getReference() const;
+	
+	virtual bool isAccessible() const override;
+	
+	virtual Expression* access(OString name, const ASTNode* hint) const override;
 	
 	virtual void findDependencies() override;
 	virtual void resolve() override;

@@ -92,6 +92,18 @@ void ReferenceType::findReference()
 	m_reference = named->as<ASTNode *>();
 }
 
+bool ReferenceType::isAccessible() const
+{
+	return getReference() && getReference()->is<Accessible *>() &&
+		getReference()->as<Accessible*>()->isAccessible();
+}
+	
+Expression* ReferenceType::access(OString name, const ASTNode* hint) const
+{
+	if (isAccessible() == false) return nullptr;
+	return getReference()->as<Accessible*>()->access(name, hint);
+}
+
 void ReferenceType::findDependencies()
 {
 	if (m_reference == nullptr)
