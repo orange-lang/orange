@@ -14,6 +14,9 @@
 
 #include <grove/exceptions/fatal_error.h>
 
+#include <grove/transformations/TransformRegistry.h>
+#include <grove/transformations/TransformBase.h>
+
 #include <util/assertions.h>
 #include <util/file.h>
 #include <util/link.h>
@@ -79,6 +82,15 @@ void Builder::compile()
 	for (auto mod : getModules())
 	{
 		mod->resolve();
+	}
+	
+	// Tranform all main functions of modules
+	for (auto mod : getModules())
+	{
+		for (auto transform : TransformRegistry::get()->getTransforms())
+		{
+			transform->transform(mod->getMain());
+		}
 	}
 
 	for (auto mod : getModules())
@@ -157,6 +169,8 @@ void Builder::link(std::string outputPath)
 
 void Builder::initializeLLVM()
 {
+	InitAllTransforms();
+	
 	LLVMInitializeNativeTarget();
 	LLVMInitializeNativeAsmPrinter();
 
