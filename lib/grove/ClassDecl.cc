@@ -32,6 +32,11 @@
 #include <util/assertions.h>
 #include <util/copy.h>
 
+bool ClassDecl::usableFrom(const ASTNode *from) const
+{
+	return getProtectionLevel() == ProtectionLevel::PROTECTION_PUBLIC;
+}
+
 ProtectionLevel ClassDecl::defaultProtectionLevel() const
 {
 	return ProtectionLevel::PROTECTION_PUBLIC;

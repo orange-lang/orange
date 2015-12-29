@@ -16,6 +16,11 @@
 #include <util/assertions.h>
 #include <util/copy.h>
 
+bool ClassMethod::usableFrom(const ASTNode *from) const
+{
+	return getProtectionLevel() == ProtectionLevel::PROTECTION_PUBLIC;
+}
+
 ProtectionLevel ClassMethod::defaultProtectionLevel() const
 {
 	return ProtectionLevel::PROTECTION_PUBLIC;

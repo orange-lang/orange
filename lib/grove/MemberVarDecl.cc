@@ -14,6 +14,11 @@
 
 #include <util/assertions.h>
 
+bool MemberVarDecl::usableFrom(const ASTNode *from) const
+{
+	return getProtectionLevel() == ProtectionLevel::PROTECTION_PUBLIC;
+}
+
 ProtectionLevel MemberVarDecl::defaultProtectionLevel() const
 {
 	return ProtectionLevel::PROTECTION_PUBLIC;

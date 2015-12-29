@@ -18,6 +18,8 @@
 class MemberVarDecl : public VarDecl, public ClassTopLevel, public Protectable
 {
 public:
+	virtual bool usableFrom(const ASTNode* from) const override;
+	
   	virtual ProtectionLevel defaultProtectionLevel() const override;
 	
 	virtual llvm::Value* getValue() const override;

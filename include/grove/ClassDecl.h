@@ -27,6 +27,8 @@ class ClassDecl : public Block, public Named, public Typed,
 protected:
 	void createCtor(ClassMethod* method) const;
 public:
+	virtual bool usableFrom(const ASTNode* from) const override;
+	
   	virtual ProtectionLevel defaultProtectionLevel() const override;
 	
 	virtual ASTNode* copy() const override;

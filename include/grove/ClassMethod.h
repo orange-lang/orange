@@ -24,6 +24,8 @@ private:
 	ClassDecl* m_class = nullptr;
 	Parameter* m_this_param = nullptr;
 public:
+	virtual bool usableFrom(const ASTNode* from) const override;
+	
 	virtual ProtectionLevel defaultProtectionLevel() const override;
 	
 	virtual void findDependencies() override;

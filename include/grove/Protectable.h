@@ -18,6 +18,8 @@ enum ProtectionLevel
 	PROTECTION_PUBLIC
 };
 
+class ASTNode;
+
 /**
  * Protectable defines a node that can have a protection level assigned 
  * to it.
@@ -30,6 +32,10 @@ public:
 	void setProtectionLevel(ProtectionLevel& level);
 	
 	const ProtectionLevel getProtectionLevel() const;
+	
+	/// Returns true if this Protectable instance is usable from
+	/// a context, false otherwise.
+	virtual bool usableFrom(const ASTNode* from) const = 0;
 	
 	virtual ProtectionLevel defaultProtectionLevel() const = 0;
 };
