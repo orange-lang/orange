@@ -16,9 +16,11 @@
 #include <grove/ClassDecl.h>
 #include <grove/ClassMethod.h>
 #include <grove/Module.h>
+#include <grove/Protectable.h>
 
 #include <grove/exceptions/undefined_error.h>
 #include <grove/exceptions/fatal_error.h>
+#include <grove/exceptions/access_denied_error.h>
 
 #include <util/assertions.h>
 
@@ -84,6 +86,12 @@ void NodeReference::findDependencies()
 
 void NodeReference::resolve()
 {
+	if (getNode()->is<Protectable *>() &&
+		getNode()->as<Protectable *>()->usableFrom(this) == false)
+	{
+		throw access_denied_error(getNode(), this, "function");
+	}
+	
 	auto typed = m_node->as<Typed *>();
 	auto ty = typed->getType();
 	assertExists(ty, "Could not assign type.");

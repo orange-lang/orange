@@ -8,6 +8,7 @@
 
 #include <grove/ExpressionCall.h>
 #include <grove/Module.h>
+#include <grove/Protectable.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
@@ -18,6 +19,7 @@
 #include <grove/types/PointerType.h>
 
 #include <grove/exceptions/code_error.h>
+#include <grove/exceptions/access_denied_error.h>
 
 #include <util/assertions.h>
 #include <util/copy.h>
@@ -235,6 +237,12 @@ void ExpressionCall::findDependencies()
 
 void ExpressionCall::resolve()
 {
+	if (getExpr()->is<Protectable *>() &&
+		getExpr()->as<Protectable *>()->usableFrom(this) == false)
+	{
+		throw access_denied_error(getExpr(), this, "function");
+	}
+	
 	auto ty = exprAsTyped()->getType();
 	if (ty->isFunctionTy() == false)
 	{

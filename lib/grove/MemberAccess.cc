@@ -15,10 +15,12 @@
 #include <grove/Module.h>
 #include <grove/IDReference.h>
 #include <grove/Parameter.h>
+#include <grove/Protectable.h>
 
 #include <grove/types/Type.h>
 
 #include <grove/exceptions/code_error.h>
+#include <grove/exceptions/access_denied_error.h>
 
 #include <util/assertions.h>
 
@@ -143,6 +145,12 @@ void MemberAccess::findDependencies()
 
 void MemberAccess::resolve()
 {
+	if (getMember()->is<Protectable *>() &&
+		getMember()->as<Protectable *>()->usableFrom(this) == false)
+	{
+		throw access_denied_error(getMember(), this, "member");
+	}
+	
 	if (m_valued == nullptr)
 	{
 		auto this_param = new IDReference("this");
