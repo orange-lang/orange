@@ -205,6 +205,12 @@ void Module::parse()
 	extern int yyparse(Module* mod);
 	extern int yyonce;
 	extern void yyflushbuffer();
+	
+#if defined(DEBUG_BUILD) && YYDEBUG 
+	extern int yydebug;
+	yydebug = 1;
+#endif
+	
 
 	if (llvm::sys::fs::is_directory(llvm::Twine(getFile())) == true)
 	{
