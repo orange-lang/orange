@@ -22,7 +22,7 @@
 
 void MethodAccess::findDependencies()
 {
-	auto&& all_named = m_class->getAllNamed(m_name, nullptr);
+	auto&& all_named = m_class->getAllNamed(m_name, this);
 	for (auto&& named : all_named)
 	{
 		addDependency(named->as<ASTNode *>());
@@ -89,7 +89,7 @@ void MethodAccess::resolve()
 	settings.includeLimit = false;
 	settings.searchWholeTree = false;
 	
-	auto named = m_class->getNamed(m_name, call->expectedFunctionTy(), nullptr, settings);
+	auto named = m_class->getNamed(m_name, call->expectedFunctionTy(), this, settings);
 	setNode(named->as<ASTNode *>());
 	
 	NodeReference::resolve();
