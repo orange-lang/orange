@@ -261,6 +261,9 @@ void ASTNode::replace(ASTNode *with)
 			}
 		}
 	}
+	
+	with->m_parent = getParent();
+	with->m_module = getModule();
 }
 
 bool ASTNode::hasNamed(OString name, SearchSettings settings) const
