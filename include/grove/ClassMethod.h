@@ -33,6 +33,8 @@ public:
 	
 	virtual ProtectionLevel defaultProtectionLevel() const override;
 	
+	virtual void initialize() override;
+	
 	virtual void findDependencies() override;
 	
 	virtual ASTNode* copy() const override;

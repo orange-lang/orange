@@ -31,6 +31,11 @@ ProtectionLevel ClassMethod::defaultProtectionLevel() const
 	return ProtectionLevel::PROTECTION_PUBLIC;
 }
 
+void ClassMethod::initialize()
+{
+	addThisParam();
+}
+
 void ClassMethod::findDependencies()
 {
 	Function::findDependencies();
@@ -85,8 +90,6 @@ ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
 {
 	assertExists(theClass, "ClassMethod created with no class");
 	m_class = theClass;
-	
-	addThisParam();
 }
 
 ClassMethod::ClassMethod(const ClassMethod& other)
