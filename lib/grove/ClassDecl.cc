@@ -16,6 +16,7 @@
 #include <grove/Parameter.h>
 #include <grove/MemberAccess.h>
 #include <grove/MethodAccess.h>
+#include <grove/StaticMethodAccess.h>
 #include <grove/Constructor.h>
 #include <grove/ExpressionCall.h>
 #include <grove/AccessExpr.h>
@@ -346,18 +347,21 @@ bool ClassDecl::isAccessible() const
 Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 {
 	assertExists(hint, "ClassDecl::access requires hint");
-	if (hint->is<const Valued *>() == false)
-	{
-		throw fatal_error("ClassDecl::access doesn't know how to handle "
-						  "non-valued hints.");
-	}
 	
-	if (hasMethod(name))
+	if (hint->is<const Valued*>() == false)
+	{
+		if (hasMethod(name))
+		{
+			return new StaticMethodAccess(this, name);
+		}
+		
+		throw fatal_error("Not sure how to handle non-value class access");
+	}
+	else if (hasMethod(name))
 	{
 		return new MethodAccess(this, name);
 	}
-	
-	if (hasMember(name))
+	else if (hasMember(name))
 	{
 		auto valued = hint->as<const Valued *>();
     	auto memAccess = new MemberAccess(this, (Valued *)valued, name);
