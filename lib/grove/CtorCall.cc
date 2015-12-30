@@ -93,7 +93,7 @@ void CtorCall::resolve()
 	auto refType = new ReferenceType(the_class);
 	addChild(refType);
 	
-	getModule()->resolve(refType);
+	getModule()->process(refType);
 
 	setType(refType);
 }

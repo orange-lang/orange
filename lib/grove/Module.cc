@@ -342,6 +342,12 @@ void Module::resolve(ASTNode *node)
 	}
 }
 
+void Module::process(ASTNode *node)
+{
+	findDependencies(node);
+	resolve(node);
+}
+
 void Module::resolve()
 {
 	resolve(getMain());

@@ -148,8 +148,7 @@ void VarDecl::resolve()
 		{
 			m_expr = getType()->getRootTy()->as<NodeType *>()->initializeVar();
 			addChild(m_expr, true);
-			getModule()->findDependencies(m_expr);
-			getModule()->resolve(m_expr);
+			getModule()->process(m_expr);
 		}
 		else
 		{

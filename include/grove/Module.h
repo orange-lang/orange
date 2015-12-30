@@ -154,6 +154,9 @@ public:
 	/// Resolve a node and its children, if it's unresolved.
 	void resolve(ASTNode* node);
 	
+	/// Completely processes a node.
+	void process(ASTNode* node);
+	
 	/// Resolve unresolved nodes.
 	void resolve();
 	

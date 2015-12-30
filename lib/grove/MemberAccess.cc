@@ -156,8 +156,7 @@ void MemberAccess::resolve()
 		auto this_param = new IDReference("this");
 		addChild(this_param);
 		
-		getModule()->findDependencies(this_param);
-		getModule()->resolve(this_param);
+		getModule()->process(this_param);
 		
 		m_valued = this_param;
 		

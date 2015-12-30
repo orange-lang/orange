@@ -64,21 +64,19 @@ void MethodAccess::resolve()
 	}
 	
 	Expression* this_arg = new NodeReference(access->getLHS());
-	getModule()->findDependencies(this_arg);
-	getModule()->resolve(this_arg);
+	getModule()->process(this_arg);
 	
 	if (this_arg->getType()->isPointerTy() == false)
 	{
 		this_arg = new ReferenceExpr(this_arg);
-		getModule()->findDependencies(this_arg);
-		getModule()->resolve(this_arg);
+		getModule()->process(this_arg);
 	}
 	
 	// We depend on all the arguments of the function, so
 	// let's just ask module to resolve them for us.
 	for (auto arg : call->getArgs())
 	{
-		getModule()->resolve(arg);
+		getModule()->process(arg);
 	}
 	
 	call->addArgument(this_arg, 0);
