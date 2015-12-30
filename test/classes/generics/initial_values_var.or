@@ -1,0 +1,10 @@
+class TestClass
+	var a = 15
+
+	def square()
+		return a * a
+	end
+end
+
+var obj = TestClass()
+return 1 if obj.square() != 225 
