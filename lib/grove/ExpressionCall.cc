@@ -104,8 +104,6 @@ ExpressionCall::ExpressionCall(const ExpressionCall& other)
 	other.defineCopy(this);
 }
 
-
-
 FunctionType* ExpressionCall::expectedFunctionTy() const
 {
 	auto ty_list = std::vector<const Type *>();

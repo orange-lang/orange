@@ -1,0 +1,6 @@
+def square(int a)
+	return a * a
+end
+
+var func_ptr = &square
+return func_ptr(9) != 81
