@@ -12,9 +12,12 @@
 #include <grove/ASTNode.h>
 #include <grove/IDReference.h>
 #include <grove/ClassMethod.h>
+#include <grove/ClassDecl.h>
 #include <grove/MemberVarDecl.h>
 #include <grove/AccessExpr.h>
 #include <grove/Module.h>
+
+#include <grove/types/ReferenceType.h>
 
 class MemberAccessTransform : public TransformBase
 {
@@ -41,15 +44,32 @@ public:
 			auto ref = child->findNamed(child->getName(), nullptr);
 			
 			// If it is not referencing a MemberVarDecl, continue onwards.
-			if (ref->is<MemberVarDecl*>() == false) continue;
+			if (ref->is<MemberVarDecl*>() == false)
+			{
+				continue;
+			}
 			
-			// We found an IDReference in a method referencing
-			// a MemberVarDecl; replace it with a MemberAccess and process it.
-			auto this_ref = new IDReference("this");
-			auto access = new AccessExpr(this_ref, child->getName());
-			this_ref->setLocation(child->getLocation());
+			auto member = ref->as<MemberVarDecl *>();
+			
+			ASTNode* accessLHS = nullptr;
+			
+			// We need to create an access expr to replace the IDReference,
+			// but if it's a static member, the LHS is the class name,
+			// otherwise it's a reference to "this"
+			if (member->getStatic())
+			{
+				auto parent_class = member->findParent<ClassDecl *>();
+				accessLHS = new ReferenceType(parent_class);
+			}
+			else
+			{
+				accessLHS = new IDReference("this");
+			}
+			
+			auto access = new AccessExpr(accessLHS, child->getName());
+			accessLHS->setLocation(child->getLocation());
 			access->setLocation(child->getLocation());
-			child->replace(access);
+			child->replace(access);		
 		}
 	}
 };
