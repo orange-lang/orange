@@ -36,6 +36,16 @@ std::vector<std::vector<ObjectBase *>*> Constructor::getMemberLists()
 	return defMemberLists();
 }
 
+Genericable* Constructor::createInstance(const Type *type)
+{
+	if (getClass()->isGeneric())
+	{
+		throw fatal_error("Need to create a instance for generic class now");
+	}
+	
+	return Function::createInstance(type);
+}
+
 Constructor::Constructor(const ClassDecl* theClass, OString name,
 						 std::vector<Parameter *> params)
 : Function(name, params)

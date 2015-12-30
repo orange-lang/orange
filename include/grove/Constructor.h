@@ -22,6 +22,8 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
+	virtual Genericable* createInstance(const Type* type) override;
+	
 	virtual std::vector<ObjectBase**> getMemberNodes() override;
 	
 	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
