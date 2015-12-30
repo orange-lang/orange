@@ -40,7 +40,10 @@ Expression* ReferenceExpr::getExpression() const
 
 void ReferenceExpr::resolve()
 {
-	if (getExpression()->hasPointer() == false)
+	auto ty = getExpression()->getType();
+	assertExists(ty, "Expression has no type");
+	
+	if (getExpression()->hasPointer() == false && ty->isFunctionTy() == false)
 	{
 		throw code_error(getExpression(), []() -> std::string
 			{
@@ -56,19 +59,32 @@ void ReferenceExpr::resolve()
 			return "cannot get a pointer to a temporary expression";
 		});
 	}
-	
-	auto ty = getExpression()->getType();
-	assertExists(ty, "Expression has no type");
-	
-	setType(ty->getPointerTo());
+
+	if (ty->isFunctionTy())
+	{
+		setType(ty->getPointerTo());
+	}
+	else
+	{
+    	setType(ty->getPointerTo());
+	}
 }
 
 void ReferenceExpr::build()
 {
-	auto val = getExpression()->getPointer();
-	assertExists(val, "Expression's pointer is null");
+	getExpression()->build();
 	
-	setValue(val);
+	if (getExpression()->getType()->isFunctionTy())
+	{
+		setValue(getExpression()->getValue());
+	}
+	else
+	{
+		auto val = getExpression()->getPointer();
+		assertExists(val, "Expression's pointer is null");
+	
+		setValue(val);
+	}
 }
 
 ReferenceExpr::ReferenceExpr(Expression* expr)
