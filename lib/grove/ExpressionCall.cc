@@ -109,6 +109,8 @@ FunctionType* ExpressionCall::expectedFunctionTy() const
 	auto ty_list = std::vector<const Type *>();
 	for (auto arg : m_args)
 	{
+		assertExists(arg->getType(), "Arg doesn't have assigned type");
+		
 		// Cast arrays to pointers so we can pass-by-reference
 		if (arg->getType()->isArrayTy())
 		{
