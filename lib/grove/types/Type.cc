@@ -167,6 +167,11 @@ BasicType Type::PODTy() const
 
 const Type* Type::getPointerTo() const
 {
+	if (isVarTy())
+	{
+		return this;
+	}
+	
 	return PointerType::get(getModule(), (Type *)this);
 }
 
