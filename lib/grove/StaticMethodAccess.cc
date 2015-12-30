@@ -63,14 +63,6 @@ void StaticMethodAccess::resolve()
 			" must be used in the context of a reference."; });
 	}
 	
-	// Now, we want to get the "this" parameter from the nearest AccessExpr.
-	auto access = findParent<AccessExpr *>();
-	if (access == nullptr)
-	{
-		throw code_error(this, [] () { return "Method call not being used in "
-			"the context of an object access."; });
-	}
-	
 	/// @todo: set to non nullptr when referencing a static class method
 	/// via an ExpressionCall.
 	FunctionType* expectedTy = nullptr;
