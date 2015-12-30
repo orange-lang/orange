@@ -64,6 +64,7 @@ private:
 	// Stack of active blocks during parsing
 	std::stack<Block *> m_ctx;
 	
+	std::vector<ASTNode *> m_initialized;
 	std::vector<ASTNode *> m_resolved;
 	std::vector<ASTNode *> m_searched;
 	
@@ -147,6 +148,10 @@ public:
 	// Finds dependencies for all unsearched nodes.
 	void findDependencies();
 	
+	/// Initializes a node and its children, if it hasn't already been
+	/// initialized.
+	void initialize(ASTNode* node);
+	
 	/// Resolve the dependencies of a node and then the node, but
 	/// not its children. If the nodes have already been resolved, does nothing.
 	void resolveDependencies(ASTNode* node);
@@ -156,6 +161,9 @@ public:
 	
 	/// Completely processes a node.
 	void process(ASTNode* node);
+	
+	/// Initialize uninitialized nodes.
+	void initialize();
 	
 	/// Resolve unresolved nodes.
 	void resolve();

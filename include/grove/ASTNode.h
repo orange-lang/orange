@@ -104,6 +104,9 @@ public:
 
 	/// Creates a copy of this node.
 	virtual ASTNode* copy() const = 0;
+	
+	/// Initializes this node after creation.
+	virtual void initialize();
 
 	/// Populates the depdencies list of this node.
 	virtual void findDependencies();

@@ -72,6 +72,18 @@ void Builder::compile()
 	/// @todo Tell each module to import its own registered nodes as headers
 	///		  (Look in the library for its LocalNamedTypes and import)
 
+	// Initialize all modules.
+	for (auto mod : getModules())
+	{
+		for (auto transform : TransformRegistry::get()->getTransforms())
+		{
+			transform->transform(TransformPhase::PRE_INITIALIZE,
+								 mod->getMain());
+		}
+		
+		mod->initialize();
+	}
+	
 	// Find dependencies for all modules.
 	for (auto mod : getModules())
 	{

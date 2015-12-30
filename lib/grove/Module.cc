@@ -276,6 +276,23 @@ Block* Module::popBlock()
 	return popped;
 }
 
+void Module::initialize(ASTNode *node)
+{
+	auto it = std::find(this->m_initialized.begin(), this->m_initialized.end(),
+						node);
+	
+	if (it == std::end(this->m_initialized))
+	{
+		this->m_initialized.push_back(node);
+		node->initialize();
+	}
+	
+	for (auto child : node->getChildren())
+	{
+		initialize(child);
+	}
+}
+
 void Module::findDependencies(ASTNode *node)
 {
 	// Only find the dependencies of a non-generic node.
@@ -344,8 +361,14 @@ void Module::resolve(ASTNode *node)
 
 void Module::process(ASTNode *node)
 {
+	initialize(node);
 	findDependencies(node);
 	resolve(node);
+}
+
+void Module::initialize()
+{
+	initialize(getMain());
 }
 
 void Module::resolve()

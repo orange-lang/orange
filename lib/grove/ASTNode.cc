@@ -225,6 +225,11 @@ bool ASTNode::isRootNode() const
 	return getParent() == nullptr;
 }
 
+void ASTNode::initialize()
+{
+	// Do nothing 
+}
+
 void ASTNode::findDependencies()
 {
 	// By default, add all children as dependencies.

@@ -12,6 +12,7 @@ class ASTNode;
 
 enum TransformPhase
 {
+	PRE_INITIALIZE,
 	PRE_FIND_DEPENDENCIES,
 	PRE_RESOLVE,
 	PRE_BUILD
