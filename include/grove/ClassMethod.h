@@ -11,6 +11,7 @@
 #include "Function.h"
 #include "ClassTopLevel.h"
 #include "Protectable.h"
+#include "Staticable.h"
 
 class ClassDecl;
 
@@ -18,7 +19,8 @@ class ClassDecl;
  * Represents a method for a class.
  * Provides a hint that is the this parameter.
  */
-class ClassMethod : public Function, public ClassTopLevel, public Protectable
+class ClassMethod : public Function, public ClassTopLevel, public Protectable,
+    public Staticable
 {
 private:
 	ClassDecl* m_class = nullptr;
