@@ -25,6 +25,9 @@ class ClassMethod : public Function, public ClassTopLevel, public Protectable,
 private:
 	ClassDecl* m_class = nullptr;
 	Parameter* m_this_param = nullptr;
+	
+protected:
+	void addThisParam();
 public:
 	virtual bool usableFrom(const ASTNode* from) const override;
 	

@@ -63,13 +63,9 @@ Parameter* ClassMethod::getThisParam() const
 	return m_this_param;
 }
 
-ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
-						 std::vector<Parameter *> params)
-: Function(name, params)
+void ClassMethod::addThisParam()
 {
-	assertExists(theClass, "ClassMethod created with no class");
-	
-	auto ty = new ReferenceType(theClass);
+	auto ty = new ReferenceType(m_class);
 	m_this_param = new Parameter(ty->getPointerTo(), "this");
 	if (m_params.size() == 0)
 	{
@@ -81,14 +77,26 @@ ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
 	}
 	
 	m_params.insert(m_params.begin(), m_this_param);
-	
+}
+
+ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
+						 std::vector<Parameter *> params)
+: Function(name, params)
+{
+	assertExists(theClass, "ClassMethod created with no class");
 	m_class = theClass;
+	
+	addThisParam();
 }
 
 ClassMethod::ClassMethod(const ClassMethod& other)
 : Function(other.m_name, copyVector(other.getParams()))
 {
-	m_this_param = getParams().at(0);
+	if (other.getStatic() == false)
+	{
+    	m_this_param = getParams().at(0);
+	}
+	
 	m_class = other.m_class;
 	
 	other.defineCopy(this);
