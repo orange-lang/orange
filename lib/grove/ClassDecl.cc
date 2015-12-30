@@ -148,7 +148,6 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	
 	auto func = new Constructor(this, getName(), params);
 	
-	// The functions return type is this class' type.
 	func->setReturnType(VoidType::get(getModule()));
 	
 	if (method != nullptr)
