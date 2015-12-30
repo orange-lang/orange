@@ -244,6 +244,12 @@ void ExpressionCall::resolve()
 	}
 	
 	auto ty = exprAsTyped()->getType();
+	
+	while (ty->isPointerTy())
+	{
+		ty = ty->getBaseTy();
+	}
+	
 	if (ty->isFunctionTy() == false)
 	{
 		throw code_error(this, m_expr,
