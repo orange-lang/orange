@@ -12,6 +12,7 @@
 #include <grove/AccessExpr.h>
 #include <grove/Module.h>
 #include <grove/ReferenceExpr.h>
+#include <grove/Staticable.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
@@ -48,24 +49,21 @@ std::vector<std::vector<ObjectBase *>*> StaticMethodAccess::getMemberLists()
 	return defMemberLists();
 }
 
+bool StaticMethodAccess::isMethodStatic() const
+{
+	return getNode()->is<Staticable *>() &&
+		getNode()->as<Staticable *>()->getStatic();
+}
+
 void StaticMethodAccess::resolve()
 {
-	// If we're not referring to a static method, we have to be used
-	// in the context of a ReferenceExpr.
-	// Otherwise, we can be used in a ReferenceExpr OR ExpressionCall.
-	
-	// The first thing to do is verify that we're being used in the
-	// context of a function call.
-	auto ref = findParent<ReferenceExpr *>();
-	if (ref == nullptr)
-	{
-		throw code_error(this, [] () { return "Accessing a non-static method "
-			" must be used in the context of a reference."; });
-	}
-	
-	/// @todo: set to non nullptr when referencing a static class method
-	/// via an ExpressionCall.
 	FunctionType* expectedTy = nullptr;
+	
+	auto parent = findParent<ExpressionCall *>();
+	if (parent != nullptr)
+	{
+		expectedTy = parent->expectedFunctionTy();
+	}
 	
 	SearchSettings settings;
 	settings.createGeneric = true;
@@ -75,6 +73,21 @@ void StaticMethodAccess::resolve()
 	
 	auto named = m_class->getNamed(m_name, expectedTy, this, settings);
 	setNode(named->as<ASTNode *>());
+	
+	// If we're not referring to a static method, we have to be used
+	// in the context of a ReferenceExpr.
+	// Otherwise, we can be used in a ReferenceExpr OR ExpressionCall.
+	if (isMethodStatic() == false && findParent<ReferenceExpr*>() == nullptr)
+	{
+		throw code_error(this, [] () { return "Accessing a non-static method "
+			" must be used in the context of a reference."; });
+	}
+	else if (isMethodStatic() && findParent<ReferenceExpr*>() == nullptr &&
+			 findParent<ExpressionCall*>() == nullptr)
+	{
+		throw code_error(this, [] () { return "Accessing a static method "
+			" must be used in the context of a reference or a call."; });
+	}
 	
 	if (getNode()->is<Valued *>() == false)
 	{

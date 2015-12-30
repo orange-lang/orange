@@ -21,6 +21,10 @@ class StaticMethodAccess : public NodeReference
 private:
 	const ClassDecl* m_class = nullptr;
 	OString m_name;
+	
+protected:
+	bool isMethodStatic() const;
+	
 public:
 	/// Depends on all methods with the given name in class.
 	virtual void findDependencies() override;
