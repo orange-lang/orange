@@ -248,6 +248,7 @@ void ExpressionCall::resolve()
 	}
 	
 	auto ty = exprAsTyped()->getType();
+	assertExists(ty, "No function type set");
 	
 	while (ty->isPointerTy())
 	{
