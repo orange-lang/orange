@@ -129,7 +129,7 @@ void VarDecl::resolve()
 
 	if (getType()->isVarTy() && getExpression() == nullptr)
 	{
-		throw code_error(m_expr, []() -> std::string
+		throw code_error(this, []() -> std::string
 			{
 				return "A variable of type var must have an initial value";
 			});
