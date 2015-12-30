@@ -116,6 +116,7 @@
 "public"										SAVESTR(); return PUBLIC;
 "private"										SAVESTR(); return PRIVATE;
 "protected"										SAVESTR(); return PROTECTED;
+"static"										SAVESTR(); return STATIC;
 "extern"										SAVESTR(); return EXTERN;
 "const"											SAVESTR(); return CONST_FLAG;
 "enum"											SAVESTR(); return ENUM;

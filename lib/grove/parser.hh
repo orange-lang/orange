@@ -124,7 +124,8 @@
      SIZEOF = 340,
      TYPE_ID = 341,
      THIS = 342,
-     AT = 343
+     AT = 343,
+     STATIC = 344
    };
 #endif
 /* Tokens.  */
@@ -214,6 +215,7 @@
 #define TYPE_ID 341
 #define THIS 342
 #define AT 343
+#define STATIC 344
 
 
 
@@ -239,7 +241,7 @@ typedef union YYSTYPE
 	const Type* ty;
 }
 /* Line 1529 of yacc.c.  */
-#line 243 "/Users/robert/dev/orange/lib/grove/parser.hh"
+#line 245 "/Users/robert/dev/orange/lib/grove/parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

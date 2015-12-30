@@ -108,7 +108,7 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
-%token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID THIS AT
+%token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID THIS AT STATIC
 
 %type <nodes> compound_statement var_decl valued statement_no_term flagged_compound_statement
 %type <nodes> opt_valued
@@ -126,11 +126,11 @@
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID typename_or_identifier
-%type <str> THIS AT PUBLIC PROTECTED PRIVATE
+%type <str> THIS AT PUBLIC PROTECTED PRIVATE STATIC opt_static
 %type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list opt_param_list
 %type <args> opt_arg_list arg_list
-%type <ppair> protection_level
+%type <ppair> opt_protection_level protection_level
 
 /* lowest to highest precedence */
 %left IDENTIFIER
@@ -203,35 +203,15 @@ statements
 	;
 
 flagged_statement
-	: protection_level statement {
-		$$ = $2;
-		if ($$->is<Protectable*>() == false)
-		{
-			auto pair = *$1;
-			throw code_error($2, [pair]() -> std::string
-			{
-				std::stringstream ss;
-				ss << "Keyword " << std::get<0>(pair).str()
-				   << " can't be used here";
-				return ss.str();
-			});
-		}
+	: opt_protection_level opt_static statement {
+		$$ = $3;
 
-		$$->as<Protectable*>()->setProtectionLevel(std::get<1>(*$1));
-		delete $1;
-	}
-	| statement { $$ = $1; }
-	;
-
-flagged_compound_statement
-	: protection_level compound_statement {
-		$$ = $2;
-		for (auto stmt : *$$)
+		if ($1 != nullptr)
 		{
-			if (stmt->is<Protectable*>() == false)
+			if ($$->is<Protectable*>() == false)
 			{
 				auto pair = *$1;
-				throw code_error(stmt, [pair]() -> std::string
+				throw code_error($$, [pair]() -> std::string
 				{
 					std::stringstream ss;
 					ss << "Keyword " << std::get<0>(pair).str()
@@ -240,11 +220,77 @@ flagged_compound_statement
 				});
 			}
 
-			stmt->as<Protectable*>()->setProtectionLevel(std::get<1>(*$1));
+			$$->as<Protectable*>()->setProtectionLevel(std::get<1>(*$1));
+			delete $1;
 		}
-		delete $1;
+
+		if ($2 != nullptr)
+		{
+			if ($$->is<Staticable*>() == false)
+			{
+				auto str = *$2;
+				throw code_error($$, [str]() -> std::string
+				{
+					std::stringstream ss;
+					ss << "Keyword " << str.str()
+					   << " can't be used here";
+					return ss.str();
+				});
+			}
+
+			$$->as<Staticable*>()->setStatic(true);
+			delete $2;
+		}
 	}
-	| compound_statement { $$ = $1; }
+	;
+
+flagged_compound_statement
+	: opt_protection_level opt_static compound_statement {
+		$$ = $3;
+
+		if ($1 != nullptr)
+		{
+			for (auto stmt : *$$)
+			{
+				if (stmt->is<Protectable*>() == false)
+				{
+					auto pair = *$1;
+					throw code_error(stmt, [pair]() -> std::string
+					{
+						std::stringstream ss;
+						ss << "Keyword " << std::get<0>(pair).str()
+						   << " can't be used here";
+						return ss.str();
+					});
+				}
+
+				stmt->as<Protectable*>()->setProtectionLevel(std::get<1>(*$1));
+			}
+			delete $1;
+		}
+
+		if ($2 != nullptr)
+		{
+			for (auto stmt : *$$)
+			{
+				if (stmt->is<Staticable*>() == false)
+				{
+					auto str = *$2;
+					throw code_error(stmt, [str]() -> std::string
+					{
+						std::stringstream ss;
+						ss << "Keyword " << str.str()
+						   << " can't be used here";
+						return ss.str();
+					});
+				}
+				
+				stmt->as<Staticable*>()->setStatic(true);
+			}
+
+			delete $2;
+		}
+	}
 	;
 
 opt_statements
@@ -824,10 +870,10 @@ primary
 	| TYPE_ID DOT IDENTIFIER {
 		auto ref = new ReferenceType(*$1);
 		SET_LOCATION(ref, @1, @1);
-		
+
 		$$ = new AccessExpr(ref, *$3);
 		SET_LOCATION($$, @1, @3);
-		
+
 		delete $1;
 		delete $3;
 	}
@@ -1057,10 +1103,20 @@ array_def_list
 	}
 	;
 
+opt_protection_level
+	: protection_level { $$ = $1; }
+	| { $$ = nullptr; }
+	;
+
 protection_level
 	: PRIVATE { $$ = new std::tuple<OString,ProtectionLevel>(std::make_tuple(*$1, ProtectionLevel::PROTECTION_PRIVATE)); delete $1;}
 	| PROTECTED { $$ = new std::tuple<OString,ProtectionLevel>(std::make_tuple(*$1, ProtectionLevel::PROTECTION_PROTECTED)); delete $1; }
 	| PUBLIC { $$ = new std::tuple<OString,ProtectionLevel>(std::make_tuple(*$1, ProtectionLevel::PROTECTION_PUBLIC)); delete $1; }
+	;
+
+opt_static
+	: STATIC { $$ = $1; }
+	| { $$ = nullptr; }
 	;
 
 basic_type
