@@ -23,6 +23,7 @@
 #include <grove/BinOpAssign.h>
 
 #include <grove/types/VoidType.h>
+#include <grove/types/VarType.h>
 
 #include <grove/exceptions/code_error.h>
 #include <grove/exceptions/already_defined_error.h>
@@ -297,9 +298,17 @@ void ClassDecl::resolve()
 		member_types.push_back(member->getType());
 	}
 	
-	// Set our type to an explicit reference type to this class.
-	auto classTy = ClassType::get(getModule(), m_name, member_types);
-	setType(new ReferenceType(this, classTy));
+	if (isGeneric())
+	{
+		setType(VarType::get(getModule()));
+	}
+	else
+	{
+    	// Set our type to an explicit reference type to this class.
+		auto classTy = ClassType::get(getModule(), m_name, member_types);
+		setType(new ReferenceType(this, classTy));
+	}
+
 	
 	// Create all of our constructors.
 	getModule()->beginCopy();
