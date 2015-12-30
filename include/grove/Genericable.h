@@ -18,20 +18,20 @@ class Type;
  * methods to create and find unique non-generic instances are 
  * exposed. 
  */
-class Genericable : public Typed
+class Genericable : virtual public Typed
 {
 protected:
 	std::vector<Genericable *> m_instances;
 public:
 	/// Determines whether or not this object is
 	/// actually a generic or not.
-	virtual bool isGeneric() const;
+	virtual bool isGeneric() const = 0;
 	
 	/// Creates a non-generic instance of this Genericable.
 	/// Throws an error if isGeneric() returns false.
 	/// @param type The type of the instance.
 	/// @return The instance created.
-	virtual Genericable* createInstance(const Type* type);
+	virtual Genericable* createInstance(const Type* type) = 0;
 	
 	/// Returns an instance with a given list of types.
 	/// Returns nullptr if an instance does not exist,

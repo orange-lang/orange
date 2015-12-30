@@ -16,21 +16,6 @@
 
 #include <util/assertions.h>
 
-bool Genericable::isGeneric() const
-{
-	return false;
-}
-
-Genericable* Genericable::createInstance(const Type *type)
-{
-	if (isGeneric() == false)
-	{
-		throw fatal_error("cannot create instance of non-generic");
-	}
-	
-	return nullptr;
-}
-
 Genericable* Genericable::findInstance(const Type *type) const
 {
 	if (isGeneric() == false)
