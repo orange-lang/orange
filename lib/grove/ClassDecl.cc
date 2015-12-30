@@ -353,6 +353,10 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 		{
 			return new StaticMethodAccess(this, name);
 		}
+		else if (hasMember(name) && getMember(name)->getStatic())
+		{
+			return new NodeReference(getMember(name));
+		}
 		
 		throw fatal_error("Not sure how to handle non-value class access");
 	}
