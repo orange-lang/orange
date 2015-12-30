@@ -160,7 +160,11 @@ std::vector<ObjectBase**> ExpressionCall::getMemberNodes()
 
 std::vector<std::vector<ObjectBase *>*> ExpressionCall::getMemberLists()
 {
-	return defMemberLists();
+	auto list = defMemberLists();
+	list.insert(list.end(), {
+		(std::vector<ObjectBase *>*)&m_args
+	});
+	return list;
 }
 
 void ExpressionCall::setExpr(ASTNode *expr)
