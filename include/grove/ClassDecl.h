@@ -10,10 +10,10 @@
 
 #include "Block.h"
 #include "Named.h"
-#include "Typed.h"
 #include "TypeProvider.h"
 #include "Accessible.h"
 #include "Protectable.h"
+#include "Genericable.h"
 
 class MemberVarDecl;
 class ClassMethod;
@@ -21,7 +21,7 @@ class ClassMethod;
 /**
  * Represents a class declaration.
  */
-class ClassDecl : public Block, public Named, public Typed,
+class ClassDecl : public Block, public Named, public Genericable,
 	public TypeProvider, public Accessible, public Protectable
 {
 protected:
@@ -41,6 +41,9 @@ public:
 	virtual bool isAccessible() const override;
 	virtual Expression* access(OString name, const ASTNode* hint)
 		const override;
+	
+	virtual bool isGeneric() const override;
+	virtual Genericable* createInstance(const Type* type) override;
 	
 	std::vector<MemberVarDecl*> getMembers() const;
 	std::vector<ClassMethod*> getMethods() const;

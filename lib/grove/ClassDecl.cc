@@ -373,6 +373,25 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 	return nullptr;
 }
 
+bool ClassDecl::isGeneric() const
+{
+	for (auto member : getMembers())
+	{
+		if (member->getType()->isVarTy() &&
+			member->getExpression() == nullptr)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+Genericable* ClassDecl::createInstance(const Type *type)
+{
+	throw fatal_error("Should not get here");
+}
+
 ClassDecl::ClassDecl(OString name)
 {
 	if (name == "")
