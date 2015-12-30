@@ -37,11 +37,21 @@ ASTNode* MemberVarDecl::copy() const
 
 llvm::Value* MemberVarDecl::getValue() const
 {
+	if (getStatic())
+	{
+		return VarDecl::getValue();
+	}
+	
 	throw fatal_error("MemberVarDecl::getValue used directly!");
 }
 
 llvm::Value* MemberVarDecl::getPointer() const
 {
+	if (getStatic())
+	{
+		return VarDecl::getPointer();
+	}
+	
 	throw fatal_error("MemberVarDecl::getPointer used directly!");
 }
 
@@ -64,7 +74,10 @@ unsigned int MemberVarDecl::getOffset() const
 
 void MemberVarDecl::build()
 {
-	// Do nothing.
+	if (getStatic())
+	{
+		VarDecl::build();
+	}
 }
 
 MemberVarDecl::MemberVarDecl(const Type* type, OString name,
