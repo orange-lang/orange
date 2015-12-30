@@ -13,6 +13,7 @@
 #include "Named.h"
 #include "Valued.h"
 #include "Accessible.h"
+#include "Staticable.h"
 
 class Expression;
 
@@ -21,7 +22,7 @@ class Expression;
  * It is named, typed, and valued. Its value is the variable created.
  */
 class VarDecl : public Statement, public Named, public Typed, public Valued,
-	public Accessible
+	public Accessible, public Staticable
 {
 private:
 	Expression* m_expr = nullptr;

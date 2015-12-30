@@ -23,6 +23,7 @@
 #include <util/llvmassertions.h>
 
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/GlobalVariable.h>
 
 llvm::Value* VarDecl::getValue() const
 {
@@ -104,7 +105,8 @@ bool VarDecl::allocateVariable()
 	//  3. Our types don't match and we need to do a cast.
 	return getExpression() == nullptr ||
 		getExpression()->transferrable() == false ||
-		getType()->matches(getExpression()->getType()) == false;
+		getType()->matches(getExpression()->getType()) == false ||
+		getStatic() == true;
 }
 
 void VarDecl::resolve()
@@ -191,10 +193,27 @@ void VarDecl::build()
 		}
 	}
 	
+	
 	if (allocateVariable())
 	{
-		setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), m_size,
-									   getName().str()));	
+		if (getStatic())
+		{
+			auto val = new llvm::GlobalVariable(
+				*getModule()->getLLVMModule(),
+				getType()->getLLVMType(),
+				getType()->isConst(),
+				llvm::GlobalValue::LinkageTypes::InternalLinkage,
+				llvm::Constant::getNullValue(getType()->getLLVMType()),
+				getName().str());
+			
+			setValue(val);
+		}
+		else
+		{
+			setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), m_size,
+									   getName().str()));			
+		}
+
 	}
 	
 	if (getExpression())
