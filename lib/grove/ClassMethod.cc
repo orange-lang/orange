@@ -73,8 +73,7 @@ Parameter* ClassMethod::getThisParam() const
 
 void ClassMethod::addThisParam()
 {
-	auto ty = new ReferenceType(m_class);
-	m_this_param = new Parameter(ty->getPointerTo(), "this");
+	m_this_param = new Parameter(m_class->getRefTy()->getPointerTo(), "this");
 	if (m_params.size() == 0)
 	{
 		addChild(m_this_param, 0);

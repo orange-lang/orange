@@ -142,7 +142,7 @@ void ClassDecl::createCtor(ClassMethod *method) const
 	// add in the this param.
 	if (method == nullptr)
 	{
-		auto this_ty = new ReferenceType(this);
+		auto this_ty = getRefTy();
 		params.push_back(new Parameter(this_ty->getPointerTo(), "this"));
 	}
 	
