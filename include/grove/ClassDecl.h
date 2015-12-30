@@ -54,6 +54,7 @@ public:
 	/// Gets a type to use to refer to this class.
 	/// Returns var if the class is generic.
 	Type* getRefTy() const;
+	
 	bool hasDefaultCtor() const;
 	
 	virtual void findDependencies() override;

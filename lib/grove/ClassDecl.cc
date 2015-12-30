@@ -323,6 +323,16 @@ void ClassDecl::resolve()
 
 void ClassDecl::build()
 {
+	if (isGeneric())
+	{
+		for (auto inst : m_instances)
+		{
+			inst->as<ClassDecl *>()->build();
+		}
+		
+		return;
+	}
+	
 	buildStatements();
 }
 
