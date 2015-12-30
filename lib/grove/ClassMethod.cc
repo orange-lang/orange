@@ -69,7 +69,7 @@ void ClassMethod::addThisParam()
 	m_this_param = new Parameter(ty->getPointerTo(), "this");
 	if (m_params.size() == 0)
 	{
-		addChild(m_this_param);
+		addChild(m_this_param, 0);
 	}
 	else
 	{
