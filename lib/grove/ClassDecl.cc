@@ -392,6 +392,18 @@ Genericable* ClassDecl::createInstance(const Type *type)
 	throw fatal_error("Should not get here");
 }
 
+Type* ClassDecl::getRefTy() const
+{
+	if (isGeneric())
+	{
+		return VarType::get(getModule());
+	}
+	else
+	{
+		return new ReferenceType(this);
+	}
+}
+
 ClassDecl::ClassDecl(OString name)
 {
 	if (name == "")

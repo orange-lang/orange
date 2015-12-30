@@ -51,6 +51,9 @@ public:
 	/// Gets methods where the name is equal to the class name
 	std::vector<ClassMethod*> getCtors() const;
 	
+	/// Gets a type to use to refer to this class.
+	/// Returns var if the class is generic.
+	Type* getRefTy() const;
 	bool hasDefaultCtor() const;
 	
 	virtual void findDependencies() override;
