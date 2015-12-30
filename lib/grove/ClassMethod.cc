@@ -33,7 +33,10 @@ ProtectionLevel ClassMethod::defaultProtectionLevel() const
 
 void ClassMethod::initialize()
 {
-	addThisParam();
+	if (getStatic() == false)
+	{
+    	addThisParam();
+	}
 }
 
 void ClassMethod::findDependencies()
