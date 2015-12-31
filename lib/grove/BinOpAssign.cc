@@ -13,6 +13,7 @@
 #include <grove/exceptions/code_error.h>
 
 #include <grove/types/Type.h>
+#include <grove/types/FutureType.h>
 
 #include <util/assertions.h>
 #include <util/llvmassertions.h>
@@ -95,7 +96,12 @@ void BinOpAssign::resolve()
 			throw fatal_error("Both LHS and RHS are future types");
 		}
 		
-		getLHS()->setType(getRHS()->getType());
+		getLHS()->getType()->as<FutureType *>()->replace(getRHS()->getType());
+		
+		if (getLHS()->getType()->isFutureTy())
+		{
+			throw fatal_error("LHS is still a future type");
+		}
 	}
 	
 	BinOpExpr::resolve();
