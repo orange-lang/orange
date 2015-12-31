@@ -122,6 +122,7 @@ public:
 	virtual bool isVarTy() const;
 	virtual bool isClassTy() const;
 	virtual bool isNodeTy() const;
+	virtual bool isFutureTy() const;
 	
 	virtual unsigned int getIntegerBitWidth() const;
 
