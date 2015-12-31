@@ -326,6 +326,17 @@ void Function::resolve()
 		auto search_settings = SearchSettings();
 		search_settings.forceTypeMatch = true;
 		search_settings.createGeneric = false;
+		search_settings.filter = [this](Named* named) -> bool
+		{
+			if (named->is<Function *>())
+			{
+				auto func = named->as<Function *>();
+				return func->getInstanceParent() != this &&
+					getInstanceParent() != func;
+			}
+			
+			return true;
+		};
 		
 		auto found = findNamed(getName(), getType(), search_settings);
 		if (found != nullptr)
