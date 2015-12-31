@@ -51,13 +51,13 @@ void Typed::setType(const Type* type)
 {
 	if (m_type)
 	{
-		if (m_type->isFutureTy())
+		if (m_type->getComparisonTy()->isFutureTy())
 		{
-    		m_type->as<FutureType *>()->removeWatcher(this);
+    		m_type->getComparisonTy()->as<FutureType *>()->removeWatcher(this);
 		}
-		else if (m_type->isAggTy())
+		else if (m_type->getComparisonTy()->isAggTy())
 		{
-			for (auto type : m_type->getMemberTys())
+			for (auto type : m_type->getComparisonTy()->getMemberTys())
 			{
 				if (type->isFutureTy())
 				{
@@ -71,13 +71,13 @@ void Typed::setType(const Type* type)
 	
 	if (m_type)
 	{
-		if (m_type->isFutureTy())
+		if (m_type->getComparisonTy()->isFutureTy())
 		{
-			m_type->as<FutureType *>()->addWatcher(this);
+			m_type->getComparisonTy()->as<FutureType *>()->addWatcher(this);
 		}
-		else if (m_type->isAggTy())
+		else if (m_type->getComparisonTy()->isAggTy())
 		{
-			for (auto type : m_type->getMemberTys())
+			for (auto type : m_type->getComparisonTy()->getMemberTys())
 			{
 				if (type->isFutureTy())
 				{
