@@ -24,6 +24,7 @@
 
 #include <grove/types/VoidType.h>
 #include <grove/types/VarType.h>
+#include <grove/types/FutureType.h>
 
 #include <grove/exceptions/code_error.h>
 #include <grove/exceptions/already_defined_error.h>
@@ -324,7 +325,6 @@ void ClassDecl::resolve()
 		auto classTy = ClassType::get(getModule(), m_name, member_types);
 		setType(new ReferenceType(this, classTy));
 	}
-
 	
 	// Create all of our constructors.
 	getModule()->beginCopy();
@@ -415,7 +415,45 @@ bool ClassDecl::isGeneric() const
 
 Genericable* ClassDecl::createInstance(const Type *type)
 {
-	throw fatal_error("Should not get here");
+	if (isGeneric() == false)
+	{
+		throw fatal_error("Cannot call createInstance on non-generic class");
+	}
+	
+	getModule()->beginCopy();
+	
+	auto clone = copy()->as<ClassDecl *>();
+	
+	getModule()->endCopy();
+	
+	std::vector<const Type *> member_types;
+	for (auto& member : clone->getMembers())
+	{
+		if (member->getType()->isVarTy() &&
+			member->getExpression() == nullptr)
+		{
+			member->setType(new FutureType(getModule()));
+		}
+		
+		member_types.push_back(member->getType());
+	}
+	
+	/// @todo: this may cause a problem
+	auto classTy = ClassType::get(getModule(), clone->m_name,
+								  member_types);
+	clone->setType(classTy);
+	
+	if (clone->isGeneric())
+	{
+		throw fatal_error("instance is still a generic!");
+	}
+	
+	clone->m_instance_of = this;
+	
+	m_instances.push_back(clone);
+	getParent()->addChild(clone);
+	
+	return clone;
 }
 
 std::vector<MemberVarDecl*> ClassDecl::getGenericMembers() const
