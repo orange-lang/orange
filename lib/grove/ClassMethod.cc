@@ -47,8 +47,6 @@ void ClassMethod::initialize()
 void ClassMethod::findDependencies()
 {
 	Function::findDependencies();
-	
-	addDependency(m_class);
 }
 
 bool ClassMethod::isConstructor() const
