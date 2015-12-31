@@ -16,12 +16,12 @@
 #include <util/assertions.h>
 #include <util/copy.h>
 
-const ClassDecl* Constructor::getClass() const
+ClassDecl* Constructor::getClass() const
 {
 	return m_class;
 }
 
-const ClassMethod* Constructor::getMethod() const
+ClassMethod* Constructor::getMethod() const
 {
 	return m_method;
 }
@@ -56,7 +56,7 @@ Genericable* Constructor::createInstance(const Type *type)
 	return Function::createInstance(type);
 }
 
-Constructor::Constructor(const ClassDecl* theClass, const ClassMethod* method,
+Constructor::Constructor(ClassDecl* theClass, ClassMethod* method,
 						 OString name, std::vector<Parameter *> params)
 : Function(name, params)
 {
