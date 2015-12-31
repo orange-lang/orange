@@ -411,6 +411,23 @@ Genericable* ClassDecl::createInstance(const Type *type)
 	throw fatal_error("Should not get here");
 }
 
+std::vector<MemberVarDecl*> ClassDecl::getGenericMembers() const
+{
+	std::vector<MemberVarDecl*> genericMembers;
+	for (auto member : getMembers())
+	{
+		if (member->getType()->isVarTy() &&
+			member->getExpression() == nullptr)
+		{
+			/// @todo: check to see if this member depends on a generic
+			/// parameter at least once.
+			genericMembers.push_back(member);
+		}
+	}
+	
+	return genericMembers;
+}
+
 Type* ClassDecl::getRefTy() const
 {
 	if (isGeneric())

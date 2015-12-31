@@ -48,6 +48,10 @@ public:
 	std::vector<MemberVarDecl*> getMembers() const;
 	std::vector<ClassMethod*> getMethods() const;
 	
+	/// Returns all generic members: members that do not have initial
+	/// values and depend on a generic parameter at least once.
+	std::vector<MemberVarDecl*> getGenericMembers() const;
+	
 	/// Gets methods where the name is equal to the class name
 	std::vector<ClassMethod*> getCtors() const;
 	
