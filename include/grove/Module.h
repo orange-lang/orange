@@ -76,7 +76,8 @@ private:
 	// for a new copy stack, which nodes will register their created copies
 	// to the stack. Then, nodes that were referencing the original node
 	// can look at the copy stack and get their newly created copy.
-	std::stack<CopyMap> m_copy_stack;
+	CopyMap m_copy_states;
+	int m_copy_levels = 0;
 	
 	/// Indicates whether or not we are currently parsing.
 	bool m_parsing = false;

@@ -523,34 +523,34 @@ void Module::addChild(ASTNode *child)
 
 void Module::beginCopy()
 {
-	m_copy_stack.push(CopyMap());
+	m_copy_levels++;
 }
 
 void Module::defineCopy(const ASTNode *original, const ASTNode *copy)
 {
-	if (m_copy_stack.size() == 0)
+	if (m_copy_levels == 0)
 	{
 		throw fatal_error("Not in a copy state");
 	}
 	
-	auto it = m_copy_stack.top().find(original);
-	if (it != m_copy_stack.top().end())
+	auto it = m_copy_states.find(original);
+	if (it != m_copy_states.end())
 	{
 		throw fatal_error("Redefining a copy mapping");
 	}
 	
-	m_copy_stack.top()[original] = copy;
+	m_copy_states[original] = copy;
 }
 
 bool Module::hasCopy(const ASTNode *original)
 {
-	if (m_copy_stack.size() == 0)
+	if (m_copy_levels == 0)
 	{
 		throw fatal_error("Not in a copy state");
 	}
 	
-	auto it = m_copy_stack.top().find(original);
-	if (it != m_copy_stack.top().end())
+	auto it = m_copy_states.find(original);
+	if (it != m_copy_states.end())
 	{
 		return true;
 	}
@@ -560,13 +560,13 @@ bool Module::hasCopy(const ASTNode *original)
 
 ASTNode* Module::getCopy(const ASTNode *original)
 {
-	if (m_copy_stack.size() == 0)
+	if (m_copy_levels == 0)
 	{
 		throw fatal_error("Not in a copy state");
 	}
 	
-	auto it = m_copy_stack.top().find(original);
-	if (it != m_copy_stack.top().end())
+	auto it = m_copy_states.find(original);
+	if (it != m_copy_states.end())
 	{
 		return (ASTNode *)it->second;
 	}
@@ -576,12 +576,15 @@ ASTNode* Module::getCopy(const ASTNode *original)
 
 void Module::endCopy()
 {
-	if (m_copy_stack.size() == 0)
+	if (m_copy_levels == 0)
 	{
 		throw fatal_error("copy state stack is empty");
 	}
 	
-	m_copy_stack.pop();
+	if (--m_copy_levels == 0)
+	{
+		m_copy_states.clear();
+	}
 }
 
 Module::Module()
