@@ -312,6 +312,13 @@ void Function::resolve()
 		return;
 	}
 	
+	if (getParent()->is<Genericable *>() &&
+		getParent()->as<Genericable *>()->isGeneric())
+	{
+		throw fatal_error("Child function of a generic parent is being "
+						  "resolved");
+	}
+	
 	if (isGeneric())
 	{
 		// We need to resolve our parameters just in case they need it 
