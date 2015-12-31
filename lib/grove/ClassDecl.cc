@@ -286,6 +286,16 @@ void ClassDecl::resolve()
 	SearchSettings settings;
 	settings.createGeneric = false;
 	settings.includeLimit = false;
+	settings.filter = [this](Named* named) -> bool
+	{
+		if (named->is<ClassDecl *>())
+		{
+			auto other = named->as<ClassDecl *>();
+			return other->getInstanceParent() == this;
+		}
+		
+		return named->is<Constructor *>() == false;
+	};
 	
 	auto named = findNamed(getName(), nullptr, settings);
 	if (named != nullptr && named != this)
