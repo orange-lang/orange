@@ -14,6 +14,8 @@
 #include "Staticable.h"
 
 class ClassDecl;
+class BinOpAssign;
+class MemberVarDecl;
 
 /**
  * Represents a method for a class.
@@ -44,6 +46,8 @@ public:
 	virtual std::vector<ObjectBase**> getMemberNodes() override;
 	
 	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
+	
+	BinOpAssign* getInitializerForMember(MemberVarDecl *member) const;
 	
 	Parameter* getThisParam() const;
 	

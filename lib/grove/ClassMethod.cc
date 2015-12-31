@@ -9,6 +9,10 @@
 #include <grove/ClassMethod.h>
 #include <grove/ClassDecl.h>
 #include <grove/Parameter.h>
+#include <grove/Module.h>
+#include <grove/BinOpAssign.h>
+#include <grove/AccessExpr.h>
+#include <grove/MemberVarDecl.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/ReferenceType.h>
@@ -89,6 +93,40 @@ void ClassMethod::addThisParam()
 	}
 	
 	m_params.insert(m_params.begin(), m_this_param);
+}
+
+BinOpAssign* ClassMethod::getInitializerForMember(MemberVarDecl *member) const
+{
+	auto assigns = findChildren<BinOpAssign *>();
+	for (auto assign : assigns)
+	{
+		getModule()->findDependencies(assign);
+		
+		// We need to know if this BinOpAssign is assigning to our
+		// member. Unfortunately, it may be an AccessExpr (via this.[name])
+		// The AccessExpr doesn't know what it is actually accessing
+		// by the time findDependencies is called, as a lot of accessing
+		// can only be determined during resolve of non-generics.
+		//
+		// Given that, we have to manually check to see if the assign's
+		// LHS is an AccessExpr, and if it's accessing this.memberName
+		if (assign->getLHS()->is<AccessExpr *>() == true &&
+			(assign->getLHS()->as<AccessExpr *>()->accessingThis() == false ||
+			 assign->getLHS()->as<AccessExpr *>()->getName() !=
+				member->getName()))
+		{
+			continue;
+		}
+		else if (assign->getLHS()->is<AccessExpr *>() == false &&
+				 assign->dependsOn(member) == false)
+		{
+			continue;
+		}
+		
+		return assign;
+	}
+	
+	return nullptr;
 }
 
 ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
