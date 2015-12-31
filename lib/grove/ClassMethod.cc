@@ -46,6 +46,11 @@ void ClassMethod::findDependencies()
 	addDependency(m_class);
 }
 
+bool ClassMethod::isConstructor() const
+{
+	return getName() == m_class->getName();
+}
+
 ASTNode* ClassMethod::copy() const
 {
 	return new ClassMethod(*this);

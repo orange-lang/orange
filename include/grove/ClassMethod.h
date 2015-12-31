@@ -37,6 +37,8 @@ public:
 	
 	virtual void findDependencies() override;
 	
+	virtual bool isConstructor() const;
+	
 	virtual ASTNode* copy() const override;
 	
 	virtual std::vector<ObjectBase**> getMemberNodes() override;
