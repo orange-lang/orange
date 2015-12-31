@@ -229,6 +229,11 @@ Type* Type::getDefined(Module* mod, std::string signature)
 	return it->second;
 }
 
+const Type* Type::replaceMember(const Type* member, const Type* with) const
+{
+	return this;
+}
+
 std::vector<const Type*> Type::getMemberTys() const
 {
 	return std::vector<const Type*>();

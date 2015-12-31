@@ -125,6 +125,10 @@ public:
 	virtual bool isFutureTy() const;
 	virtual bool isAggTy() const;
 	
+	/// Replaces a member in an aggregate type. Returns the new aggregate.
+	virtual const Type* replaceMember(const Type* member, const Type* with)
+		const;
+	
 	/// Gets the member types of an aggregate type.
 	virtual std::vector<const Type*> getMemberTys() const;
 	
