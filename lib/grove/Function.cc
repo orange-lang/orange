@@ -322,6 +322,12 @@ void Function::resolve()
 	
 	if (isGeneric())
 	{
+		// We need to resolve our parameters just in case they need it 
+		for (auto param : getParams())
+		{
+			getModule()->resolve(param);
+		}
+		
 		setType(FunctionType::get(getModule(), VarType::get(getModule()),
 								  getParamTys()));
 		
