@@ -26,6 +26,11 @@ OString ReferenceType::getName() const
 
 const Type* ReferenceType::getComparisonTy() const
 {
+	if (m_ref_type == nullptr)
+	{
+		return this;
+	}
+	
 	return m_ref_type;
 }
 
