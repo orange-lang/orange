@@ -216,6 +216,19 @@ Constructor* ClassDecl::createCtor(ClassMethod *method)
 	return func;
 }
 
+Constructor* ClassDecl::getCtorForMethod(ClassMethod *method)
+{
+	auto it = m_ctor_map.find(method);
+	if (it == m_ctor_map.end())
+	{
+		return createCtor(method);
+	}
+	else
+	{
+		return it->second;
+	}
+}
+
 bool ClassDecl::hasMethod(const OString &name) const
 {
 	auto&& methods = getMethods();

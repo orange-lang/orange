@@ -8,6 +8,8 @@
 
 #pragma once 
 
+#include <map>
+
 #include "Block.h"
 #include "Named.h"
 #include "TypeProvider.h"
@@ -27,7 +29,11 @@ class ClassDecl : public Block, public Named, public Genericable,
 {
 protected:
 	Constructor* createCtor(ClassMethod* method);
+	
+	std::map<ClassMethod*, Constructor*> m_ctor_map;
 public:
+	Constructor* getCtorForMethod(ClassMethod* method);
+	
 	virtual bool usableFrom(const ASTNode* from) const override;
 	
   	virtual ProtectionLevel defaultProtectionLevel() const override;
