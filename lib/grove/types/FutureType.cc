@@ -7,6 +7,7 @@
 */
 
 #include <grove/types/FutureType.h>
+#include <grove/types/ReferenceType.h>
 
 #include <grove/Typed.h>
 
@@ -72,6 +73,7 @@ void FutureType::replace(const Type* with)
 	for (auto watcher : watchers_copy)
 	{
 		auto ty = watcher->getType();
+		
 		if (ty->isAggTy())
 		{
 			watcher->setType(ty->replaceMember(this, with));
@@ -79,6 +81,20 @@ void FutureType::replace(const Type* with)
 		else if (ty == this)
 		{
 			watcher->setType(with);
+		}
+		else if (ty->is<ReferenceType*>())
+		{
+			auto ref_ty = ty->as<ReferenceType *>();
+			auto comp_ty = ty->getComparisonTy();
+			
+			if (comp_ty->isAggTy())
+			{
+				ref_ty->setRefType(comp_ty->replaceMember(this, with));
+			}
+			else if (comp_ty == this)
+			{
+				ref_ty->setRefType(with);
+			}
 		}
 		else
 		{
