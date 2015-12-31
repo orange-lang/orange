@@ -54,6 +54,28 @@ bool FutureType::isFutureTy() const
 	return true;
 }
 
+void FutureType::replace(Type* with)
+{
+	for (auto watcher : m_watchers)
+	{
+		auto ty = watcher->getType();
+		if (ty->isAggTy())
+		{
+			watcher->setType(ty->replaceMember(this, with));
+		}
+		else if (ty == this)
+		{
+			watcher->setType(with);
+		}
+		else
+		{
+			throw fatal_error("Watcher not affiliated with FutureType");
+		}
+	}
+	
+	m_watchers.clear();
+}
+
 void FutureType::addWatcher(Typed* watcher)
 {
 	auto it = std::find(m_watchers.begin(), m_watchers.end(), watcher);
