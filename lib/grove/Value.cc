@@ -63,7 +63,7 @@ void Value::resolve()
 {
 	if (m_char_const)
 	{
-    	m_type = IntType::get(getModule(),8);
+    	setType(IntType::get(getModule(),8));
 	}
 }
 
@@ -202,7 +202,7 @@ Value::Value(std::string str, const Type* t, int base)
 		throw fatal_error("type was null");
 	}
 
-	m_type = t;
+	setType(t);
 
 	switch (t->PODTy())
 	{
@@ -254,7 +254,7 @@ Value::Value(std::string str, const Type* t, int base)
 Value::Value(const Value& other)
 {
 	m_values = other.m_values;
-	m_type = other.m_type;
+	setType(other.m_type);
 	
 	other.defineCopy(this);
 }

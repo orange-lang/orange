@@ -60,7 +60,7 @@ void CastExpr::build()
 
 CastExpr::CastExpr(const Type* ty, Expression* expr)
 {
-	m_type = ty;
+	setType(ty);
 	m_expression = expr;
 	
 	addChild(m_expression, true);
@@ -68,7 +68,7 @@ CastExpr::CastExpr(const Type* ty, Expression* expr)
 
 CastExpr::CastExpr(const CastExpr& other)
 {
-	m_type = other.m_type->copyType();
+	setType(other.m_type->copyType());
 	m_expression = (Expression *)other.m_expression->copy();
 	
 	addChild(m_expression, true);

@@ -277,7 +277,7 @@ VarDecl::VarDecl(const Type* type, OString name, Expression* expression)
 
 VarDecl::VarDecl(const VarDecl& other)
 {
-	m_type = other.m_type->copyType();
+	setType(other.m_type->copyType());
 	m_name = other.m_name;
 	
 	if (other.m_expr)
