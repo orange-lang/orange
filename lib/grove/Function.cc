@@ -154,6 +154,12 @@ bool Function::isGeneric() const
 		}
 	}
 	
+	if (findParent<Genericable *>() &&
+		findParent<Genericable *>()->isGeneric())
+	{
+		return true;
+	}
+	
 	return false;
 }
 
@@ -310,13 +316,6 @@ void Function::resolve()
 	if (getType() != nullptr)
 	{
 		return;
-	}
-	
-	if (getParent()->is<Genericable *>() &&
-		getParent()->as<Genericable *>()->isGeneric())
-	{
-		throw fatal_error("Child function of a generic parent is being "
-						  "resolved");
 	}
 	
 	if (isGeneric())
