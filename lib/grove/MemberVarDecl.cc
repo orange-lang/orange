@@ -88,8 +88,7 @@ MemberVarDecl::MemberVarDecl(const Type* type, OString name,
 }
 
 MemberVarDecl::MemberVarDecl(const MemberVarDecl& other)
-: VarDecl(other.m_type->copyType(), other.m_name,
-		  (Expression *)other.getExpression()->copy())
+: VarDecl(other)
 {
-	other.defineCopy(this);
+	// Do nothing.
 }
