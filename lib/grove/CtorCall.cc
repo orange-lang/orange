@@ -77,11 +77,7 @@ ClassDecl* CtorCall::findClass() const
 
 void CtorCall::resolve()
 {
-	auto the_class = findClass();
-	auto class_ty = the_class->getType();
-	assertExists(class_ty, "Class has no defined type");
-	
-	m_this_param->setType(class_ty->getPointerTo());
+	m_this_param->setType(VarType::get(getModule()));
 	
 	FunctionCall::resolve();
 	
@@ -89,6 +85,9 @@ void CtorCall::resolve()
 	{
 		throw fatal_error("CtorCall not looking at a Constructor!");
 	}
+	
+	auto the_class = getExpr()->as<Constructor *>()->getClass();
+	m_this_param->setType(the_class->getType()->getPointerTo());
 
 	auto refType = new ReferenceType(the_class);
 	addChild(refType);
