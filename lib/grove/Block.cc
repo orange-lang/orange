@@ -152,7 +152,7 @@ Named* Block::getNamed(OString name, const Type* type,
 	else if (type == nullptr)
 	{
 		// Check to see if all elements are the same type.
-		auto original = matches.at(0)->as<CodeBase *>();
+		auto original = (CodeBase *)matches.at(0);
 		auto first = typeid(*original).hash_code();
 		
 		for (unsigned int i = 1; i < matches.size(); i++)
