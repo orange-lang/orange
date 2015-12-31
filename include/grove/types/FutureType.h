@@ -34,6 +34,7 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
+	virtual std::vector<ObjectBase **> getMemberNodes() override;
 	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
 	
 	virtual bool isFutureTy() const override;

@@ -46,6 +46,11 @@ ASTNode* FutureType::copy() const
 	throw fatal_error("FutureType should never be copied");
 }
 
+std::vector<ObjectBase **> FutureType::getMemberNodes()
+{
+	return defMemberNodes();
+}
+
 std::vector<std::vector<ObjectBase *>*> FutureType::getMemberLists()
 {
 	auto list = defMemberLists();
