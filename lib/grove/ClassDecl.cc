@@ -496,6 +496,6 @@ ClassDecl::ClassDecl(OString name)
 
 ClassDecl::ClassDecl(const ClassDecl& other)
 {
-	copyStatements(&other);
 	other.defineCopy(this);
+	copyStatements(&other);
 }
