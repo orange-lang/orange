@@ -88,6 +88,16 @@ ASTNode* BinOpAssign::copy() const
 
 void BinOpAssign::resolve()
 {
+	if (getLHS()->getType()->isFutureTy())
+	{
+		if (getRHS()->getType()->isFutureTy())
+		{
+			throw fatal_error("Both LHS and RHS are future types");
+		}
+		
+		getLHS()->setType(getRHS()->getType());
+	}
+	
 	BinOpExpr::resolve();
 	
 	if (getLHS()->hasPointer() == false)
