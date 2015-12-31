@@ -78,6 +78,20 @@ Expression* Parameter::access(OString name, const ASTNode *hint) const
 	return accessible_ref->access(name, hint_to_use);
 }
 
+void Parameter::setType(const Type *type)
+{
+	if (m_type && m_type->getRootTy()->is<NodeType *>())
+	{
+		removeChild(m_type->getRootTy()->as<NodeType *>());
+	}
+
+	m_type = type;
+	if (m_type->getRootTy()->is<NodeType *>())
+	{
+		addChild(m_type->getRootTy()->as<NodeType *>());
+	}
+}
+
 Parameter::Parameter(const Type* type, OString name)
 {
 	assertExists(type, "Type must not be null");
@@ -87,24 +101,14 @@ Parameter::Parameter(const Type* type, OString name)
 		throw fatal_error("name was null");
 	}
 	
-	if (type->getRootTy()->is<NodeType *>())
-	{
-		addChild(type->getRootTy()->as<NodeType *>());
-	}
-	
 	setType(type);
 	m_name = name;
 }
 
 Parameter::Parameter(const Parameter& other)
 {
-	m_type = other.m_type->copyType();
+	setType(other.m_type->copyType());
 	m_name = other.m_name;
-	
-	if (m_type->getRootTy()->is<NodeType *>())
-	{
-		addChild(m_type->getRootTy()->as<NodeType *>());
-	}
 	
 	other.defineCopy(this);
 }

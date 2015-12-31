@@ -35,5 +35,5 @@ public:
 	static Comparison compare(const Typed* source, const Typed* target);
 
 	/// Overrides the type.
-	void setType(const Type* type);
+	virtual void setType(const Type* type);
 };
