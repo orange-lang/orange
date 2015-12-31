@@ -67,7 +67,9 @@ bool FutureType::isFutureTy() const
 
 void FutureType::replace(const Type* with)
 {
-	for (auto watcher : m_watchers)
+	auto watchers_copy = m_watchers;
+	
+	for (auto watcher : watchers_copy)
 	{
 		auto ty = watcher->getType();
 		if (ty->isAggTy())
