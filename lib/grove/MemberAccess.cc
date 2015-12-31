@@ -23,6 +23,7 @@
 #include <grove/exceptions/access_denied_error.h>
 
 #include <util/assertions.h>
+#include <util/llvmassertions.h>
 
 #include <llvm/IR/IRBuilder.h>
 
@@ -196,6 +197,13 @@ void MemberAccess::build()
 	{
 		throw fatal_error("Not a pointer to a class!");
 	}
+	
+	auto conv_ty = (llvm::StructType *)val->getType();
+	conv_ty = (llvm::StructType *)conv_ty->getElementType(0);
+	
+	assertEqual(conv_ty->getElementType(offset),
+				getLLVMType(), "Internal struct type does not match expected");
+	
 	
 	m_value = IRBuilder()->CreateInBoundsGEP(val, offsets);
 }
