@@ -23,7 +23,7 @@ std::string code_error::getContext(const CodeBase *element)
 	std::ifstream file(element->getLocation().file);
 	if (file.is_open() == false)
 	{
-		throw fatal_error("couldn't open file for context");
+		return "[error: could not open file for context]";
 	}
 	
 	for (int i = 0; i < element->getLocation().first_line - 1; i++)
