@@ -104,23 +104,21 @@ Expression* ReferenceType::access(OString name, const ASTNode* hint) const
 	return getReference()->as<Accessible*>()->access(name, hint);
 }
 
-void ReferenceType::findDependencies()
+void ReferenceType::initialize()
 {
 	if (m_reference == nullptr)
 	{
 		findReference();
 	}
-	
+}
+
+void ReferenceType::findDependencies()
+{
 	addDependency(m_reference);
 }
 
 void ReferenceType::resolve()
 {
-	if (m_reference == nullptr)
-	{
-		findReference();
-	}
-	
 	assertExists(m_reference, "reference has no value");
 	
 	if (m_ref_type == nullptr)
