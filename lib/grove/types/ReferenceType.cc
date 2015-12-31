@@ -131,8 +131,7 @@ void ReferenceType::resolve()
 	{
 		auto typed = m_reference->as<Typed *>();
     	assertExists(typed->getType(), "node has no type");
-    	m_ref_type = typed->getType();
-    	m_type = m_ref_type->getLLVMType();
+		setRefType(typed->getType());
 	}
 	
 	if (m_type == nullptr)
@@ -217,6 +216,12 @@ const Type* ReferenceType::copyType() const
 	return copy()->as<Type *>();
 }
 
+void ReferenceType::setRefType(const Type* ty)
+{
+	m_ref_type = ty;
+	m_type = m_ref_type->getLLVMType();
+}
+
 ReferenceType::ReferenceType(OString name)
 : NodeType(false)
 {
@@ -244,8 +249,7 @@ ReferenceType::ReferenceType(const ASTNode* reference, const Type* refType)
 	m_location = reference->getLocation();
 	
 	assertExists(refType, "refType for ReferenceType was empty");
-	m_ref_type = refType;
-	m_type = m_ref_type->getLLVMType();
+	setRefType(refType);
 	
 	m_sticky_ref_type = true;
 }

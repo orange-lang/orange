@@ -50,6 +50,8 @@ public:
 	
 	virtual std::vector<ObjectBase**> getMemberNodes() override;
 	
+	void setRefType(const Type* ty);
+	
 	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
 	
 	ReferenceType(OString name);
