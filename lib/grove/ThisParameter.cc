@@ -57,7 +57,7 @@ ThisParameter::ThisParameter(ClassDecl* theClass)
 }
 
 ThisParameter::ThisParameter(const ThisParameter& other)
-: Parameter(other.m_type, other.getName())
+: Parameter(other.m_type->copyType(), other.getName())
 {
 	m_class = other.m_class;
 	other.defineCopy(this);
