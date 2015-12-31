@@ -394,16 +394,7 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 
 bool ClassDecl::isGeneric() const
 {
-	for (auto member : getMembers())
-	{
-		if (member->getType()->isVarTy() &&
-			member->getExpression() == nullptr)
-		{
-			return true;
-		}
-	}
-	
-	return false;
+	return getGenericMembers().size() > 0;
 }
 
 Genericable* ClassDecl::createInstance(const Type *type)
