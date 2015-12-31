@@ -461,7 +461,7 @@ Genericable* ClassDecl::createInstance(const Type *type)
 	clone->m_instance_of = this;
 	
 	m_instances.push_back(clone);
-	getParent()->addChild(clone, this, 1);
+	findParent<Block *>()->addStatement(clone, this, 1);
 	
 	return clone;
 }
