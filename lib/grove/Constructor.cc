@@ -72,6 +72,11 @@ Genericable* Constructor::createInstance(const Type *type)
 	
 	assertExists(operating_class, "no class to clone");
 	assertExists(operating_method, "no method to clone");
+
+	if (operating_method->getClass()->isGeneric())
+	{
+		throw fatal_error("Operating Method's class is still generic");
+	}
 	
 	// Now we can create an instance of the method.
 	auto cloned_method =
