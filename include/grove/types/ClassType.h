@@ -25,6 +25,9 @@ public:
 	virtual bool isClassTy() const override;
 	virtual bool isAggTy() const override;
 	
+	virtual const Type* replaceMember(const Type* member, const Type* with)
+		const override;
+	
 	virtual std::vector<const Type*> getMemberTys() const override;
 	
 	virtual std::string getString() const override;

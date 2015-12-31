@@ -57,6 +57,25 @@ bool ClassType::isAggTy() const
 	return true;
 }
 
+const Type* ClassType::replaceMember(const Type* member, const Type* with)
+const
+{
+	std::vector<const Type*> new_members;
+	for (auto old_member : m_members)
+	{
+		if (old_member == member)
+		{
+			new_members.push_back(with);
+		}
+		else
+		{
+			new_members.push_back(old_member);
+		}
+	}
+	
+	return ClassType::get(m_module, m_name, new_members);
+}
+
 std::vector<const Type*> ClassType::getMemberTys() const
 {
 	return m_members;
