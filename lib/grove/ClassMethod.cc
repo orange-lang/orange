@@ -151,5 +151,5 @@ ClassMethod::ClassMethod(const ClassMethod& other)
     	m_this_param = getParams().at(0);
 	}
 	
-	m_class = other.m_class;
+	m_class = other.getModule()->tryGetCopy(other.m_class)->as<ClassDecl *>();
 }
