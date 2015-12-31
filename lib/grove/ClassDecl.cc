@@ -128,7 +128,7 @@ bool ClassDecl::hasDefaultCtor() const
 	return false;
 }
 
-void ClassDecl::createCtor(ClassMethod *method) const
+void ClassDecl::createCtor(ClassMethod *method) 
 {
 	assertExists(getParent(), "class has no parent!");
 	
