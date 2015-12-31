@@ -54,7 +54,7 @@ bool FutureType::isFutureTy() const
 	return true;
 }
 
-void FutureType::replace(Type* with)
+void FutureType::replace(const Type* with)
 {
 	for (auto watcher : m_watchers)
 	{

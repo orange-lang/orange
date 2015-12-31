@@ -39,7 +39,7 @@ public:
 	/// Gets the type from each watcher and replaces it with another type.
 	/// If the watcher's type is an aggregate, looks for the FutureType
 	/// and replaces that instead. Removes all watchers. 
-	void replace(Type* with);
+	void replace(const Type* with);
 	
 	void addWatcher(Typed* watcher);
 	
