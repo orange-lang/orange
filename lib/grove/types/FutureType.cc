@@ -43,7 +43,7 @@ const Type* FutureType::copyType() const
 
 ASTNode* FutureType::copy() const
 {
-	return (ASTNode *)this;
+	throw fatal_error("FutureType should never be copied");
 }
 
 std::vector<std::vector<ObjectBase *>*> FutureType::getMemberLists()
