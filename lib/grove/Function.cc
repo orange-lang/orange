@@ -133,16 +133,6 @@ void Function::setReturnType(const Type *ty)
 	m_ret_type = ty;
 }
 
-Function* Function::getInstanceParent() const
-{
-	return m_instance_of;
-}
-
-bool Function::isInstance() const
-{
-	return m_instance_of != nullptr;
-}
-
 bool Function::isVoidFunction() const
 {
 	auto retType = getReturnType();
@@ -242,8 +232,9 @@ bool Function::matchesType(const Type *type) const
 		// occur if multiple nodes are found with the same name.
 		if (isInstance())
 		{
+			auto instance = getInstanceParent()->as<Function *>();
 			// If parameter i of our parent isn't var, continue.
-			auto parent_arg = getInstanceParent()->getParamTys().at(i);
+			auto parent_arg = instance->getParamTys().at(i);
 			if (parent_arg->isVarTy() == false)
 			{
 				continue;
@@ -292,7 +283,8 @@ void Function::findDependencies()
 			continue;
 		}
 		
-		if (isInstance() && ret->dependsOn(getInstanceParent()))
+		if (isInstance() &&
+			ret->dependsOn(getInstanceParent()->as<Function*>()))
 		{
 			continue;
 		}

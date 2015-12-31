@@ -37,6 +37,16 @@ Genericable* Genericable::findInstance(const Type *type) const
 	return nullptr;
 }
 
+Genericable* Genericable::getInstanceParent() const
+{
+	return m_instance_of;
+}
+
+bool Genericable::isInstance() const
+{
+	return m_instance_of != nullptr;
+}
+
 bool Genericable::hasInstance(const Type *type) const
 {
 	return findInstance(type) != nullptr;

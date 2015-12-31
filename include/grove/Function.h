@@ -30,8 +30,6 @@ private:
 	
 	llvm::Value* m_ret_value = nullptr;
 	llvm::Function* m_function = nullptr;
-	
-	Function* m_instance_of = nullptr;
 protected:
 	const Type* m_ret_type = nullptr;
 	std::vector<Parameter *> m_params;
@@ -65,17 +63,12 @@ public:
 	/// Gets this function's return type.
 	const Type* getReturnType() const;
 	
-	Function* getInstanceParent() const;
-	
 	void setReturnType(const Type* ty);
 	
 	virtual OString getMangledName() const override;
 	
 	/// Indicates whether or not this function returns void.
 	bool isVoidFunction() const;
-	
-	/// Indicates whether or not this function is a generic instance.
-	bool isInstance() const;
 	
 	virtual ASTNode* copy() const override;
 	

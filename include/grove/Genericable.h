@@ -22,6 +22,8 @@ class Genericable : virtual public Typed
 {
 protected:
 	std::vector<Genericable *> m_instances;
+	
+	Genericable* m_instance_of = nullptr;
 public:
 	/// Determines whether or not this object is
 	/// actually a generic or not.
@@ -38,6 +40,10 @@ public:
 	/// Throws an error if isGeneric() returns false.
 	/// @param type The type the instance should have.
 	Genericable* findInstance(const Type* type) const;
+	
+	Genericable* getInstanceParent() const;
+	
+	bool isInstance() const;
 	
 	/// Returns true if an instance with a given list of types
 	/// exists. Throws an error if isGeneric() returns false.
