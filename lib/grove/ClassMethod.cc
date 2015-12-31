@@ -76,6 +76,11 @@ std::vector<std::vector<ObjectBase *>*> ClassMethod::getMemberLists()
 	return Function::getMemberLists();
 }
 
+ClassDecl* ClassMethod::getClass() const
+{
+	return m_class;
+}
+
 Parameter* ClassMethod::getThisParam() const
 {
 	return m_this_param;

@@ -49,6 +49,8 @@ public:
 	
 	BinOpAssign* getInitializerForMember(MemberVarDecl *member) const;
 	
+	ClassDecl* getClass() const;
+	
 	Parameter* getThisParam() const;
 	
 	ClassMethod(OString name, ClassDecl* theClass,
