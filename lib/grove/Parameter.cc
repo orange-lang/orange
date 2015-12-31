@@ -85,7 +85,8 @@ void Parameter::setType(const Type *type)
 		removeChild(m_type->getRootTy()->as<NodeType *>());
 	}
 
-	m_type = type;
+	Typed::setType(type);
+	
 	if (m_type->getRootTy()->is<NodeType *>())
 	{
 		addChild(m_type->getRootTy()->as<NodeType *>());
