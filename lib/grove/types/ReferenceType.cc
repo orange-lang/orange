@@ -36,6 +36,11 @@ const Type* ReferenceType::getComparisonTy() const
 
 std::string ReferenceType::getString() const
 {
+	if (m_ref_type != nullptr)
+	{
+		return m_ref_type->getString();
+	}
+	
 	return m_name;
 }
 
