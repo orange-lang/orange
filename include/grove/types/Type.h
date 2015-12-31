@@ -123,6 +123,10 @@ public:
 	virtual bool isClassTy() const;
 	virtual bool isNodeTy() const;
 	virtual bool isFutureTy() const;
+	virtual bool isAggTy() const;
+	
+	/// Gets the member types of an aggregate type.
+	virtual std::vector<const Type*> getMemberTys() const;
 	
 	virtual unsigned int getIntegerBitWidth() const;
 

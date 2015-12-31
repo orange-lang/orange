@@ -160,6 +160,11 @@ bool Type::isFutureTy() const
 	return false;
 }
 
+bool Type::isAggTy() const
+{
+	return false;
+}
+
 bool Type::isConst() const
 {
 	return m_const;
@@ -222,6 +227,11 @@ Type* Type::getDefined(Module* mod, std::string signature)
 	}
 	
 	return it->second;
+}
+
+std::vector<const Type*> Type::getMemberTys() const
+{
+	return std::vector<const Type*>();
 }
 
 unsigned int Type::getIntegerBitWidth() const

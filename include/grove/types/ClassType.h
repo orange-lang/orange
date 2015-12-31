@@ -23,6 +23,9 @@ public:
 									const std::vector<const Type *> members);
 	
 	virtual bool isClassTy() const override;
+	virtual bool isAggTy() const override;
+	
+	virtual std::vector<const Type*> getMemberTys() const override;
 	
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;

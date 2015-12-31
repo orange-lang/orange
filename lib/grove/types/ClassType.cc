@@ -52,6 +52,16 @@ bool ClassType::isClassTy() const
 	return true;
 }
 
+bool ClassType::isAggTy() const
+{
+	return true;
+}
+
+std::vector<const Type*> ClassType::getMemberTys() const
+{
+	return m_members;
+}
+
 std::string ClassType::getString() const
 {
 	std::stringstream ss;
