@@ -90,6 +90,11 @@ void CtorCall::resolve()
 		throw fatal_error("CtorCall not looking at a Constructor!");
 	}
 
+	// Re-get the_class as getExpr may be pointing to a generic instance
+	// now.
+	the_class = getExpr()->as<Constructor *>()->getClass();
+	m_this_param->setType(the_class->getType()->getPointerTo());
+	
 	auto refType = new ReferenceType(the_class);
 	addChild(refType);
 	
