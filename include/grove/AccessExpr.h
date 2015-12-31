@@ -30,6 +30,9 @@ public:
 	OString getName() const;
 	Expression* getAccessed() const;
 	
+	/// Returns true if this AccessExpr is accessing something called this.
+	bool accessingThis() const;
+	
 	virtual bool hasPointer() const override;
 	virtual llvm::Value* getPointer() const override;
 	

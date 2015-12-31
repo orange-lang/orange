@@ -8,6 +8,7 @@
 
 #include <grove/AccessExpr.h>
 #include <grove/Module.h>
+#include <grove/IDReference.h>
 
 #include <grove/exceptions/fatal_error.h>
 #include <grove/exceptions/code_error.h>
@@ -57,6 +58,12 @@ bool AccessExpr::hasPointer() const
 llvm::Value* AccessExpr::getPointer() const
 {
 	return m_accessed->getPointer();
+}
+
+bool AccessExpr::accessingThis() const
+{
+	return (getLHS()->is<IDReference *>() &&
+			getLHS()->as<IDReference *>()->getName() == "this");
 }
 
 void AccessExpr::resolve()
