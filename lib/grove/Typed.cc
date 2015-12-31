@@ -7,7 +7,10 @@
 */
 
 #include <grove/Typed.h>
+
 #include <grove/types/Type.h>
+#include <grove/types/FutureType.h>
+
 #include <util/assertions.h>
 
 const Type* Typed::getType() const
@@ -46,5 +49,41 @@ bool Typed::matchesType(const Type *ty) const
 
 void Typed::setType(const Type* type)
 {
+	if (m_type)
+	{
+		if (m_type->isFutureTy())
+		{
+    		m_type->as<FutureType *>()->removeWatcher(this);
+		}
+		else if (m_type->isAggTy())
+		{
+			for (auto type : m_type->getMemberTys())
+			{
+				if (type->isFutureTy())
+				{
+					type->as<FutureType *>()->removeWatcher(this);
+				}
+			}
+		}
+	}
+	
 	m_type = type;
+	
+	if (m_type)
+	{
+		if (m_type->isFutureTy())
+		{
+			m_type->as<FutureType *>()->addWatcher(this);
+		}
+		else if (m_type->isAggTy())
+		{
+			for (auto type : m_type->getMemberTys())
+			{
+				if (type->isFutureTy())
+				{
+					type->as<FutureType *>()->addWatcher(this);
+				}
+			}
+		}
+	}
 }
