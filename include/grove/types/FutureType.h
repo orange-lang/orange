@@ -30,6 +30,8 @@ public:
 	
 	virtual void findDependencies() override;
 	
+	virtual const Type* copyType() const override;
+	
 	virtual ASTNode* copy() const override;
 	
 	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;

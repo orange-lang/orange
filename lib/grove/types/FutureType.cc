@@ -35,6 +35,12 @@ void FutureType::findDependencies()
 	}
 }
 
+const Type* FutureType::copyType() const
+{
+	return FutureType::copy()->as<Type *>();
+}
+
+
 ASTNode* FutureType::copy() const
 {
 	return (ASTNode *)this;
