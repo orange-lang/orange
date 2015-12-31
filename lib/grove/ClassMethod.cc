@@ -9,6 +9,7 @@
 #include <grove/ClassMethod.h>
 #include <grove/ClassDecl.h>
 #include <grove/Parameter.h>
+#include <grove/ThisParameter.h>
 #include <grove/Module.h>
 #include <grove/BinOpAssign.h>
 #include <grove/AccessExpr.h>
@@ -82,7 +83,7 @@ Parameter* ClassMethod::getThisParam() const
 
 void ClassMethod::addThisParam()
 {
-	m_this_param = new Parameter(m_class->getRefTy()->getPointerTo(), "this");
+	m_this_param = new ThisParameter(m_class);
 	if (m_params.size() == 0)
 	{
 		addChild(m_this_param, 0);
