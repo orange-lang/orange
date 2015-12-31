@@ -144,7 +144,8 @@ void VarDecl::resolve()
 			setType(getExpression()->getType());
 		}
 	}
-	else if (getType()->getRootTy()->is<NodeType *>())
+	else if (getType()->getRootTy()->is<NodeType *>() &&
+			 getType()->isFutureTy() == false)
 	{
 		if (getType()->getRootTy()->as<NodeType *>()->canInitializeVar())
 		{
