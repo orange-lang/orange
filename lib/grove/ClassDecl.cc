@@ -451,7 +451,7 @@ Genericable* ClassDecl::createInstance(const Type *type)
 	/// @todo: this may cause a problem
 	auto classTy = ClassType::get(getModule(), clone->m_name,
 								  member_types);
-	clone->setType(classTy);
+	clone->setType(new ReferenceType(clone, classTy));
 	
 	if (clone->isGeneric())
 	{
