@@ -139,7 +139,7 @@ ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
 }
 
 ClassMethod::ClassMethod(const ClassMethod& other)
-: Function(other.m_name, copyVector(other.getParams()))
+: Function(other)
 {
 	if (other.getStatic() == false)
 	{
@@ -147,6 +147,4 @@ ClassMethod::ClassMethod(const ClassMethod& other)
 	}
 	
 	m_class = other.m_class;
-	
-	other.defineCopy(this);
 }
