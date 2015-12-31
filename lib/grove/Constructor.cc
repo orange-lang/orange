@@ -21,6 +21,11 @@ const ClassDecl* Constructor::getClass() const
 	return m_class;
 }
 
+const ClassMethod* Constructor::getMethod() const
+{
+	return m_method;
+}
+
 ASTNode* Constructor::copy() const
 {
 	return new Constructor(*this);
@@ -38,6 +43,11 @@ std::vector<std::vector<ObjectBase *>*> Constructor::getMemberLists()
 
 Genericable* Constructor::createInstance(const Type *type)
 {
+	if (getClass()->isGeneric() && getMethod() == nullptr)
+	{
+		throw fatal_error("Generic class can't use a default constructor");
+	}
+	
 	if (getClass()->isGeneric())
 	{
 		throw fatal_error("Need to create a instance for generic class now");
@@ -46,12 +56,13 @@ Genericable* Constructor::createInstance(const Type *type)
 	return Function::createInstance(type);
 }
 
-Constructor::Constructor(const ClassDecl* theClass, OString name,
-						 std::vector<Parameter *> params)
+Constructor::Constructor(const ClassDecl* theClass, const ClassMethod* method,
+						 OString name, std::vector<Parameter *> params)
 : Function(name, params)
 {
 	assertExists(theClass, "Constructor created with no class");
 	m_class = theClass;
+	m_method = method;
 }
 
 Constructor::Constructor(const Constructor& other)

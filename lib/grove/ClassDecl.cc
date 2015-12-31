@@ -147,7 +147,7 @@ void ClassDecl::createCtor(ClassMethod *method) const
 		params.push_back(new Parameter(this_ty->getPointerTo(), "this"));
 	}
 	
-	auto func = new Constructor(this, getName(), params);
+	auto func = new Constructor(this, method, getName(), params);
 	
 	func->setReturnType(VoidType::get(getModule()));
 	
