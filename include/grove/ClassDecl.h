@@ -17,6 +17,7 @@
 
 class MemberVarDecl;
 class ClassMethod;
+class Constructor;
 
 /**
  * Represents a class declaration.
@@ -25,7 +26,7 @@ class ClassDecl : public Block, public Named, public Genericable,
 	public TypeProvider, public Accessible, public Protectable
 {
 protected:
-	void createCtor(ClassMethod* method);
+	Constructor* createCtor(ClassMethod* method);
 public:
 	virtual bool usableFrom(const ASTNode* from) const override;
 	

@@ -128,7 +128,7 @@ bool ClassDecl::hasDefaultCtor() const
 	return false;
 }
 
-void ClassDecl::createCtor(ClassMethod *method) 
+Constructor* ClassDecl::createCtor(ClassMethod *method)
 {
 	assertExists(getParent(), "class has no parent!");
 	
@@ -211,6 +211,9 @@ void ClassDecl::createCtor(ClassMethod *method)
 	
 	// Request a resolve of our function.
 	getModule()->process(func);
+	
+	m_ctor_map[method] = func;
+	return func;
 }
 
 bool ClassDecl::hasMethod(const OString &name) const
