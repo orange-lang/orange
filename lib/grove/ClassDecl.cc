@@ -410,33 +410,7 @@ std::vector<MemberVarDecl*> ClassDecl::getGenericMembers() const
 		if (member->getType()->isVarTy() &&
 			member->getExpression() == nullptr)
 		{
-			// A member is 'fully generic' if it depends on a generic
-			// parameter in the constructor.
-			bool fullyGeneric = false;
-			
-			for (auto ctor : getCtors())
-			{
-				auto initial = ctor->getInitializerForMember(member);
-				
-				for (auto param : ctor->getParams())
-				{
-					if (initial->getRHS()->dependsOn(param))
-					{
-						fullyGeneric = true;
-						break;
-					}
-				}
-				
-				if (fullyGeneric)
-				{
-					break;
-				}
-			}
-			
-			if (fullyGeneric)
-			{
-    			genericMembers.push_back(member);
-			}
+			genericMembers.push_back(member);
 		}
 	}
 	
