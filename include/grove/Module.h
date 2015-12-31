@@ -209,6 +209,10 @@ public:
 	/// Gets a copy from the copy map.
 	ASTNode* getCopy(const ASTNode* original);
 	
+	/// Gets a copy from the copy map, if it exists.
+	/// Returns original otherwise. 
+	ASTNode* tryGetCopy(const ASTNode* original);
+	
 	/// Informs the module that we are finished copying.
 	/// Removes the top CopyMap from the stack.
 	void endCopy();

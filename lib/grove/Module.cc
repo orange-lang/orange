@@ -574,6 +574,16 @@ ASTNode* Module::getCopy(const ASTNode *original)
 	throw fatal_error("Copy mapping not found");
 }
 
+ASTNode* Module::tryGetCopy(const ASTNode *original)
+{
+	if (hasCopy(original))
+	{
+		return getCopy(original);
+	}
+	
+	return original->as<ASTNode *>();
+}
+
 void Module::endCopy()
 {
 	if (m_copy_levels == 0)
