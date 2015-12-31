@@ -45,8 +45,6 @@ std::vector<std::vector<ObjectBase *>*> Constructor::getMemberLists()
 
 Genericable* Constructor::createInstance(const Type *type)
 {
-	getModule()->beginCopy();
-	
 	if (getClass()->isGeneric() && getMethod() == nullptr)
 	{
 		throw fatal_error("Generic class can't use a default constructor");
@@ -58,6 +56,8 @@ Genericable* Constructor::createInstance(const Type *type)
 	
 	if (getClass()->isGeneric())
 	{
+		getModule()->beginCopy();
+		
 		// If the class is generic, we need to create an instance of the
 		// class and then get the operating method from that instance.
 		
@@ -68,6 +68,8 @@ Genericable* Constructor::createInstance(const Type *type)
 		
 		operating_method =
 			getModule()->getCopy(operating_method)->as<ClassMethod *>();
+		
+		getModule()->endCopy();
 	}
 	
 	assertExists(operating_class, "no class to clone");
@@ -98,7 +100,6 @@ Genericable* Constructor::createInstance(const Type *type)
 	m_instances.push_back(cloned_ctor);
 	getParent()->addChild(cloned_ctor);
 	
-	getModule()->endCopy();
 	return cloned_ctor;
 }
 
