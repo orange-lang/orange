@@ -98,7 +98,6 @@ Genericable* Constructor::createInstance(const Type *type)
 	cloned_ctor->m_instance_of = this;
 	
 	m_instances.push_back(cloned_ctor);
-	getParent()->addChild(cloned_ctor);
 	
 	return cloned_ctor;
 }
