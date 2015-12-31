@@ -222,7 +222,10 @@ Constructor* ClassDecl::getCtorForMethod(ClassMethod *method)
 	auto it = m_ctor_map.find(method);
 	if (it == m_ctor_map.end())
 	{
-		return createCtor(method);
+		getModule()->beginCopy();
+		auto ret = createCtor(method);
+		getModule()->endCopy();
+		return ret;
 	}
 	else
 	{
