@@ -38,7 +38,7 @@ ProtectionLevel ClassMethod::defaultProtectionLevel() const
 
 void ClassMethod::initialize()
 {
-	if (getStatic() == false)
+	if (getStatic() == false && m_this_param == nullptr)
 	{
     	addThisParam();
 	}
