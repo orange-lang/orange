@@ -357,6 +357,8 @@ void Function::resolve()
 	
 	for (auto param : m_params)
 	{
+		getModule()->resolve(param);
+		
 		if (param->getType()->isArrayTy())
 		{
 			auto ty = param->getType();
