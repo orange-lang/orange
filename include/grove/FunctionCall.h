@@ -14,7 +14,7 @@ class FunctionCall : public ExpressionCall {
 private:
 	OString m_name;
 protected:
-	void findNode();
+	virtual void findNode();
 public:
 	/// Gets the name of the function that we are calling.
 	OString getName() const;

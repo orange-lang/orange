@@ -13,7 +13,10 @@
 
 #include <grove/types/Type.h>
 #include <grove/types/ReferenceType.h>
+#include <grove/types/FunctionType.h>
 #include <grove/types/VarType.h>
+
+#include <grove/exceptions/undefined_error.h>
 
 #include <util/assertions.h>
 #include <util/copy.h>
@@ -59,12 +62,36 @@ bool CtorCall::transferrable() const
 	return true;
 }
 
+void CtorCall::findNode()
+{
+	SearchSettings settings;
+	settings.forceTypeMatch = false;
+	settings.createGeneric = true;
+	settings.searchWholeTree = true;
+	settings.includeLimit = false;
+	
+	settings.filter = [](Named* named)
+	{
+		return named->is<Constructor *>();
+	};
+	
+	auto def = findNamed(getName(), expectedFunctionTy(), settings);
+	if (def == nullptr)
+	{
+		auto name = getName();
+		throw undefined_error(&name, getName());
+	}
+	
+	// Determine type
+	setExpr(def->as<ASTNode *>());
+}
+
 ClassDecl* CtorCall::findClass() const
 {
 	SearchSettings settings;
 	settings.createGeneric = false;
 	settings.forceTypeMatch = false;
-	settings.includeLimit = true;
+	settings.includeLimit = false;
 	settings.searchWholeTree = true;
 	
 	settings.filter = [](Named* named)
@@ -72,7 +99,13 @@ ClassDecl* CtorCall::findClass() const
 		return named->is<TypeProvider *>();
 	};
 	
-	return findNamed(getName(), nullptr, settings)->as<ClassDecl *>();
+	auto named = findNamed(getName(), nullptr, settings);
+	if (named == nullptr)
+	{
+		throw fatal_error("Could not find constructor");
+	}
+	
+	return named->as<ClassDecl *>();
 }
 
 void CtorCall::resolve()

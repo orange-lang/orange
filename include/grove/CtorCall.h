@@ -18,6 +18,8 @@ private:
 	Expression* m_this_param = nullptr;
 	
 	ClassDecl* findClass() const;
+protected:
+	virtual void findNode() override;
 public:
 	virtual ASTNode* copy() const override;
 	
