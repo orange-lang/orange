@@ -106,15 +106,15 @@ Genericable* Constructor::createInstance(const Orange::Type *type)
 	// It's ok if operating_class isn't a generic instance; it will have
 	// already been resolved by this point.
 	getModule()->process(cloned_method);
-	getModule()->process(operating_class);
 	
 	// Finally, get the constructor from the operting class. If one doesn't
 	// exist, it will be created.
 	auto cloned_ctor = operating_class->getCtorForMethod(cloned_method);
-	
 	cloned_ctor->m_instance_of = this;
-	
 	m_instances.push_back(cloned_ctor);
+	
+	getModule()->process(operating_class);
+	
 	
 	return cloned_ctor;
 }
