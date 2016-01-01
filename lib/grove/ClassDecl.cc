@@ -280,6 +280,15 @@ void ClassDecl::findDependencies()
 	for (auto& member : getMembers())
 	{
 		addDependency(member);
+		
+		if (member->dependsOn(this))
+		{
+			throw code_error(member, this,
+							 []() -> std::string
+							 {
+								return "member has incomplete type";
+							 });
+		}
 	}
 }
 
