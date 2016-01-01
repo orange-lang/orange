@@ -25,7 +25,9 @@ std::string FutureType::getString() const
 
 std::string FutureType::getSignature() const
 {
-	return "Z";
+	std::stringstream ss;
+	ss << "Z" << this;
+	return ss.str();
 }
 
 void FutureType::findDependencies()
