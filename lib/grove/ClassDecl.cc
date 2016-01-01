@@ -208,7 +208,7 @@ Constructor* ClassDecl::createCtor(ClassMethod *method)
 	// Add the function to our parent block after this class.
 	// There's never a reason to add it to our parent as well, since
 	// our parent will always be the parent block.
-	findParent<Block *>()->addStatement(func, this, 1);
+	findParent<Block *>()->addChild(func, this, 1);
 	
 	// Request a resolve of our function.
 	getModule()->process(func);
@@ -366,7 +366,45 @@ void ClassDecl::build()
 		return;
 	}
 	
-	buildStatements();
+	std::vector<ASTNode *> built;
+	
+	// Build each pair of ClassMethod/constructor
+	auto ctors = getCtors();
+	
+	if (ctors.size() == 0)
+	{
+		auto def_ctor = getCtorForMethod(nullptr);
+		built.push_back(def_ctor);
+		def_ctor->build();
+	}
+	
+	for (unsigned int i = 0; i < ctors.size(); i++)
+	{
+		built.push_back(ctors[i]);
+		ctors[i]->build();
+		
+		auto ctor = getCtorForMethod(ctors[i]);
+		built.push_back(ctor);
+	
+		ctor->build();
+	}
+	
+	// Build the rest of unbuilt statements
+	for (auto stmt : getStatements())
+	{
+		auto it = std::find(built.begin(), built.end(), stmt);
+		if (it == built.end())
+		{
+    		stmt->build();
+			built.push_back(stmt);
+		}
+		
+		if (stmt->is<Statement *>() &&
+			stmt->as<Statement *>()->isTerminator())
+		{
+			break;
+		}
+	}
 }
 
 bool ClassDecl::matchesType(const Orange::Type *other) const
