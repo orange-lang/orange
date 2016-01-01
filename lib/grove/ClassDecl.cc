@@ -459,7 +459,16 @@ Genericable* ClassDecl::createInstance(const Orange::Type *type)
 	clone->m_instance_of = this;
 	
 	m_instances.push_back(clone);
-	findParent<Block *>()->addStatement(clone, this, 1);
+	
+	// Even though whoever is creating the instance of this class will
+	// have access to it and its constructor, we don't want it to be
+	// searchable outside of its own scope.
+	
+	// This is so calling a constructor again will refer to the same
+	// class, and not the one created here.
+	auto anonymous_container = new Block();
+	anonymous_container->addStatement(clone);
+	findParent<Block *>()->addStatement(anonymous_container, this, 1);
 	
 	return clone;
 }
