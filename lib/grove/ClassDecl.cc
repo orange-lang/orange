@@ -286,7 +286,7 @@ void ClassDecl::findDependencies()
 			throw code_error(member, this,
 							 []() -> std::string
 							 {
-								return "member has incomplete type";
+								return "member has incomplete type";	
 							 });
 		}
 	}
