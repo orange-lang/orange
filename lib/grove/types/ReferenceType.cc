@@ -26,19 +26,19 @@ OString ReferenceType::getName() const
 
 const Orange::Type* ReferenceType::getComparisonTy() const
 {
-	if (m_ref_type == nullptr)
+	if (Typed::m_type == nullptr)
 	{
 		return this;
 	}
 	
-	return m_ref_type;
+	return Typed::m_type;
 }
 
 std::string ReferenceType::getString() const
 {
-	if (m_ref_type != nullptr)
+	if (Typed::m_type != nullptr)
 	{
-		return m_ref_type->getString();
+		return Typed::m_type->getString();
 	}
 	
 	return m_name;
@@ -46,7 +46,7 @@ std::string ReferenceType::getString() const
 
 std::string ReferenceType::getSignature() const
 {
-	if (m_ref_type == nullptr)
+	if (Typed::m_type == nullptr)
 	{
 		std::stringstream ss;
     	ss << this;
@@ -54,7 +54,7 @@ std::string ReferenceType::getSignature() const
 	}
 	else
 	{
-		return m_ref_type->getSignature();
+		return Typed::m_type->getSignature();
 	}
 }
 
@@ -132,14 +132,14 @@ void ReferenceType::resolve()
 {
 	assertExists(m_reference, "reference has no value");
 	
-	if (m_ref_type == nullptr)
+	if (Typed::m_type == nullptr)
 	{
 		auto typed = m_reference->as<Typed *>();
     	assertExists(typed->getType(), "node has no type");
 		setRefType(typed->getType());
 	}
 	
-	if (m_type == nullptr)
+	if (Type::m_type == nullptr)
 	{
 		throw fatal_error("Never got type for ReferenceType!");
 	}
@@ -190,7 +190,7 @@ ASTNode* ReferenceType::copy() const
 		
 		if (m_sticky_ref_type)
 		{
-			clone = new ReferenceType(reference, m_ref_type);
+			clone = new ReferenceType(reference, Typed::m_type);
 		}
 		else
 		{
@@ -228,8 +228,8 @@ void ReferenceType::setRefType(const Orange::Type* ty)
 		throw fatal_error("Trying to create a reference to a reference");
 	}
 	
-	m_ref_type = ty;
-	m_type = m_ref_type->getLLVMType();
+	Typed::m_type = ty;
+	Type::m_type = Typed::m_type->getLLVMType();
 }
 
 ReferenceType::ReferenceType(OString name)
