@@ -36,7 +36,7 @@ void BinOpAndOr::resolve()
 
 	if (lhs_ty->isBoolTy() == false || rhs_ty->isBoolTy() == false)
 	{
-		auto bool_ty = BoolType::get(getModule());
+		auto bool_ty = Orange::BoolType::get(getModule());
 		throw binop_error(this, lhs_ty, getOperator(), rhs_ty,
 						  bool_ty, bool_ty);
 	}

@@ -969,7 +969,7 @@ var_decl_list
 enum_stmt
 	: ENUM IDENTIFIER term enum_members END
 	{
-		auto estmt = new EnumStmt(*$2, module, IntType::get(module, 64));
+		auto estmt = new EnumStmt(*$2, module, Orange::IntType::get(module, 64));
 		for (auto pair : *$4)
 		{
 			estmt->addMember(std::get<0>(pair), std::get<1>(pair));
@@ -1028,11 +1028,11 @@ term
 non_agg_type
 	: non_agg_type OPEN_BRACKET CLOSE_BRACKET
 	{
-		$$ = PointerType::get(module, $1);
+		$$ = Orange::PointerType::get(module, $1);
 	}
 	| type TIMES
 	{
-		$$ = PointerType::get(module, $1);
+		$$ = Orange::PointerType::get(module, $1);
 	}
 	| basic_type
 	{
@@ -1080,11 +1080,11 @@ array_type
 			if (is_const)
 			{
 				auto arr_sz = Orange::Type::exprAsArrSize(def);
-				$$ = ArrayType::get(module, $$, arr_sz, false);
+				$$ = Orange::ArrayType::get(module, $$, arr_sz, false);
 			}
 			else
 			{
-				$$ = VariadicArrayType::get(module, $$, def, false);
+				$$ = Orange::VariadicArrayType::get(module, $$, def, false);
 			}
 		}
 	}
@@ -1120,21 +1120,21 @@ opt_static
 	;
 
 basic_type
-	: TYPE_INT { $$ = IntType::get(module, 64); }
-	| TYPE_UINT { $$ = UIntType::get(module, 64); }
-	| TYPE_FLOAT { $$ = FloatType::get(module); }
-	| TYPE_DOUBLE { $$ = DoubleType::get(module); }
-	| TYPE_INT8 { $$ = IntType::get(module, 8); }
-	| TYPE_INT16 { $$ = IntType::get(module, 16); }
-	| TYPE_INT32 { $$ = IntType::get(module, 32); }
-	| TYPE_INT64 { $$ = IntType::get(module, 64); }
-	| TYPE_UINT8 { $$ = UIntType::get(module, 8); }
-	| TYPE_UINT16 { $$ = UIntType::get(module, 16); }
-	| TYPE_UINT32 { $$ = UIntType::get(module, 32); }
-	| TYPE_UINT64 { $$ = UIntType::get(module, 64); }
-	| TYPE_CHAR { $$ = IntType::get(module, 8); }
-	| TYPE_VOID { $$ = VoidType::get(module); }
-	| TYPE_VAR { $$ = VarType::get(module); }
+	: TYPE_INT { $$ = Orange::IntType::get(module, 64); }
+	| TYPE_UINT { $$ = Orange::UIntType::get(module, 64); }
+	| TYPE_FLOAT { $$ = Orange::FloatType::get(module); }
+	| TYPE_DOUBLE { $$ = Orange::DoubleType::get(module); }
+	| TYPE_INT8 { $$ = Orange::IntType::get(module, 8); }
+	| TYPE_INT16 { $$ = Orange::IntType::get(module, 16); }
+	| TYPE_INT32 { $$ = Orange::IntType::get(module, 32); }
+	| TYPE_INT64 { $$ = Orange::IntType::get(module, 64); }
+	| TYPE_UINT8 { $$ = Orange::UIntType::get(module, 8); }
+	| TYPE_UINT16 { $$ = Orange::UIntType::get(module, 16); }
+	| TYPE_UINT32 { $$ = Orange::UIntType::get(module, 32); }
+	| TYPE_UINT64 { $$ = Orange::UIntType::get(module, 64); }
+	| TYPE_CHAR { $$ = Orange::IntType::get(module, 8); }
+	| TYPE_VOID { $$ = Orange::VoidType::get(module); }
+	| TYPE_VAR { $$ = Orange::VarType::get(module); }
 	| TYPE_ID {
 		auto ty = new ReferenceType(*$1);
 		delete $1;

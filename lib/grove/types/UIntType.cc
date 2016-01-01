@@ -77,7 +77,7 @@ static llvm::Value* BoolCast(void* irBuilder, Valued* val,
 	return IRB->CreateICmpNE(llvm_val, zero);
 }
 
-UIntType::UIntType(unsigned int width, bool isConst)
+Orange::UIntType::UIntType(unsigned int width, bool isConst)
 : Type(isConst)
 {
 	if (width == 0)
@@ -98,7 +98,7 @@ UIntType::UIntType(unsigned int width, bool isConst)
 	defineCast(typeid(BoolType), UIntToUInt, BoolCast);
 }
 
-std::string UIntType::getSignature(unsigned int width, bool isConst)
+std::string Orange::UIntType::getSignature(unsigned int width, bool isConst)
 {
 	std::stringstream ss;
 	
@@ -132,7 +132,7 @@ std::string UIntType::getSignature(unsigned int width, bool isConst)
 	return ss.str();
 }
 
-std::string UIntType::getString() const
+std::string Orange::UIntType::getString() const
 {
 	std::stringstream ss;
 	
@@ -145,32 +145,32 @@ std::string UIntType::getString() const
 	return ss.str();
 }
 
-std::string UIntType::getSignature() const
+std::string Orange::UIntType::getSignature() const
 {
 	return getSignature(m_width, isConst());
 }
 
-bool UIntType::isPODTy() const
+bool Orange::UIntType::isPODTy() const
 {
 	return true;
 }
 
-bool UIntType::isSigned() const
+bool Orange::UIntType::isSigned() const
 {
 	return false;
 }
 
-bool UIntType::isIntTy() const
+bool Orange::UIntType::isIntTy() const
 {
 	return true;
 }
 
-unsigned int UIntType::getIntegerBitWidth() const
+unsigned int Orange::UIntType::getIntegerBitWidth() const
 {
 	return m_width;
 }
 
-BasicType UIntType::PODTy() const
+BasicType Orange::UIntType::PODTy() const
 {
 	switch (m_width)
 	{
@@ -189,12 +189,13 @@ BasicType UIntType::PODTy() const
 	}
 }
 
-Orange::Type* UIntType::getConst() const
+Orange::Type* Orange::UIntType::getConst() const
 {
 	return UIntType::get(getModule(), m_width, true);
 }
 
-UIntType* UIntType::get(Module* mod, unsigned int width, bool isConst)
+Orange::UIntType* Orange::UIntType::get(Module* mod, unsigned int width,
+										bool isConst)
 {
 	if (width == 0)
 	{

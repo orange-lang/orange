@@ -9,38 +9,38 @@
 #include <grove/types/VoidType.h>
 #include <llvm/IR/Type.h>
 
-VoidType::VoidType()
+Orange::VoidType::VoidType()
 : Type(false)
 {
 	m_type = (llvm::Type *)llvm::Type::getVoidTy(*m_context);
 }
 
-std::string VoidType::getString() const
+std::string Orange::VoidType::getString() const
 {
 	return "void";
 }
 
-std::string VoidType::getSignature() const
+std::string Orange::VoidType::getSignature() const
 {
 	return "v";
 }
 
-bool VoidType::isPODTy() const
+bool Orange::VoidType::isPODTy() const
 {
 	return true;
 }
 
-bool VoidType::isVoidTy() const
+bool Orange::VoidType::isVoidTy() const
 {
 	return true;
 }
 
-BasicType VoidType::PODTy() const
+BasicType Orange::VoidType::PODTy() const
 {
 	return TYVOID;
 }
 
-VoidType* VoidType::get(Module* mod)
+Orange::VoidType* Orange::VoidType::get(Module* mod)
 {
 	auto defined = getDefined(mod, "v");
 	if (defined != nullptr)

@@ -16,7 +16,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Instruction.h>
 
-EnumType::EnumType(const Orange::Type* contained, bool isConst)
+Orange::EnumType::EnumType(const Orange::Type* contained, bool isConst)
 : Type(isConst)
 {
 	if (contained == nullptr)
@@ -30,12 +30,12 @@ EnumType::EnumType(const Orange::Type* contained, bool isConst)
 	copyCasts(typeid(*contained));
 }
 
-const Orange::Type* EnumType::copyType() const
+const Orange::Type* Orange::EnumType::copyType() const
 {
 	return EnumType::get(getModule(), m_contained->copyType(), isConst());
 }
 
-std::string EnumType::getString() const
+std::string Orange::EnumType::getString() const
 {
 	std::stringstream ss;
 	
@@ -48,7 +48,7 @@ std::string EnumType::getString() const
 	return ss.str();
 }
 
-std::string EnumType::getSignature() const
+std::string Orange::EnumType::getSignature() const
 {
 	std::stringstream ss;
 	
@@ -61,27 +61,27 @@ std::string EnumType::getSignature() const
 	return ss.str();
 }
 
-bool EnumType::isSigned() const
+bool Orange::EnumType::isSigned() const
 {
 	return getBaseTy()->isSigned();
 }
 
-const Orange::Type* EnumType::getBaseTy() const
+const Orange::Type* Orange::EnumType::getBaseTy() const
 {
 	return m_contained;
 }
 
-const Orange::Type* EnumType::getRootTy() const
+const Orange::Type* Orange::EnumType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-const Orange::Type* EnumType::getConst() const
+const Orange::Type* Orange::EnumType::getConst() const
 {
 	return EnumType::get(getModule(), m_contained, true);
 }
 
-EnumType* EnumType::get(Module* mod, const Type *contained, bool isConst)
+Orange::EnumType* Orange::EnumType::get(Module* mod, const Type *contained, bool isConst)
 {
 	if (contained == nullptr)
 	{

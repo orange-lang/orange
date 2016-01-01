@@ -11,7 +11,9 @@
 #include "Type.h"
 #include "../OString.h"
 
-class ClassType : public Orange::Type
+namespace Orange { class ClassType; }
+
+class Orange::ClassType : public Orange::Type
 {
 private:
 	std::vector<const Type *> m_members;

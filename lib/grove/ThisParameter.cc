@@ -50,7 +50,7 @@ void ThisParameter::resolve()
 }
 
 ThisParameter::ThisParameter(ClassDecl* theClass)
-: Parameter(VoidType::get(theClass->getModule()), "this")
+: Parameter(Orange::VoidType::get(theClass->getModule()), "this")
 {
 	m_class = theClass;
 	assertExists(m_class, "Created ThisParameter without a class");

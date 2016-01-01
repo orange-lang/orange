@@ -10,7 +10,9 @@
 
 #include "Type.h"
 
-class EnumType : public Orange::Type
+namespace Orange { class EnumType; }
+
+class Orange::EnumType : public Orange::Type
 {
 private:
 	const Type* m_contained = nullptr;

@@ -20,8 +20,8 @@ const int BOOL_WIDTH = 1;
 
 static int BoolToInt(const Orange::Type* f, const Orange::Type* t)
 {
-	auto from = f->as<BoolType*>();
-	auto to = t->as<IntType*>();
+	auto from = f->as<Orange::BoolType*>();
+	auto to = t->as<Orange::IntType*>();
 
 	if (from->getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
@@ -39,8 +39,8 @@ static int BoolToInt(const Orange::Type* f, const Orange::Type* t)
 
 static int BoolToUInt(const Orange::Type* f, const Orange::Type* t)
 {
-	auto from = f->as<BoolType*>();
-	auto to = t->as<UIntType*>();
+	auto from = f->as<Orange::BoolType*>();
+	auto to = t->as<Orange::UIntType*>();
 
 	if (from->Type::getIntegerBitWidth() > to->getIntegerBitWidth())
 	{
@@ -56,14 +56,14 @@ static int BoolToUInt(const Orange::Type* f, const Orange::Type* t)
 	}
 }
 
-BoolType::BoolType(bool isConst)
+Orange::BoolType::BoolType(bool isConst)
 : UIntType(BOOL_WIDTH, isConst)
 {
 	defineCast(typeid(IntType), BoolToInt);
 	defineCast(typeid(UIntType), BoolToUInt);
 }
 
-std::string BoolType::getString() const
+std::string Orange::BoolType::getString() const
 {
 	std::stringstream ss;
 	
@@ -77,7 +77,7 @@ std::string BoolType::getString() const
 	return ss.str();
 }
 
-std::string BoolType::getSignature() const
+std::string Orange::BoolType::getSignature() const
 {
 	std::stringstream ss;
 	
@@ -91,22 +91,22 @@ std::string BoolType::getSignature() const
 	return ss.str();
 }
 
-Orange::Type* BoolType::getConst() const
+Orange::Type* Orange::BoolType::getConst() const
 {
 	return BoolType::get(getModule(), true);
 }
 
-bool BoolType::isBoolTy() const
+bool Orange::BoolType::isBoolTy() const
 {
 	return true;
 }
 
-bool BoolType::isIntTy() const
+bool Orange::BoolType::isIntTy() const
 {
 	return false; 
 }
 
-BoolType* BoolType::get(Module* mod, bool isConst)
+Orange::BoolType* Orange::BoolType::get(Module* mod, bool isConst)
 {
 	std::stringstream ss;
 	

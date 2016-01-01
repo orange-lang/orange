@@ -104,7 +104,7 @@ ExpressionCall::ExpressionCall(const ExpressionCall& other)
 	other.defineCopy(this);
 }
 
-FunctionType* ExpressionCall::expectedFunctionTy() const
+Orange::FunctionType* ExpressionCall::expectedFunctionTy() const
 {
 	auto ty_list = std::vector<const Orange::Type *>();
 	for (auto arg : m_args)
@@ -114,8 +114,8 @@ FunctionType* ExpressionCall::expectedFunctionTy() const
 		// Cast arrays to pointers so we can pass-by-reference
 		if (arg->getType()->isArrayTy())
 		{
-			ty_list.push_back(PointerType::get(getModule(),
-											   arg->getType()->getBaseTy()));
+			ty_list.push_back(Orange::PointerType::get(getModule(),
+							   arg->getType()->getBaseTy()));
 			continue;
 		}
 		
@@ -123,7 +123,9 @@ FunctionType* ExpressionCall::expectedFunctionTy() const
 	}
 	
 	// Put a wildcard on the return type.
-	return FunctionType::get(getModule(), VarType::get(getModule()), ty_list);
+	return Orange::FunctionType::get(getModule(),
+									 Orange::VarType::get(getModule()),
+									 ty_list);
 }
 
 void ExpressionCall::assertCallingFunction(llvm::Value* function)
@@ -141,7 +143,7 @@ void ExpressionCall::assertCallingFunction(llvm::Value* function)
 	}
 }
 
-const FunctionType* ExpressionCall::getFunctionTy() const
+const Orange::FunctionType* ExpressionCall::getFunctionTy() const
 {
 	return m_function_ty;
 }
@@ -265,7 +267,7 @@ void ExpressionCall::resolve()
 			});
 	}
 	
-	auto func_ty = ty->as<FunctionType *>();
+	auto func_ty = ty->as<Orange::FunctionType *>();
 	
 	if (!func_ty->isVarArg() && m_args.size() != func_ty->getArgs().size())
 	{
@@ -337,18 +339,18 @@ void ExpressionCall::build()
 		{
 			if (arg_ty->isSigned())
 			{
-				llvm_args.push_back(arg->castTo(IntType::get(getModule(),
-															 32)));
+				llvm_args.push_back(arg->castTo(Orange::IntType::get(getModule(),
+																	 32)));
 			}
 			else
 			{
-				llvm_args.push_back(arg->castTo(UIntType::get(getModule(),
-															  32)));
+				llvm_args.push_back(arg->castTo(Orange::UIntType::get(getModule(),
+        															  32)));
 			}
 		}
 		else if (arg_ty->isFloatTy())
 		{
-			llvm_args.push_back(arg->castTo(DoubleType::get(getModule())));
+			llvm_args.push_back(arg->castTo(Orange::DoubleType::get(getModule())));
 		}
 		else
 		{

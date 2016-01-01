@@ -14,7 +14,7 @@
 
 namespace llvm { class Function; }
 
-class FunctionType;
+namespace Orange { class FunctionType; }
 
 /**
  * Calls an expression (if it is a function type)
@@ -28,7 +28,7 @@ private:
 	/// need an expression.
 	ASTNode* m_expr = nullptr;
 	
-	FunctionType* m_function_ty = nullptr;
+	Orange::FunctionType* m_function_ty = nullptr;
 	
 	void assertCallingFunction(llvm::Value* function);
 protected:
@@ -36,14 +36,14 @@ protected:
 	
 	std::vector<Expression *> m_args;
 	
-	const FunctionType* getFunctionTy() const;
+	const Orange::FunctionType* getFunctionTy() const;
 	
 	/// Construct a new ExpressionCall without an expression,
 	/// which can be set by child classes during resolve.
 	ExpressionCall(std::vector<Expression *> args);
 public:
 	/// Returns the function type this expression expects.
-	FunctionType* expectedFunctionTy() const;
+	Orange::FunctionType* expectedFunctionTy() const;
 	
 	/// Gets the expression we're calling as a valued node.
 	const Valued* exprAsValued() const;

@@ -10,7 +10,9 @@
 
 #include "Type.h"
 
-class VarType : public Orange::Type
+namespace Orange { class VarType; }
+
+class Orange::VarType : public Orange::Type
 {
 protected:
 	VarType(bool isConst);

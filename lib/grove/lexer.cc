@@ -990,7 +990,7 @@ yycolumn = 1; // Reset column as we're on a new line.
 case 3:
 YY_RULE_SETUP
 #line 70 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL_BASE(UIntType::get(module, 64), 2); return VALUE;
+CREATE_VAL_BASE(Orange::UIntType::get(module, 64), 2); return VALUE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -1001,7 +1001,7 @@ BEGIN(HEX);
 case 5:
 YY_RULE_SETUP
 #line 74 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL_BASE(UIntType::get(module, 64), 16); BEGIN(INITIAL); return VALUE;
+CREATE_VAL_BASE(Orange::UIntType::get(module, 64), 16); BEGIN(INITIAL); return VALUE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -1012,72 +1012,72 @@ yyerror(module, "Invalid hex constant"); BEGIN(INITIAL);
 case 7:
 YY_RULE_SETUP
 #line 78 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(FloatType::get(module)); return VALUE;
+CREATE_VAL(Orange::FloatType::get(module)); return VALUE;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 79 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(DoubleType::get(module)); return VALUE;
+CREATE_VAL(Orange::DoubleType::get(module)); return VALUE;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 80 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(DoubleType::get(module)); return VALUE;
+CREATE_VAL(Orange::DoubleType::get(module)); return VALUE;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 82 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(UIntType::get(module, 8)); return VALUE;
+CREATE_VAL(Orange::UIntType::get(module, 8)); return VALUE;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 83 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(IntType::get(module, 8)); return VALUE;
+CREATE_VAL(Orange::IntType::get(module, 8)); return VALUE;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 84 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(UIntType::get(module, 16)); return VALUE;
+CREATE_VAL(Orange::UIntType::get(module, 16)); return VALUE;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 85 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(IntType::get(module, 16)); return VALUE;
+CREATE_VAL(Orange::IntType::get(module, 16)); return VALUE;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 86 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(UIntType::get(module, 32)); return VALUE;
+CREATE_VAL(Orange::UIntType::get(module, 32)); return VALUE;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 87 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(IntType::get(module, 32)); return VALUE;
+CREATE_VAL(Orange::IntType::get(module, 32)); return VALUE;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 88 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(UIntType::get(module, 64)); return VALUE;
+CREATE_VAL(Orange::UIntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 89 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(IntType::get(module, 64)); return VALUE;
+CREATE_VAL(Orange::IntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 90 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(UIntType::get(module, 64)); return VALUE;
+CREATE_VAL(Orange::UIntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 91 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(IntType::get(module, 64)); return VALUE;
+CREATE_VAL(Orange::IntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 92 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(IntType::get(module, 64)); return VALUE;
+CREATE_VAL(Orange::IntType::get(module, 64)); return VALUE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
@@ -1087,12 +1087,12 @@ yylval.val = new Value(yytext[1]); return VALUE;
 case 22:
 YY_RULE_SETUP
 #line 96 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(BoolType::get(module)); return VALUE;
+CREATE_VAL(Orange::BoolType::get(module)); return VALUE;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 97 "/Users/robert/dev/orange/lib/grove/lexer.l"
-CREATE_VAL(BoolType::get(module)); return VALUE;
+CREATE_VAL(Orange::BoolType::get(module)); return VALUE;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP

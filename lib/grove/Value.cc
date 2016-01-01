@@ -63,7 +63,7 @@ void Value::resolve()
 {
 	if (m_char_const)
 	{
-    	setType(IntType::get(getModule(),8));
+    	setType(Orange::IntType::get(getModule(),8));
 	}
 }
 

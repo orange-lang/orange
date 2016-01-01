@@ -10,7 +10,9 @@
 
 #include "Type.h"
 
-class IntType : public Orange::Type
+namespace Orange { class IntType; }
+
+class Orange::IntType : public Orange::Type
 {
 private:
 	unsigned int m_width = 0;

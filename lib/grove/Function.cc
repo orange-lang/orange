@@ -172,7 +172,7 @@ Genericable* Function::createInstance(const Orange::Type *type)
 	
 	assertExists(type, "Type cannot be null");
 	
-	auto func_ty = type->as<FunctionType *>();
+	auto func_ty = type->as<Orange::FunctionType *>();
 	
 	getModule()->beginCopy();
 	
@@ -216,7 +216,7 @@ Genericable* Function::createInstance(const Orange::Type *type)
 
 bool Function::matchesType(const Orange::Type* type) const
 {
-	auto arg_ty = type->as<FunctionType *>();
+	auto arg_ty = type->as<Orange::FunctionType *>();
 	auto param_tys = getParamTys();
 	
 	// Match argument length
@@ -326,8 +326,9 @@ void Function::resolve()
 			getModule()->resolve(param);
 		}
 		
-		setType(FunctionType::get(getModule(), VarType::get(getModule()),
-								  getParamTys()));
+		setType(Orange::FunctionType::get(getModule(),
+										  Orange::VarType::get(getModule()),
+										  getParamTys()));
 		
 		auto search_settings = SearchSettings();
 		search_settings.forceTypeMatch = true;
@@ -359,13 +360,15 @@ void Function::resolve()
 		if (param->getType()->isArrayTy())
 		{
 			auto ty = param->getType();
-			param->setType(PointerType::get(getModule(), ty->getRootTy()));
+			param->setType(Orange::PointerType::get(getModule(),
+													ty->getRootTy()));
 		}
 	}
 	
 	if (m_ret_type != nullptr)
 	{
-		setType(FunctionType::get(getModule(), m_ret_type, getParamTys()));
+		setType(Orange::FunctionType::get(getModule(), m_ret_type,
+										  getParamTys()));
 		return;
 	}
 	
@@ -381,8 +384,9 @@ void Function::resolve()
 	
 	if (retStmts.size() == 0)
 	{
-		setType(FunctionType::get(getModule(), VoidType::get(getModule()),
-								  getParamTys()));
+		setType(Orange::FunctionType::get(getModule(),
+										  Orange::VoidType::get(getModule()),
+										  getParamTys()));
 	}
 	else
 	{
@@ -409,7 +413,7 @@ void Function::resolve()
 			}
 		}
 		
-		setType(FunctionType::get(getModule(), highest, getParamTys()));
+		setType(Orange::FunctionType::get(getModule(), highest, getParamTys()));
 	}
 	
 	auto search_settings = SearchSettings();

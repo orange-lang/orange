@@ -13,7 +13,8 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/DerivedTypes.h>
 
-FunctionType::FunctionType(const Type* retType, std::vector<const Type*> args, bool vaarg)
+Orange::FunctionType::FunctionType(const Type* retType,
+								   std::vector<const Type*> args, bool vaarg)
 : Type(false)
 {
 	if (retType == nullptr)
@@ -52,7 +53,7 @@ FunctionType::FunctionType(const Type* retType, std::vector<const Type*> args, b
 	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, vaarg);
 }
 
-const Orange::Type* FunctionType::copyType() const
+const Orange::Type* Orange::FunctionType::copyType() const
 {
 	std::vector<const Orange::Type*> args;
 	for (auto& arg : m_args)
@@ -60,11 +61,11 @@ const Orange::Type* FunctionType::copyType() const
 		args.push_back(arg->copyType());
 	}
 	
-	return FunctionType::get(getModule(), m_ret_type->copyType(),
+	return Orange::FunctionType::get(getModule(), m_ret_type->copyType(),
 							 args, m_var_arg);
 }
 
-std::string FunctionType::getString() const
+std::string Orange::FunctionType::getString() const
 {
 	std::stringstream ss;
 	ss << "def(";
@@ -83,7 +84,7 @@ std::string FunctionType::getString() const
 	return ss.str();
 }
 
-std::string FunctionType::getSignature(const Orange::Type* retType,
+std::string Orange::FunctionType::getSignature(const Orange::Type* retType,
 									   std::vector<const Orange::Type*> args,
 									   bool vaarg)
 {
@@ -118,49 +119,50 @@ std::string FunctionType::getSignature(const Orange::Type* retType,
 	return ss.str();
 }
 
-std::string FunctionType::getSignature() const
+std::string Orange::FunctionType::getSignature() const
 {
-	return FunctionType::getSignature(m_ret_type, m_args, m_var_arg);
+	return Orange::FunctionType::getSignature(m_ret_type, m_args, m_var_arg);
 }
 
-bool FunctionType::isSigned() const
+bool Orange::FunctionType::isSigned() const
 {
 	return getReturnTy()->isSigned();
 }
 
-bool FunctionType::isFunctionTy() const
+bool Orange::FunctionType::isFunctionTy() const
 {
 	return true;
 }
 
-bool FunctionType::isVarArg() const
+bool Orange::FunctionType::isVarArg() const
 {
 	return m_var_arg;
 }
 
-const Orange::Type* FunctionType::getBaseTy() const
+const Orange::Type* Orange::FunctionType::getBaseTy() const
 {
 	return m_ret_type;
 }
 
-const Orange::Type* FunctionType::getRootTy() const
+const Orange::Type* Orange::FunctionType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-const Orange::Type* FunctionType::getReturnTy() const
+const Orange::Type* Orange::FunctionType::getReturnTy() const
 {
 	return m_ret_type;
 }
 
-std::vector<const Orange::Type *> FunctionType::getArgs() const
+std::vector<const Orange::Type *> Orange::FunctionType::getArgs() const
 {
 	return m_args;
 }
 
-FunctionType* FunctionType::get(Module* mod, const Orange::Type* retType,
-								std::vector<const Orange::Type *> args,
-								bool vaarg)
+Orange::FunctionType* Orange::FunctionType::get(Module* mod,
+												const Orange::Type* retType,
+												std::vector<const Orange::Type *> args,
+												bool vaarg)
 {
 	if (retType == nullptr)
 	{

@@ -3383,7 +3383,7 @@ yyreduce:
   case 148:
 #line 971 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
-		auto estmt = new EnumStmt(*(yyvsp[(2) - (5)].str), module, IntType::get(module, 64));
+		auto estmt = new EnumStmt(*(yyvsp[(2) - (5)].str), module, Orange::IntType::get(module, 64));
 		for (auto pair : *(yyvsp[(4) - (5)].vpairs))
 		{
 			estmt->addMember(std::get<0>(pair), std::get<1>(pair));
@@ -3451,14 +3451,14 @@ yyreduce:
   case 157:
 #line 1030 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
-		(yyval.ty) = PointerType::get(module, (yyvsp[(1) - (3)].ty));
+		(yyval.ty) = Orange::PointerType::get(module, (yyvsp[(1) - (3)].ty));
 	;}
     break;
 
   case 158:
 #line 1034 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
-		(yyval.ty) = PointerType::get(module, (yyvsp[(1) - (2)].ty));
+		(yyval.ty) = Orange::PointerType::get(module, (yyvsp[(1) - (2)].ty));
 	;}
     break;
 
@@ -3515,11 +3515,11 @@ yyreduce:
 			if (is_const)
 			{
 				auto arr_sz = Orange::Type::exprAsArrSize(def);
-				(yyval.ty) = ArrayType::get(module, (yyval.ty), arr_sz, false);
+				(yyval.ty) = Orange::ArrayType::get(module, (yyval.ty), arr_sz, false);
 			}
 			else
 			{
-				(yyval.ty) = VariadicArrayType::get(module, (yyval.ty), def, false);
+				(yyval.ty) = Orange::VariadicArrayType::get(module, (yyval.ty), def, false);
 			}
 		}
 	;}
@@ -3578,77 +3578,77 @@ yyreduce:
 
   case 173:
 #line 1123 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(module, 64); ;}
+    { (yyval.ty) = Orange::IntType::get(module, 64); ;}
     break;
 
   case 174:
 #line 1124 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(module, 64); ;}
+    { (yyval.ty) = Orange::UIntType::get(module, 64); ;}
     break;
 
   case 175:
 #line 1125 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = FloatType::get(module); ;}
+    { (yyval.ty) = Orange::FloatType::get(module); ;}
     break;
 
   case 176:
 #line 1126 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = DoubleType::get(module); ;}
+    { (yyval.ty) = Orange::DoubleType::get(module); ;}
     break;
 
   case 177:
 #line 1127 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(module, 8); ;}
+    { (yyval.ty) = Orange::IntType::get(module, 8); ;}
     break;
 
   case 178:
 #line 1128 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(module, 16); ;}
+    { (yyval.ty) = Orange::IntType::get(module, 16); ;}
     break;
 
   case 179:
 #line 1129 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(module, 32); ;}
+    { (yyval.ty) = Orange::IntType::get(module, 32); ;}
     break;
 
   case 180:
 #line 1130 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(module, 64); ;}
+    { (yyval.ty) = Orange::IntType::get(module, 64); ;}
     break;
 
   case 181:
 #line 1131 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(module, 8); ;}
+    { (yyval.ty) = Orange::UIntType::get(module, 8); ;}
     break;
 
   case 182:
 #line 1132 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(module, 16); ;}
+    { (yyval.ty) = Orange::UIntType::get(module, 16); ;}
     break;
 
   case 183:
 #line 1133 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(module, 32); ;}
+    { (yyval.ty) = Orange::UIntType::get(module, 32); ;}
     break;
 
   case 184:
 #line 1134 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = UIntType::get(module, 64); ;}
+    { (yyval.ty) = Orange::UIntType::get(module, 64); ;}
     break;
 
   case 185:
 #line 1135 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = IntType::get(module, 8); ;}
+    { (yyval.ty) = Orange::IntType::get(module, 8); ;}
     break;
 
   case 186:
 #line 1136 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = VoidType::get(module); ;}
+    { (yyval.ty) = Orange::VoidType::get(module); ;}
     break;
 
   case 187:
 #line 1137 "/Users/robert/dev/orange/lib/grove/parser.y"
-    { (yyval.ty) = VarType::get(module); ;}
+    { (yyval.ty) = Orange::VarType::get(module); ;}
     break;
 
   case 188:

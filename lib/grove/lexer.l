@@ -67,34 +67,34 @@
 
 "#"[^\r\n]*										yycolumn = 1; // Reset column as we're on a new line.
 
-[0|1]+"b"										CREATE_VAL_BASE(UIntType::get(module, 64), 2); return VALUE;
+[0|1]+"b"										CREATE_VAL_BASE(Orange::UIntType::get(module, 64), 2); return VALUE;
 
 "0x"											BEGIN(HEX);
 <HEX>{
-	[0-9A-Fa-f]+								CREATE_VAL_BASE(UIntType::get(module, 64), 16); BEGIN(INITIAL); return VALUE;
+	[0-9A-Fa-f]+								CREATE_VAL_BASE(Orange::UIntType::get(module, 64), 16); BEGIN(INITIAL); return VALUE;
 	.											yyerror(module, "Invalid hex constant"); BEGIN(INITIAL);
 }
 
-[0-9][0-9]*\.[0-9]+"f" 							CREATE_VAL(FloatType::get(module)); return VALUE;
-[0-9][0-9]*\.[0-9]+"d" 							CREATE_VAL(DoubleType::get(module)); return VALUE;
-[0-9][0-9]*\.[0-9]+ 							CREATE_VAL(DoubleType::get(module)); return VALUE;
+[0-9][0-9]*\.[0-9]+"f" 							CREATE_VAL(Orange::FloatType::get(module)); return VALUE;
+[0-9][0-9]*\.[0-9]+"d" 							CREATE_VAL(Orange::DoubleType::get(module)); return VALUE;
+[0-9][0-9]*\.[0-9]+ 							CREATE_VAL(Orange::DoubleType::get(module)); return VALUE;
 
-[0-9][0-9]*"u8"									CREATE_VAL(UIntType::get(module, 8)); return VALUE;
-[0-9][0-9]*"i8"									CREATE_VAL(IntType::get(module, 8)); return VALUE;
-[0-9][0-9]*"u16"								CREATE_VAL(UIntType::get(module, 16)); return VALUE;
-[0-9][0-9]*"i16"								CREATE_VAL(IntType::get(module, 16)); return VALUE;
-[0-9][0-9]*"u32"								CREATE_VAL(UIntType::get(module, 32)); return VALUE;
-[0-9][0-9]*"i32"								CREATE_VAL(IntType::get(module, 32)); return VALUE;
-[0-9][0-9]*"u64"								CREATE_VAL(UIntType::get(module, 64)); return VALUE;
-[0-9][0-9]*"i64"								CREATE_VAL(IntType::get(module, 64)); return VALUE;
-[0-9][0-9]*"u"									CREATE_VAL(UIntType::get(module, 64)); return VALUE;
-[0-9][0-9]*"i"									CREATE_VAL(IntType::get(module, 64)); return VALUE;
-[0-9][0-9]*										CREATE_VAL(IntType::get(module, 64)); return VALUE;
+[0-9][0-9]*"u8"									CREATE_VAL(Orange::UIntType::get(module, 8)); return VALUE;
+[0-9][0-9]*"i8"									CREATE_VAL(Orange::IntType::get(module, 8)); return VALUE;
+[0-9][0-9]*"u16"								CREATE_VAL(Orange::UIntType::get(module, 16)); return VALUE;
+[0-9][0-9]*"i16"								CREATE_VAL(Orange::IntType::get(module, 16)); return VALUE;
+[0-9][0-9]*"u32"								CREATE_VAL(Orange::UIntType::get(module, 32)); return VALUE;
+[0-9][0-9]*"i32"								CREATE_VAL(Orange::IntType::get(module, 32)); return VALUE;
+[0-9][0-9]*"u64"								CREATE_VAL(Orange::UIntType::get(module, 64)); return VALUE;
+[0-9][0-9]*"i64"								CREATE_VAL(Orange::IntType::get(module, 64)); return VALUE;
+[0-9][0-9]*"u"									CREATE_VAL(Orange::UIntType::get(module, 64)); return VALUE;
+[0-9][0-9]*"i"									CREATE_VAL(Orange::IntType::get(module, 64)); return VALUE;
+[0-9][0-9]*										CREATE_VAL(Orange::IntType::get(module, 64)); return VALUE;
 
 '.'												yylval.val = new Value(yytext[1]); return VALUE;
 
-"false"											CREATE_VAL(BoolType::get(module)); return VALUE;
-"true"											CREATE_VAL(BoolType::get(module)); return VALUE;
+"false"											CREATE_VAL(Orange::BoolType::get(module)); return VALUE;
+"true"											CREATE_VAL(Orange::BoolType::get(module)); return VALUE;
 
 "def"											SAVESTR(); return DEF;
 "return"										SAVESTR(); return RETURN;

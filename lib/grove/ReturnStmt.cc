@@ -63,7 +63,7 @@ void ReturnStmt::resolve()
 	}
 	else
 	{
-		setType(VoidType::get(getModule()));
+		setType(Orange::VoidType::get(getModule()));
 	}
 }
 

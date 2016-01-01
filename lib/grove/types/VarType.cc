@@ -9,13 +9,13 @@
 #include <grove/types/VarType.h>
 #include <llvm/IR/Type.h>
 
-VarType::VarType(bool isConst)
+Orange::VarType::VarType(bool isConst)
 : Type(isConst)
 {
 	m_type = (llvm::Type *)llvm::Type::getVoidTy(*m_context);
 }
 
-std::string VarType::getString() const
+std::string Orange::VarType::getString() const
 {
 	std::stringstream ss;
 	
@@ -28,7 +28,7 @@ std::string VarType::getString() const
 	return ss.str();
 }
 
-std::string VarType::getSignature() const
+std::string Orange::VarType::getSignature() const
 {
 	std::stringstream ss;
 	
@@ -42,17 +42,17 @@ std::string VarType::getSignature() const
 	return ss.str();
 }
 
-bool VarType::isVarTy() const
+bool Orange::VarType::isVarTy() const
 {
 	return true;
 }
 
-Orange::Type* VarType::getConst() const
+Orange::Type* Orange::VarType::getConst() const
 {
 	return VarType::get(getModule(), true);
 }
 
-VarType* VarType::get(Module* mod, bool isConst)
+Orange::VarType* Orange::VarType::get(Module* mod, bool isConst)
 {
 	std::stringstream ss;
 	

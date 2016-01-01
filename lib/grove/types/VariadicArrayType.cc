@@ -34,7 +34,7 @@ static llvm::Value* PointerCast(void* irBuilder, Valued* val,
 	return IRB->CreateBitCast(llvm_val, to->getLLVMType());
 }
 
-VariadicArrayType::VariadicArrayType(const Type* contained, Expression* size,
+Orange::VariadicArrayType::VariadicArrayType(const Type* contained, Expression* size,
 									 bool isConst)
 : Type(isConst)
 {
@@ -57,14 +57,14 @@ VariadicArrayType::VariadicArrayType(const Type* contained, Expression* size,
 			   PointerCast);
 }
 
-const Orange::Type* VariadicArrayType::copyType() const
+const Orange::Type* Orange::VariadicArrayType::copyType() const
 {
 	return VariadicArrayType::get(getModule(), m_contained->copyType(),
 								  m_size->copy()->as<Expression *>(),
 								  isConst());
 }
 
-std::string VariadicArrayType::getString() const
+std::string Orange::VariadicArrayType::getString() const
 {
 	std::stringstream ss;
 	
@@ -77,7 +77,7 @@ std::string VariadicArrayType::getString() const
 	return ss.str();
 }
 
-std::string VariadicArrayType::getSignature(const Type *conatined,
+std::string Orange::VariadicArrayType::getSignature(const Type *conatined,
 											Expression *size, bool isConst)
 {
 	std::stringstream ss;
@@ -92,48 +92,48 @@ std::string VariadicArrayType::getSignature(const Type *conatined,
 	return ss.str();
 }
 
-std::string VariadicArrayType::getSignature() const
+std::string Orange::VariadicArrayType::getSignature() const
 {
 	return getSignature(m_contained, m_size, isConst());
 }
 
-Expression* VariadicArrayType::getSize() const
+Expression* Orange::VariadicArrayType::getSize() const
 {
 	return m_size;
 }
 
-bool VariadicArrayType::isSigned() const
+bool Orange::VariadicArrayType::isSigned() const
 {
 	return m_contained->isSigned();
 }
 
-bool VariadicArrayType::isArrayTy() const
+bool Orange::VariadicArrayType::isArrayTy() const
 {
 	return true;
 }
 
 
-const Orange::Type* VariadicArrayType::getBaseTy() const
+const Orange::Type* Orange::VariadicArrayType::getBaseTy() const
 {
 	return m_contained;
 }
 
-const Orange::Type* VariadicArrayType::getRootTy() const
+const Orange::Type* Orange::VariadicArrayType::getRootTy() const
 {
 	return m_contained->getRootTy();
 }
 
-const Orange::Type* VariadicArrayType::getConst() const
+const Orange::Type* Orange::VariadicArrayType::getConst() const
 {
 	return get(getModule(), m_contained, m_size, true);
 }
 
-bool VariadicArrayType::isVariadiclySized() const
+bool Orange::VariadicArrayType::isVariadiclySized() const
 {
 	return true;
 }
 
-std::vector<Expression *> VariadicArrayType::getVariadicSizes() const
+std::vector<Expression *> Orange::VariadicArrayType::getVariadicSizes() const
 {
 	std::vector<Expression *> sizes;
 	
@@ -149,8 +149,10 @@ std::vector<Expression *> VariadicArrayType::getVariadicSizes() const
 	return sizes;
 }
 
-VariadicArrayType* VariadicArrayType::get(Module* mod, const Type *contained,
-										  Expression *expr, bool isConst)
+Orange::VariadicArrayType* Orange::VariadicArrayType::get(Module* mod,
+														  const Type *contained,
+														  Expression *expr,
+														  bool isConst)
 {
 	assertExists(contained, "contained cannot be null");
 	assertExists(expr, "expr cannot be null");

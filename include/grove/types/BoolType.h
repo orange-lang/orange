@@ -10,7 +10,9 @@
 
 #include "UIntType.h"
 
-class BoolType : public UIntType
+namespace Orange { class BoolType; }
+
+class Orange::BoolType : public UIntType
 {
 protected:
 	BoolType(bool isConst);

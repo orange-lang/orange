@@ -150,7 +150,7 @@ Constructor* ClassDecl::createCtor(ClassMethod *method)
 	
 	auto func = new Constructor(this, method, getName(), params);
 	
-	func->setReturnType(VoidType::get(getModule()));
+	func->setReturnType(Orange::VoidType::get(getModule()));
 	
 	if (method != nullptr)
 	{
@@ -330,12 +330,12 @@ void ClassDecl::resolve()
 	
 	if (isGeneric())
 	{
-		setType(VarType::get(getModule()));
+		setType(Orange::VarType::get(getModule()));
 	}
 	else
 	{
     	// Set our type to an explicit reference type to this class.
-		auto classTy = ClassType::get(getModule(), m_name, member_types);
+		auto classTy = Orange::ClassType::get(getModule(), m_name, member_types);
 		setType(new ReferenceType(this, classTy));
 	}
 	
@@ -452,7 +452,7 @@ Genericable* ClassDecl::createInstance(const Orange::Type *type)
 	}
 	
 	/// @todo: this may cause a problem
-	auto classTy = ClassType::get(getModule(), clone->m_name,
+	auto classTy = Orange::ClassType::get(getModule(), clone->m_name,
 								  member_types);
 	clone->setType(new ReferenceType(clone, classTy));
 	
@@ -488,7 +488,7 @@ Orange::Type* ClassDecl::getRefTy() const
 {
 	if (isGeneric())
 	{
-		return VarType::get(getModule());
+		return Orange::VarType::get(getModule());
 	}
 	else
 	{

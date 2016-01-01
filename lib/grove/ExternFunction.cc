@@ -58,7 +58,7 @@ std::vector<std::vector<ObjectBase *>*> ExternFunction::getMemberLists()
 
 void ExternFunction::resolve()
 {
-	setType(FunctionType::get(getModule(), m_ret_type, getParamTys(),
+	setType(Orange::FunctionType::get(getModule(), m_ret_type, getParamTys(),
 							  m_vararg));
 }
 

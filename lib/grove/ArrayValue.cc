@@ -76,7 +76,7 @@ void ArrayValue::resolve()
 		}
 	}
 	
-	setType(ArrayType::get(getModule(), highest, getElements().size()));
+	setType(Orange::ArrayType::get(getModule(), highest, getElements().size()));
 }
 
 void ArrayValue::build()

@@ -10,7 +10,7 @@
 
 #include <llvm/IR/DerivedTypes.h>
 
-ClassType::ClassType(const OString& name, std::vector<const Type *> members)
+Orange::ClassType::ClassType(const OString& name, std::vector<const Type *> members)
 : Type(false), m_name(name)
 {
 	m_members = members;
@@ -24,7 +24,7 @@ ClassType::ClassType(const OString& name, std::vector<const Type *> members)
 	m_type = llvm::StructType::create(*m_context, elements, m_name.str());
 }
 
-const Orange::Type* ClassType::copyType() const
+const Orange::Type* Orange::ClassType::copyType() const
 {
 	std::vector<const Orange::Type*> members;
 	for (auto& member : m_members)
@@ -35,7 +35,7 @@ const Orange::Type* ClassType::copyType() const
 	return ClassType::get(getModule(), m_name, members);
 }
 
-std::string ClassType::getSignature(const OString& name,
+std::string Orange::ClassType::getSignature(const OString& name,
 									const std::vector<const Type *> members)
 {
 	std::stringstream ss;
@@ -47,17 +47,17 @@ std::string ClassType::getSignature(const OString& name,
 	return ss.str();
 }
 
-bool ClassType::isClassTy() const
+bool Orange::ClassType::isClassTy() const
 {
 	return true;
 }
 
-bool ClassType::isAggTy() const
+bool Orange::ClassType::isAggTy() const
 {
 	return true;
 }
 
-const Orange::Type* ClassType::replaceMember(const Orange::Type* member,
+const Orange::Type* Orange::ClassType::replaceMember(const Orange::Type* member,
 											 const Orange::Type* with)
 const
 {
@@ -77,12 +77,12 @@ const
 	return ClassType::get(m_module, m_name, new_members);
 }
 
-std::vector<const Orange::Type*> ClassType::getMemberTys() const
+std::vector<const Orange::Type*> Orange::ClassType::getMemberTys() const
 {
 	return m_members;
 }
 
-std::string ClassType::getString() const
+std::string Orange::ClassType::getString() const
 {
 	std::stringstream ss;
 	ss << "class<";
@@ -101,12 +101,12 @@ std::string ClassType::getString() const
 	return ss.str();
 }
 
-std::string ClassType::getSignature() const
+std::string Orange::ClassType::getSignature() const
 {
 	return getSignature(m_name, m_members);
 }
 
-ClassType* ClassType::get(Module* mod, const OString& name,
+Orange::ClassType* Orange::ClassType::get(Module* mod, const OString& name,
 						  std::vector<const Type *> members)
 {
 	auto full_name = "class." + name;

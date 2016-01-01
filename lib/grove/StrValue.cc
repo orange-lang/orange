@@ -59,7 +59,8 @@ std::vector<std::vector<ObjectBase *>*> StrValue::getMemberLists()
 
 void StrValue::resolve()
 {
-	setType(PointerType::get(getModule(), IntType::get(getModule(), 8)));
+	setType(Orange::PointerType::get(getModule(),
+									 Orange::IntType::get(getModule(), 8)));
 }
 
 void StrValue::build()

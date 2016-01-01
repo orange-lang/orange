@@ -10,7 +10,9 @@
 
 #include "Type.h"
 
-class FunctionType : public Orange::Type
+namespace Orange { class FunctionType; }
+
+class Orange::FunctionType : public Orange::Type
 {
 private:
 	const Type* m_ret_type = nullptr;

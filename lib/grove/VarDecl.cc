@@ -181,7 +181,7 @@ void VarDecl::build()
 		for (auto s : getType()->getVariadicSizes())
 		{
 			s->build();
-			auto s_val = s->castTo(UIntType::get(getModule(), 64));
+			auto s_val = s->castTo(Orange::UIntType::get(getModule(), 64));
 			
 			if (m_size == nullptr)
 			{

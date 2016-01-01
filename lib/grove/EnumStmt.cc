@@ -146,14 +146,14 @@ EnumStmt::EnumStmt(OString name, Module* mod, const Orange::Type* baseType)
 	}
 
 	m_base_type = baseType;
-	setType(EnumType::get(mod, m_base_type, false));
+	setType(Orange::EnumType::get(mod, m_base_type, false));
 }
 
 EnumStmt::EnumStmt(const EnumStmt& other)
 {
 	m_name = other.m_name;
 	m_base_type = other.m_base_type->copyType();
-	setType(EnumType::get(other.getModule(), m_base_type, false));
+	setType(Orange::EnumType::get(other.getModule(), m_base_type, false));
 	
 	for (auto pair : m_members)
 	{

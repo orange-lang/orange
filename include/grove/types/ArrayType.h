@@ -12,7 +12,9 @@
 
 class Expression;
 
-class ArrayType : public Orange::Type
+namespace Orange { class ArrayType; }
+
+class Orange::ArrayType : public Orange::Type
 {
 private:
 	const Type* m_contained = nullptr;

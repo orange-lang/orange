@@ -12,7 +12,9 @@
 
 class Expression;
 
-class VariadicArrayType : public Orange::Type
+namespace Orange { class VariadicArrayType; }
+
+class Orange::VariadicArrayType : public Orange::Type
 {
 private:
 	const Type* m_contained = nullptr;

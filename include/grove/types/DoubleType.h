@@ -10,7 +10,9 @@
 
 #include "Type.h"
 
-class DoubleType : public Orange::Type
+namespace Orange { class DoubleType; }
+
+class Orange::DoubleType : public Orange::Type
 {
 protected:
 	DoubleType(bool isConst);

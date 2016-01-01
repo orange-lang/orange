@@ -607,8 +607,9 @@ Module::Module()
 	
 	m_main = new MainFunction(this, "_main");
 	
-	auto mainFunctionTy = FunctionType::get(this, IntType::get(this, 32),
-											std::vector<const Orange::Type*>());
+	auto mainFunctionTy = Orange::FunctionType::get(this,
+							Orange::IntType::get(this, 32),
+							std::vector<const Orange::Type*>());
 	getMain()->setType(mainFunctionTy);
 	
 	pushBlock(m_main);
@@ -638,8 +639,9 @@ Module::Module(Builder* builder, std::string filePath)
 
 	m_main = new MainFunction(this, "_main");
 
-	auto mainFunctionTy = FunctionType::get(this, IntType::get(this, 32),
-											std::vector<const Orange::Type*>());
+	auto mainFunctionTy = Orange::FunctionType::get(this,
+							Orange::IntType::get(this, 32),
+							std::vector<const Orange::Type*>());
 	getMain()->setType(mainFunctionTy);
 
 

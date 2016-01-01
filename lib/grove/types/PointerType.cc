@@ -16,7 +16,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Instruction.h>
 
-PointerType::PointerType(const Type* contained, bool isConst)
+Orange::PointerType::PointerType(const Type* contained, bool isConst)
 : Type(isConst)
 {
 	if (contained == nullptr)
@@ -31,13 +31,13 @@ PointerType::PointerType(const Type* contained, bool isConst)
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
 }
 
-const Orange::Type* PointerType::copyType() const
+const Orange::Type* Orange::PointerType::copyType() const
 {
-	return PointerType::get(getModule(), m_contained->copyType(),
+	return Orange::PointerType::get(getModule(), m_contained->copyType(),
 							isConst());
 }
 
-bool PointerType::matches(const Type *ty) const
+bool Orange::PointerType::matches(const Type *ty) const
 {
 	// If our contained is a node type, and
 	// we're looking at a pointer type that contains a node
@@ -53,7 +53,7 @@ bool PointerType::matches(const Type *ty) const
 	return Type::matches(ty);
 }
 
-llvm::Type* PointerType::getLLVMType() const
+llvm::Type* Orange::PointerType::getLLVMType() const
 {
 	if (m_contained->getLLVMType()->isVoidTy())
 	{
@@ -63,7 +63,7 @@ llvm::Type* PointerType::getLLVMType() const
 	return m_contained->getLLVMType()->getPointerTo();
 }
 
-std::string PointerType::getString() const
+std::string Orange::PointerType::getString() const
 {
 	std::stringstream ss;
 	
@@ -76,7 +76,7 @@ std::string PointerType::getString() const
 	return ss.str();
 }
 
-std::string PointerType::getSignature() const
+std::string Orange::PointerType::getSignature() const
 {
 	std::stringstream ss;
 	
@@ -89,33 +89,34 @@ std::string PointerType::getSignature() const
 	return ss.str();
 }
 
-bool PointerType::isSigned() const
+bool Orange::PointerType::isSigned() const
 {
 	return true;
 }
 
-bool PointerType::isPointerTy() const
+bool Orange::PointerType::isPointerTy() const
 {
 	return true;
 }
 
-const Orange::Type* PointerType::getBaseTy() const
+const Orange::Type* Orange::PointerType::getBaseTy() const
 {
 	return m_contained;
 }
 
-const Orange::Type* PointerType::getRootTy() const
+const Orange::Type* Orange::PointerType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-const Orange::Type* PointerType::getConst() const
+const Orange::Type* Orange::PointerType::getConst() const
 {
-	return PointerType::get(getModule(), m_contained, true);
+	return Orange::PointerType::get(getModule(), m_contained, true);
 }
 
-PointerType* PointerType::get(Module* mod, const Orange::Type* contained,
-							  bool isConst)
+Orange::PointerType* Orange::PointerType::get(Module* mod,
+											  const Orange::Type* contained,
+                							  bool isConst)
 {
 	if (contained == nullptr)
 	{

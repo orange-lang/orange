@@ -42,7 +42,8 @@ static llvm::Value* PointerCast(void* irBuilder, Valued* val,
 	return IRB->CreateBitCast(llvm_val, to->getLLVMType());
 }
 
-ArrayType::ArrayType(const Type* contained, unsigned int size, bool isConst)
+Orange::ArrayType::ArrayType(const Orange::Type* contained, unsigned int size,
+							 bool isConst)
 : Type(isConst)
 {
 	if (contained == nullptr)
@@ -59,13 +60,13 @@ ArrayType::ArrayType(const Type* contained, unsigned int size, bool isConst)
 			   	PointerCast);
 }
 
-const Orange::Type* ArrayType::copyType() const
+const Orange::Type* Orange::ArrayType::copyType() const
 {
-	return ArrayType::get(getModule(), m_contained->copyType(),
+	return Orange::ArrayType::get(getModule(), m_contained->copyType(),
 						  m_size, isConst());
 }
 
-std::string ArrayType::getString() const
+std::string Orange::ArrayType::getString() const
 {
 	std::stringstream ss;
 	
@@ -80,7 +81,7 @@ std::string ArrayType::getString() const
 	return ss.str();
 }
 
-std::string ArrayType::getSignature() const
+std::string Orange::ArrayType::getSignature() const
 {
 	std::stringstream ss;
 	
@@ -93,33 +94,33 @@ std::string ArrayType::getSignature() const
 	return ss.str();
 }
 
-bool ArrayType::isSigned() const
+bool Orange::ArrayType::isSigned() const
 {
 	return m_contained->isSigned();
 }
 
-bool ArrayType::isArrayTy() const
+bool Orange::ArrayType::isArrayTy() const
 {
 	return true;
 }
 
-const Orange::Type* ArrayType::getBaseTy() const
+const Orange::Type* Orange::ArrayType::getBaseTy() const
 {
 	return m_contained;
 }
 
-const Orange::Type* ArrayType::getRootTy() const
+const Orange::Type* Orange::ArrayType::getRootTy() const
 {
 	return m_contained->getRootTy();
 }
 
-const Orange::Type* ArrayType::getConst() const
+const Orange::Type* Orange::ArrayType::getConst() const
 {
-	return ArrayType::get(getModule(), m_contained, m_size, true);
+	return Orange::ArrayType::get(getModule(), m_contained, m_size, true);
 }
 
-ArrayType* ArrayType::get(Module* mod, const Type *contained,
-						  unsigned int size, bool isConst)
+Orange::ArrayType* Orange::ArrayType::get(Module* mod, const Type *contained,
+										  unsigned int size, bool isConst)
 {
 	if (contained == nullptr)
 	{

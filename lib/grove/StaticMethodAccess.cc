@@ -57,7 +57,7 @@ bool StaticMethodAccess::isMethodStatic() const
 
 void StaticMethodAccess::resolve()
 {
-	FunctionType* expectedTy = nullptr;
+	Orange::FunctionType* expectedTy = nullptr;
 	
 	auto parent = findParent<ExpressionCall *>();
 	if (parent != nullptr)

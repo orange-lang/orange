@@ -10,7 +10,9 @@
 
 #include "Type.h"
 
-class FloatType : public Orange::Type
+namespace Orange { class FloatType; }
+
+class Orange::FloatType : public Orange::Type
 {
 protected:
 	FloatType(bool isConst);

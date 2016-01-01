@@ -54,7 +54,7 @@ const Orange::Type* SizeofExpr::getTypeArg() const
 
 void SizeofExpr::resolve()
 {
-	setType(UIntType::get(getModule(), 64));
+	setType(Orange::UIntType::get(getModule(), 64));
 	
 	if (getTypeArg() != nullptr && getTypeArg()->isVariadiclySized())
 	{
@@ -85,7 +85,7 @@ void SizeofExpr::build()
 			for (auto s : getTypeArg()->getVariadicSizes())
 			{
 				s->build();
-				auto s_val = s->castTo(UIntType::get(getModule(), 64));
+				auto s_val = s->castTo(Orange::UIntType::get(getModule(), 64));
 				
 				val = IRBuilder()->CreateMul(val, s_val);
 			}

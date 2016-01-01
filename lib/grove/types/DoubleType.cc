@@ -14,7 +14,7 @@
 #include <grove/types/IntType.h>
 #include <grove/types/FloatType.h>
 
-DoubleType::DoubleType(bool isConst)
+Orange::DoubleType::DoubleType(bool isConst)
 : Type(isConst)
 {
 	m_type = llvm::Type::getDoubleTy(*m_context);
@@ -24,7 +24,7 @@ DoubleType::DoubleType(bool isConst)
 	defineCast(typeid(FloatType), llvm::Instruction::CastOps::FPTrunc);
 }
 
-std::string DoubleType::getString() const
+std::string Orange::DoubleType::getString() const
 {
 	std::stringstream ss;
 	
@@ -37,7 +37,7 @@ std::string DoubleType::getString() const
 	return ss.str();
 }
 
-std::string DoubleType::getSignature() const
+std::string Orange::DoubleType::getSignature() const
 {
 	std::stringstream ss;
 	
@@ -51,32 +51,32 @@ std::string DoubleType::getSignature() const
 	return ss.str();
 }
 
-bool DoubleType::isPODTy() const
+bool Orange::DoubleType::isPODTy() const
 {
 	return true;
 }
 
-bool DoubleType::isDoubleTy() const
+bool Orange::DoubleType::isDoubleTy() const
 {
 	return true;
 }
 
-bool DoubleType::isFloatingPointTy() const
+bool Orange::DoubleType::isFloatingPointTy() const
 {
 	return true;
 }
 
-BasicType DoubleType::PODTy() const
+BasicType Orange::DoubleType::PODTy() const
 {
 	return TYDOUBLE;
 }
 
-Orange::Type* DoubleType::getConst() const
+Orange::Type* Orange::DoubleType::getConst() const
 {
 	return DoubleType::get(getModule(), true);
 }
 
-DoubleType* DoubleType::get(Module* mod, bool isConst)
+Orange::DoubleType* Orange::DoubleType::get(Module* mod, bool isConst)
 {
 	std::stringstream ss;
 	
