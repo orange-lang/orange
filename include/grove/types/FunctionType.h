@@ -29,6 +29,8 @@ public:
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
+	llvm::Type* getLLVMType() const override;
+	
 	virtual bool isSigned() const override;
 	
 	virtual bool isFunctionTy() const override;

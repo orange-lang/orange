@@ -53,6 +53,18 @@ Orange::FunctionType::FunctionType(const Type* retType,
 	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, vaarg);
 }
 
+llvm::Type* Orange::FunctionType::getLLVMType() const
+{
+	std::vector<llvm::Type *> params;
+	for (auto ty : m_args)
+	{
+		params.push_back(ty->getLLVMType());
+	}
+	
+	return llvm::FunctionType::get(m_ret_type->getLLVMType(), params,
+								   m_var_arg);
+}
+
 const Orange::Type* Orange::FunctionType::copyType() const
 {
 	std::vector<const Orange::Type*> args;
