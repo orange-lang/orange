@@ -23,6 +23,8 @@ public:
 	ClassDecl* getClass() const;
 	ClassMethod* getMethod() const;
 	
+	virtual void build() override;
+	
 	virtual ASTNode* copy() const override;
 	
 	virtual void findDependencies() override;
