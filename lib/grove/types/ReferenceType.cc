@@ -46,16 +46,9 @@ std::string ReferenceType::getString() const
 
 std::string ReferenceType::getSignature() const
 {
-	if (Typed::m_type == nullptr)
-	{
-		std::stringstream ss;
-    	ss << this;
-    	return ss.str();
-	}
-	else
-	{
-		return Typed::m_type->getSignature();
-	}
+	std::stringstream ss;
+	ss << "R" << this;
+	return ss.str();
 }
 
 Module* ReferenceType::getModule() const
