@@ -25,8 +25,9 @@
 #include <llvm/IR/IRBuilder.h>
 
 
-static llvm::Value* PointerCast(void* irBuilder, Valued* val, const Type* from,
-							 const Type* to)
+static llvm::Value* PointerCast(void* irBuilder, Valued* val,
+								const Orange::Type* from,
+								const Orange::Type* to)
 {
 	assertExists(irBuilder, "irbuilder must exist");
 	assertExists(val, "val must exist");
@@ -58,7 +59,7 @@ ArrayType::ArrayType(const Type* contained, unsigned int size, bool isConst)
 			   	PointerCast);
 }
 
-const Type* ArrayType::copyType() const
+const Orange::Type* ArrayType::copyType() const
 {
 	return ArrayType::get(getModule(), m_contained->copyType(),
 						  m_size, isConst());
@@ -102,17 +103,17 @@ bool ArrayType::isArrayTy() const
 	return true;
 }
 
-const Type* ArrayType::getBaseTy() const
+const Orange::Type* ArrayType::getBaseTy() const
 {
 	return m_contained;
 }
 
-const Type* ArrayType::getRootTy() const
+const Orange::Type* ArrayType::getRootTy() const
 {
 	return m_contained->getRootTy();
 }
 
-const Type* ArrayType::getConst() const
+const Orange::Type* ArrayType::getConst() const
 {
 	return ArrayType::get(getModule(), m_contained, m_size, true);
 }

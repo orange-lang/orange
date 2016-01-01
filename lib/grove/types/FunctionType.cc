@@ -52,9 +52,9 @@ FunctionType::FunctionType(const Type* retType, std::vector<const Type*> args, b
 	m_type = llvm::FunctionType::get(retType->getLLVMType(), params, vaarg);
 }
 
-const Type* FunctionType::copyType() const
+const Orange::Type* FunctionType::copyType() const
 {
-	std::vector<const Type*> args;
+	std::vector<const Orange::Type*> args;
 	for (auto& arg : m_args)
 	{
 		args.push_back(arg->copyType());
@@ -83,8 +83,8 @@ std::string FunctionType::getString() const
 	return ss.str();
 }
 
-std::string FunctionType::getSignature(const Type* retType,
-									   std::vector<const Type*> args,
+std::string FunctionType::getSignature(const Orange::Type* retType,
+									   std::vector<const Orange::Type*> args,
 									   bool vaarg)
 {
 	if (retType == nullptr)
@@ -138,28 +138,29 @@ bool FunctionType::isVarArg() const
 	return m_var_arg;
 }
 
-const Type* FunctionType::getBaseTy() const
+const Orange::Type* FunctionType::getBaseTy() const
 {
 	return m_ret_type;
 }
 
-const Type* FunctionType::getRootTy() const
+const Orange::Type* FunctionType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-const Type* FunctionType::getReturnTy() const
+const Orange::Type* FunctionType::getReturnTy() const
 {
 	return m_ret_type;
 }
 
-std::vector<const Type *> FunctionType::getArgs() const
+std::vector<const Orange::Type *> FunctionType::getArgs() const
 {
 	return m_args;
 }
 
-FunctionType* FunctionType::get(Module* mod, const Type *retType,
-								std::vector<const Type *> args, bool vaarg)
+FunctionType* FunctionType::get(Module* mod, const Orange::Type* retType,
+								std::vector<const Orange::Type *> args,
+								bool vaarg)
 {
 	if (retType == nullptr)
 	{

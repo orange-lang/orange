@@ -10,7 +10,7 @@
 
 #include <string>
 
-class Type;
+namespace Orange { class Type; }
 
 /**
  * NamedType is a container class to hold a type and a name. 
@@ -18,11 +18,11 @@ class Type;
  */
 class NamedType {
 private:
-	Type* m_type;
+	Orange::Type* m_type;
 	std::string m_name;
 public:
 	/// Gets the type of this NamedType.
-	Type* getType() const;
+	Orange::Type* getType() const;
 	
 	/// Gets the name of this type.
 	std::string getName() const;
@@ -31,5 +31,5 @@ public:
 	std::string getMangledName() const;
 	
 	/// Constructs a new named type with name and type.
-	NamedType(std::string name, Type* type);
+	NamedType(std::string name, Orange::Type* type);
 };

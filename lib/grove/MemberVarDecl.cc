@@ -80,7 +80,7 @@ void MemberVarDecl::build()
 	}
 }
 
-MemberVarDecl::MemberVarDecl(const Type* type, OString name,
+MemberVarDecl::MemberVarDecl(const Orange::Type* type, OString name,
 							 Expression* expression)
 : VarDecl(type, name, expression)
 {

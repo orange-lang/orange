@@ -468,8 +468,8 @@ bool Module::hasNamed(OString name, const ASTNode *from,
 	return false;
 }
 
-Named* Module::findNamed(OString name, const Type *type, const ASTNode *from,
-					   SearchSettings settings) const
+Named* Module::findNamed(OString name, const Orange::Type *type,
+						 const ASTNode *from, SearchSettings settings) const
 {
 	BlockIterator it(this, from, settings);
 	while (it.hasNext())
@@ -608,7 +608,7 @@ Module::Module()
 	m_main = new MainFunction(this, "_main");
 	
 	auto mainFunctionTy = FunctionType::get(this, IntType::get(this, 32),
-											std::vector<const Type*>());
+											std::vector<const Orange::Type*>());
 	getMain()->setType(mainFunctionTy);
 	
 	pushBlock(m_main);
@@ -639,7 +639,7 @@ Module::Module(Builder* builder, std::string filePath)
 	m_main = new MainFunction(this, "_main");
 
 	auto mainFunctionTy = FunctionType::get(this, IntType::get(this, 32),
-											std::vector<const Type*>());
+											std::vector<const Orange::Type*>());
 	getMain()->setType(mainFunctionTy);
 
 
@@ -704,5 +704,5 @@ Module::~Module()
 		delete child;
 	}
 	
-	Type::clear(this);
+	Orange::Type::clear(this);
 }

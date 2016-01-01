@@ -106,7 +106,7 @@ ExpressionCall::ExpressionCall(const ExpressionCall& other)
 
 FunctionType* ExpressionCall::expectedFunctionTy() const
 {
-	auto ty_list = std::vector<const Type *>();
+	auto ty_list = std::vector<const Orange::Type *>();
 	for (auto arg : m_args)
 	{
 		assertExists(arg->getType(), "Arg doesn't have assigned type");

@@ -36,7 +36,7 @@ void FutureType::findDependencies()
 	}
 }
 
-const Type* FutureType::copyType() const
+const Orange::Type* FutureType::copyType() const
 {
 	return FutureType::copy()->as<Type *>();
 }
@@ -66,7 +66,7 @@ bool FutureType::isFutureTy() const
 	return true;
 }
 
-void FutureType::replace(const Type* with)
+void FutureType::replace(const Orange::Type* with)
 {
 	auto watchers_copy = m_watchers;
 	

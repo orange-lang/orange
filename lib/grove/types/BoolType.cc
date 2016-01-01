@@ -18,7 +18,7 @@
 
 const int BOOL_WIDTH = 1;
 
-static int BoolToInt(const Type* f, const Type* t)
+static int BoolToInt(const Orange::Type* f, const Orange::Type* t)
 {
 	auto from = f->as<BoolType*>();
 	auto to = t->as<IntType*>();
@@ -37,7 +37,7 @@ static int BoolToInt(const Type* f, const Type* t)
 	}
 }
 
-static int BoolToUInt(const Type* f, const Type* t)
+static int BoolToUInt(const Orange::Type* f, const Orange::Type* t)
 {
 	auto from = f->as<BoolType*>();
 	auto to = t->as<UIntType*>();
@@ -91,7 +91,7 @@ std::string BoolType::getSignature() const
 	return ss.str();
 }
 
-Type* BoolType::getConst() const
+Orange::Type* BoolType::getConst() const
 {
 	return BoolType::get(getModule(), true);
 }

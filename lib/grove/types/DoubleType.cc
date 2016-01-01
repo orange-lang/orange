@@ -71,7 +71,7 @@ BasicType DoubleType::PODTy() const
 	return TYDOUBLE;
 }
 
-Type* DoubleType::getConst() const
+Orange::Type* DoubleType::getConst() const
 {
 	return DoubleType::get(getModule(), true);
 }

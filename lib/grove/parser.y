@@ -93,7 +93,7 @@
 	Statement* stmt;
 	Value* val;
 	OString* str;
-	const Type* ty;
+	const Orange::Type* ty;
 }
 
 %start start
@@ -1065,11 +1065,11 @@ array_type
 		{
 			auto def = $2->at(i);
 
-			if (Type::exprValidForArrSize(def) == false)
+			if (Orange::Type::exprValidForArrSize(def) == false)
 			{
 				is_const = false;
 				break;
-				}
+			}
 		}
 
 		int sz = (int)$2->size();
@@ -1079,7 +1079,7 @@ array_type
 
 			if (is_const)
 			{
-				auto arr_sz = Type::exprAsArrSize(def);
+				auto arr_sz = Orange::Type::exprAsArrSize(def);
 				$$ = ArrayType::get(module, $$, arr_sz, false);
 			}
 			else

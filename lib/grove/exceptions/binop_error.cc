@@ -11,8 +11,8 @@
 
 #include <grove/types/Type.h>
 
-binop_error::binop_error(CodeBase* element, const Type* LHS, OString op,
-						 const Type* RHS)
+binop_error::binop_error(CodeBase* element, const Orange::Type* LHS, OString op,
+						 const Orange::Type* RHS)
 : code_error(element)
 {
 	if (LHS == nullptr)
@@ -35,9 +35,9 @@ binop_error::binop_error(CodeBase* element, const Type* LHS, OString op,
 	m_error = ss.str();
 }
 
-binop_error::binop_error(CodeBase* element, const Type* LHS, OString op,
-						 const Type* RHS, const Type* expectLHS,
-						 const Type* expectRHS)
+binop_error::binop_error(CodeBase* element, const Orange::Type* LHS, OString op,
+						 const Orange::Type* RHS, const Orange::Type* expectLHS,
+						 const Orange::Type* expectRHS)
 : code_error(element)
 {
 	if (LHS == nullptr)

@@ -12,7 +12,7 @@
 #include <grove/types/Type.h>
 
 invalid_type_error::invalid_type_error(CodeBase* element, std::string desc,
-									   const Type* ty)
+									   const Orange::Type* ty)
 : code_error(element)
 {
 	if (ty == nullptr)

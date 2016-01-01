@@ -16,7 +16,7 @@
 
 #include <util/assertions.h>
 
-Genericable* Genericable::findInstance(const Type *type) const
+Genericable* Genericable::findInstance(const Orange::Type* type) const
 {
 	if (isGeneric() == false)
 	{
@@ -47,7 +47,7 @@ bool Genericable::isInstance() const
 	return m_instance_of != nullptr;
 }
 
-bool Genericable::hasInstance(const Type *type) const
+bool Genericable::hasInstance(const Orange::Type* type) const
 {
 	return findInstance(type) != nullptr;
 }

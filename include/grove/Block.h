@@ -12,7 +12,7 @@
 #include "Statement.h"
 
 class Named;
-class Type;
+namespace Orange { class Type; }
 
 /**
  * Block is the base class for any element that holds a list of statements.
@@ -23,7 +23,7 @@ private:
 	
 	/// Returns the named node or a generic instance
 	/// of the named node.
-	Named* namedOrGenericInstance(Named* n, const Type* t,
+	Named* namedOrGenericInstance(Named* n, const Orange::Type* t,
 								  const ASTNode* from) const;
 	bool usable(Named* n, const ASTNode* from) const;
 	Named* verify(Named* n, const ASTNode* from) const;
@@ -48,7 +48,7 @@ public:
 	/// @param type Optional. The type of the node to get.
 	/// @param from The node who is searching. Must be an immediate child.
 	/// @param settings The settings to use.
-	Named* getNamed(OString name, const Type* type, const ASTNode* from,
+	Named* getNamed(OString name, const Orange::Type* type, const ASTNode* from,
 					SearchSettings settings) const;
 	
 	std::vector<Named *> getAllNamed(OString name, const ASTNode* from)

@@ -10,7 +10,7 @@
 
 #include "Type.h"
 
-class FunctionType : public Type
+class FunctionType : public Orange::Type
 {
 private:
 	const Type* m_ret_type = nullptr;

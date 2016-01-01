@@ -11,7 +11,7 @@
 #include "Comparison.h"
 #include "ObjectBase.h"
 
-class Type;
+namespace Orange { class Type; }
 
 namespace llvm { class Type; }
 
@@ -20,20 +20,20 @@ namespace llvm { class Type; }
  */
 class Typed : virtual public ObjectBase {
 protected:
-	const Type* m_type = nullptr;
+	const Orange::Type* m_type = nullptr;
 public:
 	/// Returns the current type.
-	const Type* getType() const;
+	const Orange::Type* getType() const;
 
 	/// Returns the LLVM type. Equivalent to getType()->getLLVMType().
 	llvm::Type* getLLVMType() const;
 	
 	/// Determines whether or not this type matches another type.
-	virtual bool matchesType(const Type* ty) const;
+	virtual bool matchesType(const Orange::Type* ty) const;
 
 	/// Compare the types of a source against a target.
 	static Comparison compare(const Typed* source, const Typed* target);
 
 	/// Overrides the type.
-	virtual void setType(const Type* type);
+	virtual void setType(const Orange::Type* type);
 };

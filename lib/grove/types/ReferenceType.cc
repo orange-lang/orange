@@ -24,7 +24,7 @@ OString ReferenceType::getName() const
 	return m_name;
 }
 
-const Type* ReferenceType::getComparisonTy() const
+const Orange::Type* ReferenceType::getComparisonTy() const
 {
 	if (m_ref_type == nullptr)
 	{
@@ -216,12 +216,12 @@ std::vector<std::vector<ObjectBase *>*> ReferenceType::getMemberLists()
 	return defMemberLists();
 }
 
-const Type* ReferenceType::copyType() const
+const Orange::Type* ReferenceType::copyType() const
 {
 	return copy()->as<Type *>();
 }
 
-void ReferenceType::setRefType(const Type* ty)
+void ReferenceType::setRefType(const Orange::Type* ty)
 {
 	m_ref_type = ty;
 	m_type = m_ref_type->getLLVMType();
@@ -246,7 +246,8 @@ ReferenceType::ReferenceType(const ASTNode* reference)
 	m_location = reference->getLocation();
 }
 
-ReferenceType::ReferenceType(const ASTNode* reference, const Type* refType)
+ReferenceType::ReferenceType(const ASTNode* reference,
+							 const Orange::Type* refType)
 : NodeType(false)
 {
 	assertExists(reference, "reference for ReferenceType was emtpy");

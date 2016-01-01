@@ -17,7 +17,7 @@ Module* LocalNamedType::getModule() const
 	return m_module;
 }
 
-LocalNamedType::LocalNamedType(Module* mod, std::string name, Type* ty)
+LocalNamedType::LocalNamedType(Module* mod, std::string name, Orange::Type* ty)
 : NamedType(name, ty)
 {
 	if (mod == nullptr)

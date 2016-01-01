@@ -10,7 +10,7 @@
 
 #include "Typed.h"
 
-class Type;
+namespace Orange { class Type; }
 
 /**
  * Genericable represents a class that _can_ be a generic
@@ -33,13 +33,13 @@ public:
 	/// Throws an error if isGeneric() returns false.
 	/// @param type The type of the instance.
 	/// @return The instance created.
-	virtual Genericable* createInstance(const Type* type) = 0;
+	virtual Genericable* createInstance(const Orange::Type* type) = 0;
 	
 	/// Returns an instance with a given list of types.
 	/// Returns nullptr if an instance does not exist,
 	/// Throws an error if isGeneric() returns false.
 	/// @param type The type the instance should have.
-	Genericable* findInstance(const Type* type) const;
+	Genericable* findInstance(const Orange::Type* type) const;
 	
 	Genericable* getInstanceParent() const;
 	
@@ -49,5 +49,5 @@ public:
 	/// exists. Throws an error if isGeneric() returns false.
 	/// @param type The type the instance should have.
 	/// @return True if an instance exists, false otherwise.
-	bool hasInstance(const Type* type) const;
+	bool hasInstance(const Orange::Type* type) const;
 };

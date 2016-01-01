@@ -67,9 +67,9 @@ Parameter* Function::getParam(std::string name) const
 	return nullptr;
 }
 
-std::vector<const Type *> Function::getParamTys() const
+std::vector<const Orange::Type *> Function::getParamTys() const
 {
-	std::vector<const Type *> tys;
+	std::vector<const Orange::Type *> tys;
 	
 	for (auto param : getParams())
 	{
@@ -117,7 +117,7 @@ void Function::createReturn()
 	}
 }
 
-const Type* Function::getReturnType() const
+const Orange::Type* Function::getReturnType() const
 {
 	auto ty = getType();
 	if (ty == nullptr || ty->isFunctionTy() == false)
@@ -128,7 +128,7 @@ const Type* Function::getReturnType() const
 	return ty->getBaseTy();
 }
 
-void Function::setReturnType(const Type *ty)
+void Function::setReturnType(const Orange::Type* ty)
 {
 	m_ret_type = ty;
 }
@@ -163,7 +163,7 @@ bool Function::isGeneric() const
 	return false;
 }
 
-Genericable* Function::createInstance(const Type *type)
+Genericable* Function::createInstance(const Orange::Type *type)
 {
 	if (isGeneric() == false)
 	{
@@ -214,7 +214,7 @@ Genericable* Function::createInstance(const Type *type)
 }
 
 
-bool Function::matchesType(const Type *type) const
+bool Function::matchesType(const Orange::Type* type) const
 {
 	auto arg_ty = type->as<FunctionType *>();
 	auto param_tys = getParamTys();
@@ -395,7 +395,7 @@ void Function::resolve()
 			auto cmp_ty = retStmts[i]->getType();
     		assertExists(cmp_ty, "Return statement missing type");
 			
-			switch (Type::compare(highest, cmp_ty)) {
+			switch (Orange::Type::compare(highest, cmp_ty)) {
 				case LOWER_PRECEDENCE:
 					highest = cmp_ty;
 					break;

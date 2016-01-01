@@ -13,7 +13,7 @@
 
 #include <util/assertions.h>
 
-const Type* Typed::getType() const
+const Orange::Type* Typed::getType() const
 {
 	return m_type;
 }
@@ -39,15 +39,15 @@ Comparison Typed::compare(const Typed *source, const Typed *target)
 	assertExists(source_ty, "source didn't have a type");
 	assertExists(target_ty, "target didn't have a type");
 	
-	return Type::compare(source_ty, target_ty);
+	return Orange::Type::compare(source_ty, target_ty);
 }
 
-bool Typed::matchesType(const Type *ty) const
+bool Typed::matchesType(const Orange::Type* ty) const
 {
 	return m_type->matches(ty);
 }
 
-void Typed::setType(const Type* type)
+void Typed::setType(const Orange::Type* type)
 {
 	if (m_type)
 	{

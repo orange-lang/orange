@@ -23,13 +23,14 @@
 
 #include <util/assertions.h>
 
-std::map<std::tuple<Module *, std::string>, Type*> Type::m_defined;
-std::map<TypeTuple, TypeCast> Type::m_cast_map;
-std::map<TypeTuple, TypeCallback> Type::m_cast_ty_map;
+std::map<std::tuple<Module *, std::string>, Orange::Type*>
+    Orange::Type::m_defined;
+std::map<TypeTuple, TypeCast> Orange::Type::m_cast_map;
+std::map<TypeTuple, TypeCallback> Orange::Type::m_cast_ty_map;
 
-void Type::clear(Module *mod)
+void Orange::Type::clear(Module *mod)
 {
-	std::map<std::tuple<Module *, std::string>, Type*> copy;
+	std::map<std::tuple<Module *, std::string>, Orange::Type*> copy;
 	
 	for (auto& pair : m_defined)
 	{
@@ -45,17 +46,17 @@ void Type::clear(Module *mod)
 	m_defined = copy;
 }
 
-std::string Type::getConstIdentifier()
+std::string Orange::Type::getConstIdentifier()
 {
 	return "U";
 }
 
-Module* Type::getModule() const
+Module* Orange::Type::getModule() const
 {
 	return m_module;
 }
 
-void Type::copyCasts(const std::type_info &of)
+void Orange::Type::copyCasts(const std::type_info &of)
 {
 	for (auto pair : m_cast_map)
 	{
@@ -80,102 +81,102 @@ void Type::copyCasts(const std::type_info &of)
 	}
 }
 
-std::string Type::getString() const
+std::string Orange::Type::getString() const
 {
 	throw fatal_error("Type::getString not overriden for type");
 }
 
-bool Type::isSigned() const
+bool Orange::Type::isSigned() const
 {
 	return false;
 }
 
-bool Type::isPODTy() const
+bool Orange::Type::isPODTy() const
 {
 	return false;
 }
 
-bool Type::isArrayTy() const
+bool Orange::Type::isArrayTy() const
 {
 	return false;
 }
 
-bool Type::isDoubleTy() const
+bool Orange::Type::isDoubleTy() const
 {
 	return false;
 }
 
-bool Type::isFloatTy() const
+bool Orange::Type::isFloatTy() const
 {
 	return false;
 }
 
-bool Type::isFloatingPointTy() const
+bool Orange::Type::isFloatingPointTy() const
 {
 	return false;
 }
 
-bool Type::isFunctionTy() const
+bool Orange::Type::isFunctionTy() const
 {
 	return false;
 }
 
-bool Type::isIntTy() const
+bool Orange::Type::isIntTy() const
 {
 	return false;
 }
 
-bool Type::isBoolTy() const
+bool Orange::Type::isBoolTy() const
 {
 	return false;
 }
 
-bool Type::isPointerTy() const
+bool Orange::Type::isPointerTy() const
 {
 	return false;
 }
 
-bool Type::isVoidTy() const
+bool Orange::Type::isVoidTy() const
 {
 	return false;
 }
 
-bool Type::isVarTy() const
+bool Orange::Type::isVarTy() const
 {
 	return false;
 }
 
-bool Type::isClassTy() const
+bool Orange::Type::isClassTy() const
 {
 	return false;
 }
 
-bool Type::isNodeTy() const
+bool Orange::Type::isNodeTy() const
 {
 	return false;
 }
 
-bool Type::isFutureTy() const
+bool Orange::Type::isFutureTy() const
 {
 	return false;
 }
 
-bool Type::isAggTy() const
+bool Orange::Type::isAggTy() const
 {
 	return false;
 }
 
-bool Type::isConst() const
+bool Orange::Type::isConst() const
 {
 	return m_const;
 }
 
-BasicType Type::PODTy() const
+BasicType Orange::Type::PODTy() const
 {
 	return TYOTHER;
 }
 
-const Type* Type::getPointerTo() const
+const Orange::Type* Orange::Type::getPointerTo() const
 {
 	if (isVarTy())
 	{
@@ -185,22 +186,22 @@ const Type* Type::getPointerTo() const
 	return PointerType::get(getModule(), (Type *)this);
 }
 
-const Type* Type::getBaseTy() const
+const Orange::Type* Orange::Type::getBaseTy() const
 {
 	return (Type *)this;
 }
 
-const Type* Type::getRootTy() const
+const Orange::Type* Orange::Type::getRootTy() const
 {
 	return (Type *)this;
 }
 
-const Type* Type::getConst() const
+const Orange::Type* Orange::Type::getConst() const
 {
 	throw fatal_error("getConst not overriden for type");
 }
 
-bool Type::matches(const Type *ty) const
+bool Orange::Type::matches(const Orange::Type *ty) const
 {
 	bool does_match = ty == this || ty->isVarTy() || this->isVarTy() ||
 		this->getBaseTy()->isVarTy() || ty->getBaseTy()->isVarTy();
@@ -217,7 +218,7 @@ bool Type::matches(const Type *ty) const
 	return does_match;
 }
 
-Type* Type::getDefined(Module* mod, std::string signature)
+Orange::Type* Orange::Type::getDefined(Module* mod, std::string signature)
 {
 	auto it = m_defined.find(std::make_tuple(mod, signature));
 	
@@ -229,22 +230,23 @@ Type* Type::getDefined(Module* mod, std::string signature)
 	return it->second;
 }
 
-const Type* Type::replaceMember(const Type* member, const Type* with) const
+const Orange::Type* Orange::Type::replaceMember(const Orange::Type* member,
+												const Orange::Type* with) const
 {
 	return this;
 }
 
-std::vector<const Type*> Type::getMemberTys() const
+std::vector<const Orange::Type*> Orange::Type::getMemberTys() const
 {
-	return std::vector<const Type*>();
+	return std::vector<const Orange::Type*>();
 }
 
-unsigned int Type::getIntegerBitWidth() const
+unsigned int Orange::Type::getIntegerBitWidth() const
 {
 	return 0;
 }
 
-void Type::define(Module* mod, std::string signature, Type *ty)
+void Orange::Type::define(Module* mod, std::string signature, Orange::Type *ty)
 {
 	assertExists(mod, "Mod cannot be nullptr");
 	
@@ -262,10 +264,11 @@ void Type::define(Module* mod, std::string signature, Type *ty)
 	ty->m_module = mod;
 }
 
-void Type::defineCast(const std::type_info &to, TypeCallback cb)
+void Orange::Type::defineCast(const std::type_info &to, TypeCallback cb)
 {
 	TypeCast tc = [cb](void* build, Valued* val,
-					   const Type* from, const Type* to) -> llvm::Value*
+					   const Orange::Type* from,
+					   const Orange::Type* to) -> llvm::Value*
 	{
 		assertExists(build, "build must exist");
 		assertExists(from, "from must exist");
@@ -293,15 +296,16 @@ void Type::defineCast(const std::type_info &to, TypeCallback cb)
 	m_cast_ty_map[tuple] = cb;
 }
 
-void Type::defineCast(const std::type_info &to, int cast)
+void Orange::Type::defineCast(const std::type_info &to, int cast)
 {
-	TypeCallback cb = [cast](const Type*, const Type*) -> int
+	TypeCallback cb = [cast](const Orange::Type*, const Orange::Type*) -> int
 	{
 		return cast;
 	};
 	
 	TypeCast tc = [cb](void* build, Valued* val,
-					 const Type* from, const Type* to) -> llvm::Value*
+					   const Orange::Type* from,
+					   const Orange::Type* to) -> llvm::Value*
 	{
 		assertExists(build, "build must exist");
 		assertExists(from, "from must exist");
@@ -329,29 +333,31 @@ void Type::defineCast(const std::type_info &to, int cast)
 	m_cast_ty_map[tuple] = cb;
 }
 
-void Type::defineCast(const std::type_info &to, TypeCallback cb, TypeCast func)
+void Orange::Type::defineCast(const std::type_info &to, TypeCallback cb,
+							  TypeCast func)
 {
 	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
 	m_cast_map[tuple] = func;
 	m_cast_ty_map[tuple] = cb;
 }
 
-void Type::defineCast(const std::type_info& to, int cast, TypeCast func)
+void Orange::Type::defineCast(const std::type_info& to, int cast, TypeCast func)
 {
 	TypeTuple tuple(typeid(*this).hash_code(), to.hash_code());
 	m_cast_map[tuple] = func;
-	m_cast_ty_map[tuple] = [cast](const Type*, const Type*) -> int
+	m_cast_ty_map[tuple] = [cast](const Orange::Type*,
+								  const Orange::Type*) -> int
 	{
 		return cast;
 	};
 }
 
-std::string Type::getSignature() const
+std::string Orange::Type::getSignature() const
 {
-	throw fatal_error("Type::getSignature not overriden");
+	throw fatal_error("Orange::Type::getSignature not overriden");
 }
 
-int Type::castOperation(const Type *to) const
+int Orange::Type::castOperation(const Orange::Type *to) const
 {
 	if (this == to)
 	{
@@ -370,7 +376,8 @@ int Type::castOperation(const Type *to) const
 	return it_cb->second(this, to);
 }
 
-llvm::Value* Type::cast(void *irBuilder, Valued *val, const Type *target) const
+llvm::Value* Orange::Type::cast(void *irBuilder, Valued *val,
+								const Orange::Type *target) const
 {
 	TypeTuple key(typeid(*this).hash_code(), typeid(*target).hash_code());
 	
@@ -390,17 +397,18 @@ llvm::Value* Type::cast(void *irBuilder, Valued *val, const Type *target) const
 	return it->second(irBuilder, val, src, target);
 }
 
-llvm::Type* Type::getLLVMType() const
+llvm::Type* Orange::Type::getLLVMType() const
 {
 	return m_type;
 }
 
-const Type* Type::getComparisonTy() const
+const Orange::Type* Orange::Type::getComparisonTy() const
 {
 	return this;
 }
 
-Comparison Type::compare(const Type *source, const Type *target)
+Comparison Orange::Type::compare(const Orange::Type *source,
+								 const Orange::Type *target)
 {
 	assertExists(source, "Source type must exist");
 	assertExists(target, "Target type must exist");
@@ -443,7 +451,7 @@ Comparison Type::compare(const Type *source, const Type *target)
 	}
 }
 
-bool Type::exprValidForArrSize(Expression* expr)
+bool Orange::Type::exprValidForArrSize(Expression* expr)
 {
 	if (expr->isConstant() == false)
 	{
@@ -463,7 +471,7 @@ bool Type::exprValidForArrSize(Expression* expr)
 	return true;
 }
 
-unsigned int Type::exprAsArrSize(Expression* expr)
+unsigned int Orange::Type::exprAsArrSize(Expression* expr)
 {
 	if (dynamic_cast<Value *>(expr) == nullptr)
 	{
@@ -485,29 +493,29 @@ unsigned int Type::exprAsArrSize(Expression* expr)
 	return size;
 }
 
-bool Type::isVariadiclySized() const
+bool Orange::Type::isVariadiclySized() const
 {
 	return false;
 }
 
-std::vector<Expression *> Type::getVariadicSizes() const
+std::vector<Expression *> Orange::Type::getVariadicSizes() const
 {
 	return std::vector<Expression *>();
 }
 
-const Type* Type::copyType() const
+const Orange::Type* Orange::Type::copyType() const
 {
 	return this;
 }
 
-Type::Type(bool isConst)
+Orange::Type::Type(bool isConst)
 {
 	m_context = & llvm::getGlobalContext();
 	m_const = isConst;
 	m_type = llvm::Type::getVoidTy(*m_context);
 }
 
-Type::~Type()
+Orange::Type::~Type()
 {
 	// Do nothing.
 }

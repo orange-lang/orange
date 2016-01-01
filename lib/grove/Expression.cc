@@ -13,7 +13,7 @@
 #include <llvm/IR/Instruction.h>
 #include <llvm/IR/IRBuilder.h>
 
-llvm::Value* Expression::castTo(const Type *ty) const
+llvm::Value* Expression::castTo(const Orange::Type *ty) const
 {
 	assertExists(ty, "type must exist.");
 	assertExists(getType(), "expression does not have a type.");

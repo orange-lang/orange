@@ -28,7 +28,7 @@ typedef llvm::IRBuilder<true, llvm::ConstantFolder,
 
 class Module;
 class Named;
-class Type;
+namespace Orange { class Type; }
 
 /**
  * ASTNode is the root node for any element in the AST.
@@ -184,7 +184,7 @@ public:
 	
 	/// Returns a named node from the AST, searched from this node, using
 	/// all the parent blocks.
-	Named* findNamed(OString name, const Type* type,
+	Named* findNamed(OString name, const Orange::Type* type,
 					 SearchSettings settings = SearchSettings())
 	const;
 

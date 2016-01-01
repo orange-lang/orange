@@ -10,7 +10,7 @@
 
 #include "Type.h"
 
-class IntType : public Type
+class IntType : public Orange::Type
 {
 private:
 	unsigned int m_width = 0;

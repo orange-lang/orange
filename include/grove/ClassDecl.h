@@ -43,14 +43,14 @@ public:
 	virtual void resolve() override;
 	virtual void build() override;
 	
-	virtual bool matchesType(const Type* other) const override;
+	virtual bool matchesType(const Orange::Type* other) const override;
 	
 	virtual bool isAccessible() const override;
 	virtual Expression* access(OString name, const ASTNode* hint)
 		const override;
 	
 	virtual bool isGeneric() const override;
-	virtual Genericable* createInstance(const Type* type) override;
+	virtual Genericable* createInstance(const Orange::Type* type) override;
 	
 	std::vector<MemberVarDecl*> getMembers() const;
 	std::vector<ClassMethod*> getMethods() const;
@@ -64,7 +64,7 @@ public:
 	
 	/// Gets a type to use to refer to this class.
 	/// Returns var if the class is generic.
-	Type* getRefTy() const;
+	Orange::Type* getRefTy() const;
 	
 	bool hasDefaultCtor() const;
 	

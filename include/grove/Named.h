@@ -13,7 +13,7 @@
 
 #include <vector>
 
-class Type;
+namespace Orange { class Type; }
 
 /**
  * Named is an interface to define any node with a name that should be 

@@ -11,7 +11,7 @@
 #include "code_error.h"
 #include "../OString.h"
 
-class Type;
+namespace Orange { class Type; }
 
 /**
  * binop_error is used for errors of a binary operation between two 
@@ -20,9 +20,10 @@ class Type;
 class binop_error : public code_error
 {
 public:
-	binop_error(CodeBase* element, const Type* LHS, OString op,
-				const Type* RHS);
+	binop_error(CodeBase* element, const Orange::Type* LHS, OString op,
+				const Orange::Type* RHS);
 	
-	binop_error(CodeBase* element, const Type* LHS, OString op,
-				const Type* RHS, const Type* expectLHS, const Type* expectRHS);
+	binop_error(CodeBase* element, const Orange::Type* LHS, OString op,
+				const Orange::Type* RHS, const Orange::Type* expectLHS,
+				const Orange::Type* expectRHS);
 };

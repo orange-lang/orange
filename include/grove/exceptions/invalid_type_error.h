@@ -10,7 +10,7 @@
 
 #include "code_error.h"
 
-class Type;
+namespace Orange { class Type; }
 
 /**
  * invalid_type_error is used when a given type is invalid.
@@ -19,5 +19,6 @@ class Type;
 class invalid_type_error : public code_error
 {
 public:
-	invalid_type_error(CodeBase* element, std::string desc, const Type* ty);
+	invalid_type_error(CodeBase* element, std::string desc,
+					   const Orange::Type* ty);
 };

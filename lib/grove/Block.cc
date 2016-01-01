@@ -47,7 +47,7 @@ Named* Block::verify(Named *n, const ASTNode *from) const
 	throw access_denied_error(n->as<CodeBase*>(), from, n->getName().str());
 }
 
-Named* Block::namedOrGenericInstance(Named* n, const Type* t,
+Named* Block::namedOrGenericInstance(Named* n, const Orange::Type* t,
 									 const ASTNode* from) const
 {
 	if (n->is<Genericable *>() &&
@@ -94,7 +94,7 @@ bool Block::hasNamed(OString name, const ASTNode *limit,
 	return false;
 }
 
-Named* Block::getNamed(OString name, const Type* type,
+Named* Block::getNamed(OString name, const Orange::Type* type,
 					   const ASTNode *limit, SearchSettings settings) const
 {
 	// First thing to do is get the list of names that match.

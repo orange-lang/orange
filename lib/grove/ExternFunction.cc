@@ -20,9 +20,9 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Function.h>
 
-std::vector<const Type *> ExternFunction::getParamTys() const
+std::vector<const Orange::Type *> ExternFunction::getParamTys() const
 {
-	std::vector<const Type *> tys;
+	std::vector<const Orange::Type *> tys;
 	
 	for (auto param : getParams())
 	{
@@ -74,7 +74,7 @@ void ExternFunction::build()
 }
 
 ExternFunction::ExternFunction(OString name, std::vector<Parameter *> params,
-							   const Type* retType, bool vararg)
+							   const Orange::Type* retType, bool vararg)
 {
 	if (name == "")
 	{

@@ -56,7 +56,7 @@ void ArrayValue::resolve()
 		auto cmp_ty = getElements().at(i)->getType();
 		assertExists(cmp_ty, "Array element missing type");
 		
-		switch (Type::compare(highest, cmp_ty)) {
+		switch (Orange::Type::compare(highest, cmp_ty)) {
 			case LOWER_PRECEDENCE:
 				highest = cmp_ty;
 				break;

@@ -320,7 +320,7 @@ void ClassDecl::resolve()
 	}
 	
 	// Get all the members types
-	std::vector<const Type *> member_types;
+	std::vector<const Orange::Type *> member_types;
 	
 	for (auto member : getMembers())
 	{
@@ -374,7 +374,7 @@ void ClassDecl::build()
 	buildStatements();
 }
 
-bool ClassDecl::matchesType(const Type *other) const
+bool ClassDecl::matchesType(const Orange::Type *other) const
 {
 	if (other->isClassTy() == false)
 	{
@@ -426,7 +426,7 @@ bool ClassDecl::isGeneric() const
 	return getGenericMembers().size() > 0;
 }
 
-Genericable* ClassDecl::createInstance(const Type *type)
+Genericable* ClassDecl::createInstance(const Orange::Type *type)
 {
 	if (isGeneric() == false)
 	{
@@ -439,7 +439,7 @@ Genericable* ClassDecl::createInstance(const Type *type)
 	
 	getModule()->endCopy();
 	
-	std::vector<const Type *> member_types;
+	std::vector<const Orange::Type *> member_types;
 	for (auto& member : clone->getMembers())
 	{
 		if (member->getType()->isVarTy() &&
@@ -484,7 +484,7 @@ std::vector<MemberVarDecl*> ClassDecl::getGenericMembers() const
 	return genericMembers;
 }
 
-Type* ClassDecl::getRefTy() const
+Orange::Type* ClassDecl::getRefTy() const
 {
 	if (isGeneric())
 	{

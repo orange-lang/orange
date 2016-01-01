@@ -12,7 +12,7 @@
 #include "Named.h"
 #include "Accessible.h"
 
-class Type;
+namespace Orange { class Type; }
 
 class Parameter : public Expression, public Named, public Accessible {
 public:
@@ -33,8 +33,8 @@ public:
 	virtual Expression* access(OString name, const ASTNode* hint)
 		const override;
 	
-	virtual void setType(const Type* type) override;
+	virtual void setType(const Orange::Type* type) override;
 	
-	Parameter(const Type* type, OString name);
+	Parameter(const Orange::Type* type, OString name);
 	Parameter(const Parameter& other);
 };

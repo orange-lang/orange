@@ -32,6 +32,7 @@ public:
 	
 	virtual void build() override;
 	
-	MemberVarDecl(const Type* type, OString name, Expression* expression);
+	MemberVarDecl(const Orange::Type* type, OString name,
+				  Expression* expression);
 	MemberVarDecl(const MemberVarDecl& other);
 };

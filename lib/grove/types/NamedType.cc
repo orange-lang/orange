@@ -10,7 +10,7 @@
 
 #include <grove/exceptions/fatal_error.h>
 
-Type* NamedType::getType() const
+Orange::Type* NamedType::getType() const
 {
 	return m_type;
 }
@@ -20,7 +20,7 @@ std::string NamedType::getName() const
 	return m_name;
 }
 
-NamedType::NamedType(std::string name, Type* type)
+NamedType::NamedType(std::string name, Orange::Type* type)
 {
 	if (name == "")
 	{

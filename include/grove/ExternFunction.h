@@ -16,7 +16,7 @@
 #include "Valued.h"
 
 class Parameter;
-class Type;
+namespace Orange { class Type; }
 
 class ExternFunction
 : public Statement, public Named, public Typed, public Valued
@@ -24,13 +24,13 @@ class ExternFunction
 private:
 	std::vector<Parameter *> m_params;
 	
-	const Type* m_ret_type = nullptr;
+	const Orange::Type* m_ret_type = nullptr;
 	bool m_vararg = false;
 public:
 	virtual void build() override;
 	
 	/// Gets the list of parameters as a list of types.
-	std::vector<const Type *> getParamTys() const;
+	std::vector<const Orange::Type *> getParamTys() const;
 	
 	/// Gets the list of parameters.
 	std::vector<Parameter *> getParams() const;
@@ -43,6 +43,6 @@ public:
 	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
 	
 	ExternFunction(OString name, std::vector<Parameter *> params,
-				   const Type* retType, bool vaarg = false);
+				   const Orange::Type* retType, bool vaarg = false);
 	ExternFunction(const ExternFunction& other);
 };

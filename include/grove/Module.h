@@ -22,7 +22,7 @@ class Block;
 class Function;
 class ASTNode;
 class Named;
-class Type;
+namespace Orange { class Type; }
 
 namespace llvm { class Module; }
 namespace llvm { class LLVMContext; }
@@ -184,7 +184,8 @@ public:
 	
 	/// Returns a named node with a given name, optional type settings
 	/// and search settings from the AST, up to but not including from.
-	Named* findNamed(OString name, const Type* type, const ASTNode* from,
+	Named* findNamed(OString name, const Orange::Type* type,
+					 const ASTNode* from,
 					 SearchSettings settings = SearchSettings()) const;
 	
 	/// Returns all named nodes with a given name in the AST, up to but not

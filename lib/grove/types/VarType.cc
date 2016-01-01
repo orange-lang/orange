@@ -47,7 +47,7 @@ bool VarType::isVarTy() const
 	return true;
 }
 
-Type* VarType::getConst() const
+Orange::Type* VarType::getConst() const
 {
 	return VarType::get(getModule(), true);
 }

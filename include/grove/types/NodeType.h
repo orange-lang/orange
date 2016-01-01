@@ -14,7 +14,7 @@
 /**
  * A type that is both a type and in the AST. Allows for resolving of type.
  */
-class NodeType : public Type, public ASTNode
+class NodeType : public Orange::Type, public ASTNode
 {
 public:
 	virtual bool isNodeTy() const override;

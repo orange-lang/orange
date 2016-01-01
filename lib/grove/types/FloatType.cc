@@ -71,7 +71,7 @@ BasicType FloatType::PODTy() const
 	return TYFLOAT;
 }
 
-Type* FloatType::getConst() const
+Orange::Type* FloatType::getConst() const
 {
 	return FloatType::get(getModule(), true);
 }

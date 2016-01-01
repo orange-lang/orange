@@ -81,7 +81,7 @@ void ReturnStmt::build()
 		auto ret_ty = getType();
     	if (ret_ty != func->getReturnType())
     	{
-    		switch (Type::compare(getType(), func->getReturnType()))
+			switch (Orange::Type::compare(getType(), func->getReturnType()))
     		{
     			case LOWER_PRECEDENCE:
     			case HIGHER_PRECEDENCE:

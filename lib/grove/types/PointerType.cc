@@ -31,7 +31,7 @@ PointerType::PointerType(const Type* contained, bool isConst)
 	defineCast(typeid(PointerType), llvm::Instruction::CastOps::BitCast);
 }
 
-const Type* PointerType::copyType() const
+const Orange::Type* PointerType::copyType() const
 {
 	return PointerType::get(getModule(), m_contained->copyType(),
 							isConst());
@@ -99,22 +99,23 @@ bool PointerType::isPointerTy() const
 	return true;
 }
 
-const Type* PointerType::getBaseTy() const
+const Orange::Type* PointerType::getBaseTy() const
 {
 	return m_contained;
 }
 
-const Type* PointerType::getRootTy() const
+const Orange::Type* PointerType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-const Type* PointerType::getConst() const
+const Orange::Type* PointerType::getConst() const
 {
 	return PointerType::get(getModule(), m_contained, true);
 }
 
-PointerType* PointerType::get(Module* mod, const Type *contained, bool isConst)
+PointerType* PointerType::get(Module* mod, const Orange::Type* contained,
+							  bool isConst)
 {
 	if (contained == nullptr)
 	{

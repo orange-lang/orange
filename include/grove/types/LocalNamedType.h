@@ -21,5 +21,5 @@ private:
 public:
 	Module* getModule() const;
 	
-	LocalNamedType(Module* mod, std::string name, Type* type);
+	LocalNamedType(Module* mod, std::string name, Orange::Type* type);
 };

@@ -17,8 +17,9 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/IRBuilder.h>
 
-static llvm::Value* PointerCast(void* irBuilder, Valued* val, const Type* from,
-								const Type* to)
+static llvm::Value* PointerCast(void* irBuilder, Valued* val,
+								const Orange::Type* from,
+								const Orange::Type* to)
 {
 	assertExists(irBuilder, "irbuilder must exist");
 	assertExists(val, "val must exist");
@@ -56,7 +57,7 @@ VariadicArrayType::VariadicArrayType(const Type* contained, Expression* size,
 			   PointerCast);
 }
 
-const Type* VariadicArrayType::copyType() const
+const Orange::Type* VariadicArrayType::copyType() const
 {
 	return VariadicArrayType::get(getModule(), m_contained->copyType(),
 								  m_size->copy()->as<Expression *>(),
@@ -112,17 +113,17 @@ bool VariadicArrayType::isArrayTy() const
 }
 
 
-const Type* VariadicArrayType::getBaseTy() const
+const Orange::Type* VariadicArrayType::getBaseTy() const
 {
 	return m_contained;
 }
 
-const Type* VariadicArrayType::getRootTy() const
+const Orange::Type* VariadicArrayType::getRootTy() const
 {
 	return m_contained->getRootTy();
 }
 
-const Type* VariadicArrayType::getConst() const
+const Orange::Type* VariadicArrayType::getConst() const
 {
 	return get(getModule(), m_contained, m_size, true);
 }
@@ -136,7 +137,7 @@ std::vector<Expression *> VariadicArrayType::getVariadicSizes() const
 {
 	std::vector<Expression *> sizes;
 	
-	const Type* ptr = this;
+	const Orange::Type* ptr = this;
 	while (ptr->isVariadiclySized())
 	{
 		auto va = dynamic_cast<const VariadicArrayType *>(ptr);

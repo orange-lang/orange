@@ -352,7 +352,7 @@ typedef union YYSTYPE
 	Statement* stmt;
 	Value* val;
 	OString* str;
-	const Type* ty;
+	const Orange::Type* ty;
 }
 /* Line 193 of yacc.c.  */
 #line 359 "/Users/robert/dev/orange/lib/grove/parser.cc"
@@ -3500,11 +3500,11 @@ yyreduce:
 		{
 			auto def = (yyvsp[(2) - (2)].exprs)->at(i);
 
-			if (Type::exprValidForArrSize(def) == false)
+			if (Orange::Type::exprValidForArrSize(def) == false)
 			{
 				is_const = false;
 				break;
-				}
+			}
 		}
 
 		int sz = (int)(yyvsp[(2) - (2)].exprs)->size();
@@ -3514,7 +3514,7 @@ yyreduce:
 
 			if (is_const)
 			{
-				auto arr_sz = Type::exprAsArrSize(def);
+				auto arr_sz = Orange::Type::exprAsArrSize(def);
 				(yyval.ty) = ArrayType::get(module, (yyval.ty), arr_sz, false);
 			}
 			else

@@ -13,7 +13,8 @@
 
 class Expression;
 class ASTNode;
-class Type;
+
+namespace Orange { class Type; }
 
 /**
  * Accessible defines classes that can have their members accessed.

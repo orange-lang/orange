@@ -12,7 +12,7 @@
 
 class Expression;
 
-class ArrayType : public Type
+class ArrayType : public Orange::Type
 {
 private:
 	const Type* m_contained = nullptr;

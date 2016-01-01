@@ -96,7 +96,7 @@ void Value::build()
 	}
 }
 
-void Value::convert(const Type* new_ty)
+void Value::convert(const Orange::Type* new_ty)
 {
 	if (new_ty->isIntTy() == false && new_ty->isFloatingPointTy())
 	{
@@ -195,7 +195,7 @@ Value::Value(char c)
 	m_char_const = true;
 }
 
-Value::Value(std::string str, const Type* t, int base)
+Value::Value(std::string str, const Orange::Type* t, int base)
 {
 	if (t == nullptr)
 	{

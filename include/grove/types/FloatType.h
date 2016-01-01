@@ -10,7 +10,7 @@
 
 #include "Type.h"
 
-class FloatType : public Type
+class FloatType : public Orange::Type
 {
 protected:
 	FloatType(bool isConst);

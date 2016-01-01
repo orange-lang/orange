@@ -78,7 +78,7 @@ Expression* Parameter::access(OString name, const ASTNode *hint) const
 	return accessible_ref->access(name, hint_to_use);
 }
 
-void Parameter::setType(const Type *type)
+void Parameter::setType(const Orange::Type* type)
 {
 	if (m_type && m_type->getRootTy()->is<NodeType *>())
 	{
@@ -93,7 +93,7 @@ void Parameter::setType(const Type *type)
 	}
 }
 
-Parameter::Parameter(const Type* type, OString name)
+Parameter::Parameter(const Orange::Type* type, OString name)
 {
 	assertExists(type, "Type must not be null");
 	

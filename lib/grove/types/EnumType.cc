@@ -16,7 +16,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Instruction.h>
 
-EnumType::EnumType(const Type* contained, bool isConst)
+EnumType::EnumType(const Orange::Type* contained, bool isConst)
 : Type(isConst)
 {
 	if (contained == nullptr)
@@ -30,7 +30,7 @@ EnumType::EnumType(const Type* contained, bool isConst)
 	copyCasts(typeid(*contained));
 }
 
-const Type* EnumType::copyType() const
+const Orange::Type* EnumType::copyType() const
 {
 	return EnumType::get(getModule(), m_contained->copyType(), isConst());
 }
@@ -66,17 +66,17 @@ bool EnumType::isSigned() const
 	return getBaseTy()->isSigned();
 }
 
-const Type* EnumType::getBaseTy() const
+const Orange::Type* EnumType::getBaseTy() const
 {
 	return m_contained;
 }
 
-const Type* EnumType::getRootTy() const
+const Orange::Type* EnumType::getRootTy() const
 {
 	return getBaseTy()->getRootTy();
 }
 
-const Type* EnumType::getConst() const
+const Orange::Type* EnumType::getConst() const
 {
 	return EnumType::get(getModule(), m_contained, true);
 }

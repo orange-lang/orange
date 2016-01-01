@@ -8,7 +8,7 @@
 
 #pragma once
 
-class Type;
+namespace Orange { class Type; }
 
 #include "exceptions/fatal_error.h"
 

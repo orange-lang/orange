@@ -22,6 +22,7 @@ class Expression;
 namespace llvm { class Type; }
 namespace llvm { class LLVMContext; }
 namespace llvm { class Value; }
+namespace Orange { class Type; }
 
 /// BasicTypes are plain old data types that are
 /// ordered by precedence, descending.
@@ -41,20 +42,20 @@ typedef enum {
 	TYOTHER
 } BasicType;
 
-class Type;
 class Valued;
 typedef std::tuple<size_t, size_t> TypeTuple;
 
-typedef std::function<int(const Type*, const Type*)> TypeCallback;
-typedef std::function<llvm::Value*(void*, Valued*, const Type*,
-								   const Type*)> TypeCast;
+typedef std::function<int(const Orange::Type*, const Orange::Type*)>
+	TypeCallback;
+typedef std::function<llvm::Value*(void*, Valued*, const Orange::Type*,
+								   const Orange::Type*)> TypeCast;
 
 const int NO_CAST = 0;
 
 /**
  * Type is the base class for any Orange Type.
  */
-class Type : public ObjectBase {
+class Orange::Type : public ObjectBase {
 private:
 	/// The map of defined types, where the key is a unique identifier.
 	static std::map<std::tuple<Module*,std::string>, Type *> m_defined;

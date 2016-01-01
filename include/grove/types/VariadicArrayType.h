@@ -12,7 +12,7 @@
 
 class Expression;
 
-class VariadicArrayType : public Type
+class VariadicArrayType : public Orange::Type
 {
 private:
 	const Type* m_contained = nullptr;

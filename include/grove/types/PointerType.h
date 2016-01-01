@@ -10,7 +10,7 @@
 
 #include "Type.h"
 
-class PointerType : public Type
+class PointerType : public Orange::Type
 {
 private:
 	const Type* m_contained = nullptr;

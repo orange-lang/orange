@@ -10,7 +10,7 @@
 
 #include "Type.h"
 
-class VoidType : public Type
+class VoidType : public Orange::Type
 {
 protected:
 	VoidType();
