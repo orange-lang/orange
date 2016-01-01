@@ -43,6 +43,13 @@ std::vector<std::vector<ObjectBase *>*> Constructor::getMemberLists()
 	return defMemberLists();
 }
 
+void Constructor::findDependencies()
+{
+	addDependency(m_method);
+	
+	Function::findDependencies();
+}
+
 Genericable* Constructor::createInstance(const Orange::Type *type)
 {
 	if (getClass()->isGeneric() && getMethod() == nullptr)
