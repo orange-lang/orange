@@ -346,13 +346,13 @@ void ClassDecl::resolve()
 	if (ctors.size() == 0)
 	{
 		/// Create a default constructor that does nothing.
-		createCtor(nullptr);
+		getCtorForMethod(nullptr);
 	}
 	else
 	{
 		for (auto ctor : ctors)
 		{
-			createCtor(ctor);
+			getCtorForMethod(ctor);
 		}
 	}
 	
