@@ -1,0 +1,20 @@
+class TestClass
+	var a
+
+	def get()
+		return TestClass(a * a)
+	end
+
+	def TestClass(var num)
+		a = num
+	end
+end
+
+var obj = TestClass(25)
+var other = obj.get()
+
+return 1 if other.a != 625
+
+var obj2 = TestClass(35.25)
+var other2 = obj2.get()
+return 1 if other2.a < 1242.5625 

@@ -1,0 +1,16 @@
+class TestClass
+	int a
+
+	def get()
+		return TestClass(a * a)
+	end
+
+	def TestClass(int num)
+		a = num
+	end
+end
+
+var obj = TestClass(25)
+var other = obj.get()
+
+return 1 if other.a != 625
