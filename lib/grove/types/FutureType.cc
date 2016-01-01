@@ -89,11 +89,11 @@ void FutureType::replace(const Orange::Type* with)
 			
 			if (comp_ty->isAggTy())
 			{
-				ref_ty->setRefType(comp_ty->replaceMember(this, with));
+				ref_ty->setType(comp_ty->replaceMember(this, with));
 			}
 			else if (comp_ty == this)
 			{
-				ref_ty->setRefType(with);
+				ref_ty->setType(with);
 			}
 		}
 		else

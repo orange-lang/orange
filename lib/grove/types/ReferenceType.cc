@@ -136,7 +136,7 @@ void ReferenceType::resolve()
 	{
 		auto typed = m_reference->as<Typed *>();
     	assertExists(typed->getType(), "node has no type");
-		setRefType(typed->getType());
+		setType(typed->getType());
 	}
 	
 	if (Type::m_type == nullptr)
@@ -221,7 +221,7 @@ const Orange::Type* ReferenceType::copyType() const
 	return copy()->as<Type *>();
 }
 
-void ReferenceType::setRefType(const Orange::Type* ty)
+void ReferenceType::setType(const Orange::Type* ty)
 {
 	if (ty->is<ReferenceType *>())
 	{
@@ -261,7 +261,7 @@ ReferenceType::ReferenceType(const ASTNode* reference,
 	m_location = reference->getLocation();
 	
 	assertExists(refType, "refType for ReferenceType was empty");
-	setRefType(refType);
+	setType(refType);
 	
 	m_sticky_ref_type = true;
 }
