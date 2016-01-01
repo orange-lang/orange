@@ -434,6 +434,11 @@ void Function::resolve()
 
 void Function::createFunction()
 {
+	if (m_function != nullptr)
+	{
+		return;
+	}
+	
 	assertExists(getType(), "Function does not have a type.");
 	
 	auto llvm_ty = (llvm::FunctionType *)(getType()->getLLVMType());
