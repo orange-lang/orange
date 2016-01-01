@@ -14,7 +14,7 @@
  * TypeProvider specifies nodes that can provide a type to a 
  * NodeType.
  */
-class TypeProvider : public CodeBase
+class TypeProvider : virtual public ObjectBase
 {
 	
 };
