@@ -223,6 +223,11 @@ const Orange::Type* ReferenceType::copyType() const
 
 void ReferenceType::setRefType(const Orange::Type* ty)
 {
+	if (ty->is<ReferenceType *>())
+	{
+		throw fatal_error("Trying to create a reference to a reference");
+	}
+	
 	m_ref_type = ty;
 	m_type = m_ref_type->getLLVMType();
 }
