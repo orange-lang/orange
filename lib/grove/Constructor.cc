@@ -92,9 +92,14 @@ Genericable* Constructor::createInstance(const Orange::Type *type)
 		throw fatal_error("Operating Method's class is still generic");
 	}
 	
-	// Now we can create an instance of the method.
-	auto cloned_method =
-		operating_method->createInstance(type)->as<ClassMethod*>();
+	auto cloned_method = operating_method;
+	
+	if (operating_method->isGeneric())
+	{
+		// Now we can create an instance of the method.
+		cloned_method =
+			operating_method->createInstance(type)->as<ClassMethod*>();
+	}
 	
 	// We need to resolve the method followed by the class itself so we
 	// can get the appropriate Constructor.
