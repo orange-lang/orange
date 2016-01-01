@@ -133,6 +133,11 @@ BinOpAssign* ClassMethod::getInitializerForMember(MemberVarDecl *member) const
 	return nullptr;
 }
 
+bool ClassMethod::isGeneric() const
+{
+	return Function::isGeneric() || m_class->isGeneric();
+}
+
 ClassMethod::ClassMethod(OString name, ClassDecl* theClass,
 						 std::vector<Parameter *> params)
 : Function(name, params)

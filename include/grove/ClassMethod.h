@@ -41,6 +41,8 @@ public:
 	
 	virtual bool isConstructor() const;
 	
+	virtual bool isGeneric() const override;
+	
 	virtual ASTNode* copy() const override;
 	
 	virtual std::vector<ObjectBase**> getMemberNodes() override;

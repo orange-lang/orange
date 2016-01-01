@@ -33,6 +33,11 @@ ASTNode* Constructor::copy() const
 	return new Constructor(*this);
 }
 
+bool Constructor::isGeneric() const
+{
+	return Function::isGeneric() || m_class->isGeneric();
+}
+
 std::vector<ObjectBase**> Constructor::getMemberNodes()
 {
 	return defMemberNodes();

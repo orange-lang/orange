@@ -29,6 +29,8 @@ public:
 	
 	virtual void findDependencies() override;
 	
+	virtual bool isGeneric() const override;
+	
 	virtual Genericable* createInstance(const Orange::Type* type) override;
 	
 	virtual std::vector<ObjectBase**> getMemberNodes() override;
