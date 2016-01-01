@@ -228,7 +228,8 @@ void ReferenceType::setRefType(const Orange::Type* ty)
 		throw fatal_error("Trying to create a reference to a reference");
 	}
 	
-	Typed::m_type = ty;
+	Typed::setType(ty);
+	
 	Type::m_type = Typed::m_type->getLLVMType();
 }
 
