@@ -109,6 +109,16 @@ Genericable* Constructor::createInstance(const Orange::Type *type)
 	return cloned_ctor;
 }
 
+void Constructor::build()
+{
+	if (isGeneric())
+	{
+		return;
+	}
+	
+	Function::build();
+}
+
 Constructor::Constructor(ClassDecl* theClass, ClassMethod* method,
 						 OString name, std::vector<Parameter *> params)
 : Function(name, params)
