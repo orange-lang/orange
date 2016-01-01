@@ -208,14 +208,14 @@ Genericable* Function::createInstance(const Orange::Type *type)
 	clone->m_instance_of = this;
 	
 	m_instances.push_back(clone);
-	getParent()->addChild(clone);
+	findParent<Block *>()->addStatement(clone, this, 1);
 	
 	return clone;
 }
 
 
 bool Function::matchesType(const Orange::Type* type) const
-{
+{	
 	auto arg_ty = type->as<Orange::FunctionType *>();
 	auto param_tys = getParamTys();
 	
@@ -515,11 +515,6 @@ void Function::build()
 {
 	if (isGeneric())
 	{
-		for (auto inst : m_instances)
-		{
-			inst->as<Function *>()->build();
-		}
-		
 		return;
 	}
 	
