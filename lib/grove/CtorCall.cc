@@ -114,7 +114,15 @@ void CtorCall::resolve()
 	auto class_ty = the_class->getType();
 	assertExists(class_ty, "Class has no defined type");
 	
+	// We need to temporarily set a type for when we're resolving the
+	// function call.
 	m_this_param->setType(class_ty->getPointerTo());
+	
+	auto tempref = new ReferenceType(the_class);
+	addChild(tempref);
+	getModule()->process(tempref);
+	
+	setType(tempref);
 	
 	FunctionCall::resolve();
 	
