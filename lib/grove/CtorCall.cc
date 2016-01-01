@@ -72,7 +72,8 @@ void CtorCall::findNode()
 	
 	settings.filter = [](Named* named)
 	{
-		return named->is<Constructor *>();
+		return named->is<Constructor *>() &&
+			named->as<Constructor *>()->getClass()->isInstance() == false;
 	};
 	
 	auto def = findNamed(getName(), expectedFunctionTy(), settings);
@@ -96,13 +97,14 @@ ClassDecl* CtorCall::findClass() const
 	
 	settings.filter = [](Named* named)
 	{
-		return named->is<TypeProvider *>();
+		return named->is<ClassDecl *>() &&
+			named->as<ClassDecl *>()->isInstance() == false;
 	};
 	
 	auto named = findNamed(getName(), nullptr, settings);
 	if (named == nullptr)
 	{
-		throw fatal_error("Could not find constructor");
+		throw fatal_error("Could not find class");
 	}
 	
 	return named->as<ClassDecl *>();
