@@ -39,7 +39,7 @@ public:
 	
 	/// Determines whether or not this block has a named node by
 	/// a given name.
-	bool hasNamed(OString name, const ASTNode* limit,
+	virtual bool hasNamed(OString name, const ASTNode* limit,
 				  SearchSettings settings) const;
 	
 	/// Returns a named node, if it exists, from this block with a specific
@@ -48,10 +48,10 @@ public:
 	/// @param type Optional. The type of the node to get.
 	/// @param from The node who is searching. Must be an immediate child.
 	/// @param settings The settings to use.
-	Named* getNamed(OString name, const Orange::Type* type, const ASTNode* from,
-					SearchSettings settings) const;
+	virtual Named* getNamed(OString name, const Orange::Type* type,
+							const ASTNode* from, SearchSettings settings) const;
 	
-	std::vector<Named *> getAllNamed(OString name, const ASTNode* from)
+	virtual std::vector<Named *> getAllNamed(OString name, const ASTNode* from)
     	const;
 	
 	virtual ASTNode* copy() const override;
