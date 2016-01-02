@@ -93,6 +93,25 @@ Expression* MemberAccess::access(OString name, const ASTNode *hint) const
 	return m_member->access(name, this);
 }
 
+void MemberAccess::initialize()
+{
+	m_member = m_class->getMember(m_name);
+	
+	if (m_member == nullptr)
+	{
+		auto name = m_name;
+		auto classDecl= m_class;
+		throw code_error((ASTNode *)m_class,
+						 [&name, classDecl] () -> std::string
+						 {
+							 std::stringstream ss;
+							 ss << "Object of class " << classDecl->getName().str()
+							 << " has no member " << name.str();
+							 return ss.str();
+						 });
+	}
+}
+
 void MemberAccess::findDependencies()
 {
 	ASTNode::findDependencies();
@@ -236,19 +255,6 @@ MemberAccess::MemberAccess(const ClassDecl* classDecl, Valued* valued,
 	
 	m_class = classDecl;
 	m_valued = valued;
-	m_member = m_class->getMember(name);
-	
-	if (m_member == nullptr)
-	{
-		throw code_error((ASTNode *)classDecl,
-			[&name, classDecl] () -> std::string
-			{
-				std::stringstream ss;
-				ss << "Object of class " << classDecl->getName().str()
-				   << " has no member " << name.str();
-				return ss.str();
-			});
-	}
 }
 
 MemberAccess::MemberAccess(const MemberAccess& other)

@@ -45,6 +45,7 @@ public:
 	virtual Expression* access(OString name, const ASTNode* hint)
 		const override;
 	
+	virtual void initialize() override;
 	virtual void findDependencies() override;
 	virtual void resolve() override;
 	virtual void build() override;
