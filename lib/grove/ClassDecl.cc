@@ -345,7 +345,7 @@ void ClassDecl::resolve()
 	else
 	{
     	// Set our type to an explicit reference type to this class.
-		auto classTy = Orange::ClassType::get(getModule(), m_name, member_types);
+		auto classTy = Orange::ClassType::get(getModule(), this, member_types);
 		setType(classTy);
 	}
 	
@@ -483,7 +483,7 @@ Genericable* ClassDecl::createInstance(const Orange::Type *type)
 	}
 	
 	/// @todo: this may cause a problem
-	auto classTy = Orange::ClassType::get(getModule(), clone->m_name,
+	auto classTy = Orange::ClassType::get(getModule(), clone,
 								  member_types);
 	clone->setType(classTy);
 	

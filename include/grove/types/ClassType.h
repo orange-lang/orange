@@ -13,19 +13,23 @@
 
 namespace Orange { class ClassType; }
 
+class ClassDecl;
+
 class Orange::ClassType : public Orange::Type
 {
 private:
 	std::vector<const Type *> m_members;
-	const OString m_name;
+	ClassDecl* m_class = nullptr;
 protected:
-	ClassType(const OString& name, std::vector<const Type *> members);
+	ClassType(ClassDecl* the_class, std::vector<const Type *> members);
 public:
-	static std::string getSignature(const OString& name,
+	static std::string getSignature(const ClassDecl* name,
 									const std::vector<const Type *> members);
 	
 	virtual bool isClassTy() const override;
 	virtual bool isAggTy() const override;
+	
+	ClassDecl* getClass() const;
 	
 	virtual const Type* replaceMember(const Type* member, const Type* with)
 		const override;
@@ -37,6 +41,6 @@ public:
 	
 	virtual const Type* copyType() const override;
 	
-	static ClassType* get(Module* mod, const OString& name,
+	static ClassType* get(Module* mod, ClassDecl* the_class,
 						  std::vector<const Type *> members);
 };

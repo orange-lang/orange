@@ -8,10 +8,12 @@
 
 #include <grove/types/ClassType.h>
 
+#include <grove/ClassDecl.h>
+
 #include <llvm/IR/DerivedTypes.h>
 
-Orange::ClassType::ClassType(const OString& name, std::vector<const Type *> members)
-: Type(false), m_name(name)
+Orange::ClassType::ClassType(ClassDecl* the_class, std::vector<const Type *> members)
+: Type(false), m_class(the_class)
 {
 	m_members = members;
 	
@@ -21,7 +23,8 @@ Orange::ClassType::ClassType(const OString& name, std::vector<const Type *> memb
 		elements.push_back(member->getLLVMType());
 	}
 	
-	m_type = llvm::StructType::create(*m_context, elements, m_name.str());
+	m_type = llvm::StructType::create(*m_context, elements,
+									  the_class->getName().str());
 }
 
 const Orange::Type* Orange::ClassType::copyType() const
@@ -32,10 +35,10 @@ const Orange::Type* Orange::ClassType::copyType() const
 		members.push_back(member->copyType());
 	}
 	
-	return ClassType::get(getModule(), m_name, members);
+	return ClassType::get(getModule(), m_class, members);
 }
 
-std::string Orange::ClassType::getSignature(const OString& name,
+std::string Orange::ClassType::getSignature(const ClassDecl* the_class,
 									const std::vector<const Type *> members)
 {
 	std::stringstream ss;
@@ -74,7 +77,7 @@ const
 		}
 	}
 	
-	return ClassType::get(m_module, m_name, new_members);
+	return ClassType::get(m_module, m_class, new_members);
 }
 
 std::vector<const Orange::Type*> Orange::ClassType::getMemberTys() const
@@ -103,14 +106,12 @@ std::string Orange::ClassType::getString() const
 
 std::string Orange::ClassType::getSignature() const
 {
-	return getSignature(m_name, m_members);
+	return getSignature(m_class, m_members);
 }
 
-Orange::ClassType* Orange::ClassType::get(Module* mod, const OString& name,
+Orange::ClassType* Orange::ClassType::get(Module* mod, ClassDecl* the_class,
 						  std::vector<const Type *> members)
 {
-	auto full_name = "class." + name;
-	
 	for (auto member : members)
 	{
 		if (member == nullptr)
@@ -127,14 +128,14 @@ Orange::ClassType* Orange::ClassType::get(Module* mod, const OString& name,
 		}
 	}
 	
-	auto sig = getSignature(full_name, members);
+	auto sig = getSignature(the_class, members);
 	auto defined = getDefined(mod, sig);
 	if (defined != nullptr)
 	{
 		return defined->as<ClassType *>();
 	}
 	
-	ClassType* ty = new ClassType(full_name, members);
+	ClassType* ty = new ClassType(the_class, members);
 	define(mod, sig, ty);
 	
 	return ty;
