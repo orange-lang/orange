@@ -329,23 +329,13 @@ void ClassDecl::resolve()
 		}
 	}
 	
-	// Get all the members types
-	std::vector<const Orange::Type *> member_types;
-	
-	for (auto member : getMembers())
-	{
-		assertExists(member->getType(), "class member lacking type");
-		member_types.push_back(member->getType());
-	}
-	
 	if (isGeneric())
 	{
 		setType(Orange::VarType::get(getModule()));
 	}
 	else
 	{
-    	// Set our type to an explicit reference type to this class.
-		auto classTy = Orange::ClassType::get(getModule(), this, member_types);
+		auto classTy = Orange::ClassType::get(getModule(), this);
 		setType(classTy);
 	}
 	
@@ -371,6 +361,22 @@ void ClassDecl::resolve()
 
 void ClassDecl::prebuild()
 {
+	// Get all the members types so we can specify the body of our type
+	std::vector<const Orange::Type *> member_types;
+	
+	for (auto member : getMembers())
+	{
+		assertExists(member->getType(), "class member lacking type");
+		member_types.push_back(member->getType());
+	}
+	
+	if (getType()->isClassTy())
+	{
+		auto class_ty = getType()->as<Orange::ClassType *>();
+		class_ty->specifyMembers(member_types);
+	}
+	
+	
 	// Build each pair of ClassMethod/constructor
 	auto ctors = getCtors();
 	
@@ -470,7 +476,6 @@ Genericable* ClassDecl::createInstance(const Orange::Type *type)
 	
 	getModule()->endCopy();
 	
-	std::vector<const Orange::Type *> member_types;
 	for (auto& member : clone->getMembers())
 	{
 		if (member->getType()->isVarTy() &&
@@ -478,13 +483,10 @@ Genericable* ClassDecl::createInstance(const Orange::Type *type)
 		{
 			member->setType(new FutureType(getModule()));
 		}
-		
-		member_types.push_back(member->getType());
 	}
 	
 	/// @todo: this may cause a problem
-	auto classTy = Orange::ClassType::get(getModule(), clone,
-								  member_types);
+	auto classTy = Orange::ClassType::get(getModule(), clone);
 	clone->setType(classTy);
 	
 	if (clone->isGeneric())
