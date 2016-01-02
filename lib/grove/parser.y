@@ -47,6 +47,7 @@
 	#include <grove/CtorCall.h>
 	#include <grove/Protectable.h>
 	#include <grove/SuperReference.h>
+	#include <grove/SuperCall.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -854,6 +855,13 @@ call
 	| expression OPEN_PAREN opt_arg_list CLOSE_PAREN
 	{
 		$$ = new ExpressionCall($1, *$3, true);
+		SET_LOCATION($$, @1, @4);
+
+		delete $3;
+	}
+	| SUPER OPEN_PAREN opt_arg_list CLOSE_PAREN
+	{
+		$$ = new SuperCall(*$3);
 		SET_LOCATION($$, @1, @4);
 
 		delete $3;
