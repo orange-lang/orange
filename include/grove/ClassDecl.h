@@ -41,6 +41,7 @@ public:
 	virtual ASTNode* copy() const override;
 	
 	virtual void resolve() override;
+	virtual void prebuild() override;
 	virtual void build() override;
 	
 	virtual bool matchesType(const Orange::Type* other) const override;

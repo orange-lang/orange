@@ -368,22 +368,14 @@ void ClassDecl::resolve()
 	getModule()->endCopy();
 }
 
-void ClassDecl::build()
+void ClassDecl::prebuild()
 {
-	if (isGeneric())
-	{
-		return;
-	}
-	
-	std::vector<ASTNode *> built;
-	
 	// Build each pair of ClassMethod/constructor
 	auto ctors = getCtors();
 	
 	if (ctors.size() == 0)
 	{
 		auto def_ctor = getCtorForMethod(nullptr);
-		built.push_back(def_ctor);
 		getModule()->build(def_ctor);
 	}
 	
@@ -391,34 +383,25 @@ void ClassDecl::build()
 	{
 		if (ctors[i]->isGeneric())
 		{
-			continue; 
+			continue;
 		}
 		
-		built.push_back(ctors[i]);
 		getModule()->build(ctors[i]);
 		
 		auto ctor = getCtorForMethod(ctors[i]);
-		built.push_back(ctor);
-		
 		getModule()->build(ctor);
 	}
 	
-	// Build the rest of unbuilt statements
-	for (auto stmt : getStatements())
+}
+
+void ClassDecl::build()
+{
+	if (isGeneric())
 	{
-		auto it = std::find(built.begin(), built.end(), stmt);
-		if (it == built.end())
-		{
-    		getModule()->build(stmt);
-			built.push_back(stmt);
-		}
-		
-		if (stmt->is<Statement *>() &&
-			stmt->as<Statement *>()->isTerminator())
-		{
-			break;
-		}
+		return;
 	}
+	
+	buildStatements();
 }
 
 bool ClassDecl::matchesType(const Orange::Type *other) const
