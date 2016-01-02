@@ -67,6 +67,7 @@ private:
 	std::vector<ASTNode *> m_initialized;
 	std::vector<ASTNode *> m_resolved;
 	std::vector<ASTNode *> m_searched;
+	std::vector<ASTNode *> m_prebuilt;
 	
 	// Children of the module are nodes that are used in the AST
 	// but have no parents, and are destroyed here.
@@ -153,6 +154,9 @@ public:
 	/// initialized.
 	void initialize(ASTNode* node);
 	
+	/// Initialize uninitialized nodes.
+	void initialize();
+	
 	/// Resolve the dependencies of a node and then the node, but
 	/// not its children. If the nodes have already been resolved, does nothing.
 	void resolveDependencies(ASTNode* node);
@@ -160,15 +164,18 @@ public:
 	/// Resolve a node and its children, if it's unresolved.
 	void resolve(ASTNode* node);
 	
-	/// Completely processes a node.
-	void process(ASTNode* node);
-	
-	/// Initialize uninitialized nodes.
-	void initialize();
-	
 	/// Resolve unresolved nodes.
 	void resolve();
 	
+	/// Does any pre-building tasks
+	void prebuild(ASTNode* node);
+	
+	/// Does any pre-building tasks on all nodes.
+	void prebuild();
+	
+	/// Completely processes a node.
+	void process(ASTNode* node);
+
 	/// Generate code.
 	void build();
 	

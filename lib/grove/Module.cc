@@ -121,8 +121,6 @@ const Block* Module::BlockIterator::getNext()
     	m_ptr = m_ptr->findParent<Block *>();
     	return (Block *)m_ptr;
 	}
-	
-
 }
 
 const ASTNode* Module::BlockIterator::getLimit() const
@@ -376,8 +374,34 @@ void Module::resolve()
 	resolve(getMain());
 }
 
+void Module::prebuild(ASTNode *node)
+{
+	for (auto child : node->getChildren())
+	{
+		prebuild(child);
+	}
+	
+	// Resolve this node after resolving the dependencies.
+	auto it = std::find(this->m_prebuilt.begin(), this->m_prebuilt.end(),
+						node);
+
+	if (it == std::end(this->m_prebuilt))
+	{
+		this->m_prebuilt.push_back(node);
+		node->prebuild();
+	}
+
+}
+
+void Module::prebuild()
+{
+	prebuild(getMain());
+}
+
 void Module::build()
 {
+	prebuild();
+	
 	getMain()->build();
 	
 	// Optimize the module 
