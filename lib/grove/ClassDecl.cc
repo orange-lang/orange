@@ -394,18 +394,12 @@ void ClassDecl::build()
 			continue; 
 		}
 		
-		// These functions may be codependent. We need
-		// to create the functions for both first before we can
-		// build them.
 		built.push_back(ctors[i]);
+		ctors[i]->build();
 		
 		auto ctor = getCtorForMethod(ctors[i]);
 		built.push_back(ctor);
 		
-		ctors[i]->createFunction();
-		ctor->createFunction();
-	
-		ctors[i]->build();
 		ctor->build();
 	}
 	
