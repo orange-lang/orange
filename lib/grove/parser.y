@@ -877,8 +877,24 @@ primary
 		delete $1;
 		delete $3;
 	}
-	| THIS DOT IDENTIFIER { $$ = new MemberAccess(*$3); SET_LOCATION($$, @1, @3); delete $1; delete $3; }
-	| AT IDENTIFIER { $$ = new MemberAccess(*$2); SET_LOCATION($$, @1, @2); delete $1; delete $2; }
+	| THIS DOT IDENTIFIER {
+		auto lhs = new IDReference("this");
+		SET_LOCATION(lhs, @1, @1);
+		
+		$$ = new AccessExpr(lhs, *$3);
+		SET_LOCATION($$, @1, @3);
+		
+		delete $1; delete $3;
+	}
+	| AT IDENTIFIER {
+		auto lhs = new IDReference("this");
+		SET_LOCATION(lhs, @1, @1);
+		
+		$$ = new AccessExpr(lhs, *$2);
+		SET_LOCATION($$, @1, @2);
+		
+		delete $1; delete $2;
+	}
 	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
 	| SIZEOF OPEN_PAREN type CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
 	;
