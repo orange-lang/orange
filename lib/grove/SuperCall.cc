@@ -108,8 +108,9 @@ void SuperCall::findNode()
 			named->as<ClassMethod *>()->isConstructor();
 	};
 	
-	auto def = parent_class->findNamed(parent_class->getName(),
-									   expectedFunctionTy(), settings);
+	
+	auto def = parent_class->getNamed(parent_class->getName(),
+									  expectedFunctionTy(), nullptr, settings);
 	if (def == nullptr)
 	{
 		throw code_error(this, parent_class, [] () -> std::string
