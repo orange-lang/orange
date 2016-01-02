@@ -43,7 +43,7 @@ bool Orange::PointerType::matches(const Type *ty) const
 	// we're looking at a pointer type that contains a node
 	// type, let's compare those instead.
 	if (m_contained->isNodeTy() && ty->isPointerTy() &&
-		ty->getBaseTy()->isNodeTy())
+		ty->getBaseTy()->hasReference())
 	{
 		// Compare the reference types...
 		return m_contained->matches(ty->getBaseTy());
