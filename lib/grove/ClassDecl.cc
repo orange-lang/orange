@@ -624,7 +624,12 @@ ClassDecl::ClassDecl(OString name, ReferenceType* parentReference)
 ClassDecl::ClassDecl(const ClassDecl& other)
 {
 	m_name = other.m_name;
-	m_parent_class = (ClassDecl *)getModule()->tryGetCopy(other.m_parent_class);
+	
+	if (other.m_parent_class)
+	{
+    	m_parent_class =
+			(ClassDecl *)getModule()->tryGetCopy(other.m_parent_class);
+	}
 	
 	other.defineCopy(this);
 	copyStatements(&other);
