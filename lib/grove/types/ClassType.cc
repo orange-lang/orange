@@ -136,21 +136,7 @@ std::vector<const Orange::Type*> Orange::ClassType::getMemberTys() const
 
 std::string Orange::ClassType::getString() const
 {
-	std::stringstream ss;
-	ss << "class<";
-	
-	for (unsigned int i = 0; i < m_members.size(); i++)
-	{
-		ss << m_members.at(i)->getString();
-		
-		if (i + 1 < m_members.size())
-		{
-			ss << ", ";
-		}
-	}
-	
-	ss << ">";
-	return ss.str();
+	return m_class->getName();
 }
 
 std::string Orange::ClassType::getSignature() const
