@@ -337,7 +337,10 @@ void ClassDecl::initialize()
 
 void ClassDecl::findDependencies()
 {
-	// Classes have no dependencies.
+	if (getParentClass())
+	{
+		addDependency(getParentClass());
+	}
 }
 
 void ClassDecl::resolve()
