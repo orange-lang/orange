@@ -441,7 +441,7 @@ extern_function
 class_stmt
 	: CLASS IDENTIFIER opt_inheritance term
 	{
-		$<stmt>$ = new ClassDecl(*$2);
+		$<stmt>$ = new ClassDecl(*$2, (ReferenceType*)$3);
 		$<stmt>$->setModule(module);
 		module->pushBlock((Block *)$<stmt>$);
 		delete $2;

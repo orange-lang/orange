@@ -20,6 +20,7 @@
 class MemberVarDecl;
 class ClassMethod;
 class Constructor;
+class ReferenceType;
 
 /**
  * Represents a class declaration.
@@ -28,6 +29,9 @@ class ClassDecl : public Block, public Named, public Genericable,
 	public TypeProvider, public Accessible, public Protectable
 {
 protected:
+	ReferenceType* m_parent_ref = nullptr;
+	ClassDecl* m_parent_class = nullptr;
+	
 	Constructor* createCtor(ClassMethod* method);
 	
 	std::map<ClassMethod*, Constructor*> m_ctor_map;
@@ -40,6 +44,8 @@ public:
 	
 	virtual ASTNode* copy() const override;
 	
+	virtual void initialize() override;
+	virtual void findDependencies() override;
 	virtual void resolve() override;
 	virtual void prebuild() override;
 	virtual void build() override;
@@ -67,9 +73,9 @@ public:
 	/// Returns var if the class is generic.
 	Orange::Type* getRefTy() const;
 	
-	bool hasDefaultCtor() const;
+	ClassDecl* getParentClass() const;
 	
-	virtual void findDependencies() override;
+	bool hasDefaultCtor() const;
 	
 	bool hasMethod(const OString& name) const;
 	
@@ -77,6 +83,6 @@ public:
 	
 	MemberVarDecl* getMember(const OString& name) const;
 	
-	ClassDecl(OString name);
+	ClassDecl(OString name, ReferenceType* parentReference);
 	ClassDecl(const ClassDecl& other);
 };

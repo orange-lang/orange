@@ -97,6 +97,11 @@ std::vector<ClassMethod *> ClassDecl::getCtors() const
 	return ret;
 }
 
+ClassDecl* ClassDecl::getParentClass() const
+{
+	return m_parent_class;
+}
+
 bool ClassDecl::hasDefaultCtor() const
 {
 	auto&& ctors = getCtors();
@@ -274,6 +279,26 @@ MemberVarDecl* ClassDecl::getMember(const OString &name) const
 	}
 	
 	return nullptr;
+}
+
+void ClassDecl::initialize()
+{
+	if (m_parent_ref)
+	{
+		getModule()->initialize(m_parent_ref);
+		auto ref = m_parent_ref->getReference();
+		
+		if (ref->is<ClassDecl *>() == false)
+		{
+			throw code_error(this, ref, []() -> std::string
+							 {
+								 return "A class can only inherit from another "
+								 "class";
+							 });
+		}
+		
+		m_parent_class = ref->as<ClassDecl *>();
+	}
 }
 
 void ClassDecl::findDependencies()
@@ -526,7 +551,7 @@ Orange::Type* ClassDecl::getRefTy() const
 	}
 }
 
-ClassDecl::ClassDecl(OString name)
+ClassDecl::ClassDecl(OString name, ReferenceType* parentReference)
 {
 	if (name == "")
 	{
@@ -535,11 +560,15 @@ ClassDecl::ClassDecl(OString name)
 	
 	// Do nothing
 	m_name = name;
+	m_parent_ref = parentReference;
+	
+	addChild(parentReference);
 }
 
 ClassDecl::ClassDecl(const ClassDecl& other)
 {
 	m_name = other.m_name;
+	m_parent_class = (ClassDecl *)getModule()->tryGetCopy(other.m_parent_class);
 	
 	other.defineCopy(this);
 	copyStatements(&other);
