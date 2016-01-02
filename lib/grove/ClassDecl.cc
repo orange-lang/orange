@@ -377,6 +377,11 @@ void ClassDecl::prebuild()
 	// Get all the members types so we can specify the body of our type
 	std::vector<const Orange::Type *> member_types;
 	
+	if (getParentClass() != nullptr)
+	{
+		member_types.push_back(getParentClass()->getType());
+	}
+	
 	for (auto member : getMembers())
 	{
 		assertExists(member->getType(), "class member lacking type");
