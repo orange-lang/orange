@@ -34,14 +34,11 @@ protected:
 	const Orange::Type* m_ret_type = nullptr;
 	std::vector<Parameter *> m_params;
 	
+	virtual void createFunction();
 	virtual void createReturn();
 	virtual void setupFunction();
 	virtual void optimize();
 public:
-	/// Creates the value for this function.
-	/// Called during the build process. 
-	virtual void createFunction();
-	
 	/// Get the entry block for this function
 	llvm::BasicBlock* getEntry() const;
 	
