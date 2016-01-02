@@ -44,7 +44,7 @@ public:
 			auto ref = child->findNamed(child->getName(), nullptr);
 			
 			// If it is not referencing a MemberVarDecl, continue onwards.
-			if (ref->is<MemberVarDecl*>() == false)
+			if (ref == nullptr || ref->is<MemberVarDecl*>() == false)
 			{
 				continue;
 			}
