@@ -12,5 +12,8 @@
 
 class SuperReference : public IDReference {
 public:
+	virtual ASTNode* copy() const override;
+	
 	SuperReference();
+	SuperReference(const SuperReference& other);
 };
