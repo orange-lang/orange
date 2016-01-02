@@ -127,7 +127,7 @@
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID typename_or_identifier
 %type <str> THIS AT PUBLIC PROTECTED PRIVATE STATIC opt_static FROM
-%type <ty> type basic_type type_hint non_agg_type array_type
+%type <ty> type basic_type type_hint non_agg_type array_type opt_inheritance
 %type <params> param_list opt_param_list
 %type <args> opt_arg_list arg_list
 %type <ppair> opt_protection_level protection_level
@@ -439,7 +439,7 @@ extern_function
 	;
 
 class_stmt
-	: CLASS IDENTIFIER term
+	: CLASS IDENTIFIER opt_inheritance term
 	{
 		$<stmt>$ = new ClassDecl(*$2);
 		$<stmt>$->setModule(module);
@@ -447,13 +447,22 @@ class_stmt
 		delete $2;
 	} opt_statements END
 	{
-		ClassDecl* inst = (ClassDecl *)$<stmt>4;
+		ClassDecl* inst = (ClassDecl *)$<stmt>5;
 
 		$$ = inst;
-		SET_LOCATION($$, @1, @6);
+		SET_LOCATION($$, @1, @7);
 
 		module->popBlock();
 	}
+
+opt_inheritance
+	: FROM TYPE_ID
+	{
+		$$ = new ReferenceType(*$2);
+		SET_LOCATION($$->as<ASTNode *>(), @2, @2)
+		delete $2;
+	}
+	| { $$ = nullptr; }
 
 ifs
 	: IF expression
