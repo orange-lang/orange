@@ -69,7 +69,16 @@ unsigned int MemberVarDecl::getOffset() const
 		throw fatal_error("couldn't find member's offset in parent");
 	}
 	
-	return (unsigned int)std::distance(members.begin(), it);
+	int offset = (unsigned int)std::distance(members.begin(), it);
+	
+	// If the parent class is a child of another class, add one to the
+	// offset to account for the member.
+	if (parentClass->getParentClass() != nullptr)
+	{
+		offset++;
+	}
+	
+	return offset;
 }
 
 void MemberVarDecl::build()
