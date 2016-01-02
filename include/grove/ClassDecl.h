@@ -83,6 +83,16 @@ public:
 	
 	MemberVarDecl* getMember(const OString& name) const;
 	
+	virtual bool hasNamed(OString name, const ASTNode* limit,
+						  SearchSettings settings) const override;
+	
+	virtual Named* getNamed(OString name, const Orange::Type* type,
+							const ASTNode* from, SearchSettings settings)
+    	const override;
+	
+	virtual std::vector<Named *> getAllNamed(OString name, const ASTNode* from)
+    	const override;
+	
 	ClassDecl(OString name, ReferenceType* parentReference);
 	ClassDecl(const ClassDecl& other);
 };

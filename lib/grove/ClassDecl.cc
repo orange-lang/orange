@@ -556,6 +556,53 @@ Orange::Type* ClassDecl::getRefTy() const
 	}
 }
 
+bool ClassDecl::hasNamed(OString name, const ASTNode* limit,
+						 SearchSettings settings) const
+{
+	if (Block::hasNamed(name, limit, settings))
+	{
+		return true;
+	}
+	
+	if (getParentClass() != nullptr)
+	{
+		return getParentClass()->hasNamed(name, limit, settings);
+	}
+	
+	return false;
+}
+
+Named* ClassDecl::getNamed(OString name, const Orange::Type* type,
+						   const ASTNode* from, SearchSettings settings) const
+{
+	auto named = Block::getNamed(name, type, from, settings);
+	if (named != nullptr)
+	{
+		return named;
+	}
+	
+	if (getParentClass() != nullptr)
+	{
+		return getParentClass()->getNamed(name, type, from, settings);
+	}
+	
+	return nullptr;
+}
+
+std::vector<Named *> ClassDecl::getAllNamed(OString name, const ASTNode* from)
+const
+{
+	auto named = Block::getAllNamed(name, from);
+	
+	if (getParentClass() != nullptr)
+	{
+		auto parent_named = getParentClass()->getAllNamed(name, from);
+		named.insert(named.end(), parent_named.begin(), parent_named.end());
+	}
+	
+	return named;
+}
+
 ClassDecl::ClassDecl(OString name, ReferenceType* parentReference)
 {
 	if (name == "")
