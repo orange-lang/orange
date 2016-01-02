@@ -1,0 +1,26 @@
+class ParentClass
+	int a
+	int b
+
+	def math()
+		return a + b
+	end
+
+	def ParentClass(int a, int b)
+		@a = a
+		@b = b
+	end
+end
+
+class ChildClass from ParentClass
+	int num
+
+	def ChildClass(int a, int b)
+		super(a, b)
+
+		num = this.math()
+	end
+end
+
+var c = ChildClass(5, 6)
+return 1 if c.num != 11
