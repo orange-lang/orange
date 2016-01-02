@@ -330,8 +330,8 @@ void ClassDecl::resolve()
 		throw already_defined_error(&m_name, base, m_name, false);
 	}
 	
-	// First, make sure that all of the children are ClassTopLevels.
-	for (auto child : getChildren())
+	// First, make sure that all of the statements are ClassTopLevels.
+	for (auto child : getStatements())
 	{
 		if (child->is<ClassTopLevel *>() == false)
 		{
