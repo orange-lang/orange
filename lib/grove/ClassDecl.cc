@@ -255,6 +255,25 @@ Constructor* ClassDecl::createCtor(ClassMethod *method)
 		
 		func->addStatement(new ExpressionCall(method, arg_list));
 	}
+	else if (getParentClass() && getParentClass()->hasDefaultCtor() == false)
+	{
+		throw code_error(this, getParentClass(), []() -> std::string
+						 {
+							 return "Child class of class without a default "
+							 "constructor cannot have an implicit default "
+							 "constructor";
+						 });
+	}
+	else if (getParentClass() && getParentClass()->getDefaultCtor())
+	{
+		std::vector<Expression *> params;
+		params.push_back(new IDReference("this"));
+		
+		auto ctor_call = new ExpressionCall(getParentClass()->getDefaultCtor(),
+											params);
+		
+		func->addStatement(ctor_call);
+	}
 	
 	// Return nothing.
 	auto ret_stmt = new ReturnStmt(nullptr);
