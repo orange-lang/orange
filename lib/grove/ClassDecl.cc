@@ -71,7 +71,8 @@ std::vector<ClassMethod *> ClassDecl::getMethods() const
 	
 	for (auto child : getChildren())
 	{
-		if (child->is<ClassMethod *>())
+		if (child->is<ClassMethod *>() &&
+			child->as<ClassMethod *>()->isConstructor() == false)
 		{
 			ret.push_back(child->as<ClassMethod *>());
 		}
