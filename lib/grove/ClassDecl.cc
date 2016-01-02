@@ -135,6 +135,57 @@ bool ClassDecl::hasDefaultCtor() const
 	return false;
 }
 
+Constructor* ClassDecl::getInitializer()
+{
+	if (m_initializer != nullptr)
+	{
+		return m_initializer;
+	}
+	
+	std::vector<Parameter *> params;
+	auto this_ty = getRefTy();
+	params.push_back(new Parameter(this_ty->getPointerTo(), "this"));
+	
+	m_initializer = new Constructor(this, nullptr, "I" + getName(), params);
+	m_initializer->setReturnType(Orange::VoidType::get(getModule()));
+	
+	m_initializer->setLocation(this->getLocation());
+	
+	// The initializer needs to instantiate all of its variables that have
+	// values, and call the method, if one exists.
+	auto&& members = getMembers();
+	for (auto& member : members)
+	{
+		if (member->getExpression() == nullptr)
+		{
+			continue;
+		}
+		
+		// this.[member] = member->getExpression()
+		
+		auto this_ref = new IDReference("this");
+		auto access = new AccessExpr(this_ref, member->getName());
+		auto value = member->getExpression()->copy()->as<Expression *>();
+		auto assign = new BinOpAssign(access, "=", value);
+		
+		this_ref->setLocation(member->getLocation());
+		access->setLocation(member->getLocation());
+		value->setLocation(member->getExpression()->getLocation());
+		assign->setLocation(member->getLocation());
+		
+		m_initializer->addStatement(assign);
+	}
+	
+	auto ret_stmt = new ReturnStmt(nullptr);
+	
+	m_initializer->addStatement(ret_stmt);
+	findParent<Block *>()->addChild(m_initializer, this, 1);
+	
+	getModule()->process(m_initializer);
+	
+	return m_initializer;
+}
+
 Constructor* ClassDecl::createCtor(ClassMethod *method)
 {
 	assertExists(getParent(), "class has no parent!");
@@ -167,30 +218,13 @@ Constructor* ClassDecl::createCtor(ClassMethod *method)
 		func->setLocation(ASTNode::getLocation());
 	}
 	
-	// The class constructor needs to instantiate all of its variables that have
-	// values, and call the method, if one exists.
-	
-	auto&& members = getMembers();
-	for (auto& member : members)
 	{
-		if (member->getExpression() == nullptr)
-		{
-			continue;
-		}
+		// Call the initializer
+		std::vector<Expression *> arg_list;
+		arg_list.push_back(new IDReference("this"));
 		
-		// this.[member] = member->getExpression()
-		
-		auto this_ref = new IDReference("this");
-		auto access = new AccessExpr(this_ref, member->getName());
-		auto value = member->getExpression()->copy()->as<Expression *>();
-		auto assign = new BinOpAssign(access, "=", value);
-		
-		this_ref->setLocation(member->getLocation());
-		access->setLocation(member->getLocation());
-		value->setLocation(member->getExpression()->getLocation());
-		assign->setLocation(member->getLocation());
-		
-		func->addStatement(assign);
+		auto call = new ExpressionCall(getInitializer(), arg_list);
+		func->addStatement(call);
 	}
 	
 	if (method != nullptr)
@@ -394,6 +428,8 @@ void ClassDecl::prebuild()
 		class_ty->specifyMembers(member_types);
 	}
 	
+	// Build the initializer
+	getModule()->build(getInitializer());
 	
 	// Build each pair of ClassMethod/constructor
 	auto ctors = getCtors();

@@ -28,6 +28,10 @@ class ReferenceType;
 class ClassDecl : public Block, public Named, public Genericable,
 	public TypeProvider, public Accessible, public Protectable
 {
+private:
+	/// The Initializer for this class.
+	Constructor* m_initializer = nullptr;
+	
 protected:
 	ReferenceType* m_parent_ref = nullptr;
 	ClassDecl* m_parent_class = nullptr;
@@ -35,6 +39,9 @@ protected:
 	Constructor* createCtor(ClassMethod* method);
 	
 	std::map<ClassMethod*, Constructor*> m_ctor_map;
+	
+	/// Gets the Initializer used to initialize default values.
+	Constructor* getInitializer();
 public:
 	Constructor* getCtorForMethod(ClassMethod* method);
 	
