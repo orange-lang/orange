@@ -251,26 +251,13 @@ MemberAccess::MemberAccess(const ClassDecl* classDecl, Valued* valued,
 	}
 }
 
-MemberAccess::MemberAccess(const OString& name)
-: m_name(name)
-{
-	if (name == "")
-	{
-		throw fatal_error("MemberAccess ctor called with empty name");
-	}
-	
-	m_local = true;
-}
-
 MemberAccess::MemberAccess(const MemberAccess& other)
 {
-	if (other.m_local == false)
-	{
-		m_class = other.m_class;
-		m_valued = other.m_valued;
-	}
+	m_class = other.m_class;
+	m_valued = other.m_valued;
 	
 	m_name = other.m_name;
+	m_super = other.m_super;
 	other.defineCopy(this);
 }
 
