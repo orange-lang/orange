@@ -17,14 +17,21 @@ class ClassDecl;
  */
 class SuperCall : public ExpressionCall {
 private:
+	Expression* m_this_param = nullptr;
+	
 	ClassDecl* m_class;
 protected:
 	virtual void findNode();
 public:
+	virtual Orange::FunctionType* expectedFunctionTy() const override;
+	
 	virtual void initialize() override;
 	virtual void findDependencies() override;
 	
 	virtual void resolve() override;
+	
+	virtual std::vector<ObjectBase**> getMemberNodes() override;
+	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
 	
 	virtual ASTNode* copy() const override;
 	
