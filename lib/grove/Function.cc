@@ -516,6 +516,16 @@ void Function::optimize()
 	FPM.run(*m_function);
 }
 
+void Function::prebuild()
+{
+	if (isGeneric())
+	{
+		return;
+	}
+	
+	createFunction();
+}
+
 void Function::build()
 {
 	if (isGeneric())
