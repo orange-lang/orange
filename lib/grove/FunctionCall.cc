@@ -8,6 +8,9 @@
 
 #include <grove/FunctionCall.h>
 #include <grove/Named.h>
+#include <grove/Function.h>
+#include <grove/ExternFunction.h>
+#include <grove/VarDecl.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
@@ -51,7 +54,25 @@ void FunctionCall::findDependencies()
 
 void FunctionCall::findNode()
 {
-	auto def = findNamed(getName(), expectedFunctionTy());
+	SearchSettings settings;
+	settings.filter = [this](Named* named) -> bool
+	{
+		if (named->is<ExternFunction *>() == true ||
+			named->is<VarDecl *>())
+		{
+			return true;
+		}
+		
+		if (named->is<Function *>() == false)
+		{
+			return false;
+		}
+		
+		auto func = named->as<Function *>();
+		return func->getParams().size() == this->getArgs().size();
+	};
+	
+	auto def = findNamed(getName(), expectedFunctionTy(), settings);
 	if (def == nullptr)
 	{
 		throw undefined_error(&m_name, m_name);
