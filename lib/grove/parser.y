@@ -46,6 +46,7 @@
 	#include <grove/MemberAccess.h>
 	#include <grove/CtorCall.h>
 	#include <grove/Protectable.h>
+	#include <grove/SuperReference.h>
 
 	#include <grove/types/Type.h>
 	#include <grove/types/IntType.h>
@@ -888,6 +889,15 @@ primary
 	}
 	| THIS DOT IDENTIFIER {
 		auto lhs = new IDReference("this");
+		SET_LOCATION(lhs, @1, @1);
+
+		$$ = new AccessExpr(lhs, *$3);
+		SET_LOCATION($$, @1, @3);
+
+		delete $1; delete $3;
+	}
+	| SUPER DOT IDENTIFIER {
+		auto lhs = new SuperReference();
 		SET_LOCATION(lhs, @1, @1);
 
 		$$ = new AccessExpr(lhs, *$3);
