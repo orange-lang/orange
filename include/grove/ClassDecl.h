@@ -84,6 +84,8 @@ public:
 	
 	bool hasDefaultCtor() const;
 	
+	ClassMethod* getDefaultCtor() const;
+	
 	bool hasMethod(const OString& name) const;
 	
 	bool hasMember(const OString& name) const;

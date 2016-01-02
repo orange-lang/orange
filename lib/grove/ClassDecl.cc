@@ -110,9 +110,14 @@ bool ClassDecl::hasDefaultCtor() const
 		return true;
 	}
 	
+	return getDefaultCtor() != nullptr;
+}
+
+ClassMethod* ClassDecl::getDefaultCtor() const
+{
 	// For each ctor, see if there's a ctor that has params that are only
-	// the this parameter. 
-	for (auto& ctor : ctors)
+	// the this parameter.
+	for (auto& ctor : getCtors())
 	{
 		bool defaultable = true;
 		
@@ -128,11 +133,11 @@ bool ClassDecl::hasDefaultCtor() const
 		
 		if (defaultable == true)
 		{
-			return true;
+			return ctor;
 		}
 	}
 	
-	return false;
+	return nullptr;
 }
 
 Constructor* ClassDecl::getInitializer()
