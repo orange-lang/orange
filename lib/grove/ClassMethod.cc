@@ -14,8 +14,12 @@
 #include <grove/BinOpAssign.h>
 #include <grove/AccessExpr.h>
 #include <grove/MemberVarDecl.h>
+#include <grove/IDReference.h>
+#include <grove/ExpressionCall.h>
 
 #include <grove/types/Type.h>
+
+#include <grove/exceptions/code_error.h>
 
 #include <util/assertions.h>
 #include <util/copy.h>
@@ -43,9 +47,56 @@ void ClassMethod::initialize()
 	}
 }
 
+ExpressionCall* ClassMethod::getSuperCtorCall() const
+{
+	/// @todo: Find the super ctor call
+	return nullptr;
+}
+
 void ClassMethod::findDependencies()
 {
 	Function::findDependencies();
+}
+
+void ClassMethod::resolve()
+{
+	if (isConstructor() && getClass()->getParentClass())
+	{
+		auto ctor_call = getSuperCtorCall();
+		if (ctor_call == nullptr &&
+			getClass()->getParentClass()->hasDefaultCtor() == false)
+		{
+			throw code_error(this, []() -> std::string
+							 {
+								 return "Class constructor must explicitly "
+								 "call a constructor of parent class that "
+								 "has no default constructor";
+							 });
+		}
+		else if (ctor_call == nullptr &&
+				 getClass()->getParentClass()->getDefaultCtor())
+		{
+			auto ctor = getClass()->getParentClass()->getDefaultCtor();
+			
+			std::vector<Expression *> params;
+			params.push_back(new IDReference("this"));
+			
+			auto ctor_call = new ExpressionCall(ctor, params);
+			
+			if (getStatements().size() == 0)
+			{
+				addStatement(ctor_call);
+			}
+			else
+			{
+				addStatement(ctor_call, getStatements().at(0), 0);
+			}
+			
+			getModule()->process(ctor_call);
+		}
+	}
+	
+	Function::resolve();
 }
 
 bool ClassMethod::isConstructor() const

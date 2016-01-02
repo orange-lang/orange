@@ -16,6 +16,7 @@
 class ClassDecl;
 class BinOpAssign;
 class MemberVarDecl;
+class ExpressionCall;
 
 /**
  * Represents a method for a class.
@@ -36,12 +37,14 @@ public:
 	virtual ProtectionLevel defaultProtectionLevel() const override;
 	
 	virtual void initialize() override;
-	
 	virtual void findDependencies() override;
+	virtual void resolve() override;
 	
 	virtual bool isConstructor() const;
 	
 	virtual bool isGeneric() const override;
+	
+	ExpressionCall* getSuperCtorCall() const;
 	
 	virtual ASTNode* copy() const override;
 	
