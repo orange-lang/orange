@@ -278,19 +278,7 @@ MemberVarDecl* ClassDecl::getMember(const OString &name) const
 
 void ClassDecl::findDependencies()
 {
-	for (auto& member : getMembers())
-	{
-		addDependency(member);
-		
-		if (member->dependsOn(this))
-		{
-			throw code_error(member, this,
-							 []() -> std::string
-							 {
-								return "member has incomplete type";	
-							 });
-		}
-	}
+	// Classes have no dependencies.
 }
 
 void ClassDecl::resolve()
