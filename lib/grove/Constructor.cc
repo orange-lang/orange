@@ -13,7 +13,6 @@
 #include <grove/Module.h>
 
 #include <grove/types/Type.h>
-#include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
 #include <util/copy.h>

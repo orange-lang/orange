@@ -11,7 +11,6 @@
 #include <grove/exceptions/fatal_error.h>
 
 #include <grove/types/NodeType.h>
-#include <grove/types/ReferenceType.h>
 
 #include <util/assertions.h>
 
@@ -51,12 +50,12 @@ bool Parameter::isAccessible() const
 {
 	// We can have members accessed if we're a reference type,
 	// and our reference type is also accessible.
-	if (getType()->getRootTy()->is<ReferenceType *>() == false)
+	if (getType()->getRootTy()->hasReference() == false)
 	{
 		return false;
 	}
 	
-	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
+	auto ref = getType()->getRootTy()->getReference();
 	return ref->is<Accessible *>() && ref->as<Accessible *>()->isAccessible();
 }
 
@@ -73,7 +72,7 @@ Expression* Parameter::access(OString name, const ASTNode *hint) const
 		hint_to_use = this;
 	}
 	
-	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
+	auto ref = getType()->getRootTy()->getReference();
 	auto accessible_ref = ref->as<Accessible *>();
 	return accessible_ref->access(name, hint_to_use);
 }

@@ -12,7 +12,6 @@
 #include <grove/Module.h>
 
 #include <grove/types/Type.h>
-#include <grove/types/ReferenceType.h>
 #include <grove/types/FunctionType.h>
 #include <grove/types/VarType.h>
 
@@ -120,11 +119,7 @@ void CtorCall::resolve()
 	// function call.
 	m_this_param->setType(class_ty->getPointerTo());
 	
-	auto tempref = new ReferenceType(the_class);
-	addChild(tempref);
-	getModule()->process(tempref);
-	
-	setType(tempref);
+	setType(the_class->getType());
 	
 	FunctionCall::resolve();
 	
@@ -138,12 +133,7 @@ void CtorCall::resolve()
 	the_class = getExpr()->as<Constructor *>()->getClass();
 	m_this_param->setType(the_class->getType()->getPointerTo());
 	
-	auto refType = new ReferenceType(the_class);
-	addChild(refType);
-	
-	getModule()->process(refType);
-
-	setType(refType);
+	setType(the_class->getType());
 }
 
 void CtorCall::build()

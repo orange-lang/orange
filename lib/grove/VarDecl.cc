@@ -13,7 +13,6 @@
 #include <grove/types/Type.h>
 #include <grove/types/UIntType.h>
 #include <grove/types/NodeType.h>
-#include <grove/types/ReferenceType.h>
 
 #include <grove/exceptions/already_defined_error.h>
 #include <grove/exceptions/invalid_type_error.h>
@@ -69,12 +68,12 @@ bool VarDecl::isAccessible() const
 {
 	// We can have members accessed if we're a reference type,
 	// and our reference type is also accessible.
-	if (getType()->getRootTy()->is<ReferenceType *>() == false)
+	if (getType()->getRootTy()->hasReference() == false)
 	{
 		return false;
 	}
 	
-	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
+	auto ref = getType()->getRootTy()->getReference();
 	return ref->is<Accessible *>() && ref->as<Accessible *>()->isAccessible();
 }
 
@@ -91,7 +90,7 @@ Expression* VarDecl::access(OString name, const ASTNode *hint) const
 		hint_to_use = this;
 	}
 	
-	auto ref = getType()->getRootTy()->as<ReferenceType *>()->getReference();
+	auto ref = getType()->getRootTy()->getReference();
 	auto accessible_ref = ref->as<Accessible *>();
 	return accessible_ref->access(name, hint_to_use);
 }
