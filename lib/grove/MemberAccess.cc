@@ -170,6 +170,7 @@ void MemberAccess::resolve()
 	setType(m_member->getType());
 }
 
+#include <llvm/IR/Module.h>
 void MemberAccess::build()
 {
 	auto offset = getMember()->getOffset();
@@ -193,9 +194,23 @@ void MemberAccess::build()
 		val = IRBuilder()->CreateLoad(val);
 	}
 	
+
 	if (val->getType()->getPointerElementType()->isIntegerTy())
 	{
 		throw fatal_error("Not a pointer to a class!");
+	}
+	
+	// We need to verify that we're operating on the same type of class
+	// as the class our memberbelongs to. If not, val should be casted.
+	auto root_class_ty = m_valued->as<Typed *>()->getType()->getRootTy();
+	if (root_class_ty->matches(getClass()->getType()) == false)
+	{
+		auto current_ty = m_valued->as<Typed *>()->getType()->getRootTy();
+		current_ty = current_ty->getPointerTo();
+		
+		auto target_ty = getClass()->getType()->getPointerTo();
+		
+		val = IRBuilder()->CreateBitCast(val, target_ty->getLLVMType());
 	}
 	
 	auto conv_ty = (llvm::StructType *)val->getType();
@@ -203,7 +218,6 @@ void MemberAccess::build()
 	
 	assertEqual(conv_ty->getElementType(offset),
 				getLLVMType(), "Internal struct type does not match expected");
-	
 	
 	m_value = IRBuilder()->CreateInBoundsGEP(val, offsets);
 }
