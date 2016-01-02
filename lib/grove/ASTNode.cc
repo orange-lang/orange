@@ -241,6 +241,11 @@ void ASTNode::resolve()
 	// Do nothing
 }
 
+void ASTNode::prebuild()
+{
+	// Do nothing.
+}
+
 void ASTNode::build()
 {
 	// Do nothing 

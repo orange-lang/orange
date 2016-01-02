@@ -113,6 +113,9 @@ public:
 
 	/// Resolve node. Sets type if applicable.
 	virtual void resolve();
+	
+	/// Optional step to pre-generate some code.
+	virtual void prebuild();
 
 	/// Generate code. Sets value if applicable.
 	virtual void build();
