@@ -63,6 +63,9 @@ public:
 	virtual Expression* access(OString name, const ASTNode* hint)
 		const override;
 	
+	Expression* accessRegular(OString name, const ASTNode* hint)
+		const;
+	
 	virtual bool isGeneric() const override;
 	virtual Genericable* createInstance(const Orange::Type* type) override;
 	

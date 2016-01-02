@@ -21,6 +21,7 @@
 #include <grove/ExpressionCall.h>
 #include <grove/AccessExpr.h>
 #include <grove/BinOpAssign.h>
+#include <grove/SuperReference.h>
 
 #include <grove/types/VoidType.h>
 #include <grove/types/VarType.h>
@@ -519,7 +520,7 @@ bool ClassDecl::isAccessible() const
 	return true;
 }
 
-Expression* ClassDecl::access(OString name, const ASTNode *hint) const
+Expression* ClassDecl::accessRegular(OString name, const ASTNode *hint) const
 {
 	assertExists(hint, "ClassDecl::access requires hint");
 	
@@ -543,8 +544,8 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 	else if (hasMember(name))
 	{
 		auto valued = hint->as<const Valued *>();
-    	auto memAccess = new MemberAccess(this, (Valued *)valued, name);
-    	return memAccess;
+		auto memAccess = new MemberAccess(this, (Valued *)valued, name);
+		return memAccess;
 	}
 	else if (getParentClass())
 	{
@@ -552,6 +553,25 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
 	}
 	
 	return nullptr;
+}
+
+Expression* ClassDecl::access(OString name, const ASTNode *hint) const
+{
+	assertExists(hint, "ClassDecl::access requires hint");
+	
+	if (hint->is<SuperReference *>() && getParentClass() == nullptr)
+	{
+		throw code_error(hint, this, []() -> std::string
+						 {
+							 return "Cannot use super from a base class";
+						 });
+	}
+	else if (hint->is<SuperReference *>())
+	{
+		return getParentClass()->accessRegular(name, hint);
+	}
+	
+	return accessRegular(name, hint);
 }
 
 bool ClassDecl::isGeneric() const
