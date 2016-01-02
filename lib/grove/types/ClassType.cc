@@ -23,8 +23,11 @@ Orange::ClassType::ClassType(ClassDecl* the_class, std::vector<const Type *> mem
 		elements.push_back(member->getLLVMType());
 	}
 	
+	std::stringstream name;
+	name << "class." << the_class->getName().str();
+	
 	m_type = llvm::StructType::create(*m_context, elements,
-									  the_class->getName().str());
+									  name.str());
 }
 
 const Orange::Type* Orange::ClassType::copyType() const
