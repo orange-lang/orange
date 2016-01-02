@@ -472,6 +472,10 @@ Expression* ClassDecl::access(OString name, const ASTNode *hint) const
     	auto memAccess = new MemberAccess(this, (Valued *)valued, name);
     	return memAccess;
 	}
+	else if (getParentClass())
+	{
+		return getParentClass()->access(name, hint);
+	}
 	
 	return nullptr;
 }
