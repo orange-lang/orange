@@ -1,0 +1,14 @@
+class TestClass
+	var child
+
+	def TestClass()
+
+	end
+
+	def TestClass(int num)
+		var obj = TestClass()
+		child = &obj
+	end
+end
+
+var obj = TestClass(25)
