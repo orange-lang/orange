@@ -51,17 +51,17 @@ void Typed::setType(const Orange::Type* type)
 {
 	if (m_type)
 	{
-		if (m_type->getComparisonTy()->isFutureTy())
+		if (m_type->getComparisonTy()->is<WatchableType *>())
 		{
-    		m_type->getComparisonTy()->as<FutureType *>()->removeWatcher(this);
+    		m_type->getComparisonTy()->as<WatchableType *>()->removeWatcher(this);
 		}
 		else if (m_type->getComparisonTy()->isAggTy())
 		{
 			for (auto type : m_type->getComparisonTy()->getMemberTys())
 			{
-				if (type->isFutureTy())
+				if (type->is<WatchableType *>())
 				{
-					type->as<FutureType *>()->removeWatcher(this);
+					type->as<WatchableType *>()->removeWatcher(this);
 				}
 			}
 		}
@@ -71,17 +71,17 @@ void Typed::setType(const Orange::Type* type)
 	
 	if (m_type)
 	{
-		if (m_type->getComparisonTy()->isFutureTy())
+		if (m_type->getComparisonTy()->is<WatchableType *>())
 		{
-			m_type->getComparisonTy()->as<FutureType *>()->addWatcher(this);
+			m_type->getComparisonTy()->as<WatchableType *>()->addWatcher(this);
 		}
 		else if (m_type->getComparisonTy()->isAggTy())
 		{
 			for (auto type : m_type->getComparisonTy()->getMemberTys())
 			{
-				if (type->isFutureTy())
+				if (type->is<WatchableType *>())
 				{
-					type->as<FutureType *>()->addWatcher(this);
+					type->as<WatchableType *>()->addWatcher(this);
 				}
 			}
 		}
