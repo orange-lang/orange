@@ -1,0 +1,14 @@
+class ParentClass
+	static int a = 10
+end
+
+class ChildClass from ParentClass
+	int b
+
+	def ChildClass()
+		b = a
+	end
+end
+
+var obj = ChildClass()
+return 1 if obj.b != 10

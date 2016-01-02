@@ -1,0 +1,16 @@
+class ParentClass
+	static def add(int a, int b)
+		return a + b
+	end
+end
+
+class ChildClass from ParentClass
+	int b
+
+	def ChildClass()
+		b = add(2, 5)
+	end
+end
+
+var obj = ChildClass()
+return 1 if obj.b != 7
