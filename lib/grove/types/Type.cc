@@ -444,6 +444,12 @@ Comparison Orange::Type::compare(const Orange::Type *source,
 	bool bothPOD = source->isPODTy() && target->isPODTy();
 	if (bothPOD == false)
 	{
+		if (source->isPointerTy() && target->isPointerTy() &&
+			source->matches(target))
+		{
+			return Comparison::EQUAL;
+		}
+		
 		return Comparison::INCOMPATIBLE;
 	}
 	
