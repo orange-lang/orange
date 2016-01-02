@@ -355,7 +355,6 @@ void ClassDecl::initialize()
 {
 	if (m_parent_ref)
 	{
-		getModule()->initialize(m_parent_ref);
 		auto ref = m_parent_ref->getReference();
 		
 		if (ref->is<ClassDecl *>() == false)

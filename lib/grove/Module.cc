@@ -276,6 +276,11 @@ Block* Module::popBlock()
 
 void Module::initialize(ASTNode *node)
 {
+	for (auto child : node->getChildren())
+	{
+		initialize(child);
+	}
+	
 	auto it = std::find(this->m_initialized.begin(), this->m_initialized.end(),
 						node);
 	
@@ -283,11 +288,6 @@ void Module::initialize(ASTNode *node)
 	{
 		this->m_initialized.push_back(node);
 		node->initialize();
-	}
-	
-	for (auto child : node->getChildren())
-	{
-		initialize(child);
 	}
 }
 
