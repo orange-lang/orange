@@ -1,0 +1,18 @@
+def add(int a, int b)
+	return a + b
+end
+
+class TestClass
+	int sum
+
+	def add()
+		return 0
+	end
+
+	def TestClass(int a, int b)
+		sum = add(a, b)
+	end
+end
+
+var obj = TestClass(53, 95)
+return 1 if obj.sum != 148
