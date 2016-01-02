@@ -151,6 +151,18 @@ Constructor* ClassDecl::getInitializer()
 	
 	m_initializer->setLocation(this->getLocation());
 	
+	if (getParentClass())
+	{
+		auto parent_initializer = getParentClass()->getInitializer();
+		
+		// Call the parent's initializer
+		std::vector<Expression *> arg_list;
+		arg_list.push_back(new IDReference("this"));
+		
+		auto call = new ExpressionCall(parent_initializer, arg_list);
+		m_initializer->addStatement(call);
+	}
+	
 	// The initializer needs to instantiate all of its variables that have
 	// values, and call the method, if one exists.
 	auto&& members = getMembers();
