@@ -66,6 +66,11 @@ Module* ReferenceType::getModule() const
 	return nullptr;
 }
 
+bool ReferenceType::hasReference() const
+{
+	return true;
+}
+
 ASTNode* ReferenceType::getReference() const
 {
 	return m_reference;
