@@ -7,6 +7,7 @@
 */
 
 #include <grove/DerefExpr.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 
@@ -66,7 +67,7 @@ void DerefExpr::resolve()
 
 void DerefExpr::build()
 {
-	getExpression()->build();
+	getModule()->build(getExpression());
 	
 	auto val = getExpression()->getValue();
 	assertExists(val, "Expression has no value.");

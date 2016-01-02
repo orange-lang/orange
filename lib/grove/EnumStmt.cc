@@ -8,6 +8,7 @@
 
 #include <grove/EnumStmt.h>
 #include <grove/Value.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/EnumType.h>
@@ -58,7 +59,7 @@ void EnumStmt::build()
 {
 	for (auto pair : m_members)
 	{
-		pair.val->build();
+		getModule()->build(pair.val);
 	}
 }
 

@@ -7,6 +7,7 @@
 */
 
 #include <grove/ArrayValue.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/ArrayType.h>
@@ -84,7 +85,7 @@ void ArrayValue::build()
 	// Build all elements
 	for (auto element : getElements())
 	{
-		element->build();
+		getModule()->build(element);
 	}
 	
 	auto val = IRBuilder()->CreateAlloca(getType()->getLLVMType());

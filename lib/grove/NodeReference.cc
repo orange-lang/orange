@@ -103,7 +103,7 @@ void NodeReference::build()
 {
 	for (auto& child : getChildren())
 	{
-		child->build();
+		getModule()->build(child);
 	}
 }
 

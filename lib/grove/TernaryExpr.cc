@@ -106,7 +106,7 @@ void TernaryExpr::build()
 	auto continue_block = llvm::BasicBlock::Create(ctx, "continue", llvm_func,
 												   parent_func->getExit());
 
-	getCondition()->build();
+	getModule()->build(getCondition());
 	
 	auto vCondition = getCondition()->getValue();
 	assertExists(vCondition, "condition generated no value");
@@ -115,13 +115,13 @@ void TernaryExpr::build()
 	IRBuilder()->CreateCondBr(vCondition, true_block, false_block);
 	
 	IRBuilder()->SetInsertPoint(true_block);
-	getTrueVal()->build();
+	getModule()->build(getTrueVal());
 	assertExists(getTrueVal()->getValue(), "true expr generated no value");
 	IRBuilder()->CreateStore(getTrueVal()->getValue(), val);
 	IRBuilder()->CreateBr(continue_block);
 	
 	IRBuilder()->SetInsertPoint(false_block);
-	getFalseVal()->build();
+	getModule()->build(getFalseVal());
 	assertExists(getFalseVal()->getValue(), "false expr generated no value");
 	IRBuilder()->CreateStore(getFalseVal()->getValue(), val);
 	IRBuilder()->CreateBr(continue_block);

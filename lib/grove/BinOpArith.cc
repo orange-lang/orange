@@ -7,6 +7,7 @@
 */
 
 #include <grove/BinOpArith.h>
+#include <grove/Module.h>
 #include <grove/types/Type.h>
 
 #include <grove/exceptions/fatal_error.h>
@@ -97,8 +98,8 @@ void BinOpArith::resolve()
 
 void BinOpArith::build()
 {
-	getLHS()->build();
-	getRHS()->build();
+	getModule()->build(getLHS());
+	getModule()->build(getRHS());
 	
 	auto vLHS = getLHS()->getValue();
 	auto vRHS = getRHS()->getValue();

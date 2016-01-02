@@ -7,6 +7,7 @@
 */
 
 #include <grove/CastExpr.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 
@@ -47,7 +48,7 @@ void CastExpr::resolve()
 
 void CastExpr::build()
 {
-	getExpression()->build();
+	getModule()->build(getExpression());
 	
 	auto val = getExpression()->getValue();
 	assertExists(val, "Expression didn't generate a value");

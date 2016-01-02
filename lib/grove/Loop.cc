@@ -160,7 +160,7 @@ void Loop::build()
 	{
 		for (auto initializer : getInitializers())
 		{
-			initializer->build();
+			getModule()->build(initializer);
 		}
 	}
 	
@@ -208,7 +208,7 @@ void Loop::build()
 	if (getCondition())
 	{
 		IRBuilder()->SetInsertPoint(getConditionBlock());
-		getCondition()->build();
+		getModule()->build(getCondition());
 		
 		auto vCondition = getCondition()->getValue();
 		assertExists(vCondition, "Condition generated no value!");

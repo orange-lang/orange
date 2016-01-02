@@ -84,7 +84,7 @@ void SizeofExpr::build()
 		{
 			for (auto s : getTypeArg()->getVariadicSizes())
 			{
-				s->build();
+				getModule()->build(s);
 				auto s_val = s->castTo(Orange::UIntType::get(getModule(), 64));
 				
 				val = IRBuilder()->CreateMul(val, s_val);

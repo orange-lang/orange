@@ -7,6 +7,7 @@
 */
 
 #include <grove/BinOpCompare.h>
+#include <grove/Module.h>
 
 #include <grove/types/BoolType.h>
 
@@ -72,8 +73,8 @@ void BinOpCompare::resolve()
 
 void BinOpCompare::build()
 {
-	getLHS()->build();
-	getRHS()->build();
+	getModule()->build(getLHS());
+	getModule()->build(getRHS());
 	
 	auto vLHS = getLHS()->getValue();
 	auto vRHS = getRHS()->getValue();

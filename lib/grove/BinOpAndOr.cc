@@ -58,7 +58,7 @@ void BinOpAndOr::build()
 		"continue", llvm_func, parent_func->getExit());
 	
 	// Generate LHS
-	getLHS()->build();
+	getModule()->build(getLHS());
 	
 	auto vLHS = getLHS()->getValue();
 	assertExists(vLHS, "LHS didn't generate a value!");
@@ -81,7 +81,7 @@ void BinOpAndOr::build()
 	// Generate RHS.
 	IRBuilder()->SetInsertPoint(check_rhs);
 	
-	getRHS()->build();
+	getModule()->build(getRHS());
 	
 	auto vRHS = getRHS()->getValue();
 	assertExists(vRHS, "RHS didn't generate a value!");

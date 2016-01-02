@@ -121,8 +121,8 @@ llvm::Value* ArrayAccessExpr::getValue() const
 
 void ArrayAccessExpr::build()
 {
-	getArray()->build();
-	getIndex()->build();
+	getModule()->build(getArray());
+	getModule()->build(getIndex());
 	
 	llvm::Value* vArray = nullptr;
 	if (getArray()->hasPointer() && getArray()->getType()->isArrayTy())

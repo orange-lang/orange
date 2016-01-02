@@ -150,7 +150,7 @@ void IfStmt::build()
 		if (isElse(block) == false)
 		{
 			auto cond = block->as<CondBlock *>();
-			cond->getExpression()->build();
+			getModule()->build(cond->getExpression());
 			
 			if (cond->invertCondition() == false)
 			{
@@ -168,7 +168,7 @@ void IfStmt::build()
 		
 		// Now, set insert point to the body and generate the block.
 		IRBuilder()->SetInsertPoint(if_body);
-		block->build();
+		getModule()->build(block);
 		
 		// If the block isn't a terminator, go to continue.
 		if (block->isTerminator() == false)

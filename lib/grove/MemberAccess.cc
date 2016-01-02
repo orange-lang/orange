@@ -176,7 +176,7 @@ void MemberAccess::build()
 	
 	for (auto& child : getChildren())
 	{
-		child->build();
+		getModule()->build(child);
 	}
 	
 	std::vector<llvm::Value *> offsets;

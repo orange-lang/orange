@@ -8,6 +8,7 @@
 
 #include <grove/ReturnStmt.h>
 #include <grove/Function.h>
+#include <grove/Module.h>
 #include <grove/Expression.h>
 
 #include <grove/types/VoidType.h>
@@ -74,7 +75,7 @@ void ReturnStmt::build()
 
 	if (hasExpression())
 	{
-		getExpression()->build();
+		getModule()->build(getExpression());
 	
     	auto value = getExpression()->getValue();
 		

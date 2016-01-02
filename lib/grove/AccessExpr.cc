@@ -105,8 +105,8 @@ void AccessExpr::resolve()
 
 void AccessExpr::build()
 {
-	getLHS()->build();
-	getAccessed()->build();
+	getModule()->build(getLHS());
+	getModule()->build(getAccessed());
 	
 	setValue(getAccessed()->getValue());
 }

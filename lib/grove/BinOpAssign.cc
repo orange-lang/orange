@@ -7,6 +7,7 @@
 */
 
 #include <grove/BinOpAssign.h>
+#include <grove/Module.h>
 
 #include <grove/exceptions/fatal_error.h>
 #include <grove/exceptions/binop_error.h>
@@ -140,8 +141,8 @@ void BinOpAssign::resolve()
 
 void BinOpAssign::build()
 {
-	getLHS()->build();
-	getRHS()->build();
+	getModule()->build(getLHS());
+	getModule()->build(getRHS());
 	
 	auto vLHS = getLHS()->getValue();
 	auto vRHS = getRHS()->getValue();

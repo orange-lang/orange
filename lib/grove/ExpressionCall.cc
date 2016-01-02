@@ -302,7 +302,7 @@ void ExpressionCall::build()
 	
 	for (auto& child : getChildren())
 	{
-		child->build();
+		getModule()->build(child);
 	}
 	
 	for (unsigned int i = 0; i < num_args; i++)
@@ -326,7 +326,7 @@ void ExpressionCall::build()
 	for (unsigned int i = num_args; i < m_args.size(); i++)
 	{
 		auto arg = m_args[i];
-		arg->build();
+		getModule()->build(arg);
 		
 		auto arg_ty = arg->getType();
 		

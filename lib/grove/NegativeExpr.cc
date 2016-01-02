@@ -7,6 +7,7 @@
 */
 
 #include <grove/NegativeExpr.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 
@@ -60,7 +61,7 @@ void NegativeExpr::resolve()
 
 void NegativeExpr::build()
 {
-	getExpression()->build();
+	getModule()->build(getExpression());
 	assertExists(getExpression()->getValue(), "expression has no value.");
 	
 	llvm::Value* val = nullptr;

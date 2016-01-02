@@ -180,7 +180,7 @@ void VarDecl::build()
 	{
 		for (auto s : getType()->getVariadicSizes())
 		{
-			s->build();
+			getModule()->build(s);
 			auto s_val = s->castTo(Orange::UIntType::get(getModule(), 64));
 			
 			if (m_size == nullptr)
@@ -219,7 +219,7 @@ void VarDecl::build()
 	
 	if (getExpression())
 	{
-		getExpression()->build();
+		getModule()->build(getExpression());
 		
 		if (allocateVariable())
 		{

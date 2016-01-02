@@ -384,7 +384,7 @@ void ClassDecl::build()
 	{
 		auto def_ctor = getCtorForMethod(nullptr);
 		built.push_back(def_ctor);
-		def_ctor->build();
+		getModule()->build(def_ctor);
 	}
 	
 	for (unsigned int i = 0; i < ctors.size(); i++)
@@ -395,12 +395,12 @@ void ClassDecl::build()
 		}
 		
 		built.push_back(ctors[i]);
-		ctors[i]->build();
+		getModule()->build(ctors[i]);
 		
 		auto ctor = getCtorForMethod(ctors[i]);
 		built.push_back(ctor);
 		
-		ctor->build();
+		getModule()->build(ctor);
 	}
 	
 	// Build the rest of unbuilt statements
@@ -409,7 +409,7 @@ void ClassDecl::build()
 		auto it = std::find(built.begin(), built.end(), stmt);
 		if (it == built.end())
 		{
-    		stmt->build();
+    		getModule()->build(stmt);
 			built.push_back(stmt);
 		}
 		

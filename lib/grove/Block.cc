@@ -262,7 +262,7 @@ void Block::buildStatements()
 {
 	for (auto stmt : getStatements())
 	{
-		stmt->build();
+		getModule()->build(stmt);
 		
 		if (stmt->is<Statement *>() && stmt->as<Statement *>()->isTerminator())
 		{

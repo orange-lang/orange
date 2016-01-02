@@ -7,6 +7,7 @@
 */
 
 #include <grove/ReferenceExpr.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 
@@ -72,7 +73,7 @@ void ReferenceExpr::resolve()
 
 void ReferenceExpr::build()
 {
-	getExpression()->build();
+	getModule()->build(getExpression());
 	
 	if (getExpression()->getType()->isFunctionTy())
 	{

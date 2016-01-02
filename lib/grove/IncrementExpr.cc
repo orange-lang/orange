@@ -7,6 +7,7 @@
 */
 
 #include <grove/IncrementExpr.h>
+#include <grove/Module.h>
 
 #include <grove/types/Type.h>
 
@@ -80,7 +81,7 @@ void IncrementExpr::resolve()
 
 void IncrementExpr::build()
 {
-	getExpression()->build();
+	getModule()->build(getExpression());
 	
 	auto ptr = getExpression()->getPointer();
 	auto val = getExpression()->getValue();
