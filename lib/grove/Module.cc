@@ -398,11 +398,23 @@ void Module::prebuild()
 	prebuild(getMain());
 }
 
+void Module::build(ASTNode *node)
+{
+	auto it = std::find(this->m_built.begin(), this->m_built.end(),
+						node);
+	
+	if (it == std::end(this->m_built))
+	{
+		this->m_built.push_back(node);
+		node->build();
+	}
+}
+
 void Module::build()
 {
 	prebuild();
 	
-	getMain()->build();
+	build(getMain());
 	
 	// Optimize the module 
 	llvm::legacy::PassManager MPM;

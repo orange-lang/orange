@@ -68,6 +68,7 @@ private:
 	std::vector<ASTNode *> m_resolved;
 	std::vector<ASTNode *> m_searched;
 	std::vector<ASTNode *> m_prebuilt;
+	std::vector<ASTNode *> m_built;
 	
 	// Children of the module are nodes that are used in the AST
 	// but have no parents, and are destroyed here.
@@ -175,6 +176,10 @@ public:
 	
 	/// Completely processes a node.
 	void process(ASTNode* node);
+	
+	/// Generates code for a node, ensuring it hasn't already
+	/// been built.
+	void build(ASTNode* node);
 
 	/// Generate code.
 	void build();
