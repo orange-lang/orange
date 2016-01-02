@@ -2563,7 +2563,7 @@ yyreduce:
   case 40:
 #line 443 "/Users/robert/dev/orange/lib/grove/parser.y"
     {
-		(yyval.stmt) = new ClassDecl(*(yyvsp[(2) - (4)].str));
+		(yyval.stmt) = new ClassDecl(*(yyvsp[(2) - (4)].str), (ReferenceType*)(yyvsp[(3) - (4)].ty));
 		(yyval.stmt)->setModule(module);
 		module->pushBlock((Block *)(yyval.stmt));
 		delete (yyvsp[(2) - (4)].str);
