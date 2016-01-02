@@ -18,6 +18,7 @@
 
 class Module;
 class Expression;
+class ASTNode;
 
 namespace llvm { class Type; }
 namespace llvm { class LLVMContext; }
@@ -125,6 +126,11 @@ public:
 	virtual bool isNodeTy() const;
 	virtual bool isFutureTy() const;
 	virtual bool isAggTy() const;
+	
+	/// Returns true if this type has a reference to an ASTNode.
+	virtual bool hasReference() const;
+	
+	virtual ASTNode* getReference() const;
 	
 	/// Replaces a member in an aggregate type. Returns the new aggregate.
 	virtual const Type* replaceMember(const Type* member, const Type* with)

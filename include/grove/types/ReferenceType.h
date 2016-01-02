@@ -32,7 +32,7 @@ public:
 	virtual std::string getString() const override;
 	virtual std::string getSignature() const override;
 	
-	ASTNode* getReference() const;
+	ASTNode* getReference() const override;
 	
 	virtual bool isAccessible() const override;
 	

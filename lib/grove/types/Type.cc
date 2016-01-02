@@ -166,6 +166,16 @@ bool Orange::Type::isAggTy() const
 	return false;
 }
 
+bool Orange::Type::hasReference() const
+{
+	return false;
+}
+
+ASTNode* Orange::Type::getReference() const
+{
+	return nullptr;
+}
+
 bool Orange::Type::isConst() const
 {
 	return m_const;

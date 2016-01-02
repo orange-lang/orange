@@ -60,6 +60,16 @@ bool Orange::ClassType::isAggTy() const
 	return true;
 }
 
+bool Orange::ClassType::hasReference() const
+{
+	return true;
+}
+
+ASTNode* Orange::ClassType::getReference() const
+{
+	return m_class;
+}
+
 const Orange::Type* Orange::ClassType::replaceMember(const Orange::Type* member,
 											 const Orange::Type* with)
 const

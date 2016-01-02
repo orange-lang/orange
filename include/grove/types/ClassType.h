@@ -29,6 +29,10 @@ public:
 	virtual bool isClassTy() const override;
 	virtual bool isAggTy() const override;
 	
+	virtual bool hasReference() const override;
+	
+	virtual ASTNode* getReference() const override;
+	
 	ClassDecl* getClass() const;
 	
 	virtual const Type* replaceMember(const Type* member, const Type* with)
