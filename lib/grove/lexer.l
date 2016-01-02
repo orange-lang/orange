@@ -112,6 +112,7 @@
 "when"											SAVESTR(); return WHEN;
 "unless"										SAVESTR(); return UNLESS;
 "class"											SAVESTR(); return CLASS;
+"from"											SAVESTR(); return FROM;
 "using"											SAVESTR(); return USING;
 "public"										SAVESTR(); return PUBLIC;
 "private"										SAVESTR(); return PRIVATE;

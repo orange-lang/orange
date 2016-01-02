@@ -108,7 +108,7 @@
 %token DOT LEQ GEQ COMP_LT COMP_GT MOD VALUE STRING EXTERN VARARG EQUALS NEQUALS WHEN
 %token UNLESS LOGICAL_AND LOGICAL_OR BITWISE_AND BITWISE_OR BITWISE_XOR
 %token FOR FOREVER LOOP CONTINUE BREAK DO WHILE
-%token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID THIS AT STATIC
+%token CONST_FLAG QUESTION COLON ENUM SIZEOF TYPE_ID THIS AT STATIC FROM
 
 %type <nodes> compound_statement var_decl valued statement_no_term flagged_compound_statement
 %type <nodes> opt_valued
@@ -126,7 +126,7 @@
 %type <str> EQUALS NEQUALS PLUS_ASSIGN TIMES_ASSIGN MINUS_ASSIGN DIVIDE_ASSIGN
 %type <str> MOD MOD_ASSIGN BITWISE_AND BITWISE_OR BITWISE_XOR LOGICAL_AND
 %type <str> LOGICAL_OR LOOP CONTINUE BREAK TYPE_ID typename_or_identifier
-%type <str> THIS AT PUBLIC PROTECTED PRIVATE STATIC opt_static
+%type <str> THIS AT PUBLIC PROTECTED PRIVATE STATIC opt_static FROM
 %type <ty> type basic_type type_hint non_agg_type array_type
 %type <params> param_list opt_param_list
 %type <args> opt_arg_list arg_list
@@ -284,7 +284,7 @@ flagged_compound_statement
 						return ss.str();
 					});
 				}
-				
+
 				stmt->as<Staticable*>()->setStatic(true);
 			}
 
@@ -880,19 +880,19 @@ primary
 	| THIS DOT IDENTIFIER {
 		auto lhs = new IDReference("this");
 		SET_LOCATION(lhs, @1, @1);
-		
+
 		$$ = new AccessExpr(lhs, *$3);
 		SET_LOCATION($$, @1, @3);
-		
+
 		delete $1; delete $3;
 	}
 	| AT IDENTIFIER {
 		auto lhs = new IDReference("this");
 		SET_LOCATION(lhs, @1, @1);
-		
+
 		$$ = new AccessExpr(lhs, *$2);
 		SET_LOCATION($$, @1, @2);
-		
+
 		delete $1; delete $2;
 	}
 	| SIZEOF OPEN_PAREN expression CLOSE_PAREN { $$ = new SizeofExpr($3); SET_LOCATION($$, @1, @4); }
