@@ -18,6 +18,8 @@
 #include <grove/AccessExpr.h>
 
 #include <grove/types/ReferenceType.h>
+#include <grove/types/VarType.h>
+#include <grove/types/FunctionType.h>
 
 #include <util/copy.h>
 
@@ -36,6 +38,8 @@ public:
 			return;
 		}
 		
+		auto module = root->getModule();
+		
 		// Go through all IDReference where it has a parent that is
 		// a ClassMethod
 		auto children = root->findChildren<FunctionCall*>();
@@ -44,7 +48,8 @@ public:
 			if (child->findParent<ClassMethod*>() == nullptr) continue;
 			auto the_class = child->findParent<ClassDecl *>();
 			
-			// TODO: see if the functions match, outside of name
+			// Abort out early if the class doesn't have a method
+			// with this name.
 			if (the_class->hasMethod(child->getName()) == false)
 			{
 				continue;
@@ -53,22 +58,41 @@ public:
 			// Resolve all the arguments so we can see what we're referring to
 			for (auto arg : child->getArgs())
 			{
-				arg->getModule()->resolve(arg);
+				module->resolve(arg);
 			}
 			
-			child->expectedFunctionTy();
+			auto expected = child->expectedFunctionTy();
 			
-			// TODO: support multiple names here
-			ClassMethod* method = nullptr;
-			for (auto class_method : the_class->getMethods())
+			// Copy expected, adding a var for this, though.
+			std::vector<const Orange::Type*> types;
+			types.push_back(Orange::VarType::get(module));
+			for (auto type : expected->getArgs())
 			{
-				if (class_method->getName() == child->getName())
-				{
-					method = class_method;
-					break;
-				}
+				types.push_back(type);
 			}
 			
+			expected = Orange::FunctionType::get(module,
+												 expected->getReturnTy(),
+												 types);
+			SearchSettings settings;
+			settings.createGeneric = false;
+			settings.forceTypeMatch = true;
+			settings.includeLimit = false;
+			settings.searchWholeTree = false;
+			settings.filter = [](Named* named) -> bool
+			{
+				return named->is<ClassMethod *>();
+			};
+			
+			auto named = the_class->getNamed(child->getName(), expected,
+											 nullptr,
+											 settings);
+			if (named == nullptr)
+			{
+				continue;
+			}
+			
+			auto method = named->as<ClassMethod*>();
 			ASTNode* accessLHS = nullptr;
 			
 			// We need to create an access expr to replace the IDReference,
@@ -87,16 +111,16 @@ public:
 			accessLHS->setLocation(child->getLocation());
 			access->setLocation(child->getLocation());
 			
-			child->getModule()->beginCopy();
+			module->beginCopy();
 			
 			auto call = new ExpressionCall(access,
 										   copyVector(child->getArgs()),
 										   true);
 			
-			child->getModule()->endCopy();
+			module->endCopy();
 			
 			child->replace(call);
-			access->getModule()->findDependencies(call);
+			module->findDependencies(call);
 		
 		}
 	}
