@@ -43,7 +43,7 @@ protected:
 	ExpressionCall(std::vector<Expression *> args);
 public:
 	/// Returns the function type this expression expects.
-	Orange::FunctionType* expectedFunctionTy() const;
+	virtual Orange::FunctionType* expectedFunctionTy() const;
 	
 	/// Gets the expression we're calling as a valued node.
 	const Valued* exprAsValued() const;
