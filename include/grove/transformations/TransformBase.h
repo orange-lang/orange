@@ -26,8 +26,10 @@ public:
 };
 
 extern void InitMemberAccessTransform();
+extern void InitMethodAccessTransform();
 
 void InitAllTransforms()
 {
 	InitMemberAccessTransform();
+	InitMethodAccessTransform();
 }
