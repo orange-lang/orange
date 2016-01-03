@@ -310,7 +310,7 @@ Constructor* ClassDecl::getCtorForMethod(ClassMethod *method)
 	}
 }
 
-bool ClassDecl::hasMethod(const OString &name) const
+bool ClassDecl::hasMethod(const OString &name, bool searchParents) const
 {
 	auto&& methods = getMethods();
 	for (const auto& method : methods)
@@ -321,10 +321,15 @@ bool ClassDecl::hasMethod(const OString &name) const
 		}
 	}
 	
+	if (searchParents && getParentClass())
+	{
+		return getParentClass()->hasMethod(name, searchParents);
+	}
+	
 	return false;
 }
 
-bool ClassDecl::hasMember(const OString &name) const
+bool ClassDecl::hasMember(const OString &name, bool searchParents) const
 {
 	auto&& members = getMembers();
 	for (const auto& member : members)
@@ -333,6 +338,11 @@ bool ClassDecl::hasMember(const OString &name) const
 		{
 			return true;
 		}
+	}
+	
+	if (searchParents && getParentClass())
+	{
+		return getParentClass()->hasMember(name, searchParents);
 	}
 	
 	return false;
@@ -526,22 +536,22 @@ Expression* ClassDecl::accessRegular(OString name, const ASTNode *hint) const
 	
 	if (hint->is<const Valued*>() == false)
 	{
-		if (hasMethod(name))
+		if (hasMethod(name, false))
 		{
 			return new StaticMethodAccess(this, name);
 		}
-		else if (hasMember(name) && getMember(name)->getStatic())
+		else if (hasMember(name, false) && getMember(name)->getStatic())
 		{
 			return new NodeReference(getMember(name));
 		}
 		
 		throw fatal_error("Not sure how to handle non-value class access");
 	}
-	else if (hasMethod(name))
+	else if (hasMethod(name, false))
 	{
 		return new MethodAccess(this, name);
 	}
-	else if (hasMember(name))
+	else if (hasMember(name, false))
 	{
 		auto valued = hint->as<const Valued *>();
 		auto memAccess = new MemberAccess(this, (Valued *)valued, name);

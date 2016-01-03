@@ -89,9 +89,9 @@ public:
 	
 	ClassMethod* getDefaultCtor() const;
 	
-	bool hasMethod(const OString& name) const;
+	bool hasMethod(const OString& name, bool searchParents = true) const;
 	
-	bool hasMember(const OString& name) const;
+	bool hasMember(const OString& name, bool searchParents = true) const;
 	
 	MemberVarDecl* getMember(const OString& name) const;
 	
