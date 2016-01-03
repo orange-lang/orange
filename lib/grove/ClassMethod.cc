@@ -16,6 +16,7 @@
 #include <grove/MemberVarDecl.h>
 #include <grove/IDReference.h>
 #include <grove/ExpressionCall.h>
+#include <grove/SuperCall.h>
 
 #include <grove/types/Type.h>
 
@@ -49,8 +50,25 @@ void ClassMethod::initialize()
 
 ExpressionCall* ClassMethod::getSuperCtorCall() const
 {
-	/// @todo: Find the super ctor call
-	return nullptr;
+	ExpressionCall* ctor_call = nullptr;
+	for (auto stmt : getStatements())
+	{
+		if (stmt->is<SuperCall*>())
+		{
+			if (ctor_call != nullptr)
+			{
+				throw code_error(stmt, ctor_call, []() -> std::string
+								 {
+									 return "A constructor can only call a "
+									 "parents constructor once";
+								 });
+			}
+			
+			ctor_call = stmt->as<SuperCall *>();
+		}
+	}
+	
+	return ctor_call;
 }
 
 void ClassMethod::findDependencies()
