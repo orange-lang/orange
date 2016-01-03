@@ -1,0 +1,33 @@
+class ParentClass
+	var a
+
+	def ParentClass(var num)
+		a = num
+	end
+end
+
+class ChildClass from ParentClass
+	var b
+
+	def test()
+		return a + b
+	end
+
+	def ChildClass(int a, var b)
+		super(a)
+
+		@b = b
+	end
+end
+
+var a = ChildClass(5, 10)
+return 1 if a.test() != 15
+
+var b = ChildClass(5.35, 10)
+return 1 if b.test() < 15.35
+
+var c = ChildClass(5, 10.25)
+return 1 if c.test() < 10.25
+
+var d = ChildClass(5.25, 10.25)
+return 1 if d.test() < 15.50
