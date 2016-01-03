@@ -40,6 +40,7 @@ public:
 	
 	virtual std::vector<std::vector<ObjectBase *>*> getMemberLists() override;
 	
+	virtual void prebuild() override;
 	virtual void resolve() override;
 	virtual void build() override;
 	

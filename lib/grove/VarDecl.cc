@@ -173,6 +173,21 @@ void VarDecl::resolve()
 	}
 }
 
+void VarDecl::prebuild()
+{
+	if (getStatic())
+	{
+		auto val = new llvm::GlobalVariable(*getModule()->getLLVMModule(),
+					getType()->getLLVMType(),
+					getType()->isConst(),
+					llvm::GlobalValue::LinkageTypes::InternalLinkage,
+					llvm::Constant::getNullValue(getType()->getLLVMType()),
+					getName().str());
+		
+		setValue(val);
+	}
+}
+
 void VarDecl::build()
 {
 	if (getType()->isVariadiclySized())
@@ -194,25 +209,10 @@ void VarDecl::build()
 	}
 	
 	
-	if (allocateVariable())
+	if (allocateVariable() && getStatic() == false)
 	{
-		if (getStatic())
-		{
-			auto val = new llvm::GlobalVariable(
-				*getModule()->getLLVMModule(),
-				getType()->getLLVMType(),
-				getType()->isConst(),
-				llvm::GlobalValue::LinkageTypes::InternalLinkage,
-				llvm::Constant::getNullValue(getType()->getLLVMType()),
-				getName().str());
-			
-			setValue(val);
-		}
-		else
-		{
-			setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), m_size,
-									   getName().str()));			
-		}
+		setValue(IRBuilder()->CreateAlloca(getType()->getLLVMType(), m_size,
+								   getName().str()));			
 
 	}
 	
