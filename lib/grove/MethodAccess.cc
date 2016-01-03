@@ -64,7 +64,7 @@ bool MethodAccess::isStaticMethod()
 	
 	if (named == nullptr)
 	{
-		throw fatal_error("Couldn't find method in class");
+		return false;
 	}
 	
 	return named->as<ClassMethod *>()->getStatic();
