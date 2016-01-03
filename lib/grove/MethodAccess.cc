@@ -89,6 +89,13 @@ void MethodAccess::resolve()
 			"the context of an object access."; });
 	}
 	
+	// We depend on all the arguments of the function, so
+	// let's just ask module to resolve them for us.
+	for (auto arg : call->getArgs())
+	{
+		getModule()->process(arg);
+	}
+	
 	bool is_static = isStaticMethod();
 	Expression* this_arg = nullptr;
 	
@@ -104,12 +111,7 @@ void MethodAccess::resolve()
 		}
 	}
 
-	// We depend on all the arguments of the function, so
-	// let's just ask module to resolve them for us.
-	for (auto arg : call->getArgs())
-	{
-		getModule()->process(arg);
-	}
+
 	
 	if (this_arg != nullptr)
 	{
