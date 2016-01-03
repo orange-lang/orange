@@ -12,6 +12,7 @@
 #include <grove/AccessExpr.h>
 #include <grove/Module.h>
 #include <grove/ReferenceExpr.h>
+#include <grove/ClassMethod.h>
 
 #include <grove/types/Type.h>
 #include <grove/types/FunctionType.h>
@@ -44,6 +45,31 @@ std::vector<std::vector<ObjectBase *>*> MethodAccess::getMemberLists()
 	return defMemberLists();
 }
 
+bool MethodAccess::isStaticMethod()
+{
+    auto call = findParent<ExpressionCall *>();
+	
+	SearchSettings settings;
+	settings.createGeneric = false;
+	settings.forceTypeMatch = false;
+	settings.includeLimit = false;
+	settings.searchWholeTree = false;
+	settings.filter = [] (Named* named) -> bool
+	{
+		return named->is<ClassMethod *>();
+	};
+	
+	auto named = m_class->getNamed(m_name, call->expectedFunctionTy(), nullptr,
+								   settings);
+	
+	if (named == nullptr)
+	{
+		throw fatal_error("Couldn't find method in class");
+	}
+	
+	return named->as<ClassMethod *>()->getStatic();
+}
+
 void MethodAccess::resolve()
 {
 	// The first thing to do is verify that we're being used in the
@@ -63,15 +89,21 @@ void MethodAccess::resolve()
 			"the context of an object access."; });
 	}
 	
-	Expression* this_arg = new NodeReference(access->getLHS());
-	getModule()->process(this_arg);
+	bool is_static = isStaticMethod();
+	Expression* this_arg = nullptr;
 	
-	if (this_arg->getType()->isPointerTy() == false)
+	if (is_static == false)
 	{
-		this_arg = new ReferenceExpr(this_arg);
-		getModule()->process(this_arg);
+		this_arg = new NodeReference(access->getLHS());
+    	getModule()->process(this_arg);
+		
+		if (this_arg->getType()->isPointerTy() == false)
+		{
+			this_arg = new ReferenceExpr(this_arg);
+			getModule()->process(this_arg);
+		}
 	}
-	
+
 	// We depend on all the arguments of the function, so
 	// let's just ask module to resolve them for us.
 	for (auto arg : call->getArgs())
@@ -79,7 +111,10 @@ void MethodAccess::resolve()
 		getModule()->process(arg);
 	}
 	
-	call->addArgument(this_arg, 0);
+	if (this_arg != nullptr)
+	{
+    	call->addArgument(this_arg, 0);
+	}
 	
 	SearchSettings settings;
 	settings.createGeneric = true;
