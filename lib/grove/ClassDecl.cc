@@ -496,9 +496,12 @@ void ClassDecl::prebuild()
 			continue;
 		}
 		
-		getModule()->build(ctors[i]);
-		
 		auto ctor = getCtorForMethod(ctors[i]);
+		
+		getModule()->prebuild(ctors[i]);
+		getModule()->prebuild(ctor);
+		
+		getModule()->build(ctors[i]);
 		getModule()->build(ctor);
 	}
 	
