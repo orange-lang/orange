@@ -9,8 +9,29 @@
 #include <grove/types/ClassType.h>
 
 #include <grove/ClassDecl.h>
+#include <grove/Valued.h>
 
 #include <llvm/IR/DerivedTypes.h>
+
+#include <llvm/IR/Type.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Instruction.h>
+#include <llvm/IR/IRBuilder.h>
+
+static llvm::Value* ClassCast(void* irBuilder, Valued* val,
+							  const Orange::Type* from,
+							  const Orange::Type* to)
+{
+	if (val->hasPointer() == false)
+	{
+		throw fatal_error("Should not have got here");
+	}
+	
+	LLVMBuilder* IRB = (LLVMBuilder *)irBuilder;
+	auto cast = IRB->CreateBitCast(val->getPointer(),
+								   to->getLLVMType()->getPointerTo());
+	return IRB->CreateLoad(cast);
+}
 
 Orange::ClassType::ClassType(ClassDecl* the_class)
 : Type(false), m_class(the_class)
@@ -20,6 +41,9 @@ Orange::ClassType::ClassType(ClassDecl* the_class)
 	
 	m_type = llvm::StructType::create(*m_context, name.str());
 	m_opaque = true;
+	
+	defineCast(typeid(ClassType), llvm::Instruction::CastOps::BitCast,
+			   ClassCast);
 }
 
 Orange::ClassType::ClassType(ClassDecl* the_class,
