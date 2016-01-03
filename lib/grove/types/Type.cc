@@ -391,8 +391,14 @@ llvm::Value* Orange::Type::cast(void *irBuilder, Valued *val,
 {
 	TypeTuple key(typeid(*this).hash_code(), typeid(*target).hash_code());
 	
+	auto orig_target = target;
 	auto src = (Type *)getComparisonTy();
 	target = (Type *)target->getComparisonTy();
+	
+	if (this != src || target != orig_target)
+	{
+		return src->cast(irBuilder, val, target);
+	}
 	
 	auto it = m_cast_map.find(key);
 	if (it == m_cast_map.end() && src != target)
