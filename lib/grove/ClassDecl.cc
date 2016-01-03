@@ -735,7 +735,7 @@ ClassDecl::ClassDecl(const ClassDecl& other)
 	if (other.m_parent_class)
 	{
     	m_parent_class =
-			(ClassDecl *)getModule()->tryGetCopy(other.m_parent_class);
+			(ClassDecl *)other.getModule()->tryGetCopy(other.m_parent_class);
 	}
 	
 	other.defineCopy(this);
