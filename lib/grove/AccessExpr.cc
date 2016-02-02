@@ -14,6 +14,7 @@
 #include <grove/exceptions/code_error.h>
 
 #include <util/assertions.h>
+#include <sstream>
 
 ASTNode* AccessExpr::copy() const
 {
