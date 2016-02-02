@@ -14,6 +14,8 @@
 
 #include <util/file.h>
 
+#include <llvm/Support/TimeValue.h>
+
 #ifdef _WIN32
 const char* NULLFILE = "NUL";
 #else
