@@ -28,7 +28,7 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 	typedef std::tuple<BinOp, BinOp, BinOp> BinOpTuple;
 	
 	using namespace llvm;
-	
+
 	const static std::map<std::string, BinOpTuple> m_op_map = {
 		{"+", std::make_tuple(BinOp::Add,  BinOp::Add,  BinOp::FAdd)},
 		{"-", std::make_tuple(BinOp::Sub,  BinOp::Sub,  BinOp::FSub)},
@@ -44,7 +44,7 @@ static llvm::Instruction::BinaryOps getBinOp(std::string op, bool FP, bool isSig
 	
 	if (it == m_op_map.end())
 	{
-		throw fatal_error("unkown operator given to BinOpArith");
+		throw fatal_error("unknown operator given to BinOpArith");
 	}
 	
 	if (FP == true)
