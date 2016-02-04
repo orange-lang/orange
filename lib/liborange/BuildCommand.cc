@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <memory>
-#include <orange/BuildCommand.h>
+#include <liborange/BuildCommand.h>
 #include <libast/Builder.h>
 #include <cmd/StateFlag.h>
 

@@ -9,10 +9,9 @@
 #include <util/link.h>
 #include <cmd/ProgramOptions.h>
 #include <cmd/OptionsState.h>
-#include <orange/RunCommand.h>
-#include <orange/BuildCommand.h>
-#include <orange/TestCommand.h>
-
+#include <liborange/RunCommand.h>
+#include <liborange/BuildCommand.h>
+#include <liborange/TestCommand.h>
 
 int main(int argc, char** argv) {
 	auto options = new ProgramOptions("Orange WIP");

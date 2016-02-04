@@ -6,14 +6,9 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <orange/file.h>
-#include <orange/config.h>
+#include <util/file.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>
-
-//using namespace llvm::sys;
-//using namespace llvm;
-
 
 std::string findProjectDirectory(std::string target)
 {

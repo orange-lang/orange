@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <fcntl.h>
-#include <orange/TestCommand.h>
+#include <liborange/TestCommand.h>
 #include <libast/Builder.h>
 #include <libast/Module.h>
 
