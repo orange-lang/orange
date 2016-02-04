@@ -10,7 +10,10 @@
 
 #include <libast/Module.h>
 #include <libast/Namespace.h>
-#include <libast/Builder.h>
+
+// TODO: libast should not know about this 
+#include <liborange/Builder.h>
+
 #include <libast/MainFunction.h>
 #include <libast/TypeProvider.h>
 

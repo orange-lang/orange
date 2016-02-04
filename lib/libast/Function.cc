@@ -8,7 +8,10 @@
 
 #include <libast/Function.h>
 #include <libast/Module.h>
-#include <libast/Builder.h>
+
+// TODO: libast should not know about this
+#include <liborange/Builder.h>
+
 #include <libast/ReturnStmt.h>
 #include <libast/Parameter.h>
 

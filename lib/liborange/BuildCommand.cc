@@ -9,7 +9,7 @@
 #include <iostream>
 #include <memory>
 #include <liborange/BuildCommand.h>
-#include <libast/Builder.h>
+#include <liborange/Builder.h>
 #include <cmd/StateFlag.h>
 
 int BuildCommand::run(std::vector<std::string> args)

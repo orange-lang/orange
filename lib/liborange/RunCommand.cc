@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <liborange/RunCommand.h>
-#include <libast/Builder.h>
+#include <liborange/Builder.h>
 #include <cmd/StateFlag.h>
 
 int RunCommand::run(std::vector<std::string> args)

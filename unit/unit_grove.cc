@@ -9,7 +9,7 @@
 #include <test/TestLib.h>
 #include <test/Comparisons.h>
 
-#include <libast/Builder.h>
+#include <liborange/Builder.h>
 
 #include <libast/exceptions/file_error.h>
 #include <libast/exceptions/already_defined_error.h>

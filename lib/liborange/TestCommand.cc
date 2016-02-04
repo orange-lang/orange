@@ -9,12 +9,14 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <liborange/TestCommand.h>
-#include <libast/Builder.h>
+#include <liborange/Builder.h>
 #include <libast/Module.h>
 
 #include <util/file.h>
 
 #include <llvm/Support/TimeValue.h>
+
+#include <unistd.h>
 
 #ifdef _WIN32
 const char* NULLFILE = "NUL";

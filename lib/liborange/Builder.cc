@@ -6,8 +6,8 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <libast/Builder.h>
-#include <libast/BuildSettings.h>
+#include <liborange/Builder.h>
+
 #include <libast/Library.h>
 #include <libast/Module.h>
 #include <libast/Function.h>
@@ -36,11 +36,6 @@
 Library* Builder::getLibrary() const
 {
 	return m_library;
-}
-
-BuildSettings* Builder::getSettings() const
-{
-	return m_settings;
 }
 
 std::vector<Module *> Builder::getModules() const
@@ -273,23 +268,6 @@ Builder::Builder()
 Builder::Builder(std::string path)
 {
 	m_build_path = path;
-	m_settings = new BuildSettings();
-
-	initialize();
-	
-	auto mod = new Module(this, m_build_path);
-	m_modules.push_back(mod);
-}
-
-Builder::Builder(std::string path, BuildSettings* settings)
-{
-	if (settings == nullptr)
-	{
-		throw fatal_error("settings was null");
-	}
-
-	m_build_path = path;
-	m_settings = settings;
 
 	initialize();
 	
@@ -300,7 +278,6 @@ Builder::Builder(std::string path, BuildSettings* settings)
 Builder::~Builder()
 {
 	delete m_library;
-	delete m_settings;
 	delete m_target_machine;
 
 	for (auto module : m_modules)
