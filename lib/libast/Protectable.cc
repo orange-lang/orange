@@ -6,21 +6,19 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <util/assertions.h>
-#include <libast/exceptions/fatal_error.h>
+#include <libast/Protectable.h>
 
-void assertExists(const void* ptr, std::string str)
+void Protectable::setProtectionLevel(ProtectionLevel &level)
 {
-	if (ptr == nullptr)
-	{
-		throw fatal_error(str);
-	}
+	m_level = level;
 }
 
-void assertEqual(const void* ptr_a, const void* ptr_b, std::string str)
+const ProtectionLevel Protectable::getProtectionLevel() const
 {
-	if (ptr_a != ptr_b)
+	if (m_level == PROTECTION_DEFAULT)
 	{
-		throw fatal_error(str);
+		return defaultProtectionLevel();
 	}
+	
+	return m_level;
 }

@@ -6,21 +6,24 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <util/assertions.h>
+#include <libast/types/LocalNamedType.h>
+
 #include <libast/exceptions/fatal_error.h>
 
-void assertExists(const void* ptr, std::string str)
+
+
+Module* LocalNamedType::getModule() const
 {
-	if (ptr == nullptr)
-	{
-		throw fatal_error(str);
-	}
+	return m_module;
 }
 
-void assertEqual(const void* ptr_a, const void* ptr_b, std::string str)
+LocalNamedType::LocalNamedType(Module* mod, std::string name, Orange::Type* ty)
+: NamedType(name, ty)
 {
-	if (ptr_a != ptr_b)
+	if (mod == nullptr)
 	{
-		throw fatal_error(str);
+		throw fatal_error("module was null");
 	}
+	
+	m_module = mod;
 }

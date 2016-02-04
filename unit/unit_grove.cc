@@ -9,13 +9,13 @@
 #include <test/TestLib.h>
 #include <test/Comparisons.h>
 
-#include <grove/Builder.h>
+#include <libast/Builder.h>
 
-#include <grove/exceptions/file_error.h>
-#include <grove/exceptions/already_defined_error.h>
-#include <grove/exceptions/already_defined_sig_error.h>
-#include <grove/exceptions/undefined_error.h>
-#include <grove/exceptions/binop_error.h>
+#include <libast/exceptions/file_error.h>
+#include <libast/exceptions/already_defined_error.h>
+#include <libast/exceptions/already_defined_sig_error.h>
+#include <libast/exceptions/undefined_error.h>
+#include <libast/exceptions/binop_error.h>
 
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Support/Path.h>

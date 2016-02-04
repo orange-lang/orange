@@ -11,23 +11,23 @@
 
 #include <llvm/IR/Instruction.h>
 
-#include <grove/types/Type.h>
-#include <grove/types/ArrayType.h>
-#include <grove/types/BoolType.h>
-#include <grove/types/DoubleType.h>
-#include <grove/types/FloatType.h>
-#include <grove/types/EnumType.h>
-#include <grove/types/FunctionType.h>
-#include <grove/types/IntType.h>
-#include <grove/types/LocalNamedType.h>
-#include <grove/types/NamedType.h>
-#include <grove/types/PointerType.h>
-#include <grove/types/UIntType.h>
-#include <grove/types/VoidType.h>
+#include <libast/types/Type.h>
+#include <libast/types/ArrayType.h>
+#include <libast/types/BoolType.h>
+#include <libast/types/DoubleType.h>
+#include <libast/types/FloatType.h>
+#include <libast/types/EnumType.h>
+#include <libast/types/FunctionType.h>
+#include <libast/types/IntType.h>
+#include <libast/types/LocalNamedType.h>
+#include <libast/types/NamedType.h>
+#include <libast/types/PointerType.h>
+#include <libast/types/UIntType.h>
+#include <libast/types/VoidType.h>
 
-#include <grove/Comparison.h>
-#include <grove/Module.h>
-#include <grove/Builder.h>
+#include <libast/Comparison.h>
+#include <libast/Module.h>
+#include <libast/Builder.h>
 
 
 

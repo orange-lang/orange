@@ -25,16 +25,16 @@ if (${CMD_HAS_PFX})
 endif()
 
 # Test to see if grove has been cotired.
-get_target_property(GROVE_HAS_PFX grove COTIRE_ENABLE_PRECOMPILED_HEADER)
+get_target_property(GROVE_HAS_PFX ast COTIRE_ENABLE_PRECOMPILED_HEADER)
 if (${GROVE_HAS_PFX})
-  get_target_property(grovePfx grove COTIRE_CXX_PREFIX_HEADER)
-  set_property(TARGET orange APPEND_STRING PROPERTY COTIRE_CXX_PREFIX_HEADER_INIT "${grovePfx};")
+  get_target_property(astPfc ast COTIRE_CXX_PREFIX_HEADER)
+  set_property(TARGET orange APPEND_STRING PROPERTY COTIRE_CXX_PREFIX_HEADER_INIT "${astPfx};")
 endif()
 
 cotire(orange)
 
-target_link_libraries(orange grove util cmd)
+target_link_libraries(orange ast util cmd)
 
-ADD_DEPENDENCIES(orange boot util cmd grove)
+ADD_DEPENDENCIES(orange boot util cmd ast)
 
 install(TARGETS orange DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

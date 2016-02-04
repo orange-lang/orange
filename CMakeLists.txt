@@ -107,7 +107,7 @@ add_subdirectory(lib/test)
 add_subdirectory(lib/libor)
 add_subdirectory(lib/cmd)
 add_subdirectory(lib/util)
-add_subdirectory(lib/grove)
+add_subdirectory(lib/libast)
 add_subdirectory(tools/orange)
 add_subdirectory(unit)
 

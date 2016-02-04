@@ -6,21 +6,26 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-#include <util/assertions.h>
+#include <libast/Namespace.h>
+
 #include <libast/exceptions/fatal_error.h>
 
-void assertExists(const void* ptr, std::string str)
+std::string Namespace::getName() const
 {
-	if (ptr == nullptr)
-	{
-		throw fatal_error(str);
-	}
+	return m_name;
 }
 
-void assertEqual(const void* ptr_a, const void* ptr_b, std::string str)
+std::vector<Namespace *> Namespace::getChildren() const
 {
-	if (ptr_a != ptr_b)
+	return m_children;
+}
+
+Namespace::Namespace(std::string name)
+{
+	if (name == "")
 	{
-		throw fatal_error(str);
+		throw fatal_error("name was empty");
 	}
+	
+	m_name = name;
 }

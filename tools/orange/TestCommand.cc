@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <orange/TestCommand.h>
-#include <grove/Builder.h>
-#include <grove/Module.h>
+#include <libast/Builder.h>
+#include <libast/Module.h>
 
 #include <util/file.h>
 
