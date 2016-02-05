@@ -226,7 +226,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 83 "/Users/robert/dev/orange/lib/grove/parser.y"
+#line 83 "/Users/robert/dev/orange/lib/libparse/parser.y"
 {
 	std::vector<ASTNode*>* nodes;
 	std::vector<Parameter*>* params;
@@ -245,7 +245,7 @@ typedef union YYSTYPE
 	const Orange::Type* ty;
 }
 /* Line 1529 of yacc.c.  */
-#line 249 "/Users/robert/dev/orange/lib/grove/parser.hh"
+#line 249 "/Users/robert/dev/orange/lib/libparse/parser.hh"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

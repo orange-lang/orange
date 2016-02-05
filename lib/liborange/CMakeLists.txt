@@ -12,6 +12,5 @@ set_target_properties (orange PROPERTIES FOLDER lib)
 
 cotire(orange)
 
-target_link_libraries(orange ast util cmd)
-
-ADD_DEPENDENCIES(orange boot util cmd ast)
+target_link_libraries(orange ast util cmd parse)
+add_dependencies(orange boot util cmd ast parse)

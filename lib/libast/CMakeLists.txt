@@ -4,19 +4,6 @@ add_definitions(${LLVM_DEFINITIONS})
 
 llvm_map_components_to_libnames(llvm_libs X86 ipo MCJIT)
 
-set(FLEX_FlexOutput_OUTPUTS "")
-set(BISON_BisonOutput_OUTPUTS "")
-
-find_package(BISON)
-if (${BISON_FOUND})
-    bison_target(BisonOutput ${CMAKE_SOURCE_DIR}/lib/libast/parser.y ${CMAKE_SOURCE_DIR}/lib/libast/parser.cc)
-endif()
-
-find_package(FLEX)
-if (${FLEX_FOUND})
-    flex_target(FlexOutput ${CMAKE_SOURCE_DIR}/lib/libast/lexer.l ${CMAKE_SOURCE_DIR}/lib/libast/lexer.cc)
-endif()
-
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/lib/libast)
 
 AUX_SOURCE_DIRECTORY(${CMAKE_SOURCE_DIR}/lib/libast LIBAST_SOURCES)
@@ -30,15 +17,6 @@ file(GLOB TYPE_INCLUDES "${CMAKE_SOURCE_DIR}/include/libast/types/*.h")
 file(GLOB EXCEPTION_INCLUDES "${CMAKE_SOURCE_DIR}/include/libast/exceptions/*.h")
 file(GLOB TRANSFORMATION_INCLUDES "${CMAKE_SOURCE_DIR}/include/libast/transformations/*.h")
 file(GLOB_RECURSE TEST_FILES "${CMAKE_SOURCE_DIR}/test/*.or")
-
-source_group(parser FILES
-	${CMAKE_SOURCE_DIR}/lib/libast/parser.y
-	${CMAKE_SOURCE_DIR}/lib/libast/lexer.l
-)
-
-source_group(parser\\generated FILES
-    ${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS}
-)
 
 source_group(src FILES ${LIBAST_SOURCES})
 source_group(src\\types FILES ${LIBAST_TYPES_SOURCES})
@@ -61,9 +39,6 @@ endforeach()
 add_library(ast ${LIBAST_SOURCES} ${LIBAST_TYPES_SOURCES} ${LIBAST_EXCEPTIONS_SOURCES}
     ${LIBAST_TRANSFORMATIONS_SOURCES}
 	${INCLUDES} ${TYPE_INCLUDES} ${EXCEPTION_INCLUDES} ${TRANSFORMATION_INCLUDES}
-	${FLEX_FlexOutput_OUTPUTS} ${BISON_BisonOutput_OUTPUTS}
-	${CMAKE_SOURCE_DIR}/lib/libast/lexer.l
-	${CMAKE_SOURCE_DIR}/lib/libast/parser.y
     ${TEST_FILES}
 )
 

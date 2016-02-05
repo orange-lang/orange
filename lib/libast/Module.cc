@@ -11,7 +11,7 @@
 #include <libast/Module.h>
 #include <libast/Namespace.h>
 
-// TODO: libast should not know about this 
+// TODO: libast should not know about this
 #include <liborange/Builder.h>
 
 #include <libast/MainFunction.h>
@@ -67,7 +67,7 @@ bool Module::BlockIterator::hasNext() const
 							  "parent was found.");
 		}
 #endif
-		
+
 		// We search through the nearest parent block, so if there aren't
     	// any more parent blocks, there's nothing next.
     	auto block = m_ptr->findParent<Block *>();
@@ -75,15 +75,15 @@ bool Module::BlockIterator::hasNext() const
     	{
     		return false;
     	}
-	
+
     	// If we're not searching the whole tree and we've already
     	// given one, then there's nothing next.
     	if (m_step > 0 && m_settings.searchWholeTree == false)
     	{
     		return false;
     	}
-    	
-    	return true;	
+
+    	return true;
 	}
 
 }
@@ -94,9 +94,9 @@ const Block* Module::BlockIterator::getNext()
 	{
 		return nullptr;
 	}
-	
+
 	m_step++;
-	
+
 	// There is a chance that while in parsing mode,
 	// m_ptr is NOT just the top block. If it IS
 	// the top block, we want to get its parent first,
@@ -105,7 +105,7 @@ const Block* Module::BlockIterator::getNext()
 	{
 		m_ptr = m_ctx_stack.top();
 		m_ctx_stack.pop();
-		
+
 		return (Block *)m_ptr;
 	}
 	else
@@ -120,7 +120,7 @@ const Block* Module::BlockIterator::getNext()
 							  "parent was found.");
 		}
 #endif
-		
+
     	m_ptr = m_ptr->findParent<Block *>();
     	return (Block *)m_ptr;
 	}
@@ -132,26 +132,26 @@ const ASTNode* Module::BlockIterator::getLimit() const
 	{
 		return nullptr;
 	}
-	
+
 	// There are no limits when in parsing mode.
 	if (m_module->getParsing() == true)
 	{
 		return nullptr;
 	}
-	
+
 	const ASTNode* limit = m_ptr;
 	auto block = m_ptr->findParent<Block *>();
-	
+
 	while (limit != nullptr)
 	{
 		if (limit->getParent() == block)
 		{
 			break;
 		}
-		
+
 		limit = limit->getParent();
 	}
-	
+
 	return limit;
 }
 
@@ -161,12 +161,12 @@ Module::BlockIterator::BlockIterator(const Module* mod, const ASTNode* from,
 {
 	assertExists(mod, "BlockIterator created without a module");
 	assertExists(m_ptr, "BlockIterator created without a from");
-	
+
 	if (m_module->getParsing())
 	{
 		m_ctx_stack = mod->m_ctx;
 	}
-	
+
 	m_step = 0;
 }
 
@@ -206,12 +206,11 @@ void Module::parse()
 	extern int yyparse(Module* mod);
 	extern int yyonce;
 	extern void yyflushbuffer();
-	
-#if defined(DEBUG_BUILD) && YYDEBUG 
+
+#if defined(DEBUG_BUILD) && YYDEBUG
 	extern int yydebug;
 	yydebug = 1;
 #endif
-	
 
 	if (llvm::sys::fs::is_directory(llvm::Twine(getFile())) == true)
 	{
@@ -227,7 +226,7 @@ void Module::parse()
 	yyflushbuffer();
 	yyonce = 0;
 	yyin = file;
-	
+
 	m_parsing = true;
 	yyparse(this);
 	m_parsing = false;
@@ -283,10 +282,10 @@ void Module::initialize(ASTNode *node)
 	{
 		initialize(child);
 	}
-	
+
 	auto it = std::find(this->m_initialized.begin(), this->m_initialized.end(),
 						node);
-	
+
 	if (it == std::end(this->m_initialized))
 	{
 		this->m_initialized.push_back(node);
@@ -383,7 +382,7 @@ void Module::prebuild(ASTNode *node)
 	{
 		prebuild(child);
 	}
-	
+
 	// Resolve this node after resolving the dependencies.
 	auto it = std::find(this->m_prebuilt.begin(), this->m_prebuilt.end(),
 						node);
@@ -405,7 +404,7 @@ void Module::build(ASTNode *node)
 {
 	auto it = std::find(this->m_built.begin(), this->m_built.end(),
 						node);
-	
+
 	if (it == std::end(this->m_built))
 	{
 		this->m_built.push_back(node);
@@ -416,12 +415,12 @@ void Module::build(ASTNode *node)
 void Module::build()
 {
 	prebuild();
-	
+
 	build(getMain());
-	
-	// Optimize the module 
+
+	// Optimize the module
 	llvm::legacy::PassManager MPM;
-	
+
 	MPM.add(llvm::createVerifierPass(true));
 	MPM.add(llvm::createBasicAliasAnalysisPass());
 	MPM.add(llvm::createPromoteMemoryToRegisterPass());
@@ -429,7 +428,7 @@ void Module::build()
 	MPM.add(llvm::createReassociatePass());
 	MPM.add(llvm::createGVNPass());
 	MPM.add(llvm::createCFGSimplificationPass());
-		
+
 	MPM.run(*m_llvm_module);
 }
 
@@ -468,7 +467,7 @@ std::string Module::compile()
 	strm.flush();
 	raw.flush();
 	raw.close();
-	
+
 	delete pm;
 
 	return path;
@@ -490,20 +489,20 @@ bool Module::hasNamed(OString name, const ASTNode *from,
 					  SearchSettings settings) const
 {
 	assertExists(from, "From cannot be nullptr");
-	
+
 	BlockIterator it(this, from, settings);
 	while (it.hasNext())
 	{
 		// Get the limit from the current element of it.
 		const ASTNode* limit = it.getLimit();
-		
+
 		if (it.getNext()->hasNamed(name, limit, settings))
 		{
 			return true;
 		}
 	}
-	
-	
+
+
 	return false;
 }
 
@@ -515,14 +514,14 @@ Named* Module::findNamed(OString name, const Orange::Type *type,
 	{
 		// Get the limit from the current element of it.
 		const ASTNode* limit = it.getLimit();
-		
+
 		auto named = it.getNext()->getNamed(name, type, limit, settings);
 		if (named != nullptr)
 		{
 			return named;
 		}
 	}
-	
+
 	return nullptr;
 }
 
@@ -530,23 +529,23 @@ std::vector<Named*> Module::findAllNamed(OString name, const ASTNode *from)
 const
 {
 	std::vector<Named *> matches;
-	
+
 	SearchSettings settings;
 	settings.createGeneric = false;
 	settings.forceTypeMatch = false;
 	settings.includeLimit = true;
 	settings.searchWholeTree = true;
-	
+
 	BlockIterator it(this, from, settings);
 	while (it.hasNext())
 	{
 		// Get the limit from the current element of it.
 		const ASTNode* limit = it.getLimit();
-		
+
 		auto found = it.getNext()->getAllNamed(name, limit);
 		matches.insert(matches.end(), found.begin(), found.end());
 	}
-	
+
 	return matches;
 }
 
@@ -571,13 +570,13 @@ void Module::defineCopy(const ASTNode *original, const ASTNode *copy)
 	{
 		throw fatal_error("Not in a copy state");
 	}
-	
+
 	auto it = m_copy_states.find(original);
 	if (it != m_copy_states.end())
 	{
 		throw fatal_error("Redefining a copy mapping");
 	}
-	
+
 	m_copy_states[original] = copy;
 }
 
@@ -587,13 +586,13 @@ bool Module::hasCopy(const ASTNode *original)
 	{
 		throw fatal_error("Not in a copy state");
 	}
-	
+
 	auto it = m_copy_states.find(original);
 	if (it != m_copy_states.end())
 	{
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -603,13 +602,13 @@ ASTNode* Module::getCopy(const ASTNode *original)
 	{
 		throw fatal_error("Not in a copy state");
 	}
-	
+
 	auto it = m_copy_states.find(original);
 	if (it != m_copy_states.end())
 	{
 		return (ASTNode *)it->second;
 	}
-	
+
 	throw fatal_error("Copy mapping not found");
 }
 
@@ -619,7 +618,7 @@ ASTNode* Module::tryGetCopy(const ASTNode *original)
 	{
 		return getCopy(original);
 	}
-	
+
 	return original->as<ASTNode *>();
 }
 
@@ -629,7 +628,7 @@ void Module::endCopy()
 	{
 		throw fatal_error("copy state stack is empty");
 	}
-	
+
 	if (--m_copy_levels == 0)
 	{
 		m_copy_states.clear();
@@ -640,17 +639,17 @@ Module::Module()
 {
 	m_namespace = new Namespace("local");
 	m_file = "";
-	
+
 	m_llvm_module = new llvm::Module(m_file, getLLVMContext());
 	m_ir_builder = new IRBuilder(getLLVMContext());
-	
+
 	m_main = new MainFunction(this, "_main");
-	
+
 	auto mainFunctionTy = Orange::FunctionType::get(this,
 							Orange::IntType::get(this, 32),
 							std::vector<const Orange::Type*>());
 	getMain()->setType(mainFunctionTy);
-	
+
 	pushBlock(m_main);
 }
 
@@ -683,11 +682,10 @@ Module::Module(Builder* builder, std::string filePath)
 							std::vector<const Orange::Type*>());
 	getMain()->setType(mainFunctionTy);
 
-
 	pushBlock(m_main);
 
 	parse();
-	
+
 	if (m_ctx.size() != 1 || getBlock() != m_main)
 	{
 		throw fatal_error("Parsing didn't clean up blocks!");
@@ -698,19 +696,19 @@ bool Module::isDefinedTypeName(OString name) const
 {
 	SearchSettings settings;
 	settings.createGeneric = false;
-	
+
 	// There's no reason to include a limit as there are no nodes past
 	// getLatestNode(), and we want to be able to include getLatestNode()
 	// in the search.
 	settings.includeLimit = false;
-	
+
 	settings.filter = [](Named *named) -> bool
 	{
 		return named->is<TypeProvider *>();
 	};
-	
+
 	auto defined = hasNamed(name, getLatestNode(), settings);
-	
+
 	if (defined == false && m_parsing)
 	{
 		// If we didn't find one, let's see if we can
@@ -719,19 +717,19 @@ bool Module::isDefinedTypeName(OString name) const
 		while (ctx_copy.empty() == false)
 		{
 			auto block = ctx_copy.top();
-			
+
 			if (block->is<Named *>() &&
 				block->as<Named *>()->matchesName(name) &&
 				block->is<TypeProvider *>())
 			{
 				return true;
 			}
-			
+
 			ctx_copy.pop();
 		}
-		
+
 	}
-	
+
 	return defined;
 }
 
@@ -739,11 +737,11 @@ Module::~Module()
 {
 	delete m_ir_builder;
 	delete m_main;
-	
+
 	for (auto child : m_children)
 	{
 		delete child;
 	}
-	
+
 	Orange::Type::clear(this);
 }

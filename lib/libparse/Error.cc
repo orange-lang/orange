@@ -7,6 +7,7 @@
 */
 
 #include <stdexcept>
+#include <sstream>
 
 #include <libast/Module.h>
 
@@ -24,6 +25,6 @@ void yyerror(Module* mod, const char* str)
 	std::stringstream ss;
 	ss << mod->getFile() << ":" << yylloc.last_line << ":" <<
  		yylloc.last_column << ": " << str;
-	
+
 	throw std::runtime_error(ss.str());
 }
