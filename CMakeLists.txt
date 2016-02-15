@@ -43,12 +43,26 @@ if (NOT ${LLVM_FOUND})
     SET(CMAKE_BUILD_TYPE_SAVED "${CMAKE_BUILD_TYPE}")
     SET(CMAKE_BUILD_TYPE Release)
 
-	add_subdirectory(etc/llvm)
+    # We want to force an install to our build directory.
+    # Xcode has a tendency to try to always link to the Debug build of LLVM,
+    # so we will move our build to a pre-determined folder by installing it,
+    # and then link to it there. 
+    SET(CMAKE_INSTALL_PREFIX_SAVED "${CMAKE_INSTALL_PREFIX}")
+    SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/llvm_install")
 
-    SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE_SAVED}")
+    SET(LLVM_BUILD_TOOLS OFF)
+    SET(LLVM_INCLUDE_TOOLS OFF)
+    SET(LLVM_INCLUDE_EXAMPLES OFF)
+    SET(LLVM_INCLUDE_TESTS OFF)
+    SET(LLVM_ENABLE_WARNINGS OFF)
+
+	add_subdirectory(etc/llvm EXCLUDE_FROM_ALL)
 
 	include_directories(${CMAKE_SOURCE_DIR}/etc/llvm/include)
 	include_directories(${CMAKE_BINARY_DIR}/etc/llvm/include)
+
+    SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE_SAVED}")
+    SET(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 else()
 	# This is a cheap hack: we'd like to know if the LLVM_INCLUDE_DIRS
 	# has all the needed .h files, since it may point to the build folder here.

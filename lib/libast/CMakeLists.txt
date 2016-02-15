@@ -1,4 +1,6 @@
-find_package(LLVM REQUIRED HINTS ${CMAKE_BINARY_DIR}/etc/llvm/cmake/modules/CMakeFiles)
+find_package(LLVM REQUIRED HINTS
+	${CMAKE_BINARY_DIR}/llvm_install/share/llvm/cmake
+	${CMAKE_BINARY_DIR}/etc/llvm/cmake/modules/CMakeFiles)
 
 add_definitions(${LLVM_DEFINITIONS})
 
@@ -61,5 +63,4 @@ endif()
 cotire(ast)
 
 target_link_libraries(ast util cmd ${llvm_libs})
-
 ADD_DEPENDENCIES(ast boot util)
