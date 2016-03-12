@@ -1,7 +1,0 @@
-int[] arr = [0, 0]
-
-def foo(var a) 
-	return a != 0
-end
-
-return foo(arr[1])

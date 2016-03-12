@@ -1,9 +1,0 @@
-def foo()
-	float a = 3.5
-	a += 5.0f 
-	return a
-end 
-
-var b = foo()
-b -= 8.5 
-return b > 0.1

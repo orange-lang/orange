@@ -1,3 +1,0 @@
-extern printf(char *s, ...) -> int32
-printf("Number: %d\n", 12345)
-return 0

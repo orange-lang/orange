@@ -1,9 +1,0 @@
-class TestClass 
-	static int a = 5 
-
-	static def foo()
-		return a 
-	end 
-end 
-
-return 1 if TestClass.foo() != 5 

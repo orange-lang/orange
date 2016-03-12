@@ -1,7 +1,0 @@
-def foo(var n)
-	return n + 1
-end 
-
-extern printf(char *s, ...) -> int32
-printf("%d\n", foo(5))
-return 0

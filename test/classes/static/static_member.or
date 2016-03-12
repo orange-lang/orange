@@ -1,5 +1,0 @@
-class TestClass 
-	static int a = 5 
-end 
-
-return 1 if TestClass.a != 5 

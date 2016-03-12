@@ -1,5 +1,0 @@
-# const_int.or
-#
-# Test returning a constant 16-bit signed integer.
-
-return 0i16

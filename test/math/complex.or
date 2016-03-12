@@ -1,5 +1,0 @@
-# complex.or
-#
-# Test complex binary expressions (using parenthesis)
-
-return ((2 + 1) - 3) * 5

@@ -1,5 +1,0 @@
-def foo(var n)
-	return n + 5
-end
-
-return foo(3) - 8

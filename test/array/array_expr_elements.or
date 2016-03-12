@@ -1,7 +1,0 @@
-var a = [4 + 1, 5 + 1, 6 + 1, 7 + 1]
-
-return 1 if a[0] != 5 
-return 1 if a[1] != 6
-return 1 if a[2] != 7
-return 1 if a[3] != 8
-return 0

@@ -1,7 +1,0 @@
-def foo(int[] a)
-	a[0] -= 1
-end
-
-var a = [1]
-foo(a)
-return a[0]

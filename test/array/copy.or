@@ -1,7 +1,0 @@
-# copy.or
-# test to make sure copying a variable works and does not hold a
-# reference to the original value
-var arr = [0, 1, 2, 3]
-var copy = arr[0]
-arr[0] = 5
-return copy

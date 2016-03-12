@@ -1,6 +1,0 @@
-var b = 5 
-var a = b += 5
-a = b *= 1
-a = b /= 1
-a = b -= 5 
-return a - 5

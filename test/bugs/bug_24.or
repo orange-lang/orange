@@ -1,3 +1,0 @@
-int some_num = 0
-some_num += 3.3 
-return some_num != 3

@@ -1,5 +1,0 @@
-def add(int a, var b)
-  return a + b
-end
-
-return 1 if add(3.5, 2) > 5.0

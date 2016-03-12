@@ -1,5 +1,0 @@
-# inequality.or
-#
-# Test inequality of two numbers
-
-return 1 != 1

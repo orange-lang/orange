@@ -1,3 +1,0 @@
-const int a = 5
-const int b = 5
-return a - b

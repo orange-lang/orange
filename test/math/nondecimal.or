@@ -1,5 +1,0 @@
-# nondecimal.or
-#
-# Test numbers that aren't base 10.
-
-return 1111b - 0xF

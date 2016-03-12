@@ -1,9 +1,0 @@
-# argument_casting.or
-#
-# Test casting an argument to a parameter's type.
-
-def foo(int a)
-	return a - 5
-end
-
-return foo(5.3)

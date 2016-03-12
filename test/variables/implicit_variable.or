@@ -1,4 +1,0 @@
-var b = 2
-b = 1
-b = b - 1
-return b

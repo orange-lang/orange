@@ -1,7 +1,0 @@
-extern printf(char *s, ...) -> int32
-
-if printf("44\n") == 3
-	return 0
-else 
-	return 1
-end

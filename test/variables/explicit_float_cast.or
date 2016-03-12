@@ -1,4 +1,0 @@
-# line 3: 0 should be cast to float, and then (a * 0.0f) should be cast to int  
-float a = 3.5f 
-int b = a * 0
-return b 

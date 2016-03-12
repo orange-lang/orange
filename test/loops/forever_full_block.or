@@ -1,5 +1,0 @@
-forever do 
-	return 0
-end
-
-return 1

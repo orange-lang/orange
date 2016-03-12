@@ -1,8 +1,0 @@
-int a = 0, b = 0
-
-var arr = [&a, &b]
-
-*arr[0] = 1
-*arr[1] = 2
-
-return b - a - a

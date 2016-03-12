@@ -1,8 +1,0 @@
-int a = 5
-
-if 2 < 3
-	a = 4
-	var a = 3
-end
-
-return a != 4

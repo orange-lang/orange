@@ -1,8 +1,0 @@
-enum Status
-	PENDING 
-	RUNNING
-	STOPPED
-	EXITED 
-end
-
-return 0

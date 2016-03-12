@@ -1,5 +1,0 @@
-def foo()
-	return 5 
-end 
-
-return foo() == 5 ? 0 : 1

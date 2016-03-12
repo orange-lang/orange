@@ -1,6 +1,0 @@
-# extern_var_arg.or
-#
-# Test calling an external vaarg function.
-
-extern printf(char* s, ...) -> int32
-return printf("hello\n") - 6

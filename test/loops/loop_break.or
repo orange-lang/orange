@@ -1,8 +1,0 @@
-var a = 0
-
-for (var i = 0; i < 10; i++) 
-	a++
-	break if a > 5
-end
-
-return a - 6

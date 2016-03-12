@@ -1,5 +1,0 @@
-class TestClass
-	def TestClass()
-		TestClass()
-	end
-end

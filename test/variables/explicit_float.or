@@ -1,5 +1,0 @@
-extern printf(char *s, ...) -> int32
-float a = 3.5f 
-a = a + 0.5f
-printf("v: %f\n", a)
-return 0

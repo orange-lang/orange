@@ -1,9 +1,0 @@
-# nonvoid_parameters.or
-#
-# Test creating and calling a function that returns something but has no parameters.
-
-def foo()
-	return 0
-end
-
-return foo()

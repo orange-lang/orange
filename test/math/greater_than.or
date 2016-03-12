@@ -1,5 +1,0 @@
-# less_than.or
-#
-# Test if one number is greater than another.
-
-return 1 > 2

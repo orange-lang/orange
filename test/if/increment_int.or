@@ -1,9 +1,0 @@
-var a = 0
-a++ 
-return 1 if a != 1 
-a++ 
-return 1 if a != 2 
-a-- 
-return 1 if a != 1 
-a-- 
-return a

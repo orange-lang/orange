@@ -1,9 +1,0 @@
-# nonvoid_parameters.or
-#
-# Test creating and calling a function that returns something and has parameters.
-
-def foo(int a)
-	return a
-end
-
-foo(3)

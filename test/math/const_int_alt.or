@@ -1,5 +1,0 @@
-# const_int.or
-#
-# Test returning a constant signed integer with alternative format.
-
-return 0i

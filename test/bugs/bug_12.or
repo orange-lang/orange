@@ -1,6 +1,0 @@
-def foo(var n)
-	n + 5
-end
-
-foo(3)
-0

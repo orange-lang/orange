@@ -1,6 +1,0 @@
-# tests for parsing the class statement with members
-# on different lines with the same type.
-class TestClass
-	int a
-	int b
-end

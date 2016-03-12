@@ -1,9 +1,0 @@
-var a = 5
-int[a] arr 
-arr[i] = i for (int i = 0; i < a; i++)
-return 1 if arr[0] != 0
-return 1 if arr[1] != 1
-return 1 if arr[2] != 2
-return 1 if arr[3] != 3
-return 1 if arr[4] != 4
-return 0
