@@ -13,234 +13,236 @@
 #include <cstdint>
 
 namespace orange { namespace ast {
-    enum Operator {
-        PLUS,
-        MINUS,
-        TIMES,
-        DIVIDE,
-        MOD,
-        LSHIFT,
-        RSHIFT,
-        AND,
-        OR,
-        LT,
-        GT,
-        LTE,
-        GTE,
-        NE,
-        EQ,
-        INCREMENT,
-        DECREMENT,
-        DOT,
-        REFERENCE
-    };
+	enum Operator {
+		PLUS,
+		MINUS,
+		TIMES,
+		DIVIDE,
+		MOD,
+		LSHIFT,
+		RSHIFT,
+		AND,
+		OR,
+		LT,
+		GT,
+		LTE,
+		GTE,
+		NE,
+		EQ,
+		INCREMENT,
+		DECREMENT,
+		DOT,
+		REFERENCE
+	};
 
-    enum OpPosition { PREFIX, POSTFIX };
+	enum OpPosition { PREFIX, POSTFIX };
 
-    enum ArrayRangeType { INCLUSIVE, EXCLUSIVE };
+	enum ArrayRangeType { INCLUSIVE, EXCLUSIVE };
 
-    enum LoopConditionCheck { BEFORE_BODY, AFTER_BODY };
+	enum LoopConditionCheck { BEFORE_BODY, AFTER_BODY };
 
-    enum PrivacyLevel {
-        PRIVATE,
-        PROTECTED,
-        PUBLIC
-    };
+	enum PrivacyLevel {
+		PRIVATE,
+		PROTECTED,
+		PUBLIC
+	};
 
-    struct Flag { };
-    struct PrivacyFlag : Flag {
-        PrivacyLevel level;
-        PrivacyFlag(PrivacyLevel l) : level(l) { }
-    };
+	struct Flag { };
 
-    struct Node {
-        int id;
-        std::vector<Flag*> flags;
+	struct PrivacyFlag : Flag {
+		PrivacyLevel level;
 
-        virtual ~Node() {}
-    };
+		PrivacyFlag(PrivacyLevel l) : level(l) { }
+	};
 
-    // Forward declare some commonly-used types.
-    struct BlockExpr;
-    struct Expression;
-    struct Type;
-    struct NamedType;
-    struct GetterStmt;
-    struct SetterStmt;
-    struct ParamStmt;
-    struct TypeConstraint;
+	struct Node {
+		int id;
+		std::vector<Flag*> flags;
 
-    //
-    // Statements
-    //
+		virtual ~Node() { }
+	};
 
-    struct Statement : Node { };
+	// Forward declare some commonly-used types.
+	struct BlockExpr;
+	struct Expression;
+	struct Type;
+	struct NamedType;
+	struct GetterStmt;
+	struct SetterStmt;
+	struct ParamStmt;
+	struct TypeConstraint;
 
-    struct PackageStmt : Statement {
-        std::string* name;
-    };
+	//
+	// Statements
+	//
 
-    struct UsingStmt : Statement {
-        std::string* name;
-        std::string* alias;
-    };
+	struct Statement : Node { };
 
-    struct ClassStmt : Statement {
-        std::string* name;
-        std::vector<NamedType*> implements;
-        BlockExpr* body;
-    };
+	struct PackageStmt : Statement {
+		std::string* name;
+	};
 
-    struct EnumMember : Statement {
-        std::string* name;
-        std::vector<ParamStmt*> params;
-    };
+	struct UsingStmt : Statement {
+		std::string* name;
+		std::string* alias;
+	};
 
-    struct EnumStmt : Statement {
-        std::string* name;
-        std::vector<EnumMember*> members;
-    };
+	struct ClassStmt : Statement {
+		std::string* name;
+		std::vector<NamedType*> implements;
+		BlockExpr* body;
+	};
 
-    struct VarDeclStmt : Statement {
-        Type* type;
-        std::vector<std::string*> bindings;
-        Expression* value;
-    };
+	struct EnumMember : Statement {
+		std::string* name;
+		std::vector<ParamStmt*> params;
+	};
 
-    struct GetterStmt : Statement {
-        BlockExpr* body;
-    };
+	struct EnumStmt : Statement {
+		std::string* name;
+		std::vector<EnumMember*> members;
+	};
 
-    struct SetterStmt : Statement {
-        BlockExpr* body;
-    };
+	struct VarDeclStmt : Statement {
+		Type* type;
+		std::vector<std::string*> bindings;
+		Expression* value;
+	};
 
-    struct PropertyStmt : Statement {
-        Type* type;
-        std::string* name;
-        GetterStmt* getter;
-        SetterStmt* setter;
-    };
+	struct GetterStmt : Statement {
+		BlockExpr* body;
+	};
 
-    struct FuncDeclStmt : Statement {
-        Type* retType;
-        std::string* name;
-        std::vector<Type*> generics;
-        std::vector<TypeConstraint*> constraints;
-        std::vector<ParamStmt*> params;
-    };
+	struct SetterStmt : Statement {
+		BlockExpr* body;
+	};
 
-    struct ExternFuncDeclStmt : FuncDeclStmt { };
+	struct PropertyStmt : Statement {
+		Type* type;
+		std::string* name;
+		GetterStmt* getter;
+		SetterStmt* setter;
+	};
 
-    struct InterfaceStmt : Statement {
-        std::string* name;
-        std::vector<FuncDeclStmt*> functions;
-    };
+	struct FuncDeclStmt : Statement {
+		Type* retType;
+		std::string* name;
+		std::vector<Type*> generics;
+		std::vector<TypeConstraint*> constraints;
+		std::vector<ParamStmt*> params;
+	};
 
-    struct ParamStmt : Statement {
-        std::string* name;
-        Type* type;
-        Expression* value;
-    };
+	struct ExternFuncDeclStmt : FuncDeclStmt { };
 
-    struct ExtendsStmt : Statement {
-        NamedType* base;
-        BlockExpr* body;
-    };
+	struct InterfaceStmt : Statement {
+		std::string* name;
+		std::vector<FuncDeclStmt*> functions;
+	};
 
-    //
-    // Expressions
-    //
+	struct ParamStmt : Statement {
+		std::string* name;
+		Type* type;
+		Expression* value;
+	};
 
-    struct Expression : Node { };
+	struct ExtendsStmt : Statement {
+		NamedType* base;
+		BlockExpr* body;
+	};
 
-    struct TupleComponent : Expression {
-        std::string* name;
-        Expression* value;
-    };
+	//
+	// Expressions
+	//
 
-    struct TupleExpr : Expression {
-        std::vector<TupleComponent*> components;
-    };
+	struct Expression : Node { };
 
-    struct BinaryExpr : Expression {
-        Expression* LHS;
-        Expression* RHS;
-        Operator operation;
-    };
+	struct TupleComponent : Expression {
+		std::string* name;
+		Expression* value;
+	};
 
-    struct UnaryExpr : Expression {
-        Expression* value;
-        OpPosition position;
-        Operator operation;
-    };
+	struct TupleExpr : Expression {
+		std::vector<TupleComponent*> components;
+	};
 
-    struct ArrayExpr : Expression {
-        std::vector<Expression*> values;
-    };
+	struct BinaryExpr : Expression {
+		Expression* LHS;
+		Expression* RHS;
+		Operator operation;
+	};
 
-    struct ArrayAccessExpr : Expression {
-        Expression* LHS;
-        Expression* index;
-    };
+	struct UnaryExpr : Expression {
+		Expression* value;
+		OpPosition position;
+		Operator operation;
+	};
 
-    struct ArrayRangeExpr : Expression {
-        Expression* start;
-        Expression* end;
-        ArrayRangeType type;
-    };
+	struct ArrayExpr : Expression {
+		std::vector<Expression*> values;
+	};
 
-    struct BlockExpr : Expression {
-        std::vector<Node*> statements;
-    };
+	struct ArrayAccessExpr : Expression {
+		Expression* LHS;
+		Expression* index;
+	};
 
-    struct ConditionalBlock : Expression {
-        Expression* condition;
-        BlockExpr* body;
-    };
+	struct ArrayRangeExpr : Expression {
+		Expression* start;
+		Expression* end;
+		ArrayRangeType type;
+	};
 
-    struct IfExpr : Expression {
-        std::vector<ConditionalBlock*> blocks;
-    };
+	struct BlockExpr : Expression {
+		std::vector<Node*> statements;
+	};
 
-    struct LoopExpr : Expression {
-        Expression* initializer;
-        Expression* condition;
-        Expression* afterthought;
-        LoopConditionCheck check;
-    };
+	struct ConditionalBlock : Expression {
+		Expression* condition;
+		BlockExpr* body;
+	};
 
-    struct StringExpr : Expression {
-        std::string* value;
-    };
+	struct IfExpr : Expression {
+		std::vector<ConditionalBlock*> blocks;
+	};
 
-    struct VarRefExpr : Expression {
-        std::string* name;
-    };
+	struct LoopExpr : Expression {
+		Expression* initializer;
+		Expression* condition;
+		Expression* afterthought;
+		LoopConditionCheck check;
+	};
 
-    struct IntExpr : Expression {
-        uint64_t value;
-    };
+	struct StringExpr : Expression {
+		std::string* value;
+	};
 
-    struct DoubleExpr : Expression {
-        double value;
-    };
+	struct VarRefExpr : Expression {
+		std::string* name;
+	};
 
-    struct FloatExpr : Expression {
-        float value;
-    };
+	struct IntExpr : Expression {
+		uint64_t value;
+	};
 
-    struct FunctionExpr : Expression {
-        Type* retType;
-        std::string* name;
-        std::vector<Type*> generics;
-        std::vector<TypeConstraint*> constraints;
-        std::vector<ParamStmt*> params;
-        BlockExpr* body;
-    };
+	struct DoubleExpr : Expression {
+		double value;
+	};
 
-    struct FuncCallExpr : Expression {
-        Expression* function;
-        std::vector<Expression*> args;
-    };
-} }
+	struct FloatExpr : Expression {
+		float value;
+	};
+
+	struct FunctionExpr : Expression {
+		Type* retType;
+		std::string* name;
+		std::vector<Type*> generics;
+		std::vector<TypeConstraint*> constraints;
+		std::vector<ParamStmt*> params;
+		BlockExpr* body;
+	};
+
+	struct FuncCallExpr : Expression {
+		Expression* function;
+		std::vector<Expression*> args;
+	};
+}}
