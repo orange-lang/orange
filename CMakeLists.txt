@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4)
 project(orange)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
+set(OR_INCLUDES "${CMAKE_SOURCE_DIR}/include")
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
    message(FATAL_ERROR "In-source builds are not allowed.
