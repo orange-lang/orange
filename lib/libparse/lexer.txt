@@ -1,0 +1,5 @@
+# This file describes the syntax for the lexer.
+# Lexer rules are written with the following format:
+#    rule_name   ->   matching_regex     { comments }
+# The comment section in curly braces is optional and not part of the regex;
+# you can separate it by how it's tabbed from the matching_regex. 
