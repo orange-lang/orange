@@ -12,6 +12,8 @@ endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 include(clang_complete)
 
+include_directories(${OR_INCLUDES})
+
 add_subdirectory(lib/libast)
 add_subdirectory(lib/libparse)
 
