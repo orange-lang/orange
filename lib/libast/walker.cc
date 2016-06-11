@@ -7,15 +7,11 @@
 //
 
 #include <stdexcept>
+#include <libast/ast.h>
 #include <libast/walker.h>
+#include "typecheck.h"
 
 using namespace orange::ast;
-
-template <typename T>
-static T* asA(Node* node) { return dynamic_cast<T*>(node); }
-
-template <typename T>
-static bool isA(Node* node) { return asA<T>(node) != nullptr; }
 
 void Walker::WalkNode(Visitor* visitor, Node* node) {
 	if (isA<Statement>(node)) {

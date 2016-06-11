@@ -11,7 +11,7 @@
 #include <libast/ast.h>
 
 template <typename T>
-static bool isA(Node* node) { return dynamic_cast<T*>(node) != nullptr; }
+bool isA(orange::ast::Node* node) { return dynamic_cast<T*>(node) != nullptr; }
 
 template <typename T>
-static T* asA(Node* node) { return dynamic_cast<T*>(node); }
+T* asA(orange::ast::Node* node) { return dynamic_cast<T*>(node); }
