@@ -11,7 +11,7 @@ add_library(ast
         ${OR_INCLUDES}/libast/type.h
         ${OR_INCLUDES}/libast/visitor.h
         ${OR_INCLUDES}/libast/walker.h
-        walker.cc)
+        walker.cc ast.cc)
 
 set_target_properties(ast PROPERTIES LINKER_LANGUAGE CXX)
 

@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <type_traits>
 
 namespace orange { namespace ast {
 	enum Operator {
@@ -245,4 +246,16 @@ namespace orange { namespace ast {
 		Expression* function;
 		std::vector<Expression*> args;
 	};
+
+	/// Gets the next free ID for a node.
+	int getNextID();
+
+	template <class T, class... U>
+	T* CreateNode(U&&... params) {
+		static_assert(std::is_base_of<Node, T>::value, "T must be a subclass of Node.");
+
+		T* node = new T(std::forward<U>(params)...);
+		node->id = getNextID();
+		return node;
+	}
 }}
