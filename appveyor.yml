@@ -9,20 +9,15 @@ skip_commits:
 
 cache:
   - C:\projects\mingw.7z
-  - C:\projects\llvm.zip
 
 install:
   - git submodule init
   - git submodule update --depth 1
   - if not exist C:\projects\mingw.7z appveyor DownloadFile http://downloads.sourceforge.net/mingw-w64/x86_64-5.1.0-release-posix-seh-rt_v4-rev0.7z -FileName C:\projects\mingw.7z
   - 7z x -oC:\tools C:\projects\mingw.7z > nul
-  - if not exist C:\projects\llvm.zip appveyor DownloadFile https://github.com/rfratto/llvm/releases/download/v3.6.2/llvm-win-mingw64-posix-seh.zip -FileName C:\projects\llvm.zip
-  - 7z x -OC:\tools\mingw64 C:\projects\llvm.zip > nul
 
   # validate toolchain
   - set PATH=%PATH%;C:\tools\mingw64\bin
-  - llvm-config --version
-  - llvm-config --host-target
   - gcc --version
   - wmic os get osarchitecture
 
@@ -30,7 +25,7 @@ install:
   - cd build
 
 build_script:
-  - set PATH=C:\tools\mingw64\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Python27;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\CMake\bin;C:\LLVM\bin
+  - set PATH=C:\tools\mingw64\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Python27;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\CMake\bin
   - cmake --version
   - cmake .. -G "MinGW Makefiles" -DCMAKE_CXX_FLAGS=-m64 -DCMAKE_BUILD_TYPE=Debug
   - mingw32-make

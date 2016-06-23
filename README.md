@@ -6,6 +6,10 @@ Orange is a statically-typed, multi-paradigm (imperative, object-oriented, gener
 
 Orange is still under active development; you're currently viewing a branch that is a complete re-architecture of the Orange compiler that allows for easier development and expansion. It also houses an updated version of the Orange language specification that envisions the language to be more expressive and C# like.
 
+Linux/OS X  | Windows
+------------- | -------------
+[![Build Status](https://travis-ci.org/orange-lang/orange.svg?branch=rev-2)](https://travis-ci.org/orange-lang/orange) | [![Build status](https://ci.appveyor.com/api/projects/status/r4y46n573riuqfv1/branch/rev-2?svg=true)](https://ci.appveyor.com/project/rfratto/orange-9no7j/branch/rev-2)
+
 # Building
 Building on OS X and Linux should be straightforward. Make sure git and CMake are installed and then run the following commands:
 
