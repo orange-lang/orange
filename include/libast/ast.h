@@ -80,27 +80,27 @@ namespace orange { namespace ast {
 	struct Statement : Node { };
 
 	struct PackageStmt : Statement {
-		std::string* name;
+		std::string name;
 	};
 
 	struct UsingStmt : Statement {
-		std::string* name;
-		std::string* alias;
+		std::string name;
+		std::string alias;
 	};
 
 	struct ClassStmt : Statement {
-		std::string* name;
+		std::string name;
 		std::vector<NamedType*> implements;
 		BlockExpr* body;
 	};
 
 	struct EnumMember : Statement {
-		std::string* name;
+		std::string name;
 		std::vector<ParamStmt*> params;
 	};
 
 	struct EnumStmt : Statement {
-		std::string* name;
+		std::string name;
 		std::vector<EnumMember*> members;
 	};
 
@@ -120,14 +120,14 @@ namespace orange { namespace ast {
 
 	struct PropertyStmt : Statement {
 		Type* type;
-		std::string* name;
+		std::string name;
 		GetterStmt* getter;
 		SetterStmt* setter;
 	};
 
 	struct FuncDeclStmt : Statement {
 		Type* retType;
-		std::string* name;
+		std::string name;
 		std::vector<Type*> generics;
 		std::vector<TypeConstraint*> constraints;
 		std::vector<ParamStmt*> params;
@@ -136,12 +136,12 @@ namespace orange { namespace ast {
 	struct ExternFuncDeclStmt : FuncDeclStmt { };
 
 	struct InterfaceStmt : Statement {
-		std::string* name;
+		std::string name;
 		std::vector<FuncDeclStmt*> functions;
 	};
 
 	struct ParamStmt : Statement {
-		std::string* name;
+		std::string name;
 		Type* type;
 		Expression* value;
 	};
@@ -158,7 +158,7 @@ namespace orange { namespace ast {
 	struct Expression : Node { };
 
 	struct TupleComponent : Expression {
-		std::string* name;
+		std::string name;
 		Expression* value;
 	};
 
@@ -214,11 +214,11 @@ namespace orange { namespace ast {
 	};
 
 	struct StringExpr : Expression {
-		std::string* value;
+		std::string value;
 	};
 
 	struct VarRefExpr : Expression {
-		std::string* name;
+		std::string name;
 	};
 
 	struct IntExpr : Expression {
@@ -235,7 +235,7 @@ namespace orange { namespace ast {
 
 	struct FunctionExpr : Expression {
 		Type* retType;
-		std::string* name;
+		std::string name;
 		std::vector<Type*> generics;
 		std::vector<TypeConstraint*> constraints;
 		std::vector<ParamStmt*> params;
