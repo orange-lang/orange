@@ -19,7 +19,7 @@ namespace orange { namespace ast {
 		void WalkStmt(Visitor* visitor, Statement* node);
 		void WalkExpr(Visitor* visitor, Expression* node);
 
-		virtual void WalkPackageStmt(Visitor* visitor, PackageStmt* stmt) = 0;
+		virtual void WalkNamespaceStmt(Visitor* visitor, NamespaceStmt* stmt) = 0;
 		virtual void WalkUsingStmt(Visitor* visitor, UsingStmt* stmt) = 0;
 		virtual void WalkEnumMember(Visitor* visitor, EnumMember* stmt) = 0;
 		virtual void WalkClassStmt(Visitor* visitor, ClassStmt* stmt) = 0;
@@ -58,7 +58,7 @@ namespace orange { namespace ast {
 	/// Walker that will visit concrete elements
 	class NonTraversalWalker : public Walker {
 	public:
-		virtual void WalkPackageStmt(Visitor* visitor, PackageStmt* stmt) override;
+		virtual void WalkNamespaceStmt(Visitor* visitor, NamespaceStmt* stmt) override;
 		virtual void WalkUsingStmt(Visitor* visitor, UsingStmt* stmt) override;
 		virtual void WalkEnumMember(Visitor* visitor, EnumMember* stmt) override;
 		virtual void WalkClassStmt(Visitor* visitor, ClassStmt* stmt) override;
@@ -103,7 +103,7 @@ namespace orange { namespace ast {
 	private:
 		TraversalOrder mOrder;
 	public:
-		virtual void WalkPackageStmt(Visitor* visitor, PackageStmt* stmt) override;
+		virtual void WalkNamespaceStmt(Visitor* visitor, NamespaceStmt* stmt) override;
 		virtual void WalkUsingStmt(Visitor* visitor, UsingStmt* stmt) override;
 		virtual void WalkEnumMember(Visitor* visitor, EnumMember* stmt) override;
 		virtual void WalkClassStmt(Visitor* visitor, ClassStmt* stmt) override;

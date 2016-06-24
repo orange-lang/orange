@@ -13,7 +13,7 @@
 namespace orange { namespace ast {
 	class Visitor {
 	public:
-		virtual void VisitPackageStmt(PackageStmt* stmt) { }
+		virtual void VisitNamespaceStmt(NamespaceStmt* stmt) { }
 
 		virtual void VisitUsingStmt(UsingStmt* stmt) { }
 

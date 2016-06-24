@@ -68,8 +68,8 @@ void Walker::WalkExpr(Visitor* visitor, Expression* node) {
 }
 
 void Walker::WalkStmt(Visitor* visitor, Statement* node) {
-	if (isA<PackageStmt>(node)) {
-		WalkPackageStmt(visitor, asA<PackageStmt>(node));
+	if (isA<NamespaceStmt>(node)) {
+		WalkNamespaceStmt(visitor, asA<NamespaceStmt>(node));
 	} else if (isA<UsingStmt>(node)) {
 		WalkUsingStmt(visitor, asA<UsingStmt>(node));
 	} else if (isA<EnumMember>(node)) {
@@ -102,8 +102,8 @@ void Walker::WalkStmt(Visitor* visitor, Statement* node) {
 }
 
 
-void NonTraversalWalker::WalkPackageStmt(Visitor* visitor, PackageStmt* stmt) {
-	visitor->VisitPackageStmt(stmt);
+void NonTraversalWalker::WalkNamespaceStmt(Visitor* visitor, NamespaceStmt* stmt) {
+	visitor->VisitNamespaceStmt(stmt);
 }
 
 void NonTraversalWalker::WalkUsingStmt(Visitor* visitor, UsingStmt* stmt) {
@@ -235,8 +235,8 @@ void NonTraversalWalker::WalkDoubleExpr(Visitor* visitor, DoubleExpr* expr) {
 }
 
 
-void DepthFirstWalker::WalkPackageStmt(Visitor* visitor, PackageStmt* stmt) {
-	visitor->VisitPackageStmt(stmt);
+void DepthFirstWalker::WalkNamespaceStmt(Visitor* visitor, NamespaceStmt* stmt) {
+	visitor->VisitNamespaceStmt(stmt);
 }
 
 void DepthFirstWalker::WalkUsingStmt(Visitor* visitor, UsingStmt* stmt) {

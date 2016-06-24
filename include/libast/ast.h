@@ -86,12 +86,12 @@ namespace orange { namespace ast {
 		Statement() { }
 	};
 
-	struct PackageStmt : Statement {
+	struct NamespaceStmt : Statement {
 		std::string name;
 
-		PackageStmt() { }
+		NamespaceStmt() { }
 
-		PackageStmt(std::string name) : name(name) { }
+		NamespaceStmt(std::string name) : name(name) { }
 	};
 
 	struct UsingStmt : Statement {
