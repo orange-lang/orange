@@ -8,7 +8,7 @@
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_library(parse lex.h lex.cc)
+add_library(parse lex.h lex.cc stream_helpers.h)
 
 set_target_properties(parse PROPERTIES LINKER_LANGUAGE CXX)
 
