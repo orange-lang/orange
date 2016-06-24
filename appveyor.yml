@@ -31,4 +31,4 @@ build_script:
   - mingw32-make
 
 test_script:
-  - cmd /C "set CTEST_OUTPUT_ON_FAILURE=1 && ctest"
+  - cmd /C "./unit_tests"
