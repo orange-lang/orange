@@ -31,4 +31,4 @@ build_script:
   - mingw32-make
 
 test_script:
-  - cmd /C "./unit_tests"
+  - cmd /C "ctest -V"

@@ -8,6 +8,8 @@
 
 cmake_minimum_required(VERSION 3.4)
 project(orange)
+enable_testing()
+
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
 set(OR_INCLUDES "${CMAKE_SOURCE_DIR}/include")
