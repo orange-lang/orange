@@ -53,6 +53,8 @@ static Token* getComment(std::istream& stream) {
 		while (!streamEOF(stream) && peekChar(stream) != '\n') {
 			buf << getChar(stream);
 		}
+
+		if (peekChar(stream) == '\n') getChar(stream);
 	} else if (peekChar(stream) == '*') {
 		// Block comment
 		buf << getChar(stream);
@@ -203,7 +205,6 @@ static Token* getNumber(std::istream& stream) {
 			getChar(stream);
 			return getFloat(buf, stream);
 		} else {
-			getChar(stream);
 			return getIntSuffix(buf, stream);
 		}
 	}
@@ -215,7 +216,11 @@ static Token* getNumber(std::istream& stream) {
 		next_char = peekChar(stream);
 	}
 
-	if (next_char == '.') return getFloat(buf, stream);
+	if (next_char == '.') {
+		buf += getChar(stream);
+		return getFloat(buf, stream);
+	}
+
 	return getIntSuffix(buf, stream);
 }
 
@@ -314,7 +319,7 @@ static Token* getIdentifier(std::istream& stream) {
 	std::string buf = "";
 	buf += getChar(stream);
 
-	if (next_char == '_' && !isalpha(peekChar(stream))) {
+	if (next_char == '_' && (peekChar(stream) == '_' || isnumber(peekChar(stream)))) {
 		throw std::runtime_error("Identifiers starting with _ must be followed by a letter.");
 	}
 
