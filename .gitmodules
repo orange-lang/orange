@@ -1,0 +1,3 @@
+[submodule "etc/gtest"]
+	path = etc/gtest
+	url = git@github.com:google/googletest.git
