@@ -47,6 +47,7 @@ namespace orange { namespace ast {
 		virtual void WalkStringExpr(Visitor* visitor, StringExpr* expr) = 0;
 		virtual void WalkVarRefExpr(Visitor* visitor, VarRefExpr* expr) = 0;
 		virtual void WalkIntExpr(Visitor* visitor, IntExpr* expr) = 0;
+		virtual void WalkUIntExpr(Visitor* visitor, UIntExpr* expr) = 0;
 		virtual void WalkFunctionExpr(Visitor* visitor, FunctionExpr* expr) = 0;
 		virtual void WalkFuncCallExpr(Visitor* visitor, FuncCallExpr* expr) = 0;
 		virtual void WalkFloatExpr(Visitor* visitor, FloatExpr* expr) = 0;
@@ -85,6 +86,7 @@ namespace orange { namespace ast {
 		virtual void WalkStringExpr(Visitor* visitor, StringExpr* expr) override;
 		virtual void WalkVarRefExpr(Visitor* visitor, VarRefExpr* expr) override;
 		virtual void WalkIntExpr(Visitor* visitor, IntExpr* expr) override;
+		virtual void WalkUIntExpr(Visitor* visitor, UIntExpr* expr) override;
 		virtual void WalkFunctionExpr(Visitor* visitor, FunctionExpr* expr) override;
 		virtual void WalkFuncCallExpr(Visitor* visitor, FuncCallExpr* expr) override;
 		virtual void WalkFloatExpr(Visitor* visitor, FloatExpr* expr) override;
@@ -129,6 +131,7 @@ namespace orange { namespace ast {
 		virtual void WalkStringExpr(Visitor* visitor, StringExpr* expr) override;
 		virtual void WalkVarRefExpr(Visitor* visitor, VarRefExpr* expr) override;
 		virtual void WalkIntExpr(Visitor* visitor, IntExpr* expr) override;
+		virtual void WalkUIntExpr(Visitor* visitor, UIntExpr* expr) override;
 		virtual void WalkFunctionExpr(Visitor* visitor, FunctionExpr* expr) override;
 		virtual void WalkFuncCallExpr(Visitor* visitor, FuncCallExpr* expr) override;
 		virtual void WalkFloatExpr(Visitor* visitor, FloatExpr* expr) override;

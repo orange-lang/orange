@@ -69,6 +69,8 @@ namespace orange { namespace ast {
 
 		virtual void VisitIntExpr(IntExpr* expr) { }
 
+		virtual void VisitUIntExpr(UIntExpr* expr) { }
+
 		virtual void VisitFunctionExpr(FunctionExpr* expr) { }
 
 		virtual void VisitFuncCallExpr(FuncCallExpr* expr) { }

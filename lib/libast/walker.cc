@@ -52,6 +52,8 @@ void Walker::WalkExpr(Visitor* visitor, Expression* node) {
 		WalkVarRefExpr(visitor, asA<VarRefExpr>(node));
 	} else if (isA<IntExpr>(node)) {
 		WalkIntExpr(visitor, asA<IntExpr>(node));
+	} else if (isA<UIntExpr>(node)) {
+		WalkUIntExpr(visitor, asA<UIntExpr>(node));
 	} else if (isA<FunctionExpr>(node)) {
 		WalkFunctionExpr(visitor, asA<FunctionExpr>(node));
 	} else if (isA<FuncCallExpr>(node)) {
@@ -210,6 +212,10 @@ void NonTraversalWalker::WalkVarRefExpr(Visitor* visitor, VarRefExpr* expr) {
 
 void NonTraversalWalker::WalkIntExpr(Visitor* visitor, IntExpr* expr) {
 	visitor->VisitIntExpr(expr);
+}
+
+void NonTraversalWalker::WalkUIntExpr(Visitor* visitor, UIntExpr* expr) {
+	visitor->VisitUIntExpr(expr);
 }
 
 void NonTraversalWalker::WalkFunctionExpr(Visitor* visitor, FunctionExpr* expr) {
@@ -434,6 +440,10 @@ void DepthFirstWalker::WalkVarRefExpr(Visitor* visitor, VarRefExpr* expr) {
 
 void DepthFirstWalker::WalkIntExpr(Visitor* visitor, IntExpr* expr) {
 	visitor->VisitIntExpr(expr);
+}
+
+void DepthFirstWalker::WalkUIntExpr(Visitor* visitor, UIntExpr* expr) {
+	visitor->VisitUIntExpr(expr);
 }
 
 void DepthFirstWalker::WalkFunctionExpr(Visitor* visitor, FunctionExpr* expr) {

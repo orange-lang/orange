@@ -352,11 +352,19 @@ namespace orange { namespace ast {
 	};
 
 	struct IntExpr : Expression {
-		uint64_t value;
+		int64_t value;
 
 		IntExpr() { }
 
-		IntExpr(uint64_t value) : value(value) { }
+		IntExpr(int64_t value) : value(value) { }
+	};
+
+	struct UIntExpr : Expression {
+		uint64_t value;
+
+		UIntExpr() { }
+
+		UIntExpr(uint64_t value) : value(value) { }
 	};
 
 	struct DoubleExpr : Expression {
