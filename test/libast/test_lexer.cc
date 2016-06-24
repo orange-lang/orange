@@ -209,13 +209,11 @@ TEST(Lexer, LexesCustomIdentifiers) {
 TEST(Lexer, CatchesBadIdentifiers) {
 	using namespace orange::parser;
 
-	std::stringstream ss;
+	std::stringstream ss1("__foo");
+	EXPECT_THROW((Lexer(ss1)).readToken(), std::runtime_error);
 
-	ss = std::stringstream("__foo");
-	EXPECT_THROW((Lexer(ss)).readToken(), std::runtime_error);
-
-	ss = std::stringstream("_9");
-	EXPECT_THROW((Lexer(ss)).readToken(), std::runtime_error);
+	std::stringstream ss2("_9");
+	EXPECT_THROW((Lexer(ss2)).readToken(), std::runtime_error);
 }
 
 TEST(Lexer, LexesStrings) {
