@@ -106,7 +106,7 @@ namespace orange { namespace ast {
 
 	struct VarDeclStmt : Statement {
 		Type* type;
-		std::vector<std::string*> bindings;
+		std::vector<std::string> bindings;
 		Expression* value;
 	};
 
