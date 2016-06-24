@@ -10,6 +10,7 @@
 #include <sstream>
 #include <map>
 #include <vector>
+#include <cctype>
 
 #include "stream_helpers.h"
 #include "lex.h"
