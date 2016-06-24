@@ -1,7 +1,11 @@
 sudo: false
 language: cpp
 notifications:
-  irc: "irc.freenode.net#orange-lang"
+  irc:
+    channels:
+      - "irc.freenode.net#orange-lang"
+    on_success: change
+    on_failure: change
 compiler:
   - clang
   - gcc
