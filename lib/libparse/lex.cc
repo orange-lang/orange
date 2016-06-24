@@ -83,9 +83,9 @@ static Token* getComment(std::istream& stream) {
 
 
 static TokenMapTy IntSuffixMap = {
-	{"" , INT },
-	{"i", INT }, {"i8", INT8 }, {"i16", INT16 }, {"i32", INT32 }, {"i64", INT64 },
-	{"u", UINT}, {"u8", UINT8}, {"u16", UINT64}, {"u32", UINT32}, {"u64", UINT64},
+	{"" , VAL_INT },
+	{"i", VAL_INT }, {"i8", VAL_INT8 }, {"i16", VAL_INT16 }, {"i32", VAL_INT32 }, {"i64", VAL_INT64 },
+	{"u", VAL_UINT}, {"u8", VAL_UINT8}, {"u16", VAL_UINT16}, {"u32", VAL_UINT32}, {"u64", VAL_UINT64},
 };
 
 static Token* getIntSuffix(std::string buf, std::istream& stream) {
@@ -163,14 +163,14 @@ static Token* getFloat(std::string buf, std::istream& stream) {
 	}
 
 	if (suffix == "f") {
-		return new Token(FLOAT, buf);
+		return new Token(VAL_FLOAT, buf);
 	} else if (suffix == "d") {
-		return new Token(DOUBLE, buf);
+		return new Token(VAL_DOUBLE, buf);
 	} else if (suffix != "") {
 		throw std::runtime_error("Invalid floating-point suffix " + suffix);
 	}
 
-	return new Token(DOUBLE, buf);
+	return new Token(VAL_DOUBLE, buf);
 }
 
 /// Gets a constant number
@@ -195,10 +195,10 @@ static Token* getNumber(std::istream& stream) {
 			return getOctal(buf, stream);
 		} else if (next_char == 'd') {
 			getChar(stream);
-			return new Token(DOUBLE, buf);
+			return new Token(VAL_DOUBLE, buf);
 		} else if (next_char == 'f') {
 			getChar(stream);
-			return new Token(FLOAT, buf);
+			return new Token(VAL_FLOAT, buf);
 		} else if (next_char == '.') {
 			getChar(stream);
 			return getFloat(buf, stream);
@@ -240,7 +240,7 @@ static Token* getString(std::istream& stream) {
 		buf += toString(this_char);
 	}
 
-	return new Token(STRING, buf);
+	return new Token(VAL_STRING, buf);
 }
 
 /// Gets an operator (including newline)
