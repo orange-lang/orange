@@ -22,8 +22,16 @@ include(clang_complete)
 
 include_directories(${OR_INCLUDES})
 
+add_subdirectory(etc/gtest)
 add_subdirectory(lib/libast)
 add_subdirectory(lib/libparse)
+
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+add_executable(unit_tests test/libast/test_lexer.cc)
+target_include_directories(unit_tests PRIVATE lib)
+target_link_libraries(unit_tests gtest gtest_main ast parse)
+add_test(unit_tests unit_tests)
 
 if (${BUILD_CLANG_COMPLETE})
 	clang_complete(${CMAKE_SOURCE_DIR}/.clang_complete)
