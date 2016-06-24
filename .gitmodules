@@ -1,0 +1,4 @@
+[submodule "etc/gtest"]
+	path = etc/gtest
+	url = https://github.com/google/googletest.git
+	branch = BillyDonahue-patch-1

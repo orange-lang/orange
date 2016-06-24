@@ -26,14 +26,14 @@ matrix:
       compiler: clang
       before_install:
         - git submodule init
-        - git submodule update --depth 1
+        - git submodule update
         - brew update
         - brew upgrade cmake
 git:
   submodules: false
 before_install:
   - git submodule init
-  - git submodule update --depth 1
+  - git submodule update
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
 
