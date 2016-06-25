@@ -6,6 +6,7 @@ notifications:
       - "irc.freenode.net#orange-lang"
     on_success: change
     on_failure: change
+  email: false
 compiler:
   - clang
   - gcc
