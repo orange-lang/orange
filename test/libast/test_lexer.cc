@@ -271,14 +271,8 @@ TEST(Lexer, LexesStrings) {
 
 	Lexer l(ss);
 
-	std::vector<TokenType> expects = { VAL_STRING };
-
-	while (expects.size() > 0) {
-		auto token = expects.front();
-		expectToken(l, token);
-
-		expects.erase(expects.begin());
-	}
+	auto tok = l.readToken();
+	tokensEq(tok, Token(VAL_STRING, "!!@#%)*@!#3/*STRING123\\\"\\n\\n"));
 
 	EXPECT_EQ(l.readToken(), nullptr);
 	EXPECT_TRUE(l.eof());
