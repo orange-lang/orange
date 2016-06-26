@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <sstream>
+#include <map>
 
 #include <libparse/lex_helpers.h>
 #include <libparse/lex.h>
@@ -16,6 +17,70 @@
 #include "../helpers.h"
 
 using namespace orange::parser;
+
+TEST(LexHelpers, IsIntegerToken) {
+	std::vector<TokenType> intTypes = {
+		VAL_INT, VAL_INT8, VAL_INT16, VAL_INT32, VAL_INT64,
+		VAL_UINT, VAL_UINT8, VAL_UINT16, VAL_UINT32, VAL_UINT64
+	};
+
+	for (auto ty : intTypes) {
+		Token tok(ty, "123456789");
+		EXPECT_TRUE(IsIntegerToken(&tok));
+	}
+}
+
+TEST(LexHelpers, IsUIntToken) {
+	std::vector<TokenType> intTypes = {
+		VAL_UINT, VAL_UINT8, VAL_UINT16, VAL_UINT32, VAL_UINT64
+	};
+
+	for (auto ty : intTypes) {
+		Token tok(ty, "123456789");
+		EXPECT_TRUE(IsUIntToken(&tok));
+	}
+}
+
+TEST(LexHelpers, IsIntToken) {
+	std::vector<TokenType> intTypes = {
+		VAL_INT, VAL_INT8, VAL_INT16, VAL_INT32, VAL_INT64
+	};
+
+	for (auto ty : intTypes) {
+		Token tok(ty, "123456789");
+		EXPECT_TRUE(IsIntToken(&tok));
+	}
+}
+
+TEST(LexHelpers, IsFloatingPointToken) {
+	std::vector<TokenType> types = {
+		VAL_FLOAT, VAL_DOUBLE
+	};
+
+	for (auto ty : types) {
+		Token tok(ty, "1234.56");
+		EXPECT_TRUE(IsFloatingPointToken(&tok));
+	}
+}
+
+TEST(LexHelpers, IntegerTokenBase) {
+	std::vector<TokenType> types = {
+		VAL_INT, VAL_INT8, VAL_INT16, VAL_INT32, VAL_INT64,
+		VAL_UINT, VAL_UINT8, VAL_UINT16, VAL_UINT32, VAL_UINT64
+	};
+
+	std::map<std::string, int> bases = {
+		{"0b111", 2}, {"0o111", 8}, {"0x1111", 16},
+		{"0", 10}, {"1111", 10}
+	};
+
+	for (auto type : types) {
+		for (auto kvp : bases) {
+			Token tok(type, kvp.first);
+			EXPECT_EQ(kvp.second, IntegerTokenBase(&tok));
+		}
+	}
+}
 
 TEST(LexHelpers, ToInt) {
 	std::vector<TokenType> intTypes = { VAL_INT, VAL_INT8, VAL_INT16, VAL_INT32, VAL_INT64 };
