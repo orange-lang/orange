@@ -9,8 +9,9 @@
 #include <stdexcept>
 
 #include <gtest/gtest.h>
-#include <libparse/lex.h>
-#include "../helpers.h"
+
+#include "lex.h"
+#include "helpers.h"
 
 TEST(Lexer, AcceptsNoInput) {
 	using namespace orange::parser;

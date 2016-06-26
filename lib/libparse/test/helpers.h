@@ -9,7 +9,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <libparse/lex.h>
+#include "lex.h"
 
 template <typename T>
 bool tokensEq(orange::parser::Token* tok, T to);

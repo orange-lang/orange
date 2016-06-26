@@ -11,10 +11,9 @@
 #include <sstream>
 #include <map>
 
-#include <libparse/lex_helpers.h>
-#include <libparse/lex.h>
-
-#include "../helpers.h"
+#include "lex_helpers.h"
+#include "lex.h"
+#include "helpers.h"
 
 using namespace orange::parser;
 
