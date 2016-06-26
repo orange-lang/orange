@@ -39,6 +39,8 @@ TEST(Lexer, LexesComments) {
 
 		expects.erase(expects.begin());
 	}
+
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, LexesBlockComment) {
@@ -57,6 +59,8 @@ TEST(Lexer, LexesBlockComment) {
 
 		expects.erase(expects.begin());
 	}
+
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, LexesNestedBlockComment) {
@@ -75,6 +79,8 @@ TEST(Lexer, LexesNestedBlockComment) {
 
 		expects.erase(expects.begin());
 	}
+
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, CatchesUnterminatedBlockComment) {
@@ -115,6 +121,8 @@ TEST(Lexer, LexesOperators) {
 
 		expects.erase(expects.begin());
 	}
+
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, LexesOperatorsNoSpaces) {
@@ -144,6 +152,8 @@ TEST(Lexer, LexesOperatorsNoSpaces) {
 
 		expects.erase(expects.begin());
 	}
+
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, ClumpedOperators) {
@@ -165,6 +175,8 @@ TEST(Lexer, ClumpedOperators) {
 
 		expects.erase(expects.begin());
 	}
+
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, LexesIdentifiers) {
@@ -193,6 +205,8 @@ TEST(Lexer, LexesIdentifiers) {
 
 		expects.erase(expects.begin());
 	}
+
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, LexesCustomIdentifiers) {
@@ -214,6 +228,8 @@ TEST(Lexer, LexesCustomIdentifiers) {
 
 		expects.erase(expects.begin());
 	}
+
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, CatchesBadIdentifiers) {
@@ -244,6 +260,7 @@ TEST(Lexer, LexesEmptyString) {
 	}
 
 	EXPECT_EQ(l.readToken(), nullptr);
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, LexesStrings) {
@@ -264,6 +281,7 @@ TEST(Lexer, LexesStrings) {
 	}
 
 	EXPECT_EQ(l.readToken(), nullptr);
+	EXPECT_TRUE(l.eof());
 }
 
 TEST(Lexer, LexesNumbers) {
@@ -304,5 +322,7 @@ TEST(Lexer, LexesNumbers) {
 
 		expects.erase(expects.begin());
 	}
+	
+	EXPECT_TRUE(l.eof());
 }
 
