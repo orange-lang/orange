@@ -12,6 +12,16 @@
 #include <libparse/lex.h>
 #include "../helpers.h"
 
+TEST(Lexer, AcceptsNoInput) {
+	using namespace orange::parser;
+
+	std::stringstream ss("");
+	Lexer l(ss);
+
+	EXPECT_TRUE(l.eof());
+	EXPECT_EQ(nullptr, l.readToken());
+}
+
 TEST(Lexer, LexesComments) {
 	using namespace orange::parser;
 
@@ -214,6 +224,26 @@ TEST(Lexer, CatchesBadIdentifiers) {
 
 	std::stringstream ss2("_9");
 	EXPECT_THROW((Lexer(ss2)).readToken(), std::runtime_error);
+}
+
+TEST(Lexer, LexesEmptyString) {
+	using namespace orange::parser;
+
+	std::stringstream ss;
+	ss << "+\"\"-";
+
+	Lexer l(ss);
+
+	std::vector<TokenType> expects = { PLUS, VAL_STRING, MINUS };
+
+	while (expects.size() > 0) {
+		auto token = expects.front();
+		expectToken(l, token);
+
+		expects.erase(expects.begin());
+	}
+
+	EXPECT_EQ(l.readToken(), nullptr);
 }
 
 TEST(Lexer, LexesStrings) {
