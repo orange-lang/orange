@@ -5,7 +5,7 @@ branches:
     - gh-pages
 
 skip_commits:
-  message: /\[ci-ignore\]/
+  message: /\[ci skip\]/
 
 cache:
   - C:\projects\mingw.7z
