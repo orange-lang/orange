@@ -30,7 +30,7 @@ add_subdirectory(lib/libparse)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-add_executable(unit_tests test/helpers.cc test/libast/test_lexer.cc test/helpers.h)
+add_executable(unit_tests test/helpers.cc test/libast/test_lexer.cc test/helpers.h test/libast/test_lex_helpers.cc)
 target_include_directories(unit_tests PRIVATE lib)
 target_link_libraries(unit_tests gtest gtest_main ast parse)
 target_compile_features(unit_tests PRIVATE cxx_range_for)
