@@ -320,3 +320,21 @@ TEST(Lexer, LexesNumbers) {
 	EXPECT_TRUE(l.eof());
 }
 
+TEST(Lexer, NumberRightValues) {
+	using namespace orange::parser;
+
+	std::stringstream ss("0b01i64 0o01i64 0x01i64 0i64 0.1234 0.1234f 0.1234d");
+
+	Lexer l(ss);
+
+	std::vector<std::string> expects = {
+		"0b01", "0o01", "0x01", "0", "0.1234", "0.1234", "0.1234"
+	};
+
+	while (expects.size() > 0) {
+		auto token = expects.front();
+		expectToken(l, token);
+
+		expects.erase(expects.begin());
+	}
+}

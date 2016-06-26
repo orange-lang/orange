@@ -183,13 +183,13 @@ static Token* getNumber(std::istream& stream) {
 		next_char = peekChar(stream);
 
 		if (next_char == 'b') {
-			getChar(stream);
+			buf += getChar(stream);
 			return getBinary(buf, stream);
 		} else if (next_char == 'x') {
-			getChar(stream);
+			buf += getChar(stream);
 			return getHexadecimal(buf, stream);
 		} else if (next_char == 'o') {
-			getChar(stream);
+			buf += getChar(stream);
 			return getOctal(buf, stream);
 		} else if (next_char == 'd') {
 			getChar(stream);
@@ -198,7 +198,7 @@ static Token* getNumber(std::istream& stream) {
 			getChar(stream);
 			return new Token(VAL_FLOAT, buf);
 		} else if (next_char == '.') {
-			getChar(stream);
+			buf += getChar(stream);
 			return getFloat(buf, stream);
 		} else {
 			return getIntSuffix(buf, stream);
