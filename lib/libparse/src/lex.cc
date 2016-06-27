@@ -247,6 +247,30 @@ static Token* getString(std::istream& stream) {
 	return new Token(VAL_STRING, buf);
 }
 
+static Token* getCharacter(std::istream& stream) {
+	if (peekChar(stream) != '\'') return nullptr;
+	getChar(stream);
+
+	std::string buf = "";
+
+	bool readChar = false;
+
+	char nextChar = getChar(stream);
+	if (nextChar == '\'') {
+		return new Token(VAL_CHAR, buf);
+	} else if (nextChar == '\n') {
+		throw std::runtime_error("Unterminated character constant");
+	} else if (nextChar == '\\') {
+		buf += toString(nextChar) + getChar<std::string>(stream);
+	}
+
+	if (getChar(stream) != '\'') {
+		throw std::runtime_error("Invalid character constant with more than one character");
+	}
+
+	return new Token(VAL_CHAR, buf);
+}
+
 /// Gets an operator (including newline)
 static Token* getOperator(std::istream& stream) {
 	std::string buf;
@@ -307,7 +331,7 @@ static TokenMapTy IdentifierMap = {
 	{"set"      , SET      }, {"virtual"  , VIRTUAL  }, {"final"    , FINAL    }, {"partial"  , PARTIAL  },
 	{"where"    , WHERE    }, {"data"     , DATA     }, {"extend"   , EXTEND   }, {"const"    , CONST    },
 	{"try"      , TRY      }, {"catch"    , CATCH    }, {"finally"  , FINALLY  }, {"throw"    , THROW    },
-	{"of"       , OF       }
+	{"of"       , OF       }, {"char"     , CHAR     }
 };
 
 /// Gets an identifier (includes _ and keywords)
@@ -358,6 +382,7 @@ Token* Lexer::readToken() {
 	if ((tok = getComment(mStream))) return tok;
 	if ((tok = getNumber(mStream))) return tok;
 	if ((tok = getString(mStream))) return tok;
+	if ((tok = getCharacter(mStream))) return tok;
 	if ((tok = getOperator(mStream))) return tok;
 	if ((tok = getIdentifier(mStream))) return tok;
 

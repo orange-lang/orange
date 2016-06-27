@@ -46,7 +46,8 @@ namespace orange { namespace parser {
 		{PUBLIC, "PUBLIC"}, {GET, "GET"}, {SET, "SET"}, {VIRTUAL, "VIRTUAL"},
 		{FINAL, "FINAL"}, {WHERE, "WHERE"}, {DATA, "DATA"}, {EXTEND, "EXTEND"},
 		{NOT, "NOT"}, {CONST, "CONST"}, {TRY, "TRY"}, {CATCH, "CATCH"},
-		{FINALLY, "FINALLY"}, {THROW, "THROW"}, {OF, "OF"},
+		{FINALLY, "FINALLY"}, {THROW, "THROW"}, {OF, "OF"}, {VAL_CHAR, "VAL_CHAR"},
+		{CHAR, "CHAR"}
 	};
 
 	std::ostream& operator<<(std::ostream& os, const TokenType& tok) {

@@ -243,6 +243,62 @@ TEST(Lexer, CatchesBadIdentifiers) {
 	EXPECT_THROW((Lexer(ss2)).readToken(), std::runtime_error);
 }
 
+TEST(Lexer, LexesEmptyChar) {
+	using namespace orange::parser;
+
+	std::stringstream ss;
+	ss << "+''-";
+
+	Lexer l(ss);
+
+	std::vector<TokenType> expects = { PLUS, VAL_CHAR, MINUS };
+	for (auto token : expects) expectToken(l, token);
+
+	EXPECT_EQ(l.readToken(), nullptr);
+	EXPECT_TRUE(l.eof());
+}
+
+TEST(Lexer, LexesChar) {
+	using namespace orange::parser;
+
+	std::stringstream ss;
+	ss << "+'D'-";
+
+	Lexer l(ss);
+
+	std::vector<TokenType> expects = { PLUS, VAL_CHAR, MINUS };
+	for (auto token : expects) expectToken(l, token);
+
+	EXPECT_EQ(l.readToken(), nullptr);
+	EXPECT_TRUE(l.eof());
+}
+
+TEST(Lexer, LexesEscapedChar) {
+	using namespace orange::parser;
+
+	std::stringstream ss;
+	ss << "+'\\n'-";
+
+	Lexer l(ss);
+
+	std::vector<TokenType> expects = { PLUS, VAL_CHAR, MINUS };
+	for (auto token : expects) expectToken(l, token);
+
+	EXPECT_EQ(l.readToken(), nullptr);
+	EXPECT_TRUE(l.eof());
+}
+
+TEST(Lexer, CatchesInvalidChar) {
+	using namespace orange::parser;
+
+	std::stringstream ss;
+	ss << "'no'";
+
+	Lexer l(ss);
+
+	EXPECT_THROW(l.readToken(), std::runtime_error);
+}
+
 TEST(Lexer, LexesEmptyString) {
 	using namespace orange::parser;
 
