@@ -79,7 +79,6 @@ static Token* getComment(std::istream& stream) {
 	return new Token(COMMENT, buf.str());
 }
 
-
 static TokenMapTy IntSuffixMap = {
 	{"" , VAL_INT },
 	{"i", VAL_INT }, {"i8", VAL_INT8 }, {"i16", VAL_INT16 }, {"i32", VAL_INT32 }, {"i64", VAL_INT64 },
@@ -140,6 +139,10 @@ static Token* getOctal(std::string buf, std::istream& stream) {
 	while (isoctnumber(next_char)) {
 		buf += getChar(stream);
 		next_char = peekChar(stream);
+	}
+
+	if (isnumber(next_char)) {
+		throw std::runtime_error("Only 0-7 are valid digits in a binary constant");
 	}
 
 	return getIntSuffix(buf, stream);

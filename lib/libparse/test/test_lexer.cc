@@ -321,6 +321,21 @@ TEST(Lexer, LexesNumbers) {
 	EXPECT_TRUE(l.eof());
 }
 
+TEST(Lexer, CatchesInvalidConstants) {
+	using namespace orange::parser;
+
+	std::vector<std::string> badNumbers = {
+		"0b010123", "0o1289"
+	};
+
+	for (auto input : badNumbers) {
+		std::stringstream ss(input);
+		Lexer l(ss);
+
+		EXPECT_THROW(l.readToken(), std::runtime_error);
+	}
+}
+
 TEST(Lexer, NumberRightValues) {
 	using namespace orange::parser;
 
