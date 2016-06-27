@@ -155,7 +155,7 @@ static Token* getFloat(std::string buf, std::istream& stream) {
 	}
 
 	std::string suffix = "";
-	while (isalpha(next_char)) {
+	while (isalnum(next_char)) {
 		suffix += getChar(stream);
 		next_char = peekChar(stream);
 	}
