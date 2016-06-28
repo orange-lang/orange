@@ -14,14 +14,9 @@ namespace orange { namespace ast {
 	struct Expression;
 
 	enum BuiltinTypeKind {
-		INT, UINT,
-		INT8, UINT8,
-		INT16, UINT16,
-		INT32, UINT32,
-		INT64, UINT64,
-		FLOAT, DOUBLE,
-		VAR,
-		VOID
+		INT, INT8, INT16, INT32, INT64,
+		UINT, UINT8, UINT16, UINT32, UINT64,
+		FLOAT, DOUBLE, VAR, VOID, CHAR
 	};
 
 	struct Type { };
@@ -46,13 +41,4 @@ namespace orange { namespace ast {
 	struct ReferenceType : Type {
 		Type* base;
 	};
-
-	enum TypeConstraintKind {
-		CLASS, TYPENAME, PROVIDES_DEFAULT
-	};
-
-	struct TypeConstraint { };
-	struct BasicTypeConstraint : TypeConstraint { TypeConstraintKind kind; };
-	struct NamedTypeConstraint : TypeConstraint { std::string* base; };
-	struct DataTypeConstraint : TypeConstraint { Type* type; };
 }}
