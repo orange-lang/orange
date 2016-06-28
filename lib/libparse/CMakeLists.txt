@@ -22,10 +22,12 @@ set_target_properties(parse PROPERTIES LINKER_LANGUAGE CXX)
 
 target_compile_features(parse PRIVATE cxx_range_for)
 
+target_link_libraries(parse ast)
+
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_executable(testparse test/helpers.cc test/test_lexer.cc
         test/helpers.h test/test_lex_helpers.cc)
 target_include_directories(testparse PRIVATE include)
-target_link_libraries(testparse gtest gtest_main parse)
+target_link_libraries(testparse gtest gtest_main parse ast)
 target_compile_features(testparse PRIVATE cxx_range_for)
 add_test(testparse testparse)
