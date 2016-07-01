@@ -17,11 +17,13 @@ void Walker::WalkNode(Visitor* visitor, Node* node) {
 	if      (isA<Statement>(node))  WalkStmt(visitor, asA<Statement>(node));
 	else if (isA<Expression>(node)) WalkExpr(visitor, asA<Expression>(node));
 	else if (isA<Constraint>(node)) WalkConstraint(visitor, asA<Constraint>(node));
+	else if (isA<Generics>(node))   WalkGenerics(visitor, asA<Generics>(node));
 	else                            throw std::runtime_error("Unknown node to walk.");
 }
 
 void Walker::WalkExpr(Visitor* visitor, Expression* node) {
 	if      (isA<VarDeclExpr>(node))      WalkVarDeclExpr(visitor, asA<VarDeclExpr>(node));
+	else if (isA<EnumValue>(node))        WalkEnumValue(visitor, asA<EnumValue>(node));
 	else if (isA<ConditionalBlock>(node)) WalkConditionalBlock(visitor, asA<ConditionalBlock>(node));
 	else if (isA<BlockExpr>(node))        WalkBlockExpr(visitor, asA<BlockExpr>(node));
 	else if (isA<Value>(node))            WalkValue(visitor, asA<Value>(node));
@@ -38,6 +40,7 @@ void Walker::WalkExpr(Visitor* visitor, Expression* node) {
 	else if (isA<TernaryExpr>(node))      WalkTernaryExpr(visitor, asA<TernaryExpr>(node));
 	else if (isA<SwitchExpr>(node))       WalkSwitchExpr(visitor, asA<SwitchExpr>(node));
 	else if (isA<FunctionExpr>(node))     WalkFunctionExpr(visitor, asA<FunctionExpr>(node));
+	else if (isA<CatchBlock>(node))       WalkCatchBlock(visitor, asA<CatchBlock>(node));
 	else if (isA<TryExpr>(node))          WalkTryExpr(visitor, asA<TryExpr>(node));
 	else if (isA<CastExpr>(node))         WalkCastExpr(visitor, asA<CastExpr>(node));
 	else if (isA<FunctionCallExpr>(node)) WalkFunctionCallExpr(visitor, asA<FunctionCallExpr>(node));
@@ -46,6 +49,7 @@ void Walker::WalkExpr(Visitor* visitor, Expression* node) {
 
 void Walker::WalkStmt(Visitor* visitor, Statement* node) {
 	if      (isA<LoopStmt>(node))       WalkLoopStmt(visitor, asA<LoopStmt>(node));
+	else if (isA<SwitchPattern>(node))  WalkSwitchPattern(visitor, asA<SwitchPattern>(node));
 	else if (isA<ForeachStmt>(node))    WalkForeachStmt(visitor, asA<ForeachStmt>(node));
 	else if (isA<BreakStmt>(node))      WalkBreakStmt(visitor, asA<BreakStmt>(node));
 	else if (isA<ContinueStmt>(node))   WalkContinueStmt(visitor, asA<ContinueStmt>(node));
@@ -299,6 +303,22 @@ void NonTraversalWalker::WalkCastExpr(Visitor* visitor, CastExpr* node) {
 
 void NonTraversalWalker::WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* node) {
 	visitor->VisitFunctionCallExpr(node);
+}
+
+void NonTraversalWalker::WalkEnumValue(Visitor* visitor, EnumValue* node) {
+	visitor->VisitEnumValue(node);
+}
+
+void NonTraversalWalker::WalkSwitchPattern(Visitor* visitor, SwitchPattern* node) {
+	visitor->VisitSwitchPattern(node);
+}
+
+void NonTraversalWalker::WalkGenerics(Visitor* visitor, Generics* node) {
+	visitor->VisitGenerics(node);
+}
+
+void NonTraversalWalker::WalkCatchBlock(Visitor* visitor, CatchBlock* node) {
+	visitor->VisitCatchBlock(node);
 }
 
 //
@@ -689,8 +709,33 @@ void DepthFirstWalker::WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitFunctionCallExpr(node);
 }
 
+void DepthFirstWalker::WalkEnumValue(Visitor* visitor, EnumValue* node) {
+	if (mOrder == TraversalOrder::PREORDER) visitor->VisitEnumValue(node);
+
+	WalkIdentifier(visitor, node->name);
+	for (auto param : node->params) WalkVarDeclExpr(visitor, param);
+
+	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitEnumValue(node);
+}
+
+void DepthFirstWalker::WalkSwitchPattern(Visitor* visitor, SwitchPattern* node) {
+	if (mOrder == TraversalOrder::PREORDER) visitor->VisitSwitchPattern(node);
+
+	WalkExpr(visitor, node->pattern);
+	WalkBlockExpr(visitor, node->block);
+
+	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitSwitchPattern(node);
+}
+
+void DepthFirstWalker::WalkCatchBlock(Visitor* visitor, CatchBlock* node) {
+	if (mOrder == TraversalOrder::PREORDER) visitor->VisitCatchBlock(node);
+
+	WalkVarDeclExpr(visitor, node->exception);
+	WalkBlockExpr(visitor, node->block);
+
+	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitCatchBlock(node);
+}
+
 DepthFirstWalker::DepthFirstWalker(TraversalOrder order) {
 	mOrder = order;
 }
-
-

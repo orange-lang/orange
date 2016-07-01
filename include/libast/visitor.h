@@ -21,6 +21,7 @@ namespace orange { namespace ast {
 		void VisitReturnStmt(ReturnStmt* node) { }
 		void VisitAggregateStmt(AggregateStmt* node) { }
 		void VisitExternFuncStmt(ExternFuncStmt* node) { }
+		void VisitEnumValue(EnumValue* node) { }
 		void VisitEnumStmt(EnumStmt* node) { }
 		void VisitClassStmt(ClassStmt* node) { }
 		void VisitInterfaceStmt(InterfaceStmt* node) { }
@@ -53,13 +54,16 @@ namespace orange { namespace ast {
 		void VisitConditionalBlock(ConditionalBlock* node) { }
 		void VisitIfExpr(IfExpr* node) { }
 		void VisitTernaryExpr(TernaryExpr* node) { }
+		void VisitSwitchPattern(SwitchPattern* node) { }
 		void VisitSwitchExpr(SwitchExpr* node) { }
 		void VisitClassConstraint(ClassConstraint* node) { }
 		void VisitDefaultCtorConstraint(DefaultCtorConstraint* node) { }
 		void VisitBaseConstraint(BaseConstraint* node) { }
 		void VisitDataConstraint(DataConstraint* node) { }
 		void VisitTypeConstraint(TypeConstraint* node) { }
+		void VisitGenerics(Generics* node) { }
 		void VisitFunctionExpr(FunctionExpr* node) { }
+		void VisitCatchBlock(CatchBlock* node) { }
 		void VisitTryExpr(TryExpr* node) { }
 		void VisitCastExpr(CastExpr* node) { }
 		void VisitFunctionCallExpr(FunctionCallExpr* node) { }
