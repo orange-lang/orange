@@ -516,7 +516,7 @@ void DepthFirstWalker::WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) {
 void DepthFirstWalker::WalkLongBlockExpr(Visitor* visitor, LongBlockExpr* node) {
 	if (mOrder == TraversalOrder::PREORDER) visitor->VisitLongBlockExpr(node);
 
-	for (auto node : node->statements) WalkNode(visitor, node);
+	for (auto stmt : node->statements) WalkNode(visitor, stmt);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitLongBlockExpr(node);
 }
