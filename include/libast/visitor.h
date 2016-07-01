@@ -32,17 +32,14 @@ namespace orange { namespace ast {
 		void VisitPropertyStmt(PropertyStmt* node) { }
 		void VisitThrowStmt(ThrowStmt* node) { }
 		void VisitVarDeclExpr(VarDeclExpr* node) { }
-		void VisitValue(Value* node) { }
 		void VisitIntValue(IntValue* node) { }
 		void VisitUIntValue(UIntValue* node) { }
 		void VisitFloatValue(FloatValue* node) { }
 		void VisitDoubleValue(DoubleValue* node) { }
 		void VisitStringValue(StringValue* node) { }
 		void VisitCharValue(CharValue* node) { }
-		void VisitIdentifier(Identifier* node) { }
 		void VisitNamedIDExpr(NamedIDExpr* node) { }
 		void VisitTempIDExpr(TempIDExpr* node) { }
-		void VisitBlockExpr(BlockExpr* node) { }
 		void VisitLongBlockExpr(LongBlockExpr* node) { }
 		void VisitShortBlockExpr(ShortBlockExpr* node) { }
 		void VisitBinOpExpr(BinOpExpr* node) { }
@@ -57,7 +54,6 @@ namespace orange { namespace ast {
 		void VisitIfExpr(IfExpr* node) { }
 		void VisitTernaryExpr(TernaryExpr* node) { }
 		void VisitSwitchExpr(SwitchExpr* node) { }
-		void VisitConstraint(Constraint* node) { }
 		void VisitClassConstraint(ClassConstraint* node) { }
 		void VisitDefaultCtorConstraint(DefaultCtorConstraint* node) { }
 		void VisitBaseConstraint(BaseConstraint* node) { }
