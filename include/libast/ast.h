@@ -103,7 +103,7 @@ namespace orange { namespace ast {
 			name(name), params(params), retType(retType) { }
 	};
 
-	struct EnumValue {
+	struct EnumValue : Expression {
 	public:
 		Identifier* name;
 		std::vector<VarDeclExpr*> params;
@@ -369,7 +369,7 @@ namespace orange { namespace ast {
 			LHS(LHS), type(type), RHS(RHS) { }
 	};
 
-	struct ArrayAccessExpr  : Expression {
+	struct ArrayAccessExpr : Expression {
 	public:
 		Expression* expression;
 		Expression* index;
@@ -379,7 +379,7 @@ namespace orange { namespace ast {
 			expression(expression), index(index) { }
 	};
 
-	struct MemberAccessExpr  : Expression {
+	struct MemberAccessExpr : Expression {
 	public:
 		Expression* LHS;
 		Identifier* RHS;
@@ -427,7 +427,7 @@ namespace orange { namespace ast {
 			condition(condition), trueValue(trueValue), falseValue(falseValue) { }
 	};
 
-	struct SwitchPattern {
+	struct SwitchPattern : Statement {
 	public:
 		Expression* pattern;
 		BlockExpr* block;
@@ -447,7 +447,10 @@ namespace orange { namespace ast {
 			condition(condition), patterns(patterns) { }
 	};
 
-	struct Constraint : Node { };
+	struct Constraint : Node {
+	protected:
+		Constraint() { }
+	};
 
 	struct ClassConstraint : Constraint {
 	public:
@@ -495,7 +498,7 @@ namespace orange { namespace ast {
 			identifier(identifier), type(type) { }
 	};
 
-	struct Generics {
+	struct Generics : Node {
 	public:
 		std::vector<Identifier*> genericTypes;
 		std::vector<Constraint*> constraints;
@@ -517,7 +520,7 @@ namespace orange { namespace ast {
 			name(name), generics(generics), params(params), retType(retType) { }
 	};
 
-	struct CatchBlock {
+	struct CatchBlock : Expression {
 	public:
 		VarDeclExpr* exception;
 		BlockExpr* block;
