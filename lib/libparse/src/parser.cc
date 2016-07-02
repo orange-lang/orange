@@ -84,7 +84,6 @@ namespace orange { namespace parser { namespace impl {
 		std::vector<Identifier*> parse_super_list();
 		std::vector<Identifier*> parse_super_list_1();
 
-		/// TODO: make flag for partial
 		ClassStmt* parse_partial_class();
 
 		LongBlockExpr* parse_class_body();

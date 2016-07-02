@@ -13,6 +13,8 @@ namespace orange { namespace ast {
 
 	enum PrivacyLevel { PRIVATE, PROTECTED, PUBLIC };
 
+	struct PartialFlag : Flag { };
+
 	struct PrivacyFlag : Flag {
 		PrivacyLevel level;
 
