@@ -714,6 +714,15 @@ void DepthFirstWalker::WalkTypeConstraint(Visitor* visitor, TypeConstraint* node
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitTypeConstraint(node);
 }
 
+void DepthFirstWalker::WalkGenerics(Visitor* visitor, Generics* node) {
+	if (mOrder == TraversalOrder::PREORDER) visitor->VisitGenerics(node);
+
+	for (auto id : node->genericTypes) WalkIdentifier(visitor, id);
+	for (auto constraint : node->constraints) WalkConstraint(visitor, constraint);
+
+	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitGenerics(node);
+}
+
 void DepthFirstWalker::WalkFunctionExpr(Visitor* visitor, FunctionExpr* node) {
 	if (mOrder == TraversalOrder::PREORDER) visitor->VisitFunctionExpr(node);
 
