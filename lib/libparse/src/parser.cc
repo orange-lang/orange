@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <libparse/parser.h>
 #include <libast/type.h>
+#include <libast/flag.h>
 #include "lex_stream.h"
 
 namespace orange { namespace parser { namespace impl {
@@ -305,17 +306,120 @@ namespace orange { namespace parser { namespace impl {
 		 * Statements
 		 */
 
-		Node* parse_statement();
+		Node* parse_statement() {
+			Node* stmt = nullptr;
 
-		VarDeclExpr* parse_var_decl();
-		Flag* parse_opt_const();
+			if ((stmt = parse_var_decl()) != nullptr) return stmt;
+			if ((stmt = parse_class()) != nullptr) return stmt;
+			if ((stmt = parse_long_block()) != nullptr) return stmt;
+			if ((stmt = parse_break_stmt()) != nullptr) return stmt;
+			if ((stmt = parse_continue_stmt()) != nullptr) return stmt;
+			if ((stmt = parse_yield_stmt()) != nullptr) return stmt;
+			if ((stmt = parse_function()) != nullptr) return stmt;
+			if ((stmt = parse_aggregate()) != nullptr) return stmt;
+			if ((stmt = parse_extern_fn()) != nullptr) return stmt;
+			if ((stmt = parse_interface()) != nullptr) return stmt;
+			if ((stmt = parse_namespace()) != nullptr) return stmt;
+			if ((stmt = parse_import()) != nullptr) return stmt;
+			if ((stmt = parse_extension()) != nullptr) return stmt;
+			if ((stmt = parse_getter()) != nullptr) return stmt;
+			if ((stmt = parse_setter()) != nullptr) return stmt;
+			if ((stmt = parse_property()) != nullptr) return stmt;
+			if ((stmt = parse_enum()) != nullptr) return stmt;
+			if ((stmt = parse_expr_statement()) != nullptr) return stmt;
+			if ((stmt = parse_delete()) != nullptr) return stmt;
 
-		std::vector<Identifier*> parse_identifiers();
-		std::vector<Identifier*> parse_identifier_list();
-		std::vector<Identifier*> parse_identifier_list_1();
+			return nullptr;
+		}
 
-		std::vector<Type*> parse_opt_type_spec_list();
-		Expression* parse_opt_value();
+		VarDeclExpr* parse_var_decl() {
+			if (mStream.eof()) return nullptr;
+
+			auto pos = mStream.tell();
+			auto constFlag = parse_opt_const();
+
+			if (mStream.get()->type != VAR) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			auto ids = parse_identifiers();
+			auto tys = parse_opt_type_spec_list();
+			auto expr = parse_opt_value();
+
+			auto node = CreateNode<VarDeclExpr>(ids, tys, expr);
+			if (constFlag != nullptr) node->flags.push_back(constFlag);
+
+			return node;
+		}
+
+		Flag* parse_opt_const() {
+			if (mStream.eof() || mStream.peek()->type != CONST) return nullptr;
+			return new ConstFlag();
+		}
+
+		std::vector<Identifier*> parse_identifiers() {
+			std::vector<Identifier*> ids;
+			if (mStream.eof()) return ids;
+
+			if (mStream.peek()->type == OPEN_PAREN) {
+				mStream.get();
+
+				auto remaining = parse_identifier_list();
+				ids.insert(ids.begin(), remaining.begin(), remaining.end());
+
+				if (ids.size() == 0) throw std::runtime_error("Expected identifier inside parenthesis");
+
+				if (mStream.get()->type != CLOSE_PAREN) throw std::runtime_error("Expected )");
+			} else {
+				auto id = parse_identifier();
+				if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+				ids.push_back(id);
+			}
+
+			return ids;
+		}
+
+		std::vector<Identifier*> parse_identifier_list() {
+			std::vector<Identifier*> ids;
+
+			auto id = parse_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+			ids.push_back(id);
+
+			while (mStream.eof() == false && mStream.peek()->type == COMMA) {
+				auto id = parse_identifier();
+				if (id == nullptr) throw std::runtime_error("Expected identifier");
+				ids.push_back(id);
+			}
+
+			return ids;
+		}
+
+		std::vector<Type*> parse_opt_type_spec_list() {
+			std::vector<Type*> tys;
+			if (mStream.eof() || mStream.peek()->type != COLON) return tys;
+			mStream.get();
+
+			auto ty = parse_type();
+			if (ty == nullptr) throw std::runtime_error("Expected type");
+			tys.push_back(ty);
+
+			while (mStream.eof() == false && mStream.peek()->type == COMMA) {
+				auto ty = parse_type();
+				if (ty == nullptr) throw std::runtime_error("Expected type");
+				tys.push_back(ty);
+			}
+
+			return tys;
+		}
+
+		Expression* parse_opt_value() {
+			if (mStream.eof() || mStream.peek()->type != ASSIGN) return nullptr;
+			mStream.get();
+			return parse_expression();
+		}
 
 		EnumStmt* parse_enum();
 		EnumStmt* parse_enum_base();
@@ -359,7 +463,7 @@ namespace orange { namespace parser { namespace impl {
 		BlockExpr* parse_opt_block();
 		ImportStmt* parse_import();
 
-		ExtendStmt* parse_opt_extension();
+		ExtendStmt* parse_extension();
 
 		PropertyStmt* parse_property();
 		PropertyStmt* parse_property_base();
