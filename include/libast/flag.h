@@ -15,6 +15,8 @@ namespace orange { namespace ast {
 
 	struct PartialFlag : Flag { };
 
+	struct ConstFlag : Flag { };
+
 	struct PrivacyFlag : Flag {
 		PrivacyLevel level;
 
