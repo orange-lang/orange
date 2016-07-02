@@ -14,7 +14,7 @@ add_library(parse include/lex.h
         src/char_types.cc
         include/char_types.h
         include/lex_helpers.h
-        src/lex_helpers.cc)
+        src/lex_helpers.cc include/lex_stream.h src/lex_stream.cc)
 
 target_include_directories(parse PRIVATE include)
 
@@ -26,7 +26,7 @@ target_link_libraries(parse ast)
 
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_executable(testparse test/helpers.cc test/test_lexer.cc
-        test/helpers.h test/test_lex_helpers.cc)
+        test/helpers.h test/test_lex_helpers.cc test/test_lex_stream.cc)
 target_include_directories(testparse PRIVATE include)
 target_link_libraries(testparse gtest gtest_main parse ast)
 target_compile_features(testparse PRIVATE cxx_range_for)
