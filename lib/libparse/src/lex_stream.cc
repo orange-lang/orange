@@ -6,6 +6,8 @@
 // may not be copied, modified, or distributed except according to those terms.
 //
 
+#include <stdexcept>
+
 #include "lex_stream.h"
 
 using namespace orange::parser;
