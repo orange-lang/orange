@@ -323,6 +323,15 @@ namespace orange { namespace ast {
 		TempIDExpr() { }
 	};
 
+	struct AccessIDExpr : Identifier {
+	public:
+		Identifier* LHS;
+		Identifier* RHS;
+
+		AccessIDExpr() { }
+		AccessIDExpr(Identifier* LHS, Identifier* RHS) : LHS(LHS), RHS(RHS) { }
+	};
+
 	struct BlockExpr : Expression { };
 
 	struct LongBlockExpr : BlockExpr {

@@ -94,9 +94,10 @@ void Walker::WalkValue(Visitor* visitor, Value* node) {
 }
 
 void Walker::WalkIdentifier(Visitor* visitor, Identifier* node) {
-	if      (isA<NamedIDExpr>(node)) WalkNamedIDExpr(visitor, asA<NamedIDExpr>(node));
-	else if (isA<TempIDExpr>(node))  WalkTempIDExpr(visitor, asA<TempIDExpr>(node));
-	else if (isA<DtorIDExpr>(node))  WalkDtorIDExpr(visitor, asA<DtorIDExpr>(node));
+	if      (isA<NamedIDExpr>(node))  WalkNamedIDExpr(visitor, asA<NamedIDExpr>(node));
+	else if (isA<TempIDExpr>(node))   WalkTempIDExpr(visitor, asA<TempIDExpr>(node));
+	else if (isA<DtorIDExpr>(node))   WalkDtorIDExpr(visitor, asA<DtorIDExpr>(node));
+	else if (isA<AccessIDExpr>(node)) WalkAccessIDExpr(visitor, asA<AccessIDExpr>(node));
 	else                             throw std::runtime_error("Unknown node to walk.");
 }
 
@@ -232,6 +233,10 @@ void NonTraversalWalker::WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) {
 
 void NonTraversalWalker::WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) {
 	visitor->VisitDtorIDExpr(node);
+}
+
+void NonTraversalWalker::WalkAccessIDExpr(Visitor* visitor, AccessIDExpr* node) {
+	visitor->VisitAccessIDExpr(node);
 }
 
 void NonTraversalWalker::WalkLongBlockExpr(Visitor* visitor, LongBlockExpr* node) {
@@ -560,6 +565,15 @@ void DepthFirstWalker::WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) {
 
 void DepthFirstWalker::WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) {
 	visitor->VisitDtorIDExpr(node);
+}
+
+void DepthFirstWalker::WalkAccessIDExpr(Visitor* visitor, AccessIDExpr* node) {
+	if (mOrder == TraversalOrder::PREORDER) visitor->VisitAccessIDExpr(node);
+
+	WalkIdentifier(visitor, node->LHS);
+	WalkIdentifier(visitor, node->RHS);
+
+	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitAccessIDExpr(node);
 }
 
 void DepthFirstWalker::WalkLongBlockExpr(Visitor* visitor, LongBlockExpr* node) {
