@@ -366,7 +366,7 @@ namespace orange { namespace parser { namespace impl {
 				mStream.get();
 
 				auto remaining = parse_identifier_list();
-				ids.insert(ids.begin(), remaining.begin(), remaining.end());
+				ids.insert(ids.end(), remaining.begin(), remaining.end());
 
 				if (ids.size() == 0) throw std::runtime_error("Expected identifier inside parenthesis");
 
@@ -421,11 +421,76 @@ namespace orange { namespace parser { namespace impl {
 			return parse_expression();
 		}
 
-		EnumStmt* parse_enum();
-		EnumStmt* parse_enum_base();
-		std::vector<EnumValue*> parse_enum_values();
-		std::vector<EnumValue*> parse_enum_values_1();
-		std::vector<VarDeclExpr*> parse_opt_enum_params();
+		EnumStmt* parse_enum() {
+			auto pos = mStream.tell();
+			auto flags = parse_flags();
+			auto enumStmt = parse_enum_base();
+
+			if (enumStmt == nullptr) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			enumStmt->flags.insert(enumStmt->flags.end(), flags.begin(), flags.end());
+			return enumStmt;
+		}
+
+		EnumStmt* parse_enum_base() {
+			if (mStream.eof() || mStream.peek()->type != ENUM) return nullptr;
+			mStream.get();
+
+			auto id = parse_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+			if (mStream.get()->type != OPEN_CURLY)
+				throw std::runtime_error("Expected {");
+
+			auto values = parse_enum_values();
+
+			if (mStream.get()->type != CLOSE_CURLY)
+				throw std::runtime_error("Expected }");
+
+			return CreateNode<EnumStmt>(id, values);
+		}
+
+		std::vector<EnumValue*> parse_enum_values() {
+			std::vector<EnumValue*> values;
+
+			auto value = parse_enum_value();
+			if (value == nullptr) return values;
+			values.push_back(value);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				auto value = parse_enum_value();
+				if (value == nullptr) throw std::runtime_error("Expected enumeration value");
+				values.push_back(value);
+			}
+
+			return values;
+		}
+
+		EnumValue* parse_enum_value() {
+			if (mStream.eof() || mStream.peek()->type != IDENTIFIER) return nullptr;
+
+			auto name = mStream.get()->value;
+			std::vector<VarDeclExpr*> params = parse_opt_enum_params();
+
+			return CreateNode<EnumValue>(CreateNode<NamedIDExpr>(name), params);
+		}
+
+		std::vector<VarDeclExpr*> parse_opt_enum_params() {
+			std::vector<VarDeclExpr*> params;
+			if (mStream.eof() || mStream.peek()->type != OPEN_PAREN) return params;
+			mStream.get();
+
+			params = parse_param_list();
+
+			if (mStream.get()->type == CLOSE_PAREN) throw std::runtime_error("Expected )");
+			return params;
+		}
+
 
 		ClassStmt* parse_class();
 		ClassStmt* parse_base_class();
