@@ -14,7 +14,7 @@ add_library(parse include/lex.h
         src/char_types.cc
         include/char_types.h
         include/lex_helpers.h
-        src/lex_helpers.cc ../../include/libparse/parser.h include/lex_stream.h src/lex_stream.cc)
+        src/lex_helpers.cc ../../include/libparse/parser.h include/lex_stream.h src/lex_stream.cc src/parser.cc)
 
 target_include_directories(parse PRIVATE include)
 

@@ -12,7 +12,11 @@
 #include <libast/ast.h>
 
 namespace orange { namespace parser {
+	namespace impl { class Parser; }
+
 	class Parser {
+	private:
+		impl::Parser* mParserImpl;
 	public:
 		/// Parse the stream and return an AST.
 		ast::LongBlockExpr* parse();
