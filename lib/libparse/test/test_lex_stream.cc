@@ -178,10 +178,12 @@ TEST(LexStream, TestSeekPartialAfterPartialPeek) {
 
 	LexStream stream(ss);
 
+	auto pos = stream.tell();
+
 	stream.peek(3);
 
 	stream.get(2);
-	stream.seek(0);
+	stream.seek(pos);
 
 	expectToken(stream.get(), PLUS);
 	expectToken(stream.get(), MINUS);
