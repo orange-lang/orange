@@ -119,9 +119,8 @@ namespace orange { namespace parser { namespace impl {
 		PropertyStmt* parse_property();
 		PropertyStmt* parse_property_base();
 
-		// TODO: make AST node for this, probably don't need the _1 version
-		Statement* parse_expr_statement();
-		Statement* parse_expr_statement_1();
+		ExprStmt* parse_expr_statement();
+		ExprStmt* parse_expr_statement_1();
 
 		GetterStmt* parse_getter();
 		SetterStmt* parse_setter();

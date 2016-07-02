@@ -70,6 +70,7 @@ void Walker::WalkStmt(Visitor* visitor, Statement* node) {
 	else if (isA<PropertyStmt>(node))   WalkPropertyStmt(visitor, asA<PropertyStmt>(node));
 	else if (isA<ThrowStmt>(node))      WalkThrowStmt(visitor, asA<ThrowStmt>(node));
 	else if (isA<DeleteStmt>(node))     WalkDeleteStmt(visitor, asA<DeleteStmt>(node));
+	else if (isA<ExprStmt>(node))       WalkExprStmt(visitor, asA<ExprStmt>(node));
 	else                                throw std::runtime_error("Unknown node to walk.");
 }
 
@@ -186,6 +187,10 @@ void NonTraversalWalker::WalkThrowStmt(Visitor* visitor, ThrowStmt* node) {
 
 void NonTraversalWalker::WalkDeleteStmt(Visitor* visitor, DeleteStmt* node) {
 	visitor->VisitDeleteStmt(node);
+}
+
+void NonTraversalWalker::WalkExprStmt(Visitor* visitor, ExprStmt* node) {
+	visitor->VisitExprStmt(node);
 }
 
 void NonTraversalWalker::WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) {
@@ -497,6 +502,14 @@ void DepthFirstWalker::WalkDeleteStmt(Visitor* visitor, DeleteStmt* node) {
 	WalkExpr(visitor, node->deallocation);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitDeleteStmt(node);
+}
+
+void DepthFirstWalker::WalkExprStmt(Visitor* visitor, ExprStmt* node) {
+	if (mOrder == TraversalOrder::PREORDER) visitor->VisitExprStmt(node);
+
+	WalkExpr(visitor, node->expression);
+
+	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitExprStmt(node);
 }
 
 void DepthFirstWalker::WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) {

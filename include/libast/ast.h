@@ -209,6 +209,14 @@ namespace orange { namespace ast {
 		DeleteStmt(Expression* dealloc) : deallocation(dealloc) { }
 	};
 
+	struct ExprStmt : Statement {
+	public:
+		Expression* expression;
+
+		ExprStmt() { }
+		ExprStmt(Expression* expression) : expression(expression) { }
+	};
+
 	//
 	// Expressions
 	//

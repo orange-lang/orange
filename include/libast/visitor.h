@@ -34,6 +34,7 @@ namespace orange { namespace ast {
 		void VisitPropertyStmt(PropertyStmt* node) { }
 		void VisitThrowStmt(ThrowStmt* node) { }
 		void VisitDeleteStmt(DeleteStmt* node) { }
+		void VisitExprStmt(ExprStmt* node) { }
 		void VisitVarDeclExpr(VarDeclExpr* node) { }
 		void VisitIntValue(IntValue* node) { }
 		void VisitUIntValue(UIntValue* node) { }
