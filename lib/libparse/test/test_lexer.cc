@@ -188,7 +188,7 @@ TEST(Lexer, LexesIdentifiers) {
 	ss << "var void _ operator enum class partial in if elif else for foreach while forever do ";
 	ss << "switch break continue yield def extern aggregate interface namespace import new ";
 	ss << "delete private protected public get set virtual final partial where data extend const ";
-	ss << "try catch finally throw of";
+	ss << "try catch finally throw of as";
 
 	Lexer l(ss);
 
@@ -197,7 +197,7 @@ TEST(Lexer, LexesIdentifiers) {
 		VAR, VOID, TEMP, OPERATOR, ENUM, CLASS, PARTIAL, IN, IF, ELIF, ELSE, FOR, FOREACH,
 		WHILE, FOREVER, DO, SWITCH, BREAK, CONTINUE, YIELD, DEF, EXTERN, AGGREGATE, INTERFACE,
 		NAMESPACE, IMPORT, NEW, DELETE, PRIVATE, PROTECTED, PUBLIC, GET, SET, VIRTUAL,
-		FINAL, PARTIAL, WHERE, DATA, EXTEND, CONST, TRY, CATCH, FINALLY, THROW, OF
+		FINAL, PARTIAL, WHERE, DATA, EXTEND, CONST, TRY, CATCH, FINALLY, THROW, OF, AS
 	};
 
 	while (expects.size() > 0) {

@@ -332,7 +332,7 @@ static TokenMapTy IdentifierMap = {
 	{"set"      , SET      }, {"virtual"  , VIRTUAL  }, {"final"    , FINAL    }, {"partial"  , PARTIAL  },
 	{"where"    , WHERE    }, {"data"     , DATA     }, {"extend"   , EXTEND   }, {"const"    , CONST    },
 	{"try"      , TRY      }, {"catch"    , CATCH    }, {"finally"  , FINALLY  }, {"throw"    , THROW    },
-	{"of"       , OF       }, {"char"     , CHAR     }
+	{"of"       , OF       }, {"char"     , CHAR     }, {"as"       , AS       }
 };
 
 /// Gets an identifier (includes _ and keywords)
