@@ -72,6 +72,7 @@ static Token* getComment(std::istream& stream) {
 			throw std::runtime_error("Unterminated block comment");
 		}
 	} else {
+		stream.clear();
 		stream.seekg(pos, stream.beg);
 		return nullptr;
 	}

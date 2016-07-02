@@ -299,6 +299,14 @@ TEST(Lexer, CatchesInvalidChar) {
 	EXPECT_THROW(l.readToken(), std::runtime_error);
 }
 
+TEST(Lexer, LexesSlashAtEnd) {
+	using namespace orange::parser;
+
+	std::stringstream ss("/");
+	Lexer l(ss);
+	expectToken(l, DIVIDE);
+}
+
 TEST(Lexer, LexesEmptyString) {
 	using namespace orange::parser;
 
