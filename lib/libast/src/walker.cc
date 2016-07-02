@@ -721,7 +721,7 @@ void DepthFirstWalker::WalkEnumValue(Visitor* visitor, EnumValue* node) {
 void DepthFirstWalker::WalkSwitchPattern(Visitor* visitor, SwitchPattern* node) {
 	if (mOrder == TraversalOrder::PREORDER) visitor->VisitSwitchPattern(node);
 
-	WalkExpr(visitor, node->pattern);
+	for (auto pattern : node->patterns) WalkExpr(visitor, pattern);
 	WalkBlockExpr(visitor, node->block);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitSwitchPattern(node);

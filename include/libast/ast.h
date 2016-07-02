@@ -430,12 +430,12 @@ namespace orange { namespace ast {
 
 	struct SwitchPattern : Statement {
 	public:
-		Expression* pattern;
+		std::vector<Expression*> patterns;
 		BlockExpr* block;
 
 		SwitchPattern() { }
-		SwitchPattern(Expression* pattern, BlockExpr* block) :
-			pattern(pattern), block(block) { }
+		SwitchPattern(std::vector<Expression*> patterns, BlockExpr* block) :
+			patterns(patterns), block(block) { }
 	};
 
 	struct SwitchExpr : Expression {
