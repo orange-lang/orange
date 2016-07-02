@@ -37,12 +37,15 @@ std::vector<Token*> LexStream::peek(int n) {
 
 Token* LexStream::get() {
 	if (mBuffer.size() > 0) {
-		auto tok = mBuffer[0];
+		auto tok = mBuffer.front();
+		mConsumed.push_back(tok);
 		mBuffer.erase(mBuffer.begin());
 		return tok;
 	}
 
-	return mLexer.readToken();
+	auto tok = mLexer.readToken();
+	mConsumed.push_back(tok);
+	return tok;
 }
 
 std::vector<Token*> LexStream::get(int n) {
@@ -51,15 +54,32 @@ std::vector<Token*> LexStream::get(int n) {
 	int remaining = n;
 	while (remaining > 0 && mBuffer.size() > 0) {
 		next.push_back(mBuffer.front());
+		mConsumed.push_back(mBuffer.front());
 		mBuffer.erase(mBuffer.begin());
 		remaining--;
 	}
 
 	for (int i = 0; i < remaining; i++) {
-		next.push_back(mLexer.readToken());
+		auto tok = mLexer.readToken();
+		mConsumed.push_back(tok);
+		next.push_back(tok);
 	}
 
 	return next;
+}
+
+unsigned long LexStream::tell() {
+	return mConsumed.size();
+}
+
+void LexStream::seek(unsigned long pos) {
+	if (pos > tell()) {
+		throw std::runtime_error("Seeking past what has been read");
+	}
+
+	if (mConsumed.size() == 0) return;
+
+	mBuffer.insert(mBuffer.begin(), mConsumed.begin() + pos, mConsumed.end());
 }
 
 bool LexStream::eof() const {

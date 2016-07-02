@@ -17,6 +17,7 @@ namespace orange { namespace parser {
 	class LexStream {
 	private:
 		std::vector<Token*> mBuffer;
+		std::vector<Token*> mConsumed;
 		Lexer mLexer;
 	public:
 		/// Peeks at the next token in the stream.
@@ -30,6 +31,12 @@ namespace orange { namespace parser {
 
 		/// Gets the next n tokens from the strema.
 		std::vector<Token*> get(int n);
+
+		/// Tells the current position of the lexer stream.
+		unsigned long tell();
+
+		/// Sets the current position of the lexer stream, offset from the beginning
+		void seek(unsigned long pos);
 
 		/// Gets whether or not the stream is at EOF.
 		bool eof() const;

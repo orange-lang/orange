@@ -132,5 +132,59 @@ TEST(LexStream, TestStreamEOFAfterPeek) {
 	ASSERT_TRUE(stream.eof());
 }
 
+TEST(LexStream, TestSeekAtBeginning) {
+	std::stringstream ss("+ - * /");
 
+	LexStream stream(ss);
 
+	stream.seek(0);
+	expectToken(stream.peek(), PLUS);
+}
+
+TEST(LexStream, TestSeekAfterPeek) {
+	std::stringstream ss("+ - * /");
+
+	LexStream stream(ss);
+
+	stream.peek();
+	stream.seek(0);
+	expectToken(stream.peek(), PLUS);
+}
+
+TEST(LexStream, TestSeekAfterGet) {
+	std::stringstream ss("+ - * /");
+
+	LexStream stream(ss);
+
+	stream.get();
+	stream.seek(0);
+	expectToken(stream.peek(), PLUS);
+}
+
+TEST(LexStream, TestSeekPartial) {
+	std::stringstream ss("+ - * /");
+
+	LexStream stream(ss);
+
+	stream.get(2);
+	stream.seek(1);
+
+	expectToken(stream.get(), MINUS);
+	expectToken(stream.get(), TIMES);
+}
+
+TEST(LexStream, TestSeekPartialAfterPartialPeek) {
+	std::stringstream ss("+ - * /");
+
+	LexStream stream(ss);
+
+	stream.peek(3);
+
+	stream.get(2);
+	stream.seek(0);
+
+	expectToken(stream.get(), PLUS);
+	expectToken(stream.get(), MINUS);
+	expectToken(stream.get(), TIMES);
+	expectToken(stream.get(), DIVIDE);
+}
