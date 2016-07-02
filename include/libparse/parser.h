@@ -13,8 +13,6 @@
 
 namespace orange { namespace parser {
 	class Parser {
-	private:
-		std::istream& mStream;
 	public:
 		/// Parse the stream and return an AST.
 		ast::LongBlockExpr* parse();
