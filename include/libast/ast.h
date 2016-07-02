@@ -239,12 +239,12 @@ namespace orange { namespace ast {
 	struct VarDeclExpr : Expression {
 	public:
 		std::vector<Identifier*> bindings;
-		Type* type;
+		std::vector<Type*> types;
 		Expression* value;
 
 		VarDeclExpr() { }
-		VarDeclExpr(std::vector<Identifier*> bindings, Type* type, Expression* value) :
-			bindings(bindings), type(type), value(value) { }
+		VarDeclExpr(std::vector<Identifier*> bindings, std::vector<Type*> types, Expression* value) :
+			bindings(bindings), types(types), value(value) { }
 	};
 
 	struct Value : Expression { };
