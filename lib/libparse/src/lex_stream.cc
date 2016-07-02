@@ -62,4 +62,8 @@ std::vector<Token*> LexStream::get(int n) {
 	return next;
 }
 
+bool LexStream::eof() const {
+	return mLexer.eof() && mBuffer.size() == 0;
+}
+
 LexStream::LexStream(std::istream& stream) : mLexer(stream) { }

@@ -31,6 +31,9 @@ namespace orange { namespace parser {
 		/// Gets the next n tokens from the strema.
 		std::vector<Token*> get(int n);
 
+		/// Gets whether or not the stream is at EOF.
+		bool eof() const;
+
 		LexStream(std::istream& stream);
 	};
 }}

@@ -110,4 +110,27 @@ TEST(LexStream, GetMultipleAfterPeekMultiple) {
 	expectToken(next[2], TIMES);
 }
 
+TEST(LexStream, TestStreamEOF) {
+	std::stringstream ss("+ - * /");
+
+	LexStream stream(ss);
+
+	stream.get(4);
+
+	ASSERT_TRUE(stream.eof());
+}
+
+TEST(LexStream, TestStreamEOFAfterPeek) {
+	std::stringstream ss("+ - * /");
+
+	LexStream stream(ss);
+
+	stream.peek(4);
+	ASSERT_FALSE(stream.eof());
+
+	stream.get(4);
+	ASSERT_TRUE(stream.eof());
+}
+
+
 
