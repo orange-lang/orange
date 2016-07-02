@@ -95,11 +95,216 @@ namespace orange { namespace parser { namespace impl {
 		 * Types
 		 */
 
-		// TODO: types need reworking
+		Type* parse_type() {
+			return parse_complex_type();
+		}
+
+		Type* parse_basic_type() {
+			if      (mStream.eof())                  return nullptr;
+			else if (mStream.peek()->type == INT)    return new BuiltinType(BuiltinTypeKind::INT);
+			else if (mStream.peek()->type == INT8)   return new BuiltinType(BuiltinTypeKind::INT8);
+			else if (mStream.peek()->type == INT16)  return new BuiltinType(BuiltinTypeKind::INT16);
+			else if (mStream.peek()->type == INT32)  return new BuiltinType(BuiltinTypeKind::INT32);
+			else if (mStream.peek()->type == INT64)  return new BuiltinType(BuiltinTypeKind::INT64);
+			else if (mStream.peek()->type == UINT)   return new BuiltinType(BuiltinTypeKind::UINT);
+			else if (mStream.peek()->type == UINT8)  return new BuiltinType(BuiltinTypeKind::UINT8);
+			else if (mStream.peek()->type == UINT16) return new BuiltinType(BuiltinTypeKind::UINT16);
+			else if (mStream.peek()->type == UINT32) return new BuiltinType(BuiltinTypeKind::UINT32);
+			else if (mStream.peek()->type == UINT64) return new BuiltinType(BuiltinTypeKind::UINT64);
+			else if (mStream.peek()->type == FLOAT)  return new BuiltinType(BuiltinTypeKind::FLOAT);
+			else if (mStream.peek()->type == DOUBLE) return new BuiltinType(BuiltinTypeKind::DOUBLE);
+			else if (mStream.peek()->type == VAR)    return new BuiltinType(BuiltinTypeKind::VAR);
+			else if (mStream.peek()->type == VOID)   return new BuiltinType(BuiltinTypeKind::VOID);
+			else if (mStream.peek()->type == CHAR)   return new BuiltinType(BuiltinTypeKind::CHAR);
+
+			return nullptr;
+		}
+
+		Type* parse_complex_type() {
+			Type* LHS = parse_complex_type_base();
+			if (LHS == nullptr) return nullptr;
+
+			while (!mStream.eof()) {
+				bool done = false;
+
+				Expression* expr;
+				Type* RHS;
+
+				switch (mStream.peek()->type) {
+					case TokenType::OPEN_BRACKET:
+						mStream.get();
+						expr = parse_expression();
+						if (expr == nullptr) throw std::runtime_error("Expected expression");
+
+						LHS = new ArrayType(LHS, expr);
+
+						if (mStream.eof() || mStream.get()->type != CLOSE_BRACKET)
+							throw std::runtime_error("Expected ]");
+
+						break;
+					case TokenType::TIMES:
+						mStream.get();
+						LHS = new PointerType(LHS);
+						break;
+					case TokenType::BIT_AND:
+						mStream.get();
+						LHS = new ReferenceType(LHS);
+						break;
+					case TokenType::LESS_THAN:
+						throw std::runtime_error("Can't handle generic types yet");
+					case TokenType::DOT:
+						mStream.get();
+						RHS = parse_base_id_type();
+						if (RHS == nullptr) throw std::runtime_error("Expected type");
+
+						LHS = new AccessType(LHS, RHS);
+						break;
+					default: done = true;
+				}
+
+				if (done) break;
+			}
+
+			return LHS;
+		}
+
+		Type* parse_complex_type_base() {
+			Type* ty = nullptr;
+
+			if ((ty = parse_basic_type()) != nullptr) return ty;
+			if ((ty = parse_tuple_or_func_type()) != nullptr) return ty;
+			if ((ty = parse_base_id_type()) != nullptr) return ty;
+
+			return nullptr;
+		}
+
+		Type* parse_tuple_or_func_type() {
+			if (mStream.eof() || mStream.peek()->type != OPEN_PAREN) return nullptr;
+			mStream.get();
+
+			std::vector<Type*> types;
+
+			Type* ty = parse_type();
+			if (ty == nullptr) throw std::runtime_error("Expected type");
+			types.push_back(ty);
+
+			bool trailingComma = false;
+
+			while (!mStream.eof()) {
+				if (mStream.peek()->type == CLOSE_PAREN) break;
+				if (mStream.peek()->type == COMMA) {
+					mStream.get();
+
+					// We allow trailing commas here
+					if (mStream.peek()->type == CLOSE_PAREN) {
+						trailingComma = true;
+						break;
+					}
+
+					ty = parse_type();
+					if (ty == nullptr) throw std::runtime_error("Expected type");
+					types.push_back(ty);
+				}
+			}
+
+			if (mStream.eof() || mStream.peek()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			if (trailingComma == false && mStream.eof() == false && mStream.peek()->type == ARROW) {
+				mStream.get();
+
+				auto returnTy = parse_type();
+				if (returnTy == nullptr) throw std::runtime_error("Expected return type");
+
+				return new FunctionType(types, returnTy);
+			} else {
+				return new TupleType(types);
+			}
+		}
+
+		Type* parse_base_id_type() {
+			if (!mStream.eof() && mStream.peek()->type == IDENTIFIER) {
+				return new IdentifierType(CreateNode<NamedIDExpr>(mStream.peek()->value));
+			}
+
+			Type* ty = nullptr;
+
+			if ((ty = parse_operator_id_ty()) != nullptr) return ty;
+
+			return nullptr;
+		}
+
+		Type* parse_operator_id_ty() {
+			if (mStream.eof() || mStream.peek()->type != OPERATOR) return nullptr;
+			throw std::runtime_error("Don't know how to parse operators yet");
+		}
+
+		/*
+		 * Identifier
+		 */
+
+		Identifier* parse_identifier() {
+			auto id = parse_identifier_base();
+			if (id == nullptr) return nullptr;
+
+			auto generics = parse_opt_generic_spec();
+			if (generics == nullptr) throw std::runtime_error("Don't know how to use generics in IDs yet");
+
+			return id;
+		}
+
+		Generics* parse_opt_generic_spec() {
+			if (mStream.eof() || mStream.peek()->type != LESS_THAN) return nullptr;
+			throw std::runtime_error("Don't know how to parse generic IDs yet");
+		}
+
+		Identifier* parse_identifier_base() {
+			if (mStream.eof()) return nullptr;
+
+			if (mStream.peek()->type == IDENTIFIER) {
+				return CreateNode<NamedIDExpr>(mStream.get()->value);
+			} else if (mStream.peek()->type == TILDE) {
+				mStream.get();
+
+				if (mStream.peek()->type != IDENTIFIER)
+					throw std::runtime_error("Expected identifier");
+
+				return CreateNode<DtorIDExpr>(CreateNode<NamedIDExpr>(mStream.get()->value));
+			} else return nullptr;
+		}
+
+		Identifier* parse_full_identifier() {
+			Identifier* LHS = parse_identifier_base();
+			if (LHS == nullptr) return nullptr;
+
+			while (mStream.eof() == false) {
+				bool done = false;
+
+				Identifier* RHS;
+
+				switch (mStream.peek()->type) {
+					case TokenType::DOT:
+						mStream.get();
+						RHS = parse_identifier_base();
+						if (RHS == nullptr) throw std::runtime_error("Expected identifier");
+						LHS = CreateNode<AccessIDExpr>(LHS, RHS);
+					case TokenType::LESS_THAN:
+						throw std::runtime_error("Don't know how to handle generics in full IDs");
+					default:
+						done = true;
+						break;
+				}
+
+				if (done) break;
+			}
+
+			return LHS;
+		}
 
 		/*
 		 * Statements
 		 */
+
 		Node* parse_statement();
 
 		VarDeclExpr* parse_var_decl();
