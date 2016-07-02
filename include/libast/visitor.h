@@ -13,6 +13,7 @@
 namespace orange { namespace ast {
 	class Visitor {
 	public:
+		void VisitCommentStmt(CommentStmt* node) { }
 		void VisitLoopStmt(LoopStmt* node) { }
 		void VisitForeachStmt(ForeachStmt* node) { }
 		void VisitBreakStmt(BreakStmt* node) { }

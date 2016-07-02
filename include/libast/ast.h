@@ -38,6 +38,14 @@ namespace orange { namespace ast {
 		Statement() { }
 	};
 
+	struct CommentStmt : Statement {
+	public:
+		std::string value;
+
+		CommentStmt() { }
+		CommentStmt(std::string value) : value(value) { }
+	};
+
 	enum LoopConditionCheck { BEFORE, AFTER };
 
 	struct LoopStmt : Statement {

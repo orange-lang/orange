@@ -23,6 +23,7 @@ namespace orange { namespace ast {
 		void WalkIdentifier(Visitor* visitor, Identifier* node);
 		void WalkBlockExpr(Visitor* visitor, BlockExpr* node);
 
+		virtual void WalkCommentStmt(Visitor* visitor, CommentStmt* node) = 0;
 		virtual void WalkLoopStmt(Visitor* visitor, LoopStmt* node) = 0;
 		virtual void WalkForeachStmt(Visitor* visitor, ForeachStmt* node) = 0;
 		virtual void WalkBreakStmt(Visitor* visitor, BreakStmt* node) = 0;
@@ -83,6 +84,7 @@ namespace orange { namespace ast {
 	/// Walker that will visit concrete elements
 	class NonTraversalWalker : public Walker {
 	public:
+		virtual void WalkCommentStmt(Visitor* visitor, CommentStmt* node);
 		virtual void WalkLoopStmt(Visitor* visitor, LoopStmt* node);
 		virtual void WalkForeachStmt(Visitor* visitor, ForeachStmt* node);
 		virtual void WalkBreakStmt(Visitor* visitor, BreakStmt* node);
@@ -149,6 +151,7 @@ namespace orange { namespace ast {
 	private:
 		TraversalOrder mOrder;
 	public:
+		virtual void WalkCommentStmt(Visitor* visitor, CommentStmt* node);
 		virtual void WalkLoopStmt(Visitor* visitor, LoopStmt* node);
 		virtual void WalkForeachStmt(Visitor* visitor, ForeachStmt* node);
 		virtual void WalkBreakStmt(Visitor* visitor, BreakStmt* node);

@@ -49,6 +49,7 @@ void Walker::WalkExpr(Visitor* visitor, Expression* node) {
 
 void Walker::WalkStmt(Visitor* visitor, Statement* node) {
 	if      (isA<LoopStmt>(node))       WalkLoopStmt(visitor, asA<LoopStmt>(node));
+	else if (isA<CommentStmt>(node))    WalkCommentStmt(visitor, asA<CommentStmt>(node));
 	else if (isA<SwitchPattern>(node))  WalkSwitchPattern(visitor, asA<SwitchPattern>(node));
 	else if (isA<ForeachStmt>(node))    WalkForeachStmt(visitor, asA<ForeachStmt>(node));
 	else if (isA<BreakStmt>(node))      WalkBreakStmt(visitor, asA<BreakStmt>(node));
@@ -104,6 +105,10 @@ void Walker::WalkBlockExpr(Visitor* visitor, BlockExpr* node) {
 //
 // NonTraversalWalker
 //
+
+void NonTraversalWalker::WalkCommentStmt(Visitor* visitor, CommentStmt* node) {
+	visitor->VisitCommentStmt(node);
+}
 
 void NonTraversalWalker::WalkLoopStmt(Visitor* visitor, LoopStmt* node) {
 	visitor->VisitLoopStmt(node);
@@ -324,6 +329,10 @@ void NonTraversalWalker::WalkCatchBlock(Visitor* visitor, CatchBlock* node) {
 //
 // DepthFirstWalker
 //
+
+void DepthFirstWalker::WalkCommentStmt(Visitor* visitor, CommentStmt* node) {
+	visitor->VisitCommentStmt(node);
+}
 
 void DepthFirstWalker::WalkLoopStmt(Visitor* visitor, LoopStmt* node) {
 	if (mOrder == TraversalOrder::PREORDER) visitor->VisitLoopStmt(node);
