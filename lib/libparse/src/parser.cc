@@ -22,9 +22,10 @@ namespace orange { namespace parser { namespace impl {
 	};
 }}}
 
+using namespace orange::ast;
 using namespace orange::parser;
 
-orange::ast::LongBlockExpr* Parser::parse() { return mParserImpl->parse(); }
+LongBlockExpr* Parser::parse() { return mParserImpl->parse(); }
 Parser::Parser(std::istream& stream) : mParserImpl(new impl::Parser(stream)) { }
 
-
+using namespace orange::parser::impl;
