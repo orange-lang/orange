@@ -6,7 +6,9 @@
 // may not be copied, modified, or distributed except according to those terms.
 //
 
+#include <stdexcept>
 #include <libparse/parser.h>
+#include <libast/type.h>
 #include "lex_stream.h"
 
 namespace orange { namespace parser { namespace impl {
@@ -17,45 +19,83 @@ namespace orange { namespace parser { namespace impl {
 
 		LexStream mStream;
 
-		std::vector<Node *> parse_opt_statements();
-		std::vector<Node *> parse_statements();
-		std::vector<Node *> parse_statements_1();
-		Token* parse_term();
+		bool isTerm(Token* tok) { return tok->type == NEWLINE || tok->type == SEMICOLON; }
+		bool checkNext(TokenType ty) { return mStream.peek() != nullptr && mStream.peek()->type == ty; }
 
-		LongBlockExpr* parse_long_block();
-		ShortBlockExpr* parse_short_block();
-		BlockExpr* parse_block();
+		std::vector<Node *> parse_opt_statements() {
+			return parse_statements(true);
+		}
+
+		std::vector<Node *> parse_statements(bool allow_eps = false) {
+			std::vector<Node *> statements;
+
+			if (mStream.peek() && mStream.peek()->type == COMMENT) {
+				statements.push_back(CreateNode<CommentStmt>(mStream.get()->value));
+
+				auto remaining = parse_statements();
+				statements.insert(statements.end(), remaining.begin(), remaining.end());
+
+				return statements;
+			} else {
+				auto stmt = parse_statement();
+
+				if (stmt == nullptr) {
+					if (allow_eps) return statements;
+					throw std::runtime_error("Expected statement");
+				}
+
+				statements.push_back(stmt);
+
+				if (mStream.peek() && isTerm(mStream.peek())) {
+					parse_term();
+
+					auto remaining = parse_statements();
+					statements.insert(statements.end(), remaining.begin(), remaining.end());
+				}
+
+				return statements;
+			}
+		}
+
+		Token* parse_term() {
+			if (!isTerm(mStream.peek())) return nullptr;
+			return mStream.get();
+		}
+
+		LongBlockExpr* parse_long_block() {
+			if (checkNext(OPEN_CURLY) == false) return nullptr;
+			mStream.get();
+
+			auto stmts = parse_opt_statements();
+
+			if (checkNext(CLOSE_CURLY) == false) throw std::runtime_error("Expected }");
+
+			return CreateNode<LongBlockExpr>(stmts);
+		}
+
+		ShortBlockExpr* parse_short_block() {
+			if (checkNext(COLON) == false) return nullptr;
+
+			auto stmt = parse_statement();
+			if (stmt == nullptr) throw std::runtime_error("Expected statement");
+
+			return CreateNode<ShortBlockExpr>(stmt);
+		}
+
+		BlockExpr* parse_block() {
+			BlockExpr* block = nullptr;
+
+			if ((block = parse_long_block()) != nullptr) return block;
+			if ((block = parse_short_block()) != nullptr) return block;
+
+			throw std::runtime_error("Expected block");
+		}
 
 		/*
 		 * Types
 		 */
 
-		// TODO: array, pointers, and refs are left recursive, need special code
-		Type* parse_type();
-		Type* parse_array_type();
-		Type* parse_tuple_type();
-		Type* parse_func_type();
-		Type* parse_pointer_type();
-		Type* parse_ref_type();
-
-		std::vector<Type*> parse_types();
-		std::vector<Type*> parse_types_1();
-		std::vector<Type*> parse_types_2();
-
-		std::vector<Type*> parse_opt_type_list();
-		std::vector<Type*> parse_type_list();
-		std::vector<Type*> parse_type_list_1();
-
-		Identifier* parse_identifier();
-		Identifier* parse_named_id();
-
-		Generics* parse_opt_generic_spec();
-		Generics* parse_generic_spec();
-		Identifier* parse_id_types();
-		Identifier* parse_full_id();
-		Identifier* parse_full_id_1();
-		Identifier* parse_operator_id();
-		Identifier* parse_dtor_id();
+		// TODO: types need reworking
 
 		/*
 		 * Statements
