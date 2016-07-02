@@ -60,17 +60,29 @@ namespace orange { namespace parser {
 using namespace orange::parser;
 
 template <>
-bool tokensEq(Token* tok, Token to) { return tok != nullptr && tok->type == to.type && tok->value == to.value; }
+void expectToken(Token* tok, Token to) {
+	EXPECT_TRUE(tok != nullptr);
+	EXPECT_EQ(to.type, tok->type);
+	EXPECT_EQ(to.value, tok->value);
+}
 
 template <>
-bool tokensEq(Token* tok, TokenType ty) { return tok != nullptr && tok->type == ty; }
+void expectToken(Token* tok, TokenType ty) {
+	EXPECT_TRUE(tok != nullptr);
+	EXPECT_EQ(ty, tok->type);
+}
 
 template <>
-bool tokensEq(Token* tok, std::string val) { return tok != nullptr && tok->value == val; }
+void expectToken(Token* tok, std::string val) {
+	EXPECT_TRUE(tok != nullptr);
+	EXPECT_EQ(val, tok->value);
+}
 
 template <>
-bool tokensEq(Token* tok, const char* val) { return tok != nullptr && tok->value == val; }
-
+void expectToken(Token* tok, const char* val) {
+	EXPECT_TRUE(tok != nullptr);
+	EXPECT_EQ(val, tok->value);
+}
 
 template <>
 void expectToken(Lexer& l, Token val) {

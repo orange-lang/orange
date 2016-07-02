@@ -12,7 +12,7 @@
 #include "lex.h"
 
 template <typename T>
-bool tokensEq(orange::parser::Token* tok, T to);
+void expectToken(orange::parser::Token* tok, T to);
 
 template <typename T>
 void expectToken(orange::parser::Lexer& l, T val);

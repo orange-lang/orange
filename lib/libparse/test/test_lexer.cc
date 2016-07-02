@@ -329,7 +329,7 @@ TEST(Lexer, LexesStrings) {
 	Lexer l(ss);
 
 	auto tok = l.readToken();
-	tokensEq(tok, Token(VAL_STRING, "!!@#%)*@!#3/*STRING123\\\"\\n\\n"));
+	expectToken(tok, Token(VAL_STRING, "!!@#%)*@!#3/*STRING123\\\"\\n\\n"));
 
 	EXPECT_EQ(l.readToken(), nullptr);
 	EXPECT_TRUE(l.eof());
