@@ -30,7 +30,7 @@ namespace orange { namespace parser { namespace impl {
 		 * Types
 		 */
 
-		/* TODO: array, pointers, and refs are left recursive, need special code */
+		// TODO: array, pointers, and refs are left recursive, need special code
 		Type* parse_type();
 		Type* parse_array_type();
 		Type* parse_tuple_type();
@@ -129,7 +129,7 @@ namespace orange { namespace parser { namespace impl {
 		 * Expressions
 		 */
 
-		/// TODO: this next section will probably be reworked to fit the op-precedence parser
+		// TODO: this next section will probably be reworked to fit the op-precedence parser
 		Expression* parse_expression();
 		TernaryExpr* parse_ternary_expr();
 		Expression* parse_assign_expr();
