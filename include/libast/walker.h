@@ -43,6 +43,7 @@ namespace orange { namespace ast {
 		virtual void WalkSetterStmt(Visitor* visitor, SetterStmt* node) = 0;
 		virtual void WalkPropertyStmt(Visitor* visitor, PropertyStmt* node) = 0;
 		virtual void WalkThrowStmt(Visitor* visitor, ThrowStmt* node) = 0;
+		virtual void WalkDeleteStmt(Visitor* visitor, DeleteStmt* node) = 0;
 		virtual void WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) = 0;
 		virtual void WalkIntValue(Visitor* visitor, IntValue* node) = 0;
 		virtual void WalkUIntValue(Visitor* visitor, UIntValue* node) = 0;
@@ -78,6 +79,7 @@ namespace orange { namespace ast {
 		virtual void WalkTryExpr(Visitor* visitor, TryExpr* node) = 0;
 		virtual void WalkCastExpr(Visitor* visitor, CastExpr* node) = 0;
 		virtual void WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* node) = 0;
+		virtual void WalkNewExpr(Visitor* visitor, NewExpr* node) = 0;
 	};
 
 
@@ -104,6 +106,7 @@ namespace orange { namespace ast {
 		virtual void WalkSetterStmt(Visitor* visitor, SetterStmt* node);
 		virtual void WalkPropertyStmt(Visitor* visitor, PropertyStmt* node);
 		virtual void WalkThrowStmt(Visitor* visitor, ThrowStmt* node);
+		virtual void WalkDeleteStmt(Visitor* visitor, DeleteStmt* node);
 		virtual void WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node);
 		virtual void WalkIntValue(Visitor* visitor, IntValue* node);
 		virtual void WalkUIntValue(Visitor* visitor, UIntValue* node);
@@ -139,6 +142,7 @@ namespace orange { namespace ast {
 		virtual void WalkTryExpr(Visitor* visitor, TryExpr* node);
 		virtual void WalkCastExpr(Visitor* visitor, CastExpr* node);
 		virtual void WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* node);
+		virtual void WalkNewExpr(Visitor* visitor, NewExpr* node);
 	};
 
 	enum TraversalOrder {
@@ -171,6 +175,7 @@ namespace orange { namespace ast {
 		virtual void WalkSetterStmt(Visitor* visitor, SetterStmt* node);
 		virtual void WalkPropertyStmt(Visitor* visitor, PropertyStmt* node);
 		virtual void WalkThrowStmt(Visitor* visitor, ThrowStmt* node);
+		virtual void WalkDeleteStmt(Visitor* visitor, DeleteStmt* node);
 		virtual void WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node);
 		virtual void WalkIntValue(Visitor* visitor, IntValue* node);
 		virtual void WalkUIntValue(Visitor* visitor, UIntValue* node);
@@ -206,6 +211,7 @@ namespace orange { namespace ast {
 		virtual void WalkTryExpr(Visitor* visitor, TryExpr* node);
 		virtual void WalkCastExpr(Visitor* visitor, CastExpr* node);
 		virtual void WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* node);
+		virtual void WalkNewExpr(Visitor* visitor, NewExpr* node);
 
 		DepthFirstWalker(TraversalOrder order);
 	};

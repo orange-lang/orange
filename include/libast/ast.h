@@ -201,6 +201,14 @@ namespace orange { namespace ast {
 		ThrowStmt(Expression* exception) : exception(exception) { }
 	};
 
+	struct DeleteStmt : Statement {
+	public:
+		Expression* deallocation;
+
+		DeleteStmt() { }
+		DeleteStmt(Expression* dealloc) : deallocation(dealloc) { }
+	};
+
 	//
 	// Expressions
 	//
@@ -568,6 +576,14 @@ namespace orange { namespace ast {
 		FunctionCallExpr() { }
 		FunctionCallExpr(Expression* function, std::vector<Expression*> args) :
 			function(function), args(args) { }
+	};
+
+	struct NewExpr : Expression {
+	public:
+		Expression* allocation;
+
+		NewExpr() { }
+		NewExpr(Expression* allocation) : allocation(allocation) { }
 	};
 
 	/// Gets the next free ID for a node.

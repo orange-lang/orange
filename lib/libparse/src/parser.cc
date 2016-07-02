@@ -215,9 +215,8 @@ namespace orange { namespace parser { namespace impl {
 		Constraint* parse_constraint();
 		Constraint* parse_type_constraint();
 
-		// TODO: create AST node for these
-		Node* parse_new();
-		Node* parse_delete();
+		NewExpr* parse_new();
+		DeleteStmt* parse_delete();
 
 		std::vector<Flag*> parse_flags();
 		std::vector<Flag*> parse_flags_1();

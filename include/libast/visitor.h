@@ -33,6 +33,7 @@ namespace orange { namespace ast {
 		void VisitSetterStmt(SetterStmt* node) { }
 		void VisitPropertyStmt(PropertyStmt* node) { }
 		void VisitThrowStmt(ThrowStmt* node) { }
+		void VisitDeleteStmt(DeleteStmt* node) { }
 		void VisitVarDeclExpr(VarDeclExpr* node) { }
 		void VisitIntValue(IntValue* node) { }
 		void VisitUIntValue(UIntValue* node) { }
@@ -68,5 +69,6 @@ namespace orange { namespace ast {
 		void VisitTryExpr(TryExpr* node) { }
 		void VisitCastExpr(CastExpr* node) { }
 		void VisitFunctionCallExpr(FunctionCallExpr* node) { }
+		void VisitNewExpr(NewExpr* node) { }
 	};
 }}
