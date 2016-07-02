@@ -38,18 +38,46 @@ namespace orange { namespace ast {
 
 	struct BuiltinType : Type {
 		BuiltinTypeKind kind;
+
+		BuiltinType() { }
+		BuiltinType(BuiltinTypeKind kind) : kind(kind) { }
 	};
 
 	struct ArrayType : Type {
 		Type* base;
 		Expression* size;
+
+		ArrayType() { }
+		ArrayType(Type* base, Expression* size) : base(base), size(size) { }
 	};
 
 	struct PointerType : Type {
 		Type* base;
+
+		PointerType() { }
+		PointerType(Type* base) : base(base) { }
 	};
 
 	struct ReferenceType : Type {
 		Type* base;
+
+		ReferenceType() { }
+		ReferenceType(Type* base) : base(base) { }
+	};
+
+	struct TupleType : Type {
+		std::vector<Type*> types;
+
+		TupleType() { }
+		TupleType(std::vector<Type*> types) : types(types) { }
+	};
+
+	struct FunctionType : Type {
+		std::vector<Type*> params;
+		Type* returnType;
+
+		FunctionType() { }
+		FunctionType(std::vector<Type*> params, Type* returnType) :
+			params(params), returnType(returnType) { }
 	};
 }}
