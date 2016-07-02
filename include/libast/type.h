@@ -29,12 +29,15 @@ namespace orange { namespace ast {
 		AccessType(Type* LHS, Type* RHS) : LHS(LHS), RHS(RHS) { }
 	};
 
-	struct BuiltinType : Type {
-		BuiltinTypeKind kind;
+	struct IdentifierType : Type {
+		Identifier* id;
+
+		IdentifierType() { }
+		IdentifierType(Identifier* id) : id(id) { }
 	};
 
-	struct NamedType : Type {
-		std::string* name;
+	struct BuiltinType : Type {
+		BuiltinTypeKind kind;
 	};
 
 	struct ArrayType : Type {
