@@ -21,6 +21,14 @@ namespace orange { namespace ast {
 
 	struct Type { };
 
+	struct AccessType : Type {
+		Type* LHS;
+		Type* RHS;
+
+		AccessType() { }
+		AccessType(Type* LHS, Type* RHS) : LHS(LHS), RHS(RHS) { }
+	};
+
 	struct BuiltinType : Type {
 		BuiltinTypeKind kind;
 	};
