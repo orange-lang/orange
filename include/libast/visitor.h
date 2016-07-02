@@ -44,6 +44,7 @@ namespace orange { namespace ast {
 		void VisitCharValue(CharValue* node) { }
 		void VisitNamedIDExpr(NamedIDExpr* node) { }
 		void VisitTempIDExpr(TempIDExpr* node) { }
+		void VisitDtorIDExpr(DtorIDExpr* node) { }
 		void VisitLongBlockExpr(LongBlockExpr* node) { }
 		void VisitShortBlockExpr(ShortBlockExpr* node) { }
 		void VisitBinOpExpr(BinOpExpr* node) { }

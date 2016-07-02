@@ -302,6 +302,14 @@ namespace orange { namespace ast {
 		Identifier() { }
 	};
 
+	struct DtorIDExpr : Expression {
+	public:
+		NamedIDExpr* base;
+
+		DtorIDExpr() { }
+		DtorIDExpr(NamedIDExpr* base) : base(base) { }
+	};
+
 	struct NamedIDExpr : Identifier {
 	public:
 		std::string name;

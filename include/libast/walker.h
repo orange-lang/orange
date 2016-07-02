@@ -54,6 +54,7 @@ namespace orange { namespace ast {
 		virtual void WalkCharValue(Visitor* visitor, CharValue* node) = 0;
 		virtual void WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) = 0;
 		virtual void WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) = 0;
+		virtual void WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) = 0;
 		virtual void WalkLongBlockExpr(Visitor* visitor, LongBlockExpr* node) = 0;
 		virtual void WalkShortBlockExpr(Visitor* visitor, ShortBlockExpr* node) = 0;
 		virtual void WalkBinOpExpr(Visitor* visitor, BinOpExpr* node) = 0;
@@ -118,6 +119,7 @@ namespace orange { namespace ast {
 		virtual void WalkCharValue(Visitor* visitor, CharValue* node) override;
 		virtual void WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) override;
 		virtual void WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) override;
+		virtual void WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) override;
 		virtual void WalkLongBlockExpr(Visitor* visitor, LongBlockExpr* node) override;
 		virtual void WalkShortBlockExpr(Visitor* visitor, ShortBlockExpr* node) override;
 		virtual void WalkBinOpExpr(Visitor* visitor, BinOpExpr* node) override;
@@ -188,6 +190,7 @@ namespace orange { namespace ast {
 		virtual void WalkCharValue(Visitor* visitor, CharValue* node) override;
 		virtual void WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) override;
 		virtual void WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) override;
+		virtual void WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) override;
 		virtual void WalkLongBlockExpr(Visitor* visitor, LongBlockExpr* node) override;
 		virtual void WalkShortBlockExpr(Visitor* visitor, ShortBlockExpr* node) override;
 		virtual void WalkBinOpExpr(Visitor* visitor, BinOpExpr* node) override;
