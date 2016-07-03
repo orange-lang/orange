@@ -20,7 +20,7 @@ TEST(Lexer, AcceptsNoInput) {
 	Lexer l(ss);
 
 	EXPECT_TRUE(l.eof());
-	EXPECT_EQ(nullptr, l.readToken());
+	expectToken(l, TOKEN_EOF);
 }
 
 TEST(Lexer, LexesComments) {
@@ -255,7 +255,7 @@ TEST(Lexer, LexesEmptyChar) {
 	std::vector<TokenType> expects = { PLUS, VAL_CHAR, MINUS };
 	for (auto token : expects) expectToken(l, token);
 
-	EXPECT_EQ(l.readToken(), nullptr);
+	expectToken(l, TOKEN_EOF);
 	EXPECT_TRUE(l.eof());
 }
 
@@ -270,7 +270,7 @@ TEST(Lexer, LexesChar) {
 	std::vector<TokenType> expects = { PLUS, VAL_CHAR, MINUS };
 	for (auto token : expects) expectToken(l, token);
 
-	EXPECT_EQ(l.readToken(), nullptr);
+	expectToken(l, TOKEN_EOF);
 	EXPECT_TRUE(l.eof());
 }
 
@@ -285,7 +285,7 @@ TEST(Lexer, LexesEscapedChar) {
 	std::vector<TokenType> expects = { PLUS, VAL_CHAR, MINUS };
 	for (auto token : expects) expectToken(l, token);
 
-	EXPECT_EQ(l.readToken(), nullptr);
+	expectToken(l, TOKEN_EOF);
 	EXPECT_TRUE(l.eof());
 }
 
@@ -325,7 +325,7 @@ TEST(Lexer, LexesEmptyString) {
 		expects.erase(expects.begin());
 	}
 
-	EXPECT_EQ(l.readToken(), nullptr);
+	expectToken(l, TOKEN_EOF);
 	EXPECT_TRUE(l.eof());
 }
 
@@ -340,7 +340,7 @@ TEST(Lexer, LexesStrings) {
 	auto tok = l.readToken();
 	expectToken(tok, Token(VAL_STRING, "!!@#%)*@!#3/*STRING123\\\"\\n\\n"));
 
-	EXPECT_EQ(l.readToken(), nullptr);
+	expectToken(l, TOKEN_EOF);
 	EXPECT_TRUE(l.eof());
 }
 

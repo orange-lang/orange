@@ -13,6 +13,8 @@
 
 namespace orange { namespace parser {
 	enum TokenType {
+		TOKEN_EOF, // EOF token
+
 		VAL_INT, VAL_INT8, VAL_INT16, VAL_INT32, VAL_INT64,
 		VAL_UINT, VAL_UINT8, VAL_UINT16, VAL_UINT32, VAL_UINT64,
 		VAL_FLOAT, VAL_DOUBLE, VAL_STRING, VAL_CHAR,

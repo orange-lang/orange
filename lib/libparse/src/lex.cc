@@ -369,8 +369,10 @@ bool Lexer::eof() const {
 	return streamEOF(mStream);
 }
 
+static Token EOFToken(TokenType::TOKEN_EOF, "");
+
 Token* Lexer::readToken() {
-	if (eof()) return nullptr;
+	if (eof()) return &EOFToken;
 
 	// Ignore whitespace (minus newlines)
 	char next_char = peekChar(mStream);
