@@ -23,7 +23,11 @@ TEST(Parser, ParsesNothing) {
 	std::stringstream ss("");
 
 	Parser p(ss);
-	EXPECT_NO_THROW(p.parse());
+
+	EXPECT_NO_THROW({
+		auto ast = p.parse();
+		delete ast;
+	});
 }
 
 TEST(Parser, ParsesInteger) {
@@ -38,6 +42,8 @@ TEST(Parser, ParsesInteger) {
 		new IntValue(0xf00)
     }));
 
-	EXPECT_EQ(expected, *ast);
+	assertEqAST(&expected, ast);
+
+	delete ast;
 }
 

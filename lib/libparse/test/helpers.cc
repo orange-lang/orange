@@ -8,9 +8,34 @@
 
 #include <iostream>
 #include <map>
+#include <sstream>
+
 #include "helpers.h"
 
 #include <libast/compare.h>
+#include <libast/printer.h>
+
+namespace orange { namespace ast {
+	// Print an AST. Break by newline, printing every line prefixed with a tab so it shows up nicely in
+	// gtest.
+	std::ostream& operator<<(std::ostream& os, const LongBlockExpr& ast) {
+		auto stream = std::stringstream(PrettyPrint((LongBlockExpr* )&ast));
+
+		bool printedNewline = false;
+
+		std::string line;
+		while (std::getline(stream, line, '\n')) {
+			if (!printedNewline) {
+				os << "\n";
+				printedNewline = true;
+			}
+
+			os << "\t" << line << std::endl;
+		}
+
+		return os;
+	}
+}}
 
 namespace orange { namespace parser {
 	static std::map<orange::parser::TokenType, std::string> TokenTyNames = {
@@ -117,4 +142,10 @@ void expectToken(Lexer& l, const char* val) {
 
 bool orange::ast::operator==(orange::ast::LongBlockExpr expected, orange::ast::LongBlockExpr actual) {
 	return CompareNode(&expected, &actual);
+}
+
+void assertEqAST(orange::ast::LongBlockExpr* expected, orange::ast::LongBlockExpr* actual) {
+	EXPECT_TRUE(expected != nullptr);
+	EXPECT_TRUE(actual != nullptr);
+	EXPECT_EQ(*expected, *actual);
 }

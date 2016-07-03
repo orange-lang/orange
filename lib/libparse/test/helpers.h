@@ -21,3 +21,5 @@ void expectToken(orange::parser::Lexer& l, T val);
 namespace orange { namespace ast {
 	bool operator==(orange::ast::LongBlockExpr expected, orange::ast::LongBlockExpr actual);
 }}
+
+void assertEqAST(orange::ast::LongBlockExpr* expected, orange::ast::LongBlockExpr* actual);

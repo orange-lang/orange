@@ -13,66 +13,66 @@
 namespace orange { namespace ast {
 	class Visitor {
 	public:
-		void VisitCommentStmt(CommentStmt* node) { }
-		void VisitLoopStmt(LoopStmt* node) { }
-		void VisitForeachStmt(ForeachStmt* node) { }
-		void VisitBreakStmt(BreakStmt* node) { }
-		void VisitContinueStmt(ContinueStmt* node) { }
-		void VisitYieldStmt(YieldStmt* node) { }
-		void VisitReturnStmt(ReturnStmt* node) { }
-		void VisitAggregateStmt(AggregateStmt* node) { }
-		void VisitExternFuncStmt(ExternFuncStmt* node) { }
-		void VisitEnumValue(EnumValue* node) { }
-		void VisitEnumStmt(EnumStmt* node) { }
-		void VisitClassStmt(ClassStmt* node) { }
-		void VisitInterfaceStmt(InterfaceStmt* node) { }
-		void VisitExtendStmt(ExtendStmt* node) { }
-		void VisitNamespaceStmt(NamespaceStmt* node) { }
-		void VisitImportStmt(ImportStmt* node) { }
-		void VisitGetterStmt(GetterStmt* node) { }
-		void VisitSetterStmt(SetterStmt* node) { }
-		void VisitPropertyStmt(PropertyStmt* node) { }
-		void VisitThrowStmt(ThrowStmt* node) { }
-		void VisitDeleteStmt(DeleteStmt* node) { }
-		void VisitExprStmt(ExprStmt* node) { }
-		void VisitVarDeclExpr(VarDeclExpr* node) { }
-		void VisitIntValue(IntValue* node) { }
-		void VisitUIntValue(UIntValue* node) { }
-		void VisitFloatValue(FloatValue* node) { }
-		void VisitDoubleValue(DoubleValue* node) { }
-		void VisitStringValue(StringValue* node) { }
-		void VisitCharValue(CharValue* node) { }
-		void VisitThisID(ThisID* node) { }
-		void VisitNamedIDExpr(NamedIDExpr* node) { }
-		void VisitTempIDExpr(TempIDExpr* node) { }
-		void VisitDtorIDExpr(DtorIDExpr* node) { }
-		void VisitAccessIDExpr(AccessIDExpr* node) { }
-		void VisitLongBlockExpr(LongBlockExpr* node) { }
-		void VisitShortBlockExpr(ShortBlockExpr* node) { }
-		void VisitBinOpExpr(BinOpExpr* node) { }
-		void VisitUnaryExpr(UnaryExpr* node) { }
-		void VisitTupleExpr(TupleExpr* node) { }
-		void VisitArrayExpr(ArrayExpr* node) { }
-		void VisitArrayRangeExpr(ArrayRangeExpr* node) { }
-		void VisitArrayAccessExpr(ArrayAccessExpr* node) { }
-		void VisitMemberAccessExpr(MemberAccessExpr* node) { }
-		void VisitNamedExpr(NamedExpr* node) { }
-		void VisitConditionalBlock(ConditionalBlock* node) { }
-		void VisitIfExpr(IfExpr* node) { }
-		void VisitTernaryExpr(TernaryExpr* node) { }
-		void VisitSwitchPattern(SwitchPattern* node) { }
-		void VisitSwitchExpr(SwitchExpr* node) { }
-		void VisitClassConstraint(ClassConstraint* node) { }
-		void VisitDefaultCtorConstraint(DefaultCtorConstraint* node) { }
-		void VisitBaseConstraint(BaseConstraint* node) { }
-		void VisitDataConstraint(DataConstraint* node) { }
-		void VisitTypeConstraint(TypeConstraint* node) { }
-		void VisitGenerics(Generics* node) { }
-		void VisitFunctionExpr(FunctionExpr* node) { }
-		void VisitCatchBlock(CatchBlock* node) { }
-		void VisitTryExpr(TryExpr* node) { }
-		void VisitCastExpr(CastExpr* node) { }
-		void VisitFunctionCallExpr(FunctionCallExpr* node) { }
-		void VisitNewExpr(NewExpr* node) { }
+		virtual void VisitCommentStmt(CommentStmt* node) { }
+		virtual void VisitLoopStmt(LoopStmt* node) { }
+		virtual void VisitForeachStmt(ForeachStmt* node) { }
+		virtual void VisitBreakStmt(BreakStmt* node) { }
+		virtual void VisitContinueStmt(ContinueStmt* node) { }
+		virtual void VisitYieldStmt(YieldStmt* node) { }
+		virtual void VisitReturnStmt(ReturnStmt* node) { }
+		virtual void VisitAggregateStmt(AggregateStmt* node) { }
+		virtual void VisitExternFuncStmt(ExternFuncStmt* node) { }
+		virtual void VisitEnumValue(EnumValue* node) { }
+		virtual void VisitEnumStmt(EnumStmt* node) { }
+		virtual void VisitClassStmt(ClassStmt* node) { }
+		virtual void VisitInterfaceStmt(InterfaceStmt* node) { }
+		virtual void VisitExtendStmt(ExtendStmt* node) { }
+		virtual void VisitNamespaceStmt(NamespaceStmt* node) { }
+		virtual void VisitImportStmt(ImportStmt* node) { }
+		virtual void VisitGetterStmt(GetterStmt* node) { }
+		virtual void VisitSetterStmt(SetterStmt* node) { }
+		virtual void VisitPropertyStmt(PropertyStmt* node) { }
+		virtual void VisitThrowStmt(ThrowStmt* node) { }
+		virtual void VisitDeleteStmt(DeleteStmt* node) { }
+		virtual void VisitExprStmt(ExprStmt* node) { }
+		virtual void VisitVarDeclExpr(VarDeclExpr* node) { }
+		virtual void VisitIntValue(IntValue* node) { }
+		virtual void VisitUIntValue(UIntValue* node) { }
+		virtual void VisitFloatValue(FloatValue* node) { }
+		virtual void VisitDoubleValue(DoubleValue* node) { }
+		virtual void VisitStringValue(StringValue* node) { }
+		virtual void VisitCharValue(CharValue* node) { }
+		virtual void VisitThisID(ThisID* node) { }
+		virtual void VisitNamedIDExpr(NamedIDExpr* node) { }
+		virtual void VisitTempIDExpr(TempIDExpr* node) { }
+		virtual void VisitDtorIDExpr(DtorIDExpr* node) { }
+		virtual void VisitAccessIDExpr(AccessIDExpr* node) { }
+		virtual void VisitLongBlockExpr(LongBlockExpr* node) { }
+		virtual void VisitShortBlockExpr(ShortBlockExpr* node) { }
+		virtual void VisitBinOpExpr(BinOpExpr* node) { }
+		virtual void VisitUnaryExpr(UnaryExpr* node) { }
+		virtual void VisitTupleExpr(TupleExpr* node) { }
+		virtual void VisitArrayExpr(ArrayExpr* node) { }
+		virtual void VisitArrayRangeExpr(ArrayRangeExpr* node) { }
+		virtual void VisitArrayAccessExpr(ArrayAccessExpr* node) { }
+		virtual void VisitMemberAccessExpr(MemberAccessExpr* node) { }
+		virtual void VisitNamedExpr(NamedExpr* node) { }
+		virtual void VisitConditionalBlock(ConditionalBlock* node) { }
+		virtual void VisitIfExpr(IfExpr* node) { }
+		virtual void VisitTernaryExpr(TernaryExpr* node) { }
+		virtual void VisitSwitchPattern(SwitchPattern* node) { }
+		virtual void VisitSwitchExpr(SwitchExpr* node) { }
+		virtual void VisitClassConstraint(ClassConstraint* node) { }
+		virtual void VisitDefaultCtorConstraint(DefaultCtorConstraint* node) { }
+		virtual void VisitBaseConstraint(BaseConstraint* node) { }
+		virtual void VisitDataConstraint(DataConstraint* node) { }
+		virtual void VisitTypeConstraint(TypeConstraint* node) { }
+		virtual void VisitGenerics(Generics* node) { }
+		virtual void VisitFunctionExpr(FunctionExpr* node) { }
+		virtual void VisitCatchBlock(CatchBlock* node) { }
+		virtual void VisitTryExpr(TryExpr* node) { }
+		virtual void VisitCastExpr(CastExpr* node) { }
+		virtual void VisitFunctionCallExpr(FunctionCallExpr* node) { }
+		virtual void VisitNewExpr(NewExpr* node) { }
 	};
 }}
