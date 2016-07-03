@@ -47,3 +47,28 @@ TEST(Parser, ParsesInteger) {
 	delete ast;
 }
 
+TEST(Parser, ParsesOpPrecedence) {
+	std::stringstream ss("5 + 3 * 12");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new BinOpExpr(
+			new IntValue(5),
+			BinOp::ADD,
+			new BinOpExpr(
+				new IntValue(3),
+				BinOp::MULTIPLY,
+				new IntValue(12)
+			)
+		)
+    }));
+
+	assertEqAST(&expected, ast);
+
+	delete ast;
+}
+

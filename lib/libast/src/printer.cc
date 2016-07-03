@@ -8,11 +8,53 @@
 
 #include <sstream>
 #include <stdexcept>
+#include <map>
 
-#include <libast/printer.h>
 #include <libast/walker.h>
+#include <libast/printer.h>
 #include <libast/typecheck.h>
 #include <libast/type.h>
+
+namespace orange { namespace ast {
+	static std::map<BinOp, std::string> BinOpNames = {
+		{ADD, "ADD"}, {SUBTRACT, "SUBTRACT"}, {DIVIDE, "DIVIDE"}, {MULTIPLY, "MULTIPLY"},
+		{REMAINDER, "REMAINDER"}, {BIT_OR, "BIT_OR"}, {BIT_AND, "BIT_AND"}, {BIT_XOR, "BIT_XOR"},
+		{SHIFT_LEFT, "SHIFT_LEFT"}, {SHIFT_RIGHT, "SHIFT_RIGHT"}, {ASSIGN, "ASSIGN"}, {EQUALS, "EQUALS"},
+		{PLUS_ASSIGN, "PLUS_ASSIGN"}, {MINUS_ASSIGN, "MINUS_ASSIGN"}, {TIMES_ASSIGN, "TIMES_ASSIGN"},
+		{DIVIDE_ASSIGN, "DIVIDE_ASSIGN"}, {REMAINDER_ASSIGN, "REMAINDER_ASSIGN"},
+		{SHIFT_LEFT_ASSIGN, "SHIFT_LEFT_ASSIGN"}, {SHIFT_RIGHT_ASSIGN, "SHIFT_RIGHT_ASSIGN"},
+		{BIT_OR_ASSIGN, "BIT_OR_ASSIGN"}, {BIT_AND_ASSIGN, "BIT_AND_ASSIGN"}, {BIT_XOR_ASSIGN, "BIT_XOR_ASSIGN"},
+		{LESS_THAN, "LESS_THAN"}, {GREATER_THAN, "GREATER_THAN"}, {LEQ, "LEQ"}, {GEQ, "GEQ"},
+		{NEQ, "NEQ"}, {AND, "AND"}, {OR, "OR"}
+	};
+
+	static std::map<UnaryOp, std::string> UnaryOpNames = {
+		{INCREMENT, "INCREMENT"}, {DECREMENT, "DECREMENT"}, {MINUS, "MINUS"},
+		{NOT, "NOT"}, {TILDE, "TILDE"}, {TIMES, "TIMES"}, {REFERENCE,"REFERENCE"},
+	};
+
+	static std::map<UnaryOrder, std::string> UnaryOrderNames = {
+		{PREFIX, "PREFIX"}, {POSTFIX, "POSTFIX"}
+	};
+
+	std::ostream& operator<<(std::ostream& os, const BinOp& tok) {
+		auto it = BinOpNames.find(tok);
+		if (it == BinOpNames.end()) return os << tok;
+		return os << it->second;
+	}
+
+	std::ostream& operator<<(std::ostream& os, const UnaryOp& tok) {
+		auto it = UnaryOpNames.find(tok);
+		if (it == UnaryOpNames.end()) return os << tok;
+		return os << it->second;
+	}
+
+	std::ostream& operator<<(std::ostream& os, const UnaryOrder& tok) {
+		auto it = UnaryOrderNames.find(tok);
+		if (it == UnaryOrderNames.end()) return os << tok;
+		return os << it->second;
+	}
+}}
 
 using namespace orange::ast;
 
@@ -611,6 +653,7 @@ void ASTPrinter::VisitBinOpExpr(BinOpExpr* node) {
 
 	mIndentation++;
 	mWalker.WalkExpr(this, node->LHS);
+	mOutput << std::endl;
 	mWalker.WalkExpr(this, node->RHS);
 	mIndentation--;
 }
