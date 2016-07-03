@@ -556,10 +556,12 @@ namespace orange { namespace ast {
 		Generics* generics;
 		std::vector<VarDeclExpr*> params;
 		Type* retType;
+		BlockExpr* block;
 
 		FunctionExpr() { }
-		FunctionExpr(Identifier* name, Generics* generics, std::vector<VarDeclExpr*> params, Type* retType) :
-			name(name), generics(generics), params(params), retType(retType) { }
+		FunctionExpr(Identifier* name, Generics* generics, std::vector<VarDeclExpr*> params,
+		             Type* retType, BlockExpr* block) :
+			name(name), generics(generics), params(params), retType(retType), block(block) { }
 	};
 
 	struct CatchBlock : Expression {
