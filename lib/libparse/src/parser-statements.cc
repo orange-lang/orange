@@ -563,16 +563,15 @@ PropertyStmt* impl::Parser::parse_property_base() {
 	return CreateNode<PropertyStmt>(id, type, block);
 }
 
-ExprStmt* impl::Parser::parse_expr_statement() {
-	auto pos = mStream.tell();
-
+Node* impl::Parser::parse_expr_statement() {
 	auto expr = parse_expression();
 	if (expr == nullptr) return nullptr;
 
 	if (mStream.peek()->type != SEMICOLON) {
-		mStream.seek(pos);
-		return nullptr;
+		return expr;
 	}
+
+	mStream.get();
 
 	return CreateNode<ExprStmt>(expr);
 }

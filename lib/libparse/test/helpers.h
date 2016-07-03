@@ -10,9 +10,14 @@
 
 #include <gtest/gtest.h>
 #include "lex.h"
+#include <libast/ast.h>
 
 template <typename T>
 void expectToken(orange::parser::Token* tok, T to);
 
 template <typename T>
 void expectToken(orange::parser::Lexer& l, T val);
+
+namespace orange { namespace ast {
+	bool operator==(orange::ast::LongBlockExpr expected, orange::ast::LongBlockExpr actual);
+}}

@@ -113,7 +113,7 @@ namespace orange { namespace parser { namespace impl {
 
 		PropertyStmt* parse_property();
 		PropertyStmt* parse_property_base();
-		ExprStmt* parse_expr_statement();
+		Node* parse_expr_statement();
 		GetterStmt* parse_getter();
 		SetterStmt* parse_setter();
 

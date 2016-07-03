@@ -10,6 +10,8 @@
 #include <map>
 #include "helpers.h"
 
+#include <libast/compare.h>
+
 namespace orange { namespace parser {
 	static std::map<orange::parser::TokenType, std::string> TokenTyNames = {
 		{COMMENT, "COMMENT"}, {FLOAT, "FLOAT"}, {STRING, "STRING"},
@@ -111,4 +113,8 @@ void expectToken(Lexer& l, const char* val) {
 	auto tok = l.readToken();
 	EXPECT_TRUE(tok != nullptr);
 	EXPECT_EQ(tok->value, val);
+}
+
+bool orange::ast::operator==(orange::ast::LongBlockExpr expected, orange::ast::LongBlockExpr actual) {
+	return CompareNode(&expected, &actual);
 }
