@@ -370,6 +370,7 @@ void DepthFirstWalker::WalkLoopStmt(Visitor* visitor, LoopStmt* node) {
 	if (node->initializer) WalkExpr(visitor, node->initializer);
 	if (node->condition) WalkExpr(visitor, node->condition);
 	if (node->afterthought) WalkExpr(visitor, node->afterthought);
+	WalkBlockExpr(visitor, node->body);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitLoopStmt(node);
 }
@@ -379,6 +380,7 @@ void DepthFirstWalker::WalkForeachStmt(Visitor* visitor, ForeachStmt* node) {
 
 	WalkVarDeclExpr(visitor, node->declaration);
 	WalkExpr(visitor, node->value);
+	WalkBlockExpr(visitor, node->body);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitForeachStmt(node);
 }

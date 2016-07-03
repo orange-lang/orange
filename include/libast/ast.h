@@ -56,19 +56,23 @@ namespace orange { namespace ast {
 
 		LoopConditionCheck check;
 
+		BlockExpr* body;
+
 		LoopStmt() { }
-		LoopStmt(Expression* initializer, Expression* condition, Expression* afterthought, LoopConditionCheck check) :
-			initializer(initializer), condition(condition), afterthought(afterthought), check(check) { }
+		LoopStmt(Expression* initializer, Expression* condition, Expression* afterthought,
+		         LoopConditionCheck check, BlockExpr* body) :
+			initializer(initializer), condition(condition), afterthought(afterthought), check(check), body(body) { }
 	};
 
 	struct ForeachStmt : Statement {
 	public:
 		VarDeclExpr* declaration;
 		Expression* value;
+		BlockExpr* body;
 
 		ForeachStmt() { }
-		ForeachStmt(VarDeclExpr* declaration, Expression* value) :
-			declaration(declaration), value(value) { }
+		ForeachStmt(VarDeclExpr* declaration, Expression* value, BlockExpr* body) :
+			declaration(declaration), value(value), body(body) { }
 	};
 
 	struct BreakStmt : Statement { };
