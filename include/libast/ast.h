@@ -374,14 +374,16 @@ namespace orange { namespace ast {
 	};
 
 	enum UnaryOp { INCREMENT, DECREMENT, MINUS, NOT, TILDE, TIMES, REFERENCE };
+	enum UnaryOrder { PREFIX, POSTFIX };
 
 	struct UnaryExpr : Expression {
 	public:
 		UnaryOp op;
+		UnaryOrder order;
 		Expression* LHS;
 
 		UnaryExpr() { }
-		UnaryExpr(UnaryOp op, Expression* LHS) : op(op), LHS(LHS) { }
+		UnaryExpr(UnaryOp op, UnaryOrder order, Expression* LHS) : op(op), order(order), LHS(LHS) { }
 	};
 
 	struct TupleExpr : Expression {
