@@ -29,7 +29,7 @@ static TokenMapTy TokenMap = {
 	{">" , GREATER_THAN }, {"<=", LEQ             }, {">=" , GEQ              }, {"!=" , NEQ               },
 	{"&&", AND          }, {"||", OR              }, {"++" , INCREMENT        }, {"--" , DECREMENT         },
 	{"{" , OPEN_CURLY   }, {"}" , CLOSE_CURLY     }, {","  , COMMA            }, {"."  , DOT               },
-	{"[" , OPEN_BRACKET }, {"]" , CLOSE_BRACKET   }, {"...", EXLUSIVE_RANGE   }, {".." , INCLUSIVE_RANGE   },
+	{"[" , OPEN_BRACKET }, {"]" , CLOSE_BRACKET   }, {"...", EXCLUSIVE_RANGE   }, {".." , INCLUSIVE_RANGE   },
 	{":" , COLON        }, {"->", ARROW           }, {"~"  , TILDE            }, {"!"  , NOT               }
 };
 
