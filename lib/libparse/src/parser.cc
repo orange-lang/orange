@@ -7,6 +7,8 @@
 //
 
 #include <stdexcept>
+#include <map>
+
 #include <libparse/parser.h>
 #include <libast/type.h>
 #include <libast/flag.h>
@@ -14,6 +16,74 @@
 
 namespace orange { namespace parser { namespace impl {
 	using namespace orange::ast;
+
+	int GetOperatorPrecedence(TokenType tok) {
+		const static std::map<TokenType, int> OperatorPrecedence = {
+			{TokenType::PLUS, 4}, {TokenType::MINUS, 4},
+			{TokenType::SHIFT_LEFT, 5}, {TokenType::SHIFT_RIGHT, 5},
+			{TokenType::LESS_THAN, 6}, {TokenType::GREATER_THAN, 6},
+			{TokenType::LEQ, 6}, {TokenType::GEQ, 6},
+			{TokenType::EQUALS, 7}, {TokenType::NEQ, 7},
+			{TokenType::BIT_AND, 8},
+			{TokenType::BIT_XOR, 9},
+			{TokenType::BIT_OR, 10},
+			{TokenType::AND, 11},
+			{TokenType::OR, 12},
+			{TokenType::QUESTION, 13}, {TokenType::ASSIGN, 13},
+			{TokenType::PLUS_ASSIGN, 13}, {TokenType::MINUS_ASSIGN, 13},
+			{TokenType::TIMES_ASSIGN, 13}, {TokenType::DIVIDE_ASSIGN, 13},
+			{TokenType::REMAINDER_ASSIGN, 13}, {TokenType::SHIFT_LEFT_ASSIGN, 13},
+			{TokenType::SHIFT_RIGHT_ASSIGN, 13}, {TokenType::BIT_OR_ASSIGN, 13},
+			{TokenType::BIT_AND_ASSIGN, 13}, {TokenType::BIT_XOR_ASSIGN, 13}
+		};
+
+		auto it = OperatorPrecedence.find(tok);
+		if (it == OperatorPrecedence.end()) return -1;
+		return it->second;
+	}
+
+	enum OperatorAssociativity { LEFT, RIGHT };
+
+	OperatorAssociativity GetAssociativity(TokenType tok) {
+		auto prec = GetOperatorPrecedence(tok);
+
+		if (prec == 13) return OperatorAssociativity::RIGHT;
+		else return OperatorAssociativity::LEFT;
+	}
+
+	BinOp GetBinOp(TokenType ty) {
+		switch (ty) {
+			case TokenType::PLUS:               return ADD;
+			case TokenType::MINUS:              return SUBTRACT;
+			case TokenType::DIVIDE:             return DIVIDE;
+			case TokenType::TIMES:              return MULTIPLY;
+			case TokenType::REMAINDER:          return REMAINDER;
+			case TokenType::BIT_OR:             return BIT_OR;
+			case TokenType::BIT_AND:            return BIT_AND;
+			case TokenType::BIT_XOR:            return BIT_XOR;
+			case TokenType::SHIFT_LEFT:         return SHIFT_LEFT;
+			case TokenType::SHIFT_RIGHT:        return SHIFT_RIGHT;
+			case TokenType::ASSIGN:             return ASSIGN;
+			case TokenType::EQUALS:             return EQUALS;
+			case TokenType::PLUS_ASSIGN:        return PLUS_ASSIGN;
+			case TokenType::MINUS_ASSIGN:       return MINUS_ASSIGN;
+			case TokenType::TIMES_ASSIGN:       return TIMES_ASSIGN;
+			case TokenType::DIVIDE_ASSIGN:      return DIVIDE_ASSIGN;
+			case TokenType::REMAINDER_ASSIGN:   return REMAINDER_ASSIGN;
+			case TokenType::SHIFT_LEFT_ASSIGN:  return SHIFT_LEFT_ASSIGN;
+			case TokenType::SHIFT_RIGHT_ASSIGN: return SHIFT_RIGHT_ASSIGN;
+			case TokenType::BIT_OR_ASSIGN:      return BIT_OR_ASSIGN;
+			case TokenType::BIT_AND_ASSIGN:     return BIT_AND_ASSIGN;
+			case TokenType::BIT_XOR_ASSIGN:     return BIT_XOR_ASSIGN;
+			case TokenType::LESS_THAN:          return LESS_THAN;
+			case TokenType::GREATER_THAN:       return GREATER_THAN;
+			case TokenType::LEQ:                return LEQ;
+			case TokenType::GEQ:                return GEQ;
+			case TokenType::NEQ:                return NEQ;
+			case TokenType::AND:                return AND;
+			case TokenType::OR:                 return OR;
+		}
+	}
 
 	class Parser {
 	private:
@@ -758,43 +828,177 @@ namespace orange { namespace parser { namespace impl {
 			return type;
 		}
 
-		AggregateStmt* parse_aggregate();
-		InterfaceStmt* parse_interface();
+		AggregateStmt* parse_aggregate() {
+			if (mStream.eof() || mStream.peek()->type != AGGREGATE) return nullptr;
+			mStream.get();
 
-		NamespaceStmt* parse_namespace();
-		BlockExpr* parse_opt_block();
-		ImportStmt* parse_import();
+			auto id = parse_identifier();
 
-		ExtendStmt* parse_extension();
+			auto block = parse_long_block();
+			if (block == nullptr) throw std::runtime_error("Expected {");
 
-		PropertyStmt* parse_property();
-		PropertyStmt* parse_property_base();
+			return CreateNode<AggregateStmt>(id, block);
+		}
 
-		ExprStmt* parse_expr_statement();
-		ExprStmt* parse_expr_statement_1();
+		InterfaceStmt* parse_interface() {
+			if (mStream.eof() || mStream.peek()->type != INTERFACE) return nullptr;
+			mStream.get();
 
-		GetterStmt* parse_getter();
-		SetterStmt* parse_setter();
+			auto id = parse_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+			auto block = parse_long_block();
+			if (block == nullptr) throw std::runtime_error("Expected {");
+
+			return CreateNode<InterfaceStmt>(id, block);
+		}
+
+		NamespaceStmt* parse_namespace() {
+			if (mStream.eof() || mStream.peek()->type != NAMESPACE) return nullptr;
+			mStream.get();
+
+			auto id = parse_full_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+			auto block = parse_long_block();
+
+			return CreateNode<NamespaceStmt>(id, block);
+		}
+
+		ImportStmt* parse_import() {
+			if (mStream.eof() || mStream.peek()->type != IMPORT) return nullptr;
+			mStream.get();
+
+			auto id = parse_full_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+			return CreateNode<ImportStmt>(id);
+		}
+
+		ExtendStmt* parse_extension() {
+			if (mStream.eof() || mStream.peek()->type != EXTEND) return nullptr;
+			mStream.get();
+
+			auto id = parse_full_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+			auto supers = parse_opt_supers();
+
+			auto block = parse_long_block();
+			if (block == nullptr) throw std::runtime_error("Expected {");
+
+			return CreateNode<ExtendStmt>(id, supers, block);
+		}
+
+		PropertyStmt* parse_property() {
+			auto pos = mStream.tell();
+			auto flags = parse_flags();
+			auto propertyStmt = parse_property_base();
+
+			if (propertyStmt == nullptr) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			propertyStmt->flags.insert(propertyStmt->flags.end(), flags.begin(), flags.end());
+			return propertyStmt;
+		}
+
+		PropertyStmt* parse_property_base() {
+			if (mStream.eof() || mStream.peek()->type != PROPERTY) return nullptr;
+			mStream.get();
+
+			auto id = parse_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+			auto type = parse_opt_func_type();
+			auto block = parse_block();
+
+			return CreateNode<PropertyStmt>(id, type, block);
+		}
+
+		ExprStmt* parse_expr_statement() {
+			auto pos = mStream.tell();
+
+			auto expr = parse_expression();
+			if (expr == nullptr) return nullptr;
+
+			if (mStream.eof() || mStream.peek()->type != SEMICOLON) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			return CreateNode<ExprStmt>(expr);
+		}
+
+		GetterStmt* parse_getter() {
+			if (mStream.eof() || mStream.peek()->type != GET) return nullptr;
+			mStream.get();
+
+			auto block = parse_block();
+			if (block == nullptr) throw std::runtime_error("Expected block");
+
+			return CreateNode<GetterStmt>(block);
+		}
+
+		SetterStmt* parse_setter() {
+			if (mStream.eof() || mStream.peek()->type != SET) return nullptr;
+			mStream.get();
+
+			auto block = parse_block();
+			if (block == nullptr) throw std::runtime_error("Expected block");
+
+			return CreateNode<SetterStmt>(block);
+		}
 
 		/*
 		 * Expressions
 		 */
 
-		// TODO: this next section will probably be reworked to fit the op-precedence parser
-		Expression* parse_expression();
-		TernaryExpr* parse_ternary_expr();
-		Expression* parse_assign_expr();
-		Expression* parse_or_expr();
-		Expression* parse_and_expr();
-		Expression* parse_bit_or_expr();
-		Expression* parse_bit_xor_expr();
-		Expression* parse_bit_and_expr();
-		Expression* parse_equality();
-		Expression* parse_comparison();
-		Expression* parse_shifts();
-		Expression* parse_sums();
-		Expression* parse_mult();
+		Expression* parse_expression() {
+			auto LHS = parse_unary();
+			if (LHS == nullptr) return nullptr;
 
+			return parse_expression_1(LHS, 0);
+		}
+
+		Expression* parse_expression_1(Expression* LHS, int min_precedence) {
+			auto next = mStream.peek();
+
+			while (GetOperatorPrecedence(next->type) >= min_precedence) {
+				auto op = next->type;
+				mStream.get();
+
+				// Bail early if we found a question mark to properly handle ternary operators
+				if (op == QUESTION) {
+					auto trueValue = parse_expression();
+
+					if (mStream.get()->type != COLON)
+						throw std::runtime_error("Expected :");
+
+					auto falseValue = parse_expression();
+
+					LHS = CreateNode<TernaryExpr>(LHS, trueValue, falseValue);
+				}
+
+				auto RHS = parse_unary();
+				if (RHS == nullptr) throw std::runtime_error("Expected expression");
+
+				next = mStream.peek();
+
+				while ((GetAssociativity(next->type) == RIGHT &&
+						GetOperatorPrecedence(next->type) > GetOperatorPrecedence(op)) ||
+					   (GetAssociativity(next->type) == LEFT &&
+						GetOperatorPrecedence(next->type) == GetOperatorPrecedence(op))) {
+					RHS = parse_expression_1(RHS, GetOperatorPrecedence(next->type));
+					next = mStream.peek();
+				}
+
+				LHS = CreateNode<BinOpExpr>(LHS, GetBinOp(op), RHS);
+			}
+
+			return LHS;
+		}
 
 		Expression* parse_unary();
 		Expression* parse_values();
