@@ -1482,16 +1482,93 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<LoopStmt>(nullptr, condition, nullptr, LoopConditionCheck::AFTER, body);
 		}
 
-		SwitchExpr* parse_switch();
-		BlockExpr* parse_switch_block();
-		std::vector<SwitchPattern*> parse_opt_switch_matches();
-		std::vector<SwitchPattern*> parse_switch_matches();
-		std::vector<SwitchPattern*> parse_switch_matches_1();
-		SwitchPattern* parse_switch_match();
-		std::vector<Expression*> parse_switch_patterns();
-		std::vector<Expression*> parse_switch_patterns_1();
-		Expression* parse_switch_value();
-		Expression* parse_switch_pattern();
+		SwitchExpr* parse_switch() {
+			if (mStream.eof() || mStream.peek()->type != SWITCH) return nullptr;
+			mStream.get();
+
+			if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
+				throw std::runtime_error("Expected (");
+
+			auto expression = parse_expression();
+			if (expression == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			auto block = parse_switch_block();
+			return CreateNode<SwitchExpr>(expression, block);
+		}
+
+		std::vector<SwitchPattern*> parse_switch_block() {
+			if (mStream.eof() || mStream.get()->type != OPEN_CURLY)
+				throw std::runtime_error("Expected {");
+
+			return parse_switch_matches();
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_CURLY)
+				throw std::runtime_error("Expected }");
+		}
+
+		std::vector<SwitchPattern*> parse_switch_matches() {
+			std::vector<SwitchPattern*> matches;
+
+			auto match = parse_switch_match();
+			if (match == nullptr) return matches;
+			matches.push_back(match);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				match = parse_switch_match();
+				if (match == nullptr) throw std::runtime_error("Expected switch pattern");
+				matches.push_back(match);
+			}
+
+			return matches;
+		}
+
+		SwitchPattern* parse_switch_match() {
+			auto patterns = parse_switch_patterns();
+			if (patterns.size() == 0) return nullptr;
+
+			if (mStream.eof() || mStream.get()->type != COLON)
+				throw std::runtime_error("Expected :");
+
+			auto val = parse_switch_value();
+			if (val == nullptr) throw std::runtime_error("Expected switch value");
+
+			return CreateNode<SwitchPattern>(patterns, val);
+		}
+
+		std::vector<Expression*> parse_switch_patterns() {
+			std::vector<Expression*> pattern_list;
+
+			auto pattern = parse_switch_pattern();
+			if (pattern == nullptr) return pattern_list;
+			pattern_list.push_back(pattern);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				pattern = parse_switch_pattern();
+				if (pattern == nullptr) throw std::runtime_error("Expected switch pattern");
+				pattern_list.push_back(pattern);
+			}
+
+			return pattern_list;
+		}
+
+		Expression* parse_switch_pattern() { return parse_expression(); }
+
+		BlockExpr* parse_switch_value() {
+			auto long_block = parse_long_block();
+			if (long_block != nullptr) return long_block;
+
+			auto expr = parse_expression();
+			if (expr == nullptr) throw std::runtime_error("Expecting block or expression");
+
+			return CreateNode<ShortBlockExpr>(expr);
+		}
 
 		BreakStmt* parse_break_stmt() {
 			if (mStream.eof() || mStream.peek()->type != BREAK) return nullptr;
