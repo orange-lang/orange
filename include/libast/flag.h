@@ -9,7 +9,10 @@
 #pragma once
 
 namespace orange { namespace ast {
-	struct Flag { };
+	struct Flag {
+	public:
+		virtual ~Flag() { }
+	};
 
 	enum PrivacyLevel { PRIVATE, PROTECTED, PUBLIC };
 

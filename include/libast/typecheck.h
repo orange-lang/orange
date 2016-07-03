@@ -15,3 +15,17 @@ bool isA(orange::ast::Node* node) { return dynamic_cast<T*>(node) != nullptr; }
 
 template <typename T>
 T* asA(orange::ast::Node* node) { return dynamic_cast<T*>(node); }
+
+
+template <typename T>
+bool isA(orange::ast::Flag* flag) { return dynamic_cast<T*>(flag) != nullptr; }
+
+template <typename T>
+T* asA(orange::ast::Flag* flag) { return dynamic_cast<T*>(flag); }
+
+template <typename T>
+bool isA(orange::ast::Type* type) { return dynamic_cast<T*>(type) != nullptr; }
+
+template <typename T>
+T* asA(orange::ast::Type* type) { return dynamic_cast<T*>(type); }
+

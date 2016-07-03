@@ -19,7 +19,10 @@ namespace orange { namespace ast {
 		FLOAT, DOUBLE, VAR, VOID, CHAR
 	};
 
-	struct Type { };
+	struct Type {
+	public:
+		virtual ~Type() {}
+	};
 
 	struct AccessType : Type {
 		Type* LHS;
