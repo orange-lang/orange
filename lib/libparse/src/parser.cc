@@ -727,7 +727,7 @@ namespace orange { namespace parser { namespace impl {
 
 		VarDeclExpr* parse_implicit_var() {
 			if (mStream.eof() || mStream.peek()->type != IDENTIFIER) return nullptr;
-			auto name = CreateNode<Identifier>(mStream.get()->value);
+			auto name = CreateNode<NamedIDExpr>(mStream.get()->value);
 
 			Type* type = parse_opt_type_spec();
 			Expression* value = nullptr;
