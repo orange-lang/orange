@@ -53,35 +53,37 @@ namespace orange { namespace parser { namespace impl {
 
 	BinOp GetBinOp(TokenType ty) {
 		switch (ty) {
-			case TokenType::PLUS:               return ADD;
-			case TokenType::MINUS:              return SUBTRACT;
-			case TokenType::DIVIDE:             return DIVIDE;
-			case TokenType::TIMES:              return MULTIPLY;
-			case TokenType::REMAINDER:          return REMAINDER;
-			case TokenType::BIT_OR:             return BIT_OR;
-			case TokenType::BIT_AND:            return BIT_AND;
-			case TokenType::BIT_XOR:            return BIT_XOR;
-			case TokenType::SHIFT_LEFT:         return SHIFT_LEFT;
-			case TokenType::SHIFT_RIGHT:        return SHIFT_RIGHT;
-			case TokenType::ASSIGN:             return ASSIGN;
-			case TokenType::EQUALS:             return EQUALS;
-			case TokenType::PLUS_ASSIGN:        return PLUS_ASSIGN;
-			case TokenType::MINUS_ASSIGN:       return MINUS_ASSIGN;
-			case TokenType::TIMES_ASSIGN:       return TIMES_ASSIGN;
-			case TokenType::DIVIDE_ASSIGN:      return DIVIDE_ASSIGN;
-			case TokenType::REMAINDER_ASSIGN:   return REMAINDER_ASSIGN;
-			case TokenType::SHIFT_LEFT_ASSIGN:  return SHIFT_LEFT_ASSIGN;
-			case TokenType::SHIFT_RIGHT_ASSIGN: return SHIFT_RIGHT_ASSIGN;
-			case TokenType::BIT_OR_ASSIGN:      return BIT_OR_ASSIGN;
-			case TokenType::BIT_AND_ASSIGN:     return BIT_AND_ASSIGN;
-			case TokenType::BIT_XOR_ASSIGN:     return BIT_XOR_ASSIGN;
-			case TokenType::LESS_THAN:          return LESS_THAN;
-			case TokenType::GREATER_THAN:       return GREATER_THAN;
-			case TokenType::LEQ:                return LEQ;
-			case TokenType::GEQ:                return GEQ;
-			case TokenType::NEQ:                return NEQ;
-			case TokenType::AND:                return AND;
-			case TokenType::OR:                 return OR;
+			case TokenType::PLUS:               return BinOp::ADD;
+			case TokenType::MINUS:              return BinOp::SUBTRACT;
+			case TokenType::DIVIDE:             return BinOp::DIVIDE;
+			case TokenType::TIMES:              return BinOp::MULTIPLY;
+			case TokenType::REMAINDER:          return BinOp::REMAINDER;
+			case TokenType::BIT_OR:             return BinOp::BIT_OR;
+			case TokenType::BIT_AND:            return BinOp::BIT_AND;
+			case TokenType::BIT_XOR:            return BinOp::BIT_XOR;
+			case TokenType::SHIFT_LEFT:         return BinOp::SHIFT_LEFT;
+			case TokenType::SHIFT_RIGHT:        return BinOp::SHIFT_RIGHT;
+			case TokenType::ASSIGN:             return BinOp::ASSIGN;
+			case TokenType::EQUALS:             return BinOp::EQUALS;
+			case TokenType::PLUS_ASSIGN:        return BinOp::PLUS_ASSIGN;
+			case TokenType::MINUS_ASSIGN:       return BinOp::MINUS_ASSIGN;
+			case TokenType::TIMES_ASSIGN:       return BinOp::TIMES_ASSIGN;
+			case TokenType::DIVIDE_ASSIGN:      return BinOp::DIVIDE_ASSIGN;
+			case TokenType::REMAINDER_ASSIGN:   return BinOp::REMAINDER_ASSIGN;
+			case TokenType::SHIFT_LEFT_ASSIGN:  return BinOp::SHIFT_LEFT_ASSIGN;
+			case TokenType::SHIFT_RIGHT_ASSIGN: return BinOp::SHIFT_RIGHT_ASSIGN;
+			case TokenType::BIT_OR_ASSIGN:      return BinOp::BIT_OR_ASSIGN;
+			case TokenType::BIT_AND_ASSIGN:     return BinOp::BIT_AND_ASSIGN;
+			case TokenType::BIT_XOR_ASSIGN:     return BinOp::BIT_XOR_ASSIGN;
+			case TokenType::LESS_THAN:          return BinOp::LESS_THAN;
+			case TokenType::GREATER_THAN:       return BinOp::GREATER_THAN;
+			case TokenType::LEQ:                return BinOp::LEQ;
+			case TokenType::GEQ:                return BinOp::GEQ;
+			case TokenType::NEQ:                return BinOp::NEQ;
+			case TokenType::AND:                return BinOp::AND;
+			case TokenType::OR:                 return BinOp::OR;
+			default:
+				throw std::runtime_error("Not a valid binary operator token");
 		}
 	}
 
@@ -363,8 +365,10 @@ namespace orange { namespace parser { namespace impl {
 						RHS = parse_identifier_base();
 						if (RHS == nullptr) throw std::runtime_error("Expected identifier");
 						LHS = CreateNode<AccessIDExpr>(LHS, RHS);
+						break;
 					case TokenType::LESS_THAN:
 						throw std::runtime_error("Don't know how to handle generics in full IDs");
+						break;
 					default:
 						done = true;
 						break;
