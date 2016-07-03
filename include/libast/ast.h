@@ -304,6 +304,11 @@ namespace orange { namespace ast {
 		Identifier() { }
 	};
 
+	struct ThisID : Identifier {
+	public:
+		ThisID() { }
+	};
+
 	struct NamedIDExpr : Identifier {
 	public:
 		std::string name;
