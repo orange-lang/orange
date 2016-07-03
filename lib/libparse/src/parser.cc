@@ -17,7 +17,6 @@ namespace orange { namespace parser { namespace impl {
 
 	class Parser {
 	private:
-
 		LexStream mStream;
 
 		bool isTerm(Token* tok) { return tok->type == NEWLINE || tok->type == SEMICOLON; }
@@ -626,19 +625,136 @@ namespace orange { namespace parser { namespace impl {
 			return nullptr;
 		}
 
-		FunctionExpr* parse_function();
-		FunctionExpr* parse_base_function();
-		Identifier* parse_opt_identifier();
-		Identifier* parse_opt_name();
-		std::vector<VarDeclExpr*> parse_opt_param_list();
-		std::vector<VarDeclExpr*> parse_param_list();
-		std::vector<VarDeclExpr*> parse_param_list_1();
-		Type* parse_opt_func_type();
-		ExternFuncStmt* parse_extern_fn();
-		ExternFuncStmt* parse_base_extern();
+		FunctionExpr* parse_function() {
+			auto pos = mStream.tell();
+			auto flags = parse_flags();
+			auto functionExpr = parse_base_function();
 
-		VarDeclExpr* parse_implicit_var();
-		Type* parse_opt_type_spec();
+			if (functionExpr == nullptr) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			functionExpr->flags.insert(functionExpr->flags.end(), flags.begin(), flags.end());
+			return functionExpr;
+		}
+
+		FunctionExpr* parse_base_function() {
+			if (mStream.eof() || mStream.peek()->type != DEF) return nullptr;
+			mStream.get();
+
+			auto id = parse_identifier();
+			auto generics = parse_generics();
+
+			if (mStream.eof() || mStream.peek()->type != OPEN_PAREN)
+				throw std::runtime_error("Expected (");
+
+			auto params = parse_param_list();
+
+			if (mStream.eof() || mStream.peek()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			auto retType = parse_opt_func_type();
+			auto body = parse_block();
+
+			return CreateNode<FunctionExpr>(id, generics, params, retType, body);
+		}
+
+		std::vector<VarDeclExpr*> parse_param_list() {
+			std::vector<VarDeclExpr*> params;
+
+			auto param = parse_implicit_var();
+			if (param == nullptr) return params;
+			params.push_back(param);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				auto param = parse_implicit_var();
+				if (param == nullptr) return params;
+				params.push_back(param);
+			}
+
+			return params;
+		}
+
+		Type* parse_opt_func_type() {
+			if (mStream.eof() || mStream.peek()->type != ARROW) return nullptr;
+			mStream.get();
+
+			return parse_type();
+		}
+
+		ExternFuncStmt* parse_extern_fn() {
+			auto pos = mStream.tell();
+			auto flags = parse_flags();
+			auto functionExpr = parse_base_extern();
+
+			if (functionExpr == nullptr) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			functionExpr->flags.insert(functionExpr->flags.end(), flags.begin(), flags.end());
+			return functionExpr;
+		}
+
+		ExternFuncStmt* parse_base_extern() {
+			if (mStream.eof() || mStream.peek()->type != EXTERN) return nullptr;
+			mStream.get();
+
+			if (mStream.eof() || mStream.get()->type != DEF)
+				throw std::runtime_error("Expecting def");
+
+			auto id = parse_identifier();
+			if (id == nullptr) throw std::runtime_error("Expecting identifier");
+
+			if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
+				throw std::runtime_error("Expecting (");
+
+			auto params = parse_param_list();
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expecting )");
+
+			auto retType = parse_opt_func_type();
+			if (retType == nullptr) throw std::runtime_error("Expecting ->");
+
+			return CreateNode<ExternFuncStmt>(id, params, retType);
+		}
+
+		VarDeclExpr* parse_implicit_var() {
+			if (mStream.eof() || mStream.peek()->type != IDENTIFIER) return nullptr;
+			auto name = CreateNode<Identifier>(mStream.get()->value);
+
+			Type* type = parse_opt_type_spec();
+			Expression* value = nullptr;
+
+			if (!mStream.eof() && mStream.peek()->type == ASSIGN) {
+				mStream.get();
+
+				value = parse_expression();
+				if (value == nullptr) throw std::runtime_error("Expected expression");
+			}
+
+			std::vector<Identifier*> bindings;
+			bindings.push_back(name);
+
+			std::vector<Type*> types;
+			if (type != nullptr) types.push_back(type);
+
+			return CreateNode<VarDeclExpr>(bindings, types, value);
+		}
+
+		Type* parse_opt_type_spec() {
+			if (mStream.eof() || mStream.peek()->type != COLON) return nullptr;
+			mStream.get();
+
+			auto type = parse_type();
+			if (type == nullptr) throw std::runtime_error("Expected type");
+
+			return type;
+		}
 
 		AggregateStmt* parse_aggregate();
 		InterfaceStmt* parse_interface();
