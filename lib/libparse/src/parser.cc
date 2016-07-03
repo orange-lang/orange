@@ -12,7 +12,9 @@
 #include <libparse/parser.h>
 #include <libast/type.h>
 #include <libast/flag.h>
+#include <libast/typecheck.h>
 #include "lex_stream.h"
+#include "lex_helpers.h"
 
 namespace orange { namespace parser { namespace impl {
 	using namespace orange::ast;
@@ -49,6 +51,20 @@ namespace orange { namespace parser { namespace impl {
 
 		if (prec == 13) return OperatorAssociativity::RIGHT;
 		else return OperatorAssociativity::LEFT;
+	}
+
+	UnaryOp GetUnaryOp(TokenType ty) {
+		switch (ty) {
+			case TokenType::INCREMENT: return UnaryOp::INCREMENT;
+			case TokenType::DECREMENT: return UnaryOp::DECREMENT;
+			case TokenType::MINUS:     return UnaryOp::MINUS;
+			case TokenType::NOT:       return UnaryOp::NOT;
+			case TokenType::TILDE:     return UnaryOp::TILDE;
+			case TokenType::TIMES:     return UnaryOp::TIMES;
+			case TokenType::BIT_AND:   return UnaryOp::REFERENCE;
+			default:
+				throw std::runtime_error("Not a valid unary operator token");
+		}
 	}
 
 	BinOp GetBinOp(TokenType ty) {
@@ -407,6 +423,11 @@ namespace orange { namespace parser { namespace impl {
 			if ((stmt = parse_enum()) != nullptr) return stmt;
 			if ((stmt = parse_expr_statement()) != nullptr) return stmt;
 			if ((stmt = parse_delete()) != nullptr) return stmt;
+			if ((stmt = parse_for_loop()) != nullptr) return stmt;
+			if ((stmt = parse_foreach()) != nullptr) return stmt;
+			if ((stmt = parse_while()) != nullptr) return stmt;
+			if ((stmt = parse_forever()) != nullptr) return stmt;
+			if ((stmt = parse_do_while()) != nullptr) return stmt;
 
 			return nullptr;
 		}
@@ -963,7 +984,19 @@ namespace orange { namespace parser { namespace impl {
 			auto LHS = parse_unary();
 			if (LHS == nullptr) return nullptr;
 
-			return parse_expression_1(LHS, 0);
+			auto expr = parse_expression_1(LHS, 0);
+			if (expr == nullptr) return nullptr;
+
+			if (mStream.peek()->type == AS) {
+				mStream.get();
+
+				auto type = parse_type();
+				if (type == nullptr) throw std::runtime_error("Expected type");
+
+				expr = CreateNode<CastExpr>(type, expr);
+			}
+
+			return expr;
 		}
 
 		Expression* parse_expression_1(Expression* LHS, int min_precedence) {
@@ -1004,31 +1037,278 @@ namespace orange { namespace parser { namespace impl {
 			return LHS;
 		}
 
-		Expression* parse_unary();
-		Expression* parse_values();
-		MemberAccessExpr* parse_dot();
-		Expression* parse_primary();
-		Expression* parse_value();
-		Value* parse_constant_val();
-		Expression* parse_control();
-		Expression* parse_type_cast();
+		Expression* parse_unary() {
+			if (mStream.eof()) return nullptr;
 
-		ArrayExpr* parse_array_expression();
-		std::vector<Expression*> parse_opt_arr_elements();
-		std::vector<Expression*> parse_arr_elements();
-		std::vector<Expression*> parse_arr_elements_1();
+			Expression* inner = nullptr;
+			auto lookahead = mStream.peek();
 
-		ArrayAccessExpr* parse_array_access_expr();
-		ArrayRangeExpr* parse_inclusive_range_expr();
-		ArrayRangeExpr* parse_exclusive_range_expr();
+			switch (lookahead->type) {
+				case TokenType::INCREMENT:
+				case TokenType::DECREMENT:
+				case TokenType::MINUS:
+				case TokenType::NOT:
+				case TokenType::TILDE:
+				case TokenType::TIMES:
+				case TokenType::BIT_AND:
+					mStream.get();
+					inner = parse_unary();
+					if (inner == nullptr) throw std::runtime_error("Expected expression");
+					return CreateNode<UnaryExpr>(GetUnaryOp(lookahead->type), UnaryOrder::PREFIX, inner);
+				default: break;
+			}
 
-		TupleExpr* parse_tuple_expr();
-		std::vector<Expression*> parse_tuple_values();
-		std::vector<Expression*> parse_tuple_values_1();
-		Expression* parse_tuple_value();
-		Token* parse_opt_comma();
+			return parse_values();
+		}
 
-		NamedExpr* parse_named_expr();
+		Expression* parse_values() {
+			auto LHS = parse_primary();
+			if (LHS == nullptr) return nullptr;
+
+			while (!mStream.eof()) {
+				auto lookahead = mStream.peek();
+
+				if (lookahead->type == OPEN_PAREN) { // function
+					mStream.get();
+
+					auto args = parse_opt_arg_list();
+
+					if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+						throw std::runtime_error("Expected )");
+
+					LHS = CreateNode<FunctionCallExpr>(LHS, args);
+				} else if (lookahead->type == OPEN_BRACKET) { // array access
+					mStream.get();
+
+					auto index = parse_expression();
+
+					if (mStream.eof() || mStream.get()->type != CLOSE_BRACKET)
+						throw std::runtime_error("Expected ]");
+
+					LHS = CreateNode<ArrayAccessExpr>(LHS, index);
+				} else if (lookahead->type == INCREMENT) { // increment
+					mStream.get();
+					LHS = CreateNode<UnaryExpr>(UnaryOp::INCREMENT, UnaryOrder::POSTFIX, LHS);
+				} else if (lookahead->type == DECREMENT) { // decrement
+					mStream.get();
+					LHS = CreateNode<UnaryExpr>(UnaryOp::DECREMENT, UnaryOrder::POSTFIX, LHS);
+				} else if (lookahead->type == DOT) {
+					mStream.get();
+
+					auto id = parse_identifier();
+					if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+					LHS = CreateNode<MemberAccessExpr>(LHS, id);
+				} else break;
+			}
+
+			return LHS;
+		}
+
+		Expression* parse_primary() { return parse_value(); }
+
+		Expression* parse_value() {
+			Expression* expr = nullptr;
+
+			if ((expr = parse_constant_val()) != nullptr) return expr;
+			if ((expr = parse_array_expression()) != nullptr) return expr;
+			if ((expr = parse_inclusive_range_expr()) != nullptr) return expr;
+			if ((expr = parse_exclusive_range_expr()) != nullptr) return expr;
+			if ((expr = parse_tuple_expr()) != nullptr) return expr;
+			if ((expr = parse_this()) != nullptr) return expr;
+			if ((expr = parse_control()) != nullptr) return expr;
+			if ((expr = parse_new()) != nullptr) return expr;
+
+			return nullptr;
+		}
+
+		/// TODO: this doesn't retain the type
+		Value* parse_constant_val() {
+			auto lookahead = mStream.peek();
+
+			if (IsIntToken(lookahead)) {
+				auto value = ToInt(mStream.get());
+				return CreateNode<IntValue>(value);
+			} else if (IsUIntToken(lookahead)) {
+				auto value = ToUInt(mStream.get());
+				return CreateNode<UIntValue>(value);
+			} else if (lookahead->type == VAL_FLOAT) {
+				auto value = ToFloat(mStream.get());
+				return CreateNode<FloatValue>(value);
+			} else if (lookahead->type == VAL_DOUBLE) {
+				auto value = ToDouble(mStream.get());
+				return CreateNode<DoubleValue>(value);
+			} else if (lookahead->type == VAL_CHAR) {
+				auto value = mStream.get()->value[0];
+				return CreateNode<CharValue>(value);
+			} else if (lookahead->type == VAL_STRING) {
+				auto value = mStream.get()->value;
+				return CreateNode<StringValue>(value);
+			}
+
+			return nullptr;
+		}
+
+		Expression* parse_this() {
+			if (mStream.eof() || mStream.peek()->type != THIS) return nullptr;
+			return CreateNode<ThisID>();
+		}
+
+		Expression* parse_control() {
+			Expression* ctrl = nullptr;
+
+			if ((ctrl = parse_if()) != nullptr) return ctrl;
+			if ((ctrl = parse_switch()) != nullptr) return ctrl;
+			if ((ctrl = parse_try_block()) != nullptr) return ctrl;
+
+			return nullptr;
+		}
+
+		NewExpr* parse_new() {
+			if (mStream.eof() || mStream.peek()->type != NEW) return nullptr;
+			mStream.get();
+
+			auto full_id = parse_full_identifier();
+			return CreateNode<NewExpr>(full_id);
+		}
+
+		// Parse an array expression, but bail if we run into an inclusive/exclusive range token
+		ArrayExpr* parse_array_expression() {
+			auto pos = mStream.tell();
+
+			if (mStream.eof() || mStream.peek()->type != OPEN_BRACKET) return nullptr;
+			mStream.get();
+
+			std::vector<Expression *> elements;
+
+			auto element = parse_expression();
+			if (element == nullptr && mStream.peek()->type != CLOSE_BRACKET)
+				throw std::runtime_error("Expected expression");
+			if (element != nullptr) elements.push_back(element);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				auto element = parse_expression();
+				if (element == nullptr) throw std::runtime_error("Expected expression");
+				elements.push_back(element);
+			}
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_BRACKET) {
+				if (mStream.get()->type == EXCLUSIVE_RANGE || mStream.get()->type == INCLUSIVE_RANGE) {
+					mStream.seek(pos);
+					return nullptr;
+				}
+
+				throw std::runtime_error("Expected ]");
+			}
+
+			return CreateNode<ArrayExpr>(elements);
+		}
+
+		ArrayRangeExpr* parse_inclusive_range_expr() {
+			auto pos = mStream.tell();
+
+			if (mStream.eof() || mStream.peek()->type != OPEN_BRACKET) return nullptr;
+			mStream.get();
+
+			auto LHS = parse_expression();
+			if (LHS == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.get()->type != INCLUSIVE_RANGE) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			auto RHS = parse_expression();
+			if (RHS == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_BRACKET) {
+				throw std::runtime_error("Expected ]");
+			}
+
+			return CreateNode<ArrayRangeExpr>(LHS, ArrayRangeType::INCLUSIVE, RHS);
+		}
+
+		ArrayRangeExpr* parse_exclusive_range_expr() {
+			auto pos = mStream.tell();
+
+			if (mStream.eof() || mStream.peek()->type != OPEN_BRACKET) return nullptr;
+			mStream.get();
+
+			auto LHS = parse_expression();
+			if (LHS == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.get()->type != EXCLUSIVE_RANGE) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			auto RHS = parse_expression();
+			if (RHS == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_BRACKET) {
+				throw std::runtime_error("Expected ]");
+			}
+
+			return CreateNode<ArrayRangeExpr>(LHS, ArrayRangeType::EXCLUSIVE, RHS);
+		}
+
+		/// Also parses (expression) as just an expression. A trailing comma
+		/// is required to make it a tuple.
+		Expression* parse_tuple_expr() {
+			if (mStream.eof() || mStream.peek()->type != OPEN_PAREN) return nullptr;
+			mStream.get();
+
+			std::vector<Expression*> exprs;
+			bool isTuple = false;
+
+			auto expr = parse_tuple_value();
+			if (expr == nullptr) throw std::runtime_error("Expected expression");
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+				isTuple = true;
+
+				auto expr = parse_tuple_value();
+				if (expr != nullptr) exprs.push_back(expr);
+				else break;
+			}
+
+			if (mStream.get()->type != CLOSE_PAREN) throw std::runtime_error("Expected )");
+
+			if (!isTuple) {
+				if (isA<NamedExpr>(exprs[0]))
+					throw std::runtime_error("Unexpected named expression for non-tuple");
+
+				return exprs[0];
+			}
+			else return CreateNode<TupleExpr>(exprs);
+		}
+
+		Expression* parse_tuple_value() {
+			Expression* val = nullptr;
+			if ((val = parse_named_expr()) != nullptr) return val;
+
+			return parse_expression();
+		}
+
+		NamedExpr* parse_named_expr() {
+			auto pos = mStream.tell();
+			if (mStream.eof() || mStream.peek()->type != IDENTIFIER) return nullptr;
+
+			auto name = mStream.get()->value;
+
+			if (mStream.get()->type != COLON) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			auto value = parse_expression();
+			if (value == nullptr) throw std::runtime_error("Expected expression");
+
+			return CreateNode<NamedExpr>(CreateNode<NamedIDExpr>(name), value);
+		}
 
 		IfExpr* parse_if();
 		std::vector<ConditionalBlock*> parse_elif_or_else();
@@ -1073,7 +1353,6 @@ namespace orange { namespace parser { namespace impl {
 		Constraint* parse_constraint();
 		Constraint* parse_type_constraint();
 
-		NewExpr* parse_new();
 		DeleteStmt* parse_delete();
 
 		std::vector<Flag*> parse_flags();
@@ -1102,5 +1381,3 @@ using namespace orange::parser;
 
 LongBlockExpr* Parser::parse() { return mParserImpl->parse(); }
 Parser::Parser(std::istream& stream) : mParserImpl(new impl::Parser(stream)) { }
-
-using namespace orange::parser::impl;

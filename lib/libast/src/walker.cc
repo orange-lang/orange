@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <libast/ast.h>
 #include <libast/walker.h>
-#include "typecheck.h"
+#include <libast/typecheck.h>
 
 using namespace orange::ast;
 
