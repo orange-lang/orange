@@ -428,6 +428,7 @@ namespace orange { namespace parser { namespace impl {
 			if ((stmt = parse_while()) != nullptr) return stmt;
 			if ((stmt = parse_forever()) != nullptr) return stmt;
 			if ((stmt = parse_do_while()) != nullptr) return stmt;
+			if ((stmt = parse_throw_stmt()) != nullptr) return stmt;
 
 			return nullptr;
 		}
@@ -1071,7 +1072,7 @@ namespace orange { namespace parser { namespace impl {
 				if (lookahead->type == OPEN_PAREN) { // function
 					mStream.get();
 
-					auto args = parse_opt_arg_list();
+					auto args = parse_arg_list();
 
 					if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
 						throw std::runtime_error("Expected )");
@@ -1514,10 +1515,30 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<YieldStmt>(expr);
 		}
 
-		std::vector<Expression*> parse_opt_arg_list();
-		std::vector<Expression*> parse_arg_list();
-		std::vector<Expression*> parse_arg_list_1();
-		Expression* parse_arg();
+		std::vector<Expression*> parse_arg_list() {
+			std::vector<Expression*> arg_list;
+
+			auto argument = parse_arg();
+			if (argument == nullptr) return arg_list;
+			arg_list.push_back(argument);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				auto argument = parse_arg();
+				if (argument == nullptr) throw std::runtime_error("Expected argument");
+				arg_list.push_back(argument);
+			}
+
+			return arg_list;
+		}
+
+		Expression* parse_arg() {
+			Expression* expr = nullptr;
+			if ((expr = parse_named_expr()) != nullptr) return expr;
+
+			return parse_expression();
+		}
 
 		Generics* parse_generics();
 		std::vector<Identifier*> parse_opt_generic_values();
@@ -1597,14 +1618,64 @@ namespace orange { namespace parser { namespace impl {
 			return new PartialFlag();
 		}
 
-		TryExpr* parse_try_block();
-		std::vector<CatchBlock*> parse_opt_catch_blocks();
-		std::vector<CatchBlock*> parse_catch_blocks();
-		std::vector<CatchBlock*> parse_catch_blocks_1();
-		CatchBlock* parse_catch_block();
-		BlockExpr* parse_opt_finally_block();
-		BlockExpr* parse_finally_block();
-		ThrowStmt* parse_throw_stmt();
+		TryExpr* parse_try_block() {
+			if (mStream.eof() || mStream.peek()->type != TRY) return nullptr;
+			mStream.get();
+
+			auto block = parse_block();
+			if (block == nullptr) throw std::runtime_error("Expected block");
+
+			auto catches = parse_catch_blocks();
+			auto finally = parse_finally_block();
+
+			return CreateNode<TryExpr>(block, catches, finally);
+		}
+
+		std::vector<CatchBlock*> parse_catch_blocks() {
+			std::vector<CatchBlock*> catches;
+
+			while (!mStream.eof() && mStream.peek()->type == CATCH) {
+				if (mStream.eof() || mStream.peek()->type != CATCH) return catches;
+				mStream.get();
+
+				if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
+					throw std::runtime_error("Expected (");
+
+				auto exception = parse_var_decl();
+				if (exception == nullptr) throw std::runtime_error("Expected expression");
+
+				if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+					throw std::runtime_error("Expected )");
+
+				auto block = parse_block();
+				if (block == nullptr) throw std::runtime_error("Expected block");
+
+				auto catch_block = CreateNode<CatchBlock>(exception, block);
+				catches.push_back(catch_block);
+			}
+
+			return catches;
+		}
+
+		BlockExpr* parse_finally_block() {
+			if (mStream.eof() || mStream.peek()->type != FINALLY) return nullptr;
+			mStream.get();
+
+			auto block = parse_block();
+			if (block == nullptr) throw std::runtime_error("Expected block");
+
+			return block;
+		}
+
+		ThrowStmt* parse_throw_stmt() {
+			if (mStream.eof() || mStream.peek()->type != THROW) return nullptr;
+			mStream.get();
+
+			auto expr = parse_expression();
+			if (expr == nullptr) throw std::runtime_error("Expected expression");
+
+			return CreateNode<ThrowStmt>(expr);
+		}
 	public:
 		ast::LongBlockExpr* parse() {
 			auto stmts = parse_statements(true);
