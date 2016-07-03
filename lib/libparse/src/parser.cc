@@ -1617,15 +1617,119 @@ namespace orange { namespace parser { namespace impl {
 			return parse_expression();
 		}
 
-		Generics* parse_generics();
-		std::vector<Identifier*> parse_opt_generic_values();
-		std::vector<Identifier*> parse_generic_values();
-		std::vector<Identifier*> parse_generic_values_1();
-		std::vector<Constraint*> parse_opt_constraints();
-		std::vector<Constraint*> parse_constraints();
-		std::vector<Constraint*> parse_constraints_1();
-		Constraint* parse_constraint();
-		Constraint* parse_type_constraint();
+
+		Generics* parse_generics() {
+			if (mStream.eof() || mStream.peek()->type != LESS_THAN) return nullptr;
+			mStream.get();
+
+			auto values = parse_generic_values();
+			auto constraints = parse_opt_constraints();
+
+			if (mStream.eof() || mStream.get()->type != GREATER_THAN)
+				throw std::runtime_error("Expected >");
+
+			return CreateNode<Generics>(values, constraints);
+		}
+
+		std::vector<Identifier*> parse_generic_values() {
+			std::vector<Identifier*> id_list;
+
+			auto id = parse_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+			id_list.push_back(id);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				auto id = parse_identifier();
+				if (id == nullptr) throw std::runtime_error("Expected identifier");
+				id_list.push_back(id);
+			}
+
+			return id_list;
+		}
+
+		std::vector<Constraint*> parse_opt_constraints() {
+			if (mStream.eof() || mStream.peek()->type != COLON)
+				return std::vector<Constraint*>();
+
+			mStream.get();
+			return parse_constraints();
+		}
+
+		std::vector<Constraint*> parse_constraints() {
+			std::vector<Constraint*> constraint_list;
+
+			auto constraint = parse_constraint();
+			if (constraint == nullptr) throw std::runtime_error("Expected constraint");
+			constraint_list.push_back(constraint);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				constraint = parse_constraint();
+				if (constraint == nullptr) throw std::runtime_error("Expected constraint");
+				constraint_list.push_back(constraint);
+			}
+
+			return constraint_list;
+		}
+
+		Constraint* parse_constraint() {
+			if (mStream.eof() || mStream.peek()->type != WHERE) return nullptr;
+			mStream.get();
+
+			auto id = parse_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+
+			if (mStream.eof() || mStream.get()->type != ASSIGN)
+				throw std::runtime_error("Expected =");
+
+			auto constraint = parse_type_constraint(id);
+			if (constraint == nullptr) throw std::runtime_error("Expected constraint value");
+
+			return constraint;
+		}
+
+		Constraint* parse_type_constraint(Identifier* id) {
+			if (mStream.eof()) return nullptr;
+
+			auto lookahead = mStream.peek();
+
+			if (lookahead->type == CLASS) {
+				mStream.get();
+				return CreateNode<ClassConstraint>(id);
+			} else if (lookahead->type == NEW) {
+				mStream.get();
+
+				if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
+					throw std::runtime_error("Expected (");
+
+				if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+					throw std::runtime_error("Expected )");
+
+				return CreateNode<DefaultCtorConstraint>(id);
+			} else if (lookahead->type == DATA) {
+				mStream.get();
+
+				auto type = parse_type();
+				if (type == nullptr) throw std::runtime_error("Expected type");
+
+				return CreateNode<DataConstraint>(id, type);
+			}
+
+			auto base = parse_identifier();
+			if (id != nullptr) {
+				return CreateNode<BaseConstraint>(id, base);
+			}
+
+			auto type = parse_type();
+			if (type != nullptr) {
+				return CreateNode<TypeConstraint>(id, type);
+			}
+
+			return nullptr;
+		}
 
 		DeleteStmt* parse_delete() {
 			if (mStream.eof() || mStream.peek()->type != DELETE) return nullptr;
