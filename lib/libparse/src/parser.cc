@@ -285,7 +285,7 @@ namespace orange { namespace parser { namespace impl {
 			while (mStream.eof() == false) {
 				bool done = false;
 
-				Identifier* RHS;
+				Identifier* RHS = nullptr;
 
 				switch (mStream.peek()->type) {
 					case TokenType::DOT:
