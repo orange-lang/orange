@@ -30,6 +30,11 @@ namespace orange { namespace parser { namespace impl {
 		std::vector<Node *> parse_statements(bool allow_eps = false) {
 			std::vector<Node *> statements;
 
+			if (mStream.peek() && isTerm(mStream.peek())) {
+				mStream.get();
+				return parse_statements();
+			}
+
 			if (mStream.peek() && mStream.peek()->type == COMMENT) {
 				statements.push_back(CreateNode<CommentStmt>(mStream.get()->value));
 
@@ -492,20 +497,134 @@ namespace orange { namespace parser { namespace impl {
 		}
 
 
-		ClassStmt* parse_class();
-		ClassStmt* parse_base_class();
-		std::vector<Identifier*> parse_opt_supers();
-		std::vector<Identifier*> parse_super_list();
-		std::vector<Identifier*> parse_super_list_1();
+		ClassStmt* parse_class() {
+			auto pos = mStream.tell();
+			auto flags = parse_flags();
+			auto classStmt = parse_base_class();
 
-		ClassStmt* parse_partial_class();
+			if (classStmt == nullptr) {
+				mStream.seek(pos);
+				return nullptr;
+			}
 
-		LongBlockExpr* parse_class_body();
-		std::vector<Node*> parse_opt_class_stmts();
-		std::vector<Node*> parse_class_stmts();
-		std::vector<Node*> parse_class_stmts_1();
+			classStmt->flags.insert(classStmt->flags.end(), flags.begin(), flags.end());
+			return classStmt;
+		}
 
-		Node* parse_class_stmt();
+		ClassStmt* parse_base_class() {
+			if (mStream.eof() || mStream.peek()->type != CLASS) return nullptr;
+			mStream.get();
+
+			if (mStream.eof() || mStream.peek()->type != IDENTIFIER)
+				throw std::runtime_error("Expected identifier");
+
+			auto name = CreateNode<NamedIDExpr>(mStream.get()->value);
+			auto supers = parse_opt_supers();
+			auto body = parse_class_body();
+
+			return CreateNode<ClassStmt>(name, supers, body);
+		}
+
+		std::vector<Identifier*> parse_opt_supers() {
+			std::vector<Identifier*> ids;
+			if (mStream.eof() || mStream.peek()->type != COLON) return ids;
+
+			auto id = parse_full_identifier();
+			if (id == nullptr) throw std::runtime_error("Expected identifier");
+			ids.push_back(id);
+
+			while (!mStream.eof() && mStream.peek()->type == COMMA) {
+				mStream.get();
+
+				auto id = parse_full_identifier();
+				if (id == nullptr) throw std::runtime_error("Expected identifier");
+				ids.push_back(id);
+			}
+
+			return ids;
+		}
+
+		ClassStmt* parse_partial_class() {
+			auto pos = mStream.tell();
+			auto flags = parse_flags();
+
+			if (mStream.eof() || mStream.peek()->type != PARTIAL) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			auto classStmt = parse_base_class();
+
+			if (classStmt == nullptr) {
+				mStream.seek(pos);
+				return nullptr;
+			}
+
+			classStmt->flags.insert(classStmt->flags.end(), flags.begin(), flags.end());
+			classStmt->flags.push_back(new PartialFlag);
+			return classStmt;
+		}
+
+		LongBlockExpr* parse_class_body() {
+			if (mStream.eof() || mStream.peek()->type != OPEN_CURLY)
+				throw std::runtime_error("Expected {");
+
+			auto stmts = parse_class_stmts();
+
+			if (mStream.eof() || mStream.peek()->type != CLOSE_CURLY)
+				throw std::runtime_error("Expected }");
+
+			return CreateNode<LongBlockExpr>(stmts);
+		}
+
+		std::vector<Node*> parse_class_stmts() {
+			std::vector<Node *> statements;
+
+			if (mStream.peek() && isTerm(mStream.peek())) {
+				mStream.get();
+				return parse_class_stmts();
+			}
+
+			if (mStream.peek() && mStream.peek()->type == COMMENT) {
+				statements.push_back(CreateNode<CommentStmt>(mStream.get()->value));
+
+				auto remaining = parse_class_stmts();
+				statements.insert(statements.end(), remaining.begin(), remaining.end());
+
+				return statements;
+			} else {
+				auto stmt = parse_class_stmt();
+
+				if (stmt == nullptr) { return statements; }
+
+				statements.push_back(stmt);
+
+				if (mStream.peek() && isTerm(mStream.peek())) {
+					parse_term();
+
+					auto remaining = parse_class_stmts();
+					statements.insert(statements.end(), remaining.begin(), remaining.end());
+				}
+
+				return statements;
+			}
+		}
+
+		Node* parse_class_stmt() {
+			Node* node = nullptr;
+
+			if ((node = parse_implicit_var()) != nullptr) return node;
+			if ((node = parse_class()) != nullptr) return node;
+			if ((node = parse_function()) != nullptr) return node;
+			if ((node = parse_aggregate()) != nullptr) return node;
+			if ((node = parse_extern_fn()) != nullptr) return node;
+			if ((node = parse_import()) != nullptr) return node;
+			if ((node = parse_extension()) != nullptr) return node;
+			if ((node = parse_property()) != nullptr) return node;
+			if ((node = parse_enum()) != nullptr) return node;
+
+			return nullptr;
+		}
 
 		FunctionExpr* parse_function();
 		FunctionExpr* parse_base_function();
