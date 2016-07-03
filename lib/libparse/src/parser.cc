@@ -1310,9 +1310,66 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<NamedExpr>(CreateNode<NamedIDExpr>(name), value);
 		}
 
-		IfExpr* parse_if();
-		std::vector<ConditionalBlock*> parse_elif_or_else();
-		ConditionalBlock* parse_else();
+		IfExpr* parse_if() {
+			if (mStream.eof() || mStream.peek()->type != IF) return nullptr;
+			mStream.get();
+
+			if (mStream.get()->type != OPEN_PAREN)
+				throw std::runtime_error("Expected (");
+
+			auto expr = parse_expression();
+			if (expr == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.get()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			auto block = parse_block();
+			if (block == nullptr) throw std::runtime_error("Expected block");
+
+			auto blocks = parse_elif_or_else();
+			blocks.insert(blocks.begin(), CreateNode<ConditionalBlock>(expr, block));
+
+			return CreateNode<IfExpr>(blocks);
+		}
+
+		std::vector<ConditionalBlock*> parse_elif_or_else() {
+			std::vector<ConditionalBlock*> blocks;
+
+			if (mStream.eof() || mStream.peek()->type != ELIF) {
+				auto elseBlock = parse_else();
+				if (elseBlock != nullptr) blocks.push_back(elseBlock);
+				return blocks;
+			}
+
+			mStream.get();
+
+			if (mStream.get()->type != OPEN_PAREN)
+				throw std::runtime_error("Expected (");
+
+			auto expr = parse_expression();
+			if (expr == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.get()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			auto block = parse_block();
+			if (block == nullptr) throw std::runtime_error("Expected block");
+
+			blocks = parse_elif_or_else();
+			blocks.insert(blocks.begin(), CreateNode<ConditionalBlock>(expr, block));
+
+			return blocks;
+		}
+
+		ConditionalBlock* parse_else() {
+			if (mStream.eof() || mStream.peek()->type != ELSE) return nullptr;
+			mStream.get();
+
+			auto block = parse_block();
+			if (block == nullptr) throw std::runtime_error("Expected block");
+
+			return CreateNode<ConditionalBlock>(nullptr, block);
+		}
 
 		Expression* parse_for_component();
 		LoopStmt* parse_for_loop();

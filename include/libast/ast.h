@@ -456,7 +456,7 @@ namespace orange { namespace ast {
 		BlockExpr* block;
 
 		ConditionalBlock() { }
-		ConditionalBlock(Expression* condition) : condition(condition) { }
+		ConditionalBlock(Expression* condition, BlockExpr* block) : condition(condition), block(block) { }
 	};
 
 	struct IfExpr : Expression {
