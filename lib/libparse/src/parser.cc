@@ -1215,7 +1215,7 @@ namespace orange { namespace parser { namespace impl {
 			auto LHS = parse_expression();
 			if (LHS == nullptr) throw std::runtime_error("Expected expression");
 
-			if (mStream.get()->type != INCLUSIVE_RANGE) {
+			if (mStream.eof() || mStream.get()->type != INCLUSIVE_RANGE) {
 				mStream.seek(pos);
 				return nullptr;
 			}
@@ -1239,7 +1239,7 @@ namespace orange { namespace parser { namespace impl {
 			auto LHS = parse_expression();
 			if (LHS == nullptr) throw std::runtime_error("Expected expression");
 
-			if (mStream.get()->type != EXCLUSIVE_RANGE) {
+			if (mStream.eof() || mStream.get()->type != EXCLUSIVE_RANGE) {
 				mStream.seek(pos);
 				return nullptr;
 			}
@@ -1275,7 +1275,7 @@ namespace orange { namespace parser { namespace impl {
 				else break;
 			}
 
-			if (mStream.get()->type != CLOSE_PAREN) throw std::runtime_error("Expected )");
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN) throw std::runtime_error("Expected )");
 
 			if (!isTuple) {
 				if (isA<NamedExpr>(exprs[0]))
@@ -1299,7 +1299,7 @@ namespace orange { namespace parser { namespace impl {
 
 			auto name = mStream.get()->value;
 
-			if (mStream.get()->type != COLON) {
+			if (mStream.eof() || mStream.get()->type != COLON) {
 				mStream.seek(pos);
 				return nullptr;
 			}
@@ -1314,13 +1314,13 @@ namespace orange { namespace parser { namespace impl {
 			if (mStream.eof() || mStream.peek()->type != IF) return nullptr;
 			mStream.get();
 
-			if (mStream.get()->type != OPEN_PAREN)
+			if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
 				throw std::runtime_error("Expected (");
 
 			auto expr = parse_expression();
 			if (expr == nullptr) throw std::runtime_error("Expected expression");
 
-			if (mStream.get()->type != CLOSE_PAREN)
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
 				throw std::runtime_error("Expected )");
 
 			auto block = parse_block();
@@ -1343,13 +1343,13 @@ namespace orange { namespace parser { namespace impl {
 
 			mStream.get();
 
-			if (mStream.get()->type != OPEN_PAREN)
+			if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
 				throw std::runtime_error("Expected (");
 
 			auto expr = parse_expression();
 			if (expr == nullptr) throw std::runtime_error("Expected expression");
 
-			if (mStream.get()->type != CLOSE_PAREN)
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
 				throw std::runtime_error("Expected )");
 
 			auto block = parse_block();
@@ -1371,12 +1371,115 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<ConditionalBlock>(nullptr, block);
 		}
 
-		Expression* parse_for_component();
-		LoopStmt* parse_for_loop();
-		LoopStmt* parse_foreach();
-		LoopStmt* parse_while();
-		LoopStmt* parse_forever();
-		LoopStmt* parse_do_while();
+		Expression* parse_for_component() {
+			Expression* expr = nullptr;
+
+			if ((expr = parse_var_decl()) != nullptr) return expr;
+			if ((expr = parse_expression()) != nullptr) return expr;
+
+			return expr;
+		}
+
+		LoopStmt* parse_for_loop() {
+			if (mStream.eof() || mStream.peek()->type != FOR) return nullptr;
+			mStream.get();
+
+			if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
+				throw std::runtime_error("Expected (");
+
+			auto initializer = parse_for_component();
+
+			if (mStream.eof() || mStream.get()->type != SEMICOLON) throw std::runtime_error("Expected ;");
+
+			auto condition = parse_for_component();
+
+			if (mStream.eof() || mStream.get()->type != SEMICOLON) throw std::runtime_error("Expected ;");
+
+			auto afterthought = parse_for_component();
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			auto body = parse_block();
+			if (body == nullptr) throw std::runtime_error("Expected block");
+
+			return CreateNode<LoopStmt>(initializer, condition, afterthought, LoopConditionCheck::BEFORE, body);
+		}
+
+		ForeachStmt* parse_foreach() {
+			if (mStream.eof() || mStream.peek()->type != FOREACH) return nullptr;
+			mStream.get();
+
+			if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
+				throw std::runtime_error("Expected (");
+
+			auto var_decl = parse_var_decl();
+			if (var_decl == nullptr) throw std::runtime_error("Expected variable declaration");
+
+			if (mStream.eof() || mStream.get()->type != IN) throw std::runtime_error("Expected in");
+
+			auto value = parse_expression();
+			if (value == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			auto body = parse_block();
+			if (body == nullptr) throw std::runtime_error("Expected block");
+
+			return CreateNode<ForeachStmt>(var_decl, value, body);
+		}
+
+		LoopStmt* parse_while() {
+			if (mStream.eof() || mStream.peek()->type != WHILE) return nullptr;
+			mStream.get();
+
+			if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
+				throw std::runtime_error("Expected (");
+
+			auto condition = parse_for_component();
+			if (condition == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			auto body = parse_block();
+			if (body == nullptr) throw std::runtime_error("Expected block");
+
+			return CreateNode<LoopStmt>(nullptr, condition, nullptr, LoopConditionCheck::BEFORE, body);
+		}
+
+		LoopStmt* parse_forever() {
+			if (mStream.eof() || mStream.peek()->type != FOREVER) return nullptr;
+			mStream.get();
+
+			auto body = parse_block();
+			if (body == nullptr) throw std::runtime_error("Expected block");
+
+			return CreateNode<LoopStmt>(nullptr, nullptr, nullptr, LoopConditionCheck::BEFORE, body);
+		}
+
+		LoopStmt* parse_do_while() {
+			if (mStream.eof() || mStream.peek()->type != DO) return nullptr;
+			mStream.get();
+
+			auto body = parse_block();
+			if (body == nullptr) throw std::runtime_error("Expected block");
+
+			if (mStream.eof() || mStream.get()->type != WHILE)
+				throw std::runtime_error("Expected while");
+
+			if (mStream.eof() || mStream.get()->type != OPEN_PAREN)
+				throw std::runtime_error("Expected (");
+
+			auto condition = parse_for_component();
+			if (condition == nullptr) throw std::runtime_error("Expected expression");
+
+			if (mStream.eof() || mStream.get()->type != CLOSE_PAREN)
+				throw std::runtime_error("Expected )");
+
+			return CreateNode<LoopStmt>(nullptr, condition, nullptr, LoopConditionCheck::AFTER, body);
+		}
 
 		SwitchExpr* parse_switch();
 		BlockExpr* parse_switch_block();
@@ -1389,17 +1492,33 @@ namespace orange { namespace parser { namespace impl {
 		Expression* parse_switch_value();
 		Expression* parse_switch_pattern();
 
-		BreakStmt* parse_break_stmt();
-		ContinueStmt* parse_continue_stmt();
-		YieldStmt* parse_yield_stmt();
+		BreakStmt* parse_break_stmt() {
+			if (mStream.eof() || mStream.peek()->type != BREAK) return nullptr;
+			mStream.get();
+			return CreateNode<BreakStmt>();
+		}
 
-		FunctionCallExpr* parse_fn_call();
+		ContinueStmt* parse_continue_stmt() {
+			if (mStream.eof() || mStream.peek()->type != CONTINUE) return nullptr;
+			mStream.get();
+			return CreateNode<ContinueStmt>();
+		}
+
+		YieldStmt* parse_yield_stmt() {
+			if (mStream.eof() || mStream.peek()->type != YIELD) return nullptr;
+			mStream.get();
+
+			auto expr = parse_expression();
+			if (expr == nullptr) throw std::runtime_error("Expected expression");
+
+			return CreateNode<YieldStmt>(expr);
+		}
+
 		std::vector<Expression*> parse_opt_arg_list();
 		std::vector<Expression*> parse_arg_list();
 		std::vector<Expression*> parse_arg_list_1();
 		Expression* parse_arg();
 
-		Generics* parse_opt_generics();
 		Generics* parse_generics();
 		std::vector<Identifier*> parse_opt_generic_values();
 		std::vector<Identifier*> parse_generic_values();
@@ -1410,13 +1529,73 @@ namespace orange { namespace parser { namespace impl {
 		Constraint* parse_constraint();
 		Constraint* parse_type_constraint();
 
-		DeleteStmt* parse_delete();
+		DeleteStmt* parse_delete() {
+			if (mStream.eof() || mStream.peek()->type != DELETE) return nullptr;
+			mStream.get();
 
-		std::vector<Flag*> parse_flags();
-		std::vector<Flag*> parse_flags_1();
-		Flag* parse_flag();
-		Flag* parse_virtual();
-		Flag* parse_privacy();
+			auto expr = parse_expression();
+			if (expr == nullptr) throw std::runtime_error("Expected expression");
+
+			return CreateNode<DeleteStmt>(expr);
+		}
+
+		std::vector<Flag*> parse_flags() {
+			std::vector<Flag*> flags;
+
+			while (mStream.eof()) {
+				Flag* flag = parse_flag();
+
+				if (flag != nullptr) {
+					flags.push_back(flag);
+					continue;
+				}
+
+				break;
+			}
+
+			return flags;
+		}
+
+		Flag* parse_flag() {
+			Flag* flag = nullptr;
+
+			if ((flag = parse_virtual()) != nullptr) return flag;
+			if ((flag = parse_privacy()) != nullptr) return flag;
+			if ((flag = parse_partial()) != nullptr) return flag;
+
+			return flag;
+		}
+
+		Flag* parse_virtual() {
+			if (mStream.eof() || mStream.peek()->type != VIRTUAL) return nullptr;
+			mStream.get();
+
+			return new VirtualFlag();
+		}
+
+		Flag* parse_privacy() {
+			if (mStream.eof()) return nullptr;
+
+			switch (mStream.peek()->type) {
+				case TokenType::PRIVATE:
+					mStream.get();
+					return new PrivacyFlag(PrivacyLevel::PRIVATE);
+				case TokenType::PROTECTED:
+					mStream.get();
+					return new PrivacyFlag(PrivacyLevel::PROTECTED);
+				case TokenType::PUBLIC:
+					mStream.get();
+					return new PrivacyFlag(PrivacyLevel::PUBLIC);
+				default: return nullptr;
+			}
+		}
+
+		Flag* parse_partial() {
+			if (mStream.eof() || mStream.peek()->type != PARTIAL) return nullptr;
+			mStream.get();
+
+			return new PartialFlag();
+		}
 
 		TryExpr* parse_try_block();
 		std::vector<CatchBlock*> parse_opt_catch_blocks();
@@ -1427,7 +1606,10 @@ namespace orange { namespace parser { namespace impl {
 		BlockExpr* parse_finally_block();
 		ThrowStmt* parse_throw_stmt();
 	public:
-		ast::LongBlockExpr* parse();
+		ast::LongBlockExpr* parse() {
+			auto stmts = parse_statements(true);
+			return CreateNode<LongBlockExpr>(stmts);
+		}
 
 		Parser(std::istream& stream) : mStream(stream) { }
 	};
