@@ -493,6 +493,7 @@ void DepthFirstWalker::WalkSetterStmt(Visitor* visitor, SetterStmt* node) {
 void DepthFirstWalker::WalkPropertyStmt(Visitor* visitor, PropertyStmt* node) {
 	if (mOrder == TraversalOrder::PREORDER) visitor->VisitPropertyStmt(node);
 
+	WalkIdentifier(visitor, node->name);
 	WalkBlockExpr(visitor, node->body);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitPropertyStmt(node);

@@ -187,10 +187,12 @@ namespace orange { namespace ast {
 	};
 
 	struct PropertyStmt : Statement {
+		Identifier* name;
+		Type* type;
 		BlockExpr* body;
 
 		PropertyStmt() { }
-		PropertyStmt(BlockExpr* body) : body(body) { }
+		PropertyStmt(Identifier* name, Type* type, BlockExpr* body) : name(name), type(type), body(body) { }
 	};
 
 	struct ThrowStmt : Statement {
