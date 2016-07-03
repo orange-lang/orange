@@ -315,6 +315,7 @@ namespace orange { namespace parser { namespace impl {
 
 			if ((stmt = parse_var_decl()) != nullptr) return stmt;
 			if ((stmt = parse_class()) != nullptr) return stmt;
+			if ((stmt = parse_partial_class()) != nullptr) return stmt;
 			if ((stmt = parse_long_block()) != nullptr) return stmt;
 			if ((stmt = parse_break_stmt()) != nullptr) return stmt;
 			if ((stmt = parse_continue_stmt()) != nullptr) return stmt;
@@ -614,6 +615,7 @@ namespace orange { namespace parser { namespace impl {
 
 			if ((node = parse_implicit_var()) != nullptr) return node;
 			if ((node = parse_class()) != nullptr) return node;
+			if ((node = parse_partial_class()) != nullptr) return node;
 			if ((node = parse_function()) != nullptr) return node;
 			if ((node = parse_aggregate()) != nullptr) return node;
 			if ((node = parse_extern_fn()) != nullptr) return node;
