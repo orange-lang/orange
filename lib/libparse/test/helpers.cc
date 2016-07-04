@@ -19,7 +19,8 @@ namespace orange { namespace ast {
 	// Print an AST. Break by newline, printing every line prefixed with a tab so it shows up nicely in
 	// gtest.
 	std::ostream& operator<<(std::ostream& os, const LongBlockExpr& ast) {
-		auto stream = std::stringstream(PrettyPrint((LongBlockExpr* )&ast));
+		std::stringstream stream;
+		stream << PrettyPrint((LongBlockExpr*)&ast);
 
 		bool printedNewline = false;
 
