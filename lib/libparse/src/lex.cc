@@ -381,6 +381,8 @@ Token* Lexer::readToken() {
 		next_char = peekChar(mStream);
 	}
 
+	if (eof()) return &EOFToken;
+
 	Token* tok = nullptr;
 
 	if ((tok = getComment(mStream))) return tok;
@@ -389,6 +391,8 @@ Token* Lexer::readToken() {
 	if ((tok = getCharacter(mStream))) return tok;
 	if ((tok = getOperator(mStream))) return tok;
 	if ((tok = getIdentifier(mStream))) return tok;
+
+	if (eof()) return &EOFToken;
 
 	std::stringstream ss;
 	ss << "Invalid token " << peekChar(mStream);

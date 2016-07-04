@@ -44,6 +44,24 @@ TEST(Lexer, LexesComments) {
 	EXPECT_TRUE(l.eof());
 }
 
+TEST(Lexer, LexesNothingButTerms) {
+	using namespace orange::parser;
+
+	std::stringstream ss(R"(
+		;;;
+
+			;
+		;
+		;
+	)");
+
+	Lexer l(ss);
+
+	EXPECT_NO_THROW({
+		while (l.readToken()->type != TOKEN_EOF);
+	});
+}
+
 TEST(Lexer, LexesBlockComment) {
 	using namespace orange::parser;
 
