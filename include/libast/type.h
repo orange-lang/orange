@@ -85,4 +85,29 @@ namespace orange { namespace ast {
 		FunctionType(std::vector<Type*> params, Type* returnType) :
 			params(params), returnType(returnType) { }
 	};
+
+	// Define basic builtin types
+#define DEFINE_BUILTIN(name, val) \
+	struct name : BuiltinType { name() : BuiltinType(val) { } }
+
+	DEFINE_BUILTIN(IntType, BuiltinTypeKind::INT);
+	DEFINE_BUILTIN(Int8Type, BuiltinTypeKind::INT8);
+	DEFINE_BUILTIN(Int16Type, BuiltinTypeKind::INT16);
+	DEFINE_BUILTIN(Int32Type, BuiltinTypeKind::INT32);
+	DEFINE_BUILTIN(Int64Type, BuiltinTypeKind::INT64);
+
+	DEFINE_BUILTIN(UIntType, BuiltinTypeKind::UINT);
+	DEFINE_BUILTIN(UInt8Type, BuiltinTypeKind::UINT8);
+	DEFINE_BUILTIN(UInt16Type, BuiltinTypeKind::UINT16);
+	DEFINE_BUILTIN(UInt32Type, BuiltinTypeKind::UINT32);
+	DEFINE_BUILTIN(UInt64Type, BuiltinTypeKind::UINT64);
+
+	DEFINE_BUILTIN(FloatType, BuiltinTypeKind::FLOAT);
+	DEFINE_BUILTIN(DoubleType, BuiltinTypeKind::DOUBLE);
+
+	DEFINE_BUILTIN(CharType, BuiltinTypeKind::DOUBLE);
+
+	struct StringType : PointerType {
+		StringType() : PointerType(new CharType) { }
+	};
 }}
