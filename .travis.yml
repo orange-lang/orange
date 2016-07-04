@@ -44,6 +44,7 @@ before_install:
   - git submodule update
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
+  - export CMAKE_LLVM_PATH=-DLLVM_DIR=`llvm-config-3.8 --prefix`/share/llvm/cmake
 
   # Snag a newer version of CMake on linux
   - |
@@ -63,6 +64,6 @@ script:
   - cd ${TRAVIS_BUILD_DIR}
   - mkdir build
   - cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=Debug -DUSE_SYSTEM_LLVM=True
+  - cmake .. ${CMAKE_LLVM_PATH} -DCMAKE_BUILD_TYPE=Debug -DUSE_SYSTEM_LLVM=True
   - make all
   - ctest -V
