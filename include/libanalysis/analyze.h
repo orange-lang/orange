@@ -26,6 +26,8 @@ namespace orange { namespace analysis {
 		/// Node ID this context is for. -1 if global.
 		int mID;
 
+		bool mDefault = true;
+
 		/// The types that uniquely define this context
 		std::vector<orange::ast::Type*> mParameters;
 
@@ -41,6 +43,9 @@ namespace orange { namespace analysis {
 
 		/// Gets whether this context is global.
 		bool IsGlobalContext() const;
+
+		/// Gets whether or not this context is the default context for this node.
+		bool IsDefault() const;
 
 		/// Gets all children contexts.
 		std::vector<NodeTypeContext*> GetChildrenContexts() const;
@@ -70,12 +75,7 @@ namespace orange { namespace analysis {
 		/// Gets the global context.
 		NodeTypeContext* GetGlobalContext() const;
 
-		/// Gets all contexts tied a specific node. Searches contexts for any children where this
-		/// node also has a context.
-		std::vector<NodeTypeContext*> GetContexts(orange::ast::Node* node) const;
-
-		/// Find the default context for a node.
-		NodeTypeContext* GetDefaultContext() const;
+		NodeTypeContext* GetDefaultContext(orange::ast::Node* node) const;
 
 		/// Gets the type of a node. A context may be passed in. If no context is specified, the default
 		/// context is used.
