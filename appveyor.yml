@@ -27,7 +27,7 @@ install:
 build_script:
   - set PATH=C:\tools\mingw64\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Python27;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\CMake\bin
   - cmake --version
-  - cmake .. -G "MinGW Makefiles" -DCMAKE_CXX_FLAGS=-m64 -DCMAKE_BUILD_TYPE=Debug
+  - cmake .. -G "MinGW Makefiles" -DCMAKE_CXX_FLAGS=-m64 -DCMAKE_BUILD_TYPE=Debug -DUSE_SYSTEM_LLVM=True
   - mingw32-make
 
 test_script:

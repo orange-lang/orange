@@ -24,6 +24,12 @@ include(clang_complete)
 
 include_directories(${OR_INCLUDES})
 
+# Build LLVM from source
+if (NOT DEFINED USE_SYSTEM_LLVM)
+    SET(LLVM_INCLUDE_TESTS FALSE)
+    add_subdirectory(etc/llvm)
+endif()
+
 add_subdirectory(etc/gtest)
 add_subdirectory(lib/libast)
 add_subdirectory(lib/libparse)
