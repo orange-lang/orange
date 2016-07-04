@@ -36,7 +36,7 @@ matrix:
         - brew upgrade cmake
         - brew tap homebrew/versions 
         - brew install llvm38
-        - export CMAKE_LLVM_PATH=-DLLVM_DIR=/usr/local/Cellar/llvm/3.8.0/share/llvm/cmake
+        - export CMAKE_LLVM_PATH=-DLLVM_DIR=/usr/local/Cellar/llvm38/3.8.0/lib/llvm-3.8/share/llvm/cmake
 git:
   submodules: false
 before_install:
