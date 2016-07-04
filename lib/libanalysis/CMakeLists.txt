@@ -8,7 +8,7 @@
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_library(analysis src/analyze.cc ../../include/libanalysis/analyze.h)
+add_library(analysis src/analyze.cc ../../include/libanalysis/analyze.h ../../include/libanalysis/error.h src/validate.cc)
 
 target_include_directories(analysis PRIVATE include)
 
@@ -21,6 +21,6 @@ target_link_libraries(analysis ast)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_executable(testanalysis test/test_analysis.cc)
 target_include_directories(testanalysis PRIVATE include)
-target_link_libraries(testanalysis gtest gtest_main parse ast)
+target_link_libraries(testanalysis gtest gtest_main parse ast analysis)
 target_compile_features(testanalysis PRIVATE cxx_range_for)
 add_test(testanalysis testanalysis)

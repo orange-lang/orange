@@ -14,6 +14,8 @@
 #include <libast/ast.h>
 #include <libast/type.h>
 
+#include "error.h"
+
 namespace orange { namespace analysis {
 	/// The type of some node is dependent on a specific context. There always exists a global context,
 	/// but a context is created for each function and class. The default context for a function and class
@@ -83,8 +85,11 @@ namespace orange { namespace analysis {
 	class TypeResolution {
 	private:
 		std::vector<orange::ast::LongBlockExpr*> mASTs;
+		AnalysisMessageLog mLog;
 	public:
 		TypeTable* GenerateTypeTable();
+
+		const AnalysisMessageLog GetLog() const;
 
 		TypeResolution(std::vector<orange::ast::LongBlockExpr*> ASTs);
 	};
