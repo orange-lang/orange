@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.4)
 project(orange)
 enable_testing()
 
-
+SET(LLVM_INCLUDE_TESTS OFF CACHE BOOL "Generate build targets for the LLVM unit tests." FORCE)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
 set(OR_INCLUDES "${CMAKE_SOURCE_DIR}/include")
 
@@ -26,7 +26,6 @@ include_directories(${OR_INCLUDES})
 
 # Build LLVM from source
 if (NOT DEFINED USE_SYSTEM_LLVM)
-    SET(LLVM_INCLUDE_TESTS FALSE)
     add_subdirectory(etc/llvm)
 endif()
 
@@ -34,6 +33,7 @@ add_subdirectory(etc/gtest)
 add_subdirectory(lib/libast)
 add_subdirectory(lib/libparse)
 add_subdirectory(lib/libanalysis)
+add_subdirectory(lib/libtranslate)
 
 if (${BUILD_CLANG_COMPLETE})
 	clang_complete(${CMAKE_SOURCE_DIR}/.clang_complete)
