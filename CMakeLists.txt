@@ -27,6 +27,7 @@ include_directories(${OR_INCLUDES})
 add_subdirectory(etc/gtest)
 add_subdirectory(lib/libast)
 add_subdirectory(lib/libparse)
+add_subdirectory(lib/libanalysis)
 
 if (${BUILD_CLANG_COMPLETE})
 	clang_complete(${CMAKE_SOURCE_DIR}/.clang_complete)
