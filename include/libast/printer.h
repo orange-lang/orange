@@ -22,9 +22,9 @@ namespace orange { namespace ast {
 
 		void handleIdententation();
 		void printID(Node* node);
-
-		void TypeString(Type* ty);
 	public:
+		void PrintType(Type* ty);
+
 		virtual void VisitCommentStmt(CommentStmt* node) override;
 		virtual void VisitLoopStmt(LoopStmt* node) override;
 		virtual void VisitForeachStmt(ForeachStmt* node) override;

@@ -58,12 +58,12 @@ namespace orange { namespace ast {
 
 using namespace orange::ast;
 
-void ASTPrinter::TypeString(Type* ty) {
+void ASTPrinter::PrintType(Type* ty) {
 	if (isA<AccessType>(ty)) {
 		auto at = asA<AccessType>(ty);
-		TypeString(at->LHS);
+		PrintType(at->LHS);
 		mOutput << ".";
-		TypeString(at->RHS);
+		PrintType(at->RHS);
 	} else if (isA<IdentifierType>(ty)) {
 		mOutput << "(" << std::endl;
 		mIndentation++;
@@ -91,7 +91,7 @@ void ASTPrinter::TypeString(Type* ty) {
 			default: throw std::runtime_error("Unknown builtin type");
 		}
 	} else if (isA<ArrayType>(ty)) {
-		TypeString(asA<ArrayType>(ty)->base);
+		PrintType(asA<ArrayType>(ty)->base);
 		mOutput << "[" << std::endl;
 		mIndentation++;
 		mWalker.WalkExpr(this, asA<ArrayType>(ty)->size);
@@ -99,16 +99,16 @@ void ASTPrinter::TypeString(Type* ty) {
 		handleIdententation();
 		mOutput << std::endl << "]";
 	} else if (isA<PointerType>(ty)) {
-		TypeString(asA<PointerType>(ty)->base);
+		PrintType(asA<PointerType>(ty)->base);
 		mOutput << "*";
 	} else if (isA<ReferenceType>(ty)) {
-		TypeString(asA<ReferenceType>(ty)->base);
+		PrintType(asA<ReferenceType>(ty)->base);
 		mOutput << "&";
 	} else if (isA<TupleType>(ty)) {
 		mOutput << "(";
 
 		for (auto innerTy : asA<TupleType>(ty)->types) {
-			TypeString(innerTy);
+			PrintType(innerTy);
 			mOutput << ",";
 		}
 
@@ -118,7 +118,7 @@ void ASTPrinter::TypeString(Type* ty) {
 
 		auto fnTy = asA<FunctionType>(ty);
 		for (unsigned long i = 0; i < fnTy->params.size(); i++) {
-			TypeString(fnTy->params[i]);
+			PrintType(fnTy->params[i]);
 			if (i + 1 < fnTy->params.size()) mOutput << ",";
 		}
 
@@ -126,7 +126,7 @@ void ASTPrinter::TypeString(Type* ty) {
 
 		if (fnTy->returnType != nullptr) {
 			mOutput << " -> ";
-			TypeString(fnTy->returnType);
+			PrintType(fnTy->returnType);
 		}
 	}
 }
@@ -263,7 +263,8 @@ void ASTPrinter::VisitExternFuncStmt(ExternFuncStmt* node) {
 	printID(node);
 
 	mOutput << "ExternFuncStmt(";
-	mOutput << "retType = "; TypeString(node->retType);
+	mOutput << "retType = ";
+	PrintType(node->retType);
     mOutput << "):" << std::endl;
 
 	mIndentation++;
@@ -436,7 +437,8 @@ void ASTPrinter::VisitPropertyStmt(PropertyStmt* node) {
 
 	mOutput << "PropertyStmt(";
 	if (node->type != nullptr) {
-		mOutput << "type = "; TypeString(node->type);
+		mOutput << "type = ";
+		PrintType(node->type);
 	}
 	mOutput << "):" << std::endl;
 
@@ -491,7 +493,7 @@ void ASTPrinter::VisitVarDeclExpr(VarDeclExpr* node) {
 	if (node->types.size() > 0) {
 		mOutput << "types: [";
 		for (unsigned long i = 0; i < node->types.size(); i++) {
-			TypeString(node->types[i]);
+			PrintType(node->types[i]);
 
 			if (i + 1 < node->types.size()) mOutput << ", ";
 		}
@@ -517,7 +519,8 @@ void ASTPrinter::VisitIntValue(IntValue* node) {
 
 	mOutput << "IntValue(";
 	mOutput << "value = " << node->value;
-	mOutput << ", type = "; TypeString(node->type);
+	mOutput << ", type = ";
+	PrintType(node->type);
 	mOutput << ")";
 }
 
@@ -527,7 +530,8 @@ void ASTPrinter::VisitUIntValue(UIntValue* node) {
 
 	mOutput << "UIntValue(";
 	mOutput << "value = " << node->value;
-	mOutput << ", type = "; TypeString(node->type);
+	mOutput << ", type = ";
+	PrintType(node->type);
 	mOutput << ")";
 }
 
@@ -902,7 +906,8 @@ void ASTPrinter::VisitDataConstraint(DataConstraint* node) {
 	printID(node);
 
 	mOutput << "DataConstraint(";
-	mOutput << "dataType: "; TypeString(node->dataType);
+	mOutput << "dataType: ";
+	PrintType(node->dataType);
 	mOutput << "):\n";
 
 	mIndentation++;
@@ -917,7 +922,8 @@ void ASTPrinter::VisitTypeConstraint(TypeConstraint* node) {
 	printID(node);
 
 	mOutput << "TypeConstraint(";
-	mOutput << "dataType: "; TypeString(node->type);
+	mOutput << "dataType: ";
+	PrintType(node->type);
 	mOutput << "):\n";
 
 	mIndentation++;
@@ -956,7 +962,8 @@ void ASTPrinter::VisitFunctionExpr(FunctionExpr* node) {
 
 	mOutput << "FunctionExpr(";
 	if (node->retType != nullptr) {
-		mOutput << "retType: "; TypeString(node->retType);
+		mOutput << "retType: ";
+		PrintType(node->retType);
 	}
 	mOutput << "):\n";
 
@@ -1022,7 +1029,8 @@ void ASTPrinter::VisitCastExpr(CastExpr* node) {
 	printID(node);
 
 	mOutput << "CastExpr(";
-	mOutput << "targetType: "; TypeString(node->targetType);
+	mOutput << "targetType: ";
+	PrintType(node->targetType);
 	mOutput << "):\n";
 
 	mIndentation++;
