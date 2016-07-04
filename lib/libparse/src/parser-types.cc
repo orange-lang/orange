@@ -72,6 +72,10 @@ Type* impl::Parser::parse_complex_type() {
 				mStream.get();
 				LHS = new PointerType(LHS);
 				break;
+			case TokenType::AND: // Hack for double-references
+				mStream.get();
+				LHS = new ReferenceType(new ReferenceType(LHS));
+				break;
 			case TokenType::BIT_AND:
 				mStream.get();
 				LHS = new ReferenceType(LHS);
@@ -133,7 +137,7 @@ Type* impl::Parser::parse_tuple_or_func_type() {
 		}
 	}
 
-	if (mStream.peek()->type != CLOSE_PAREN)
+	if (mStream.get()->type != CLOSE_PAREN)
 		throw std::runtime_error("Expected )");
 
 	if (trailingComma == false && mStream.peek()->type == ARROW) {
@@ -143,6 +147,8 @@ Type* impl::Parser::parse_tuple_or_func_type() {
 		if (returnTy == nullptr) throw std::runtime_error("Expected return type");
 
 		return new FunctionType(types, returnTy);
+	} else if (trailingComma == false && types.size() == 1) {
+		return types[0];
 	} else {
 		return new TupleType(types);
 	}
@@ -150,7 +156,7 @@ Type* impl::Parser::parse_tuple_or_func_type() {
 
 Type* impl::Parser::parse_base_id_type() {
 	if (mStream.peek()->type == IDENTIFIER) {
-		return new IdentifierType(CreateNode<NamedIDExpr>(mStream.peek()->value));
+		return new IdentifierType(CreateNode<NamedIDExpr>(mStream.get()->value));
 	}
 
 	Type* ty = nullptr;
