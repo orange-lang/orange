@@ -181,16 +181,24 @@ EnumStmt* impl::Parser::parse_enum_base() {
 std::vector<EnumValue*> impl::Parser::parse_enum_values() {
 	std::vector<EnumValue*> values;
 
+	while (isTerm(mStream.peek())) parse_term();
+
 	auto value = parse_enum_value();
 	if (value == nullptr) return values;
 	values.push_back(value);
 
+	while (isTerm(mStream.peek())) parse_term();
+
 	while (mStream.peek()->type == COMMA) {
 		mStream.get();
+
+		while (isTerm(mStream.peek())) parse_term();
 
 		auto value = parse_enum_value();
 		if (value == nullptr) throw std::runtime_error("Expected enumeration value");
 		values.push_back(value);
+
+		while (isTerm(mStream.peek())) parse_term();
 	}
 
 	return values;
@@ -212,7 +220,7 @@ std::vector<VarDeclExpr*> impl::Parser::parse_opt_enum_params() {
 
 	params = parse_param_list();
 
-	if (mStream.get()->type == CLOSE_PAREN) throw std::runtime_error("Expected )");
+	if (mStream.get()->type != CLOSE_PAREN) throw std::runtime_error("Expected )");
 	return params;
 }
 
@@ -248,6 +256,7 @@ ClassStmt* impl::Parser::parse_base_class() {
 std::vector<Identifier*> impl::Parser::parse_opt_supers() {
 	std::vector<Identifier*> ids;
 	if (mStream.peek()->type != COLON) return ids;
+	mStream.get();
 
 	auto id = parse_full_identifier();
 	if (id == nullptr) throw std::runtime_error("Expected identifier");
@@ -286,12 +295,12 @@ ClassStmt* impl::Parser::parse_partial_class() {
 }
 
 LongBlockExpr* impl::Parser::parse_class_body() {
-	if (mStream.peek()->type != OPEN_CURLY)
+	if (mStream.get()->type != OPEN_CURLY)
 		throw std::runtime_error("Expected {");
 
 	auto stmts = parse_class_stmts();
 
-	if (mStream.peek()->type != CLOSE_CURLY)
+	if (mStream.get()->type != CLOSE_CURLY)
 		throw std::runtime_error("Expected }");
 
 	return CreateNode<LongBlockExpr>(stmts);
@@ -300,34 +309,23 @@ LongBlockExpr* impl::Parser::parse_class_body() {
 std::vector<Node*> impl::Parser::parse_class_stmts() {
 	std::vector<Node *> statements;
 
-	if (mStream.peek() && isTerm(mStream.peek())) {
-		mStream.get();
-		return parse_class_stmts();
-	}
+	while (!mStream.eof()) {
+		while (isTerm(mStream.peek())) parse_term();
 
-	if (mStream.peek() && mStream.peek()->type == COMMENT) {
-		statements.push_back(CreateNode<CommentStmt>(mStream.get()->value));
+		if (mStream.peek()->type == COMMENT) {
+			statements.push_back(CreateNode<CommentStmt>(mStream.get()->value));
+			continue;
+		}
 
-		auto remaining = parse_class_stmts();
-		statements.insert(statements.end(), remaining.begin(), remaining.end());
-
-		return statements;
-	} else {
 		auto stmt = parse_class_stmt();
-
-		if (stmt == nullptr) { return statements; }
+		if (stmt == nullptr) break;
 
 		statements.push_back(stmt);
 
-		if (mStream.peek() && isTerm(mStream.peek())) {
-			parse_term();
-
-			auto remaining = parse_class_stmts();
-			statements.insert(statements.end(), remaining.begin(), remaining.end());
-		}
-
-		return statements;
+		if (!isTerm(mStream.peek())) break;
 	}
+
+	return statements;
 }
 
 Node* impl::Parser::parse_class_stmt() {
@@ -368,12 +366,12 @@ FunctionExpr* impl::Parser::parse_base_function() {
 	auto id = parse_identifier();
 	auto generics = parse_generics();
 
-	if (mStream.peek()->type != OPEN_PAREN)
+	if (mStream.get()->type != OPEN_PAREN)
 		throw std::runtime_error("Expected (");
 
 	auto params = parse_param_list();
 
-	if (mStream.peek()->type != CLOSE_PAREN)
+	if (mStream.get()->type != CLOSE_PAREN)
 		throw std::runtime_error("Expected )");
 
 	auto retType = parse_opt_func_type();

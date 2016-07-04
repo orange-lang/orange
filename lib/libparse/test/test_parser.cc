@@ -662,17 +662,351 @@ TEST(Parser, ParsesArrayOfFunctionType) {
 	delete ast;
 }
 
-// TODO: Test long identifier (via namespace)
-// TODO: Test flags
-// TODO: Test enum
-// TODO: Test class (and all of its acceptable statements)
-// TODO: Test partial class
+TEST(Parser, TestNamespace) {
+	std::stringstream ss(R"(
+		namespace Foo
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new NamespaceStmt(
+			new NamedIDExpr("Foo"),
+			nullptr
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, TestNamespaceLong) {
+	std::stringstream ss(R"(
+		namespace Foo.Bar.Baz
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new NamespaceStmt(
+			new AccessIDExpr(
+				new AccessIDExpr(
+					new NamedIDExpr("Foo"),
+					new NamedIDExpr("Bar")
+				),
+				new NamedIDExpr("Baz")
+			),
+			nullptr
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, TestNamespaceBlock) {
+	std::stringstream ss(R"(
+		namespace Foo {
+
+		}
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new NamespaceStmt(
+			new NamedIDExpr("Foo"),
+			new LongBlockExpr()
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, TestNamespaceLongBlock) {
+	std::stringstream ss(R"(
+		namespace Foo.Bar.Baz {
+
+        }
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new NamespaceStmt(
+			new AccessIDExpr(
+				new AccessIDExpr(
+					new NamedIDExpr("Foo"),
+					new NamedIDExpr("Bar")
+				),
+				new NamedIDExpr("Baz")
+			),
+			new LongBlockExpr()
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, TestFlags) {
+	std::stringstream ss(R"(
+		virtual public private protected partial def foo() { }
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new FunctionExpr(
+			new NamedIDExpr("foo"),
+			nullptr,
+			std::vector<VarDeclExpr*>(),
+			nullptr,
+			new LongBlockExpr()
+		)
+	}));
+
+	FunctionExpr* fnExpr = (FunctionExpr*)expected.statements[0];
+	fnExpr->flags.push_back(new VirtualFlag());
+	fnExpr->flags.push_back(new PrivacyFlag(PrivacyLevel::PUBLIC));
+	fnExpr->flags.push_back(new PrivacyFlag(PrivacyLevel::PRIVATE));
+	fnExpr->flags.push_back(new PrivacyFlag(PrivacyLevel::PROTECTED));
+	fnExpr->flags.push_back(new PartialFlag());
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, TestEmptyEnum) {
+	std::stringstream ss(R"(
+		enum Status { }
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new EnumStmt(
+			new NamedIDExpr("Status"),
+			std::vector<EnumValue*>()
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, TestEnumBasicValues) {
+	std::stringstream ss(R"(
+		enum Status {
+			PENDING,
+			RUNNING,
+			COMPLETED
+        }
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new EnumStmt(
+			new NamedIDExpr("Status"),
+			std::vector<EnumValue*>({
+				new EnumValue(
+					new NamedIDExpr("PENDING"), std::vector<VarDeclExpr*>()
+				),
+				new EnumValue(
+					new NamedIDExpr("RUNNING"), std::vector<VarDeclExpr*>()
+				),
+				new EnumValue(
+					new NamedIDExpr("COMPLETED"), std::vector<VarDeclExpr*>()
+				)
+			})
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, TestEnumWithData) {
+	std::stringstream ss(R"(
+		enum Status {
+			PENDING,
+			RUNNING(time:int),
+			COMPLETED(time,completed:double)
+        }
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new EnumStmt(
+			new NamedIDExpr("Status"),
+			std::vector<EnumValue*>({
+				new EnumValue(
+					new NamedIDExpr("PENDING"), std::vector<VarDeclExpr*>()
+				),
+				new EnumValue(
+					new NamedIDExpr("RUNNING"),
+					std::vector<VarDeclExpr*>({
+						new VarDeclExpr(
+							std::vector<Identifier*>({new NamedIDExpr("time")}),
+							std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}),
+							nullptr
+						)
+					})
+				),
+				new EnumValue(
+					new NamedIDExpr("COMPLETED"),
+					std::vector<VarDeclExpr*>({
+						new VarDeclExpr(
+							std::vector<Identifier*>({new NamedIDExpr("time")}),
+							std::vector<Type*>(),
+							nullptr
+						),
+						new VarDeclExpr(
+							std::vector<Identifier*>({new NamedIDExpr("completed")}),
+							std::vector<Type*>({new BuiltinType(BuiltinTypeKind::DOUBLE)}),
+							nullptr
+						)
+					})
+				)
+			})
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, ParsesClass) {
+	std::stringstream ss(R"(
+		class MyClass : Base1, Foo.Bar, Base2 {
+			a
+			a: int
+
+			class NestedClass { }
+			def foo() { }
+			aggregate { }
+			extern def foo() -> int
+			import Foo
+			extend Foo { }
+
+			property Foo: a
+			property Foo -> int {
+				get: a
+				set: a
+			}
+
+			enum NestedEnum { }
+		}
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new ClassStmt(
+			new NamedIDExpr("MyClass"),
+			std::vector<Identifier*>({
+				new NamedIDExpr("Base1"),
+			    new AccessIDExpr(
+				    new NamedIDExpr("Foo"),
+				    new NamedIDExpr("Bar")
+			    ),
+				new NamedIDExpr("Base2")
+			}),
+			new LongBlockExpr(std::vector<Node*>({
+				new VarDeclExpr(
+					std::vector<Identifier*>({new NamedIDExpr("a")}),
+					std::vector<Type*>(), nullptr
+				),
+				new VarDeclExpr(
+					std::vector<Identifier*>({new NamedIDExpr("a")}),
+					std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}),
+					nullptr
+				),
+			    new ClassStmt(
+				    new NamedIDExpr("NestedClass"),
+				    std::vector<Identifier*>(),
+				    new LongBlockExpr()
+			    ),
+			    new FunctionExpr(
+				    new NamedIDExpr("foo"),
+				    nullptr,
+				    std::vector<VarDeclExpr*>(),
+				    nullptr,
+				    new LongBlockExpr()
+			    ),
+			    new AggregateStmt(nullptr, new LongBlockExpr),
+			    new ExternFuncStmt(
+				    new NamedIDExpr("foo"),
+				    std::vector<VarDeclExpr*>(),
+				    new BuiltinType(BuiltinTypeKind::INT)
+			    ),
+			    new ImportStmt(new NamedIDExpr("Foo")),
+			    new ExtendStmt(
+				    new NamedIDExpr("Foo"),
+				    std::vector<Identifier*>(),
+				    new LongBlockExpr()
+			    ),
+				new PropertyStmt(
+					new NamedIDExpr("Foo"),
+					nullptr,
+					new ShortBlockExpr(new NamedIDExpr("a"))
+				),
+				new PropertyStmt(
+					new NamedIDExpr("Foo"),
+					new BuiltinType(BuiltinTypeKind::INT),
+					new LongBlockExpr(std::vector<Node*>({
+						new GetterStmt(new ShortBlockExpr(new NamedIDExpr("a"))),
+						new SetterStmt(new ShortBlockExpr(new NamedIDExpr("a")))
+					}))
+				),
+			    new EnumStmt(
+				    new NamedIDExpr("NestedEnum"),
+				    std::vector<EnumValue*>()
+			    )
+			}))
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
 // TODO: Test functions
 // TODO: Test extern functions
 // TODO: Test aggregate
 // TODO: Test interface
-// TODO: Test namespaces
 // TODO: Test imports
+// TODO: Test extensions
 // TODO: Test single constant value
 // TODO: Test single identifier
 // TODO: Test unary (INCREMENT, DECREMENT, DEREF, REF)
@@ -693,6 +1027,3 @@ TEST(Parser, ParsesArrayOfFunctionType) {
 // TODO: Test generics
 // TODO: Test delete
 // TODO: Test try/catch/finally
-
-
-

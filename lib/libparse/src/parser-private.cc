@@ -159,6 +159,7 @@ LongBlockExpr* impl::Parser::parse_long_block() {
 
 ShortBlockExpr* impl::Parser::parse_short_block() {
 	if (checkNext(COLON) == false) return nullptr;
+	mStream.get();
 
 	auto stmt = parse_statement();
 	if (stmt == nullptr) throw std::runtime_error("Expected statement");

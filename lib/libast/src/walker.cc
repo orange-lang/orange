@@ -45,6 +45,7 @@ void Walker::WalkExpr(Visitor* visitor, Expression* node) {
 	else if (isA<CastExpr>(node))         WalkCastExpr(visitor, asA<CastExpr>(node));
 	else if (isA<FunctionCallExpr>(node)) WalkFunctionCallExpr(visitor, asA<FunctionCallExpr>(node));
 	else if (isA<NewExpr>(node))          WalkNewExpr(visitor, asA<NewExpr>(node));
+	else if (isA<Identifier>(node))       WalkIdentifier(visitor, asA<Identifier>(node));
 	else                                  throw std::runtime_error("Unknown node to walk.");
 }
 

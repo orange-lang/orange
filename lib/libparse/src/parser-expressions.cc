@@ -159,6 +159,10 @@ Expression* impl::Parser::parse_value() {
 	if ((expr = parse_control()) != nullptr) return expr;
 	if ((expr = parse_new()) != nullptr) return expr;
 
+	if (mStream.peek()->type == IDENTIFIER) {
+		return CreateNode<NamedIDExpr>(mStream.get()->value);
+	}
+
 	return nullptr;
 }
 
@@ -783,7 +787,7 @@ DeleteStmt* impl::Parser::parse_delete() {
 std::vector<Flag*> impl::Parser::parse_flags() {
 	std::vector<Flag*> flags;
 
-	while (mStream.eof()) {
+	while (!mStream.eof()) {
 		Flag* flag = parse_flag();
 
 		if (flag != nullptr) {

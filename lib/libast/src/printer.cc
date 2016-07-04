@@ -607,6 +607,7 @@ void ASTPrinter::VisitAccessIDExpr(AccessIDExpr* node) {
 
 	mIndentation++;
 	mWalker.WalkIdentifier(this, node->LHS);
+	mOutput << std::endl;
 	mWalker.WalkIdentifier(this, node->RHS);
 	mIndentation--;
 }
