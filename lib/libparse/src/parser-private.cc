@@ -161,7 +161,7 @@ ShortBlockExpr* impl::Parser::parse_short_block() {
 	if (checkNext(COLON) == false) return nullptr;
 	mStream.get();
 
-	auto stmt = parse_statement();
+	auto stmt = parse_statement(true);
 	if (stmt == nullptr) throw std::runtime_error("Expected statement");
 
 	return CreateNode<ShortBlockExpr>(stmt);

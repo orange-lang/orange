@@ -66,7 +66,7 @@ namespace orange { namespace parser { namespace impl {
 		 * Statements
 		 */
 
-		Node* parse_statement();
+		Node* parse_statement(bool getExprStmt = false);
 
 		VarDeclExpr* parse_var_decl();
 

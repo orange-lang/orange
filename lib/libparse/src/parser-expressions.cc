@@ -46,18 +46,6 @@ Expression* impl::Parser::parse_expression_1(Expression* LHS, int min_precedence
 		auto op = next->type;
 		mStream.get();
 
-		// Bail early if we found a question mark to properly handle ternary operators
-		if (op == QUESTION) {
-			auto trueValue = parse_expression();
-
-			if (mStream.get()->type != COLON)
-				throw std::runtime_error("Expected :");
-
-			auto falseValue = parse_expression();
-
-			LHS = CreateNode<TernaryExpr>(LHS, trueValue, falseValue);
-		}
-
 		auto RHS = parse_unary();
 		if (RHS == nullptr) throw std::runtime_error("Expected expression");
 
@@ -72,6 +60,18 @@ Expression* impl::Parser::parse_expression_1(Expression* LHS, int min_precedence
 		}
 
 		LHS = CreateNode<BinOpExpr>(LHS, GetBinOp(op), RHS);
+	}
+
+	if (next->type == QUESTION) {
+		mStream.get();
+		auto trueValue = parse_expression();
+
+		if (mStream.get()->type != COLON)
+			throw std::runtime_error("Expected :");
+
+		auto falseValue = parse_expression();
+
+		LHS = CreateNode<TernaryExpr>(LHS, trueValue, falseValue);
 	}
 
 	return LHS;
@@ -163,6 +163,11 @@ Expression* impl::Parser::parse_value() {
 		return CreateNode<NamedIDExpr>(mStream.get()->value);
 	}
 
+	if (mStream.peek()->type == TEMP) {
+		mStream.get();
+		return CreateNode<TempIDExpr>();
+	}
+
 	return nullptr;
 }
 
@@ -195,6 +200,7 @@ Value* impl::Parser::parse_constant_val() {
 
 Expression* impl::Parser::parse_this() {
 	if (mStream.peek()->type != THIS) return nullptr;
+	mStream.get();
 	return CreateNode<ThisID>();
 }
 
@@ -238,8 +244,8 @@ ArrayExpr* impl::Parser::parse_array_expression() {
 		elements.push_back(element);
 	}
 
-	if (mStream.get()->type != CLOSE_BRACKET) {
-		if (mStream.get()->type == EXCLUSIVE_RANGE || mStream.get()->type == INCLUSIVE_RANGE) {
+	if (mStream.peek()->type != CLOSE_BRACKET) {
+		if (mStream.peek()->type == EXCLUSIVE_RANGE || mStream.peek()->type == INCLUSIVE_RANGE) {
 			mStream.seek(pos);
 			return nullptr;
 		}
@@ -247,6 +253,7 @@ ArrayExpr* impl::Parser::parse_array_expression() {
 		throw std::runtime_error("Expected ]");
 	}
 
+	mStream.get();
 	return CreateNode<ArrayExpr>(elements);
 }
 
@@ -309,6 +316,7 @@ Expression* impl::Parser::parse_tuple_expr() {
 
 	auto expr = parse_tuple_value();
 	if (expr == nullptr) throw std::runtime_error("Expected expression");
+	exprs.push_back(expr);
 
 	while (mStream.peek()->type == COMMA) {
 		mStream.get();
@@ -367,6 +375,8 @@ IfExpr* impl::Parser::parse_if() {
 	if (mStream.get()->type != CLOSE_PAREN)
 		throw std::runtime_error("Expected )");
 
+	while (isTerm(mStream.peek())) parse_term();
+
 	auto block = parse_block();
 	if (block == nullptr) throw std::runtime_error("Expected block");
 
@@ -378,10 +388,14 @@ IfExpr* impl::Parser::parse_if() {
 
 std::vector<ConditionalBlock*> impl::Parser::parse_elif_or_else() {
 	std::vector<ConditionalBlock*> blocks;
+	auto pos = mStream.tell();
+
+	while (isTerm(mStream.peek())) parse_term();
 
 	if (mStream.peek()->type != ELIF) {
 		auto elseBlock = parse_else();
 		if (elseBlock != nullptr) blocks.push_back(elseBlock);
+		else mStream.seek(pos);
 		return blocks;
 	}
 
@@ -396,6 +410,8 @@ std::vector<ConditionalBlock*> impl::Parser::parse_elif_or_else() {
 	if (mStream.get()->type != CLOSE_PAREN)
 		throw std::runtime_error("Expected )");
 
+	while (isTerm(mStream.peek())) parse_term();
+
 	auto block = parse_block();
 	if (block == nullptr) throw std::runtime_error("Expected block");
 
@@ -406,8 +422,18 @@ std::vector<ConditionalBlock*> impl::Parser::parse_elif_or_else() {
 }
 
 ConditionalBlock* impl::Parser::parse_else() {
-	if (mStream.peek()->type != ELSE) return nullptr;
+	auto pos = mStream.tell();
+
+	while (isTerm(mStream.peek())) parse_term();
+
+	if (mStream.peek()->type != ELSE) {
+		mStream.seek(pos);
+		return nullptr;
+	}
+
 	mStream.get();
+
+	while (isTerm(mStream.peek())) parse_term();
 
 	auto block = parse_block();
 	if (block == nullptr) throw std::runtime_error("Expected block");
@@ -546,14 +572,18 @@ std::vector<SwitchPattern*> impl::Parser::parse_switch_block() {
 	if (mStream.get()->type != OPEN_CURLY)
 		throw std::runtime_error("Expected {");
 
-	return parse_switch_matches();
+	auto matches = parse_switch_matches();
 
 	if (mStream.get()->type != CLOSE_CURLY)
 		throw std::runtime_error("Expected }");
+
+	return matches;
 }
 
 std::vector<SwitchPattern*> impl::Parser::parse_switch_matches() {
 	std::vector<SwitchPattern*> matches;
+
+	while (isTerm(mStream.peek())) parse_term();
 
 	auto match = parse_switch_match();
 	if (match == nullptr) return matches;
@@ -562,10 +592,14 @@ std::vector<SwitchPattern*> impl::Parser::parse_switch_matches() {
 	while (mStream.peek()->type == COMMA) {
 		mStream.get();
 
+		while (isTerm(mStream.peek())) parse_term();
+
 		match = parse_switch_match();
 		if (match == nullptr) throw std::runtime_error("Expected switch pattern");
 		matches.push_back(match);
 	}
+
+	while (isTerm(mStream.peek())) parse_term();
 
 	return matches;
 }
@@ -846,6 +880,8 @@ TryExpr* impl::Parser::parse_try_block() {
 	if (mStream.peek()->type != TRY) return nullptr;
 	mStream.get();
 
+	while (isTerm(mStream.peek())) parse_term();
+
 	auto block = parse_block();
 	if (block == nullptr) throw std::runtime_error("Expected block");
 
@@ -857,6 +893,14 @@ TryExpr* impl::Parser::parse_try_block() {
 
 std::vector<CatchBlock*> impl::Parser::parse_catch_blocks() {
 	std::vector<CatchBlock*> catches;
+	auto pos = mStream.tell();
+
+	while (isTerm(mStream.peek())) parse_term();
+
+	if (mStream.peek()->type != CATCH) {
+		mStream.seek(pos);
+		return catches;
+	}
 
 	while (mStream.peek()->type == CATCH) {
 		if (mStream.peek()->type != CATCH) return catches;
@@ -871,18 +915,37 @@ std::vector<CatchBlock*> impl::Parser::parse_catch_blocks() {
 		if (mStream.get()->type != CLOSE_PAREN)
 			throw std::runtime_error("Expected )");
 
+		while (isTerm(mStream.peek())) parse_term();
+
 		auto block = parse_block();
 		if (block == nullptr) throw std::runtime_error("Expected block");
 
 		auto catch_block = CreateNode<CatchBlock>(exception, block);
 		catches.push_back(catch_block);
+
+		pos = mStream.tell();
+
+		while (isTerm(mStream.peek())) parse_term();
+
+		if (mStream.peek()->type != CATCH) {
+			mStream.seek(pos);
+			break;
+		}
 	}
 
 	return catches;
 }
 
 BlockExpr* impl::Parser::parse_finally_block() {
-	if (mStream.peek()->type != FINALLY) return nullptr;
+	auto pos = mStream.tell();
+
+	while (isTerm(mStream.peek())) parse_term();
+
+	if (mStream.peek()->type != FINALLY) {
+		mStream.seek(pos);
+		return nullptr;
+	}
+
 	mStream.get();
 
 	auto block = parse_block();

@@ -985,6 +985,7 @@ void ASTPrinter::VisitCatchBlock(CatchBlock* node) {
 	mIndentation++;
 
 	mWalker.WalkExpr(this, node->exception);
+	mOutput << std::endl;
 	mWalker.WalkBlockExpr(this, node->block);
 
 	mIndentation--;
@@ -1036,6 +1037,9 @@ void ASTPrinter::VisitFunctionCallExpr(FunctionCallExpr* node) {
 	mOutput << "FunctionCallExpr():\n";
 
 	mIndentation++;
+
+	mWalker.WalkExpr(this, node->function);
+	if (node->args.size() > 0) mOutput << std::endl;
 
 	for (unsigned long i = 0; i < node->args.size(); i++) {
 		mWalker.WalkExpr(this, node->args[i]);

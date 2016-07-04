@@ -20,7 +20,7 @@ using namespace orange::ast;
 using namespace orange::parser;
 using namespace orange::parser::impl;
 
-Node* impl::Parser::parse_statement() {
+Node* impl::Parser::parse_statement(bool getExprStmt) {
 	Node* stmt = nullptr;
 
 	if ((stmt = parse_var_decl()) != nullptr) return stmt;
@@ -41,7 +41,13 @@ Node* impl::Parser::parse_statement() {
 	if ((stmt = parse_setter()) != nullptr) return stmt;
 	if ((stmt = parse_property()) != nullptr) return stmt;
 	if ((stmt = parse_enum()) != nullptr) return stmt;
-	if ((stmt = parse_expr_statement()) != nullptr) return stmt;
+
+	if (getExprStmt) {
+		if ((stmt = parse_expr_statement()) != nullptr) return stmt;
+	} else {
+		if ((stmt = parse_expression()) != nullptr) return stmt;
+	}
+
 	if ((stmt = parse_delete()) != nullptr) return stmt;
 	if ((stmt = parse_for_loop()) != nullptr) return stmt;
 	if ((stmt = parse_foreach()) != nullptr) return stmt;
