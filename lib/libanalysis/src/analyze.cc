@@ -110,4 +110,3 @@ TypeTable* TypeResolution::GenerateTypeTable() {
 const AnalysisMessageLog TypeResolution::GetLog() const { return mLog; }
 
 TypeResolution::TypeResolution(std::vector<orange::ast::LongBlockExpr*> ASTs) : mASTs(ASTs) { }
-

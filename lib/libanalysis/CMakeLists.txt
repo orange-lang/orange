@@ -8,7 +8,7 @@
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_library(analysis src/analyze.cc ../../include/libanalysis/analyze.h ../../include/libanalysis/error.h src/validate.cc)
+add_library(analysis src/analyze.cc ../../include/libanalysis/analyze.h ../../include/libanalysis/error.h src/validate.cc include/resolve.h src/resolve.cc src/error.cc include/compatibility.h src/compatibility.cc)
 
 target_include_directories(analysis PRIVATE include)
 
