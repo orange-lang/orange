@@ -152,6 +152,7 @@ LongBlockExpr* impl::Parser::parse_long_block() {
 	auto stmts = parse_opt_statements();
 
 	if (checkNext(CLOSE_CURLY) == false) throw std::runtime_error("Expected }");
+	mStream.get();
 
 	return CreateNode<LongBlockExpr>(stmts);
 }

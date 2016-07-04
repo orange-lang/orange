@@ -27,21 +27,21 @@ Type* impl::Parser::parse_type() {
 
 Type* impl::Parser::parse_basic_type() {
 	if      (mStream.eof())                  return nullptr;
-	else if (mStream.peek()->type == INT)    return new BuiltinType(BuiltinTypeKind::INT);
-	else if (mStream.peek()->type == INT8)   return new BuiltinType(BuiltinTypeKind::INT8);
-	else if (mStream.peek()->type == INT16)  return new BuiltinType(BuiltinTypeKind::INT16);
-	else if (mStream.peek()->type == INT32)  return new BuiltinType(BuiltinTypeKind::INT32);
-	else if (mStream.peek()->type == INT64)  return new BuiltinType(BuiltinTypeKind::INT64);
-	else if (mStream.peek()->type == UINT)   return new BuiltinType(BuiltinTypeKind::UINT);
-	else if (mStream.peek()->type == UINT8)  return new BuiltinType(BuiltinTypeKind::UINT8);
-	else if (mStream.peek()->type == UINT16) return new BuiltinType(BuiltinTypeKind::UINT16);
-	else if (mStream.peek()->type == UINT32) return new BuiltinType(BuiltinTypeKind::UINT32);
-	else if (mStream.peek()->type == UINT64) return new BuiltinType(BuiltinTypeKind::UINT64);
-	else if (mStream.peek()->type == FLOAT)  return new BuiltinType(BuiltinTypeKind::FLOAT);
-	else if (mStream.peek()->type == DOUBLE) return new BuiltinType(BuiltinTypeKind::DOUBLE);
-	else if (mStream.peek()->type == VAR)    return new BuiltinType(BuiltinTypeKind::VAR);
-	else if (mStream.peek()->type == VOID)   return new BuiltinType(BuiltinTypeKind::VOID);
-	else if (mStream.peek()->type == CHAR)   return new BuiltinType(BuiltinTypeKind::CHAR);
+	else if (mStream.peek()->type == INT)    { mStream.get(); return new BuiltinType(BuiltinTypeKind::INT); }
+	else if (mStream.peek()->type == INT8)   { mStream.get(); return new BuiltinType(BuiltinTypeKind::INT8); }
+	else if (mStream.peek()->type == INT16)  { mStream.get(); return new BuiltinType(BuiltinTypeKind::INT16); }
+	else if (mStream.peek()->type == INT32)  { mStream.get(); return new BuiltinType(BuiltinTypeKind::INT32); }
+	else if (mStream.peek()->type == INT64)  { mStream.get(); return new BuiltinType(BuiltinTypeKind::INT64); }
+	else if (mStream.peek()->type == UINT)   { mStream.get(); return new BuiltinType(BuiltinTypeKind::UINT); }
+	else if (mStream.peek()->type == UINT8)  { mStream.get(); return new BuiltinType(BuiltinTypeKind::UINT8); }
+	else if (mStream.peek()->type == UINT16) { mStream.get(); return new BuiltinType(BuiltinTypeKind::UINT16); }
+	else if (mStream.peek()->type == UINT32) { mStream.get(); return new BuiltinType(BuiltinTypeKind::UINT32); }
+	else if (mStream.peek()->type == UINT64) { mStream.get(); return new BuiltinType(BuiltinTypeKind::UINT64); }
+	else if (mStream.peek()->type == FLOAT)  { mStream.get(); return new BuiltinType(BuiltinTypeKind::FLOAT); }
+	else if (mStream.peek()->type == DOUBLE) { mStream.get(); return new BuiltinType(BuiltinTypeKind::DOUBLE); }
+	else if (mStream.peek()->type == VAR)    { mStream.get(); return new BuiltinType(BuiltinTypeKind::VAR); }
+	else if (mStream.peek()->type == VOID)   { mStream.get(); return new BuiltinType(BuiltinTypeKind::VOID); }
+	else if (mStream.peek()->type == CHAR)   { mStream.get(); return new BuiltinType(BuiltinTypeKind::CHAR); }
 
 	return nullptr;
 }

@@ -110,6 +110,8 @@ std::vector<Identifier*> impl::Parser::parse_identifier_list() {
 	ids.push_back(id);
 
 	while (mStream.peek()->type == COMMA) {
+		mStream.get();
+
 		auto id = parse_identifier();
 		if (id == nullptr) throw std::runtime_error("Expected identifier");
 		ids.push_back(id);
@@ -128,6 +130,8 @@ std::vector<Type*> impl::Parser::parse_opt_type_spec_list() {
 	tys.push_back(ty);
 
 	while (mStream.peek()->type == COMMA) {
+		mStream.get();
+
 		auto ty = parse_type();
 		if (ty == nullptr) throw std::runtime_error("Expected type");
 		tys.push_back(ty);

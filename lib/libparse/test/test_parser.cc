@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include <libast/ast.h>
+#include <libast/type.h>
 #include <libparse/parser.h>
 
 #include "parser-private.h"
@@ -30,21 +31,21 @@ TEST(Parser, ParsesNothing) {
 	});
 }
 
-TEST(Parser, ParsesInteger) {
-	std::stringstream ss("0xF00");
+TEST(Parser, ParsesNothingButTerms) {
+	std::stringstream ss(R"(
+		;;;
+
+			;
+		;
+		;
+	)");
 
 	Parser p(ss);
 
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
-		new IntValue(0xf00)
-    }));
-
-	assertEqAST(&expected, ast);
-
-	delete ast;
+	EXPECT_NO_THROW({
+		auto ast = p.parse();
+		delete ast;
+	});
 }
 
 TEST(Parser, ParsesEmptyBlock) {
@@ -60,12 +61,17 @@ TEST(Parser, ParsesEmptyBlock) {
     }));
 
 	assertEqAST(&expected, ast);
-
 	delete ast;
 }
 
-TEST(Parser, ParsesOpPrecedence) {
-	std::stringstream ss("5 + 3 * 12");
+TEST(Parser, ParsesLongBlockNothingButTerms) {
+	std::stringstream ss(R"({
+		;;;
+
+			;
+		;
+		;
+	})");
 
 	Parser p(ss);
 
@@ -73,52 +79,54 @@ TEST(Parser, ParsesOpPrecedence) {
 	EXPECT_TRUE(ast != nullptr);
 
 	LongBlockExpr expected(std::vector<Node*>({
-		new BinOpExpr(
-			new IntValue(5),
-			BinOp::ADD,
-			new BinOpExpr(
-				new IntValue(3),
-				BinOp::MULTIPLY,
-				new IntValue(12)
-			)
-		)
-    }));
-
-	assertEqAST(&expected, ast);
-
-	delete ast;
-}
-
-TEST(Parser, ParsesOpPrecedence2) {
-	std::stringstream ss("5 * 3 + 12");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
-		new BinOpExpr(
-			new BinOpExpr(
-				new IntValue(5),
-				BinOp::MULTIPLY,
-				new IntValue(3)
-			),
-			BinOp::ADD,
-			new IntValue(12)
-		)
+		new LongBlockExpr()
 	}));
 
 	assertEqAST(&expected, ast);
-
 	delete ast;
 }
 
-TEST(Parser, ParsesIfStmt) {
+TEST(Parser, ParsesLongBlockSimpleExpression) {
+	std::stringstream ss(R"({
+		3
+	})");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new LongBlockExpr(std::vector<Node*>({
+			new IntValue(3)
+		}))
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, ParsesLongBlockSimpleExpressionOneLine) {
+	std::stringstream ss("{ 3 }");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new LongBlockExpr(std::vector<Node*>({
+			new IntValue(3)
+		}))
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, ParsesBasicVarDecl) {
 	std::stringstream ss(R"(
-		if (3) {
-            5 + 2
-        }
+		var a
 	)");
 
 	Parser p(ss);
@@ -127,21 +135,131 @@ TEST(Parser, ParsesIfStmt) {
 	EXPECT_TRUE(ast != nullptr);
 
 	LongBlockExpr expected(std::vector<Node*>({
-		new IfExpr(std::vector<ConditionalBlock*>({
-			new ConditionalBlock(
-				new IntValue(3),
-				new LongBlockExpr(std::vector<Node*>({
-					new BinOpExpr(
-						new IntValue(5),
-						BinOp::ADD,
-						new IntValue(2)
-					)
-				}))
-			)
-		}))
+		new VarDeclExpr(
+			std::vector<Identifier*>({
+				new NamedIDExpr("a")
+			}),
+			std::vector<Type*>(),
+			nullptr
+		)
 	}));
 
 	assertEqAST(&expected, ast);
-
 	delete ast;
 }
+
+TEST(Parser, ParsesMultipleBindingVarDecl) {
+	std::stringstream ss(R"(
+		var (a, b)
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new VarDeclExpr(
+			std::vector<Identifier*>({
+				new NamedIDExpr("a"),
+				new NamedIDExpr("b")
+			}),
+			std::vector<Type*>(),
+			nullptr
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, ParsesTypedVarDecl) {
+	std::stringstream ss(R"(
+		var a: int
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new VarDeclExpr(
+			std::vector<Identifier*>({
+				new NamedIDExpr("a")
+			}),
+			std::vector<Type*>({
+				new BuiltinType(BuiltinTypeKind::INT)
+			}),
+			nullptr
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, ParsesMultipleTypedVarDecl) {
+	std::stringstream ss(R"(
+		var (a, b): int, double
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new VarDeclExpr(
+			std::vector<Identifier*>({
+				new NamedIDExpr("a"),
+				new NamedIDExpr("b")
+			}),
+			std::vector<Type*>({
+				new BuiltinType(BuiltinTypeKind::INT),
+				new BuiltinType(BuiltinTypeKind::DOUBLE)
+			}),
+			nullptr
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+// TODO: Test types (all the kinds, via var decl)
+// TODO: Test short identifier (via var decl)
+// TODO: Test long identifier (via namespace)
+// TODO: Test flags
+// TODO: Test enum
+// TODO: Test class (and all of its acceptable statements)
+// TODO: Test partial class
+// TODO: Test functions
+// TODO: Test extern functions
+// TODO: Test aggregate
+// TODO: Test interface
+// TODO: Test namespaces
+// TODO: Test imports
+// TODO: Test single constant value
+// TODO: Test single identifier
+// TODO: Test unary (INCREMENT, DECREMENT, DEREF, REF)
+// TODO: Test function call, array access, member access
+// TODO: Test binary expressions & basic operator precedence
+// TODO: Test this
+// TODO: Test control
+// TODO: Test new
+// TODO: Test array
+// TODO: Test inclusive, exclusive range
+// TODO: Test tuple
+// TODO: Test named arguments
+// TODO: Test if statements (and elif, else)
+// TODO: Test short block (via if statement)
+// TODO: Test for loop, foreach, while, forever, do_while
+// TODO: Test switch
+// TODO: Test break, continue, yield
+// TODO: Test generics
+// TODO: Test delete
+// TODO: Test try/catch/finally
+
+
+

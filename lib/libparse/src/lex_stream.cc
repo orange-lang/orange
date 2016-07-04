@@ -85,7 +85,7 @@ void LexStream::seek(unsigned long pos) {
 }
 
 bool LexStream::eof() const {
-	return mLexer.eof() && mBuffer.size() == 0;
+	return mLexer.eof() && (mBuffer.size() == 0 || mBuffer[0]->type == TOKEN_EOF);
 }
 
 LexStream::LexStream(std::istream& stream) : mLexer(stream) { }

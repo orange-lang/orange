@@ -24,7 +24,7 @@ Identifier* impl::Parser::parse_identifier() {
 	if (id == nullptr) return nullptr;
 
 	auto generics = parse_opt_generic_spec();
-	if (generics == nullptr) throw std::runtime_error("Don't know how to use generics in IDs yet");
+	if (generics != nullptr) throw std::runtime_error("Don't know how to use generics in IDs yet");
 
 	return id;
 }

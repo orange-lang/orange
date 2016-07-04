@@ -899,5 +899,10 @@ ThrowStmt* impl::Parser::parse_throw_stmt() {
 
 orange::ast::LongBlockExpr* impl::Parser::parse() {
 	auto stmts = parse_statements(true);
+
+	if (mStream.eof() == false) {
+		throw std::runtime_error("Failed to parse the entire file");
+	}
+
 	return CreateNode<LongBlockExpr>(stmts);
 }
