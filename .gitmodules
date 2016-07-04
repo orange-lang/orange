@@ -3,5 +3,5 @@
 	url = https://github.com/google/googletest.git
 [submodule "etc/llvm"]
 	path = etc/llvm
-	url = https://github.com/llvm-mirror/llvm
+	url = https://github.com/orange-lang/llvm.git
 	branch = release_38
