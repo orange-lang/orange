@@ -8,10 +8,12 @@
 
 #pragma once
 
+#include <vector>
 #include <string>
 
 namespace orange { namespace ast {
 	struct Expression;
+	struct Identifier;
 
 	enum BuiltinTypeKind {
 		INT, INT8, INT16, INT32, INT64,

@@ -354,11 +354,11 @@ bool orange::ast::CompareNode(Value* a, Value* b) {
 }
 
 bool orange::ast::CompareNode(IntValue* a, IntValue* b) {
-	return a->value == b->value;
+	return a->value == b->value && CompareOptType(a->type, b->type);
 }
 
 bool orange::ast::CompareNode(UIntValue* a, UIntValue* b) {
-	return a->value == b->value;
+	return a->value == b->value && CompareOptType(a->type, b->type);
 }
 
 bool orange::ast::CompareNode(FloatValue* a, FloatValue* b) {

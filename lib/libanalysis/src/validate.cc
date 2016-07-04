@@ -461,6 +461,14 @@ public:
 		mWalker.WalkExpr(this, node->allocation);
 	}
 
+	virtual void VisitIntValue(IntValue* node) override {
+		if (node->type == nullptr) { mValid = false; return; }
+	}
+
+	virtual void VisitUIntValue(UIntValue* node) override {
+		if (node->type == nullptr) { mValid = false; return; }
+	}
+
 	ValidatorVisitor(Walker& walker) : mWalker(walker) { }
 };
 

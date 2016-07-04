@@ -10,6 +10,8 @@
 
 #include <cstdint>
 
+#include <libast/type.h>
+
 namespace orange { namespace parser {
 	class Token;
 
@@ -39,5 +41,7 @@ namespace orange { namespace parser {
 
 	/// Converts a DOUBLE token to double
 	double ToDouble(const Token* tok);
+
+	orange::ast::Type* TypeFromToken(const Token* tok);
 }}
 

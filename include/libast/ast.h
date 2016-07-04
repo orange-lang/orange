@@ -13,9 +13,10 @@
 #include <cstdint>
 #include <type_traits>
 
+#include "type.h"
+
 namespace orange { namespace ast {
 	class Flag;
-	class Type;
 	class Identifier;
 	class Expression;
 	class BlockExpr;
@@ -258,17 +259,21 @@ namespace orange { namespace ast {
 	struct IntValue : Value {
 	public:
 		int64_t value;
+		Type* type = new BuiltinType(BuiltinTypeKind::INT);
 
 		IntValue() { }
 		IntValue(int64_t value) : value(value) { }
+		IntValue(int64_t value, Type* ty) : value(value), type(ty) { }
 	};
 
 	struct UIntValue : Value {
 	public:
 		uint64_t value;
+		Type* type = new BuiltinType(BuiltinTypeKind::UINT);
 
 		UIntValue() { }
 		UIntValue(uint64_t value) : value(value) { }
+		UIntValue(uint64_t value, Type* ty) : value(value), type(ty) { }
 	};
 
 	struct FloatValue : Value {

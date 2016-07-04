@@ -517,6 +517,7 @@ void ASTPrinter::VisitIntValue(IntValue* node) {
 
 	mOutput << "IntValue(";
 	mOutput << "value = " << node->value;
+	mOutput << ", type = "; TypeString(node->type);
 	mOutput << ")";
 }
 
@@ -526,6 +527,7 @@ void ASTPrinter::VisitUIntValue(UIntValue* node) {
 
 	mOutput << "UIntValue(";
 	mOutput << "value = " << node->value;
+	mOutput << ", type = "; TypeString(node->type);
 	mOutput << ")";
 }
 

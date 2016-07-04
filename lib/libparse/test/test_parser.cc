@@ -1160,7 +1160,7 @@ TEST(Parser, BasicValue) {
 	EXPECT_TRUE(ast != nullptr);
 
 	LongBlockExpr expected(std::vector<Node*>({
-		new UIntValue(0xF00)
+		new UIntValue(0xF00, new BuiltinType(BuiltinTypeKind::UINT64))
 	}));
 
 	assertEqAST(&expected, ast);

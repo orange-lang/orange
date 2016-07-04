@@ -89,3 +89,27 @@ double orange::parser::ToDouble(const Token* tok) {
 
 	return strtod(tok->value.c_str(), nullptr);
 }
+
+orange::ast::Type* orange::parser::TypeFromToken(const Token* tok) {
+	using namespace orange::ast;
+
+	switch (tok->type) {
+		case VAL_INT:    return new BuiltinType(BuiltinTypeKind::INT);
+		case VAL_INT8:   return new BuiltinType(BuiltinTypeKind::INT8);
+		case VAL_INT16:  return new BuiltinType(BuiltinTypeKind::INT16);
+		case VAL_INT32:  return new BuiltinType(BuiltinTypeKind::INT32);
+		case VAL_INT64:  return new BuiltinType(BuiltinTypeKind::INT64);
+		case VAL_UINT:   return new BuiltinType(BuiltinTypeKind::UINT);
+		case VAL_UINT8:  return new BuiltinType(BuiltinTypeKind::UINT8);
+		case VAL_UINT16: return new BuiltinType(BuiltinTypeKind::UINT16);
+		case VAL_UINT32: return new BuiltinType(BuiltinTypeKind::UINT32);
+		case VAL_UINT64: return new BuiltinType(BuiltinTypeKind::UINT64);
+		case VAL_CHAR:   return new BuiltinType(BuiltinTypeKind::CHAR);
+		case VAL_FLOAT:  return new BuiltinType(BuiltinTypeKind::FLOAT);
+		case VAL_DOUBLE: return new BuiltinType(BuiltinTypeKind::DOUBLE);
+		case VAL_STRING: return new PointerType(new BuiltinType(BuiltinTypeKind::CHAR));
+		default:         break;
+	}
+
+	throw std::runtime_error("Cannot convert token to type");
+}

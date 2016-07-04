@@ -171,16 +171,17 @@ Expression* impl::Parser::parse_value() {
 	return nullptr;
 }
 
-/// TODO: this doesn't retain the type
 Value* impl::Parser::parse_constant_val() {
 	auto lookahead = mStream.peek();
 
 	if (IsIntToken(lookahead)) {
-		auto value = ToInt(mStream.get());
-		return CreateNode<IntValue>(value);
+		auto tok = mStream.get();
+		auto value = ToInt(tok);
+		return CreateNode<IntValue>(value, TypeFromToken(tok));
 	} else if (IsUIntToken(lookahead)) {
-		auto value = ToUInt(mStream.get());
-		return CreateNode<UIntValue>(value);
+		auto tok = mStream.get();
+		auto value = ToUInt(tok);
+		return CreateNode<UIntValue>(value, TypeFromToken(tok));
 	} else if (lookahead->type == VAL_FLOAT) {
 		auto value = ToFloat(mStream.get());
 		return CreateNode<FloatValue>(value);
