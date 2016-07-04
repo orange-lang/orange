@@ -57,7 +57,7 @@ namespace orange { namespace analysis {
 
 		orange::ast::Type* GetNodeType(orange::ast::Node* node) const;
 
-		void SetNodeType(orange::ast::Node* node, orange::ast::Type* type) const;
+		void SetNodeType(orange::ast::Node* node, orange::ast::Type* type);
 	};
 
 	/// The type table holds a reference to the global context and provides methods to get the type for any node.
