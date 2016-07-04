@@ -8,6 +8,8 @@
 
 #include <libast/compare.h>
 #include <libast/typecheck.h>
+
+#include <limits>
 #include <cmath>
 
 template <typename T>
