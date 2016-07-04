@@ -107,8 +107,8 @@ void ASTPrinter::TypeString(Type* ty) {
 	} else if (isA<TupleType>(ty)) {
 		mOutput << "(";
 
-		for (auto ty : asA<TupleType>(ty)->types) {
-			TypeString(ty);
+		for (auto innerTy : asA<TupleType>(ty)->types) {
+			TypeString(innerTy);
 			mOutput << ",";
 		}
 
