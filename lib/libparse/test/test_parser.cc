@@ -47,6 +47,23 @@ TEST(Parser, ParsesInteger) {
 	delete ast;
 }
 
+TEST(Parser, ParsesEmptyBlock) {
+	std::stringstream ss("{}");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new LongBlockExpr()
+    }));
+
+	assertEqAST(&expected, ast);
+
+	delete ast;
+}
+
 TEST(Parser, ParsesOpPrecedence) {
 	std::stringstream ss("5 + 3 * 12");
 
@@ -72,3 +89,59 @@ TEST(Parser, ParsesOpPrecedence) {
 	delete ast;
 }
 
+TEST(Parser, ParsesOpPrecedence2) {
+	std::stringstream ss("5 * 3 + 12");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new BinOpExpr(
+			new BinOpExpr(
+				new IntValue(5),
+				BinOp::MULTIPLY,
+				new IntValue(3)
+			),
+			BinOp::ADD,
+			new IntValue(12)
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+
+	delete ast;
+}
+
+TEST(Parser, ParsesIfStmt) {
+	std::stringstream ss(R"(
+		if (3) {
+            5 + 2
+        }
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new IfExpr(std::vector<ConditionalBlock*>({
+			new ConditionalBlock(
+				new IntValue(3),
+				new LongBlockExpr(std::vector<Node*>({
+					new BinOpExpr(
+						new IntValue(5),
+						BinOp::ADD,
+						new IntValue(2)
+					)
+				}))
+			)
+		}))
+	}));
+
+	assertEqAST(&expected, ast);
+
+	delete ast;
+}

@@ -22,22 +22,23 @@ using namespace orange::parser::impl;
 
 int impl::GetOperatorPrecedence(TokenType tok) {
 	const static std::map<TokenType, int> OperatorPrecedence = {
-		{TokenType::PLUS, 4}, {TokenType::MINUS, 4},
-		{TokenType::SHIFT_LEFT, 5}, {TokenType::SHIFT_RIGHT, 5},
-		{TokenType::LESS_THAN, 6}, {TokenType::GREATER_THAN, 6},
-		{TokenType::LEQ, 6}, {TokenType::GEQ, 6},
+		{TokenType::TIMES, 12}, {TokenType::DIVIDE, 12}, {TokenType::REMAINDER, 12},
+		{TokenType::PLUS, 11}, {TokenType::MINUS, 11},
+		{TokenType::SHIFT_LEFT, 10}, {TokenType::SHIFT_RIGHT, 10},
+		{TokenType::LESS_THAN, 9}, {TokenType::GREATER_THAN, 9},
+		{TokenType::LEQ, 8}, {TokenType::GEQ, 8},
 		{TokenType::EQUALS, 7}, {TokenType::NEQ, 7},
-		{TokenType::BIT_AND, 8},
-		{TokenType::BIT_XOR, 9},
-		{TokenType::BIT_OR, 10},
-		{TokenType::AND, 11},
-		{TokenType::OR, 12},
-		{TokenType::QUESTION, 13}, {TokenType::ASSIGN, 13},
-		{TokenType::PLUS_ASSIGN, 13}, {TokenType::MINUS_ASSIGN, 13},
-		{TokenType::TIMES_ASSIGN, 13}, {TokenType::DIVIDE_ASSIGN, 13},
-		{TokenType::REMAINDER_ASSIGN, 13}, {TokenType::SHIFT_LEFT_ASSIGN, 13},
-		{TokenType::SHIFT_RIGHT_ASSIGN, 13}, {TokenType::BIT_OR_ASSIGN, 13},
-		{TokenType::BIT_AND_ASSIGN, 13}, {TokenType::BIT_XOR_ASSIGN, 13}
+		{TokenType::BIT_AND, 6},
+		{TokenType::BIT_XOR, 5},
+		{TokenType::BIT_OR, 4},
+		{TokenType::AND, 3},
+		{TokenType::OR, 2},
+		{TokenType::QUESTION, 1}, {TokenType::ASSIGN, 1},
+		{TokenType::PLUS_ASSIGN, 1}, {TokenType::MINUS_ASSIGN, 1},
+		{TokenType::TIMES_ASSIGN, 1}, {TokenType::DIVIDE_ASSIGN, 1},
+		{TokenType::REMAINDER_ASSIGN, 1}, {TokenType::SHIFT_LEFT_ASSIGN, 1},
+		{TokenType::SHIFT_RIGHT_ASSIGN, 1}, {TokenType::BIT_OR_ASSIGN, 1},
+		{TokenType::BIT_AND_ASSIGN, 1}, {TokenType::BIT_XOR_ASSIGN, 1}
 	};
 
 	auto it = OperatorPrecedence.find(tok);
@@ -117,37 +118,26 @@ std::vector<Node *> impl::Parser::parse_opt_statements() {
 std::vector<Node *> impl::Parser::parse_statements(bool allow_eps) {
 	std::vector<Node *> statements;
 
-	if (mStream.peek() && isTerm(mStream.peek())) {
-		mStream.get();
-		return parse_statements();
-	}
+	while (!mStream.eof()) {
+		while (isTerm(mStream.peek())) parse_term();
 
-	if (mStream.peek() && mStream.peek()->type == COMMENT) {
-		statements.push_back(CreateNode<CommentStmt>(mStream.get()->value));
+		if (mStream.peek()->type == COMMENT) {
+			statements.push_back(CreateNode<CommentStmt>(mStream.get()->value));
+			continue;
+		}
 
-		auto remaining = parse_statements();
-		statements.insert(statements.end(), remaining.begin(), remaining.end());
-
-		return statements;
-	} else {
 		auto stmt = parse_statement();
-
 		if (stmt == nullptr) {
-			if (allow_eps) return statements;
+			if (allow_eps) break;
 			throw std::runtime_error("Expected statement");
 		}
 
 		statements.push_back(stmt);
 
-		if (mStream.peek() && isTerm(mStream.peek())) {
-			parse_term();
-
-			auto remaining = parse_statements();
-			statements.insert(statements.end(), remaining.begin(), remaining.end());
-		}
-
-		return statements;
+		if (!isTerm(mStream.peek())) break;
 	}
+
+	return statements;
 }
 
 Token* impl::Parser::parse_term() {

@@ -63,9 +63,9 @@ Expression* impl::Parser::parse_expression_1(Expression* LHS, int min_precedence
 
 		next = mStream.peek();
 
-		while ((GetAssociativity(next->type) == RIGHT &&
+		while ((GetAssociativity(next->type) == LEFT &&
 		        GetOperatorPrecedence(next->type) > GetOperatorPrecedence(op)) ||
-		       (GetAssociativity(next->type) == LEFT &&
+		       (GetAssociativity(next->type) == RIGHT &&
 		        GetOperatorPrecedence(next->type) == GetOperatorPrecedence(op))) {
 			RHS = parse_expression_1(RHS, GetOperatorPrecedence(next->type));
 			next = mStream.peek();
