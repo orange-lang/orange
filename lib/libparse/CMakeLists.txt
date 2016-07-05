@@ -31,3 +31,5 @@ target_include_directories(testparse PRIVATE include)
 target_link_libraries(testparse gtest gtest_main parse ast)
 target_compile_features(testparse PRIVATE cxx_range_for)
 add_test(testparse testparse)
+
+install(TARGETS parse ARCHIVE DESTINATION lib)

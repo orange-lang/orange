@@ -27,3 +27,5 @@ target_include_directories(testtranslate PRIVATE include)
 target_link_libraries(testtranslate gtest gtest_main parse ast translate ${llvm_libs})
 target_compile_features(testtranslate PRIVATE cxx_range_for)
 add_test(testtranslate testtranslate)
+
+install(TARGETS translate ARCHIVE DESTINATION lib)

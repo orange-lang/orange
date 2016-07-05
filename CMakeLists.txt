@@ -10,9 +10,11 @@ cmake_minimum_required(VERSION 3.4)
 project(orange)
 enable_testing()
 
-SET(LLVM_INCLUDE_TESTS OFF CACHE BOOL "Generate build targets for the LLVM unit tests." FORCE)
+set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/orange")
+set(LLVM_INCLUDE_TESTS OFF CACHE BOOL "Generate build targets for the LLVM unit tests." FORCE)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
 set(OR_INCLUDES "${CMAKE_SOURCE_DIR}/include")
+set(USE_SYSTEM_LLVM OFF CACHE BOOL "Use a pre-installed LLVM instead of building it from source.")
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
    message(FATAL_ERROR "In-source builds are not allowed.
@@ -25,7 +27,7 @@ include(clang_complete)
 include_directories(${OR_INCLUDES})
 
 # Build LLVM from source
-if (NOT DEFINED USE_SYSTEM_LLVM)
+if (NOT ${USE_SYSTEM_LLVM})
     add_subdirectory(etc/llvm)
 endif()
 
@@ -38,3 +40,5 @@ add_subdirectory(lib/libtranslate)
 if (${BUILD_CLANG_COMPLETE})
 	clang_complete(${CMAKE_SOURCE_DIR}/.clang_complete)
 endif()
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)

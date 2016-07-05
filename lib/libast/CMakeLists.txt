@@ -17,3 +17,5 @@ add_library(ast
 target_include_directories(ast PRIVATE include)
 set_target_properties(ast PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(ast PRIVATE cxx_range_for)
+
+install(TARGETS ast ARCHIVE DESTINATION lib)
