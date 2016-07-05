@@ -47,4 +47,4 @@ CMake will try to find LLVM 3.6 on your system; if it is not installed, it will 
 
 # Community
 
-Orange has an IRC channel on [irc.freenode.net](irc.freenode.net) at #orange-lang. Come say hi! Feel free to open any issues on Github about questions, suggestions, or bugs. We also have a [Google Group](https://groups.google.com/forum/#!forum/orange-lang) open to the public.
+Orange has a [Gitter](https://gitter.im/orange-lang/orange?utm_source=share-link&utm_medium=link&utm_campaign=share-link). Come say hi! Feel free to open any issues on Github about questions, suggestions, or bugs. We also have a [Google Group](https://groups.google.com/forum/#!forum/orange-lang) open to the public.
