@@ -1,5 +1,7 @@
 # Orange  
 
+[![Join the chat at https://gitter.im/orange-lang/orange](https://badges.gitter.im/orange-lang/orange.svg)](https://gitter.im/orange-lang/orange?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Orange is a statically typed, multi-paradigm (imperative, object-oriented, reflective) systems programming language with focus on high productivity, features for DRY code, and a smooth syntax.
 
 # Status
