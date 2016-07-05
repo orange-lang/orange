@@ -15,9 +15,13 @@ install:
   - git submodule update
   - if not exist C:\projects\mingw.7z appveyor DownloadFile http://downloads.sourceforge.net/mingw-w64/x86_64-5.1.0-release-posix-seh-rt_v4-rev0.7z -FileName C:\projects\mingw.7z
   - 7z x -oC:\tools C:\projects\mingw.7z > nul
+  - if not exist C:\projects\llvm38.zip appveyor DownloadFile https://github.com/orange-lang/llvm/releases/download/v3.8.0/llvm-3.8.0-mingw64-x86_64-posix-seh.zip -FileName C:\projects\llvm38.zip
+  - 7z x -oC:\tools\mingw64 C:\projects\llvm38.zip > nul
 
   # validate toolchain
   - set PATH=%PATH%;C:\tools\mingw64\bin
+  - llvm-config --version
+  - llvm-config --host-target
   - gcc --version
   - wmic os get osarchitecture
 
