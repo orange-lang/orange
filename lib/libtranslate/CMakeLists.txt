@@ -6,9 +6,15 @@
 ## may not be copied, modified, or distributed except according to those terms.
 ##
 
+if (NOT ${USE_SYSTEM_LLVM})
+    include_directories(${CMAKE_SOURCE_DIR}/etc/llvm/include)
+    include_directories(${CMAKE_BINARY_DIR}/etc/llvm/include)
+endif()
+
 find_package(LLVM REQUIRED HINTS ${CMAKE_BINARY_DIR}/etc/llvm/cmake/modules/CMakeFiles)
 
 add_definitions(${LLVM_DEFINITIONS})
+include_directories(${LLVM_INCLUDE_DIRS})
 
 llvm_map_components_to_libnames(llvm_libs core)
 
