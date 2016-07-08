@@ -82,6 +82,7 @@ void LexStream::seek(unsigned long pos) {
 	if (mConsumed.size() == 0) return;
 
 	mBuffer.insert(mBuffer.begin(), mConsumed.begin() + pos, mConsumed.end());
+	mConsumed.erase(mConsumed.begin() + pos, mConsumed.end());
 }
 
 bool LexStream::eof() const {
