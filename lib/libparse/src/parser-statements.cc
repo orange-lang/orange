@@ -337,7 +337,7 @@ std::vector<Node*> impl::Parser::parse_class_stmts() {
 Node* impl::Parser::parse_class_stmt() {
 	Node* node = nullptr;
 
-	if ((node = parse_implicit_var()) != nullptr) return node;
+	if ((node = parse_class_member()) != nullptr) return node;
 	if ((node = parse_class()) != nullptr) return node;
 	if ((node = parse_partial_class()) != nullptr) return node;
 	if ((node = parse_function()) != nullptr) return node;
@@ -349,6 +349,20 @@ Node* impl::Parser::parse_class_stmt() {
 	if ((node = parse_enum()) != nullptr) return node;
 
 	return nullptr;
+}
+
+VarDeclExpr* impl::Parser::parse_class_member() {
+	auto pos = mStream.tell();
+	auto flags = parse_flags();
+	auto varDecl = parse_var_decl();
+
+	if (varDecl == nullptr) {
+		mStream.seek(pos);
+		return nullptr;
+	}
+
+	varDecl->flags.insert(varDecl->flags.end(), flags.begin(), flags.end());
+	return varDecl;
 }
 
 FunctionExpr* impl::Parser::parse_function() {

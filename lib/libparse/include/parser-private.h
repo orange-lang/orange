@@ -92,6 +92,7 @@ namespace orange { namespace parser { namespace impl {
 		LongBlockExpr* parse_class_body();
 		std::vector<Node*> parse_class_stmts();
 		Node* parse_class_stmt();
+		VarDeclExpr* parse_class_member();
 
 		FunctionExpr* parse_function();
 		FunctionExpr* parse_base_function();

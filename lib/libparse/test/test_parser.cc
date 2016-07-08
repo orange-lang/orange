@@ -906,8 +906,8 @@ TEST(Parser, TestEnumWithData) {
 TEST(Parser, ParsesClass) {
 	std::stringstream ss(R"(
 		class MyClass : Base1, Foo.Bar, Base2 {
-			a
-			a: int
+			var a
+			var a: int
 
 			class NestedClass { }
 			def foo() { }
@@ -993,6 +993,36 @@ TEST(Parser, ParsesClass) {
 				    new NamedIDExpr("NestedEnum"),
 				    std::vector<EnumValue*>()
 			    )
+			}))
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
+TEST(Parser, ClassMemberPrivacy) {
+	std::stringstream ss(R"(
+		class MyClass {
+			private var a: int
+		}
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new ClassStmt(
+			new NamedIDExpr("MyClass"),
+			std::vector<Identifier*>({ }),
+			new LongBlockExpr(std::vector<Node*>({
+				new VarDeclExpr(
+					std::vector<Identifier*>({new NamedIDExpr("a")}),
+					std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}),
+					nullptr
+				)
 			}))
 		)
 	}));
