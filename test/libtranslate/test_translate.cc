@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 #include <map>
+#include <functional>
 
 #include <libtranslate/translate.h>
 #include <libanalysis/analyze.h>
@@ -38,7 +39,20 @@ std::shared_ptr<llvm::Module> CompileAST(LongBlockExpr* ast) {
 	return t.TranslateMain(ast, "main.or");
 }
 
-llvm::Value* CompileValueForNode(Node* node) {
+struct CompilationContext {
+	std::shared_ptr<Module> module;
+	llvm::Function* function;
+	llvm::BasicBlock* functionBody;
+	orange::ast::NonTraversalWalker& walker;
+	orange::translate::TranslateVisitor& visitor;
+
+	CompilationContext(std::shared_ptr<Module> mod, llvm::Function* function, llvm::BasicBlock* bb,
+		orange::ast::NonTraversalWalker& walker, orange::translate::TranslateVisitor& visitor) :
+		module(mod), function(function), functionBody(bb), walker(walker), visitor(visitor) { }
+};
+
+typedef std::function<void(CompilationContext)> ValueCallback;
+llvm::Value* CompileValueForNode(Node* node, Optional<ValueCallback> cb = Optional<ValueCallback>()) {
 	LongBlockExpr ast (std::vector<Node*>({ node }));
 	std::vector<LongBlockExpr *> astList = { &ast };
 	TypeResolution tr(astList);
@@ -58,23 +72,30 @@ llvm::Value* CompileValueForNode(Node* node) {
 	visitor.SetCurrentContext(tr.GenerateTypeTable()->GetGlobalContext());
 	visitor.VisitLongBlockExpr(&ast);
 
-	return visitor.GetValue(node);
+	if (cb.hasValue()) {
+		cb.getValue()(CompilationContext(module, mainFunction, body, walker, visitor));
+	}
+
+	// Always override loading values
+	return visitor.GetValue(node, true);
 }
 
 TEST(Translator, BasicMainTranslate) {
 	auto node = CreateNode<ReturnStmt>(CreateNode<IntValue>(5));
 
-	auto term = CompileValueForNode(node);
+	CompileValueForNode(node, Optional<ValueCallback>([node] (CompilationContext ctx) {
+		auto term = ctx.visitor.GetValue(node, true);
 
-	ASSERT_TRUE(term != nullptr);
-	ASSERT_TRUE(isa<ReturnInst>(term));
+		ASSERT_TRUE(term != nullptr);
+		ASSERT_TRUE(isa<ReturnInst>(term));
 
-	auto retVal = dyn_cast<ReturnInst>(term)->getReturnValue();
+		auto retVal = dyn_cast<ReturnInst>(term)->getReturnValue();
 
-	ASSERT_TRUE(retVal != nullptr);
-	ASSERT_TRUE(isa<ConstantInt>(retVal));
+		ASSERT_TRUE(retVal != nullptr);
+		ASSERT_TRUE(isa<ConstantInt>(retVal));
 
-	EXPECT_EQ(5, llvm::dyn_cast<ConstantInt>(retVal)->getValue());
+		EXPECT_EQ(5, llvm::dyn_cast<ConstantInt>(retVal)->getValue());
+	}));
 
 	delete node;
 }
@@ -100,22 +121,32 @@ TEST(Translator, ArithBinOpExpr) {
 	};
 
 	for (auto kvp : intBinOps) {
-		auto val = CompileValueForNode(kvp.first);
-		ASSERT_TRUE(val != nullptr);
-		ASSERT_TRUE(isa<ConstantInt>(val));
+		auto node = kvp.first;
 
-		EXPECT_EQ(kvp.second, dyn_cast<ConstantInt>(val)->getValue());
+		CompileValueForNode(node, Optional<ValueCallback>([node, &kvp] (CompilationContext ctx) {
+			auto val = ctx.visitor.GetValue(node, true);
 
-		delete kvp.first;
+			ASSERT_TRUE(val != nullptr);
+			ASSERT_TRUE(isa<ConstantInt>(val));
+
+			EXPECT_EQ(kvp.second, dyn_cast<ConstantInt>(val)->getValue());
+		}));
+
+		delete node;
 	}
 
 	for (auto kvp : fpBinOps) {
-		auto val = CompileValueForNode(kvp.first);
-		ASSERT_TRUE(val != nullptr);
-		ASSERT_TRUE(isa<ConstantFP>(val));
+		auto node = kvp.first;
 
-		EXPECT_FLOAT_EQ(kvp.second, dyn_cast<ConstantFP>(val)->getValueAPF().convertToDouble());
+		CompileValueForNode(node, Optional<ValueCallback>([node, &kvp] (CompilationContext ctx) {
+			auto val = ctx.visitor.GetValue(node, true);
 
-		delete kvp.first;
+			ASSERT_TRUE(val != nullptr);
+			ASSERT_TRUE(isa<ConstantFP>(val));
+
+			EXPECT_FLOAT_EQ(kvp.second, dyn_cast<ConstantFP>(val)->getValueAPF().convertToDouble());
+		}));
+
+		delete node;
 	}
 }
