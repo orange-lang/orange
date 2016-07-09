@@ -8,6 +8,9 @@
 
 #include <libanalysis/analyze.h>
 #include <libast/typecheck.h>
+#include <libast/walker.h>
+
+#include "resolve.h"
 
 using namespace orange::analysis;
 
@@ -86,8 +89,12 @@ void NodeTypeContext::SetNodeType(orange::ast::Node* node, orange::ast::Type* ty
 	mTypes[node->id] = type;
 }
 
-NodeTypeContext* TypeTable::GetGlobalContext() const { return mGlobalContext; }
 
+NodeTypeContext::NodeTypeContext() : mID(-1) { }
+
+NodeTypeContext::NodeTypeContext(orange::ast::Node* node) : mID(node->id) { }
+
+NodeTypeContext* TypeTable::GetGlobalContext() const { return mGlobalContext; }
 
 NodeTypeContext* TypeTable::GetDefaultContext(orange::ast::Node* node) const {
 	// TODO: Find the default context
@@ -103,10 +110,26 @@ orange::ast::Type* TypeTable::GetNodeType(orange::ast::Node* node, NodeTypeConte
 	return context->GetNodeType(node);
 }
 
+TypeTable::TypeTable() {
+	mGlobalContext = new NodeTypeContext();
+}
+
+
 TypeTable* TypeResolution::GenerateTypeTable() {
-	return nullptr;
+	auto tt = new TypeTable();
+
+	ResolveVisitor resolver(tt->GetGlobalContext());
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+
+	for (auto ast : mASTs) walker.WalkLongBlockExpr(&resolver, ast);
+
+	return tt;
 }
 
 const AnalysisMessageLog TypeResolution::GetLog() const { return mLog; }
+
+TypeResolution::TypeResolution(orange::ast::LongBlockExpr* ast) {
+	mASTs.push_back(ast);
+}
 
 TypeResolution::TypeResolution(std::vector<orange::ast::LongBlockExpr*> ASTs) : mASTs(ASTs) { }

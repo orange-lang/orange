@@ -63,6 +63,9 @@ namespace orange { namespace analysis {
 		orange::ast::Type* GetNodeType(orange::ast::Node* node) const;
 
 		void SetNodeType(orange::ast::Node* node, orange::ast::Type* type);
+
+		NodeTypeContext();
+		NodeTypeContext(orange::ast::Node* node);
 	};
 
 	/// The type table holds a reference to the global context and provides methods to get the type for any node.
@@ -80,6 +83,8 @@ namespace orange { namespace analysis {
 		/// Gets the type of a node. A context may be passed in. If no context is specified, the default
 		/// context is used.
 		orange::ast::Type* GetNodeType(orange::ast::Node* node, NodeTypeContext* context = nullptr);
+
+		TypeTable();
 	};
 
 	class TypeResolution {
@@ -91,6 +96,7 @@ namespace orange { namespace analysis {
 
 		const AnalysisMessageLog GetLog() const;
 
+		TypeResolution(orange::ast::LongBlockExpr* ast);
 		TypeResolution(std::vector<orange::ast::LongBlockExpr*> ASTs);
 	};
 
