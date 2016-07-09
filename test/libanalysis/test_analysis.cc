@@ -216,23 +216,50 @@ TEST(Analysis, VarDecl) {
 }
 
 TEST(Analysis, InvalidVarDecl) {
-	// typeless without value
-	auto varDecl = CreateNode<VarDeclExpr>(
-		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-		std::vector<Type*> ({ }),
-		nullptr
-	);
+	std::vector<VarDeclExpr*> tests({
+		// invalid name
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<AccessIDExpr>(
+				CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b")
+			)}),
+			std::vector<Type*> ({ }),
+			CreateNode<IntValue>(5)
+		),
+
+		// typeless without value
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<Type*> ({ }),
+			nullptr
+		),
+
+		// void type
+	    CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
+			nullptr
+	    ),
+
+	    // void value
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
+			CreateNode<TempIDExpr>()
+		),
+	});
 
 	auto ctx = NodeTypeContext();
 	ResolveVisitor resolver(&ctx);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 
-	EXPECT_THROW({
-		walker.WalkExpr(&resolver, varDecl);
-	}, std::runtime_error);
+	for (auto varDecl : tests) {
+		EXPECT_THROW({
+			walker.WalkExpr(&resolver, varDecl);
+		}, std::runtime_error);
 
-	delete varDecl;
+		delete varDecl;
+	}
 }
 
 TEST(Analysis, VarDeclPair) {

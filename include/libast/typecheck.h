@@ -37,5 +37,8 @@ bool IsSignedType(orange::ast::Type* type);
 /// Gets whether or not a type is a floating point type.
 bool IsFloatingPointType(orange::ast::Type* type);
 
+/// Gets whether or not a type is a void type.
+bool IsVoidType(orange::ast::Type* type);
+
 /// Gets the integer bit width of a type. Return -1 if the type is not an integer type.
 int GetIntegerBitWidth(orange::ast::Type* type);

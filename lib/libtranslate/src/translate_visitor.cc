@@ -120,7 +120,28 @@ void TranslateVisitor::VisitExprStmt(ExprStmt* node) {
 }
 
 void TranslateVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
-	throw std::runtime_error("Don't know how to handle VarDeclExpr");
+	if (node->bindings.size() > 1) {
+		throw std::runtime_error("Can't handle multiple bindings yet.");
+	}
+
+	auto binding = asA<NamedIDExpr>(node->bindings[0]);
+	auto ty = mCurrentContext->GetNodeType(binding);
+	auto llvmTy = GetLLVMType(ty);
+
+	auto var = mBuilder->CreateAlloca(llvmTy, nullptr, binding->name);
+
+	if (node->value) {
+		mWalker.WalkExpr(this, node->value);
+		auto val = GetValue(node->value);
+
+		if (val->getType() != llvmTy) {
+			throw std::runtime_error("Don't know how to do implicit cast to variable type");
+		}
+
+		mBuilder->CreateStore(val, var);
+	}
+
+	SetValue(binding, ValueInfo(var, true));
 }
 
 void TranslateVisitor::VisitIntValue(IntValue* node) {

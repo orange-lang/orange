@@ -150,3 +150,50 @@ TEST(Translator, ArithBinOpExpr) {
 		delete node;
 	}
 }
+
+void ExpectInsts(Node* node, std::vector<unsigned> expect) {
+	CompileValueForNode(node, Optional<ValueCallback>([node, expect] (CompilationContext ctx) {
+		auto it = ctx.functionBody->begin();
+
+		for (auto inst : expect) {
+			ASSERT_TRUE(it != ctx.functionBody->end());
+			EXPECT_STREQ(Instruction::getOpcodeName(inst), it->getOpcodeName());
+
+			it++;
+		}
+
+		EXPECT_TRUE(it == ctx.functionBody->end());
+	}));
+}
+
+TEST(Translator, VarDeclNoValue) {
+	auto varDecl = CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<orange::ast::Type*>({ new IntType }), nullptr
+	);
+
+	std::vector<unsigned> expectedInstructs({
+		Instruction::MemoryOps::Alloca
+	});
+
+
+	ExpectInsts(varDecl, expectedInstructs);
+	delete varDecl;
+}
+
+TEST(Translator, SingleVarDecl) {
+	auto varDecl = CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<orange::ast::Type*>({}),
+		CreateNode<IntValue>(951)
+	);
+
+	std::vector<unsigned> expectedInstructs({
+		Instruction::MemoryOps::Alloca,
+	    Instruction::MemoryOps::Store
+	});
+
+
+	ExpectInsts(varDecl, expectedInstructs);
+	delete varDecl;
+}

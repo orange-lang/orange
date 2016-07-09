@@ -55,10 +55,21 @@ void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 
 	auto binding = node->bindings[0];
 
+	if (isA<NamedIDExpr>(binding) == false) {
+		throw std::runtime_error("Invalid name for variable");
+	}
+
 	Type* nodeType = nullptr;
 
-	if (node->value != nullptr) nodeType = mContext->GetNodeType(node->value);
-	if (node->types.size() > 0) nodeType = node->types[0];
+	if (node->value != nullptr) {
+		nodeType = mContext->GetNodeType(node->value);
+		if (IsVoidType(nodeType)) throw std::runtime_error("Cannot assign void typed expresion to variable");
+	}
+
+	if (node->types.size() > 0) {
+		nodeType = node->types[0];
+		if (IsVoidType(nodeType)) throw std::runtime_error("Variables cannot be of type void");
+	}
 
 	if (isA<ReferenceType>(nodeType)) {
 		throw std::runtime_error("Not sure how to handle reference types yet.");
