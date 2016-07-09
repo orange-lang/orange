@@ -27,7 +27,7 @@ static std::map<BuiltinTypeKind, int> BuiltinTypePrecedence = {
 	{BuiltinTypeKind::UINT64, 4},
 	{BuiltinTypeKind::UINT32, 3},
 	{BuiltinTypeKind::UINT16, 2},
-	{BuiltinTypeKind::UINT8, 1}
+	{BuiltinTypeKind::UINT8, 1},
 };
 
 bool orange::analysis::AreTypesCompatible(Type* a, Type* b) {

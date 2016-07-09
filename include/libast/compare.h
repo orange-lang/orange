@@ -40,6 +40,7 @@ namespace orange { namespace ast {
 	bool CompareNode(EnumValue* a, EnumValue* b);
 	bool CompareNode(VarDeclExpr* a, VarDeclExpr* b);
 	bool CompareNode(Value* a, Value* b);
+	bool CompareNode(BoolValue* a, BoolValue* b);
 	bool CompareNode(IntValue* a, IntValue* b);
 	bool CompareNode(UIntValue* a, UIntValue* b);
 	bool CompareNode(FloatValue* a, FloatValue* b);

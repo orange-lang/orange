@@ -206,7 +206,7 @@ TEST(Lexer, LexesIdentifiers) {
 	ss << "var void _ operator enum class partial in if elif else for foreach while forever do ";
 	ss << "switch break continue yield def extern aggregate interface namespace import new ";
 	ss << "delete private protected public get set virtual final partial where data extend const ";
-	ss << "try catch finally throw of as property this";
+	ss << "try catch finally throw of as property this bool";
 
 	Lexer l(ss);
 
@@ -216,7 +216,7 @@ TEST(Lexer, LexesIdentifiers) {
 		WHILE, FOREVER, DO, SWITCH, BREAK, CONTINUE, YIELD, DEF, EXTERN, AGGREGATE, INTERFACE,
 		NAMESPACE, IMPORT, NEW, DELETE, PRIVATE, PROTECTED, PUBLIC, GET, SET, VIRTUAL,
 		FINAL, PARTIAL, WHERE, DATA, EXTEND, CONST, TRY, CATCH, FINALLY, THROW, OF, AS, PROPERTY,
-	    THIS
+	    THIS, BOOL
 	};
 
 	while (expects.size() > 0) {
@@ -359,6 +359,28 @@ TEST(Lexer, LexesStrings) {
 	expectToken(tok, Token(VAL_STRING, "!!@#%)*@!#3/*STRING123\\\"\\n\\n"));
 
 	expectToken(l, TOKEN_EOF);
+	EXPECT_TRUE(l.eof());
+}
+
+TEST(Lexer, LexesBools) {
+	using namespace orange::parser;
+
+	std::stringstream ss;
+	ss << "false true";
+
+	Lexer l(ss);
+
+	std::vector<TokenType> expects = {
+		VAL_BOOL, VAL_BOOL
+	};
+
+	while (expects.size() > 0) {
+		auto token = expects.front();
+		expectToken(l, token);
+
+		expects.erase(expects.begin());
+	}
+
 	EXPECT_TRUE(l.eof());
 }
 

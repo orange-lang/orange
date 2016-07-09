@@ -34,6 +34,7 @@ namespace orange { namespace analysis {
 		virtual void VisitThrowStmt(ThrowStmt* node) override;
 		virtual void VisitDeleteStmt(DeleteStmt* node) override;
 		virtual void VisitVarDeclExpr(VarDeclExpr* node) override;
+		virtual void VisitBoolValue(BoolValue* node) override;
 		virtual void VisitIntValue(IntValue* node) override;
 		virtual void VisitUIntValue(UIntValue* node) override;
 		virtual void VisitFloatValue(FloatValue* node) override;

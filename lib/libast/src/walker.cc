@@ -91,6 +91,7 @@ void Walker::WalkValue(Visitor* visitor, Value* node) {
 	else if (isA<DoubleValue>(node)) WalkDoubleValue(visitor, asA<DoubleValue>(node));
 	else if (isA<StringValue>(node)) WalkStringValue(visitor, asA<StringValue>(node));
 	else if (isA<CharValue>(node))   WalkCharValue(visitor, asA<CharValue>(node));
+	else if (isA<BoolValue>(node))   WalkBoolValue(visitor, asA<BoolValue>(node));
 	else                             throw std::runtime_error("Unknown node to walk.");
 }
 
@@ -200,6 +201,10 @@ void NonTraversalWalker::WalkExprStmt(Visitor* visitor, ExprStmt* node) {
 
 void NonTraversalWalker::WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) {
 	visitor->VisitVarDeclExpr(node);
+}
+
+void NonTraversalWalker::WalkBoolValue(Visitor* visitor, BoolValue* node) {
+	visitor->VisitBoolValue(node);
 }
 
 void NonTraversalWalker::WalkIntValue(Visitor* visitor, IntValue* node) {
@@ -543,6 +548,10 @@ void DepthFirstWalker::WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) {
 	if (node->value) WalkExpr(visitor, node->value);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitVarDeclExpr(node);
+}
+
+void DepthFirstWalker::WalkBoolValue(Visitor* visitor, BoolValue* node) {
+	visitor->VisitBoolValue(node);
 }
 
 void DepthFirstWalker::WalkIntValue(Visitor* visitor, IntValue* node) {

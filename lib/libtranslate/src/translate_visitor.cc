@@ -146,6 +146,15 @@ void TranslateVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 	SetValue(binding, ValueInfo(var, true));
 }
 
+
+void TranslateVisitor::VisitBoolValue(BoolValue* node) {
+	auto orangeTy = mCurrentContext->GetNodeType(node);
+	auto llvmTy = GetLLVMType(orangeTy);
+	auto llvmVal = llvm::APInt(1, (int)node->value, IsSignedType(orangeTy));
+	auto val = llvm::Constant::getIntegerValue(llvmTy, llvmVal);
+	SetValue(node, val);
+}
+
 void TranslateVisitor::VisitIntValue(IntValue* node) {
 	auto orangeTy = mCurrentContext->GetNodeType(node);
 	auto llvmTy = GetLLVMType(orangeTy);

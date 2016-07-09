@@ -29,7 +29,7 @@ static TokenMapTy TokenMap = {
 	{">" , GREATER_THAN }, {"<=", LEQ             }, {">=" , GEQ              }, {"!=" , NEQ               },
 	{"&&", AND          }, {"||", OR              }, {"++" , INCREMENT        }, {"--" , DECREMENT         },
 	{"{" , OPEN_CURLY   }, {"}" , CLOSE_CURLY     }, {","  , COMMA            }, {"."  , DOT               },
-	{"[" , OPEN_BRACKET }, {"]" , CLOSE_BRACKET   }, {"...", EXCLUSIVE_RANGE   }, {".." , INCLUSIVE_RANGE   },
+	{"[" , OPEN_BRACKET }, {"]" , CLOSE_BRACKET   }, {"...", EXCLUSIVE_RANGE  }, {".." , INCLUSIVE_RANGE   },
 	{":" , COLON        }, {"->", ARROW           }, {"~"  , TILDE            }, {"!"  , NOT               }
 };
 
@@ -333,7 +333,7 @@ static TokenMapTy IdentifierMap = {
 	{"where"    , WHERE    }, {"data"     , DATA     }, {"extend"   , EXTEND   }, {"const"    , CONST    },
 	{"try"      , TRY      }, {"catch"    , CATCH    }, {"finally"  , FINALLY  }, {"throw"    , THROW    },
 	{"of"       , OF       }, {"char"     , CHAR     }, {"as"       , AS       }, {"property" , PROPERTY },
-	{"this"     , THIS     }
+	{"this"     , THIS     }, {"bool"     , BOOL     }, {"false"    , VAL_BOOL }, {"true"     , VAL_BOOL },
 };
 
 /// Gets an identifier (includes _ and keywords)

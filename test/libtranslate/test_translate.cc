@@ -81,6 +81,21 @@ llvm::Value* CompileValueForNode(Node* node, Optional<ValueCallback> cb = Option
 	return visitor.GetValue(node, true);
 }
 
+TEST(Translator, TranslatesBools) {
+	auto node = CreateNode<BoolValue>(true);
+
+	CompileValueForNode(node, Optional<ValueCallback>([node] (CompilationContext ctx) {
+		auto val = ctx.visitor.GetValue(node, true);
+
+		ASSERT_TRUE(val != nullptr);
+		ASSERT_TRUE(isa<ConstantInt>(val));
+
+		EXPECT_EQ(true, llvm::dyn_cast<ConstantInt>(val)->getValue());
+	}));
+
+	delete node;
+}
+
 TEST(Translator, BasicMainTranslate) {
 	auto node = CreateNode<ReturnStmt>(CreateNode<IntValue>(5));
 

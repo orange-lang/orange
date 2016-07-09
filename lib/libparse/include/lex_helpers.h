@@ -36,6 +36,9 @@ namespace orange { namespace parser {
 	/// Converts a UINTn token to uint64_t
 	uint64_t ToUInt(const Token* tok);
 
+	/// Converts a BOOL token to bool.
+	bool ToBool(const Token* tok);
+
 	/// Converts a FLOAT token to float
 	float ToFloat(const Token* tok);
 

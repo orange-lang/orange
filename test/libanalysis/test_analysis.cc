@@ -107,7 +107,13 @@ TEST(Analysis, ConstTypes) {
 	    ),
 	    std::make_pair(
 		    CreateNode<StringValue>("foo"), new StringType
-	    )
+	    ),
+	    std::make_pair(
+		    CreateNode<BoolValue>(true), new BoolType
+	    ),
+		std::make_pair(
+		    CreateNode<BoolValue>(false), new BoolType
+	    ),
 	});
 
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());

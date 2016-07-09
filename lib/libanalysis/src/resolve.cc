@@ -84,6 +84,11 @@ void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 	})));
 }
 
+
+void ResolveVisitor::VisitBoolValue(BoolValue* node) {
+	mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::BOOL));
+}
+
 void ResolveVisitor::VisitIntValue(IntValue* node) {
 	mContext->SetNodeType(node, node->type);
 }

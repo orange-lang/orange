@@ -73,6 +73,7 @@ void ASTPrinter::PrintType(Type* ty) {
 		mOutput << std::endl << ")";
 	} else if (isA<BuiltinType>(ty)) {
 		switch (asA<BuiltinType>(ty)->kind) {
+			case BOOL: mOutput << "bool"; break;
 			case INT: mOutput << "int"; break;
 			case INT8: mOutput << "int8"; break;
 			case INT16: mOutput << "int16"; break;
@@ -511,6 +512,16 @@ void ASTPrinter::VisitVarDeclExpr(VarDeclExpr* node) {
 	if (node->value) mWalker.WalkExpr(this, node->value);
 
 	mIndentation--;
+}
+
+
+void ASTPrinter::VisitBoolValue(BoolValue* node) {
+	handleIdententation();
+	printID(node);
+
+	mOutput << "BoolValue(";
+	mOutput << "value = " << node->value;
+	mOutput << ")";
 }
 
 void ASTPrinter::VisitIntValue(IntValue* node) {

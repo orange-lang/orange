@@ -194,6 +194,8 @@ Value* impl::Parser::parse_constant_val() {
 	} else if (lookahead->type == VAL_STRING) {
 		auto value = mStream.get()->value;
 		return CreateNode<StringValue>(value);
+	} else if (lookahead->type == VAL_BOOL) {
+		return CreateNode<BoolValue>(ToBool(mStream.get()));
 	}
 
 	return nullptr;

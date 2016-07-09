@@ -256,6 +256,14 @@ namespace orange { namespace ast {
 
 	struct Value : Expression { };
 
+	struct BoolValue : Value {
+	public:
+		bool value;
+
+		BoolValue() { }
+		BoolValue(bool value) : value(value) { }
+	};
+
 	struct IntValue : Value {
 	public:
 		int64_t value;

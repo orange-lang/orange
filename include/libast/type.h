@@ -18,7 +18,7 @@ namespace orange { namespace ast {
 	enum BuiltinTypeKind {
 		INT, INT8, INT16, INT32, INT64,
 		UINT, UINT8, UINT16, UINT32, UINT64,
-		FLOAT, DOUBLE, VAR, VOID, CHAR
+		FLOAT, DOUBLE, VAR, VOID, CHAR, BOOL
 	};
 
 	struct Type {
@@ -89,6 +89,8 @@ namespace orange { namespace ast {
 	// Define basic builtin types
 #define DEFINE_BUILTIN(name, val) \
 	struct name : BuiltinType { name() : BuiltinType(val) { } }
+
+	DEFINE_BUILTIN(BoolType, BuiltinTypeKind::BOOL);
 
 	DEFINE_BUILTIN(IntType, BuiltinTypeKind::INT);
 	DEFINE_BUILTIN(Int8Type, BuiltinTypeKind::INT8);

@@ -36,6 +36,7 @@ namespace orange { namespace ast {
 		virtual void VisitDeleteStmt(DeleteStmt* node) { }
 		virtual void VisitExprStmt(ExprStmt* node) { }
 		virtual void VisitVarDeclExpr(VarDeclExpr* node) { }
+		virtual void VisitBoolValue(BoolValue* node) { }
 		virtual void VisitIntValue(IntValue* node) { }
 		virtual void VisitUIntValue(UIntValue* node) { }
 		virtual void VisitFloatValue(FloatValue* node) { }

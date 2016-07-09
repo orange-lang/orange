@@ -48,6 +48,16 @@ int orange::parser::IntegerTokenBase(const Token* tok) {
 	return 10;
 }
 
+bool orange::parser::ToBool(const Token* tok) {
+	if (tok->type != VAL_BOOL)
+		throw std::runtime_error("Cannot convert non-bool token to bool.");
+
+	if (tok->value == "true") return true;
+	if (tok->value == "false") return false;
+
+	throw std::runtime_error("Unexpected boolean value.");
+}
+
 int64_t orange::parser::ToInt(const Token* tok) {
 	if (IsIntToken(tok) == false)
 		throw std::runtime_error("Cannot convert non-int token to int.");

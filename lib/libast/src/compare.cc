@@ -335,6 +335,9 @@ bool orange::ast::CompareNode(Value* a, Value* b) {
 	if (isA<IntValue>(a) && isA<IntValue>(b))
 		return CompareNode(asA<IntValue>(a), asA<IntValue>(b));
 
+	if (isA<BoolValue>(a) && isA<BoolValue>(b))
+		return CompareNode(asA<BoolValue>(a), asA<BoolValue>(b));
+
 	if (isA<UIntValue>(a) && isA<UIntValue>(b))
 		return CompareNode(asA<UIntValue>(a), asA<UIntValue>(b));
 
@@ -351,6 +354,11 @@ bool orange::ast::CompareNode(Value* a, Value* b) {
 		return CompareNode(asA<CharValue>(a), asA<CharValue>(b));
 
 	return false;
+}
+
+
+bool orange::ast::CompareNode(BoolValue* a, BoolValue* b) {
+	return a->value == b->value;
 }
 
 bool orange::ast::CompareNode(IntValue* a, IntValue* b) {

@@ -75,12 +75,12 @@ namespace orange { namespace parser {
 		{FINAL, "FINAL"}, {WHERE, "WHERE"}, {DATA, "DATA"}, {EXTEND, "EXTEND"},
 		{NOT, "NOT"}, {CONST, "CONST"}, {TRY, "TRY"}, {CATCH, "CATCH"},
 		{FINALLY, "FINALLY"}, {THROW, "THROW"}, {OF, "OF"}, {VAL_CHAR, "VAL_CHAR"},
-		{CHAR, "CHAR"}
+		{CHAR, "CHAR"}, {BOOL, "BOOL"}, {VAL_BOOL, "VAL_BOOL"}
 	};
 
 	std::ostream& operator<<(std::ostream& os, const TokenType& tok) {
 		auto it = TokenTyNames.find(tok);
-		if (it == TokenTyNames.end()) return os << tok;
+		if (it == TokenTyNames.end()) return os << (int)tok;
 		return os << it->second;
 	}
 }}

@@ -46,6 +46,7 @@ namespace orange { namespace ast {
 		virtual void WalkDeleteStmt(Visitor* visitor, DeleteStmt* node) = 0;
 		virtual void WalkExprStmt(Visitor* visitor, ExprStmt* node) = 0;
 		virtual void WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) = 0;
+		virtual void WalkBoolValue(Visitor* visitor, BoolValue* node) = 0;
 		virtual void WalkIntValue(Visitor* visitor, IntValue* node) = 0;
 		virtual void WalkUIntValue(Visitor* visitor, UIntValue* node) = 0;
 		virtual void WalkFloatValue(Visitor* visitor, FloatValue* node) = 0;
@@ -114,6 +115,7 @@ namespace orange { namespace ast {
 		virtual void WalkDeleteStmt(Visitor* visitor, DeleteStmt* node) override;
 		virtual void WalkExprStmt(Visitor* visitor, ExprStmt* node) override;
 		virtual void WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) override;
+		virtual void WalkBoolValue(Visitor* visitor, BoolValue* node) override;
 		virtual void WalkIntValue(Visitor* visitor, IntValue* node) override;
 		virtual void WalkUIntValue(Visitor* visitor, UIntValue* node) override;
 		virtual void WalkFloatValue(Visitor* visitor, FloatValue* node) override;
@@ -188,6 +190,7 @@ namespace orange { namespace ast {
 		virtual void WalkDeleteStmt(Visitor* visitor, DeleteStmt* node) override;
 		virtual void WalkExprStmt(Visitor* visitor, ExprStmt* node) override;
 		virtual void WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) override;
+		virtual void WalkBoolValue(Visitor* visitor, BoolValue* node) override;
 		virtual void WalkIntValue(Visitor* visitor, IntValue* node) override;
 		virtual void WalkUIntValue(Visitor* visitor, UIntValue* node) override;
 		virtual void WalkFloatValue(Visitor* visitor, FloatValue* node) override;

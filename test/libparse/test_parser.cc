@@ -87,6 +87,29 @@ TEST(Parser, ParsesLongBlockNothingButTerms) {
 	delete ast;
 }
 
+
+TEST(Parser, ParsesBooleans) {
+	std::stringstream ss(R"({
+		false
+		true
+	})");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new LongBlockExpr(std::vector<Node*>({
+			new BoolValue(false),
+		    new BoolValue(true)
+		}))
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
 TEST(Parser, ParsesLongBlockSimpleExpression) {
 	std::stringstream ss(R"({
 		3

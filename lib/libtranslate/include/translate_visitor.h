@@ -79,6 +79,7 @@ namespace orange { namespace translate {
 		virtual void VisitDeleteStmt(DeleteStmt* node) override;
 		virtual void VisitExprStmt(ExprStmt* node) override;
 		virtual void VisitVarDeclExpr(VarDeclExpr* node) override;
+		virtual void VisitBoolValue(BoolValue* node) override;
 		virtual void VisitIntValue(IntValue* node) override;
 		virtual void VisitUIntValue(UIntValue* node) override;
 		virtual void VisitFloatValue(FloatValue* node) override;
