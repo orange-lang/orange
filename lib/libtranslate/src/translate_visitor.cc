@@ -14,7 +14,7 @@
 #include "type_converter.h"
 
 using namespace orange::translate;
-
+using namespace llvm;
 
 llvm::Value* TranslateVisitor::GetValue(Node* node) {
 	auto it = mValues.find(node->id);
@@ -180,8 +180,79 @@ void TranslateVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {
 	throw std::runtime_error("Don't know how to handle ShortBlockExpr");
 }
 
+llvm::Instruction::BinaryOps GetLLVMBinOp(orange::ast::BinOp binop, bool fp, bool isSigned) {
+	if (binop == BinOp::ADD) return fp ? Instruction::BinaryOps::FAdd : Instruction::BinaryOps::Add;
+	if (binop == BinOp::SUBTRACT) return fp ? Instruction::BinaryOps::FSub : Instruction::BinaryOps::Sub;
+	if (binop == BinOp::DIVIDE) {
+		if (fp) return Instruction::BinaryOps::FDiv;
+		return isSigned ? Instruction::BinaryOps::SDiv : Instruction::BinaryOps::UDiv;
+	}
+	if (binop == BinOp::MULTIPLY) return fp ? Instruction::BinaryOps::FMul : Instruction::BinaryOps::Mul;
+	if (binop == BinOp::REMAINDER) {
+		if (fp) return Instruction::BinaryOps::FRem;
+		return isSigned ? Instruction::BinaryOps::SRem : Instruction::BinaryOps::URem;
+	}
+	if (binop == BinOp::BIT_OR) return Instruction::BinaryOps::Or;
+	if (binop == BinOp::BIT_AND) return Instruction::BinaryOps::And;
+	if (binop == BinOp::BIT_XOR) return Instruction::BinaryOps::Xor;
+	if (binop == BinOp::SHIFT_LEFT) return Instruction::BinaryOps::Shl;
+	if (binop == BinOp::SHIFT_RIGHT) return Instruction::BinaryOps::LShr;
+
+	return Instruction::BinaryOps::BinaryOpsEnd;
+}
+
+bool IsLLVMBinOp(orange::ast::BinOp binop) {
+	return binop == BinOp::ADD || binop == BinOp::SUBTRACT || binop == BinOp::DIVIDE ||
+		binop == BinOp::MULTIPLY || binop == BinOp::REMAINDER || binop == BinOp::BIT_OR ||
+		binop == BinOp::BIT_AND || binop == BinOp::BIT_XOR || binop == BinOp::SHIFT_LEFT ||
+		binop == BinOp::SHIFT_RIGHT;
+}
+
+bool IsLLVMAssignOp(orange::ast::BinOp binop) {
+	return binop == BinOp::ASSIGN || binop == BinOp::PLUS_ASSIGN || binop == BinOp::MINUS_ASSIGN ||
+		binop == BinOp::TIMES_ASSIGN || binop == BinOp::DIVIDE_ASSIGN || binop == BinOp::REMAINDER_ASSIGN ||
+		binop == BinOp::SHIFT_LEFT_ASSIGN || binop == BinOp::SHIFT_RIGHT_ASSIGN || binop == BinOp::BIT_OR_ASSIGN ||
+		binop == BinOp::BIT_AND_ASSIGN || binop == BinOp::BIT_XOR_ASSIGN;
+}
+
+bool IsLLVMCompareOp(orange::ast::BinOp binop) {
+	return binop == BinOp::EQUALS || binop == BinOp::LESS_THAN || binop == BinOp::GREATER_THAN ||
+		binop == BinOp::LEQ || binop == BinOp::GEQ || binop == BinOp::NEQ;
+}
+
+bool IsLLVMLogicalOp(orange::ast::BinOp binop) {
+	return binop == BinOp::AND || binop == BinOp::OR;
+}
+
 void TranslateVisitor::VisitBinOpExpr(BinOpExpr* node) {
-	throw std::runtime_error("Don't know how to handle BinOpExpr");
+	mWalker.WalkExpr(this, node->LHS);
+	mWalker.WalkExpr(this, node->RHS);
+
+	auto nodeTy      = mCurrentContext->GetNodeType(node);
+	auto targetLHSTy = mCurrentContext->GetNodeType(node->LHS);
+	auto targetRHSTy = mCurrentContext->GetNodeType(node->RHS);
+
+	auto vLHS = GetValue(node->LHS);
+	auto vRHS = GetValue(node->RHS);
+
+	if (vLHS->getType() != GetLLVMType(targetLHSTy)) {
+		throw std::runtime_error("Don't know how to do implicit cast");
+	}
+
+	if (vRHS->getType() != GetLLVMType(targetRHSTy)) {
+		throw std::runtime_error("Don't know how to do implicit cast");
+	}
+
+	if (IsLLVMBinOp(node->op)) {
+		Instruction::BinaryOps llvmOp = GetLLVMBinOp(node->op, IsFloatingPointType(nodeTy), IsSignedType(nodeTy));
+		if (llvmOp == Instruction::BinaryOps::BinaryOpsEnd)
+			throw std::runtime_error("Unknown binary operator to convert to LLVM operation");
+
+		auto val = mBuilder->CreateBinOp(llvmOp, vLHS, vRHS);
+		SetValue(node, val);
+	} else {
+		throw std::runtime_error("Don't know how to handle non-arithmatic binary operator");
+	}
 }
 
 void TranslateVisitor::VisitUnaryExpr(UnaryExpr* node) {
