@@ -38,12 +38,13 @@ matrix:
     - export DEFINITIONS=`llvm-config-3.8 --cxxflags | sed -e 's/-fno-exceptions //'`
     - sed -i -e 's,@LLVM_DEFINITIONS@,'"$DEFINITIONS"',g' /usr/local/Cellar/llvm38/3.8.0/lib/llvm-3.8/share/llvm/cmake/LLVMConfig.cmake
   - os: linux
+    compiler: gcc
     sudo: required
     services:
       - docker
     before_install:
     script:
-    - docker build -t orangelang/orange
+    - docker build -t orangelang/orange .
 git:
   submodules: true
   depth: 1
