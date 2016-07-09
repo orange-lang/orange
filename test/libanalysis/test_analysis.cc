@@ -44,6 +44,23 @@ namespace orange { namespace ast {
 	}
 }}
 
+TEST(Analysis, BuildsTypeTable) {
+	LongBlockExpr* ast = CreateNode<LongBlockExpr>();
+
+	auto intNode = CreateNode<IntValue>(0xF00);
+	ast->statements.push_back(intNode);
+
+	std::vector<LongBlockExpr *> astList = { ast };
+	TypeResolution tr(astList);
+
+	auto tt = tr.GenerateTypeTable();
+
+	ASSERT_NE(tt, nullptr);
+	ExpectTy(new IntType, tt->GetGlobalContext()->GetNodeType(intNode));
+
+	delete ast;
+}
+
 TEST(Analysis, ConstTypes) {
 	std::vector<std::pair<Expression*, orange::ast::Type*>> tests({
 		std::make_pair(
