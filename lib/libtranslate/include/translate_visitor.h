@@ -35,12 +35,23 @@ namespace orange { namespace translate {
 
 		std::shared_ptr<LLVMIRBuilder> mBuilder;
 
-		/// A map of node IDs to values
-		std::map<int, llvm::Value*> mValues;
+		struct ValueInfo {
+			llvm::Value* val;
 
-		void SetValue(Node* node, llvm::Value* value);
+			// Whether or not this value is an identifier that will
+			// be loaded on GetValue.
+			bool reference;
+
+			ValueInfo() { }
+			ValueInfo(llvm::Value* v, bool ref = false) : val(v), reference(ref) { }
+		};
+
+		/// A map of node IDs to values
+		std::map<int, ValueInfo> mValues;
+
+		void SetValue(Node* node, ValueInfo vi);
 	public:
-		llvm::Value* GetValue(Node* node);
+		llvm::Value* GetValue(Node* node, bool disableLoading = false);
 
 		virtual void VisitLoopStmt(LoopStmt* node) override;
 		virtual void VisitForeachStmt(ForeachStmt* node) override;

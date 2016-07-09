@@ -12,18 +12,25 @@
 
 #include "translate_visitor.h"
 #include "type_converter.h"
+#include "llvm_helpers.h"
 
 using namespace orange::translate;
 using namespace llvm;
 
-llvm::Value* TranslateVisitor::GetValue(Node* node) {
+llvm::Value* TranslateVisitor::GetValue(Node* node, bool disableLoading) {
 	auto it = mValues.find(node->id);
 	if (it == mValues.end()) return nullptr;
-	return it->second;
+	auto v = it->second.val;
+
+	if (!disableLoading && it->second.reference) {
+		v = mBuilder->CreateLoad(v);
+	}
+
+	return v;
 }
 
-void TranslateVisitor::SetValue(Node* node, llvm::Value* value) {
-	mValues[node->id] = value;
+void TranslateVisitor::SetValue(Node* node, ValueInfo vi) {
+	mValues[node->id] = vi;
 }
 
 void TranslateVisitor::VisitLoopStmt(LoopStmt* node) {
@@ -180,49 +187,6 @@ void TranslateVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {
 	throw std::runtime_error("Don't know how to handle ShortBlockExpr");
 }
 
-llvm::Instruction::BinaryOps GetLLVMBinOp(orange::ast::BinOp binop, bool fp, bool isSigned) {
-	if (binop == BinOp::ADD) return fp ? Instruction::BinaryOps::FAdd : Instruction::BinaryOps::Add;
-	if (binop == BinOp::SUBTRACT) return fp ? Instruction::BinaryOps::FSub : Instruction::BinaryOps::Sub;
-	if (binop == BinOp::DIVIDE) {
-		if (fp) return Instruction::BinaryOps::FDiv;
-		return isSigned ? Instruction::BinaryOps::SDiv : Instruction::BinaryOps::UDiv;
-	}
-	if (binop == BinOp::MULTIPLY) return fp ? Instruction::BinaryOps::FMul : Instruction::BinaryOps::Mul;
-	if (binop == BinOp::REMAINDER) {
-		if (fp) return Instruction::BinaryOps::FRem;
-		return isSigned ? Instruction::BinaryOps::SRem : Instruction::BinaryOps::URem;
-	}
-	if (binop == BinOp::BIT_OR) return Instruction::BinaryOps::Or;
-	if (binop == BinOp::BIT_AND) return Instruction::BinaryOps::And;
-	if (binop == BinOp::BIT_XOR) return Instruction::BinaryOps::Xor;
-	if (binop == BinOp::SHIFT_LEFT) return Instruction::BinaryOps::Shl;
-	if (binop == BinOp::SHIFT_RIGHT) return Instruction::BinaryOps::LShr;
-
-	return Instruction::BinaryOps::BinaryOpsEnd;
-}
-
-bool IsLLVMBinOp(orange::ast::BinOp binop) {
-	return binop == BinOp::ADD || binop == BinOp::SUBTRACT || binop == BinOp::DIVIDE ||
-		binop == BinOp::MULTIPLY || binop == BinOp::REMAINDER || binop == BinOp::BIT_OR ||
-		binop == BinOp::BIT_AND || binop == BinOp::BIT_XOR || binop == BinOp::SHIFT_LEFT ||
-		binop == BinOp::SHIFT_RIGHT;
-}
-
-bool IsLLVMAssignOp(orange::ast::BinOp binop) {
-	return binop == BinOp::ASSIGN || binop == BinOp::PLUS_ASSIGN || binop == BinOp::MINUS_ASSIGN ||
-		binop == BinOp::TIMES_ASSIGN || binop == BinOp::DIVIDE_ASSIGN || binop == BinOp::REMAINDER_ASSIGN ||
-		binop == BinOp::SHIFT_LEFT_ASSIGN || binop == BinOp::SHIFT_RIGHT_ASSIGN || binop == BinOp::BIT_OR_ASSIGN ||
-		binop == BinOp::BIT_AND_ASSIGN || binop == BinOp::BIT_XOR_ASSIGN;
-}
-
-bool IsLLVMCompareOp(orange::ast::BinOp binop) {
-	return binop == BinOp::EQUALS || binop == BinOp::LESS_THAN || binop == BinOp::GREATER_THAN ||
-		binop == BinOp::LEQ || binop == BinOp::GEQ || binop == BinOp::NEQ;
-}
-
-bool IsLLVMLogicalOp(orange::ast::BinOp binop) {
-	return binop == BinOp::AND || binop == BinOp::OR;
-}
 
 void TranslateVisitor::VisitBinOpExpr(BinOpExpr* node) {
 	mWalker.WalkExpr(this, node->LHS);
