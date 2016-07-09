@@ -123,6 +123,23 @@ TEST(Analysis, ConstTypes) {
 	}
 }
 
+TEST(Analysis, ReturnAdaptsType) {
+	auto ast = CreateNode<LongBlockExpr>();
+	auto voidReturn = CreateNode<ReturnStmt>();
+	auto intReturn = CreateNode<ReturnStmt>(CreateNode<IntValue>(0xF00));
+
+	ast->statements.push_back(voidReturn);
+	ast->statements.push_back(intReturn);
+
+	TypeResolution tr(ast);
+
+	auto tab = tr.GenerateTypeTable();
+	ASSERT_NE(tab, nullptr);
+
+	ExpectTy(new BuiltinType(BuiltinTypeKind::VOID), tab->GetGlobalContext()->GetNodeType(voidReturn));
+	ExpectTy(new IntType, tab->GetGlobalContext()->GetNodeType(intReturn));
+}
+
 TEST(Analysis, BinOps) {
 	std::vector<std::pair<Expression*, orange::ast::Type*>> tests({
 		std::make_pair(

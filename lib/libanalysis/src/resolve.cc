@@ -17,6 +17,8 @@ void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
 }
 
 void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
+	auto ty = (node->value == nullptr) ? new BuiltinType(BuiltinTypeKind::VOID) : mContext->GetNodeType(node->value);
+	mContext->SetNodeType(node, ty);
 }
 
 void ResolveVisitor::VisitExternFuncStmt(ExternFuncStmt* node) {
