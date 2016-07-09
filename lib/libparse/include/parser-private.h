@@ -57,10 +57,10 @@ namespace orange { namespace parser { namespace impl {
 		 * Identifier
 		 */
 
-		Identifier* parse_identifier();
+		Identifier* parse_identifier(bool declaring = true);
+		Identifier* parse_identifier_base(bool declaring = true);
+		Identifier* parse_full_identifier(bool declaring = true);
 		Generics* parse_opt_generic_spec();
-		Identifier* parse_identifier_base();
-		Identifier* parse_full_identifier();
 
 		/*
 		 * Statements

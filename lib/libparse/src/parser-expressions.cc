@@ -135,7 +135,7 @@ Expression* impl::Parser::parse_values() {
 		} else if (lookahead->type == DOT) {
 			mStream.get();
 
-			auto id = parse_identifier();
+			auto id = parse_identifier(false);
 			if (id == nullptr) throw std::runtime_error("Expected identifier");
 
 			LHS = CreateNode<MemberAccessExpr>(LHS, id);
@@ -160,7 +160,7 @@ Expression* impl::Parser::parse_value() {
 	if ((expr = parse_new()) != nullptr) return expr;
 
 	if (mStream.peek()->type == IDENTIFIER) {
-		return CreateNode<NamedIDExpr>(mStream.get()->value);
+		return CreateNode<ReferenceIDExpr>(mStream.get()->value);
 	}
 
 	if (mStream.peek()->type == TEMP) {
@@ -219,7 +219,7 @@ NewExpr* impl::Parser::parse_new() {
 	if (mStream.peek()->type != NEW) return nullptr;
 	mStream.get();
 
-	auto full_id = parse_full_identifier();
+	auto full_id = parse_full_identifier(false);
 	return CreateNode<NewExpr>(full_id);
 }
 
@@ -757,7 +757,7 @@ Constraint* impl::Parser::parse_constraint() {
 	if (mStream.peek()->type != WHERE) return nullptr;
 	mStream.get();
 
-	auto id = parse_identifier();
+	auto id = parse_identifier(false);
 	if (id == nullptr) throw std::runtime_error("Expected identifier");
 
 	if (mStream.get()->type != ASSIGN)
@@ -796,7 +796,7 @@ Constraint* impl::Parser::parse_type_constraint(Identifier* id) {
 		return CreateNode<DataConstraint>(id, type);
 	}
 
-	auto base = parse_identifier();
+	auto base = parse_identifier(false);
 	if (id != nullptr) {
 		return CreateNode<BaseConstraint>(id, base);
 	}

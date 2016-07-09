@@ -184,6 +184,10 @@ void TranslateVisitor::VisitThisID(ThisID* node) {
 	throw std::runtime_error("Don't know how to handle ThisID");
 }
 
+void TranslateVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
+	throw std::runtime_error("Don't know how to handle ReferenceIDExpr");
+}
+
 void TranslateVisitor::VisitNamedIDExpr(NamedIDExpr* node) {
 	throw std::runtime_error("Don't know how to handle NamedIDExpr");
 }

@@ -53,6 +53,7 @@ namespace orange { namespace ast {
 		virtual void WalkStringValue(Visitor* visitor, StringValue* node) = 0;
 		virtual void WalkCharValue(Visitor* visitor, CharValue* node) = 0;
 		virtual void WalkThisID(Visitor* visitor, ThisID* node) = 0;
+		virtual void WalkReferenceIDExpr(Visitor* visitor, ReferenceIDExpr* node) = 0;
 		virtual void WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) = 0;
 		virtual void WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) = 0;
 		virtual void WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) = 0;
@@ -120,6 +121,7 @@ namespace orange { namespace ast {
 		virtual void WalkStringValue(Visitor* visitor, StringValue* node) override;
 		virtual void WalkCharValue(Visitor* visitor, CharValue* node) override;
 		virtual void WalkThisID(Visitor* visitor, ThisID* node) override;
+		virtual void WalkReferenceIDExpr(Visitor* visitor, ReferenceIDExpr* node) override;
 		virtual void WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) override;
 		virtual void WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) override;
 		virtual void WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) override;
@@ -193,6 +195,7 @@ namespace orange { namespace ast {
 		virtual void WalkStringValue(Visitor* visitor, StringValue* node) override;
 		virtual void WalkCharValue(Visitor* visitor, CharValue* node) override;
 		virtual void WalkThisID(Visitor* visitor, ThisID* node) override;
+		virtual void WalkReferenceIDExpr(Visitor* visitor, ReferenceIDExpr* node) override;
 		virtual void WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) override;
 		virtual void WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) override;
 		virtual void WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) override;

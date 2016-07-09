@@ -11,6 +11,7 @@
 #include <stack>
 
 #include <libast/visitor.h>
+#include <libast/search.h>
 #include <libanalysis/analyze.h>
 
 namespace orange { namespace analysis {
@@ -22,6 +23,7 @@ namespace orange { namespace analysis {
 	class ResolveVisitor : public Visitor {
 	private:
 		NodeTypeContext* mContext;
+		ASTSearcher& mSearcher;
 	public:
 		virtual void VisitYieldStmt(YieldStmt* node) override;
 		virtual void VisitReturnStmt(ReturnStmt* node) override;
@@ -39,6 +41,7 @@ namespace orange { namespace analysis {
 		virtual void VisitStringValue(StringValue* node) override;
 		virtual void VisitCharValue(CharValue* node) override;
 		virtual void VisitThisID(ThisID* node) override;
+		virtual void VisitReferenceIDExpr(ReferenceIDExpr* node) override;
 		virtual void VisitNamedIDExpr(NamedIDExpr* node) override;
 		virtual void VisitTempIDExpr(TempIDExpr* node) override;
 		virtual void VisitDtorIDExpr(DtorIDExpr* node) override;
@@ -65,6 +68,6 @@ namespace orange { namespace analysis {
 		virtual void VisitFunctionCallExpr(FunctionCallExpr* node) override;
 		virtual void VisitNewExpr(NewExpr* node) override;
 
-		ResolveVisitor(NodeTypeContext* context);
+		ResolveVisitor(NodeTypeContext* context, ASTSearcher& searcher);
 	};
 }}

@@ -110,8 +110,9 @@ TEST(Analysis, ConstTypes) {
 	    )
 	});
 
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
 	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx);
+	ResolveVisitor resolver(&ctx, searcher);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 
@@ -156,8 +157,9 @@ TEST(Analysis, BinOps) {
 		)
 	});
 
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
 	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx);
+	ResolveVisitor resolver(&ctx, searcher);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 
@@ -202,8 +204,9 @@ TEST(Analysis, VarDecl) {
 		),
 	});
 
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
 	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx);
+	ResolveVisitor resolver(&ctx, searcher);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 
@@ -248,8 +251,9 @@ TEST(Analysis, InvalidVarDecl) {
 		),
 	});
 
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
 	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx);
+	ResolveVisitor resolver(&ctx, searcher);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 
@@ -273,8 +277,9 @@ TEST(Analysis, VarDeclPair) {
 		}))
 	);
 
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
 	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx);
+	ResolveVisitor resolver(&ctx, searcher);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 
@@ -283,4 +288,32 @@ TEST(Analysis, VarDeclPair) {
 	}, std::runtime_error);
 
 	delete varDecl;
+}
+
+TEST(Analysis, VarReference) {
+	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<Type*>(), CreateNode<IntValue>(5)
+		),
+
+	    CreateNode<BinOpExpr>(
+		    CreateNode<ReferenceIDExpr>("a"),
+		    BinOp::ADD,
+		    CreateNode<IntValue>(5)
+	    ),
+	}));
+
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
+	auto ctx = NodeTypeContext();
+	ResolveVisitor resolver(&ctx, searcher);
+
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+
+	walker.WalkLongBlockExpr(&resolver, ast);
+	ExpectTy(new IntType, ctx.GetNodeType(ast->statements[1]));
+}
+
+TEST(Analysis, InvalidVarReference) {
+
 }

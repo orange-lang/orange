@@ -381,6 +381,9 @@ bool orange::ast::CompareNode(Identifier* a, Identifier* b) {
 	if (isA<ThisID>(a) && isA<ThisID>(b))
 		return CompareNode(asA<ThisID>(a), asA<ThisID>(b));
 
+	if (isA<ReferenceIDExpr>(a) && isA<ReferenceIDExpr>(b))
+		return CompareNode(asA<ReferenceIDExpr>(a), asA<ReferenceIDExpr>(b));
+
 	if (isA<NamedIDExpr>(a) && isA<NamedIDExpr>(b))
 		return CompareNode(asA<NamedIDExpr>(a), asA<NamedIDExpr>(b));
 
@@ -398,6 +401,11 @@ bool orange::ast::CompareNode(Identifier* a, Identifier* b) {
 
 bool orange::ast::CompareNode(ThisID* a, ThisID* b) {
 	return true;
+}
+
+
+bool orange::ast::CompareNode(ReferenceIDExpr* a, ReferenceIDExpr* b) {
+	return a->name == b->name;
 }
 
 bool orange::ast::CompareNode(NamedIDExpr* a, NamedIDExpr* b) {

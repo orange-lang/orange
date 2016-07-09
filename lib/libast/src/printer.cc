@@ -578,6 +578,15 @@ void ASTPrinter::VisitThisID(ThisID* node) {
 	mOutput << "ThisID()";
 }
 
+void ASTPrinter::VisitReferenceIDExpr(ReferenceIDExpr* node) {
+	handleIdententation();
+	printID(node);
+
+	mOutput << "ReferenceIDExpr(";
+	mOutput << "name = \"" << node->name << "\"";
+	mOutput << ")";
+}
+
 void ASTPrinter::VisitNamedIDExpr(NamedIDExpr* node) {
 	handleIdententation();
 	printID(node);

@@ -68,7 +68,7 @@ void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 
 	if (node->types.size() > 0) {
 		nodeType = node->types[0];
-		if (IsVoidType(nodeType)) throw std::runtime_error("Variables cannot be of type void");
+		if (IsVoidType(nodeType)) throw std::runtime_error("");
 	}
 
 	if (isA<ReferenceType>(nodeType)) {
@@ -108,6 +108,29 @@ void ResolveVisitor::VisitCharValue(CharValue* node) {
 }
 
 void ResolveVisitor::VisitThisID(ThisID* node) {
+}
+
+void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
+	auto original = mSearcher.FindNode(node, node, true);
+
+	if (original == nullptr) {
+		throw std::runtime_error("Unknown reference to identifier");
+	}
+
+	if (isA<VarDeclExpr>(original) == false) {
+		throw std::runtime_error("Don't know how to handle non-variable identifier");
+	}
+
+	if (isA<VarDeclExpr>(original)) {
+		auto varDecl = asA<VarDeclExpr>(original);
+		for (auto binding : varDecl->bindings) {
+			if (isA<NamedIDExpr>(binding) == false) continue;
+			if (asA<NamedIDExpr>(binding)->name == node->name) {
+				mContext->SetNodeType(node, mContext->GetNodeType(binding));
+				break;
+			}
+		}
+	}
 }
 
 void ResolveVisitor::VisitNamedIDExpr(NamedIDExpr* node) {
@@ -193,5 +216,6 @@ void ResolveVisitor::VisitFunctionCallExpr(FunctionCallExpr* node) {
 void ResolveVisitor::VisitNewExpr(NewExpr* node) {
 }
 
-ResolveVisitor::ResolveVisitor(NodeTypeContext* context) : mContext(context) { }
+ResolveVisitor::ResolveVisitor(NodeTypeContext* context, ASTSearcher& searcher) :
+	mContext(context), mSearcher(searcher) { }
 

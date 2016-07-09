@@ -48,6 +48,7 @@ namespace orange { namespace ast {
 	bool CompareNode(CharValue* a, CharValue* b);
 	bool CompareNode(Identifier* a, Identifier* b);
 	bool CompareNode(ThisID* a, ThisID* b);
+	bool CompareNode(ReferenceIDExpr* a, ReferenceIDExpr* b);
 	bool CompareNode(NamedIDExpr* a, NamedIDExpr* b);
 	bool CompareNode(DtorIDExpr* a, DtorIDExpr* b);
 	bool CompareNode(TempIDExpr* a, TempIDExpr* b);

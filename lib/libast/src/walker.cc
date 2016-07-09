@@ -95,12 +95,13 @@ void Walker::WalkValue(Visitor* visitor, Value* node) {
 }
 
 void Walker::WalkIdentifier(Visitor* visitor, Identifier* node) {
-	if      (isA<NamedIDExpr>(node))  WalkNamedIDExpr(visitor, asA<NamedIDExpr>(node));
-	else if (isA<TempIDExpr>(node))   WalkTempIDExpr(visitor, asA<TempIDExpr>(node));
-	else if (isA<DtorIDExpr>(node))   WalkDtorIDExpr(visitor, asA<DtorIDExpr>(node));
-	else if (isA<AccessIDExpr>(node)) WalkAccessIDExpr(visitor, asA<AccessIDExpr>(node));
-	else if (isA<ThisID>(node))       WalkThisID(visitor, asA<ThisID>(node));
-	else                             throw std::runtime_error("Unknown node to walk.");
+	if      (isA<NamedIDExpr>(node))      WalkNamedIDExpr(visitor, asA<NamedIDExpr>(node));
+	else if (isA<ReferenceIDExpr>(node))  WalkReferenceIDExpr(visitor, asA<ReferenceIDExpr>(node));
+	else if (isA<TempIDExpr>(node))       WalkTempIDExpr(visitor, asA<TempIDExpr>(node));
+	else if (isA<DtorIDExpr>(node))       WalkDtorIDExpr(visitor, asA<DtorIDExpr>(node));
+	else if (isA<AccessIDExpr>(node))     WalkAccessIDExpr(visitor, asA<AccessIDExpr>(node));
+	else if (isA<ThisID>(node))           WalkThisID(visitor, asA<ThisID>(node));
+	else                                  throw std::runtime_error("Unknown node to walk.");
 }
 
 void Walker::WalkBlockExpr(Visitor* visitor, BlockExpr* node) {
@@ -227,6 +228,10 @@ void NonTraversalWalker::WalkCharValue(Visitor* visitor, CharValue* node) {
 
 void NonTraversalWalker::WalkThisID(Visitor* visitor, ThisID* node) {
 	visitor->VisitThisID(node);
+}
+
+void NonTraversalWalker::WalkReferenceIDExpr(Visitor* visitor, ReferenceIDExpr* node) {
+	visitor->VisitReferenceIDExpr(node);
 }
 
 void NonTraversalWalker::WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) {
@@ -566,6 +571,10 @@ void DepthFirstWalker::WalkCharValue(Visitor* visitor, CharValue* node) {
 
 void DepthFirstWalker::WalkThisID(Visitor* visitor, ThisID* node) {
 	visitor->VisitThisID(node);
+}
+
+void DepthFirstWalker::WalkReferenceIDExpr(Visitor* visitor, ReferenceIDExpr* node) {
+	visitor->VisitReferenceIDExpr(node);
 }
 
 void DepthFirstWalker::WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) {

@@ -14,15 +14,16 @@ using namespace orange::ast;
 
 class NamedNodeFinder : public Visitor {
 private:
-	NamedIDExpr* mName = nullptr;
+	ReferenceIDExpr* mName = nullptr;
 	ASTSearcher* mSearcher = nullptr;
 	Node* mNode = nullptr;
 public:
-	Node* GetNode() const { return mName;}
+	Node* GetNode() const { return mNode; }
 
 	/// Returns whether or not a node is "declarative" (e.g., declares a structure, function, enum, class, etc)
 	bool IsDeclarativeNode(Node* node) {
-		return isA<ExternFuncStmt>(node) || isA<FunctionExpr>(node) || isA<EnumStmt>(node) || isA<ClassStmt>(node);
+		return isA<ExternFuncStmt>(node) || isA<FunctionExpr>(node) || isA<EnumStmt>(node) || isA<ClassStmt>(node) ||
+			isA<VarDeclExpr>(node);
 	}
 
 	virtual void VisitNamedIDExpr(NamedIDExpr* node) {
@@ -35,10 +36,10 @@ public:
 			it = mSearcher->GetParent(it);
 		}
 
-		mNode = it;
+		mNode = it == node ? nullptr : it;
 	}
 
-	NamedNodeFinder(NamedIDExpr* name, ASTSearcher* searcher) : mName(name), mSearcher(searcher) { }
+	NamedNodeFinder(ReferenceIDExpr* name, ASTSearcher* searcher) : mName(name), mSearcher(searcher) { }
 };
 
 class ParentFinderVisitor : public Visitor {
@@ -329,11 +330,11 @@ Node* ASTSearcher::GetParent(Node* child) {
 }
 
 Node* ASTSearcher::FindNode(Identifier* id, Node* from, bool allowForwardRef) {
-	if (isA<NamedIDExpr>(id) == false)
+	if (isA<ReferenceIDExpr>(id) == false)
 		throw std::runtime_error("Don't know how to handle anything other than simple IDs yet");
 
 	// Step one: search the ASTs for a node with an identifier.
-	NamedNodeFinder nodeFinder(asA<NamedIDExpr>(id), this);
+	NamedNodeFinder nodeFinder(asA<ReferenceIDExpr>(id), this);
 	DepthFirstWalker walker(TraversalOrder::PREORDER);
 
 	Node* originalDecl = nullptr;

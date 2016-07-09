@@ -43,6 +43,7 @@ namespace orange { namespace ast {
 		virtual void VisitStringValue(StringValue* node) { }
 		virtual void VisitCharValue(CharValue* node) { }
 		virtual void VisitThisID(ThisID* node) { }
+		virtual void VisitReferenceIDExpr(ReferenceIDExpr* node) { }
 		virtual void VisitNamedIDExpr(NamedIDExpr* node) { }
 		virtual void VisitTempIDExpr(TempIDExpr* node) { }
 		virtual void VisitDtorIDExpr(DtorIDExpr* node) { }

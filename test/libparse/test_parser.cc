@@ -979,14 +979,14 @@ TEST(Parser, ParsesClass) {
 				new PropertyStmt(
 					new NamedIDExpr("Foo"),
 					nullptr,
-					new ShortBlockExpr(new NamedIDExpr("a"))
+					new ShortBlockExpr(new ReferenceIDExpr("a"))
 				),
 				new PropertyStmt(
 					new NamedIDExpr("Foo"),
 					new BuiltinType(BuiltinTypeKind::INT),
 					new LongBlockExpr(std::vector<Node*>({
-						new GetterStmt(new ShortBlockExpr(new NamedIDExpr("a"))),
-						new SetterStmt(new ShortBlockExpr(new NamedIDExpr("a")))
+						new GetterStmt(new ShortBlockExpr(new ReferenceIDExpr("a"))),
+						new SetterStmt(new ShortBlockExpr(new ReferenceIDExpr("a")))
 					}))
 				),
 			    new EnumStmt(
@@ -1208,7 +1208,7 @@ TEST(Parser, BasicVarRef) {
 	EXPECT_TRUE(ast != nullptr);
 
 	LongBlockExpr expected(std::vector<Node*>({
-		new NamedIDExpr("a")
+		new ReferenceIDExpr("a")
 	}));
 
 	assertEqAST(&expected, ast);
@@ -1246,10 +1246,10 @@ TEST(Parser, UnaryOperations) {
 	EXPECT_TRUE(ast != nullptr);
 
 	LongBlockExpr expected(std::vector<Node*>({
-		new UnaryExpr(UnaryOp::INCREMENT, UnaryOrder::PREFIX, new NamedIDExpr("a")),
-		new UnaryExpr(UnaryOp::DECREMENT, UnaryOrder::PREFIX, new NamedIDExpr("a")),
-		new UnaryExpr(UnaryOp::TIMES, UnaryOrder::PREFIX, new NamedIDExpr("a")),
-		new UnaryExpr(UnaryOp::REFERENCE, UnaryOrder::PREFIX, new NamedIDExpr("a")),
+		new UnaryExpr(UnaryOp::INCREMENT, UnaryOrder::PREFIX, new ReferenceIDExpr("a")),
+		new UnaryExpr(UnaryOp::DECREMENT, UnaryOrder::PREFIX, new ReferenceIDExpr("a")),
+		new UnaryExpr(UnaryOp::TIMES, UnaryOrder::PREFIX, new ReferenceIDExpr("a")),
+		new UnaryExpr(UnaryOp::REFERENCE, UnaryOrder::PREFIX, new ReferenceIDExpr("a")),
 	}));
 
 	assertEqAST(&expected, ast);
@@ -1268,7 +1268,7 @@ TEST(Parser, FunctionCall) {
 
 	LongBlockExpr expected(std::vector<Node*>({
 		new FunctionCallExpr(
-			new NamedIDExpr("a"),
+			new ReferenceIDExpr("a"),
 			std::vector<Expression*>({
 				new IntValue(1),
 				new IntValue(2)
@@ -1292,7 +1292,7 @@ TEST(Parser, ArrayAccess) {
 
 	LongBlockExpr expected(std::vector<Node*>({
 		new ArrayAccessExpr(
-			new NamedIDExpr("a"),
+			new ReferenceIDExpr("a"),
 			new IntValue(5)
 		)
 	}));
@@ -1314,10 +1314,10 @@ TEST(Parser, MemberAccess) {
 	LongBlockExpr expected(std::vector<Node*>({
 		new MemberAccessExpr(
 			new MemberAccessExpr(
-				new NamedIDExpr("a"),
-				new NamedIDExpr("b")
+				new ReferenceIDExpr("a"),
+				new ReferenceIDExpr("b")
 			),
-			new NamedIDExpr("c")
+			new ReferenceIDExpr("c")
 		)
 	}));
 
@@ -1341,14 +1341,14 @@ TEST(Parser, ComplexUnaryMod) {
 			new ArrayAccessExpr(
 				new MemberAccessExpr(
 					new ArrayAccessExpr(
-						new NamedIDExpr("a"),
+						new ReferenceIDExpr("a"),
 						new IntValue(1)
 					),
-					new NamedIDExpr("b")
+					new ReferenceIDExpr("b")
 				),
 				new IntValue(2)
 			),
-			new NamedIDExpr("c")
+			new ReferenceIDExpr("c")
 		)
 	}));
 
@@ -1394,7 +1394,7 @@ TEST(Parser, TestTenaryExpr) {
 
 	LongBlockExpr expected(std::vector<Node*>({
 		new BinOpExpr(
-			new NamedIDExpr("a"),
+			new ReferenceIDExpr("a"),
 			BinOp::ASSIGN,
 			new TernaryExpr(
 				new BinOpExpr(new IntValue(1), BinOp::ADD, new IntValue(2)),
@@ -1421,7 +1421,7 @@ TEST(Parser, This) {
 	LongBlockExpr expected(std::vector<Node*>({
 		new BinOpExpr(
 			new MemberAccessExpr(
-				new ThisID(), new NamedIDExpr("a")
+				new ThisID(), new ReferenceIDExpr("a")
 			),
 			BinOp::ASSIGN,
 			new IntValue(5)
@@ -1445,8 +1445,8 @@ TEST(Parser, New) {
 	LongBlockExpr expected(std::vector<Node*>({
 		new NewExpr(
 			new AccessIDExpr(
-				new NamedIDExpr("Foo"),
-				new NamedIDExpr("Bar")
+				new ReferenceIDExpr("Foo"),
+				new ReferenceIDExpr("Bar")
 			)
 		)
 	}));
@@ -1550,10 +1550,10 @@ TEST(Parser, ArrayRange) {
 
 	LongBlockExpr expected(std::vector<Node*>({
 		new ArrayRangeExpr(
-			new NamedIDExpr("a"), ArrayRangeType::INCLUSIVE, new NamedIDExpr("b")
+			new ReferenceIDExpr("a"), ArrayRangeType::INCLUSIVE, new ReferenceIDExpr("b")
 		),
 		new ArrayRangeExpr(
-			new NamedIDExpr("a"), ArrayRangeType::EXCLUSIVE, new NamedIDExpr("b")
+			new ReferenceIDExpr("a"), ArrayRangeType::EXCLUSIVE, new ReferenceIDExpr("b")
 		)
 	}));
 
@@ -1603,7 +1603,7 @@ TEST(Parser, NamedArguments) {
 
 	LongBlockExpr expected(std::vector<Node*>({
 		new FunctionCallExpr(
-			new NamedIDExpr("foo"),
+			new ReferenceIDExpr("foo"),
 			std::vector<Expression*>({
 				new NamedExpr(new NamedIDExpr("a"), new IntValue(1)),
 				new NamedExpr(new NamedIDExpr("b"), new IntValue(2))
@@ -1681,7 +1681,7 @@ TEST(Parser, Loops) {
 			nullptr, nullptr, nullptr, LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 	 	new LoopStmt(
-			new NamedIDExpr("a"), new NamedIDExpr("b"), new NamedIDExpr("c"),
+			new ReferenceIDExpr("a"), new ReferenceIDExpr("b"), new ReferenceIDExpr("c"),
 		    LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 		new LoopStmt(
@@ -1689,7 +1689,7 @@ TEST(Parser, Loops) {
 				std::vector<Identifier*>({new NamedIDExpr("a")}),
 				std::vector<Type*>(),
 				nullptr
-			), new NamedIDExpr("b"), new NamedIDExpr("c"),
+			), new ReferenceIDExpr("b"), new ReferenceIDExpr("c"),
 		    LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 	    new ForeachStmt(
@@ -1697,10 +1697,10 @@ TEST(Parser, Loops) {
 				std::vector<Identifier*>({new NamedIDExpr("a")}),
 				std::vector<Type*>(),
 				nullptr
-		    ), new NamedIDExpr("b"), new LongBlockExpr()
+		    ), new ReferenceIDExpr("b"), new LongBlockExpr()
 	    ),
 		new LoopStmt(
-			nullptr, new NamedIDExpr("a"), nullptr,
+			nullptr, new ReferenceIDExpr("a"), nullptr,
 			LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 		new LoopStmt(
@@ -1708,7 +1708,7 @@ TEST(Parser, Loops) {
 			LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 		new LoopStmt(
-			nullptr, new NamedIDExpr("a"), nullptr,
+			nullptr, new ReferenceIDExpr("a"), nullptr,
 			LoopConditionCheck::AFTER, new LongBlockExpr()
 		)
 	}));
@@ -1733,7 +1733,7 @@ TEST(Parser, SwitchStatement) {
 
 	LongBlockExpr expected(std::vector<Node*>({
 		new SwitchExpr(
-			new NamedIDExpr("a"),
+			new ReferenceIDExpr("a"),
 			std::vector<SwitchPattern*>({
 				new SwitchPattern(
 					std::vector<Expression*>({
@@ -1745,10 +1745,10 @@ TEST(Parser, SwitchStatement) {
 					std::vector<Expression*>({
 						new FunctionCallExpr(
 							new MemberAccessExpr(
-								new NamedIDExpr("A"), new NamedIDExpr("B")
+								new ReferenceIDExpr("A"), new ReferenceIDExpr("B")
 							),
 							std::vector<Expression*>({
-								new NamedIDExpr("a"), new NamedIDExpr("b")
+								new ReferenceIDExpr("a"), new ReferenceIDExpr("b")
 							})
 						)
 					}),
@@ -1796,7 +1796,7 @@ TEST(Parser, Delete) {
 	EXPECT_TRUE(ast != nullptr);
 
 	LongBlockExpr expected(std::vector<Node*>({
-		new DeleteStmt(new NamedIDExpr("a"))
+		new DeleteStmt(new ReferenceIDExpr("a"))
 	}));
 
 	assertEqAST(&expected, ast);

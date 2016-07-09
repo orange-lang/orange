@@ -318,6 +318,16 @@ namespace orange { namespace ast {
 		ThisID() { }
 	};
 
+	// A reference to a named node.
+	struct ReferenceIDExpr : Identifier {
+	public:
+		std::string name;
+
+		ReferenceIDExpr() { }
+		ReferenceIDExpr(std::string name) : name(name) { }
+	};
+
+	// A named node, mostly in the context of it being declared.
 	struct NamedIDExpr : Identifier {
 	public:
 		std::string name;

@@ -19,8 +19,8 @@ using namespace orange::ast;
 using namespace orange::parser;
 using namespace orange::parser::impl;
 
-Identifier* impl::Parser::parse_identifier() {
-	auto id = parse_identifier_base();
+Identifier* impl::Parser::parse_identifier(bool declaring) {
+	auto id = parse_identifier_base(declaring);
 	if (id == nullptr) return nullptr;
 
 	auto generics = parse_opt_generic_spec();
@@ -34,11 +34,12 @@ Generics* impl::Parser::parse_opt_generic_spec() {
 	throw std::runtime_error("Don't know how to parse generic IDs yet");
 }
 
-Identifier* impl::Parser::parse_identifier_base() {
+Identifier* impl::Parser::parse_identifier_base(bool declaring) {
 	if (mStream.eof()) return nullptr;
 
 	if (mStream.peek()->type == IDENTIFIER) {
-		return CreateNode<NamedIDExpr>(mStream.get()->value);
+		auto name = mStream.get()->value;
+		return declaring ? (Identifier*)CreateNode<NamedIDExpr>(name) : (Identifier*)CreateNode<ReferenceIDExpr>(name);
 	} else if (mStream.peek()->type == TILDE) {
 		mStream.get();
 
@@ -49,8 +50,8 @@ Identifier* impl::Parser::parse_identifier_base() {
 	} else return nullptr;
 }
 
-Identifier* impl::Parser::parse_full_identifier() {
-	Identifier* LHS = parse_identifier_base();
+Identifier* impl::Parser::parse_full_identifier(bool declaring) {
+	Identifier* LHS = parse_identifier_base(declaring);
 	if (LHS == nullptr) return nullptr;
 
 	while (mStream.eof() == false) {
@@ -61,7 +62,7 @@ Identifier* impl::Parser::parse_full_identifier() {
 		switch (mStream.peek()->type) {
 			case TokenType::DOT:
 				mStream.get();
-				RHS = parse_identifier_base();
+				RHS = parse_identifier_base(declaring);
 				if (RHS == nullptr) throw std::runtime_error("Expected identifier");
 				LHS = CreateNode<AccessIDExpr>(LHS, RHS);
 				break;
