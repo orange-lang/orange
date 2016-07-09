@@ -6,10 +6,10 @@
 // may not be copied, modified, or distributed except according to those terms.
 //
 
-#include <libtranslate/translate.h>
-
 #include <iostream>
 #include <llvm/IR/LLVMContext.h>
+
+#include <libtranslate/translate.h>
 
 using namespace orange::ast;
 using namespace orange::analysis; 

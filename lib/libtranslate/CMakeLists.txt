@@ -27,11 +27,4 @@ set_target_properties(translate PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(translate PRIVATE cxx_range_for)
 target_link_libraries(translate ast analysis ${llvm_libs})
 
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-add_executable(testtranslate test/test_translate.cc)
-target_include_directories(testtranslate PRIVATE include)
-target_link_libraries(testtranslate gtest gtest_main parse ast translate ${llvm_libs})
-target_compile_features(testtranslate PRIVATE cxx_range_for)
-add_test(testtranslate testtranslate)
-
 install(TARGETS translate ARCHIVE DESTINATION lib)
