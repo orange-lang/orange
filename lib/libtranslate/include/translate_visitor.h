@@ -12,6 +12,7 @@
 
 #include <libast/visitor.h>
 #include <libast/walker.h>
+#include <libast/search.h>
 #include <libtranslate/translate.h>
 #include <libanalysis/analyze.h>
 
@@ -34,6 +35,8 @@ namespace orange { namespace translate {
 		Walker& mWalker;
 
 		std::shared_ptr<LLVMIRBuilder> mBuilder;
+
+		ASTSearcher& mSearcher;
 
 		struct ValueInfo {
 			llvm::Value* val;
@@ -116,6 +119,6 @@ namespace orange { namespace translate {
 		void SetCurrentBlock(llvm::BasicBlock* currentBlock);
 		void SetCurrentContext(orange::analysis::NodeTypeContext* ctx);
 
-		TranslateVisitor(Walker& walker, std::shared_ptr<llvm::Module> mod);
+		TranslateVisitor(Walker& walker, std::shared_ptr<llvm::Module> mod, ASTSearcher& searcher);
 	};
 }}

@@ -185,7 +185,26 @@ void TranslateVisitor::VisitThisID(ThisID* node) {
 }
 
 void TranslateVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
-	throw std::runtime_error("Don't know how to handle ReferenceIDExpr");
+	auto original = mSearcher.FindNode(node, node, true);
+
+	if (original == nullptr) {
+		throw std::runtime_error("Unknown reference to identifier");
+	}
+
+	if (isA<VarDeclExpr>(original) == false) {
+		throw std::runtime_error("Don't know how to handle non-variable identifier");
+	}
+
+	if (isA<VarDeclExpr>(original)) {
+		auto varDecl = asA<VarDeclExpr>(original);
+		for (auto binding : varDecl->bindings) {
+			if (isA<NamedIDExpr>(binding) == false) continue;
+			if (asA<NamedIDExpr>(binding)->name == node->name) {
+				SetValue(node, GetValue(binding));
+				break;
+			}
+		}
+	}
 }
 
 void TranslateVisitor::VisitNamedIDExpr(NamedIDExpr* node) {
@@ -349,8 +368,8 @@ void TranslateVisitor::SetCurrentContext(orange::analysis::NodeTypeContext* ctx)
 	mCurrentContext = ctx;
 }
 
-TranslateVisitor::TranslateVisitor(Walker& walker, std::shared_ptr<llvm::Module> mod) :
-	mWalker(walker), mModule(mod) {
+TranslateVisitor::TranslateVisitor(Walker& walker, std::shared_ptr<llvm::Module> mod, ASTSearcher& searcher) :
+	mWalker(walker), mModule(mod), mSearcher(searcher) {
 	mBuilder = std::make_shared<LLVMIRBuilder>(llvm::getGlobalContext());
 }
 

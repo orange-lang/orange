@@ -67,7 +67,8 @@ llvm::Value* CompileValueForNode(Node* node, Optional<ValueCallback> cb = Option
 
 	orange::ast::NonTraversalWalker walker;
 
-	orange::translate::TranslateVisitor visitor(walker, module);
+	auto searcher = orange::ast::ASTSearcher(astList);
+	orange::translate::TranslateVisitor visitor(walker, module, searcher);
 	visitor.SetCurrentBlock(body);
 	visitor.SetCurrentContext(tr.GenerateTypeTable()->GetGlobalContext());
 	visitor.VisitLongBlockExpr(&ast);
@@ -196,4 +197,25 @@ TEST(Translator, SingleVarDecl) {
 
 	ExpectInsts(varDecl, expectedInstructs);
 	delete varDecl;
+}
+
+TEST(Translator, VarDeclReference) {
+	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<orange::ast::Type*>({}),
+			CreateNode<IntValue>(951)
+		),
+
+	    CreateNode<ReferenceIDExpr>("a")
+	}));
+
+	std::vector<unsigned> expectedInstructs({
+		Instruction::MemoryOps::Alloca,
+	    Instruction::MemoryOps::Store,
+	    Instruction::MemoryOps::Load
+	});
+
+	ExpectInsts(ast, expectedInstructs);
+	delete ast;
 }

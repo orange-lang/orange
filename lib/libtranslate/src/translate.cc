@@ -25,9 +25,10 @@ TypeTable* Translator::GetTypeTable() const {
 std::shared_ptr<llvm::Module> Translator::Translate(ast::LongBlockExpr* ast, std::string name) { 
 	auto module = std::make_shared<llvm::Module>(name, llvm::getGlobalContext());
 
+	auto searcher = ast::ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
 	ast::NonTraversalWalker walker;
 
-	TranslateVisitor visitor(walker, module);
+	TranslateVisitor visitor(walker, module, searcher);
 	visitor.SetCurrentContext(mTypeTable->GetGlobalContext());
 
 	visitor.VisitLongBlockExpr(ast);
@@ -46,9 +47,10 @@ std::shared_ptr<llvm::Module> Translator::TranslateMain(ast::LongBlockExpr* ast,
 
 	auto body = llvm::BasicBlock::Create(getGlobalContext(), "body", mainFunction);
 
+	auto searcher = ast::ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
 	ast::NonTraversalWalker walker;
 
-	TranslateVisitor visitor(walker, module);
+	TranslateVisitor visitor(walker, module, searcher);
 	visitor.SetCurrentBlock(body);
 	visitor.SetCurrentContext(mTypeTable->GetGlobalContext());
 
