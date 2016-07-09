@@ -125,15 +125,23 @@ void TranslateVisitor::VisitIntValue(IntValue* node) {
 }
 
 void TranslateVisitor::VisitUIntValue(UIntValue* node) {
-	throw std::runtime_error("Don't know how to handle UIntValue");
+	auto orangeTy = mCurrentContext->GetNodeType(node);
+	auto llvmTy = GetLLVMType(orangeTy);
+	auto llvmVal = llvm::APInt(GetIntegerBitWidth(orangeTy), node->value, IsSignedType(orangeTy));
+	auto val = llvm::Constant::getIntegerValue(llvmTy, llvmVal);
+	SetValue(node, val);
 }
 
 void TranslateVisitor::VisitFloatValue(FloatValue* node) {
-	throw std::runtime_error("Don't know how to handle FloatValue");
+	auto llvmVal = llvm::APFloat(node->value);
+	auto val = llvm::ConstantFP::get(llvm::getGlobalContext(), llvmVal);
+	SetValue(node, val);
 }
 
 void TranslateVisitor::VisitDoubleValue(DoubleValue* node) {
-	throw std::runtime_error("Don't know how to handle DoubleValue");
+	auto llvmVal = llvm::APFloat(node->value);
+	auto val = llvm::ConstantFP::get(llvm::getGlobalContext(), llvmVal);
+	SetValue(node, val);
 }
 
 void TranslateVisitor::VisitStringValue(StringValue* node) {
