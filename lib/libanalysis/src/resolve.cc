@@ -8,6 +8,7 @@
 
 #include <libast/compare.h>
 #include <libast/typecheck.h>
+#include <libast/binop.h>
 
 #include "resolve.h"
 #include "compatibility.h"
@@ -159,6 +160,13 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 		mContext->SetNodeType(node, tyLHS);
 	} else if (AreTypesCompatible(tyLHS, tyRHS)) {
 		mContext->SetNodeType(node, GetImplicitType(tyLHS, tyRHS));
+	}
+
+	if (IsAssignBinOp(node->op)) {
+		mContext->SetNodeType(node, tyLHS);
+
+		if (mContext->IsLValue(node->LHS) == false)
+			throw std::runtime_error("Can only assign to lvalues");
 	}
 }
 

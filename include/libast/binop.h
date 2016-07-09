@@ -15,5 +15,7 @@ namespace orange { namespace ast {
 	bool IsAssignBinOp(BinOp binop);
 	bool IsCompareBinOp(BinOp binop);
 	bool IsLogicalBinOp(BinOp binop);
+	bool IsArithAssignBinOp(BinOp binop);
+	BinOp GetArithBinOp(BinOp binop);
 }}
 

@@ -315,5 +315,54 @@ TEST(Analysis, VarReference) {
 }
 
 TEST(Analysis, InvalidVarReference) {
+	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<BinOpExpr>(
+			CreateNode<ReferenceIDExpr>("a"),
+			BinOp::ADD,
+			CreateNode<IntValue>(5)
+		),
+	}));
 
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
+	auto ctx = NodeTypeContext();
+	ResolveVisitor resolver(&ctx, searcher);
+
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+
+	EXPECT_THROW({
+		walker.WalkLongBlockExpr(&resolver, ast);
+	}, std::runtime_error);
+}
+
+TEST(Analysis, AssignBinOps) {
+	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<Type*>(), CreateNode<IntValue>(5)
+		),
+
+	    CreateNode<BinOpExpr>(
+		    CreateNode<ReferenceIDExpr>("a"),
+		    BinOp::PLUS_ASSIGN,
+		    CreateNode<IntValue>(5)
+	    ),
+
+	    CreateNode<BinOpExpr>(
+		    CreateNode<ReferenceIDExpr>("a"),
+		    BinOp::TIMES_ASSIGN,
+		    CreateNode<DoubleValue>(52.932)
+	    ),
+	}));
+
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
+	auto ctx = NodeTypeContext();
+	ResolveVisitor resolver(&ctx, searcher);
+
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+
+	walker.WalkLongBlockExpr(&resolver, ast);
+
+	for (unsigned long i = 1; i < ast->statements.size(); i++) {
+		ExpectTy(new IntType, ctx.GetNodeType(ast->statements[i]));
+	}
 }

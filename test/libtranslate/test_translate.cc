@@ -156,6 +156,8 @@ void ExpectInsts(Node* node, std::vector<unsigned> expect) {
 	CompileValueForNode(node, Optional<ValueCallback>([node, expect] (CompilationContext ctx) {
 		auto it = ctx.functionBody->begin();
 
+		ctx.module->dump();
+
 		for (auto inst : expect) {
 			ASSERT_TRUE(it != ctx.functionBody->end());
 			EXPECT_STREQ(Instruction::getOpcodeName(inst), it->getOpcodeName());
@@ -213,7 +215,39 @@ TEST(Translator, VarDeclReference) {
 	std::vector<unsigned> expectedInstructs({
 		Instruction::MemoryOps::Alloca,
 	    Instruction::MemoryOps::Store,
-	    Instruction::MemoryOps::Load
+	});
+
+	ExpectInsts(ast, expectedInstructs);
+	delete ast;
+}
+
+TEST(Translator, AssignBinOps) {
+	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<orange::ast::Type*>(), CreateNode<IntValue>(5)
+		),
+
+		CreateNode<BinOpExpr>(
+			CreateNode<ReferenceIDExpr>("a"),
+			BinOp::PLUS_ASSIGN,
+			CreateNode<IntValue>(5)
+		),
+
+	    CreateNode<BinOpExpr>(
+		 	CreateNode<ReferenceIDExpr>("a"),
+			BinOp::ASSIGN,
+			CreateNode<IntValue>(10)
+	    )
+	}));
+
+	std::vector<unsigned> expectedInstructs({
+		Instruction::MemoryOps::Alloca,
+		Instruction::MemoryOps::Store,
+	    Instruction::MemoryOps::Load,
+	    Instruction::BinaryOps::Add,
+	    Instruction::MemoryOps::Store,
+		Instruction::MemoryOps::Store
 	});
 
 	ExpectInsts(ast, expectedInstructs);

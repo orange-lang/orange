@@ -56,6 +56,9 @@ namespace orange { namespace translate {
 	public:
 		llvm::Value* GetValue(Node* node, bool disableLoading = false);
 
+		llvm::Value* HandleArithBinOp(BinOpExpr* node, BinOp op);
+		llvm::Value* HandleAssignBinOp(BinOpExpr* node, BinOp op);
+
 		virtual void VisitLoopStmt(LoopStmt* node) override;
 		virtual void VisitForeachStmt(ForeachStmt* node) override;
 		virtual void VisitBreakStmt(BreakStmt* node) override;

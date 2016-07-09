@@ -16,6 +16,7 @@
 #include "llvm_helpers.h"
 
 using namespace orange::translate;
+using namespace orange::analysis;
 using namespace llvm;
 
 llvm::Value* TranslateVisitor::GetValue(Node* node, bool disableLoading) {
@@ -201,7 +202,8 @@ void TranslateVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
 		for (auto binding : varDecl->bindings) {
 			if (isA<NamedIDExpr>(binding) == false) continue;
 			if (asA<NamedIDExpr>(binding)->name == node->name) {
-				SetValue(node, GetValue(binding));
+				auto value = GetValue(binding, true);
+				SetValue(node, ValueInfo(value, true));
 				break;
 			}
 		}
@@ -232,11 +234,7 @@ void TranslateVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {
 	throw std::runtime_error("Don't know how to handle ShortBlockExpr");
 }
 
-
-void TranslateVisitor::VisitBinOpExpr(BinOpExpr* node) {
-	mWalker.WalkExpr(this, node->LHS);
-	mWalker.WalkExpr(this, node->RHS);
-
+llvm::Value* TranslateVisitor::HandleArithBinOp(BinOpExpr* node, BinOp op) {
 	auto nodeTy      = mCurrentContext->GetNodeType(node);
 	auto targetLHSTy = mCurrentContext->GetNodeType(node->LHS);
 	auto targetRHSTy = mCurrentContext->GetNodeType(node->RHS);
@@ -252,13 +250,50 @@ void TranslateVisitor::VisitBinOpExpr(BinOpExpr* node) {
 		throw std::runtime_error("Don't know how to do implicit cast");
 	}
 
-	if (IsArithBinOp(node->op)) {
-		Instruction::BinaryOps llvmOp = GetLLVMBinOp(node->op, IsFloatingPointType(nodeTy), IsSignedType(nodeTy));
-		if (llvmOp == Instruction::BinaryOps::BinaryOpsEnd)
-			throw std::runtime_error("Unknown binary operator to convert to LLVM operation");
+	Instruction::BinaryOps llvmOp = GetLLVMBinOp(op, IsFloatingPointType(nodeTy), IsSignedType(nodeTy));
+	if (llvmOp == Instruction::BinaryOps::BinaryOpsEnd)
+		throw std::runtime_error("Unknown binary operator to convert to LLVM operation");
 
-		auto val = mBuilder->CreateBinOp(llvmOp, vLHS, vRHS);
-		SetValue(node, val);
+	return mBuilder->CreateBinOp(llvmOp, vLHS, vRHS);
+}
+
+
+llvm::Value* TranslateVisitor::HandleAssignBinOp(BinOpExpr* node, BinOp op) {
+	auto nodeTy      = mCurrentContext->GetNodeType(node);
+	auto targetLHSTy = mCurrentContext->GetNodeType(node->LHS);
+	auto targetRHSTy = mCurrentContext->GetNodeType(node->RHS);
+
+	auto vPtr = GetValue(node->LHS, true);
+
+	llvm::Value* vRHS = nullptr;
+
+	if (IsArithAssignBinOp(op)) {
+		// Do a binary operation between LHS and RHS.
+		vRHS = HandleArithBinOp(node, GetArithBinOp(op));
+	} else {
+		// Just assign RHS
+		vRHS = GetValue(node->RHS);
+	}
+
+	if (vRHS->getType() != GetLLVMType(nodeTy)) {
+		throw std::runtime_error("Don't know how to do implicit cast");
+	}
+
+	mBuilder->CreateStore(vRHS, vPtr);
+
+	return vRHS;
+}
+
+
+void TranslateVisitor::VisitBinOpExpr(BinOpExpr* node) {
+	mWalker.WalkExpr(this, node->LHS);
+	mWalker.WalkExpr(this, node->RHS);
+
+	if (IsArithBinOp(node->op)) {
+		SetValue(node, HandleArithBinOp(node, node->op));
+	} else if (IsAssignBinOp(node->op)) {
+		HandleAssignBinOp(node, node->op);
+		SetValue(node, GetValue(node->LHS, true));
 	} else {
 		throw std::runtime_error("Don't know how to handle non-arithmatic binary operator");
 	}
