@@ -51,13 +51,13 @@ namespace orange { namespace ast {
 
 	struct LoopStmt : Statement {
 	public:
-		Expression* initializer;
-		Expression* condition;
-		Expression* afterthought;
+		Expression* initializer = nullptr;
+		Expression* condition = nullptr;
+		Expression* afterthought = nullptr;
 
 		LoopConditionCheck check;
 
-		BlockExpr* body;
+		BlockExpr* body = nullptr;
 
 		LoopStmt() { }
 		LoopStmt(Expression* initializer, Expression* condition, Expression* afterthought,
@@ -67,9 +67,9 @@ namespace orange { namespace ast {
 
 	struct ForeachStmt : Statement {
 	public:
-		VarDeclExpr* declaration;
-		Expression* value;
-		BlockExpr* body;
+		VarDeclExpr* declaration = nullptr;
+		Expression* value = nullptr;
+		BlockExpr* body = nullptr;
 
 		ForeachStmt() { }
 		ForeachStmt(VarDeclExpr* declaration, Expression* value, BlockExpr* body) :
@@ -82,7 +82,7 @@ namespace orange { namespace ast {
 
 	struct YieldStmt : Statement {
 	public:
-		Expression* value;
+		Expression* value = nullptr;
 
 		YieldStmt() { }
 		YieldStmt(Expression* value) : value(value) { }
@@ -90,7 +90,7 @@ namespace orange { namespace ast {
 
 	struct ReturnStmt : Statement {
 	public:
-		Expression* value;
+		Expression* value = nullptr;
 
 		ReturnStmt() { }
 		ReturnStmt(Expression* value) : value(value) { }
@@ -98,8 +98,8 @@ namespace orange { namespace ast {
 
 	struct AggregateStmt : Statement {
 	public:
-		Identifier* name;
-		BlockExpr* body;
+		Identifier* name = nullptr;
+		BlockExpr* body = nullptr;
 
 		AggregateStmt() { }
 		AggregateStmt(Identifier* name, BlockExpr* body) :
@@ -108,9 +108,9 @@ namespace orange { namespace ast {
 
 	struct ExternFuncStmt : Statement {
 	public:
-		Identifier* name;
+		Identifier* name = nullptr;
 		std::vector<VarDeclExpr*> params;
-		Type* retType;
+		Type* retType = nullptr;
 
 		ExternFuncStmt() { }
 		ExternFuncStmt(Identifier* name, std::vector<VarDeclExpr*> params, Type* retType) :
@@ -119,7 +119,7 @@ namespace orange { namespace ast {
 
 	struct EnumStmt : Statement {
 	public:
-		Identifier* name;
+		Identifier* name = nullptr;
 		std::vector<EnumValue*> values;
 
 		EnumStmt() { }
@@ -129,9 +129,9 @@ namespace orange { namespace ast {
 
 	struct ClassStmt : Statement {
 	public:
-		Identifier* name;
+		Identifier* name = nullptr;
 		std::vector<Identifier*> supers;
-		BlockExpr* body;
+		BlockExpr* body = nullptr;
 
 		ClassStmt() { }
 		ClassStmt(Identifier* name, std::vector<Identifier*> supers, BlockExpr* body) :
@@ -140,8 +140,8 @@ namespace orange { namespace ast {
 
 	struct InterfaceStmt : Statement {
 	public:
-		Identifier* name;
-		BlockExpr* body;
+		Identifier* name = nullptr;
+		BlockExpr* body = nullptr;
 
 		InterfaceStmt() { }
 		InterfaceStmt(Identifier* name, BlockExpr* body) :
@@ -150,9 +150,9 @@ namespace orange { namespace ast {
 
 	struct ExtendStmt : Statement {
 	public:
-		Identifier* name;
+		Identifier* name = nullptr;
 		std::vector<Identifier*> supers;
-		BlockExpr* body;
+		BlockExpr* body = nullptr;
 
 		ExtendStmt() { }
 		ExtendStmt(Identifier* name, std::vector<Identifier*> supers, BlockExpr* body) :
@@ -161,8 +161,8 @@ namespace orange { namespace ast {
 
 	struct NamespaceStmt : Statement {
 	public:
-		Identifier* name;
-		BlockExpr* body;
+		Identifier* name = nullptr;
+		BlockExpr* body = nullptr;
 
 		NamespaceStmt() { }
 		NamespaceStmt(Identifier* name, BlockExpr* body) :
@@ -171,30 +171,30 @@ namespace orange { namespace ast {
 
 	struct ImportStmt : Statement {
 	public:
-		Identifier* name;
+		Identifier* name = nullptr;
 
 		ImportStmt() { }
 		ImportStmt(Identifier* name) : name(name) { }
 	};
 
 	struct GetterStmt : Statement {
-		BlockExpr* body;
+		BlockExpr* body = nullptr;
 
 		GetterStmt() { }
 		GetterStmt(BlockExpr* body) : body(body) { }
 	};
 
 	struct SetterStmt : Statement {
-		BlockExpr* body;
+		BlockExpr* body = nullptr;
 
 		SetterStmt() { }
 		SetterStmt(BlockExpr* body) : body(body) { }
 	};
 
 	struct PropertyStmt : Statement {
-		Identifier* name;
-		Type* type;
-		BlockExpr* body;
+		Identifier* name = nullptr;
+		Type* type = nullptr;
+		BlockExpr* body = nullptr;
 
 		PropertyStmt() { }
 		PropertyStmt(Identifier* name, Type* type, BlockExpr* body) : name(name), type(type), body(body) { }
@@ -202,7 +202,7 @@ namespace orange { namespace ast {
 
 	struct ThrowStmt : Statement {
 	public:
-		Expression* exception;
+		Expression* exception = nullptr;
 
 		ThrowStmt() { }
 		ThrowStmt(Expression* exception) : exception(exception) { }
@@ -210,7 +210,7 @@ namespace orange { namespace ast {
 
 	struct DeleteStmt : Statement {
 	public:
-		Expression* deallocation;
+		Expression* deallocation = nullptr;
 
 		DeleteStmt() { }
 		DeleteStmt(Expression* dealloc) : deallocation(dealloc) { }
@@ -218,7 +218,7 @@ namespace orange { namespace ast {
 
 	struct ExprStmt : Statement {
 	public:
-		Expression* expression;
+		Expression* expression = nullptr;
 
 		ExprStmt() { }
 		ExprStmt(Expression* expression) : expression(expression) { }
@@ -235,7 +235,7 @@ namespace orange { namespace ast {
 
 	struct EnumValue : Expression {
 	public:
-		Identifier* name;
+		Identifier* name = nullptr;
 		std::vector<VarDeclExpr*> params;
 
 		EnumValue() { }
@@ -247,7 +247,7 @@ namespace orange { namespace ast {
 	public:
 		std::vector<Identifier*> bindings;
 		std::vector<Type*> types;
-		Expression* value;
+		Expression* value = nullptr;
 
 		VarDeclExpr() { }
 		VarDeclExpr(std::vector<Identifier*> bindings, std::vector<Type*> types, Expression* value) :
@@ -328,7 +328,7 @@ namespace orange { namespace ast {
 
 	struct DtorIDExpr : Identifier {
 	public:
-		NamedIDExpr* base;
+		NamedIDExpr* base = nullptr;
 
 		DtorIDExpr() { }
 		DtorIDExpr(NamedIDExpr* base) : base(base) { }
@@ -341,8 +341,8 @@ namespace orange { namespace ast {
 
 	struct AccessIDExpr : Identifier {
 	public:
-		Identifier* LHS;
-		Identifier* RHS;
+		Identifier* LHS = nullptr;
+		Identifier* RHS = nullptr;
 
 		AccessIDExpr() { }
 		AccessIDExpr(Identifier* LHS, Identifier* RHS) : LHS(LHS), RHS(RHS) { }
@@ -360,7 +360,7 @@ namespace orange { namespace ast {
 
 	struct ShortBlockExpr : BlockExpr {
 	public:
-		Node* statement;
+		Node* statement = nullptr;
 
 		ShortBlockExpr() { }
 		ShortBlockExpr(Node* statement) : statement(statement) { }
@@ -378,9 +378,9 @@ namespace orange { namespace ast {
 
 	struct BinOpExpr : Expression {
 	public:
-		Expression* LHS;
+		Expression* LHS = nullptr;
 		BinOp op;
-		Expression* RHS;
+		Expression* RHS = nullptr;
 
 		BinOpExpr() { }
 		BinOpExpr(Expression* LHS, BinOp op, Expression* RHS) :
@@ -394,7 +394,7 @@ namespace orange { namespace ast {
 	public:
 		UnaryOp op;
 		UnaryOrder order;
-		Expression* LHS;
+		Expression* LHS = nullptr;
 
 		UnaryExpr() { }
 		UnaryExpr(UnaryOp op, UnaryOrder order, Expression* LHS) : op(op), order(order), LHS(LHS) { }
@@ -420,9 +420,9 @@ namespace orange { namespace ast {
 
 	struct ArrayRangeExpr : Expression {
 	public:
-		Expression* LHS;
+		Expression* LHS = nullptr;
 		ArrayRangeType type;
-		Expression* RHS;
+		Expression* RHS = nullptr;
 
 		ArrayRangeExpr() { }
 		ArrayRangeExpr(Expression* LHS, ArrayRangeType type, Expression* RHS) :
@@ -431,8 +431,8 @@ namespace orange { namespace ast {
 
 	struct ArrayAccessExpr : Expression {
 	public:
-		Expression* expression;
-		Expression* index;
+		Expression* expression = nullptr;
+		Expression* index = nullptr;
 
 		ArrayAccessExpr () { }
 		ArrayAccessExpr (Expression* expression, Expression* index) :
@@ -441,8 +441,8 @@ namespace orange { namespace ast {
 
 	struct MemberAccessExpr : Expression {
 	public:
-		Expression* LHS;
-		Identifier* RHS;
+		Expression* LHS = nullptr;
+		Identifier* RHS = nullptr;
 
 		MemberAccessExpr () { }
 		MemberAccessExpr (Expression* LHS, Identifier* RHS) :
@@ -451,8 +451,8 @@ namespace orange { namespace ast {
 
 	struct NamedExpr : Expression {
 	public:
-		Identifier* name;
-		Expression* value;
+		Identifier* name = nullptr;
+		Expression* value = nullptr;
 
 		NamedExpr() { }
 		NamedExpr(Identifier* name, Expression* value) :
@@ -461,8 +461,8 @@ namespace orange { namespace ast {
 
 	struct ConditionalBlock : Expression {
 	public:
-		Expression* condition;
-		BlockExpr* block;
+		Expression* condition = nullptr;
+		BlockExpr* block = nullptr;
 
 		ConditionalBlock() { }
 		ConditionalBlock(Expression* condition, BlockExpr* block) : condition(condition), block(block) { }
@@ -478,9 +478,9 @@ namespace orange { namespace ast {
 
 	struct TernaryExpr : Expression {
 	public:
-		Expression* condition;
-		Expression* trueValue;
-		Expression* falseValue;
+		Expression* condition = nullptr;
+		Expression* trueValue = nullptr;
+		Expression* falseValue = nullptr;
 
 		TernaryExpr() { }
 		TernaryExpr(Expression* condition, Expression* trueValue, Expression* falseValue) :
@@ -490,7 +490,7 @@ namespace orange { namespace ast {
 	struct SwitchPattern : Statement {
 	public:
 		std::vector<Expression*> patterns;
-		BlockExpr* block;
+		BlockExpr* block = nullptr;
 
 		SwitchPattern() { }
 		SwitchPattern(std::vector<Expression*> patterns, BlockExpr* block) :
@@ -499,7 +499,7 @@ namespace orange { namespace ast {
 
 	struct SwitchExpr : Expression {
 	public:
-		Expression* condition;
+		Expression* condition = nullptr;
 		std::vector<SwitchPattern*> patterns;
 
 		SwitchExpr() { }
@@ -514,7 +514,7 @@ namespace orange { namespace ast {
 
 	struct ClassConstraint : Constraint {
 	public:
-		Identifier* identifier;
+		Identifier* identifier = nullptr;
 
 		ClassConstraint() { }
 		ClassConstraint(Identifier* identifier) : identifier(identifier) { }
@@ -522,7 +522,7 @@ namespace orange { namespace ast {
 
 	struct DefaultCtorConstraint : Constraint {
 	public:
-		Identifier* identifier;
+		Identifier* identifier = nullptr;
 
 		DefaultCtorConstraint() { }
 		DefaultCtorConstraint(Identifier* identifier) : identifier(identifier) { }
@@ -530,8 +530,8 @@ namespace orange { namespace ast {
 
 	struct BaseConstraint : Constraint {
 	public:
-		Identifier* identifier;
-		Identifier* base;
+		Identifier* identifier = nullptr;
+		Identifier* base = nullptr;
 
 		BaseConstraint() { }
 		BaseConstraint(Identifier* identifier, Identifier* base) :
@@ -540,8 +540,8 @@ namespace orange { namespace ast {
 
 	struct DataConstraint : Constraint {
 	public:
-		Identifier* identifier;
-		Type* dataType;
+		Identifier* identifier = nullptr;
+		Type* dataType = nullptr;
 
 		DataConstraint() { }
 		DataConstraint(Identifier* identifier, Type* dataType) :
@@ -550,8 +550,8 @@ namespace orange { namespace ast {
 
 	struct TypeConstraint : Constraint {
 	public:
-		Identifier* identifier;
-		Type* type;
+		Identifier* identifier = nullptr;
+		Type* type = nullptr;
 
 		TypeConstraint() { }
 		TypeConstraint(Identifier* identifier, Type* type) :
@@ -570,11 +570,11 @@ namespace orange { namespace ast {
 
 	struct FunctionExpr : Expression {
 	public:
-		Identifier* name;
-		Generics* generics;
+		Identifier* name = nullptr;
+		Generics* generics = nullptr;
 		std::vector<VarDeclExpr*> params;
-		Type* retType;
-		BlockExpr* block;
+		Type* retType = nullptr;
+		BlockExpr* block = nullptr;
 
 		FunctionExpr() { }
 		FunctionExpr(Identifier* name, Generics* generics, std::vector<VarDeclExpr*> params,
@@ -584,8 +584,8 @@ namespace orange { namespace ast {
 
 	struct CatchBlock : Expression {
 	public:
-		VarDeclExpr* exception;
-		BlockExpr* block;
+		VarDeclExpr* exception = nullptr;
+		BlockExpr* block = nullptr;
 
 		CatchBlock() { }
 		CatchBlock(VarDeclExpr* exception, BlockExpr* block) :
@@ -594,9 +594,9 @@ namespace orange { namespace ast {
 
 	struct TryExpr : Expression {
 	public:
-		BlockExpr* block;
+		BlockExpr* block = nullptr;
 		std::vector<CatchBlock*> catches;
-		BlockExpr* finally;
+		BlockExpr* finally = nullptr;
 
 		TryExpr() { }
 		TryExpr(BlockExpr* block, std::vector<CatchBlock*> catches, BlockExpr* finally) :
@@ -605,8 +605,8 @@ namespace orange { namespace ast {
 
 	struct CastExpr : Expression {
 	public:
-		Type* targetType;
-		Expression* expr;
+		Type* targetType = nullptr;
+		Expression* expr = nullptr;
 
 		CastExpr() { }
 		CastExpr(Type* targetType, Expression* expr) :
@@ -615,7 +615,7 @@ namespace orange { namespace ast {
 
 	struct FunctionCallExpr : Expression {
 	public:
-		Expression* function;
+		Expression* function = nullptr;
 		std::vector<Expression*> args;
 
 		FunctionCallExpr() { }
@@ -625,7 +625,7 @@ namespace orange { namespace ast {
 
 	struct NewExpr : Expression {
 	public:
-		Expression* allocation;
+		Expression* allocation = nullptr;
 
 		NewExpr() { }
 		NewExpr(Expression* allocation) : allocation(allocation) { }
