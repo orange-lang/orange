@@ -7,6 +7,7 @@
 //
 
 #include <libast/compare.h>
+#include <libast/typecheck.h>
 
 #include "resolve.h"
 #include "compatibility.h"
@@ -40,6 +41,35 @@ void ResolveVisitor::VisitDeleteStmt(DeleteStmt* node) {
 }
 
 void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
+	if (node->bindings.size() > 1) {
+		throw std::runtime_error("Can't handle multiple bindings yet.");
+	}
+
+	if (node->types.size() > 0 && node->types.size() != node->bindings.size()) {
+		throw std::runtime_error("The number of defined types do not match the number of declared variables");
+	}
+
+	if (node->value == nullptr && node->types.size() == 0) {
+		throw std::runtime_error("Implicitly typed variables need an initial value");
+	}
+
+	auto binding = node->bindings[0];
+
+	Type* nodeType = nullptr;
+
+	if (node->value != nullptr) nodeType = mContext->GetNodeType(node->value);
+	if (node->types.size() > 0) nodeType = node->types[0];
+
+	if (isA<ReferenceType>(nodeType)) {
+		throw std::runtime_error("Not sure how to handle reference types yet.");
+	}
+
+	mContext->SetNodeType(binding, nodeType);
+
+	// Finally, set the type for the variable declaration, which will be a tuple of all the bindings
+	mContext->SetNodeType(node, new TupleType(std::vector<Type*>({
+		mContext->GetNodeType(binding)
+	})));
 }
 
 void ResolveVisitor::VisitIntValue(IntValue* node) {

@@ -168,3 +168,92 @@ TEST(Analysis, BinOps) {
 		ExpectTy(pair.second, ty);
 	}
 }
+
+TEST(Analysis, VarDecl) {
+	std::vector<std::pair<VarDeclExpr*, orange::ast::Type*>> tests({
+		// typeless with value
+		std::make_pair(
+			CreateNode<VarDeclExpr>(
+				std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+				std::vector<Type*> ({ }),
+				CreateNode<IntValue>(52)
+			),
+			new IntType
+		),
+
+		// type without value
+		std::make_pair(
+			CreateNode<VarDeclExpr>(
+				std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+				std::vector<Type*> ({ new IntType }),
+				nullptr
+			),
+			new IntType
+		),
+
+		// type with value
+		std::make_pair(
+			CreateNode<VarDeclExpr>(
+				std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+				std::vector<Type*> ({ new IntType }),
+				CreateNode<DoubleValue>(5.23)
+			),
+			new IntType
+		),
+	});
+
+	auto ctx = NodeTypeContext();
+	ResolveVisitor resolver(&ctx);
+
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+
+	for (auto pair : tests) {
+		walker.WalkExpr(&resolver, pair.first);
+		auto ty = ctx.GetNodeType(pair.first->bindings[0]);
+
+		ExpectTy(pair.second, ty);
+	}
+}
+
+TEST(Analysis, InvalidVarDecl) {
+	// typeless without value
+	auto varDecl = CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<Type*> ({ }),
+		nullptr
+	);
+
+	auto ctx = NodeTypeContext();
+	ResolveVisitor resolver(&ctx);
+
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+
+	EXPECT_THROW({
+		walker.WalkExpr(&resolver, varDecl);
+	}, std::runtime_error);
+
+	delete varDecl;
+}
+
+TEST(Analysis, VarDeclPair) {
+	// TODO: change when this feature is implemented
+	auto varDecl = CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b") }),
+		std::vector<Type*> ({ }),
+		CreateNode<TupleExpr>(std::vector<Expression*>({
+			CreateNode<IntValue>(5),
+			CreateNode<DoubleValue>(10.93)
+		}))
+	);
+
+	auto ctx = NodeTypeContext();
+	ResolveVisitor resolver(&ctx);
+
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+
+	EXPECT_THROW({
+		walker.WalkExpr(&resolver, varDecl);
+	}, std::runtime_error);
+
+	delete varDecl;
+}
