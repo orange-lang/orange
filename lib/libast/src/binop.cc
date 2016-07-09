@@ -6,6 +6,7 @@
 // may not be copied, modified, or distributed except according to those terms.
 //
 
+#include <stdexcept>
 #include <libast/binop.h>
 
 using namespace orange::ast;
