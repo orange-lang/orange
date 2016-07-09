@@ -8,10 +8,12 @@
 
 #pragma once
 
-#include <libast/ast.h>
-#include <llvm/IR/Instructions.h>
+#include "ast.h"
 
-namespace orange { namespace translate {
-	llvm::Instruction::BinaryOps GetLLVMBinOp(orange::ast::BinOp binop, bool fp, bool isSigned);
+namespace orange { namespace ast {
+	bool IsArithBinOp(BinOp binop);
+	bool IsAssignBinOp(BinOp binop);
+	bool IsCompareBinOp(BinOp binop);
+	bool IsLogicalBinOp(BinOp binop);
 }}
 

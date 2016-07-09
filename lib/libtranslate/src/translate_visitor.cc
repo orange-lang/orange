@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <llvm/IR/IRBuilder.h>
 #include <libast/typecheck.h>
+#include <libast/binop.h>
 
 #include "translate_visitor.h"
 #include "type_converter.h"
@@ -251,7 +252,7 @@ void TranslateVisitor::VisitBinOpExpr(BinOpExpr* node) {
 		throw std::runtime_error("Don't know how to do implicit cast");
 	}
 
-	if (IsLLVMBinOp(node->op)) {
+	if (IsArithBinOp(node->op)) {
 		Instruction::BinaryOps llvmOp = GetLLVMBinOp(node->op, IsFloatingPointType(nodeTy), IsSignedType(nodeTy));
 		if (llvmOp == Instruction::BinaryOps::BinaryOpsEnd)
 			throw std::runtime_error("Unknown binary operator to convert to LLVM operation");

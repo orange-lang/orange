@@ -32,25 +32,3 @@ llvm::Instruction::BinaryOps orange::translate::GetLLVMBinOp(orange::ast::BinOp 
 	return Instruction::BinaryOps::BinaryOpsEnd;
 }
 
-bool orange::translate::IsLLVMBinOp(orange::ast::BinOp binop) {
-	return binop == BinOp::ADD || binop == BinOp::SUBTRACT || binop == BinOp::DIVIDE ||
-	       binop == BinOp::MULTIPLY || binop == BinOp::REMAINDER || binop == BinOp::BIT_OR ||
-	       binop == BinOp::BIT_AND || binop == BinOp::BIT_XOR || binop == BinOp::SHIFT_LEFT ||
-	       binop == BinOp::SHIFT_RIGHT;
-}
-
-bool orange::translate::IsLLVMAssignOp(orange::ast::BinOp binop) {
-	return binop == BinOp::ASSIGN || binop == BinOp::PLUS_ASSIGN || binop == BinOp::MINUS_ASSIGN ||
-	       binop == BinOp::TIMES_ASSIGN || binop == BinOp::DIVIDE_ASSIGN || binop == BinOp::REMAINDER_ASSIGN ||
-	       binop == BinOp::SHIFT_LEFT_ASSIGN || binop == BinOp::SHIFT_RIGHT_ASSIGN || binop == BinOp::BIT_OR_ASSIGN ||
-	       binop == BinOp::BIT_AND_ASSIGN || binop == BinOp::BIT_XOR_ASSIGN;
-}
-
-bool orange::translate::IsLLVMCompareOp(orange::ast::BinOp binop) {
-	return binop == BinOp::EQUALS || binop == BinOp::LESS_THAN || binop == BinOp::GREATER_THAN ||
-	       binop == BinOp::LEQ || binop == BinOp::GEQ || binop == BinOp::NEQ;
-}
-
-bool orange::translate::IsLLVMLogicalOp(orange::ast::BinOp binop) {
-	return binop == BinOp::AND || binop == BinOp::OR;
-}
