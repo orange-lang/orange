@@ -30,8 +30,6 @@ matrix:
   - os: osx
     compiler: clang
     before_install:
-    - git submodule init
-    - git submodule update
     - brew update
     - brew upgrade cmake
     - brew tap homebrew/versions
@@ -39,11 +37,17 @@ matrix:
     - export CMAKE_LLVM_PATH=-DLLVM_DIR=/usr/local/Cellar/llvm38/3.8.0/lib/llvm-3.8/share/llvm/cmake
     - export DEFINITIONS=`llvm-config-3.8 --cxxflags | sed -e 's/-fno-exceptions //'`
     - sed -i -e 's,@LLVM_DEFINITIONS@,'"$DEFINITIONS"',g' /usr/local/Cellar/llvm38/3.8.0/lib/llvm-3.8/share/llvm/cmake/LLVMConfig.cmake
+  - os: linux
+    sudo: required
+    services:
+      - docker
+    before_install:
+    script:
+    - docker build -t orangelang/orange
 git:
-  submodules: false
+  submodules: true
+  depth: 1
 before_install:
-- git submodule init
-- git submodule update
 - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
 - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
 - export CMAKE_LLVM_PATH=-DLLVM_DIR=`llvm-config-3.8 --prefix`/share/llvm/cmake
