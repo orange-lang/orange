@@ -62,13 +62,11 @@ llvm::Value* CompileValueForNode(Node* node) {
 }
 
 TEST(Translator, BasicMainTranslate) {
-	LongBlockExpr* ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
-		CreateNode<ReturnStmt>(CreateNode<IntValue>(5))
-	}));
+	auto node = CreateNode<ReturnStmt>(CreateNode<IntValue>(5));
 
-	auto mod = CompileAST(ast);
-	auto term = mod->getFunction("main")->getEntryBlock().getTerminator();
+	auto term = CompileValueForNode(node);
 
+	ASSERT_TRUE(term != nullptr);
 	ASSERT_TRUE(isa<ReturnInst>(term));
 
 	auto retVal = dyn_cast<ReturnInst>(term)->getReturnValue();
@@ -78,7 +76,7 @@ TEST(Translator, BasicMainTranslate) {
 
 	EXPECT_EQ(5, llvm::dyn_cast<ConstantInt>(retVal)->getValue());
 
-	delete ast;
+	delete node;
 }
 
 TEST(Translator, ArithBinOpExpr) {
