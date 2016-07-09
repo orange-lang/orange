@@ -20,6 +20,10 @@ llvm::Type* orange::translate::GetLLVMType(Type* orangeType) {
 	if (IsIntegerType(orangeType)) {
 		int width = GetIntegerBitWidth(orangeType);
 		return llvm::Type::getIntNTy(llvm::getGlobalContext(), width);
+	} else if (isA<BuiltinType>(orangeType) && IsFloatingPointType(orangeType)) {
+		auto builtin = asA<BuiltinType>(orangeType);
+		if (builtin->kind == BuiltinTypeKind::FLOAT)  return llvm::Type::getFloatTy(llvm::getGlobalContext());
+		if (builtin->kind == BuiltinTypeKind::DOUBLE) return llvm::Type::getDoubleTy(llvm::getGlobalContext());
 	}
 
 	throw std::runtime_error("Don't know how to convert Orange type to LLVM type");
