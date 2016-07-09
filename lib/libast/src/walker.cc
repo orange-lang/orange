@@ -405,7 +405,7 @@ void DepthFirstWalker::WalkYieldStmt(Visitor* visitor, YieldStmt* node) {
 void DepthFirstWalker::WalkReturnStmt(Visitor* visitor, ReturnStmt* node) {
 	if (mOrder == TraversalOrder::PREORDER) visitor->VisitReturnStmt(node);
 
-	WalkExpr(visitor, node->value);
+	if (node->value != nullptr) WalkExpr(visitor, node->value);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitReturnStmt(node);
 }
