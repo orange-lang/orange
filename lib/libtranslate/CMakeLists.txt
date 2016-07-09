@@ -20,7 +20,7 @@ llvm_map_components_to_libnames(llvm_libs core)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_library(translate src/translate.cc ../../include/libtranslate/translate.h include/translate_visitor.h src/translate_visitor.cc include/type_converter.h src/type_converter.cc)
+add_library(translate src/translate.cc ../../include/libtranslate/translate.h include/translate_visitor.h src/translate_visitor.cc include/type_converter.h src/type_converter.cc include/llvm_helpers.h src/llvm_helpers.cc)
 
 target_include_directories(translate PRIVATE include)
 set_target_properties(translate PROPERTIES LINKER_LANGUAGE CXX)
