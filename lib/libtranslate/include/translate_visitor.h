@@ -38,9 +38,10 @@ namespace orange { namespace translate {
 		/// A map of node IDs to values
 		std::map<int, llvm::Value*> mValues;
 
-		llvm::Value* GetValue(Node* node);
 		void SetValue(Node* node, llvm::Value* value);
 	public:
+		llvm::Value* GetValue(Node* node);
+
 		virtual void VisitLoopStmt(LoopStmt* node) override;
 		virtual void VisitForeachStmt(ForeachStmt* node) override;
 		virtual void VisitBreakStmt(BreakStmt* node) override;
