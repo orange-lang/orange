@@ -15,6 +15,7 @@ set(LLVM_INCLUDE_TESTS OFF CACHE BOOL "Generate build targets for the LLVM unit 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
 set(OR_INCLUDES "${CMAKE_SOURCE_DIR}/include")
 set(USE_SYSTEM_LLVM OFF CACHE BOOL "Use a pre-installed LLVM instead of building it from source.")
+set(LLVM_ENABLE_RTTI ON CACHE BOOL "Build LLVM with run-time type information.")
 set(BUILD_ORANGE_TESTS ON CACHE BOOL "Build the Orange tests")
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")

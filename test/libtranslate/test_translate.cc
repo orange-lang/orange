@@ -268,3 +268,43 @@ TEST(Translator, AssignBinOps) {
 	ExpectInsts(ast, expectedInstructs);
 	delete ast;
 }
+
+TEST(Translator, CompareBinOps) {
+	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<orange::ast::Type*>(), CreateNode<IntValue>(5)
+		),
+
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("b") }),
+			std::vector<orange::ast::Type*>(), CreateNode<DoubleValue>(5)
+		),
+
+		CreateNode<BinOpExpr>(
+			CreateNode<ReferenceIDExpr>("a"),
+			BinOp::LESS_THAN,
+			CreateNode<IntValue>(5)
+		),
+
+		CreateNode<BinOpExpr>(
+			CreateNode<ReferenceIDExpr>("b"),
+			BinOp::GREATER_THAN,
+			CreateNode<DoubleValue>(19.22)
+		)
+	}));
+
+	std::vector<unsigned> expectedInstructs({
+		Instruction::MemoryOps::Alloca,
+		Instruction::MemoryOps::Store,
+		Instruction::MemoryOps::Alloca,
+		Instruction::MemoryOps::Store,
+		Instruction::MemoryOps::Load,
+		Instruction::OtherOps::ICmp,
+		Instruction::MemoryOps::Load,
+		Instruction::OtherOps::FCmp,
+	});
+
+	ExpectInsts(ast, expectedInstructs);
+	delete ast;
+}

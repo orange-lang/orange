@@ -165,6 +165,8 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 		mContext->SetNodeType(node, tyLHS);
 	} else if (AreTypesCompatible(tyLHS, tyRHS)) {
 		mContext->SetNodeType(node, GetImplicitType(tyLHS, tyRHS));
+	} else {
+		throw std::runtime_error("Incompatible types.");
 	}
 
 	if (IsAssignBinOp(node->op)) {
@@ -172,6 +174,16 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 
 		if (mContext->IsLValue(node->LHS) == false)
 			throw std::runtime_error("Can only assign to lvalues");
+	}
+
+	if (IsCompareBinOp(node->op)) {
+		// Convert both sides to the highest precedence type, but the
+		// type of this node is still bool.
+		auto bestType = GetImplicitType(tyLHS, tyRHS);
+		mContext->SetNodeType(node->LHS, bestType);
+		mContext->SetNodeType(node->RHS, bestType);
+
+		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::BOOL));
 	}
 }
 

@@ -132,7 +132,7 @@ void TranslateVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 
 	auto var = mBuilder->CreateAlloca(llvmTy, nullptr, binding->name);
 
-	if (node->value) {
+	if (node->value != nullptr) {
 		mWalker.WalkExpr(this, node->value);
 		auto val = GetValue(node->value);
 
@@ -268,9 +268,7 @@ llvm::Value* TranslateVisitor::HandleArithBinOp(BinOpExpr* node, BinOp op) {
 
 
 llvm::Value* TranslateVisitor::HandleAssignBinOp(BinOpExpr* node, BinOp op) {
-	auto nodeTy      = mCurrentContext->GetNodeType(node);
-	auto targetLHSTy = mCurrentContext->GetNodeType(node->LHS);
-	auto targetRHSTy = mCurrentContext->GetNodeType(node->RHS);
+	auto nodeTy = mCurrentContext->GetNodeType(node);
 
 	auto vPtr = GetValue(node->LHS, true);
 
@@ -294,6 +292,33 @@ llvm::Value* TranslateVisitor::HandleAssignBinOp(BinOpExpr* node, BinOp op) {
 }
 
 
+llvm::Value* TranslateVisitor::HandleCompareBinOp(BinOpExpr* node, BinOp op) {
+	auto nodeTy      = mCurrentContext->GetNodeType(node);
+	auto targetLHSTy = mCurrentContext->GetNodeType(node->LHS);
+	auto targetRHSTy = mCurrentContext->GetNodeType(node->RHS);
+
+	auto vLHS = GetValue(node->LHS);
+	auto vRHS = GetValue(node->RHS);
+
+	if (vLHS->getType() != GetLLVMType(targetLHSTy)) {
+		throw std::runtime_error("Don't know how to do implicit cast");
+	}
+
+	if (vRHS->getType() != GetLLVMType(targetRHSTy)) {
+		throw std::runtime_error("Don't know how to do implicit cast");
+	}
+
+	bool fp = vLHS->getType()->isFloatingPointTy();
+
+	CmpInst::Predicate llvmOp = GetLLVMCompareOp(op, fp, IsSignedType(targetLHSTy));
+
+	if (fp) {
+		return mBuilder->CreateFCmp(llvmOp, vLHS, vRHS);
+	} else {
+		return mBuilder->CreateICmp(llvmOp, vLHS, vRHS);
+	}
+}
+
 void TranslateVisitor::VisitBinOpExpr(BinOpExpr* node) {
 	mWalker.WalkExpr(this, node->LHS);
 	mWalker.WalkExpr(this, node->RHS);
@@ -303,8 +328,10 @@ void TranslateVisitor::VisitBinOpExpr(BinOpExpr* node) {
 	} else if (IsAssignBinOp(node->op)) {
 		HandleAssignBinOp(node, node->op);
 		SetValue(node, GetValue(node->LHS, true));
+	} else if (IsCompareBinOp(node->op)) {
+		SetValue(node, HandleCompareBinOp(node, node->op));
 	} else {
-		throw std::runtime_error("Don't know how to handle non-arithmatic binary operator");
+		throw std::runtime_error("Don't know how to handle binary operator");
 	}
 }
 
@@ -417,6 +444,3 @@ TranslateVisitor::TranslateVisitor(Walker& walker, std::shared_ptr<llvm::Module>
 	mWalker(walker), mModule(mod), mSearcher(searcher) {
 	mBuilder = std::make_shared<LLVMIRBuilder>(llvm::getGlobalContext());
 }
-
-
-

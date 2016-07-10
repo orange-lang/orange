@@ -372,3 +372,36 @@ TEST(Analysis, AssignBinOps) {
 		ExpectTy(new IntType, ctx.GetNodeType(ast->statements[i]));
 	}
 }
+
+TEST(Analysis, CompareBinOps) {
+	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<Type*>(), CreateNode<IntValue>(5)
+		),
+
+		CreateNode<BinOpExpr>(
+			CreateNode<ReferenceIDExpr>("a"),
+			BinOp::GREATER_THAN,
+			CreateNode<IntValue>(5)
+		),
+
+		CreateNode<BinOpExpr>(
+			CreateNode<ReferenceIDExpr>("a"),
+			BinOp::LESS_THAN,
+			CreateNode<DoubleValue>(52.932)
+		),
+	}));
+
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
+	auto ctx = NodeTypeContext();
+	ResolveVisitor resolver(&ctx, searcher);
+
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+
+	walker.WalkLongBlockExpr(&resolver, ast);
+
+	for (unsigned long i = 1; i < ast->statements.size(); i++) {
+		ExpectTy(new BoolType, ctx.GetNodeType(ast->statements[i]));
+	}
+}

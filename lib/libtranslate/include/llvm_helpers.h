@@ -13,5 +13,6 @@
 
 namespace orange { namespace translate {
 	llvm::Instruction::BinaryOps GetLLVMBinOp(orange::ast::BinOp binop, bool fp, bool isSigned);
+	llvm::CmpInst::Predicate GetLLVMCompareOp(orange::ast::BinOp binop, bool fp, bool isSigned);
 }}
 
