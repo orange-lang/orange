@@ -22,7 +22,7 @@ TypeTable* Translator::GetTypeTable() const {
 	return mTypeTable;
 }
 
-std::shared_ptr<llvm::Module> Translator::Translate(ast::LongBlockExpr* ast, std::string name) { 
+std::shared_ptr<llvm::Module> Translator::Translate(LongBlockExpr* ast, std::string name) { 
 	auto module = std::make_shared<llvm::Module>(name, llvm::getGlobalContext());
 
 	auto searcher = ast::ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
@@ -36,7 +36,7 @@ std::shared_ptr<llvm::Module> Translator::Translate(ast::LongBlockExpr* ast, std
 	return module;
 }
 
-std::shared_ptr<llvm::Module> Translator::TranslateMain(ast::LongBlockExpr* ast, std::string name) {
+std::shared_ptr<llvm::Module> Translator::TranslateMain(LongBlockExpr* ast, std::string name) {
 	using namespace llvm;
 
 	auto module = std::make_shared<Module>(name, getGlobalContext());
@@ -59,4 +59,4 @@ std::shared_ptr<llvm::Module> Translator::TranslateMain(ast::LongBlockExpr* ast,
 	return module;
 }
 
-Translator::Translator(analysis::TypeTable* typeInfo) : mTypeTable(typeInfo) { }
+Translator::Translator(TypeTable* typeInfo) : mTypeTable(typeInfo) { }
