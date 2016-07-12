@@ -11,11 +11,10 @@ project(orange)
 enable_testing()
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/orange")
-set(LLVM_INCLUDE_TESTS OFF CACHE BOOL "Generate build targets for the LLVM unit tests." FORCE)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
 set(OR_INCLUDES "${CMAKE_SOURCE_DIR}/include")
+set(gtest_force_shared_crt ON CACHE BOOL "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
 set(USE_SYSTEM_LLVM OFF CACHE BOOL "Use a pre-installed LLVM instead of building it from source.")
-set(LLVM_ENABLE_RTTI ON CACHE BOOL "Build LLVM with run-time type information.")
 set(BUILD_ORANGE_TESTS ON CACHE BOOL "Build the Orange tests")
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
@@ -30,6 +29,9 @@ include_directories(${OR_INCLUDES})
 
 # Build LLVM from source
 if (NOT ${USE_SYSTEM_LLVM})
+    set(LLVM_INCLUDE_TESTS OFF CACHE BOOL "Generate build targets for the LLVM unit tests." FORCE)
+    set(LLVM_ENABLE_RTTI ON CACHE BOOL "Build LLVM with run-time type information.")
+
     add_subdirectory(etc/llvm)
 endif()
 
