@@ -16,12 +16,12 @@
 #include "type.h"
 
 namespace orange { namespace ast {
-	class Flag;
-	class Identifier;
-	class Expression;
-	class BlockExpr;
-	class VarDeclExpr;
-	class EnumValue;
+	struct Flag;
+	struct Identifier;
+	struct Expression;
+	struct BlockExpr;
+	struct VarDeclExpr;
+	struct EnumValue;
 
 	struct Node {
 	protected:
