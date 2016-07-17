@@ -1429,7 +1429,7 @@ TEST(Parser, TestBinaryExpr) {
 	delete ast;
 }
 
-TEST(Parser, TestTenaryExpr) {
+TEST(Parser, TestTernaryExpr) {
 	std::stringstream ss(R"(
 		a = 1 + 2 ? 3 * 4 : 5 * 6
 	)");
@@ -1491,7 +1491,7 @@ TEST(Parser, New) {
 
 	LongBlockExpr expected(std::vector<Node*>({
 		new NewExpr(
-			new AccessIDExpr(
+			new MemberAccessExpr(
 				new ReferenceIDExpr("Foo"),
 				new ReferenceIDExpr("Bar")
 			)
@@ -1629,8 +1629,8 @@ TEST(Parser, TestTuples) {
 		    new IntValue(2)
 		})),
 		new TupleExpr(std::vector<Expression*>({
-			new NamedExpr(new NamedIDExpr("a"), new IntValue(1)),
-			new NamedExpr(new NamedIDExpr("b"), new IntValue(2))
+			new NamedExpr(new ReferenceIDExpr("a"), new IntValue(1)),
+			new NamedExpr(new ReferenceIDExpr("b"), new IntValue(2))
 		}))
 	}));
 
@@ -1652,8 +1652,8 @@ TEST(Parser, NamedArguments) {
 		new FunctionCallExpr(
 			new ReferenceIDExpr("foo"),
 			std::vector<Expression*>({
-				new NamedExpr(new NamedIDExpr("a"), new IntValue(1)),
-				new NamedExpr(new NamedIDExpr("b"), new IntValue(2))
+				new NamedExpr(new ReferenceIDExpr("a"), new IntValue(1)),
+				new NamedExpr(new ReferenceIDExpr("b"), new IntValue(2))
 			})
 		)
 	}));
@@ -1791,7 +1791,7 @@ TEST(Parser, SwitchStatement) {
 				new SwitchPattern(
 					std::vector<Expression*>({
 						new FunctionCallExpr(
-							new MemberAccessExpr(
+							new AccessIDExpr(
 								new ReferenceIDExpr("A"), new ReferenceIDExpr("B")
 							),
 							std::vector<Expression*>({
