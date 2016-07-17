@@ -172,6 +172,30 @@ TEST(Parser, ParsesBasicVarDecl) {
 	delete ast;
 }
 
+TEST(Parser, ParsesBasicVarDeclWithValue) {
+	std::stringstream ss(R"(
+		var a = 5
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new VarDeclExpr(
+			std::vector<Identifier*>({
+				new NamedIDExpr("a")
+			}),
+			std::vector<Type*>(),
+			new IntValue(5)
+		)
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
 TEST(Parser, ParsesMultipleBindingVarDecl) {
 	std::stringstream ss(R"(
 		var (a, b)
