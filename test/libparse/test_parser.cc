@@ -950,6 +950,49 @@ TEST(Parser, TestEnumWithData) {
 	delete ast;
 }
 
+TEST(Parser, Interface) {
+	std::stringstream ss(R"(
+		interface Foo {
+			def foo() -> void
+			def bar(a:int,b:int) -> int
+		}
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new InterfaceStmt(new NamedIDExpr("Foo"), new LongBlockExpr(std::vector<Node*>({
+			new ExternFuncStmt(
+				new NamedIDExpr("foo"),
+				std::vector<VarDeclExpr*>(),
+				new BuiltinType(BuiltinTypeKind::VOID)
+			),
+		    new ExternFuncStmt(
+			    new NamedIDExpr("bar"),
+			    std::vector<VarDeclExpr*>({
+				   new VarDeclExpr(
+					   std::vector<Identifier*>({  new NamedIDExpr("a") }),
+					   std::vector<Type*>({ new IntType }),
+					   nullptr
+				   ),
+			       new VarDeclExpr(
+					   std::vector<Identifier*>({  new NamedIDExpr("b") }),
+					   std::vector<Type*>({ new IntType }),
+					   nullptr
+				   )
+			    }),
+			    new IntType
+		    )
+		})))
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
 TEST(Parser, ParsesClass) {
 	std::stringstream ss(R"(
 		class MyClass : Base1, Foo.Bar, Base2 {
@@ -1403,9 +1446,29 @@ TEST(Parser, ComplexUnaryMod) {
 	delete ast;
 }
 
+TEST(Parser, BinOpNewline) {
+	std::stringstream ss(R"(
+		1
+		-3
+	)");
+
+	Parser p(ss);
+
+	auto ast = p.parse();
+	EXPECT_TRUE(ast != nullptr);
+
+	LongBlockExpr expected(std::vector<Node*>({
+		new IntValue(1),
+	    new UnaryExpr(UnaryOp::MINUS, UnaryOrder::PREFIX, new IntValue(3))
+	}));
+
+	assertEqAST(&expected, ast);
+	delete ast;
+}
+
 TEST(Parser, TestBinaryExpr) {
 	std::stringstream ss(R"(
-		1 + (2 + 3) * 4
+		1 + (2 - 3) * 4
 	)");
 
 	Parser p(ss);
@@ -1418,7 +1481,7 @@ TEST(Parser, TestBinaryExpr) {
 			new IntValue(1),
 			BinOp::ADD,
 			new BinOpExpr(
-				new BinOpExpr(new IntValue(2), BinOp::ADD, new IntValue(3)),
+				new BinOpExpr(new IntValue(2), BinOp::SUBTRACT, new IntValue(3)),
 				BinOp::MULTIPLY,
 				new IntValue(4)
 			)

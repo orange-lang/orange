@@ -104,6 +104,74 @@ namespace orange { namespace parser { namespace impl {
 			return mStream.get(lookahead).back();
 		}
 
+		Node* ParseInterfaceStatement() {
+			auto flags = ParseFlags();
+
+			if (!Expect(DEF)) return nullptr;
+
+			Identifier* id = nullptr;
+			std::vector<VarDeclExpr*> params;
+			Type* retType = nullptr;
+
+			if (PeekNextConcreteToken()->type == IDENTIFIER) {
+				auto token = GetNextConcreteToken();
+				id = CreateNode<NamedIDExpr>(token->value);
+			}
+
+			if (!Expect(OPEN_PAREN)) return nullptr;
+
+			if (PeekNextConcreteToken()->type == IDENTIFIER) {
+				params = ParseParameterList();
+			}
+
+			if (!Expect(CLOSE_PAREN)) return nullptr;
+			if (!Expect(ARROW)) return nullptr;
+
+			retType = ParseType();
+			if (retType == nullptr) {
+				Expected("type");
+				return nullptr;
+			}
+
+			auto node = CreateNode<ExternFuncStmt>(id, params, retType);
+
+			if (node != nullptr) {
+				node->flags.insert(node->flags.end(), flags.begin(), flags.end());
+			}
+
+			return node;
+		}
+
+		std::vector<Node*> ParseInterfaceStatements() {
+			auto statements = std::vector<Node*>();
+			auto next = PeekNextConcreteToken();
+
+			while (next->type == SEMICOLON) {
+				GetNextConcreteToken();
+				next = PeekNextConcreteToken();
+			}
+
+			while (next->type != CLOSE_CURLY && next->type != TOKEN_EOF) {
+				auto stmt = ParseInterfaceStatement();
+
+				if (stmt != nullptr) {
+					statements.push_back(stmt);
+				} else {
+					Expected("statement");
+					PanicRecovery();
+				}
+
+				next = PeekNextConcreteToken();
+
+				while (next->type == SEMICOLON) {
+					GetNextConcreteToken();
+					next = PeekNextConcreteToken();
+				}
+			}
+
+			return statements;
+		}
+
 		std::vector<Node*> ParseStatements() {
 			auto statements = std::vector<Node*>();
 			auto next = PeekNextConcreteToken();
@@ -188,6 +256,7 @@ namespace orange { namespace parser { namespace impl {
 				case EXTEND: node = ParseExtend(); break;
 				case GET: node = ParseGet(); break;
 				case SET: node = ParseSet(); break;
+				case INTERFACE: node = ParseInterface(); break;
 				default: break;
 			}
 
@@ -254,6 +323,23 @@ namespace orange { namespace parser { namespace impl {
 			auto body = ParseBlock();
 			if (body == nullptr) { Expected("block"); return nullptr; }
 			return CreateNode<SetterStmt>(body);
+		}
+
+		InterfaceStmt* ParseInterface() {
+			if (!Expect(INTERFACE)) return nullptr;
+
+			auto token = GetNextConcreteToken();
+			if (!Expect(IDENTIFIER, token)) return nullptr;
+
+			auto name = CreateNode<NamedIDExpr>(token->value);
+
+			if (!Expect(OPEN_CURLY)) return nullptr;
+
+			auto block = CreateNode<LongBlockExpr>(ParseInterfaceStatements());
+
+			if (!Expect(CLOSE_CURLY)) return nullptr;
+
+			return CreateNode<InterfaceStmt>(name, block);
 		}
 
 		ClassStmt* ParseClass() {
@@ -337,6 +423,7 @@ namespace orange { namespace parser { namespace impl {
 				case PROPERTY: node = ParseProperty(); break;
 				case ENUM: node = ParseEnum(); break;
 				case CLASS: node = ParseClass(); break;
+				case INTERFACE: node = ParseInterface(); break;
 				default: break;
 			}
 
