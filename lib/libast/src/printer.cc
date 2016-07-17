@@ -691,7 +691,7 @@ void ASTPrinter::VisitUnaryExpr(UnaryExpr* node) {
 
 	mOutput << "UnaryExpr(";
 	mOutput << "op: " << node->op;
-	mOutput << "order: " << node->order;
+	mOutput << ", order: " << node->order;
 	mOutput << "):\n";
 
 	mIndentation++;
