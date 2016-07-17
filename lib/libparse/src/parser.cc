@@ -231,6 +231,8 @@ namespace orange { namespace parser { namespace impl {
 						Expected("type");
 						return nullptr;
 					}
+
+					tys.push_back(ty);
 				}
 			}
 
@@ -247,7 +249,116 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<VarDeclExpr>(ids, tys, value);
 		}
 
+		/// Parse type _or_ basic type
 		Type* ParseType() {
+			Type* base = ParseBasicType();
+
+			auto lookahead = mStream.peek();
+			while (lookahead->type == OPEN_BRACKET || lookahead->type == TIMES || lookahead->type == BIT_AND ||
+				   lookahead->type == AND)
+			{
+				mStream.get();
+
+				if (lookahead->type == OPEN_BRACKET) {
+					auto value = ParseExpression();
+					if (!Expect(CLOSE_BRACKET)) return nullptr;
+					base = new ArrayType(base, value);
+				} else if (lookahead->type == TIMES) {
+					base = new PointerType(base);
+				} else if (lookahead->type == BIT_AND) {
+					base = new ReferenceType(base);
+				} else if (lookahead->type == AND) {
+					base = new ReferenceType(new ReferenceType(base));
+				}
+
+				lookahead = mStream.peek();
+			}
+
+			return base;
+		}
+
+		Type* ParseBasicType() {
+			auto ty = GetNextConcreteToken();
+
+			if      (ty->type == INT)    { return new BuiltinType(BuiltinTypeKind::INT); }
+			else if (ty->type == INT8)   { return new BuiltinType(BuiltinTypeKind::INT8); }
+			else if (ty->type == INT16)  { return new BuiltinType(BuiltinTypeKind::INT16); }
+			else if (ty->type == INT32)  { return new BuiltinType(BuiltinTypeKind::INT32); }
+			else if (ty->type == INT64)  { return new BuiltinType(BuiltinTypeKind::INT64); }
+			else if (ty->type == UINT)   { return new BuiltinType(BuiltinTypeKind::UINT); }
+			else if (ty->type == UINT8)  { return new BuiltinType(BuiltinTypeKind::UINT8); }
+			else if (ty->type == UINT16) { return new BuiltinType(BuiltinTypeKind::UINT16); }
+			else if (ty->type == UINT32) { return new BuiltinType(BuiltinTypeKind::UINT32); }
+			else if (ty->type == UINT64) { return new BuiltinType(BuiltinTypeKind::UINT64); }
+			else if (ty->type == FLOAT)  { return new BuiltinType(BuiltinTypeKind::FLOAT); }
+			else if (ty->type == DOUBLE) { return new BuiltinType(BuiltinTypeKind::DOUBLE); }
+			else if (ty->type == VAR)    { return new BuiltinType(BuiltinTypeKind::VAR); }
+			else if (ty->type == VOID)   { return new BuiltinType(BuiltinTypeKind::VOID); }
+			else if (ty->type == CHAR)   { return new BuiltinType(BuiltinTypeKind::CHAR); }
+
+			if (ty->type == IDENTIFIER) {
+				// Identifier type
+				Type* LHS = new IdentifierType(CreateNode<ReferenceIDExpr>(ty->value));
+
+				while (mStream.peek()->type == DOT) {
+					mStream.get();
+
+					auto next = mStream.get();
+					if (!Expect(IDENTIFIER, next)) return nullptr;
+
+					LHS = new AccessType(LHS, new IdentifierType(CreateNode<ReferenceIDExpr>(next->value)));
+				}
+
+				return LHS;
+			} else if (ty->type == OPEN_PAREN) {
+				// Function or tuple
+				std::vector<Type*> tys;
+
+				auto member = ParseType();
+				if (member == nullptr) {
+					Expected("type");
+					return nullptr;
+				}
+
+				tys.push_back(member);
+
+				unsigned long commas = 0;
+
+				while (PeekNextConcreteToken()->type == COMMA) {
+					commas++;
+					GetNextConcreteToken();
+
+					// Allow trailing comma before )
+					if (PeekNextConcreteToken()->type == CLOSE_PAREN) break;
+
+					member = ParseType();
+					if (member == nullptr) {
+						Expected("type");
+						return nullptr;
+					}
+
+					tys.push_back(member);
+				}
+
+				if (!Expect(CLOSE_PAREN)) return nullptr;
+
+				// if there wasn't a trailing comma, accept ->
+				if (commas < tys.size() && PeekNextConcreteToken()->type == ARROW) {
+					GetNextConcreteToken();
+
+					auto ret = ParseType();
+					if (ret == nullptr) {
+						Expected("type");
+						return nullptr;
+					}
+
+					return new FunctionType(tys, ret);
+				}
+
+				return commas > 0 ? new TupleType(tys) : tys.front();
+			}
+
+			Expected("type", ty);
 			return nullptr;
 		}
 
