@@ -125,21 +125,108 @@ namespace orange { namespace parser { namespace impl {
 		}
 
 		Node* ParseStatement() {
+			auto flags = ParseFlags();
+
+			Node* node = nullptr;
+
 			switch (PeekNextConcreteToken()->type) {
-				case OPEN_CURLY:
-					return ParseLongBlock();
-				case VAL_BOOL:   case VAL_INT:    case VAL_INT8:
-				case VAL_INT16:  case VAL_INT32:  case VAL_INT64:
-				case VAL_UINT:   case VAL_UINT8:  case VAL_UINT16:
-				case VAL_UINT32: case VAL_UINT64: case VAL_FLOAT:
-				case VAL_DOUBLE: case VAL_CHAR:   case VAL_STRING:
-					return ParseExpression();
 				case TokenType::VAR:
-					return ParseVarDecl();
+					node = ParseVarDecl();
+					break;
+				case NAMESPACE:
+					node = ParseNamespace();
+					break;
 				default: break;
 			}
 
-			return nullptr;
+			// Parse remaining statements that don't support flags
+			if (flags.size() == 0 && node == nullptr) {
+				switch (PeekNextConcreteToken()->type) {
+					case OPEN_CURLY:
+						node = ParseLongBlock();
+						break;
+					case VAL_BOOL:   case VAL_INT:    case VAL_INT8:
+					case VAL_INT16:  case VAL_INT32:  case VAL_INT64:
+					case VAL_UINT:   case VAL_UINT8:  case VAL_UINT16:
+					case VAL_UINT32: case VAL_UINT64: case VAL_FLOAT:
+					case VAL_DOUBLE: case VAL_CHAR:   case VAL_STRING:
+						node = ParseExpression();
+						break;
+					default: break;
+				}
+			}
+
+			if (node != nullptr) {
+				node->flags.insert(node->flags.end(), flags.begin(), flags.end());
+			}
+
+			return node;
+		}
+
+		bool IsFlag(Token* tok) {
+			switch (tok->type) {
+				case TokenType::PRIVATE: case TokenType::PROTECTED: case TokenType::PUBLIC:
+				case TokenType::VIRTUAL: case TokenType::FINAL:     case TokenType::CONST:
+				case TokenType::PARTIAL:
+					return true;
+				default:
+					return false;
+			}
+		}
+
+		std::vector<Flag*> ParseFlags() {
+			std::vector<Flag*> flags;
+
+			while (IsFlag(PeekNextConcreteToken())) {
+				auto flag = GetNextConcreteToken();
+
+				if      (flag->type == TokenType::PRIVATE)   flags.push_back(new PrivacyFlag(PrivacyLevel::PRIVATE));
+				else if (flag->type == TokenType::PROTECTED) flags.push_back(new PrivacyFlag(PrivacyLevel::PROTECTED));
+				else if (flag->type == TokenType::PUBLIC)    flags.push_back(new PrivacyFlag(PrivacyLevel::PUBLIC));
+				else if (flag->type == TokenType::VIRTUAL)   flags.push_back(new VirtualFlag());
+				else if (flag->type == TokenType::FINAL)     flags.push_back(new FinalFlag());
+				else if (flag->type == TokenType::CONST)     flags.push_back(new ConstFlag());
+				else if (flag->type == TokenType::PARTIAL)   flags.push_back(new PartialFlag());
+				else                                         { Expected("flag"); break; }
+			}
+
+			return flags;
+		}
+
+		NamespaceStmt* ParseNamespace() {
+			if (!Expect(NAMESPACE)) return nullptr;
+
+			auto id = ParseLongID();
+			if (id == nullptr) {
+				Expected("identifier");
+				return nullptr;
+			}
+
+			LongBlockExpr* body = nullptr;
+
+			if (PeekNextConcreteToken()->type == OPEN_CURLY) {
+				body = ParseLongBlock();
+			}
+
+			return CreateNode<NamespaceStmt>(id, body);
+		}
+
+		Identifier* ParseLongID() {
+			auto next = GetNextConcreteToken();
+			if (!Expect(IDENTIFIER, next)) return nullptr;
+
+			Identifier* base = CreateNode<NamedIDExpr>(next->value);
+
+			while (mStream.peek()->type == DOT) {
+				mStream.get();
+
+				next = mStream.get();
+				if (!Expect(IDENTIFIER, next)) return nullptr;
+
+				base = CreateNode<AccessIDExpr>(base, CreateNode<NamedIDExpr>(next->value));
+			}
+
+			return base;
 		}
 
 		VarDeclExpr* ParseVarDecl() {
@@ -385,12 +472,43 @@ namespace orange { namespace parser { namespace impl {
 			}
 		}
 
+		BlockExpr* ParseBlock() {
+			// We'll allow open curlies on any line, but we'll expect short blocks to be
+			// defined on the same line (at least the colon, it's valid for the expression to be
+			// on a separate line.)
+			if (PeekNextConcreteToken()->type == OPEN_CURLY) {
+				return ParseLongBlock();
+			} else if (mStream.peek()->type == COLON) {
+				return ParseShortBlock();
+			} else {
+				Expected("block");
+				return nullptr;
+			}
+		}
+
 		LongBlockExpr* ParseLongBlock() {
 			if (!Expect(OPEN_CURLY)) return nullptr;
 			auto stmts = ParseStatements();
 			if (!Expect(CLOSE_CURLY)) return nullptr;
 
 			return CreateNode<LongBlockExpr>(stmts);
+		}
+
+		ShortBlockExpr* ParseShortBlock() {
+			if (!Expect(COLON)) return nullptr;
+			Expression* expr = ParseExpression();
+			Node* stmt = expr;
+			if (stmt == nullptr) {
+				Expected("statement");
+				return nullptr;
+			}
+
+			if (mStream.peek()->type == SEMICOLON) {
+				mStream.get();
+				stmt = CreateNode<ExprStmt>(expr);
+			}
+
+			return CreateNode<ShortBlockExpr>(stmt);
 		}
 
 		LongBlockExpr* parse() {
