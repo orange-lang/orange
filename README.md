@@ -12,6 +12,11 @@ Linux/OS X  | Windows
 ------------- | -------------
 [![Build Status](https://travis-ci.org/orange-lang/orange.svg?branch=rev-2)](https://travis-ci.org/orange-lang/orange) | [![Build status](https://ci.appveyor.com/api/projects/status/r4y46n573riuqfv1/branch/rev-2?svg=true)](https://ci.appveyor.com/project/rfratto/orange-9no7j/branch/rev-2)
 
+# Resources
+
+* [Language Guide](http://docs.orange-lang.org/v/rev-2/) ([Github](https://github.com/orange-lang/orange-docs/tree/rev-2))
+* [Compiler Internal Reference](http://docs.orange-lang.org/v/rev-2/internals/)
+
 # Building
 Building on OS X and Linux should be straightforward. Make sure git and CMake are installed and then run the following commands:
 
