@@ -76,5 +76,6 @@ namespace orange { namespace ast {
 		virtual void VisitCastExpr(CastExpr* node) { }
 		virtual void VisitFunctionCallExpr(FunctionCallExpr* node) { }
 		virtual void VisitNewExpr(NewExpr* node) { }
+		virtual void VisitEnumMatch(EnumMatch* node) { }
 	};
 }}

@@ -431,6 +431,11 @@ void TranslateVisitor::VisitNewExpr(NewExpr* node) {
 	throw std::runtime_error("Don't know how to handle NewExpr");
 }
 
+void TranslateVisitor::VisitEnumMatch(EnumMatch* node) {
+	throw std::runtime_error("Don't know how to handle EnumMatch");
+}
+
+
 void TranslateVisitor::SetCurrentBlock(llvm::BasicBlock* currentBlock) {
 	mCurrentBlock = currentBlock;
 	mBuilder->SetInsertPoint(mCurrentBlock);

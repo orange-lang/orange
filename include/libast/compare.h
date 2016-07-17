@@ -83,6 +83,7 @@ namespace orange { namespace ast {
 	bool CompareNode(CastExpr* a, CastExpr* b);
 	bool CompareNode(FunctionCallExpr* a, FunctionCallExpr* b);
 	bool CompareNode(NewExpr* a, NewExpr* b);
+	bool CompareNode(EnumMatch* a, EnumMatch* b);
 
 	bool CompareFlag(Flag* a, Flag* b);
 	bool CompareFlag(PartialFlag* a, PartialFlag* b);

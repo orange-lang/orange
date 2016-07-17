@@ -86,6 +86,7 @@ namespace orange { namespace ast {
 		virtual void WalkCastExpr(Visitor* visitor, CastExpr* node) = 0;
 		virtual void WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* node) = 0;
 		virtual void WalkNewExpr(Visitor* visitor, NewExpr* node) = 0;
+		virtual void WalkEnumMatch(Visitor* visitor, EnumMatch* node) = 0;
 	};
 
 
@@ -155,6 +156,7 @@ namespace orange { namespace ast {
 		virtual void WalkCastExpr(Visitor* visitor, CastExpr* node) override;
 		virtual void WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* node) override;
 		virtual void WalkNewExpr(Visitor* visitor, NewExpr* node) override;
+		virtual void WalkEnumMatch(Visitor* visitor, EnumMatch* node) override;
 	};
 
 	enum TraversalOrder {
@@ -230,6 +232,7 @@ namespace orange { namespace ast {
 		virtual void WalkCastExpr(Visitor* visitor, CastExpr* node) override;
 		virtual void WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* node) override;
 		virtual void WalkNewExpr(Visitor* visitor, NewExpr* node) override;
+		virtual void WalkEnumMatch(Visitor* visitor, EnumMatch* node) override;
 
 		DepthFirstWalker(TraversalOrder order);
 	};

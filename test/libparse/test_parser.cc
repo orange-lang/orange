@@ -1853,7 +1853,7 @@ TEST(Parser, SwitchStatement) {
 				),
 				new SwitchPattern(
 					std::vector<Expression*>({
-						new FunctionCallExpr(
+						new EnumMatch(
 							new AccessIDExpr(
 								new ReferenceIDExpr("A"), new ReferenceIDExpr("B")
 							),

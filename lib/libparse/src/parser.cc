@@ -1385,7 +1385,7 @@ namespace orange { namespace parser { namespace impl {
 
 				if (!Expect(CLOSE_PAREN)) return nullptr;
 
-				return CreateNode<FunctionCallExpr>(id, args);
+				return CreateNode<EnumMatch>(id, args);
 			} else {
 				return id;
 			}

@@ -241,6 +241,9 @@ void ResolveVisitor::VisitFunctionCallExpr(FunctionCallExpr* node) {
 void ResolveVisitor::VisitNewExpr(NewExpr* node) {
 }
 
+void ResolveVisitor::VisitEnumMatch(EnumMatch* node) {
+}
+
 ResolveVisitor::ResolveVisitor(NodeTypeContext* context, ASTSearcher& searcher) :
 	mContext(context), mSearcher(searcher) { }
 

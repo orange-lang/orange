@@ -486,6 +486,21 @@ void ASTPrinter::VisitExprStmt(ExprStmt* node) {
 	mIndentation--;
 }
 
+
+void ASTPrinter::VisitEnumMatch(EnumMatch* node) {
+	handleIdententation();
+	printID(node);
+
+	mOutput << "EnumMatch():" << std::endl;
+
+	mIndentation++;
+
+	mWalker.WalkExpr(this, node->value);
+	for (auto expr : node->params) mWalker.WalkExpr(this, expr);
+
+	mIndentation--;
+}
+
 void ASTPrinter::VisitVarDeclExpr(VarDeclExpr* node) {
 	handleIdententation();
 	printID(node);

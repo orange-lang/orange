@@ -46,6 +46,7 @@ void Walker::WalkExpr(Visitor* visitor, Expression* node) {
 	else if (isA<FunctionCallExpr>(node)) WalkFunctionCallExpr(visitor, asA<FunctionCallExpr>(node));
 	else if (isA<NewExpr>(node))          WalkNewExpr(visitor, asA<NewExpr>(node));
 	else if (isA<Identifier>(node))       WalkIdentifier(visitor, asA<Identifier>(node));
+	else if (isA<EnumMatch>(node))        WalkEnumMatch(visitor, asA<EnumMatch>(node));
 	else                                  throw std::runtime_error("Unknown node to walk.");
 }
 
@@ -366,6 +367,12 @@ void NonTraversalWalker::WalkCatchBlock(Visitor* visitor, CatchBlock* node) {
 void NonTraversalWalker::WalkNewExpr(Visitor* visitor, NewExpr* node) {
 	visitor->VisitNewExpr(node);
 }
+
+
+void NonTraversalWalker::WalkEnumMatch(Visitor* visitor, EnumMatch* node) {
+	visitor->VisitEnumMatch(node);
+}
+
 
 //
 // DepthFirstWalker
@@ -846,6 +853,15 @@ void DepthFirstWalker::WalkNewExpr(Visitor* visitor, NewExpr* node) {
 	WalkExpr(visitor, node->allocation);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitNewExpr(node);
+}
+
+void DepthFirstWalker::WalkEnumMatch(Visitor* visitor, EnumMatch* node) {
+	if (mOrder == TraversalOrder::PREORDER) visitor->VisitEnumMatch(node);
+
+	WalkExpr(visitor, node->value);
+	for (auto param : node->params) WalkExpr(visitor, param);
+
+	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitEnumMatch(node);
 }
 
 DepthFirstWalker::DepthFirstWalker(TraversalOrder order) {

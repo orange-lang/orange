@@ -525,6 +525,16 @@ namespace orange { namespace ast {
 			condition(condition), patterns(patterns) { }
 	};
 
+	struct EnumMatch : Expression {
+	public:
+		Expression* value;
+		std::vector<Expression*> params;
+
+		EnumMatch() { }
+		EnumMatch(Expression* value, std::vector<Expression*> params) :
+			value(value), params(params) { }
+	};
+
 	struct Constraint : Node {
 	protected:
 		Constraint() { }

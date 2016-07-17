@@ -317,6 +317,9 @@ bool orange::ast::CompareNode(Expression* a, Expression* b) {
 	if (isA<NewExpr>(a) && isA<NewExpr>(b))
 		return CompareNode(asA<NewExpr>(a), asA<NewExpr>(b));
 
+	if (isA<EnumMatch>(a) && isA<EnumMatch>(b))
+		return CompareNode(asA<EnumMatch>(a), asA<EnumMatch>(b));
+
 	return false;
 }
 
@@ -595,6 +598,12 @@ bool orange::ast::CompareNode(FunctionCallExpr* a, FunctionCallExpr* b) {
 
 bool orange::ast::CompareNode(NewExpr* a, NewExpr* b) {
 	return CompareOptNode(a->allocation, b->allocation);
+}
+
+
+bool orange::ast::CompareNode(EnumMatch* a, EnumMatch* b) {
+	return CompareOptNode(a->value, b->value) &&
+           CompareOptList(a->params, b->params);
 }
 
 bool orange::ast::CompareFlag(Flag* a, Flag* b) {

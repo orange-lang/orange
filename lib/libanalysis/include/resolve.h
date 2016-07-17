@@ -68,6 +68,7 @@ namespace orange { namespace analysis {
 		virtual void VisitCastExpr(CastExpr* node) override;
 		virtual void VisitFunctionCallExpr(FunctionCallExpr* node) override;
 		virtual void VisitNewExpr(NewExpr* node) override;
+		virtual void VisitEnumMatch(EnumMatch* node) override;
 
 		ResolveVisitor(NodeTypeContext* context, ASTSearcher& searcher);
 	};
