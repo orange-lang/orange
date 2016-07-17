@@ -4,6 +4,13 @@
 
 Orange is a statically-typed, multi-paradigm (imperative, object-oriented, generic) systems programming language that tries to allow for rapid development without sacrificing speed or control. It's perfect for both high-and low-level applications.
 
+# Goals
+
+- Provide syntatic sugar to avoid boilerplate code
+- Be extendible via plugins to add new language features
+- Cross-platform and multi-architecture compitibility
+- Be suitable for high-level applications or low-level applications (like kernels)
+
 # Status
 
 Orange is still under active development; you're currently viewing a branch that is a complete re-architecture of the Orange compiler that allows for easier development and expansion. It also houses an updated version of the Orange language specification that envisions the language to be more expressive and C# like.
