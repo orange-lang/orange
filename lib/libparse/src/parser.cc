@@ -133,6 +133,9 @@ namespace orange { namespace parser { namespace impl {
 				case TokenType::VAR:
 					node = ParseVarDecl();
 					break;
+				case DEF:
+					node = ParseFunction();
+					break;
 				case NAMESPACE:
 					node = ParseNamespace();
 					break;
@@ -191,6 +194,92 @@ namespace orange { namespace parser { namespace impl {
 			}
 
 			return flags;
+		}
+
+		FunctionExpr* ParseFunction() {
+			if (!Expect(DEF)) return nullptr;
+
+			Identifier* id = nullptr;
+			std::vector<VarDeclExpr*> params;
+			Type* retType = nullptr;
+
+			if (PeekNextConcreteToken()->type == IDENTIFIER) {
+				auto token = GetNextConcreteToken();
+                id = CreateNode<NamedIDExpr>(token->value);
+			}
+
+			if (!Expect(OPEN_PAREN)) return nullptr;
+
+			if (PeekNextConcreteToken()->type == IDENTIFIER) {
+				params = ParseParameterList();
+			}
+
+			if (!Expect(CLOSE_PAREN)) return nullptr;
+
+			if (PeekNextConcreteToken()->type == ARROW) {
+				auto token = GetNextConcreteToken();
+				retType = ParseType();
+
+				if (retType == nullptr) {
+					Expected("type");
+					return nullptr;
+				}
+			}
+
+			auto body = ParseBlock();
+			if (body == nullptr) {
+				Expected("block");
+				return nullptr;
+			}
+
+			return new FunctionExpr(id, nullptr, params, retType, body);
+		}
+
+		std::vector<VarDeclExpr*> ParseParameterList() {
+			std::vector<VarDeclExpr*> params;
+
+			auto param = ParseImplicitParameter();
+			if (param == nullptr) { Expected("parameter"); return std::vector<VarDeclExpr*>(); }
+			params.push_back(param);
+
+			while (PeekNextConcreteToken()->type == COMMA) {
+				GetNextConcreteToken();
+
+				param = ParseImplicitParameter();
+				if (param == nullptr) { Expected("parameter"); return std::vector<VarDeclExpr*>(); }
+				params.push_back(param);
+			}
+
+			return params;
+		}
+
+		VarDeclExpr* ParseImplicitParameter() {
+			auto id = GetNextConcreteToken();
+			std::vector<Type*> types;
+			Expression* value = nullptr;
+
+			if (!Expect(IDENTIFIER, id)) return nullptr;
+
+			if (PeekNextConcreteToken()->type == COLON) {
+				GetNextConcreteToken();
+				auto ty = ParseType();
+
+				if (ty == nullptr) { Expected("type"); return nullptr; }
+
+				types.push_back(ty);
+			}
+
+			if (PeekNextConcreteToken()->type == ASSIGN) {
+				GetNextConcreteToken();
+				value = ParseExpression();
+
+				if (value == nullptr) { Expected("expression"); return nullptr; }
+			}
+
+			return CreateNode<VarDeclExpr>(
+				std::vector<Identifier*>({ CreateNode<NamedIDExpr>(id->value) }),
+				types, value
+			);
 		}
 
 		NamespaceStmt* ParseNamespace() {
