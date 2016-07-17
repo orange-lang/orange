@@ -22,6 +22,8 @@ namespace orange { namespace ast {
 
 	struct VirtualFlag : Flag { };
 
+	struct FinalFlag : Flag { };
+
 	struct PrivacyFlag : Flag {
 		PrivacyLevel level;
 
