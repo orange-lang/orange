@@ -108,6 +108,11 @@ namespace orange { namespace parser { namespace impl {
 			auto statements = std::vector<Node*>();
 			auto next = PeekNextConcreteToken();
 
+			while (next->type == SEMICOLON) {
+				GetNextConcreteToken();
+				next = PeekNextConcreteToken();
+			}
+
 			while (next->type != CLOSE_CURLY && next->type != TOKEN_EOF) {
 				auto stmt = ParseStatement();
 
@@ -119,6 +124,11 @@ namespace orange { namespace parser { namespace impl {
 				}
 
 				next = PeekNextConcreteToken();
+
+				while (next->type == SEMICOLON) {
+					GetNextConcreteToken();
+					next = PeekNextConcreteToken();
+				}
 			}
 
 			return statements;
@@ -148,11 +158,16 @@ namespace orange { namespace parser { namespace impl {
 					case OPEN_CURLY:
 						node = ParseLongBlock();
 						break;
+					case TokenType::TIMES: case TokenType::BIT_AND:
+					case TokenType::TILDE: case TokenType::NOT:
+					case TokenType::MINUS: case TokenType::INCREMENT:
+					case TokenType::DECREMENT:
 					case VAL_BOOL:   case VAL_INT:    case VAL_INT8:
 					case VAL_INT16:  case VAL_INT32:  case VAL_INT64:
 					case VAL_UINT:   case VAL_UINT8:  case VAL_UINT16:
 					case VAL_UINT32: case VAL_UINT64: case VAL_FLOAT:
 					case VAL_DOUBLE: case VAL_CHAR:   case VAL_STRING:
+					case THIS:       case IDENTIFIER:
 						node = ParseExpression();
 						break;
 					default: break;
@@ -509,11 +524,45 @@ namespace orange { namespace parser { namespace impl {
 		}
 
 		/// Unary expression _or_ operation
+		/// new/delete is also parsed here
 		Expression* ParseUnary() {
+			auto token = PeekNextConcreteToken();
+			Expression* inner = nullptr;
+
+			switch (token->type) {
+				case TokenType::INCREMENT: case TokenType::DECREMENT: case TokenType::MINUS:
+				case TokenType::NOT:       case TokenType::TILDE:     case TokenType::TIMES:
+				case TokenType::BIT_AND:
+					GetNextConcreteToken();
+					inner = ParseUnaryInner();
+					if (inner == nullptr) { Expected("Expression"); return nullptr; }
+					return CreateNode<UnaryExpr>(GetUnaryOp(token->type), UnaryOrder::PREFIX, inner);
+			}
+
+			return ParseOperation();
+		}
+
+		/// Equivalent to parse unary, but only looks at the next token, not skipping over \n and ;
+		/// Only parses unary operators, unlike ParseUnary, which does new/delete.
+		Expression* ParseUnaryInner() {
+			auto token = mStream.peek();
+			Expression* inner = nullptr;
+
+			switch (token->type) {
+				case TokenType::INCREMENT: case TokenType::DECREMENT: case TokenType::MINUS:
+				case TokenType::NOT:       case TokenType::TILDE:     case TokenType::TIMES:
+				case TokenType::BIT_AND:
+					mStream.get();
+					inner = ParseUnaryInner();
+					if (inner == nullptr) { Expected("Expression"); return nullptr; }
+					return CreateNode<UnaryExpr>(GetUnaryOp(token->type), UnaryOrder::PREFIX, inner);
+			}
+
 			return ParseOperation();
 		}
 
 		/// Operation _or_ primary
+		/// The operations are: function call, array access, member access, and postfix unary operations
 		Expression* ParseOperation() {
 			return ParsePrimary();
 		}
@@ -527,6 +576,11 @@ namespace orange { namespace parser { namespace impl {
 				case VAL_UINT32: case VAL_UINT64: case VAL_FLOAT:
 				case VAL_DOUBLE: case VAL_CHAR:   case VAL_STRING:
 					return ParseConstantValue();
+				case IDENTIFIER:
+					return CreateNode<ReferenceIDExpr>(GetNextConcreteToken()->value);
+				case THIS:
+					GetNextConcreteToken();
+					return CreateNode<ThisID>();
 				default:
 					Expected("value", token);
 					return nullptr;
