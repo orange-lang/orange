@@ -366,10 +366,10 @@ TEST(Parser, ParsesAccessType) {
 			std::vector<Type*>({
 				new AccessType(
 					new AccessType(
-						new IdentifierType(new NamedIDExpr("Foo")),
-						new IdentifierType(new NamedIDExpr("Bar"))
+						new IdentifierType(new ReferenceIDExpr("Foo")),
+						new IdentifierType(new ReferenceIDExpr("Bar"))
 					),
-					new IdentifierType(new NamedIDExpr("Baz"))
+					new IdentifierType(new ReferenceIDExpr("Baz"))
 				)
 			}),
 			nullptr
@@ -396,7 +396,7 @@ TEST(Parser, ParsesIdentifierType) {
 				new NamedIDExpr("a")
 			}),
 			std::vector<Type*>({
-				new IdentifierType(new NamedIDExpr("Foo"))
+				new IdentifierType(new ReferenceIDExpr("Foo"))
 			}),
 			nullptr
 		)
@@ -424,7 +424,7 @@ TEST(Parser, ParsesArrayType) {
 			std::vector<Type*>({
 				new ArrayType(
 					new ArrayType(
-						new IdentifierType(new NamedIDExpr("Foo")),
+						new IdentifierType(new ReferenceIDExpr("Foo")),
 						new IntValue(5)
 					),
 					new IntValue(3)
@@ -456,7 +456,7 @@ TEST(Parser, ParsesPointerType) {
 			std::vector<Type*>({
 				new PointerType(
 					new PointerType(
-						new IdentifierType(new NamedIDExpr("Foo"))
+						new IdentifierType(new ReferenceIDExpr("Foo"))
 					)
 				)
 			}),
@@ -486,7 +486,7 @@ TEST(Parser, ParsesReferenceType) {
 			std::vector<Type*>({
 				new ReferenceType(
 					new ReferenceType(
-						new IdentifierType(new NamedIDExpr("Foo"))
+						new IdentifierType(new ReferenceIDExpr("Foo"))
 					)
 				)
 			}),
@@ -631,7 +631,7 @@ TEST(Parser, ParsesFunctionType) {
 						new BuiltinType(BuiltinTypeKind::INT),
 						new BuiltinType(BuiltinTypeKind::DOUBLE)
 					}),
-					new IdentifierType(new NamedIDExpr("Foo"))
+					new IdentifierType(new ReferenceIDExpr("Foo"))
 				)
 			}),
 			nullptr
@@ -696,7 +696,7 @@ TEST(Parser, ParsesArrayOfFunctionType) {
 							new BuiltinType(BuiltinTypeKind::INT),
 							new BuiltinType(BuiltinTypeKind::DOUBLE)
 						}),
-						new IdentifierType(new NamedIDExpr("Foo"))
+						new IdentifierType(new ReferenceIDExpr("Foo"))
 					),
 					new IntValue(5)
 				)
