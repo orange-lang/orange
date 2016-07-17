@@ -18,7 +18,7 @@ Building on OS X and Linux should be straightforward. Make sure git and CMake ar
 ```sh
 $ git clone https://github.com/orange-lang/orange.git
 $ cd orange
-$ git submodule init && git submodule update
+$ git submodule update --init
 $ mkdir build-orange && cd build-orange
 $ cmake ..
 $ make all install
