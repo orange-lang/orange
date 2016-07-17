@@ -30,6 +30,8 @@ matrix:
   - os: osx
     compiler: clang
     before_install:
+    - git submodule init 
+    - git submodule update etc/gtest 
     - brew update
     - brew upgrade cmake
     - brew tap homebrew/versions
@@ -46,9 +48,10 @@ matrix:
     script:
     - docker build -t orangelang/orange .
 git:
-  submodules: true
   depth: 1
 before_install:
+- git submodule init 
+- git submodule update etc/gtest 
 - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
 - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
 - export CMAKE_LLVM_PATH=-DLLVM_DIR=`llvm-config-3.8 --prefix`/share/llvm/cmake
