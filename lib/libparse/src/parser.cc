@@ -673,7 +673,7 @@ namespace orange { namespace parser { namespace impl {
 				return nullptr;
 			}
 
-			return new ExternFuncStmt(id, params, retType);
+			return CreateNode<ExternFuncStmt>(id, params, retType);
 		}
 
 		FunctionExpr* ParseFunction() {
@@ -1173,7 +1173,7 @@ namespace orange { namespace parser { namespace impl {
 				auto val = ParseExpression();
 				if (val == nullptr) { Expected("Expression"); }
 
-				return new NamedExpr(id, val);
+				return CreateNode<NamedExpr>(id, val);
 			} else return ParseExpression();
 		}
 
