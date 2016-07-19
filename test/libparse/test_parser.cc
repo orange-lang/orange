@@ -21,144 +21,86 @@
 using namespace orange::ast;
 using namespace orange::parser;
 
-TEST(Parser, ParsesNothing) {
-	std::stringstream ss("");
+void TestAST(std::string str, std::vector<Node*> expectedNodes) {
+	auto expected = CreateNode<LongBlockExpr>(expectedNodes);
 
+	std::stringstream ss(str);
 	Parser p(ss);
 
-	EXPECT_NO_THROW({
-		auto ast = p.parse();
-		delete ast;
+	LongBlockExpr* ast = nullptr;
+
+	ASSERT_NO_THROW({
+		ast = p.parse();
 	});
+
+	ASSERT_TRUE(ast != nullptr);
+
+	assertEqAST(expected, ast);
+
+	delete ast;
+	delete expected;
 }
 
-TEST(Parser, ParsesNothingButTerms) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesNothing) { 
+	TestAST("", {});
+}
+
+TEST(Parser, ParsesNothingButTerms) { 
+	TestAST(R"(
 		;;;
 
 			;
 		;
 		;
-	)");
-
-	Parser p(ss);
-
-	EXPECT_NO_THROW({
-		auto ast = p.parse();
-		delete ast;
-	});
+	)", {}); 
 }
 
 TEST(Parser, ParsesEmptyBlock) {
-	std::stringstream ss("{}");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
-		new LongBlockExpr()
-    }));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+       TestAST("{}", { new LongBlockExpr });
 }
 
-TEST(Parser, ParsesLongBlockNothingButTerms) {
-	std::stringstream ss(R"({
+TEST(Parser, ParsesLongBlockNothingButTerms) { 
+	TestAST(R"({
 		;;;
 
 			;
 		;
 		;
-	})");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
-		new LongBlockExpr()
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	})", { new LongBlockExpr });
 }
 
-
-TEST(Parser, ParsesBooleans) {
-	std::stringstream ss(R"({
+TEST(Parser, ParsesBooleans) { 
+	TestAST(R"({
 		false
 		true
-	})");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	})", {
 		new LongBlockExpr(std::vector<Node*>({
 			new BoolValue(false),
 		    new BoolValue(true)
 		}))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesLongBlockSimpleExpression) {
-	std::stringstream ss(R"({
+TEST(Parser, ParsesLongBlockSimpleExpression) { 
+	TestAST(R"({
 		3
-	})");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	})", {
 		new LongBlockExpr(std::vector<Node*>({
 			new IntValue(3)
 		}))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesLongBlockSimpleExpressionOneLine) {
-	std::stringstream ss("{ 3 }");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+TEST(Parser, ParsesLongBlockSimpleExpressionOneLine) { 
+	TestAST("{ 3 }", {
 		new LongBlockExpr(std::vector<Node*>({
 			new IntValue(3)
 		}))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesBasicVarDecl) {
-	std::stringstream ss(R"(
-		var a
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+TEST(Parser, ParsesBasicVarDecl) { 
+	TestAST("var a", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -166,23 +108,13 @@ TEST(Parser, ParsesBasicVarDecl) {
 			std::vector<Type*>(),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesBasicVarDeclWithValue) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesBasicVarDeclWithValue) { 
+	TestAST(R"(
 		var a = 5
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -190,23 +122,13 @@ TEST(Parser, ParsesBasicVarDeclWithValue) {
 			std::vector<Type*>(),
 			new IntValue(5)
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesMultipleBindingVarDecl) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesMultipleBindingVarDecl) { 
+	TestAST(R"(
 		var (a, b)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a"),
@@ -215,23 +137,13 @@ TEST(Parser, ParsesMultipleBindingVarDecl) {
 			std::vector<Type*>(),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesTypedVarDecl) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesTypedVarDecl) { 
+	TestAST(R"(
 		var a: int
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -241,23 +153,13 @@ TEST(Parser, ParsesTypedVarDecl) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesMultipleTypedVarDecl) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesMultipleTypedVarDecl) { 
+	TestAST(R"(
 		var (a, b): int, double
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a"),
@@ -269,23 +171,13 @@ TEST(Parser, ParsesMultipleTypedVarDecl) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesMultipleTypedVarDeclWithValue) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesMultipleTypedVarDeclWithValue) { 
+	TestAST(R"(
 		var (a, b): int, double = 5
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a"),
@@ -297,10 +189,7 @@ TEST(Parser, ParsesMultipleTypedVarDeclWithValue) {
 			}),
 			new IntValue(5)
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
 TEST(Parser, ParsesBasicTypes) {
@@ -326,12 +215,7 @@ TEST(Parser, ParsesBasicTypes) {
 		std::stringstream ss;
 		ss << "var a: " << kvp.first;
 
-		Parser p(ss);
-
-		auto ast = p.parse();
-		EXPECT_TRUE(ast != nullptr);
-
-		LongBlockExpr expected(std::vector<Node*>({
+		TestAST(ss.str(), {
 			new VarDeclExpr(
 				std::vector<Identifier*>({
 					new NamedIDExpr("a")
@@ -341,24 +225,14 @@ TEST(Parser, ParsesBasicTypes) {
 				}),
 				nullptr
 			)
-		}));
-
-		assertEqAST(&expected, ast);
-		delete ast;
+		});
 	}
 }
 
-TEST(Parser, ParsesAccessType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesAccessType) { 
+	TestAST(R"(
 		var a: Foo.Bar.Baz
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -374,23 +248,13 @@ TEST(Parser, ParsesAccessType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesIdentifierType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesIdentifierType) { 
+	TestAST(R"(
 		var a: Foo
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -400,23 +264,13 @@ TEST(Parser, ParsesIdentifierType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesArrayType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesArrayType) { 
+	TestAST(R"(
 		var a: Foo[5][3]
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -432,23 +286,13 @@ TEST(Parser, ParsesArrayType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesPointerType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesPointerType) { 
+	TestAST(R"(
 		var a: Foo**
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -462,23 +306,13 @@ TEST(Parser, ParsesPointerType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesReferenceType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesReferenceType) { 
+	TestAST(R"(
 		var a: Foo&&
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -492,23 +326,13 @@ TEST(Parser, ParsesReferenceType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesTypeInParens) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesTypeInParens) { 
+	TestAST(R"(
 		var a: (int)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -518,23 +342,13 @@ TEST(Parser, ParsesTypeInParens) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesTupleType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesTupleType) { 
+	TestAST(R"(
 		var a: (int,)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -546,23 +360,13 @@ TEST(Parser, ParsesTupleType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParseMultipleTupleType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParseMultipleTupleType) { 
+	TestAST(R"(
 		var a: (int,double)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -575,23 +379,13 @@ TEST(Parser, ParseMultipleTupleType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParseMultipleTupleTypeTrailingComma) {
-	std::stringstream ss(R"(
+TEST(Parser, ParseMultipleTupleTypeTrailingComma) { 
+	TestAST(R"(
 		var a: (int,double,)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -604,23 +398,13 @@ TEST(Parser, ParseMultipleTupleTypeTrailingComma) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesFunctionType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesFunctionType) { 
+	TestAST(R"(
 		var a: (int,double) -> Foo
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -636,23 +420,13 @@ TEST(Parser, ParsesFunctionType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesComplexType) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesComplexType) { 
+	TestAST(R"(
 		var a: int*[5]&
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -669,22 +443,13 @@ TEST(Parser, ParsesComplexType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
-TEST(Parser, ParsesArrayOfFunctionType) {
-	std::stringstream ss(R"(
+
+TEST(Parser, ParsesArrayOfFunctionType) { 
+	TestAST(R"(
 		var a: ((int,double) -> Foo)[5]
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new VarDeclExpr(
 			std::vector<Identifier*>({
 				new NamedIDExpr("a")
@@ -703,44 +468,24 @@ TEST(Parser, ParsesArrayOfFunctionType) {
 			}),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestNamespace) {
-	std::stringstream ss(R"(
+TEST(Parser, TestNamespace) { 
+	TestAST(R"(
 		namespace Foo
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new NamespaceStmt(
 			new NamedIDExpr("Foo"),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestNamespaceLong) {
-	std::stringstream ss(R"(
+TEST(Parser, TestNamespaceLong) { 
+	TestAST(R"(
 		namespace Foo.Bar.Baz
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new NamespaceStmt(
 			new AccessIDExpr(
 				new AccessIDExpr(
@@ -751,48 +496,28 @@ TEST(Parser, TestNamespaceLong) {
 			),
 			nullptr
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestNamespaceBlock) {
-	std::stringstream ss(R"(
+TEST(Parser, TestNamespaceBlock) { 
+	TestAST(R"(
 		namespace Foo {
 
 		}
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new NamespaceStmt(
 			new NamedIDExpr("Foo"),
 			new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestNamespaceLongBlock) {
-	std::stringstream ss(R"(
+TEST(Parser, TestNamespaceLongBlock) { 
+	TestAST(R"(
 		namespace Foo.Bar.Baz {
 
-        }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	}
+	)", {
 		new NamespaceStmt(
 			new AccessIDExpr(
 				new AccessIDExpr(
@@ -803,10 +528,7 @@ TEST(Parser, TestNamespaceLongBlock) {
 			),
 			new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
 TEST(Parser, TestFlags) {
@@ -840,42 +562,25 @@ TEST(Parser, TestFlags) {
 	delete ast;
 }
 
-TEST(Parser, TestEmptyEnum) {
-	std::stringstream ss(R"(
+TEST(Parser, TestEmptyEnum) { 
+	TestAST(R"(
 		enum Status { }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new EnumStmt(
 			new NamedIDExpr("Status"),
 			std::vector<EnumValue*>()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestEnumBasicValues) {
-	std::stringstream ss(R"(
+TEST(Parser, TestEnumBasicValues) { 
+	TestAST(R"(
 		enum Status {
 			PENDING,
 			RUNNING,
 			COMPLETED
-        }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	}
+	)", {
 		new EnumStmt(
 			new NamedIDExpr("Status"),
 			std::vector<EnumValue*>({
@@ -890,27 +595,17 @@ TEST(Parser, TestEnumBasicValues) {
 				)
 			})
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestEnumWithData) {
-	std::stringstream ss(R"(
+TEST(Parser, TestEnumWithData) { 
+	TestAST(R"(
 		enum Status {
 			PENDING,
 			RUNNING(time:int),
 			COMPLETED(time,completed:double)
-        }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	}
+	)", {
 		new EnumStmt(
 			new NamedIDExpr("Status"),
 			std::vector<EnumValue*>({
@@ -944,57 +639,44 @@ TEST(Parser, TestEnumWithData) {
 				)
 			})
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, Interface) {
-	std::stringstream ss(R"(
+TEST(Parser, Interface) { 
+	TestAST(R"(
 		interface Foo {
 			def foo() -> void
 			def bar(a:int,b:int) -> int
 		}
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new InterfaceStmt(new NamedIDExpr("Foo"), new LongBlockExpr(std::vector<Node*>({
 			new ExternFuncStmt(
 				new NamedIDExpr("foo"),
 				std::vector<VarDeclExpr*>(),
 				new BuiltinType(BuiltinTypeKind::VOID)
 			),
-		    new ExternFuncStmt(
-			    new NamedIDExpr("bar"),
-			    std::vector<VarDeclExpr*>({
-				   new VarDeclExpr(
-					   std::vector<Identifier*>({  new NamedIDExpr("a") }),
-					   std::vector<Type*>({ new IntType }),
-					   nullptr
-				   ),
-			       new VarDeclExpr(
-					   std::vector<Identifier*>({  new NamedIDExpr("b") }),
-					   std::vector<Type*>({ new IntType }),
-					   nullptr
-				   )
-			    }),
-			    new IntType
-		    )
+			new ExternFuncStmt(
+				new NamedIDExpr("bar"),
+				std::vector<VarDeclExpr*>({
+					new VarDeclExpr(
+						std::vector<Identifier*>({  new NamedIDExpr("a") }),
+						std::vector<Type*>({ new IntType }),
+						nullptr
+					),
+					new VarDeclExpr(
+						std::vector<Identifier*>({  new NamedIDExpr("b") }),
+						std::vector<Type*>({ new IntType }),
+						nullptr
+					)
+				}),
+				new IntType
+			)
 		})))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ParsesClass) {
-	std::stringstream ss(R"(
+TEST(Parser, ParsesClass) { 
+	TestAST(R"(
 		class MyClass : Base1, Foo.Bar, Base2 {
 			var a
 			var a: int
@@ -1014,22 +696,15 @@ TEST(Parser, ParsesClass) {
 
 			enum NestedEnum { }
 		}
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ClassStmt(
 			new NamedIDExpr("MyClass"),
 			std::vector<Identifier*>({
 				new NamedIDExpr("Base1"),
-			    new AccessIDExpr(
-				    new NamedIDExpr("Foo"),
-				    new NamedIDExpr("Bar")
-			    ),
+				new AccessIDExpr(
+					new NamedIDExpr("Foo"),
+					new NamedIDExpr("Bar")
+				),
 				new NamedIDExpr("Base2")
 			}),
 			new LongBlockExpr(std::vector<Node*>({
@@ -1042,30 +717,30 @@ TEST(Parser, ParsesClass) {
 					std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}),
 					nullptr
 				),
-			    new ClassStmt(
-				    new NamedIDExpr("NestedClass"),
-				    std::vector<Identifier*>(),
-				    new LongBlockExpr()
-			    ),
-			    new FunctionExpr(
-				    new NamedIDExpr("foo"),
-				    nullptr,
-				    std::vector<VarDeclExpr*>(),
-				    nullptr,
-				    new LongBlockExpr()
-			    ),
-			    new AggregateStmt(nullptr, new LongBlockExpr),
-			    new ExternFuncStmt(
-				    new NamedIDExpr("foo"),
-				    std::vector<VarDeclExpr*>(),
-				    new BuiltinType(BuiltinTypeKind::INT)
-			    ),
-			    new ImportStmt(new NamedIDExpr("Foo")),
-			    new ExtendStmt(
-				    new NamedIDExpr("Foo"),
-				    std::vector<Identifier*>(),
-				    new LongBlockExpr()
-			    ),
+				new ClassStmt(
+					new NamedIDExpr("NestedClass"),
+					std::vector<Identifier*>(),
+					new LongBlockExpr()
+				),
+				new FunctionExpr(
+					new NamedIDExpr("foo"),
+					nullptr,
+					std::vector<VarDeclExpr*>(),
+					nullptr,
+					new LongBlockExpr()
+				),
+				new AggregateStmt(nullptr, new LongBlockExpr),
+				new ExternFuncStmt(
+					new NamedIDExpr("foo"),
+					std::vector<VarDeclExpr*>(),
+					new BuiltinType(BuiltinTypeKind::INT)
+				),
+				new ImportStmt(new NamedIDExpr("Foo")),
+				new ExtendStmt(
+					new NamedIDExpr("Foo"),
+					std::vector<Identifier*>(),
+					new LongBlockExpr()
+				),
 				new PropertyStmt(
 					new NamedIDExpr("Foo"),
 					nullptr,
@@ -1079,31 +754,21 @@ TEST(Parser, ParsesClass) {
 						new SetterStmt(new ShortBlockExpr(new ReferenceIDExpr("a")))
 					}))
 				),
-			    new EnumStmt(
-				    new NamedIDExpr("NestedEnum"),
-				    std::vector<EnumValue*>()
-			    )
+				new EnumStmt(
+					new NamedIDExpr("NestedEnum"),
+					std::vector<EnumValue*>()
+				)
 			}))
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ClassMemberPrivacy) {
-	std::stringstream ss(R"(
+TEST(Parser, ClassMemberPrivacy) { 
+	TestAST(R"(
 		class MyClass {
 			private var a: int
 		}
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ClassStmt(
 			new NamedIDExpr("MyClass"),
 			std::vector<Identifier*>({ }),
@@ -1115,23 +780,13 @@ TEST(Parser, ClassMemberPrivacy) {
 				)
 			}))
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, BasicFunction) {
-	std::stringstream ss(R"(
+TEST(Parser, BasicFunction) { 
+	TestAST(R"(
 		def foo() { }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new FunctionExpr(
 			new NamedIDExpr("foo"),
 			nullptr,
@@ -1139,23 +794,13 @@ TEST(Parser, BasicFunction) {
 			nullptr,
 			new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, BasicFunctionParameterImplicit) {
-	std::stringstream ss(R"(
+TEST(Parser, BasicFunctionParameterImplicit) { 
+	TestAST(R"(
 		def foo(a) { }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new FunctionExpr(
 			new NamedIDExpr("foo"),
 			nullptr,
@@ -1168,23 +813,13 @@ TEST(Parser, BasicFunctionParameterImplicit) {
 			nullptr,
 			new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, BasicFunctionParameterExplicit) {
-	std::stringstream ss(R"(
+TEST(Parser, BasicFunctionParameterExplicit) { 
+	TestAST(R"(
 		def foo(a:int) { }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new FunctionExpr(
 			new NamedIDExpr("foo"),
 			nullptr,
@@ -1197,23 +832,13 @@ TEST(Parser, BasicFunctionParameterExplicit) {
 			nullptr,
 			new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, BasicFunctionParameterMixed) {
-	std::stringstream ss(R"(
+TEST(Parser, BasicFunctionParameterMixed) { 
+	TestAST(R"(
 		def foo(a,a:int) { }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new FunctionExpr(
 			new NamedIDExpr("foo"),
 			nullptr,
@@ -1230,23 +855,13 @@ TEST(Parser, BasicFunctionParameterMixed) {
 			nullptr,
 			new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, BasicFunctionParameterMixedReturn) {
-	std::stringstream ss(R"(
+TEST(Parser, BasicFunctionParameterMixedReturn) { 
+	TestAST(R"(
 		def foo(a,a:int) -> void { }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new FunctionExpr(
 			new NamedIDExpr("foo"),
 			nullptr,
@@ -1263,100 +878,50 @@ TEST(Parser, BasicFunctionParameterMixedReturn) {
 			new BuiltinType(BuiltinTypeKind::VOID),
 			new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, BasicValue) {
-	std::stringstream ss(R"(
+TEST(Parser, BasicValue) { 
+	TestAST(R"(
 		0xF00u64
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new UIntValue(0xF00, new BuiltinType(BuiltinTypeKind::UINT64))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, BasicVarRef) {
-	std::stringstream ss(R"(
+TEST(Parser, BasicVarRef) { 
+	TestAST(R"(
 		a
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ReferenceIDExpr("a")
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, MultExprsOneLine) {
-	std::stringstream ss(R"(
+TEST(Parser, MultExprsOneLine) { 
+	TestAST(R"(
 		3; 3; 3
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new IntValue(3),
 		new IntValue(3),
 		new IntValue(3)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, UnaryOperations) {
-	std::stringstream ss(R"(
+TEST(Parser, UnaryOperations) { 
+	TestAST(R"(
 		++a; --a; *a; &a
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new UnaryExpr(UnaryOp::INCREMENT, UnaryOrder::PREFIX, new ReferenceIDExpr("a")),
 		new UnaryExpr(UnaryOp::DECREMENT, UnaryOrder::PREFIX, new ReferenceIDExpr("a")),
 		new UnaryExpr(UnaryOp::TIMES, UnaryOrder::PREFIX, new ReferenceIDExpr("a")),
 		new UnaryExpr(UnaryOp::REFERENCE, UnaryOrder::PREFIX, new ReferenceIDExpr("a")),
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, FunctionCall) {
-	std::stringstream ss(R"(
+TEST(Parser, FunctionCall) { 
+	TestAST(R"(
 		a(1,2)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new FunctionCallExpr(
 			new ReferenceIDExpr("a"),
 			std::vector<Expression*>({
@@ -1364,44 +929,24 @@ TEST(Parser, FunctionCall) {
 				new IntValue(2)
 			})
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ArrayAccess) {
-	std::stringstream ss(R"(
+TEST(Parser, ArrayAccess) { 
+	TestAST(R"(
 		a[5]
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ArrayAccessExpr(
 			new ReferenceIDExpr("a"),
 			new IntValue(5)
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, MemberAccess) {
-	std::stringstream ss(R"(
+TEST(Parser, MemberAccess) { 
+	TestAST(R"(
 		a.b.c
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new MemberAccessExpr(
 			new MemberAccessExpr(
 				new ReferenceIDExpr("a"),
@@ -1409,24 +954,13 @@ TEST(Parser, MemberAccess) {
 			),
 			new ReferenceIDExpr("c")
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ComplexUnaryMod) {
-	std::stringstream ss(R"(
+TEST(Parser, ComplexUnaryMod) { 
+	TestAST(R"(
 		a[1].b[2].c
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	// ((a[1].b)[2]).c
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new MemberAccessExpr(
 			new ArrayAccessExpr(
 				new MemberAccessExpr(
@@ -1440,43 +974,23 @@ TEST(Parser, ComplexUnaryMod) {
 			),
 			new ReferenceIDExpr("c")
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, BinOpNewline) {
-	std::stringstream ss(R"(
+TEST(Parser, BinOpNewline) { 
+	TestAST(R"(
 		1
 		-3
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new IntValue(1),
-	    new UnaryExpr(UnaryOp::MINUS, UnaryOrder::PREFIX, new IntValue(3))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+		new UnaryExpr(UnaryOp::MINUS, UnaryOrder::PREFIX, new IntValue(3))
+	});
 }
 
-TEST(Parser, TestBinaryExpr) {
-	std::stringstream ss(R"(
+TEST(Parser, TestBinaryExpr) { 
+	TestAST(R"(
 		1 + (2 - 3) * 4
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new BinOpExpr(
 			new IntValue(1),
 			BinOp::ADD,
@@ -1486,23 +1000,13 @@ TEST(Parser, TestBinaryExpr) {
 				new IntValue(4)
 			)
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestTernaryExpr) {
-	std::stringstream ss(R"(
+TEST(Parser, TestTernaryExpr) { 
+	TestAST(R"(
 		a = 1 + 2 ? 3 * 4 : 5 * 6
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new BinOpExpr(
 			new ReferenceIDExpr("a"),
 			BinOp::ASSIGN,
@@ -1512,23 +1016,13 @@ TEST(Parser, TestTernaryExpr) {
 				new BinOpExpr(new IntValue(5), BinOp::MULTIPLY, new IntValue(6))
 			)
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, This) {
-	std::stringstream ss(R"(
+TEST(Parser, This) { 
+	TestAST(R"(
 		this.a = 5
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new BinOpExpr(
 			new MemberAccessExpr(
 				new ThisID(), new ReferenceIDExpr("a")
@@ -1536,104 +1030,54 @@ TEST(Parser, This) {
 			BinOp::ASSIGN,
 			new IntValue(5)
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, New) {
-	std::stringstream ss(R"(
+TEST(Parser, New) { 
+	TestAST(R"(
 		new Foo.Bar
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new NewExpr(
 			new MemberAccessExpr(
 				new ReferenceIDExpr("Foo"),
 				new ReferenceIDExpr("Bar")
 			)
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, EmptyArray) {
-	std::stringstream ss(R"(
+TEST(Parser, EmptyArray) { 
+	TestAST(R"(
 		[]
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ArrayExpr()
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, SingleElementArray) {
-	std::stringstream ss(R"(
+TEST(Parser, SingleElementArray) { 
+	TestAST(R"(
 		[1]
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ArrayExpr(std::vector<Expression*>({
 			new IntValue(1)
 		}))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, MultipleElementArray) {
-	std::stringstream ss(R"(
+TEST(Parser, MultipleElementArray) { 
+	TestAST(R"(
 		[1, 2, 3, 4]
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ArrayExpr(std::vector<Expression*>({
 			new IntValue(1), new IntValue(2), new IntValue(3), new IntValue(4)
 		}))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, NestedArray) {
-	std::stringstream ss(R"(
+TEST(Parser, NestedArray) { 
+	TestAST(R"(
 		[[1,2],[3,4]]
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ArrayExpr(std::vector<Expression*>({
 			new ArrayExpr(std::vector<Expression*>({
 				new IntValue(1), new IntValue(2)
@@ -1642,76 +1086,46 @@ TEST(Parser, NestedArray) {
 				new IntValue(3), new IntValue(4)
 			}))
 		}))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ArrayRange) {
-	std::stringstream ss(R"(
+TEST(Parser, ArrayRange) { 
+	TestAST(R"(
 		[a .. b]; [a ... b]
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new ArrayRangeExpr(
 			new ReferenceIDExpr("a"), ArrayRangeType::INCLUSIVE, new ReferenceIDExpr("b")
 		),
 		new ArrayRangeExpr(
 			new ReferenceIDExpr("a"), ArrayRangeType::EXCLUSIVE, new ReferenceIDExpr("b")
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestTuples) {
-	std::stringstream ss(R"(
+TEST(Parser, TestTuples) { 
+	TestAST(R"(
 		(1,)
 		(1,2)
 		(a:1,b:2)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new TupleExpr(std::vector<Expression*>({
 			new IntValue(1)
 		})),
-	 	new TupleExpr(std::vector<Expression*>({
-		    new IntValue(1),
-		    new IntValue(2)
+		new TupleExpr(std::vector<Expression*>({
+			new IntValue(1),
+			new IntValue(2)
 		})),
 		new TupleExpr(std::vector<Expression*>({
 			new NamedExpr(new ReferenceIDExpr("a"), new IntValue(1)),
 			new NamedExpr(new ReferenceIDExpr("b"), new IntValue(2))
 		}))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, NamedArguments) {
-	std::stringstream ss(R"(
+TEST(Parser, NamedArguments) { 
+	TestAST(R"(
 		foo(a:1,b:2)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new FunctionCallExpr(
 			new ReferenceIDExpr("foo"),
 			std::vector<Expression*>({
@@ -1719,14 +1133,11 @@ TEST(Parser, NamedArguments) {
 				new NamedExpr(new ReferenceIDExpr("b"), new IntValue(2))
 			})
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TestIfs) {
-	std::stringstream ss(R"(
+TEST(Parser, TestIfs) { 
+	TestAST(R"(
 		if (1) { }
 
 		if (2) { }
@@ -1739,14 +1150,7 @@ TEST(Parser, TestIfs) {
 		if (6) { }
 		elif (7) { }
 		else { }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new IfExpr(std::vector<ConditionalBlock*>({
 			new ConditionalBlock(new IntValue(1), new LongBlockExpr())
 		})),
@@ -1764,14 +1168,11 @@ TEST(Parser, TestIfs) {
 			new ConditionalBlock(new IntValue(7), new LongBlockExpr()),
 			new ConditionalBlock(nullptr, new LongBlockExpr())
 		}))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, Loops) {
-	std::stringstream ss(R"(
+TEST(Parser, Loops) { 
+	TestAST(R"(
 		for (;;) { }
 		for (a;b;c) { }
 		for (var a;b;c) { }
@@ -1779,20 +1180,13 @@ TEST(Parser, Loops) {
 		while (a) { }
 		forever { }
 		do { } while (a)
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new LoopStmt(
 			nullptr, nullptr, nullptr, LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
-	 	new LoopStmt(
+		new LoopStmt(
 			new ReferenceIDExpr("a"), new ReferenceIDExpr("b"), new ReferenceIDExpr("c"),
-		    LoopConditionCheck::BEFORE, new LongBlockExpr()
+			LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 		new LoopStmt(
 			new VarDeclExpr(
@@ -1800,15 +1194,15 @@ TEST(Parser, Loops) {
 				std::vector<Type*>(),
 				nullptr
 			), new ReferenceIDExpr("b"), new ReferenceIDExpr("c"),
-		    LoopConditionCheck::BEFORE, new LongBlockExpr()
+			LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
-	    new ForeachStmt(
-		    new VarDeclExpr(
+		new ForeachStmt(
+			new VarDeclExpr(
 				std::vector<Identifier*>({new NamedIDExpr("a")}),
 				std::vector<Type*>(),
 				nullptr
-		    ), new ReferenceIDExpr("b"), new LongBlockExpr()
-	    ),
+			), new ReferenceIDExpr("b"), new LongBlockExpr()
+		),
 		new LoopStmt(
 			nullptr, new ReferenceIDExpr("a"), nullptr,
 			LoopConditionCheck::BEFORE, new LongBlockExpr()
@@ -1821,27 +1215,17 @@ TEST(Parser, Loops) {
 			nullptr, new ReferenceIDExpr("a"), nullptr,
 			LoopConditionCheck::AFTER, new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, SwitchStatement) {
-	std::stringstream ss(R"(
+TEST(Parser, SwitchStatement) { 
+	TestAST(R"(
 		switch (a) {
 			1, 2: { },
 			A.B(a, b): { },
 			_: { }
 		}
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new SwitchExpr(
 			new ReferenceIDExpr("a"),
 			std::vector<SwitchPattern*>({
@@ -1870,63 +1254,33 @@ TEST(Parser, SwitchStatement) {
 				),
 			})
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, ControlStatements) {
-	std::stringstream ss(R"(
+TEST(Parser, ControlStatements) { 
+	TestAST(R"(
 		break; continue; yield 5
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new BreakStmt(), new ContinueStmt,
-	    new YieldStmt(new IntValue(5))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+		new YieldStmt(new IntValue(5))
+	});
 }
 
-TEST(Parser, Delete) {
-	std::stringstream ss(R"(
+TEST(Parser, Delete) { 
+	TestAST(R"(
 		delete a
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new DeleteStmt(new ReferenceIDExpr("a"))
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
 
-TEST(Parser, TryCatches) {
-	std::stringstream ss(R"(
+TEST(Parser, TryCatches) { 
+	TestAST(R"(
 		try { }
 		catch (var a: int) { }
 		catch (var b: int) { }
 		finally { }
-	)");
-
-	Parser p(ss);
-
-	auto ast = p.parse();
-	EXPECT_TRUE(ast != nullptr);
-
-	LongBlockExpr expected(std::vector<Node*>({
+	)", {
 		new TryExpr(
 			new LongBlockExpr(),
 			std::vector<CatchBlock*>({
@@ -1945,8 +1299,5 @@ TEST(Parser, TryCatches) {
 			}),
 			new LongBlockExpr()
 		)
-	}));
-
-	assertEqAST(&expected, ast);
-	delete ast;
+	});
 }
