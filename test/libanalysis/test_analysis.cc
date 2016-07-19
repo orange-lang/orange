@@ -224,13 +224,13 @@ TEST(Analysis, VarReference) {
 
 TEST(Analysis, InvalidVarReference) {
 	EXPECT_THROW({
-		TestType({
+		TestType(std::vector<Node*>({
 			CreateNode<BinOpExpr>(
 				CreateNode<ReferenceIDExpr>("a"),
 				BinOp::ADD,
 				CreateNode<IntValue>(5)
 			)
-		}, nullptr);
+		}), nullptr);
 	}, std::runtime_error);
 }
 
