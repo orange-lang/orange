@@ -61,243 +61,154 @@ TEST(Analysis, BuildsTypeTable) {
 	delete ast;
 }
 
-TEST(Analysis, ConstTypes) {
-	std::vector<std::pair<Expression*, orange::ast::Type*>> tests({
-		std::make_pair(
-			CreateNode<IntValue>(0xF00), new IntType
-		),
-	    std::make_pair(
-			CreateNode<IntValue>(0xF00, new IntType), new IntType
-		),
-	    std::make_pair(
-		    CreateNode<IntValue>(0xF00, new Int8Type), new Int8Type
-		),
-	    std::make_pair(
-		    CreateNode<IntValue>(0xF00, new Int16Type), new Int16Type
-		),
-	    std::make_pair(
-		    CreateNode<IntValue>(0xF00, new Int32Type), new Int32Type
-		),
-	    std::make_pair(
-		    CreateNode<IntValue>(0xF00, new Int64Type), new Int64Type
-		),
-		std::make_pair(
-			CreateNode<UIntValue>(0xF00, new UIntType), new UIntType
-		),
-		std::make_pair(
-			CreateNode<UIntValue>(0xF00, new UInt8Type), new UInt8Type
-		),
-		std::make_pair(
-			CreateNode<UIntValue>(0xF00, new UInt16Type), new UInt16Type
-		),
-		std::make_pair(
-			CreateNode<UIntValue>(0xF00, new UInt32Type), new UInt32Type
-		),
-		std::make_pair(
-			CreateNode<UIntValue>(0xF00, new UInt64Type), new UInt64Type
-		),
-	    std::make_pair(
-		    CreateNode<FloatValue>(0.529), new FloatType
-	    ),
-	    std::make_pair(
-		    CreateNode<DoubleValue>(0.529), new DoubleType
-	    ),
-		std::make_pair(
-		    CreateNode<CharValue>('f'), new CharType
-	    ),
-	    std::make_pair(
-		    CreateNode<StringValue>("foo"), new StringType
-	    ),
-	    std::make_pair(
-		    CreateNode<BoolValue>(true), new BoolType
-	    ),
-		std::make_pair(
-		    CreateNode<BoolValue>(false), new BoolType
-	    ),
-	});
+void TestType(std::vector<Node*> nodes, Type* target) {
+	auto ast = CreateNode<LongBlockExpr>(nodes);
 
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
+	auto ctx = NodeTypeContext();
+	ResolveVisitor resolver(&ctx, searcher);
+
+	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+	walker.WalkNode(&resolver, ast);
+
+	auto ty = ctx.GetNodeType(nodes.back());
+	ExpectTy(target, ty);
+
+	delete ast;
+	delete target;
+}
+
+void TestType(Node* node, Type* target) {
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
 	auto ctx = NodeTypeContext();
 	ResolveVisitor resolver(&ctx, searcher);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+	walker.WalkNode(&resolver, node);
 
-	for (auto pair : tests) {
-		walker.WalkExpr(&resolver, pair.first);
-		auto ty = ctx.GetNodeType(pair.first);
+	auto ty = ctx.GetNodeType(node);
+	ExpectTy(target, ty);
 
-		ExpectTy(pair.second, ty);
-	}
+	delete node;
+	delete target;
+}
+
+TEST(Analysis, ConstTypes) {
+	TestType(CreateNode<IntValue>(0xF00), new IntType);
+	TestType(CreateNode<IntValue>(0xF00, new IntType), new IntType);
+	TestType(CreateNode<IntValue>(0xF00, new Int8Type), new Int8Type);
+	TestType(CreateNode<IntValue>(0xF00, new Int16Type), new Int16Type);
+	TestType(CreateNode<IntValue>(0xF00, new Int32Type), new Int32Type);
+	TestType(CreateNode<IntValue>(0xF00, new Int64Type), new Int64Type);
+	TestType(CreateNode<UIntValue>(0xF00, new UIntType), new UIntType);
+	TestType(CreateNode<UIntValue>(0xF00, new UInt8Type), new UInt8Type);
+	TestType(CreateNode<UIntValue>(0xF00, new UInt16Type), new UInt16Type);
+	TestType(CreateNode<UIntValue>(0xF00, new UInt32Type), new UInt32Type);
+	TestType(CreateNode<UIntValue>(0xF00, new UInt64Type), new UInt64Type);
+	TestType(CreateNode<FloatValue>(0.529), new FloatType);
+	TestType(CreateNode<DoubleValue>(0.529), new DoubleType);
+	TestType(CreateNode<CharValue>('f'), new CharType);
+	TestType(CreateNode<StringValue>("foo"), new StringType);
+	TestType(CreateNode<BoolValue>(true), new BoolType);
+	TestType(CreateNode<BoolValue>(false), new BoolType);
 }
 
 TEST(Analysis, ReturnAdaptsType) {
-	auto ast = CreateNode<LongBlockExpr>();
-	auto voidReturn = CreateNode<ReturnStmt>();
-	auto intReturn = CreateNode<ReturnStmt>(CreateNode<IntValue>(0xF00));
-
-	ast->statements.push_back(voidReturn);
-	ast->statements.push_back(intReturn);
-
-	TypeResolution tr(ast);
-
-	auto tab = tr.GenerateTypeTable();
-	ASSERT_NE(tab, nullptr);
-
-	ExpectTy(new BuiltinType(BuiltinTypeKind::VOID), tab->GetGlobalContext()->GetNodeType(voidReturn));
-	ExpectTy(new IntType, tab->GetGlobalContext()->GetNodeType(intReturn));
+	TestType(CreateNode<ReturnStmt>(), new BuiltinType(BuiltinTypeKind::VOID));
+	TestType(CreateNode<ReturnStmt>(CreateNode<IntValue>(0xF00)), new IntType);
 }
 
 TEST(Analysis, BinOps) {
-	std::vector<std::pair<Expression*, orange::ast::Type*>> tests({
-		std::make_pair(
-			CreateNode<BinOpExpr>(CreateNode<IntValue>(5), BinOp::ADD, CreateNode<IntValue>(10)),
-			new IntType
-		),
-	 	std::make_pair(
-			CreateNode<BinOpExpr>(CreateNode<IntValue>(5, new Int8Type), BinOp::ADD, CreateNode<IntValue>(10)),
-		    new IntType
-		),
-	 	std::make_pair(
-			CreateNode<BinOpExpr>(CreateNode<IntValue>(5, new FloatType), BinOp::ADD, CreateNode<IntValue>(10)),
-		    new FloatType
-		)
-	});
+	TestType(CreateNode<BinOpExpr>(CreateNode<IntValue>(5), BinOp::ADD, CreateNode<IntValue>(10)),
+		new IntType);
 
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
-	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
+	TestType(CreateNode<BinOpExpr>(CreateNode<IntValue>(5, new Int8Type), BinOp::ADD, CreateNode<IntValue>(10)),
+		new IntType);
 
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
-	for (auto pair : tests) {
-		walker.WalkExpr(&resolver, pair.first);
-		auto ty = ctx.GetNodeType(pair.first);
-
-		ExpectTy(pair.second, ty);
-	}
+	TestType(CreateNode<BinOpExpr>(CreateNode<IntValue>(5, new FloatType), BinOp::ADD, CreateNode<IntValue>(10)),
+		new FloatType);
 }
 
+// The type of a variable declaration is a tuple of a type for each binding
 TEST(Analysis, VarDecl) {
-	std::vector<std::pair<VarDeclExpr*, orange::ast::Type*>> tests({
-		// typeless with value
-		std::make_pair(
-			CreateNode<VarDeclExpr>(
-				std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-				std::vector<Type*> ({ }),
-				CreateNode<IntValue>(52)
-			),
-			new IntType
-		),
+	// typeless with value
+	TestType(CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<Type*> ({ }),
+		CreateNode<IntValue>(52)
+	), new TupleType(std::vector<Type*>({ new IntType })));
 
-		// type without value
-		std::make_pair(
-			CreateNode<VarDeclExpr>(
-				std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-				std::vector<Type*> ({ new IntType }),
-				nullptr
-			),
-			new IntType
-		),
+	// type without value
+	TestType(CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<Type*> ({ new IntType }),
+		nullptr
+	), new TupleType(std::vector<Type*>({ new IntType })));
 
-		// type with value
-		std::make_pair(
-			CreateNode<VarDeclExpr>(
-				std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-				std::vector<Type*> ({ new IntType }),
-				CreateNode<DoubleValue>(5.23)
-			),
-			new IntType
-		),
-	});
-
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
-	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
-
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
-	for (auto pair : tests) {
-		walker.WalkExpr(&resolver, pair.first);
-		auto ty = ctx.GetNodeType(pair.first->bindings[0]);
-
-		ExpectTy(pair.second, ty);
-	}
+	// type with value
+	TestType(CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<Type*> ({ new IntType }),
+		CreateNode<DoubleValue>(5.23)
+	), new TupleType(std::vector<Type*>({ new IntType })));
 }
 
 TEST(Analysis, InvalidVarDecl) {
-	std::vector<VarDeclExpr*> tests({
-		// invalid name
-		CreateNode<VarDeclExpr>(
+	// invalid name
+	EXPECT_THROW({
+		TestType(CreateNode<VarDeclExpr>(
 			std::vector<Identifier*>({ CreateNode<AccessIDExpr>(
 				CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b")
 			)}),
 			std::vector<Type*> ({ }),
 			CreateNode<IntValue>(5)
-		),
+		), nullptr);
+	}, std::runtime_error);
 
-		// typeless without value
-		CreateNode<VarDeclExpr>(
+	// typeless without value
+	EXPECT_THROW({
+		TestType(CreateNode<VarDeclExpr>(
 			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 			std::vector<Type*> ({ }),
 			nullptr
-		),
+		), nullptr);
+	}, std::runtime_error);
 
-		// void type
-	    CreateNode<VarDeclExpr>(
+	// void type
+	EXPECT_THROW({
+		TestType(CreateNode<VarDeclExpr>(
 			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 			std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
 			nullptr
-	    ),
+		), nullptr);
+	}, std::runtime_error);
 
-	    // void value
-		CreateNode<VarDeclExpr>(
+	// void value
+	EXPECT_THROW({
+		TestType(CreateNode<VarDeclExpr>(
 			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 			std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
 			CreateNode<TempIDExpr>()
-		),
-	});
-
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
-	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
-
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
-	for (auto varDecl : tests) {
-		EXPECT_THROW({
-			walker.WalkExpr(&resolver, varDecl);
-		}, std::runtime_error);
-
-		delete varDecl;
-	}
+		), nullptr);
+	}, std::runtime_error);
 }
 
 TEST(Analysis, VarDeclPair) {
-	// TODO: change when this feature is implemented
-	auto varDecl = CreateNode<VarDeclExpr>(
-		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b") }),
-		std::vector<Type*> ({ }),
-		CreateNode<TupleExpr>(std::vector<Expression*>({
-			CreateNode<IntValue>(5),
-			CreateNode<DoubleValue>(10.93)
-		}))
-	);
-
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
-	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
-
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
+	// TODO: remove expect throw when this feature is implemented
 	EXPECT_THROW({
-		walker.WalkExpr(&resolver, varDecl);
+		TestType(CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b") }),
+			std::vector<Type*> ({ }),
+			CreateNode<TupleExpr>(std::vector<Expression*>({
+				CreateNode<IntValue>(5),
+				CreateNode<DoubleValue>(10.93)
+			}))
+		), new TupleType(std::vector<Type*>({ new IntType, new DoubleType })));
 	}, std::runtime_error);
-
-	delete varDecl;
 }
 
 TEST(Analysis, VarReference) {
-	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+	TestType({
 		CreateNode<VarDeclExpr>(
 			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 			std::vector<Type*>(), CreateNode<IntValue>(5)
@@ -307,41 +218,24 @@ TEST(Analysis, VarReference) {
 		    CreateNode<ReferenceIDExpr>("a"),
 		    BinOp::ADD,
 		    CreateNode<IntValue>(5)
-	    ),
-	}));
-
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
-	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
-
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
-	walker.WalkLongBlockExpr(&resolver, ast);
-	ExpectTy(new IntType, ctx.GetNodeType(ast->statements[1]));
+	    )
+	}, new IntType);
 }
 
 TEST(Analysis, InvalidVarReference) {
-	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
-		CreateNode<BinOpExpr>(
-			CreateNode<ReferenceIDExpr>("a"),
-			BinOp::ADD,
-			CreateNode<IntValue>(5)
-		),
-	}));
-
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
-	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
-
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
 	EXPECT_THROW({
-		walker.WalkLongBlockExpr(&resolver, ast);
+		TestType({
+			CreateNode<BinOpExpr>(
+				CreateNode<ReferenceIDExpr>("a"),
+				BinOp::ADD,
+				CreateNode<IntValue>(5)
+			)
+		}, nullptr);
 	}, std::runtime_error);
 }
 
 TEST(Analysis, AssignBinOps) {
-	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+	TestType({
 		CreateNode<VarDeclExpr>(
 			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 			std::vector<Type*>(), CreateNode<IntValue>(5)
@@ -351,30 +245,25 @@ TEST(Analysis, AssignBinOps) {
 		    CreateNode<ReferenceIDExpr>("a"),
 		    BinOp::PLUS_ASSIGN,
 		    CreateNode<IntValue>(5)
-	    ),
+	    )
+	}, new IntType);
+
+	TestType({
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<Type*>(), CreateNode<IntValue>(5)
+		),
 
 	    CreateNode<BinOpExpr>(
 		    CreateNode<ReferenceIDExpr>("a"),
 		    BinOp::TIMES_ASSIGN,
 		    CreateNode<DoubleValue>(52.932)
 	    ),
-	}));
-
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
-	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
-
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
-	walker.WalkLongBlockExpr(&resolver, ast);
-
-	for (unsigned long i = 1; i < ast->statements.size(); i++) {
-		ExpectTy(new IntType, ctx.GetNodeType(ast->statements[i]));
-	}
+	}, new IntType);
 }
 
 TEST(Analysis, CompareBinOps) {
-	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
+	TestType({
 		CreateNode<VarDeclExpr>(
 			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 			std::vector<Type*>(), CreateNode<IntValue>(5)
@@ -385,23 +274,18 @@ TEST(Analysis, CompareBinOps) {
 			BinOp::GREATER_THAN,
 			CreateNode<IntValue>(5)
 		),
+	}, new BoolType);
+
+	TestType({
+		CreateNode<VarDeclExpr>(
+			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+			std::vector<Type*>(), CreateNode<IntValue>(5)
+		),
 
 		CreateNode<BinOpExpr>(
 			CreateNode<ReferenceIDExpr>("a"),
 			BinOp::LESS_THAN,
 			CreateNode<DoubleValue>(52.932)
 		),
-	}));
-
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
-	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
-
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
-	walker.WalkLongBlockExpr(&resolver, ast);
-
-	for (unsigned long i = 1; i < ast->statements.size(); i++) {
-		ExpectTy(new BoolType, ctx.GetNodeType(ast->statements[i]));
-	}
+	}, new BoolType);
 }
