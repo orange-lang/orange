@@ -177,12 +177,12 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 	}
 
 	if (IsCompareBinOp(node->op)) {
-		// Convert both sides to the highest precedence type, but the
-		// type of this node is still bool.
-		auto bestType = GetImplicitType(tyLHS, tyRHS);
-		mContext->SetNodeType(node->LHS, bestType);
-		mContext->SetNodeType(node->RHS, bestType);
-
+		// The type of compare nodes is always a boolean. Code generation will 
+		// have to find the implicit type between the two nodes to be able to 
+		// generate it successfully.
+		//
+		// By this point, we've already determined that the types are compatible,
+		// so we don't need to do any extra error checking.
 		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::BOOL));
 	}
 }
