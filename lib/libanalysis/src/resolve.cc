@@ -16,6 +16,7 @@
 using namespace orange::analysis;
 
 void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
+	throw std::runtime_error("Don't know how to determine type of YieldStmt");
 }
 
 void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
@@ -24,21 +25,27 @@ void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
 }
 
 void ResolveVisitor::VisitExternFuncStmt(ExternFuncStmt* node) {
+	throw std::runtime_error("Don't know how to determine type of ExternFuncStmt");
 }
 
 void ResolveVisitor::VisitClassStmt(ClassStmt* node) {
+	throw std::runtime_error("Don't know how to determine type of ClassStmt");
 }
 
 void ResolveVisitor::VisitGetterStmt(GetterStmt* node) {
+	throw std::runtime_error("Don't know how to determine type of GetterStmt");
 }
 
 void ResolveVisitor::VisitPropertyStmt(PropertyStmt* node) {
+	throw std::runtime_error("Don't know how to determine type of PropertyStmt");
 }
 
 void ResolveVisitor::VisitThrowStmt(ThrowStmt* node) {
+	throw std::runtime_error("Don't know how to determine type of ThrowStmt");
 }
 
 void ResolveVisitor::VisitDeleteStmt(DeleteStmt* node) {
+	throw std::runtime_error("Don't know how to determine type of DeleteStmt");
 }
 
 void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
@@ -114,6 +121,7 @@ void ResolveVisitor::VisitCharValue(CharValue* node) {
 }
 
 void ResolveVisitor::VisitThisID(ThisID* node) {
+	throw std::runtime_error("Don't know how to determine type of ThisID");
 }
 
 void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
@@ -140,21 +148,27 @@ void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
 }
 
 void ResolveVisitor::VisitNamedIDExpr(NamedIDExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of NamedIDExpr");
 }
 
 void ResolveVisitor::VisitTempIDExpr(TempIDExpr* node) {
+	mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::VAR));
 }
 
 void ResolveVisitor::VisitDtorIDExpr(DtorIDExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of DtorIDExpr");
 }
 
 void ResolveVisitor::VisitAccessIDExpr(AccessIDExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of AccessIDExpr");
 }
 
 void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of LongBlockExpr");
 }
 
 void ResolveVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of ShortBlockExpr");
 }
 
 void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
@@ -188,60 +202,79 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 }
 
 void ResolveVisitor::VisitUnaryExpr(UnaryExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of UnaryExpr");
 }
 
 void ResolveVisitor::VisitTupleExpr(TupleExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of TupleExpr");
 }
 
 void ResolveVisitor::VisitArrayExpr(ArrayExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of ArrayExpr");
 }
 
 void ResolveVisitor::VisitArrayRangeExpr(ArrayRangeExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of ArrayRangeExpr");
 }
 
 void ResolveVisitor::VisitArrayAccessExpr(ArrayAccessExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of ArrayAccessExpr");
 }
 
 void ResolveVisitor::VisitMemberAccessExpr(MemberAccessExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of MemberAccessExpr");
 }
 
 void ResolveVisitor::VisitNamedExpr(NamedExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of NamedExpr");
 }
 
 void ResolveVisitor::VisitConditionalBlock(ConditionalBlock* node) {
+	throw std::runtime_error("Don't know how to determine type of ConditionalBlock");
 }
 
 void ResolveVisitor::VisitIfExpr(IfExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of IfExpr");
 }
 
 void ResolveVisitor::VisitTernaryExpr(TernaryExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of TernaryExpr");
 }
 
 void ResolveVisitor::VisitSwitchPattern(SwitchPattern* node) {
+	throw std::runtime_error("Don't know how to determine type of SwitchPattern");
 }
 
 void ResolveVisitor::VisitSwitchExpr(SwitchExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of SwitchExpr");
 }
 
 void ResolveVisitor::VisitFunctionExpr(FunctionExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of FunctionExpr");
 }
 
 void ResolveVisitor::VisitCatchBlock(CatchBlock* node) {
+	throw std::runtime_error("Don't know how to determine type of CatchBlock");
 }
 
 void ResolveVisitor::VisitTryExpr(TryExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of TryExpr");
 }
 
 void ResolveVisitor::VisitCastExpr(CastExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of CastExpr");
 }
 
 void ResolveVisitor::VisitFunctionCallExpr(FunctionCallExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of FunctionCallExpr");
 }
 
 void ResolveVisitor::VisitNewExpr(NewExpr* node) {
+	throw std::runtime_error("Don't know how to determine type of NewExpr");
 }
 
 void ResolveVisitor::VisitEnumMatch(EnumMatch* node) {
+	throw std::runtime_error("Don't know how to determine type of EnumMatch");
 }
 
 ResolveVisitor::ResolveVisitor(NodeTypeContext* context, ASTSearcher& searcher) :
