@@ -131,7 +131,7 @@ TypeTable* TypeResolution::GenerateTypeTable() {
 	auto tt = new TypeTable();
 
 	ASTSearcher searcher(mASTs);
-	ResolveVisitor resolver(tt->GetGlobalContext(), searcher);
+	ResolveVisitor resolver(tt->GetGlobalContext(), mLog, searcher);
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 
 	for (auto ast : mASTs) walker.WalkLongBlockExpr(&resolver, ast);

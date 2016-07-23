@@ -277,6 +277,6 @@ void ResolveVisitor::VisitEnumMatch(EnumMatch* node) {
 	throw std::runtime_error("Don't know how to determine type of EnumMatch");
 }
 
-ResolveVisitor::ResolveVisitor(NodeTypeContext* context, ASTSearcher& searcher) :
-	mContext(context), mSearcher(searcher) { }
+ResolveVisitor::ResolveVisitor(NodeTypeContext* context, AnalysisMessageLog& log, ASTSearcher& searcher) :
+	mContext(context), mLog(log), mSearcher(searcher) { }
 

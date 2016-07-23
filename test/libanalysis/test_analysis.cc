@@ -66,7 +66,8 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
 	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
+	auto log = AnalysisMessageLog();
+	ResolveVisitor resolver(&ctx, log, searcher);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, ast);
@@ -81,7 +82,8 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 void TestType(Node* node, Type* target) {
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>());
 	auto ctx = NodeTypeContext();
-	ResolveVisitor resolver(&ctx, searcher);
+	auto log = AnalysisMessageLog();
+	ResolveVisitor resolver(&ctx, log, searcher);
 
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, node);

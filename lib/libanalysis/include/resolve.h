@@ -12,6 +12,8 @@
 
 #include <libast/visitor.h>
 #include <libast/search.h>
+
+#include <libanalysis/error.h>
 #include <libanalysis/analyze.h>
 
 namespace orange { namespace analysis {
@@ -24,6 +26,7 @@ namespace orange { namespace analysis {
 	private:
 		NodeTypeContext* mContext;
 		ASTSearcher& mSearcher;
+		AnalysisMessageLog& mLog;
 	public:
 		virtual void VisitYieldStmt(YieldStmt* node) override;
 		virtual void VisitReturnStmt(ReturnStmt* node) override;
@@ -70,6 +73,6 @@ namespace orange { namespace analysis {
 		virtual void VisitNewExpr(NewExpr* node) override;
 		virtual void VisitEnumMatch(EnumMatch* node) override;
 
-		ResolveVisitor(NodeTypeContext* context, ASTSearcher& searcher);
+		ResolveVisitor(NodeTypeContext* context, AnalysisMessageLog& log, ASTSearcher& searcher);
 	};
 }}
