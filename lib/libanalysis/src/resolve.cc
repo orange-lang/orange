@@ -16,7 +16,7 @@
 using namespace orange::analysis;
 
 void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
-	throw std::runtime_error("Don't know how to determine type of YieldStmt");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
@@ -25,53 +25,61 @@ void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
 }
 
 void ResolveVisitor::VisitExternFuncStmt(ExternFuncStmt* node) {
-	throw std::runtime_error("Don't know how to determine type of ExternFuncStmt");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitClassStmt(ClassStmt* node) {
-	throw std::runtime_error("Don't know how to determine type of ClassStmt");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitGetterStmt(GetterStmt* node) {
-	throw std::runtime_error("Don't know how to determine type of GetterStmt");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitPropertyStmt(PropertyStmt* node) {
-	throw std::runtime_error("Don't know how to determine type of PropertyStmt");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitThrowStmt(ThrowStmt* node) {
-	throw std::runtime_error("Don't know how to determine type of ThrowStmt");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitDeleteStmt(DeleteStmt* node) {
-	throw std::runtime_error("Don't know how to determine type of DeleteStmt");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 	if (node->bindings.size() > 1) {
-		throw std::runtime_error("Can't handle multiple bindings yet.");
+		throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 	}
 
 	if (node->types.size() > 0 && node->types.size() != node->bindings.size()) {
-		throw std::runtime_error("The number of defined types do not match the number of declared variables");
+		mLog.LogMessage(MessageSeverity::ERROR, MISMATCHED_TYPES_FOR_BINDINGS, node, mContext);
+		for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
+		return;
 	}
 
 	if (node->value == nullptr && node->types.size() == 0) {
-		throw std::runtime_error("Implicitly typed variables need an initial value");
+		mLog.LogMessage(ERROR, MISSING_DEFAULT_VALUE, node, mContext);
+		for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
+		return;
 	}
 
 	auto binding = node->bindings[0];
 
 	if (isA<NamedIDExpr>(binding) == false) {
-		throw std::runtime_error("Invalid name for variable");
+		throw AnalysisMessage(FATAL, INVALID_NAME, node->id, mContext);
 	}
 
 	Type* nodeType = nullptr;
 
 	if (node->value != nullptr) {
 		nodeType = mContext->GetNodeType(node->value);
-		if (IsVoidType(nodeType)) throw std::runtime_error("Cannot assign void typed expresion to variable");
+		if (IsVoidType(nodeType)) {
+			mLog.LogMessage(ERROR, INVALID_ASSIGN, node, mContext);
+			for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
+			return;
+		}
 	}
 
 	if (node->types.size() > 0) {
@@ -80,7 +88,7 @@ void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 	}
 
 	if (isA<ReferenceType>(nodeType)) {
-		throw std::runtime_error("Not sure how to handle reference types yet.");
+		throw AnalysisMessage(FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 	}
 
 	mContext->SetNodeType(binding, nodeType);
@@ -121,18 +129,20 @@ void ResolveVisitor::VisitCharValue(CharValue* node) {
 }
 
 void ResolveVisitor::VisitThisID(ThisID* node) {
-	throw std::runtime_error("Don't know how to determine type of ThisID");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
 	auto original = mSearcher.FindNode(node, node, true);
 
 	if (original == nullptr) {
-		throw std::runtime_error("Unknown reference to identifier");
+		mLog.LogMessage(ERROR, REFERENCE_NOT_FOUND, node, mContext);
+		mContext->SetNodeType(node, new BuiltinType(VAR));
+		return;
 	}
 
 	if (isA<VarDeclExpr>(original) == false) {
-		throw std::runtime_error("Don't know how to handle non-variable identifier");
+		throw AnalysisMessage(FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 	}
 
 	if (isA<VarDeclExpr>(original)) {
@@ -148,7 +158,7 @@ void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
 }
 
 void ResolveVisitor::VisitNamedIDExpr(NamedIDExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of NamedIDExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitTempIDExpr(TempIDExpr* node) {
@@ -156,19 +166,19 @@ void ResolveVisitor::VisitTempIDExpr(TempIDExpr* node) {
 }
 
 void ResolveVisitor::VisitDtorIDExpr(DtorIDExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of DtorIDExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitAccessIDExpr(AccessIDExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of AccessIDExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of LongBlockExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of ShortBlockExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
@@ -180,7 +190,9 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 	} else if (AreTypesCompatible(tyLHS, tyRHS)) {
 		mContext->SetNodeType(node, GetImplicitType(tyLHS, tyRHS));
 	} else {
-		throw std::runtime_error("Incompatible types.");
+		mLog.LogMessage(ERROR, INCOMPATIBLE_TYPES, node, mContext);
+		mContext->SetNodeType(node, new BuiltinType(VAR));
+		return;
 	}
 
 	if (IsAssignBinOp(node->op)) {
@@ -202,79 +214,79 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 }
 
 void ResolveVisitor::VisitUnaryExpr(UnaryExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of UnaryExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitTupleExpr(TupleExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of TupleExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitArrayExpr(ArrayExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of ArrayExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitArrayRangeExpr(ArrayRangeExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of ArrayRangeExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitArrayAccessExpr(ArrayAccessExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of ArrayAccessExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitMemberAccessExpr(MemberAccessExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of MemberAccessExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitNamedExpr(NamedExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of NamedExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitConditionalBlock(ConditionalBlock* node) {
-	throw std::runtime_error("Don't know how to determine type of ConditionalBlock");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitIfExpr(IfExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of IfExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitTernaryExpr(TernaryExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of TernaryExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitSwitchPattern(SwitchPattern* node) {
-	throw std::runtime_error("Don't know how to determine type of SwitchPattern");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitSwitchExpr(SwitchExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of SwitchExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitFunctionExpr(FunctionExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of FunctionExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitCatchBlock(CatchBlock* node) {
-	throw std::runtime_error("Don't know how to determine type of CatchBlock");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitTryExpr(TryExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of TryExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitCastExpr(CastExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of CastExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitFunctionCallExpr(FunctionCallExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of FunctionCallExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitNewExpr(NewExpr* node) {
-	throw std::runtime_error("Don't know how to determine type of NewExpr");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 void ResolveVisitor::VisitEnumMatch(EnumMatch* node) {
-	throw std::runtime_error("Don't know how to determine type of EnumMatch");
+	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
 ResolveVisitor::ResolveVisitor(NodeTypeContext* context, AnalysisMessageLog& log, ASTSearcher& searcher) :
