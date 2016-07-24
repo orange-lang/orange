@@ -174,7 +174,14 @@ void ResolveVisitor::VisitAccessIDExpr(AccessIDExpr* node) {
 }
 
 void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	// The type of a long block is inherited from all yield statements of direct children.
+	auto yieldStatements = mSearcher.FindChildren<YieldStmt>(node, true);
+	
+	if (yieldStatements.size() == 0) {
+		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::VOID));
+	} else {
+		throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	}
 }
 
 void ResolveVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {

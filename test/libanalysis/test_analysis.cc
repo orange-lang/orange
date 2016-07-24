@@ -96,6 +96,10 @@ void TestType(Node* node, Type* target) {
 	delete target;
 }
 
+TEST(Analysis, EmptyBlock) {
+	TestType(CreateNode<LongBlockExpr>(), new BuiltinType(VOID));
+}
+
 TEST(Analysis, ConstTypes) {
 	TestType(CreateNode<IntValue>(0xF00), new IntType);
 	TestType(CreateNode<IntValue>(0xF00, new IntType), new IntType);

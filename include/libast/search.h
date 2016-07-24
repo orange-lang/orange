@@ -13,6 +13,7 @@
 
 #include "ast.h"
 #include "typecheck.h"
+#include "predicate.h"
 
 namespace orange { namespace ast {
 	class ASTSearcher {
@@ -51,6 +52,30 @@ namespace orange { namespace ast {
 			}
 
 			return lookat;
+		}
+		
+		/// Finds all children of a given type.
+		template <class T>
+		std::vector<T*> FindChildren(Node* parent, bool directOnly) {
+			auto self = this;
+			
+			auto predicate = CreatePredicate<T>([] (T* node) {
+				//return directOnly ? self->GetParent(node) == parent : true;
+				return true;
+			});
+			
+			PredicateWalker walker;
+			walker.WalkNode(predicate, parent);
+			
+			std::vector<T*> children;
+			auto matches = walker.GetMatches();
+			
+			for (auto match : matches) {
+				if (isA<T>(match)) children.push_back(asA<T>(match));
+			}
+			
+			delete predicate;
+			return children;
 		}
 
 		/// Searches for a node by a given identifier. Returns the node that has this identifier,
