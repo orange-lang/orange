@@ -40,6 +40,7 @@ namespace orange { namespace ast {
 	}
 
 	void ExpectTy(Type* expected, Type* actual) {
+		if (expected == actual) return;
 		EXPECT_EQ(TypeWrapper(expected), TypeWrapper(actual));
 	}
 }}
