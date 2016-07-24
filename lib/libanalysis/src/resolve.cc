@@ -84,7 +84,11 @@ void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 
 	if (node->types.size() > 0) {
 		nodeType = node->types[0];
-		if (IsVoidType(nodeType)) throw std::runtime_error("");
+		if (IsVoidType(nodeType)) {
+			mLog.LogMessage(ERROR, INVALID_TYPE, node, mContext);
+			for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
+			return;
+		}
 	}
 
 	if (isA<ReferenceType>(nodeType)) {
