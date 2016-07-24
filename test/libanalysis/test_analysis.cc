@@ -166,34 +166,28 @@ TEST(Analysis, InvalidVarDecl) {
 			std::vector<Type*> ({ }),
 			CreateNode<IntValue>(5)
 		), nullptr);
-	}, std::runtime_error);
-
+	}, AnalysisMessage);
+	
 	// typeless without value
-	EXPECT_THROW({
-		TestType(CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<Type*> ({ }),
-			nullptr
-		), nullptr);
-	}, std::runtime_error);
+	TestType(CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<Type*> ({ }),
+		nullptr
+	), nullptr);
 
 	// void type
-	EXPECT_THROW({
-		TestType(CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
-			nullptr
-		), nullptr);
-	}, std::runtime_error);
+	TestType(CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
+		nullptr
+	), nullptr);
 
 	// void value
-	EXPECT_THROW({
-		TestType(CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
-			CreateNode<TempIDExpr>()
-		), nullptr);
-	}, std::runtime_error);
+	TestType(CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
+		std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
+		CreateNode<TempIDExpr>()
+	), nullptr);
 }
 
 TEST(Analysis, VarDeclPair) {
@@ -207,7 +201,7 @@ TEST(Analysis, VarDeclPair) {
 				CreateNode<DoubleValue>(10.93)
 			}))
 		), new TupleType(std::vector<Type*>({ new IntType, new DoubleType })));
-	}, std::runtime_error);
+	}, AnalysisMessage);
 }
 
 TEST(Analysis, VarReference) {
@@ -226,15 +220,13 @@ TEST(Analysis, VarReference) {
 }
 
 TEST(Analysis, InvalidVarReference) {
-	EXPECT_THROW({
-		TestType(std::vector<Node*>({
-			CreateNode<BinOpExpr>(
-				CreateNode<ReferenceIDExpr>("a"),
-				BinOp::ADD,
-				CreateNode<IntValue>(5)
-			)
-		}), nullptr);
-	}, std::runtime_error);
+	TestType(std::vector<Node*>({
+		CreateNode<BinOpExpr>(
+			CreateNode<ReferenceIDExpr>("a"),
+			BinOp::ADD,
+			CreateNode<IntValue>(5)
+		)
+	}), new BuiltinType(VAR));
 }
 
 TEST(Analysis, AssignBinOps) {
