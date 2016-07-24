@@ -46,7 +46,6 @@ namespace orange { namespace analysis {
 		virtual void VisitCharValue(CharValue* node) override;
 		virtual void VisitThisID(ThisID* node) override;
 		virtual void VisitReferenceIDExpr(ReferenceIDExpr* node) override;
-		virtual void VisitNamedIDExpr(NamedIDExpr* node) override;
 		virtual void VisitTempIDExpr(TempIDExpr* node) override;
 		virtual void VisitDtorIDExpr(DtorIDExpr* node) override;
 		virtual void VisitAccessIDExpr(AccessIDExpr* node) override;

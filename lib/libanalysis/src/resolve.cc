@@ -161,10 +161,6 @@ void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
 	}
 }
 
-void ResolveVisitor::VisitNamedIDExpr(NamedIDExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
 void ResolveVisitor::VisitTempIDExpr(TempIDExpr* node) {
 	mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::VAR));
 }
