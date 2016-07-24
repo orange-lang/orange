@@ -8,87 +8,184 @@
 
 #pragma once
 
+#include <vector>
+
 #include "ast.h"
-#include "visitor.h"
+#include "typecheck.h"
 
 namespace orange { namespace ast {
-	class Walker {
+	class Visitor;
+	
+	template <class T>
+	class WalkerBase {
 	public:
 		/// Dispatches to the proper walk method. Does not visit any nodes.
-		void WalkNode(Visitor* visitor, Node* node);
-		void WalkStmt(Visitor* visitor, Statement* node);
-		void WalkExpr(Visitor* visitor, Expression* node);
-		void WalkConstraint(Visitor* visitor, Constraint* node);
-		void WalkValue(Visitor* visitor, Value* node);
-		void WalkIdentifier(Visitor* visitor, Identifier* node);
-		void WalkBlockExpr(Visitor* visitor, BlockExpr* node);
-
-		virtual void WalkCommentStmt(Visitor* visitor, CommentStmt* node) = 0;
-		virtual void WalkLoopStmt(Visitor* visitor, LoopStmt* node) = 0;
-		virtual void WalkForeachStmt(Visitor* visitor, ForeachStmt* node) = 0;
-		virtual void WalkBreakStmt(Visitor* visitor, BreakStmt* node) = 0;
-		virtual void WalkContinueStmt(Visitor* visitor, ContinueStmt* node) = 0;
-		virtual void WalkYieldStmt(Visitor* visitor, YieldStmt* node) = 0;
-		virtual void WalkReturnStmt(Visitor* visitor, ReturnStmt* node) = 0;
-		virtual void WalkAggregateStmt(Visitor* visitor, AggregateStmt* node) = 0;
-		virtual void WalkExternFuncStmt(Visitor* visitor, ExternFuncStmt* node) = 0;
-		virtual void WalkEnumValue(Visitor* visitor, EnumValue* node) = 0;
-		virtual void WalkEnumStmt(Visitor* visitor, EnumStmt* node) = 0;
-		virtual void WalkClassStmt(Visitor* visitor, ClassStmt* node) = 0;
-		virtual void WalkInterfaceStmt(Visitor* visitor, InterfaceStmt* node) = 0;
-		virtual void WalkExtendStmt(Visitor* visitor, ExtendStmt* node) = 0;
-		virtual void WalkNamespaceStmt(Visitor* visitor, NamespaceStmt* node) = 0;
-		virtual void WalkImportStmt(Visitor* visitor, ImportStmt* node) = 0;
-		virtual void WalkGetterStmt(Visitor* visitor, GetterStmt* node) = 0;
-		virtual void WalkSetterStmt(Visitor* visitor, SetterStmt* node) = 0;
-		virtual void WalkPropertyStmt(Visitor* visitor, PropertyStmt* node) = 0;
-		virtual void WalkThrowStmt(Visitor* visitor, ThrowStmt* node) = 0;
-		virtual void WalkDeleteStmt(Visitor* visitor, DeleteStmt* node) = 0;
-		virtual void WalkExprStmt(Visitor* visitor, ExprStmt* node) = 0;
-		virtual void WalkVarDeclExpr(Visitor* visitor, VarDeclExpr* node) = 0;
-		virtual void WalkBoolValue(Visitor* visitor, BoolValue* node) = 0;
-		virtual void WalkIntValue(Visitor* visitor, IntValue* node) = 0;
-		virtual void WalkUIntValue(Visitor* visitor, UIntValue* node) = 0;
-		virtual void WalkFloatValue(Visitor* visitor, FloatValue* node) = 0;
-		virtual void WalkDoubleValue(Visitor* visitor, DoubleValue* node) = 0;
-		virtual void WalkStringValue(Visitor* visitor, StringValue* node) = 0;
-		virtual void WalkCharValue(Visitor* visitor, CharValue* node) = 0;
-		virtual void WalkThisID(Visitor* visitor, ThisID* node) = 0;
-		virtual void WalkReferenceIDExpr(Visitor* visitor, ReferenceIDExpr* node) = 0;
-		virtual void WalkNamedIDExpr(Visitor* visitor, NamedIDExpr* node) = 0;
-		virtual void WalkTempIDExpr(Visitor* visitor, TempIDExpr* node) = 0;
-		virtual void WalkDtorIDExpr(Visitor* visitor, DtorIDExpr* node) = 0;
-		virtual void WalkAccessIDExpr(Visitor* visitor, AccessIDExpr* node) = 0;
-		virtual void WalkLongBlockExpr(Visitor* visitor, LongBlockExpr* node) = 0;
-		virtual void WalkShortBlockExpr(Visitor* visitor, ShortBlockExpr* node) = 0;
-		virtual void WalkBinOpExpr(Visitor* visitor, BinOpExpr* node) = 0;
-		virtual void WalkUnaryExpr(Visitor* visitor, UnaryExpr* node) = 0;
-		virtual void WalkTupleExpr(Visitor* visitor, TupleExpr* node) = 0;
-		virtual void WalkArrayExpr(Visitor* visitor, ArrayExpr* node) = 0;
-		virtual void WalkArrayRangeExpr(Visitor* visitor, ArrayRangeExpr* node) = 0;
-		virtual void WalkArrayAccessExpr(Visitor* visitor, ArrayAccessExpr* node) = 0;
-		virtual void WalkMemberAccessExpr(Visitor* visitor, MemberAccessExpr* node) = 0;
-		virtual void WalkNamedExpr(Visitor* visitor, NamedExpr* node) = 0;
-		virtual void WalkConditionalBlock(Visitor* visitor, ConditionalBlock* node) = 0;
-		virtual void WalkIfExpr(Visitor* visitor, IfExpr* node) = 0;
-		virtual void WalkTernaryExpr(Visitor* visitor, TernaryExpr* node) = 0;
-		virtual void WalkSwitchPattern(Visitor* visitor, SwitchPattern* node) = 0;
-		virtual void WalkSwitchExpr(Visitor* visitor, SwitchExpr* node) = 0;
-		virtual void WalkClassConstraint(Visitor* visitor, ClassConstraint* node) = 0;
-		virtual void WalkDefaultCtorConstraint(Visitor* visitor, DefaultCtorConstraint* node) = 0;
-		virtual void WalkBaseConstraint(Visitor* visitor, BaseConstraint* node) = 0;
-		virtual void WalkDataConstraint(Visitor* visitor, DataConstraint* node) = 0;
-		virtual void WalkTypeConstraint(Visitor* visitor, TypeConstraint* node) = 0;
-		virtual void WalkGenerics(Visitor* visitor, Generics* node) = 0;
-		virtual void WalkFunctionExpr(Visitor* visitor, FunctionExpr* node) = 0;
-		virtual void WalkCatchBlock(Visitor* visitor, CatchBlock* node) = 0;
-		virtual void WalkTryExpr(Visitor* visitor, TryExpr* node) = 0;
-		virtual void WalkCastExpr(Visitor* visitor, CastExpr* node) = 0;
-		virtual void WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* node) = 0;
-		virtual void WalkNewExpr(Visitor* visitor, NewExpr* node) = 0;
-		virtual void WalkEnumMatch(Visitor* visitor, EnumMatch* node) = 0;
+		void WalkNode(T* helper, Node* node) {
+			if      (isA<Statement>(node))  WalkStmt(helper, asA<Statement>(node));
+			else if (isA<Expression>(node)) WalkExpr(helper, asA<Expression>(node));
+			else if (isA<Constraint>(node)) WalkConstraint(helper, asA<Constraint>(node));
+			else if (isA<Generics>(node))   WalkGenerics(helper, asA<Generics>(node));
+			else                            throw std::runtime_error("Unknown node to walk.");
+		}
+		
+		void WalkExpr(T* helper, Expression* node) {
+			if      (isA<VarDeclExpr>(node))      WalkVarDeclExpr(helper, asA<VarDeclExpr>(node));
+			else if (isA<EnumValue>(node))        WalkEnumValue(helper, asA<EnumValue>(node));
+			else if (isA<ConditionalBlock>(node)) WalkConditionalBlock(helper, asA<ConditionalBlock>(node));
+			else if (isA<BlockExpr>(node))        WalkBlockExpr(helper, asA<BlockExpr>(node));
+			else if (isA<Value>(node))            WalkValue(helper, asA<Value>(node));
+			else if (isA<BlockExpr>(node))        WalkBlockExpr(helper, asA<BlockExpr>(node));
+			else if (isA<BinOpExpr>(node))        WalkBinOpExpr(helper, asA<BinOpExpr>(node));
+			else if (isA<UnaryExpr>(node))        WalkUnaryExpr(helper, asA<UnaryExpr>(node));
+			else if (isA<TupleExpr>(node))        WalkTupleExpr(helper, asA<TupleExpr>(node));
+			else if (isA<ArrayExpr>(node))        WalkArrayExpr(helper, asA<ArrayExpr>(node));
+			else if (isA<ArrayRangeExpr>(node))   WalkArrayRangeExpr(helper, asA<ArrayRangeExpr>(node));
+			else if (isA<ArrayAccessExpr>(node))  WalkArrayAccessExpr(helper, asA<ArrayAccessExpr>(node));
+			else if (isA<MemberAccessExpr>(node)) WalkMemberAccessExpr(helper, asA<MemberAccessExpr>(node));
+			else if (isA<NamedExpr>(node))        WalkNamedExpr(helper, asA<NamedExpr>(node));
+			else if (isA<IfExpr>(node))           WalkIfExpr(helper, asA<IfExpr>(node));
+			else if (isA<TernaryExpr>(node))      WalkTernaryExpr(helper, asA<TernaryExpr>(node));
+			else if (isA<SwitchExpr>(node))       WalkSwitchExpr(helper, asA<SwitchExpr>(node));
+			else if (isA<FunctionExpr>(node))     WalkFunctionExpr(helper, asA<FunctionExpr>(node));
+			else if (isA<CatchBlock>(node))       WalkCatchBlock(helper, asA<CatchBlock>(node));
+			else if (isA<TryExpr>(node))          WalkTryExpr(helper, asA<TryExpr>(node));
+			else if (isA<CastExpr>(node))         WalkCastExpr(helper, asA<CastExpr>(node));
+			else if (isA<FunctionCallExpr>(node)) WalkFunctionCallExpr(helper, asA<FunctionCallExpr>(node));
+			else if (isA<NewExpr>(node))          WalkNewExpr(helper, asA<NewExpr>(node));
+			else if (isA<Identifier>(node))       WalkIdentifier(helper, asA<Identifier>(node));
+			else if (isA<EnumMatch>(node))        WalkEnumMatch(helper, asA<EnumMatch>(node));
+			else                                  throw std::runtime_error("Unknown node to walk.");
+		}
+		
+		void WalkStmt(T* helper, Statement* node) {
+			if      (isA<LoopStmt>(node))       WalkLoopStmt(helper, asA<LoopStmt>(node));
+			else if (isA<CommentStmt>(node))    WalkCommentStmt(helper, asA<CommentStmt>(node));
+			else if (isA<SwitchPattern>(node))  WalkSwitchPattern(helper, asA<SwitchPattern>(node));
+			else if (isA<ForeachStmt>(node))    WalkForeachStmt(helper, asA<ForeachStmt>(node));
+			else if (isA<BreakStmt>(node))      WalkBreakStmt(helper, asA<BreakStmt>(node));
+			else if (isA<ContinueStmt>(node))   WalkContinueStmt(helper, asA<ContinueStmt>(node));
+			else if (isA<YieldStmt>(node))      WalkYieldStmt(helper, asA<YieldStmt>(node));
+			else if (isA<ReturnStmt>(node))     WalkReturnStmt(helper, asA<ReturnStmt>(node));
+			else if (isA<AggregateStmt>(node))  WalkAggregateStmt(helper, asA<AggregateStmt>(node));
+			else if (isA<ExternFuncStmt>(node)) WalkExternFuncStmt(helper, asA<ExternFuncStmt>(node));
+			else if (isA<EnumStmt>(node))       WalkEnumStmt(helper, asA<EnumStmt>(node));
+			else if (isA<ClassStmt>(node))      WalkClassStmt(helper, asA<ClassStmt>(node));
+			else if (isA<InterfaceStmt>(node))  WalkInterfaceStmt(helper, asA<InterfaceStmt>(node));
+			else if (isA<ExtendStmt>(node))     WalkExtendStmt(helper, asA<ExtendStmt>(node));
+			else if (isA<NamespaceStmt>(node))  WalkNamespaceStmt(helper, asA<NamespaceStmt>(node));
+			else if (isA<ImportStmt>(node))     WalkImportStmt(helper, asA<ImportStmt>(node));
+			else if (isA<GetterStmt>(node))     WalkGetterStmt(helper, asA<GetterStmt>(node));
+			else if (isA<SetterStmt>(node))     WalkSetterStmt(helper, asA<SetterStmt>(node));
+			else if (isA<PropertyStmt>(node))   WalkPropertyStmt(helper, asA<PropertyStmt>(node));
+			else if (isA<ThrowStmt>(node))      WalkThrowStmt(helper, asA<ThrowStmt>(node));
+			else if (isA<DeleteStmt>(node))     WalkDeleteStmt(helper, asA<DeleteStmt>(node));
+			else if (isA<ExprStmt>(node))       WalkExprStmt(helper, asA<ExprStmt>(node));
+			else                                throw std::runtime_error("Unknown node to walk.");
+		}
+		
+		void WalkConstraint(T* helper, Constraint* node) {
+			if      (isA<ClassConstraint>(node))       WalkClassConstraint(helper, asA<ClassConstraint>(node));
+			else if (isA<DefaultCtorConstraint>(node)) WalkDefaultCtorConstraint(helper, asA<DefaultCtorConstraint>(node));
+			else if (isA<BaseConstraint>(node))        WalkBaseConstraint(helper, asA<BaseConstraint>(node));
+			else if (isA<DataConstraint>(node))        WalkDataConstraint(helper, asA<DataConstraint>(node));
+			else if (isA<TypeConstraint>(node))        WalkTypeConstraint(helper, asA<TypeConstraint>(node));
+			else                                       throw std::runtime_error("Unknown node to walk.");
+		}
+		
+		void WalkValue(T* helper, Value* node) {
+			if      (isA<IntValue>(node))    WalkIntValue(helper, asA<IntValue>(node));
+			else if (isA<UIntValue>(node))   WalkUIntValue(helper, asA<UIntValue>(node));
+			else if (isA<FloatValue>(node))  WalkFloatValue(helper, asA<FloatValue>(node));
+			else if (isA<DoubleValue>(node)) WalkDoubleValue(helper, asA<DoubleValue>(node));
+			else if (isA<StringValue>(node)) WalkStringValue(helper, asA<StringValue>(node));
+			else if (isA<CharValue>(node))   WalkCharValue(helper, asA<CharValue>(node));
+			else if (isA<BoolValue>(node))   WalkBoolValue(helper, asA<BoolValue>(node));
+			else                             throw std::runtime_error("Unknown node to walk.");
+		}
+		
+		void WalkIdentifier(T* helper, Identifier* node) {
+			if      (isA<NamedIDExpr>(node))      WalkNamedIDExpr(helper, asA<NamedIDExpr>(node));
+			else if (isA<ReferenceIDExpr>(node))  WalkReferenceIDExpr(helper, asA<ReferenceIDExpr>(node));
+			else if (isA<TempIDExpr>(node))       WalkTempIDExpr(helper, asA<TempIDExpr>(node));
+			else if (isA<DtorIDExpr>(node))       WalkDtorIDExpr(helper, asA<DtorIDExpr>(node));
+			else if (isA<AccessIDExpr>(node))     WalkAccessIDExpr(helper, asA<AccessIDExpr>(node));
+			else if (isA<ThisID>(node))           WalkThisID(helper, asA<ThisID>(node));
+			else                                  throw std::runtime_error("Unknown node to walk.");
+		}
+		
+		void WalkBlockExpr(T* helper, BlockExpr* node) {
+			if      (isA<LongBlockExpr>(node))  WalkLongBlockExpr(helper, asA<LongBlockExpr>(node));
+			else if (isA<ShortBlockExpr>(node)) WalkShortBlockExpr(helper, asA<ShortBlockExpr>(node));
+			else                                throw std::runtime_error("Unknown node to walk.");
+		}
+		
+		virtual void WalkCommentStmt(T* helper, CommentStmt* node) = 0;
+		virtual void WalkLoopStmt(T* helper, LoopStmt* node) = 0;
+		virtual void WalkForeachStmt(T* helper, ForeachStmt* node) = 0;
+		virtual void WalkBreakStmt(T* helper, BreakStmt* node) = 0;
+		virtual void WalkContinueStmt(T* helper, ContinueStmt* node) = 0;
+		virtual void WalkYieldStmt(T* helper, YieldStmt* node) = 0;
+		virtual void WalkReturnStmt(T* helper, ReturnStmt* node) = 0;
+		virtual void WalkAggregateStmt(T* helper, AggregateStmt* node) = 0;
+		virtual void WalkExternFuncStmt(T* helper, ExternFuncStmt* node) = 0;
+		virtual void WalkEnumValue(T* helper, EnumValue* node) = 0;
+		virtual void WalkEnumStmt(T* helper, EnumStmt* node) = 0;
+		virtual void WalkClassStmt(T* helper, ClassStmt* node) = 0;
+		virtual void WalkInterfaceStmt(T* helper, InterfaceStmt* node) = 0;
+		virtual void WalkExtendStmt(T* helper, ExtendStmt* node) = 0;
+		virtual void WalkNamespaceStmt(T* helper, NamespaceStmt* node) = 0;
+		virtual void WalkImportStmt(T* helper, ImportStmt* node) = 0;
+		virtual void WalkGetterStmt(T* helper, GetterStmt* node) = 0;
+		virtual void WalkSetterStmt(T* helper, SetterStmt* node) = 0;
+		virtual void WalkPropertyStmt(T* helper, PropertyStmt* node) = 0;
+		virtual void WalkThrowStmt(T* helper, ThrowStmt* node) = 0;
+		virtual void WalkDeleteStmt(T* helper, DeleteStmt* node) = 0;
+		virtual void WalkExprStmt(T* helper, ExprStmt* node) = 0;
+		virtual void WalkVarDeclExpr(T* helper, VarDeclExpr* node) = 0;
+		virtual void WalkBoolValue(T* helper, BoolValue* node) = 0;
+		virtual void WalkIntValue(T* helper, IntValue* node) = 0;
+		virtual void WalkUIntValue(T* helper, UIntValue* node) = 0;
+		virtual void WalkFloatValue(T* helper, FloatValue* node) = 0;
+		virtual void WalkDoubleValue(T* helper, DoubleValue* node) = 0;
+		virtual void WalkStringValue(T* helper, StringValue* node) = 0;
+		virtual void WalkCharValue(T* helper, CharValue* node) = 0;
+		virtual void WalkThisID(T* helper, ThisID* node) = 0;
+		virtual void WalkReferenceIDExpr(T* helper, ReferenceIDExpr* node) = 0;
+		virtual void WalkNamedIDExpr(T* helper, NamedIDExpr* node) = 0;
+		virtual void WalkTempIDExpr(T* helper, TempIDExpr* node) = 0;
+		virtual void WalkDtorIDExpr(T* helper, DtorIDExpr* node) = 0;
+		virtual void WalkAccessIDExpr(T* helper, AccessIDExpr* node) = 0;
+		virtual void WalkLongBlockExpr(T* helper, LongBlockExpr* node) = 0;
+		virtual void WalkShortBlockExpr(T* helper, ShortBlockExpr* node) = 0;
+		virtual void WalkBinOpExpr(T* helper, BinOpExpr* node) = 0;
+		virtual void WalkUnaryExpr(T* helper, UnaryExpr* node) = 0;
+		virtual void WalkTupleExpr(T* helper, TupleExpr* node) = 0;
+		virtual void WalkArrayExpr(T* helper, ArrayExpr* node) = 0;
+		virtual void WalkArrayRangeExpr(T* helper, ArrayRangeExpr* node) = 0;
+		virtual void WalkArrayAccessExpr(T* helper, ArrayAccessExpr* node) = 0;
+		virtual void WalkMemberAccessExpr(T* helper, MemberAccessExpr* node) = 0;
+		virtual void WalkNamedExpr(T* helper, NamedExpr* node) = 0;
+		virtual void WalkConditionalBlock(T* helper, ConditionalBlock* node) = 0;
+		virtual void WalkIfExpr(T* helper, IfExpr* node) = 0;
+		virtual void WalkTernaryExpr(T* helper, TernaryExpr* node) = 0;
+		virtual void WalkSwitchPattern(T* helper, SwitchPattern* node) = 0;
+		virtual void WalkSwitchExpr(T* helper, SwitchExpr* node) = 0;
+		virtual void WalkClassConstraint(T* helper, ClassConstraint* node) = 0;
+		virtual void WalkDefaultCtorConstraint(T* helper, DefaultCtorConstraint* node) = 0;
+		virtual void WalkBaseConstraint(T* helper, BaseConstraint* node) = 0;
+		virtual void WalkDataConstraint(T* helper, DataConstraint* node) = 0;
+		virtual void WalkTypeConstraint(T* helper, TypeConstraint* node) = 0;
+		virtual void WalkGenerics(T* helper, Generics* node) = 0;
+		virtual void WalkFunctionExpr(T* helper, FunctionExpr* node) = 0;
+		virtual void WalkCatchBlock(T* helper, CatchBlock* node) = 0;
+		virtual void WalkTryExpr(T* helper, TryExpr* node) = 0;
+		virtual void WalkCastExpr(T* helper, CastExpr* node) = 0;
+		virtual void WalkFunctionCallExpr(T* helper, FunctionCallExpr* node) = 0;
+		virtual void WalkNewExpr(T* helper, NewExpr* node) = 0;
+		virtual void WalkEnumMatch(T* helper, EnumMatch* node) = 0;
 	};
-
+	
+	class Walker : public WalkerBase<Visitor> { };
 
 	/// Walker that will visit concrete elements
 	class NonTraversalWalker : public Walker {
@@ -159,12 +256,9 @@ namespace orange { namespace ast {
 		virtual void WalkEnumMatch(Visitor* visitor, EnumMatch* node) override;
 	};
 
-	enum TraversalOrder {
-		PREORDER,
-		POSTORDER
-	};
+	enum TraversalOrder { PREORDER, POSTORDER };
 
-	// Walker that traverses the hierarchy depth-first.
+	/// Walker that traverses the hierarchy depth-first.
 	class DepthFirstWalker : public Walker {
 	private:
 		TraversalOrder mOrder;
