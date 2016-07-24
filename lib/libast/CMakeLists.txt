@@ -12,7 +12,7 @@ add_library(ast
         ${OR_INCLUDES}/libast/visitor.h
         ${OR_INCLUDES}/libast/walker.h
         ${OR_INCLUDES}/libast/typecheck.h
-        src/walker.cc src/ast.cc ../../include/libast/flag.h ../../include/libast/compare.h src/compare.cc ../../include/libast/printer.h src/printer.cc src/typecheck.cc ../../include/libast/search.h src/search.cc ../../include/libast/binop.h src/binop.cc)
+        src/walker.cc src/ast.cc ../../include/libast/flag.h ../../include/libast/compare.h src/compare.cc ../../include/libast/printer.h src/printer.cc src/typecheck.cc ../../include/libast/search.h src/search.cc ../../include/libast/binop.h src/binop.cc ../../include/libast/predicate.h src/predicate.cc)
 
 target_include_directories(ast PRIVATE include)
 set_target_properties(ast PROPERTIES LINKER_LANGUAGE CXX)
