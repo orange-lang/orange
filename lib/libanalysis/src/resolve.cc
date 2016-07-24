@@ -76,7 +76,7 @@ void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 	if (node->value != nullptr) {
 		nodeType = mContext->GetNodeType(node->value);
 		if (IsVoidType(nodeType)) {
-			mLog.LogMessage(ERROR, INVALID_ASSIGN, node, mContext);
+			mLog.LogMessage(ERROR, INVALID_VALUE, node, mContext);
 			for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
 			return;
 		}
