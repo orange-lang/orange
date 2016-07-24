@@ -171,8 +171,6 @@ void ExpectInsts(Node* node, std::vector<unsigned> expect) {
 	CompileValueForNode(node, Optional<ValueCallback>([node, expect] (CompilationContext ctx) {
 		auto it = ctx.functionBody->begin();
 
-		ctx.module->dump();
-
 		for (auto inst : expect) {
 			ASSERT_TRUE(it != ctx.functionBody->end());
 			EXPECT_STREQ(Instruction::getOpcodeName(inst), it->getOpcodeName());
