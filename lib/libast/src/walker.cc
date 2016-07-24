@@ -788,6 +788,7 @@ void DepthFirstWalker::WalkFunctionExpr(Visitor* visitor, FunctionExpr* node) {
 	if (mOrder == TraversalOrder::PREORDER) visitor->VisitFunctionExpr(node);
 
 	if (node->name) WalkIdentifier(visitor, node->name);
+	if (node->generics) WalkGenerics(visitor, node->generics);
 	for (auto param : node->params) WalkVarDeclExpr(visitor, param);
 	WalkBlockExpr(visitor, node->block);
 
