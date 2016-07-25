@@ -16,7 +16,7 @@
 using namespace orange::analysis;
 
 void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	mContext->SetNodeType(node, mContext->GetNodeType(node->value));
 }
 
 void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
@@ -179,9 +179,25 @@ void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
 	
 	if (yieldStatements.size() == 0) {
 		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::VOID));
-	} else {
-		throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+		return;
 	}
+	
+	auto maxType = mContext->GetNodeType(yieldStatements[0]);
+	for (unsigned long i = 1; i < yieldStatements.size(); i++) {
+		auto stmtType = mContext->GetNodeType(yieldStatements[i]);
+		
+		if (CompareType(maxType, stmtType)) {
+			continue;
+		} else if (AreTypesCompatible(stmtType, maxType)) {
+			maxType = GetImplicitType(stmtType, maxType);
+		} else {
+			mLog.LogMessage(ERROR, INCOMPATIBLE_TYPES, node, mContext);
+			mContext->SetNodeType(node, new BuiltinType(VAR));
+			return;
+		}
+	}
+	
+	mContext->SetNodeType(node, maxType);
 }
 
 void ResolveVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {

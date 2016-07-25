@@ -288,3 +288,25 @@ TEST(Analysis, CompareBinOps) {
 		),
 	}, new BoolType);
 }
+
+TEST(Analysis, YieldStmt) {
+	TestType(
+		CreateNode<YieldStmt>(CreateNode<DoubleValue>(0.50)),
+		new DoubleType
+	);
+}
+
+TEST(Analysis, YieldInBlock) {
+	// Single yield
+	TestType(CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<YieldStmt>(CreateNode<DoubleValue>(0.50))
+	})), new DoubleType);
+	
+	// Multiple yields
+	TestType(CreateNode<LongBlockExpr>(std::vector<Node*>({
+		CreateNode<YieldStmt>(CreateNode<IntValue>(0xf00)),
+		CreateNode<YieldStmt>(CreateNode<DoubleValue>(0.50)),
+		CreateNode<YieldStmt>(CreateNode<FloatValue>(0.50)),
+	})), new DoubleType);
+	
+}
