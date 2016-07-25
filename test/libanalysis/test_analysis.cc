@@ -308,5 +308,16 @@ TEST(Analysis, YieldInBlock) {
 		CreateNode<YieldStmt>(CreateNode<DoubleValue>(0.50)),
 		CreateNode<YieldStmt>(CreateNode<FloatValue>(0.50)),
 	})), new DoubleType);
+}
+
+TEST(Analysis, ShortBlock) {
+	// With expr
+	TestType(CreateNode<ShortBlockExpr>(
+		CreateNode<IntValue>(0xF00)
+	), new IntType);
 	
+	// Without expr
+	TestType(CreateNode<ShortBlockExpr>(
+		CreateNode<ExprStmt>(CreateNode<IntValue>(0xF00))
+	), new BuiltinType(VOID));
 }

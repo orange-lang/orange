@@ -201,7 +201,10 @@ void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
 }
 
 void ResolveVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	auto type = mContext->GetNodeType(node->statement);
+	if (type == nullptr) type = new BuiltinType(VOID);
+	
+	mContext->SetNodeType(node, type);
 }
 
 void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
