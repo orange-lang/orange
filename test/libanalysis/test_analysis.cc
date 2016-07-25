@@ -321,3 +321,90 @@ TEST(Analysis, ShortBlock) {
 		CreateNode<ExprStmt>(CreateNode<IntValue>(0xF00))
 	), new BuiltinType(VOID));
 }
+
+VarDeclExpr* CreateNamedVariable(std::string name, Expression* value) {
+	return CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>(name) }),
+		std::vector<Type*> ({ }),
+		value
+	);
+}
+
+VarDeclExpr* CreateTypedVariable(std::string name, Type* ty) {
+	return CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>(name) }),
+		std::vector<Type*> ({ ty }),
+		nullptr
+	);
+}
+
+TEST(Analysis, UnaryOps) {
+	// INCREMENT, DECREMENT, MINUS, NOT, TILDE, TIMES, REFERENCE
+	std::vector<std::pair<UnaryOp, UnaryOrder>> tests = {
+		{UnaryOp::INCREMENT, UnaryOrder::PREFIX},
+		{UnaryOp::DECREMENT, UnaryOrder::PREFIX},
+		{UnaryOp::INCREMENT, UnaryOrder::POSTFIX},
+		{UnaryOp::DECREMENT, UnaryOrder::POSTFIX},
+		{UnaryOp::MINUS, UnaryOrder::POSTFIX},
+		{UnaryOp::TILDE, UnaryOrder::POSTFIX},
+	};
+	
+	for (auto pair : tests) {
+		TestType({
+			CreateNamedVariable("a", CreateNode<IntValue>(52)),
+			CreateNode<UnaryExpr>(pair.first, pair.second, CreateNode<ReferenceIDExpr>("a"))
+		}, new IntType);
+	}
+	
+	// test NOT, TIMES, REFERENCE
+	TestType(
+		CreateNode<UnaryExpr>(UnaryOp::NOT, UnaryOrder::PREFIX, CreateNode<BoolValue>(false)),
+		new BoolType
+	);
+	
+	TestType({
+		CreateNamedVariable("a", CreateNode<BoolValue>(false)),
+		CreateNode<UnaryExpr>(UnaryOp::NOT, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
+	}, new BoolType);
+	
+	TestType({
+		CreateTypedVariable("a", new PointerType(new IntType)),
+	    CreateNode<UnaryExpr>(UnaryOp::TIMES, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
+	}, new IntType);
+	
+	TestType({
+		CreateNamedVariable("a", CreateNode<IntValue>(0xF00)),
+		CreateNode<UnaryExpr>(UnaryOp::REFERENCE, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
+	}, new PointerType(new IntType));
+}
+
+TEST(Analysis, InvalidUnaryOps) {
+	// INCREMENT/DECREMENT multiple times
+	TestType({
+		CreateNamedVariable("a", CreateNode<IntValue>(0xF00)),
+		CreateNode<UnaryExpr>(UnaryOp::INCREMENT, UnaryOrder::PREFIX, CreateNode<UnaryExpr>(
+			UnaryOp::INCREMENT, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")
+		)),
+	}, new BuiltinType(VAR));
+	
+	TestType({
+		CreateNamedVariable("a", CreateNode<IntValue>(0xF00)),
+		CreateNode<UnaryExpr>(UnaryOp::DECREMENT, UnaryOrder::PREFIX, CreateNode<UnaryExpr>(
+			UnaryOp::DECREMENT, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")
+		)),
+	}, new BuiltinType(VAR));
+	
+	// NOT on not-boolean
+	TestType(CreateNode<UnaryExpr>(UnaryOp::NOT, UnaryOrder::PREFIX, CreateNode<IntValue>(0xF00)),
+		new BuiltinType(VAR));
+	
+	// TIMES on not-pointer
+	TestType({
+		CreateNamedVariable("a", CreateNode<IntValue>(0xF00)),
+		CreateNode<UnaryExpr>(UnaryOp::TIMES, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
+	}, new BuiltinType(VAR));
+	
+	// REFERENCE on not-lvalue
+	TestType(CreateNode<UnaryExpr>(UnaryOp::REFERENCE, UnaryOrder::PREFIX, CreateNode<IntValue>(0xF00)),
+		new BuiltinType(VAR));
+}
