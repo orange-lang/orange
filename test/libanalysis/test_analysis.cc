@@ -408,3 +408,56 @@ TEST(Analysis, InvalidUnaryOps) {
 	TestType(CreateNode<UnaryExpr>(UnaryOp::REFERENCE, UnaryOrder::PREFIX, CreateNode<IntValue>(0xF00)),
 		new BuiltinType(VAR));
 }
+
+TEST(Analysis, FunctionDecl) {
+	// Func Decl with type
+	TestType(std::vector<Node*>({
+		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new IntType,
+			CreateNode<LongBlockExpr>()),
+	}), new FunctionType(std::vector<Type*>(), new IntType));
+		
+	// Func Decl with type and multiple returns
+	TestType(std::vector<Node*>({
+		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new IntType,
+		CreateNode<LongBlockExpr>(std::vector<Node*>({
+			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
+		}))),
+	}), new FunctionType(std::vector<Type*>(), new IntType));
+	
+	// Func Decl without type and one return
+	TestType(std::vector<Node*>({
+		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), nullptr,
+		CreateNode<LongBlockExpr>(std::vector<Node*>({
+			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
+		}))),
+	}), new FunctionType(std::vector<Type*>(), new DoubleType));
+	
+	// Func Decl without type and multiple returns
+	TestType(std::vector<Node*>({
+		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), nullptr,
+		CreateNode<LongBlockExpr>(std::vector<Node*>({
+			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
+			CreateNode<ReturnStmt>(CreateNode<IntValue>(0.5)),
+		}))),
+	}), new FunctionType(std::vector<Type*>(), new DoubleType));
+	
+	// Test using referencing parameter
+	TestType(std::vector<Node*>({
+		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>({
+			CreateTypedVariable("foo", new IntType)
+		}), nullptr,
+		CreateNode<LongBlockExpr>(std::vector<Node*>({
+			CreateNode<ReturnStmt>(CreateNode<ReferenceIDExpr>("foo")),
+		}))),
+	}), new FunctionType(std::vector<Type*>(), new DoubleType));
+}
+
+TEST(Analysis, InvalidFunctionDecls) {
+	// Test incompatible types
+	TestType(std::vector<Node*>({
+		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new PointerType(new IntType),
+		CreateNode<LongBlockExpr>(std::vector<Node*>({
+			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
+		}))),
+	}), new BuiltinType(VAR));
+}
