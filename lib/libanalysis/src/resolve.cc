@@ -240,7 +240,39 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 }
 
 void ResolveVisitor::VisitUnaryExpr(UnaryExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	// By default, inherit the type from the expression
+	mContext->SetNodeType(node, mContext->GetNodeType(node->LHS));
+	
+	// If INCREMENT, DECREMENT or REFERENCE, LHS must be an lvalue
+	if ((node->op == INCREMENT || node->op == DECREMENT || node->op == REFERENCE)) {
+		if (!mContext->IsLValue(node->LHS)) {
+			mLog.LogMessage(ERROR, AnalysisError::INVALID_VALUE, node, mContext);
+			mContext->SetNodeType(node, new BuiltinType(VAR));
+			return;
+		}
+		
+		if (node->op == REFERENCE) {
+			mContext->SetNodeType(node, new PointerType(mContext->GetNodeType(node->LHS)));
+		}
+	}
+	
+	// If NOT, LHS must be a boolean
+	if (node->op == NOT && !IsBooleanType(mContext->GetNodeType(node->LHS))) {
+		mLog.LogMessage(ERROR, AnalysisError::INVALID_VALUE, node, mContext);
+		mContext->SetNodeType(node, new BuiltinType(VAR));
+		return;
+	}
+	
+	// If TIMES, LHS must be a pointer
+	if (node->op == UnaryOp::TIMES) {
+		if (!isA<PointerType>(mContext->GetNodeType(node->LHS))) {
+			mLog.LogMessage(ERROR, AnalysisError::INVALID_VALUE, node, mContext);
+			mContext->SetNodeType(node, new BuiltinType(VAR));
+			return;
+		}
+		
+		mContext->SetNodeType(node, asA<PointerType>(mContext->GetNodeType(node->LHS))->base);
+	}
 }
 
 void ResolveVisitor::VisitTupleExpr(TupleExpr* node) {
