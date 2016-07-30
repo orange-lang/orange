@@ -42,9 +42,9 @@ bool IsFloatingPointType(Type* type) {
 		auto ty = asA<BuiltinType>(type);
 		return ty->kind == FLOAT || ty->kind == DOUBLE;
 	} else if (isA<ArrayType>(type)) {
-		return IsSignedType(asA<ArrayType>(type)->base);
+		return IsFloatingPointType(asA<ArrayType>(type)->base);
 	} else if (isA<ReferenceType>(type)) {
-		return IsSignedType(asA<ReferenceType>(type)->base);
+		return IsFloatingPointType(asA<ReferenceType>(type)->base);
 	}
 
 	return false;
