@@ -50,6 +50,15 @@ bool IsFloatingPointType(Type* type) {
 	return false;
 }
 
+bool IsBooleanType(Type* type) {
+	if (isA<BuiltinType>(type)) {
+		auto ty = asA<BuiltinType>(type);
+		return ty->kind == BuiltinTypeKind::BOOL;
+	}
+	
+	return false;
+}
+
 bool IsVoidType(orange::ast::Type* type) {
 	if (isA<BuiltinType>(type)) {
 		return asA<BuiltinType>(type)->kind == VOID;

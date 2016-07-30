@@ -37,6 +37,9 @@ bool IsSignedType(orange::ast::Type* type);
 /// Gets whether or not a type is a floating point type.
 bool IsFloatingPointType(orange::ast::Type* type);
 
+/// Gets whether or not a type is a boolean type.
+bool IsBooleanType(orange::ast::Type* type);
+
 /// Gets whether or not a type is a void type.
 bool IsVoidType(orange::ast::Type* type);
 
