@@ -268,7 +268,13 @@ void ResolveVisitor::VisitUnaryExpr(UnaryExpr* node) {
 }
 
 void ResolveVisitor::VisitTupleExpr(TupleExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	std::vector<Type*> types;
+	
+	for (auto value : node->values) {
+		types.push_back(mContext->GetNodeType(value));
+	}
+	
+	mContext->SetNodeType(node, new TupleType(types));
 }
 
 void ResolveVisitor::VisitArrayExpr(ArrayExpr* node) {
@@ -320,7 +326,7 @@ void ResolveVisitor::VisitTryExpr(TryExpr* node) {
 }
 
 void ResolveVisitor::VisitCastExpr(CastExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	mContext->SetNodeType(node, node->targetType);
 }
 
 void ResolveVisitor::VisitFunctionCallExpr(FunctionCallExpr* node) {
