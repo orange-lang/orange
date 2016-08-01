@@ -416,6 +416,11 @@ TEST(Analysis, InvalidUnaryOps) {
 		new BuiltinType(VAR));
 }
 
+TEST(Analysis, InvalidReturn) {
+	// Test trying to return a void value.
+	TestType(CreateNode<ReturnStmt>(CreateMockExpr(new BuiltinType(VOID))), new BuiltinType(VAR));
+}
+
 TEST(Analysis, FunctionDecl) {
 	// Func Decl with type
 	TestType(std::vector<Node*>({
@@ -467,8 +472,12 @@ TEST(Analysis, InvalidFunctionDecls) {
 			CreateNode<ReturnStmt>(CreateMockExpr(new PointerType(new IntType))),
 		}))),
 	}), new BuiltinType(VAR));
-	
+
 	// Returning value with void function
-	
-	// Returning void value
+	TestType(std::vector<Node*>({
+		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new BuiltinType(VOID),
+		CreateNode<LongBlockExpr>(std::vector<Node*>({
+			CreateNode<ReturnStmt>(CreateMockExpr(new IntType)),
+		}))),
+	}), new BuiltinType(VAR));
 }
