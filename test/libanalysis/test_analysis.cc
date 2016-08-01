@@ -62,6 +62,30 @@ TEST(Analysis, BuildsTypeTable) {
 	delete ast;
 }
 
+class MockExpr: public Expression {
+public:
+	Type* type;
+	
+	MockExpr(Type* type) : type(type) { }
+};
+
+Expression* CreateMockExpr(Type* ty) { return CreateNode<MockExpr>(ty); }
+
+class MockDepthFirstWalker : public DepthFirstWalker {
+public:
+	virtual void WalkExpr(Visitor* helper, Expression* node) override {
+		if (dynamic_cast<ResolveVisitor*>(helper) != nullptr && isA<MockExpr>(node)) {
+			auto resolver = dynamic_cast<ResolveVisitor*>(helper);
+			resolver->GetContext()->SetNodeType(node, asA<MockExpr>(node)->type);
+		} else {
+			DepthFirstWalker::WalkExpr(helper, node);
+		}
+	}
+	
+	MockDepthFirstWalker(TraversalOrder order) : DepthFirstWalker(order) { }
+};
+
+
 void TestType(std::vector<Node*> nodes, Type* target) {
 	auto ast = CreateNode<LongBlockExpr>(nodes);
 
@@ -70,7 +94,7 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 	auto log = AnalysisMessageLog();
 	ResolveVisitor resolver(&ctx, log, searcher);
 
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, ast);
 
 	auto ty = ctx.GetNodeType(nodes.back());
@@ -86,7 +110,7 @@ void TestType(Node* node, Type* target) {
 	auto log = AnalysisMessageLog();
 	ResolveVisitor resolver(&ctx, log, searcher);
 
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, node);
 
 	auto ty = ctx.GetNodeType(node);
@@ -94,6 +118,11 @@ void TestType(Node* node, Type* target) {
 
 	delete node;
 	delete target;
+}
+
+TEST(Analysis, MockExpression) {
+	TestType(CreateNode<MockExpr>(new DoubleType), new DoubleType);
+	TestType(CreateNode<MockExpr>(new IntType), new IntType);
 }
 
 TEST(Analysis, EmptyBlock) {
