@@ -120,6 +120,22 @@ void TestType(Node* node, Type* target) {
 	delete target;
 }
 
+VarDeclExpr* CreateNamedVariable(std::string name, Expression* value) {
+	return CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>(name) }),
+		std::vector<Type*> ({ }),
+		value
+	);
+}
+
+VarDeclExpr* CreateTypedVariable(std::string name, Type* ty) {
+	return CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>(name) }),
+		std::vector<Type*> ({ ty }),
+		nullptr
+	);
+}
+
 TEST(Analysis, MockExpression) {
 	TestType(CreateNode<MockExpr>(new DoubleType), new DoubleType);
 	TestType(CreateNode<MockExpr>(new IntType), new IntType);
@@ -151,17 +167,17 @@ TEST(Analysis, ConstTypes) {
 
 TEST(Analysis, ReturnAdaptsType) {
 	TestType(CreateNode<ReturnStmt>(), new BuiltinType(BuiltinTypeKind::VOID));
-	TestType(CreateNode<ReturnStmt>(CreateNode<IntValue>(0xF00)), new IntType);
+	TestType(CreateNode<ReturnStmt>(CreateMockExpr(new IntType)), new IntType);
 }
 
 TEST(Analysis, BinOps) {
-	TestType(CreateNode<BinOpExpr>(CreateNode<IntValue>(5), BinOp::ADD, CreateNode<IntValue>(10)),
+	TestType(CreateNode<BinOpExpr>(CreateMockExpr(new IntType), BinOp::ADD, CreateMockExpr(new IntType)),
 		new IntType);
 
-	TestType(CreateNode<BinOpExpr>(CreateNode<IntValue>(5, new Int8Type), BinOp::ADD, CreateNode<IntValue>(10)),
-		new IntType);
+	TestType(CreateNode<BinOpExpr>(CreateMockExpr(new Int8Type), BinOp::ADD, CreateMockExpr(new Int16Type)),
+		new Int16Type);
 
-	TestType(CreateNode<BinOpExpr>(CreateNode<IntValue>(5, new FloatType), BinOp::ADD, CreateNode<IntValue>(10)),
+	TestType(CreateNode<BinOpExpr>(CreateMockExpr(new FloatType), BinOp::ADD, CreateMockExpr(new IntType)),
 		new FloatType);
 }
 
@@ -171,7 +187,7 @@ TEST(Analysis, VarDecl) {
 	TestType(CreateNode<VarDeclExpr>(
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ }),
-		CreateNode<IntValue>(52)
+		CreateMockExpr(new IntType)
 	), new TupleType(std::vector<Type*>({ new IntType })));
 
 	// type without value
@@ -185,7 +201,7 @@ TEST(Analysis, VarDecl) {
 	TestType(CreateNode<VarDeclExpr>(
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ new IntType }),
-		CreateNode<DoubleValue>(5.23)
+		CreateMockExpr(new DoubleType)
 	), new TupleType(std::vector<Type*>({ new IntType })));
 }
 
@@ -197,7 +213,7 @@ TEST(Analysis, InvalidVarDecl) {
 				CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b")
 			)}),
 			std::vector<Type*> ({ }),
-			CreateNode<IntValue>(5)
+			CreateMockExpr(new IntType)
 		), nullptr);
 	}, AnalysisMessage);
 	
@@ -219,7 +235,7 @@ TEST(Analysis, InvalidVarDecl) {
 	TestType(CreateNode<VarDeclExpr>(
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
-		CreateNode<TempIDExpr>()
+		CreateMockExpr(new BuiltinType(VOID))
 	), nullptr);
 }
 
@@ -229,25 +245,19 @@ TEST(Analysis, VarDeclPair) {
 		TestType(CreateNode<VarDeclExpr>(
 			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b") }),
 			std::vector<Type*> ({ }),
-			CreateNode<TupleExpr>(std::vector<Expression*>({
-				CreateNode<IntValue>(5),
-				CreateNode<DoubleValue>(10.93)
-			}))
+			CreateMockExpr(new TupleType(std::vector<Type*>({new IntType, new DoubleType})))
 		), new TupleType(std::vector<Type*>({ new IntType, new DoubleType })));
 	}, AnalysisMessage);
 }
 
 TEST(Analysis, VarReference) {
 	TestType({
-		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<Type*>(), CreateNode<IntValue>(5)
-		),
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
 
 	    CreateNode<BinOpExpr>(
 		    CreateNode<ReferenceIDExpr>("a"),
 		    BinOp::ADD,
-		    CreateNode<IntValue>(5)
+		    CreateMockExpr(new IntType)
 	    )
 	}, new IntType);
 }
@@ -257,45 +267,36 @@ TEST(Analysis, InvalidVarReference) {
 		CreateNode<BinOpExpr>(
 			CreateNode<ReferenceIDExpr>("a"),
 			BinOp::ADD,
-			CreateNode<IntValue>(5)
+			CreateMockExpr(new IntType)
 		)
 	}), new BuiltinType(VAR));
 }
 
 TEST(Analysis, AssignBinOps) {
 	TestType({
-		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<Type*>(), CreateNode<IntValue>(5)
-		),
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
 
 	    CreateNode<BinOpExpr>(
 		    CreateNode<ReferenceIDExpr>("a"),
 		    BinOp::PLUS_ASSIGN,
-		    CreateNode<IntValue>(5)
+		    CreateMockExpr(new IntType)
 	    )
 	}, new IntType);
 
 	TestType({
-		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<Type*>(), CreateNode<IntValue>(5)
-		),
-
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		
 	    CreateNode<BinOpExpr>(
 		    CreateNode<ReferenceIDExpr>("a"),
 		    BinOp::TIMES_ASSIGN,
-		    CreateNode<DoubleValue>(52.932)
+		    CreateMockExpr(new IntType)
 	    ),
 	}, new IntType);
 }
 
 TEST(Analysis, CompareBinOps) {
 	TestType({
-		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<Type*>(), CreateNode<IntValue>(5)
-		),
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
 
 		CreateNode<BinOpExpr>(
 			CreateNode<ReferenceIDExpr>("a"),
@@ -305,10 +306,7 @@ TEST(Analysis, CompareBinOps) {
 	}, new BoolType);
 
 	TestType({
-		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<Type*>(), CreateNode<IntValue>(5)
-		),
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
 
 		CreateNode<BinOpExpr>(
 			CreateNode<ReferenceIDExpr>("a"),
@@ -320,7 +318,7 @@ TEST(Analysis, CompareBinOps) {
 
 TEST(Analysis, YieldStmt) {
 	TestType(
-		CreateNode<YieldStmt>(CreateNode<DoubleValue>(0.50)),
+		CreateNode<YieldStmt>(CreateMockExpr(new DoubleType)),
 		new DoubleType
 	);
 }
@@ -328,44 +326,29 @@ TEST(Analysis, YieldStmt) {
 TEST(Analysis, YieldInBlock) {
 	// Single yield
 	TestType(CreateNode<LongBlockExpr>(std::vector<Node*>({
-		CreateNode<YieldStmt>(CreateNode<DoubleValue>(0.50))
+		CreateNode<YieldStmt>(CreateMockExpr(new DoubleType))
 	})), new DoubleType);
 	
 	// Multiple yields
 	TestType(CreateNode<LongBlockExpr>(std::vector<Node*>({
-		CreateNode<YieldStmt>(CreateNode<IntValue>(0xf00)),
-		CreateNode<YieldStmt>(CreateNode<DoubleValue>(0.50)),
-		CreateNode<YieldStmt>(CreateNode<FloatValue>(0.50)),
+		CreateNode<YieldStmt>(CreateMockExpr(new IntType)),
+		CreateNode<YieldStmt>(CreateMockExpr(new DoubleType)),
+		CreateNode<YieldStmt>(CreateMockExpr(new FloatType)),
 	})), new DoubleType);
 }
 
 TEST(Analysis, ShortBlock) {
 	// With expr
 	TestType(CreateNode<ShortBlockExpr>(
-		CreateNode<IntValue>(0xF00)
+		CreateMockExpr(new IntType)
 	), new IntType);
 	
 	// Without expr
 	TestType(CreateNode<ShortBlockExpr>(
-		CreateNode<ExprStmt>(CreateNode<IntValue>(0xF00))
+		CreateNode<ExprStmt>(CreateMockExpr(new DoubleType))
 	), new BuiltinType(VOID));
 }
 
-VarDeclExpr* CreateNamedVariable(std::string name, Expression* value) {
-	return CreateNode<VarDeclExpr>(
-		std::vector<Identifier*>({ CreateNode<NamedIDExpr>(name) }),
-		std::vector<Type*> ({ }),
-		value
-	);
-}
-
-VarDeclExpr* CreateTypedVariable(std::string name, Type* ty) {
-	return CreateNode<VarDeclExpr>(
-		std::vector<Identifier*>({ CreateNode<NamedIDExpr>(name) }),
-		std::vector<Type*> ({ ty }),
-		nullptr
-	);
-}
 
 TEST(Analysis, UnaryOps) {
 	// INCREMENT, DECREMENT, MINUS, NOT, TILDE, TIMES, REFERENCE
@@ -387,22 +370,17 @@ TEST(Analysis, UnaryOps) {
 	
 	// test NOT, TIMES, REFERENCE
 	TestType(
-		CreateNode<UnaryExpr>(UnaryOp::NOT, UnaryOrder::PREFIX, CreateNode<BoolValue>(false)),
+		CreateNode<UnaryExpr>(UnaryOp::NOT, UnaryOrder::PREFIX, CreateMockExpr(new BoolType)),
 		new BoolType
 	);
 	
-	TestType({
-		CreateNamedVariable("a", CreateNode<BoolValue>(false)),
-		CreateNode<UnaryExpr>(UnaryOp::NOT, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
-	}, new BoolType);
+	TestType(
+	    CreateNode<UnaryExpr>(UnaryOp::TIMES, UnaryOrder::PREFIX, CreateMockExpr(new PointerType(new IntType))),
+	    new IntType
+	);
 	
 	TestType({
-		CreateTypedVariable("a", new PointerType(new IntType)),
-	    CreateNode<UnaryExpr>(UnaryOp::TIMES, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
-	}, new IntType);
-	
-	TestType({
-		CreateNamedVariable("a", CreateNode<IntValue>(0xF00)),
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
 		CreateNode<UnaryExpr>(UnaryOp::REFERENCE, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
 	}, new PointerType(new IntType));
 }
@@ -410,31 +388,31 @@ TEST(Analysis, UnaryOps) {
 TEST(Analysis, InvalidUnaryOps) {
 	// INCREMENT/DECREMENT multiple times
 	TestType({
-		CreateNamedVariable("a", CreateNode<IntValue>(0xF00)),
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
 		CreateNode<UnaryExpr>(UnaryOp::INCREMENT, UnaryOrder::PREFIX, CreateNode<UnaryExpr>(
 			UnaryOp::INCREMENT, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")
 		)),
 	}, new BuiltinType(VAR));
 	
 	TestType({
-		CreateNamedVariable("a", CreateNode<IntValue>(0xF00)),
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
 		CreateNode<UnaryExpr>(UnaryOp::DECREMENT, UnaryOrder::PREFIX, CreateNode<UnaryExpr>(
 			UnaryOp::DECREMENT, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")
 		)),
 	}, new BuiltinType(VAR));
 	
 	// NOT on not-boolean
-	TestType(CreateNode<UnaryExpr>(UnaryOp::NOT, UnaryOrder::PREFIX, CreateNode<IntValue>(0xF00)),
+	TestType(CreateNode<UnaryExpr>(UnaryOp::NOT, UnaryOrder::PREFIX, CreateMockExpr(new IntType)),
 		new BuiltinType(VAR));
 	
 	// TIMES on not-pointer
-	TestType({
-		CreateNamedVariable("a", CreateNode<IntValue>(0xF00)),
-		CreateNode<UnaryExpr>(UnaryOp::TIMES, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
-	}, new BuiltinType(VAR));
+	TestType(
+		CreateNode<UnaryExpr>(UnaryOp::TIMES, UnaryOrder::PREFIX, CreateMockExpr(new IntType)),
+		new BuiltinType(VAR)
+	);
 	
 	// REFERENCE on not-lvalue
-	TestType(CreateNode<UnaryExpr>(UnaryOp::REFERENCE, UnaryOrder::PREFIX, CreateNode<IntValue>(0xF00)),
+	TestType(CreateNode<UnaryExpr>(UnaryOp::REFERENCE, UnaryOrder::PREFIX, CreateMockExpr(new IntType)),
 		new BuiltinType(VAR));
 }
 
@@ -444,32 +422,32 @@ TEST(Analysis, FunctionDecl) {
 		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new IntType,
 			CreateNode<LongBlockExpr>()),
 	}), new FunctionType(std::vector<Type*>(), new IntType));
-		
+
 	// Func Decl with type and multiple returns
 	TestType(std::vector<Node*>({
 		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new IntType,
 		CreateNode<LongBlockExpr>(std::vector<Node*>({
-			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
+			CreateNode<ReturnStmt>(CreateMockExpr(new DoubleType)),
 		}))),
 	}), new FunctionType(std::vector<Type*>(), new IntType));
-	
+
 	// Func Decl without type and one return
 	TestType(std::vector<Node*>({
 		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), nullptr,
 		CreateNode<LongBlockExpr>(std::vector<Node*>({
-			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
+			CreateNode<ReturnStmt>(CreateMockExpr(new DoubleType)),
 		}))),
 	}), new FunctionType(std::vector<Type*>(), new DoubleType));
-	
+
 	// Func Decl without type and multiple returns
 	TestType(std::vector<Node*>({
 		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), nullptr,
 		CreateNode<LongBlockExpr>(std::vector<Node*>({
-			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
-			CreateNode<ReturnStmt>(CreateNode<IntValue>(0.5)),
+			CreateNode<ReturnStmt>(CreateMockExpr(new DoubleType)),
+			CreateNode<ReturnStmt>(CreateMockExpr(new IntType)),
 		}))),
 	}), new FunctionType(std::vector<Type*>(), new DoubleType));
-	
+
 	// Test using referencing parameter
 	TestType(std::vector<Node*>({
 		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>({
@@ -486,7 +464,7 @@ TEST(Analysis, InvalidFunctionDecls) {
 	TestType(std::vector<Node*>({
 		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new PointerType(new IntType),
 		CreateNode<LongBlockExpr>(std::vector<Node*>({
-			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
+			CreateNode<ReturnStmt>(CreateMockExpr(new PointerType(new IntType))),
 		}))),
 	}), new BuiltinType(VAR));
 	
