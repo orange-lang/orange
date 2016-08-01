@@ -34,8 +34,6 @@ namespace orange { namespace analysis {
 		virtual void VisitClassStmt(ClassStmt* node) override;
 		virtual void VisitGetterStmt(GetterStmt* node) override;
 		virtual void VisitPropertyStmt(PropertyStmt* node) override;
-		virtual void VisitThrowStmt(ThrowStmt* node) override;
-		virtual void VisitDeleteStmt(DeleteStmt* node) override;
 		virtual void VisitVarDeclExpr(VarDeclExpr* node) override;
 		virtual void VisitBoolValue(BoolValue* node) override;
 		virtual void VisitIntValue(IntValue* node) override;
@@ -58,7 +56,6 @@ namespace orange { namespace analysis {
 		virtual void VisitArrayRangeExpr(ArrayRangeExpr* node) override;
 		virtual void VisitArrayAccessExpr(ArrayAccessExpr* node) override;
 		virtual void VisitMemberAccessExpr(MemberAccessExpr* node) override;
-		virtual void VisitNamedExpr(NamedExpr* node) override;
 		virtual void VisitConditionalBlock(ConditionalBlock* node) override;
 		virtual void VisitIfExpr(IfExpr* node) override;
 		virtual void VisitTernaryExpr(TernaryExpr* node) override;

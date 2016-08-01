@@ -40,14 +40,6 @@ void ResolveVisitor::VisitPropertyStmt(PropertyStmt* node) {
 	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
-void ResolveVisitor::VisitThrowStmt(ThrowStmt* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
-void ResolveVisitor::VisitDeleteStmt(DeleteStmt* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
 void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 	if (node->bindings.size() > 1) {
 		throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
@@ -292,10 +284,6 @@ void ResolveVisitor::VisitArrayAccessExpr(ArrayAccessExpr* node) {
 }
 
 void ResolveVisitor::VisitMemberAccessExpr(MemberAccessExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
-void ResolveVisitor::VisitNamedExpr(NamedExpr* node) {
 	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
