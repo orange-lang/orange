@@ -20,7 +20,7 @@ namespace orange { namespace ast {
 	class WalkerBase {
 	public:
 		/// Dispatches to the proper walk method. Does not visit any nodes.
-		void WalkNode(T* helper, Node* node) {
+		virtual void WalkNode(T* helper, Node* node) {
 			if      (isA<Statement>(node))  WalkStmt(helper, asA<Statement>(node));
 			else if (isA<Expression>(node)) WalkExpr(helper, asA<Expression>(node));
 			else if (isA<Constraint>(node)) WalkConstraint(helper, asA<Constraint>(node));
@@ -28,7 +28,7 @@ namespace orange { namespace ast {
 			else                            throw std::runtime_error("Unknown node to walk.");
 		}
 		
-		void WalkExpr(T* helper, Expression* node) {
+		virtual void WalkExpr(T* helper, Expression* node) {
 			if      (isA<VarDeclExpr>(node))      WalkVarDeclExpr(helper, asA<VarDeclExpr>(node));
 			else if (isA<EnumValue>(node))        WalkEnumValue(helper, asA<EnumValue>(node));
 			else if (isA<ConditionalBlock>(node)) WalkConditionalBlock(helper, asA<ConditionalBlock>(node));
@@ -57,7 +57,7 @@ namespace orange { namespace ast {
 			else                                  throw std::runtime_error("Unknown node to walk.");
 		}
 		
-		void WalkStmt(T* helper, Statement* node) {
+		virtual void WalkStmt(T* helper, Statement* node) {
 			if      (isA<LoopStmt>(node))       WalkLoopStmt(helper, asA<LoopStmt>(node));
 			else if (isA<CommentStmt>(node))    WalkCommentStmt(helper, asA<CommentStmt>(node));
 			else if (isA<SwitchPattern>(node))  WalkSwitchPattern(helper, asA<SwitchPattern>(node));
@@ -83,7 +83,7 @@ namespace orange { namespace ast {
 			else                                throw std::runtime_error("Unknown node to walk.");
 		}
 		
-		void WalkConstraint(T* helper, Constraint* node) {
+		virtual void WalkConstraint(T* helper, Constraint* node) {
 			if      (isA<ClassConstraint>(node))       WalkClassConstraint(helper, asA<ClassConstraint>(node));
 			else if (isA<DefaultCtorConstraint>(node)) WalkDefaultCtorConstraint(helper, asA<DefaultCtorConstraint>(node));
 			else if (isA<BaseConstraint>(node))        WalkBaseConstraint(helper, asA<BaseConstraint>(node));
@@ -92,7 +92,7 @@ namespace orange { namespace ast {
 			else                                       throw std::runtime_error("Unknown node to walk.");
 		}
 		
-		void WalkValue(T* helper, Value* node) {
+		virtual void WalkValue(T* helper, Value* node) {
 			if      (isA<IntValue>(node))    WalkIntValue(helper, asA<IntValue>(node));
 			else if (isA<UIntValue>(node))   WalkUIntValue(helper, asA<UIntValue>(node));
 			else if (isA<FloatValue>(node))  WalkFloatValue(helper, asA<FloatValue>(node));
@@ -103,7 +103,7 @@ namespace orange { namespace ast {
 			else                             throw std::runtime_error("Unknown node to walk.");
 		}
 		
-		void WalkIdentifier(T* helper, Identifier* node) {
+		virtual void WalkIdentifier(T* helper, Identifier* node) {
 			if      (isA<NamedIDExpr>(node))      WalkNamedIDExpr(helper, asA<NamedIDExpr>(node));
 			else if (isA<ReferenceIDExpr>(node))  WalkReferenceIDExpr(helper, asA<ReferenceIDExpr>(node));
 			else if (isA<TempIDExpr>(node))       WalkTempIDExpr(helper, asA<TempIDExpr>(node));
@@ -113,7 +113,7 @@ namespace orange { namespace ast {
 			else                                  throw std::runtime_error("Unknown node to walk.");
 		}
 		
-		void WalkBlockExpr(T* helper, BlockExpr* node) {
+		virtual void WalkBlockExpr(T* helper, BlockExpr* node) {
 			if      (isA<LongBlockExpr>(node))  WalkLongBlockExpr(helper, asA<LongBlockExpr>(node));
 			else if (isA<ShortBlockExpr>(node)) WalkShortBlockExpr(helper, asA<ShortBlockExpr>(node));
 			else                                throw std::runtime_error("Unknown node to walk.");

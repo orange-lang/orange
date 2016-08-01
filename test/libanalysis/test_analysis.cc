@@ -460,4 +460,8 @@ TEST(Analysis, InvalidFunctionDecls) {
 			CreateNode<ReturnStmt>(CreateNode<DoubleValue>(0.50)),
 		}))),
 	}), new BuiltinType(VAR));
+	
+	// Returning value with void function
+	
+	// Returning void value
 }
