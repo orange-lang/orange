@@ -21,6 +21,13 @@ void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
 
 void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
 	auto ty = (node->value == nullptr) ? new BuiltinType(BuiltinTypeKind::VOID) : mContext->GetNodeType(node->value);
+	
+	if (IsVoidType(ty) && node->value != nullptr) {
+		mLog.LogMessage(MessageSeverity::ERROR, AnalysisError::INVALID_TYPE, node, mContext);
+		mContext->SetNodeType(node, new BuiltinType(VAR));
+		return;
+	}
+	
 	mContext->SetNodeType(node, ty);
 }
 
