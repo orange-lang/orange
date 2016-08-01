@@ -66,8 +66,9 @@ llvm::Value* CompileValueForNode(Node* node, Optional<ValueCallback> cb = Option
 	auto body = llvm::BasicBlock::Create(getGlobalContext(), "body", mainFunction);
 
 	orange::ast::NonTraversalWalker walker;
+	orange::ast::DepthFirstWalker searchWalker(TraversalOrder::PREORDER);
 
-	auto searcher = orange::ast::ASTSearcher(astList);
+	auto searcher = orange::ast::ASTSearcher(astList, &searchWalker);
 	orange::translate::TranslateVisitor visitor(walker, module, searcher);
 	visitor.SetCurrentBlock(body);
 	visitor.SetCurrentContext(tr.GenerateTypeTable()->GetGlobalContext());

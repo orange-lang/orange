@@ -19,6 +19,7 @@ namespace orange { namespace ast {
 	class ASTSearcher {
 	private:
 		std::vector<LongBlockExpr*> mASTs;
+		Walker* mWalker;
 
 		/// A cache of determined parents for nodes.
 		std::map<int, Node*> mParentCache;
@@ -86,6 +87,6 @@ namespace orange { namespace ast {
 		/// @param allowForwardRef Whether or not you can reference the node before it's declared.
 		Node* FindNode(Identifier* id, Node* from, bool allowForwardRef = false);
 
-		ASTSearcher(std::vector<LongBlockExpr*> asts);
+		ASTSearcher(std::vector<LongBlockExpr*> asts, Walker* walker);
 	};
 }}

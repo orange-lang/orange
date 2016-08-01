@@ -130,7 +130,9 @@ TypeTable::TypeTable() {
 TypeTable* TypeResolution::GenerateTypeTable() {
 	auto tt = new TypeTable();
 
-	ASTSearcher searcher(mASTs);
+	DepthFirstWalker searchWalker(TraversalOrder::PREORDER);
+	ASTSearcher searcher(mASTs, &searchWalker);
+	
 	ResolveVisitor resolver(tt->GetGlobalContext(), mLog, searcher);
 	DepthFirstWalker walker(TraversalOrder::POSTORDER);
 

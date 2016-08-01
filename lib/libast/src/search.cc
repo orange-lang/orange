@@ -335,12 +335,11 @@ Node* ASTSearcher::FindNode(Identifier* id, Node* from, bool allowForwardRef) {
 
 	// Step one: search the ASTs for a node with an identifier.
 	NamedNodeFinder nodeFinder(asA<ReferenceIDExpr>(id), this);
-	DepthFirstWalker walker(TraversalOrder::PREORDER);
 
 	Node* originalDecl = nullptr;
 
 	for (auto ast : mASTs) {
-		walker.WalkLongBlockExpr(&nodeFinder, ast);
+		mWalker->WalkLongBlockExpr(&nodeFinder, ast);
 		originalDecl = nodeFinder.GetNode();
 		if (originalDecl != nullptr) break;
 	}
@@ -351,4 +350,4 @@ Node* ASTSearcher::FindNode(Identifier* id, Node* from, bool allowForwardRef) {
 	return originalDecl;
 }
 
-ASTSearcher::ASTSearcher(std::vector<LongBlockExpr*> asts) : mASTs(asts) { }
+ASTSearcher::ASTSearcher(std::vector<LongBlockExpr*> asts, Walker* walker) : mASTs(asts), mWalker(walker) { }

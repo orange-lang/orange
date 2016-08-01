@@ -24,8 +24,10 @@ TypeTable* Translator::GetTypeTable() const {
 
 std::shared_ptr<llvm::Module> Translator::Translate(LongBlockExpr* ast, std::string name) { 
 	auto module = std::make_shared<llvm::Module>(name, llvm::getGlobalContext());
-
-	auto searcher = ast::ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
+	
+	DepthFirstWalker searchWalker(TraversalOrder::PREORDER);
+	auto searcher = ast::ASTSearcher(std::vector<LongBlockExpr*>({ ast }), &searchWalker);
+	
 	ast::NonTraversalWalker walker;
 
 	TranslateVisitor visitor(walker, module, searcher);
@@ -46,8 +48,10 @@ std::shared_ptr<llvm::Module> Translator::TranslateMain(LongBlockExpr* ast, std:
 	auto mainFunction = Function::Create(mainTy, GlobalValue::LinkageTypes::ExternalLinkage, "main", module.get());
 
 	auto body = llvm::BasicBlock::Create(getGlobalContext(), "body", mainFunction);
-
-	auto searcher = ast::ASTSearcher(std::vector<LongBlockExpr*>({ ast }));
+	
+	DepthFirstWalker searchWalker(TraversalOrder::PREORDER);
+	auto searcher = ast::ASTSearcher(std::vector<LongBlockExpr*>({ ast }), &searchWalker);
+	
 	ast::NonTraversalWalker walker;
 
 	TranslateVisitor visitor(walker, module, searcher);
