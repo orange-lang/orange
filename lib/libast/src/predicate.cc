@@ -15,6 +15,8 @@
 
 using namespace orange::ast;
 
+void PredicateWalker::Reset() { mMatches.clear(); }
+
 std::vector<Node*> PredicateWalker::GetMatches() const { return mMatches; }
 
 void PredicateWalker::TestPredicate(Predicate* p, Node* n) {

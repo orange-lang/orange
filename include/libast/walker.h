@@ -183,6 +183,8 @@ namespace orange { namespace ast {
 		virtual void WalkFunctionCallExpr(T* helper, FunctionCallExpr* node) = 0;
 		virtual void WalkNewExpr(T* helper, NewExpr* node) = 0;
 		virtual void WalkEnumMatch(T* helper, EnumMatch* node) = 0;
+		
+		virtual ~WalkerBase() { }
 	};
 	
 	class Walker : public WalkerBase<Visitor> { };

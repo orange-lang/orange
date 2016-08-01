@@ -74,9 +74,13 @@ Expression* CreateMockExpr(Type* ty) { return CreateNode<MockExpr>(ty); }
 class MockDepthFirstWalker : public DepthFirstWalker {
 public:
 	virtual void WalkExpr(Visitor* helper, Expression* node) override {
-		if (dynamic_cast<ResolveVisitor*>(helper) != nullptr && isA<MockExpr>(node)) {
-			auto resolver = dynamic_cast<ResolveVisitor*>(helper);
-			resolver->GetContext()->SetNodeType(node, asA<MockExpr>(node)->type);
+		if (isA<MockExpr>(node)) {
+			if (dynamic_cast<ResolveVisitor*>(helper) != nullptr) {
+				auto resolver = dynamic_cast<ResolveVisitor*>(helper);
+				resolver->GetContext()->SetNodeType(node, asA<MockExpr>(node)->type);
+			}
+			
+			return;
 		} else {
 			DepthFirstWalker::WalkExpr(helper, node);
 		}
@@ -85,12 +89,27 @@ public:
 	MockDepthFirstWalker(TraversalOrder order) : DepthFirstWalker(order) { }
 };
 
+class MockPredicateWalker : public PredicateWalker {
+public:
+	virtual void WalkExpr(Predicate* helper, Expression* node) override {
+		if (isA<MockExpr>(node)) {
+			return;
+		} else {
+			PredicateWalker::WalkExpr(helper, node);
+		}
+	}
+	
+	MockPredicateWalker() { }
+};
+
+
 
 void TestType(std::vector<Node*> nodes, Type* target) {
 	auto ast = CreateNode<LongBlockExpr>(nodes);
 
 	MockDepthFirstWalker searchWalker(TraversalOrder::PREORDER);
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ ast }), &searchWalker);
+	MockPredicateWalker predWalker;
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ast}), &searchWalker, &predWalker);
 	
 	auto ctx = NodeTypeContext();
 	auto log = AnalysisMessageLog();
@@ -108,7 +127,8 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 
 void TestType(Node* node, Type* target) {
 	MockDepthFirstWalker searchWalker(TraversalOrder::PREORDER);
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>(), &searchWalker);
+	MockPredicateWalker predWalker;
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>(), &searchWalker, &predWalker);
 	
 	auto ctx = NodeTypeContext();
 	auto log = AnalysisMessageLog();

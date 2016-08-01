@@ -286,16 +286,14 @@ public:
 	ParentFinderVisitor(Node* child) : mChild(child) { }
 };
 
-
 bool ASTSearcher::ValidateParent(Node* parent, Node* child) {
-	ParentFinderVisitor visitor(child);
-	DepthFirstWalker walker(TraversalOrder::PREORDER);
+	auto visitor = ParentFinderVisitor(child);
 
 	for (auto ast : mASTs) {
-		walker.WalkLongBlockExpr(&visitor, ast);
+		mWalker->WalkLongBlockExpr(&visitor, ast);
 		if (visitor.GetParent() != nullptr) break;
 	}
-
+	
 	return visitor.GetParent() == parent;
 }
 
@@ -318,10 +316,9 @@ Node* ASTSearcher::GetParent(Node* child) {
 	if (parent != nullptr) return parent;
 
 	ParentFinderVisitor visitor(child);
-	DepthFirstWalker walker(TraversalOrder::PREORDER);
 
 	for (auto ast : mASTs) {
-		walker.WalkLongBlockExpr(&visitor, ast);
+		mWalker->WalkLongBlockExpr(&visitor, ast);
 		if (visitor.GetParent() != nullptr) break;
 	}
 
@@ -350,4 +347,13 @@ Node* ASTSearcher::FindNode(Identifier* id, Node* from, bool allowForwardRef) {
 	return originalDecl;
 }
 
-ASTSearcher::ASTSearcher(std::vector<LongBlockExpr*> asts, Walker* walker) : mASTs(asts), mWalker(walker) { }
+ASTSearcher::ASTSearcher(std::vector<LongBlockExpr*> asts, Walker* walker, PredicateWalker* predWalker)
+	: mASTs(asts), mWalker(walker), mPredWalker(predWalker) { }
+
+DefaultASTSearcher::DefaultASTSearcher(std::vector<LongBlockExpr*> asts) :
+	ASTSearcher(asts, new DepthFirstWalker(TraversalOrder::PREORDER), new PredicateWalker) { }
+
+DefaultASTSearcher::~DefaultASTSearcher() {
+	delete mWalker;
+	delete mPredWalker;
+}

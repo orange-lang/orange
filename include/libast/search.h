@@ -17,10 +17,12 @@
 
 namespace orange { namespace ast {
 	class ASTSearcher {
-	private:
+	protected:
 		std::vector<LongBlockExpr*> mASTs;
+		
 		Walker* mWalker;
-
+		PredicateWalker* mPredWalker;
+	private:
 		/// A cache of determined parents for nodes.
 		std::map<int, Node*> mParentCache;
 
@@ -65,11 +67,11 @@ namespace orange { namespace ast {
 				return true;
 			});
 			
-			PredicateWalker walker;
-			walker.WalkNode(predicate, parent);
+			mPredWalker->Reset();
+			mPredWalker->WalkNode(predicate, parent);
 			
 			std::vector<T*> children;
-			auto matches = walker.GetMatches();
+			auto matches = mPredWalker->GetMatches();
 			
 			for (auto match : matches) {
 				if (isA<T>(match)) children.push_back(asA<T>(match));
@@ -87,6 +89,13 @@ namespace orange { namespace ast {
 		/// @param allowForwardRef Whether or not you can reference the node before it's declared.
 		Node* FindNode(Identifier* id, Node* from, bool allowForwardRef = false);
 
-		ASTSearcher(std::vector<LongBlockExpr*> asts, Walker* walker);
+		ASTSearcher(std::vector<LongBlockExpr*> asts, Walker* walker, PredicateWalker* predWalker);
+		virtual ~ASTSearcher() { }
+	};
+	
+	class DefaultASTSearcher : public ASTSearcher {
+	public:
+		DefaultASTSearcher(std::vector<LongBlockExpr*> asts);
+		virtual ~DefaultASTSearcher();
 	};
 }}

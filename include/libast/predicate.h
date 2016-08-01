@@ -114,6 +114,7 @@ namespace orange { namespace ast {
 		/// matches.
 		void TestPredicate(Predicate* p, Node* n);
 	public:
+		void Reset();
 		std::vector<Node*> GetMatches() const;
 		
 		virtual void WalkCommentStmt(Predicate* predicate, CommentStmt* node);
