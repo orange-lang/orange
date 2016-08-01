@@ -341,6 +341,13 @@ void ResolveVisitor::VisitEnumMatch(EnumMatch* node) {
 	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
+NodeTypeContext* ResolveVisitor::GetContext() const { return mContext; }
+
+ASTSearcher& ResolveVisitor::GetSearcher() const { return mSearcher; }
+
+AnalysisMessageLog& ResolveVisitor::GetLog() const { return mLog; }
+
 ResolveVisitor::ResolveVisitor(NodeTypeContext* context, AnalysisMessageLog& log, ASTSearcher& searcher) :
 	mContext(context), mLog(log), mSearcher(searcher) { }
+
 

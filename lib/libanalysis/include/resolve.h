@@ -28,6 +28,10 @@ namespace orange { namespace analysis {
 		ASTSearcher& mSearcher;
 		AnalysisMessageLog& mLog;
 	public:
+		NodeTypeContext* GetContext() const;
+		ASTSearcher& GetSearcher() const;
+		AnalysisMessageLog& GetLog() const;
+		
 		virtual void VisitYieldStmt(YieldStmt* node) override;
 		virtual void VisitReturnStmt(ReturnStmt* node) override;
 		virtual void VisitExternFuncStmt(ExternFuncStmt* node) override;
