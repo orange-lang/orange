@@ -85,6 +85,39 @@ int GetIntegerBitWidth(Type* type) {
 
 	return -1;
 }
+
+bool IsGenericType(orange::ast::Type* type) {
+	if (isA<BuiltinType>(type)) {
+		return asA<BuiltinType>(type)->kind == VAR;
+	} else if (isA<AccessType>(type)) {
+		auto _ty = asA<AccessType>(type);
+		return IsGenericType(_ty->LHS) || IsGenericType(_ty->RHS);
+	} else if (isA<IdentifierType>(type)) {
+		// TODO: this is rough; we will probably need the default context for this one.
+		return true;
+	} else if (isA<ArrayType>(type)) {
+		// TODO: is size generic?
+		return IsGenericType(asA<ArrayType>(type)->base);
+	} else if (isA<PointerType>(type)) {
+		return IsGenericType(asA<PointerType>(type)->base);
+	} else if (isA<ReferenceType>(type)) {
+		return IsGenericType(asA<ReferenceType>(type)->base);
+	} else if (isA<TupleType>(type)) {
+		auto _ty = asA<TupleType>(type);
+		for (auto type : _ty->types) {
+			if (IsGenericType(type)) return true;
+		}
+	} else if (isA<FunctionType>(type)) {
+		auto _ty = asA<FunctionType>(type);
+		if (IsGenericType(_ty->returnType)) return true;
+		for (auto type : _ty->params) {
+			if (IsGenericType(type)) return true;
+		}
+	}
+	
+	return false;
+}
+
 bool IsLValue(orange::ast::Node* node, orange::ast::Type* nodeType) {
 	// TODO: this isn't complete.
 	if (isA<Identifier>(node)) return true;

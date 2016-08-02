@@ -43,6 +43,9 @@ bool IsBooleanType(orange::ast::Type* type);
 /// Gets whether or not a type is a void type.
 bool IsVoidType(orange::ast::Type* type);
 
+/// Gets whether a type is generic (var or an inner type is var).
+bool IsGenericType(orange::ast::Type* type);
+
 /// Gets the integer bit width of a type. Return -1 if the type is not an integer type.
 int GetIntegerBitWidth(orange::ast::Type* type);
 
