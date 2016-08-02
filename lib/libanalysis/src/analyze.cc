@@ -86,18 +86,6 @@ void NodeTypeContext::SetNodeType(orange::ast::Node* node, orange::ast::Type* ty
 }
 
 
-// TODO: this isn't complete yet.
-bool NodeTypeContext::IsLValue(orange::ast::Node* node) {
-	if (isA<Identifier>(node)) return true;
-	return false;
-}
-
-
-bool TypeTable::IsLValue(orange::ast::Node* node, NodeTypeContext* ctx) {
-	ctx = ctx == nullptr ? mGlobalContext : ctx;
-	return ctx->IsLValue(node);
-}
-
 NodeTypeContext::NodeTypeContext() : mID(-1) { }
 
 NodeTypeContext::NodeTypeContext(orange::ast::Node* node) : mID(node->id) { }

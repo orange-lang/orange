@@ -222,9 +222,9 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 
 	if (IsAssignBinOp(node->op)) {
 		mContext->SetNodeType(node, tyLHS);
-
-		if (mContext->IsLValue(node->LHS) == false)
-			throw std::runtime_error("Can only assign to lvalues");
+		
+		auto lval = IsLValue(node->LHS, mContext->GetNodeType(node->LHS));
+		if (!lval) throw std::runtime_error("Can only assign to lvalues");
 	}
 
 	if (IsCompareBinOp(node->op)) {
@@ -244,7 +244,9 @@ void ResolveVisitor::VisitUnaryExpr(UnaryExpr* node) {
 	
 	// If INCREMENT, DECREMENT or REFERENCE, LHS must be an lvalue
 	if ((node->op == INCREMENT || node->op == DECREMENT || node->op == REFERENCE)) {
-		if (!mContext->IsLValue(node->LHS)) {
+		auto lval = IsLValue(node->LHS, mContext->GetNodeType(node->LHS));
+		
+		if (!lval) {
 			mLog.LogMessage(ERROR, AnalysisError::INVALID_VALUE, node, mContext);
 			mContext->SetNodeType(node, new BuiltinType(VAR));
 			return;

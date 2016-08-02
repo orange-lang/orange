@@ -53,11 +53,6 @@ namespace orange { namespace analysis {
 		
 		/// Gets whether this context is generic (i.e., any of the types to initialize it are of var type)
 		bool IsGeneric() const;
-
-		/// Gets whether or not a node is an lvalue. A context may be passed in to get the node's type.
-		/// If no context is specified, the default context is used.
-		bool IsLValue(orange::ast::Node* node);
-
 		orange::ast::Type* GetNodeType(orange::ast::Node* node) const;
 
 		void SetNodeType(orange::ast::Node* node, orange::ast::Type* type);
@@ -77,11 +72,7 @@ namespace orange { namespace analysis {
 		NodeTypeContext* GetGlobalContext() const;
 
 		NodeTypeContext* GetDefaultContext(orange::ast::Node* node) const;
-
-		/// Gets whether or not a node is an lvalue. A context may be passed in to get the node's type.
-		/// If no context is specified, the default context is used.
-		bool IsLValue(orange::ast::Node* node, NodeTypeContext* ctx = nullptr);
-
+		
 		/// Gets the type of a node. A context may be passed in. If no context is specified, the default
 		/// context is used.
 		orange::ast::Type* GetNodeType(orange::ast::Node* node, NodeTypeContext* context = nullptr);

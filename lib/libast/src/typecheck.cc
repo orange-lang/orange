@@ -85,3 +85,8 @@ int GetIntegerBitWidth(Type* type) {
 
 	return -1;
 }
+bool IsLValue(orange::ast::Node* node, orange::ast::Type* nodeType) {
+	// TODO: this isn't complete.
+	if (isA<Identifier>(node)) return true;
+	return false;
+}
