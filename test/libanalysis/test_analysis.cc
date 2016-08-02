@@ -113,7 +113,8 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 	
 	auto ctx = NodeTypeContext(ast);
 	auto log = AnalysisMessageLog();
-	ResolveVisitor resolver(nullptr, &ctx, log, searcher);
+	auto tt = TypeTable(searcher);
+	ResolveVisitor resolver(&tt, &ctx, log);
 
 	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, ast);
@@ -132,7 +133,8 @@ void TestType(Node* node, Type* target) {
 	
 	auto ctx = NodeTypeContext(node);
 	auto log = AnalysisMessageLog();
-	ResolveVisitor resolver(nullptr, &ctx, log, searcher);
+	auto tt = TypeTable(searcher);
+	ResolveVisitor resolver(&tt, &ctx, log);
 
 	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, node);

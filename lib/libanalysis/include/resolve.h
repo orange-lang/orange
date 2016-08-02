@@ -24,12 +24,11 @@ namespace orange { namespace analysis {
 	/// types of its components
 	class ResolveVisitor : public Visitor {
 	private:
+		TypeTable* mTypeTable;
 		NodeTypeContext* mContext;
-		ASTSearcher& mSearcher;
 		AnalysisMessageLog& mLog;
 	public:
 		NodeTypeContext* GetContext() const;
-		ASTSearcher& GetSearcher() const;
 		AnalysisMessageLog& GetLog() const;
 		
 		virtual void VisitYieldStmt(YieldStmt* node) override;
@@ -73,6 +72,6 @@ namespace orange { namespace analysis {
 		virtual void VisitNewExpr(NewExpr* node) override;
 		virtual void VisitEnumMatch(EnumMatch* node) override;
 
-		ResolveVisitor(TypeTable* tt, NodeTypeContext* context, AnalysisMessageLog& log, ASTSearcher& searcher);
+		ResolveVisitor(TypeTable* tt, NodeTypeContext* context, AnalysisMessageLog& log);
 	};
 }}

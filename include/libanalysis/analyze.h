@@ -13,6 +13,7 @@
 
 #include <libast/ast.h>
 #include <libast/type.h>
+#include <libast/search.h>
 
 #include "error.h"
 
@@ -72,7 +73,10 @@ namespace orange { namespace analysis {
 	class TypeTable {
 	private:
 		std::vector<NodeTypeContext*> mGlobalContexts;
+		orange::ast::ASTSearcher& mSearcher;
 	public:
+		ast::ASTSearcher& GetSearcher() const;
+		
 		/// Gets the global contexts.
 		std::vector<NodeTypeContext*> GetGlobalContexts() const;
 		
@@ -81,7 +85,7 @@ namespace orange { namespace analysis {
 		
 		void AddGlobalContext(NodeTypeContext* ctx);
 		
-		TypeTable();
+		TypeTable(orange::ast::ASTSearcher& searcher);
 	};
 
 	class TypeResolution {

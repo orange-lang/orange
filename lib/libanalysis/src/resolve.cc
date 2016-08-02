@@ -136,7 +136,7 @@ void ResolveVisitor::VisitThisID(ThisID* node) {
 }
 
 void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
-	auto original = mSearcher.FindNode(node, node, true);
+	auto original = mTypeTable->GetSearcher().FindNode(node, node, true);
 
 	if (original == nullptr) {
 		mLog.LogMessage(ERROR, REFERENCE_NOT_FOUND, node, mContext);
@@ -174,7 +174,7 @@ void ResolveVisitor::VisitAccessIDExpr(AccessIDExpr* node) {
 
 void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
 	// The type of a long block is inherited from all yield statements of direct children.
-	auto yieldStatements = mSearcher.FindChildren<YieldStmt>(node, true);
+	auto yieldStatements = mTypeTable->GetSearcher().FindChildren<YieldStmt>(node, true);
 	
 	if (yieldStatements.size() == 0) {
 		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::VOID));
@@ -352,12 +352,10 @@ void ResolveVisitor::VisitEnumMatch(EnumMatch* node) {
 
 NodeTypeContext* ResolveVisitor::GetContext() const { return mContext; }
 
-ASTSearcher& ResolveVisitor::GetSearcher() const { return mSearcher; }
-
 AnalysisMessageLog& ResolveVisitor::GetLog() const { return mLog; }
 
-ResolveVisitor::ResolveVisitor(TypeTable* tt, NodeTypeContext* context, AnalysisMessageLog& log, ASTSearcher& searcher)
+ResolveVisitor::ResolveVisitor(TypeTable* tt, NodeTypeContext* context, AnalysisMessageLog& log)
 	:
-	mContext(context), mLog(log), mSearcher(searcher) { }
+	mTypeTable(tt), mContext(context), mLog(log) { }
 
 

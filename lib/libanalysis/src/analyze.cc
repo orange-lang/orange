@@ -70,12 +70,13 @@ NodeTypeContext* TypeTable::GetDefaultContext(orange::ast::Node* node) const {
 
 void TypeTable::AddGlobalContext(NodeTypeContext* ctx) { mGlobalContexts.push_back(ctx); }
 
-TypeTable::TypeTable() { }
+TypeTable::TypeTable(orange::ast::ASTSearcher& searcher) : mSearcher(searcher) { }
+
+ASTSearcher& TypeTable::GetSearcher() const { return mSearcher; }
 
 TypeTable* TypeResolution::GenerateTypeTable() {
-	auto tt = new TypeTable();
-
 	DefaultASTSearcher searcher(mASTs);
+	auto tt = new TypeTable(searcher);
 	
 	// Create a global context for each AST.
 	for (auto ast : mASTs) {
@@ -85,7 +86,7 @@ TypeTable* TypeResolution::GenerateTypeTable() {
 	
 	// Resolve each context.
 	for (auto ctx : tt->GetGlobalContexts()) {
-		ResolveVisitor resolver(tt, ctx, mLog, searcher);
+		ResolveVisitor resolver(tt, ctx, mLog);
 		DepthFirstWalker walker(TraversalOrder::POSTORDER);
 		
 		walker.WalkLongBlockExpr(&resolver, asA<LongBlockExpr>(ctx->GetNode()));
