@@ -15,6 +15,45 @@
 
 using namespace orange::analysis;
 
+std::vector<Type*> ResolveVisitor::GetContextParameters(Node* node) {
+	std::vector<Type*> types;
+	
+	if (isA<FunctionExpr>(node)) {
+		auto params = asA<FunctionExpr>(node)->params;
+		for (auto param : params) types.push_back(mContext->GetNodeType(param));
+	} else {
+		throw std::runtime_error("fatal: invalid node for context parameters");
+	}
+	
+	return types;
+}
+
+std::vector<Type*> ResolveVisitor::GetContextInstParams(Node* node, Node* target) {
+	std::vector<Type*> types;
+	
+	if (isA<FunctionCallExpr>(node)) {
+		auto original = GetContextParameters(target);
+		
+		auto args = asA<FunctionCallExpr>(node)->args;
+		
+		if (original.size() != args.size()) {
+			throw std::runtime_error("fatal: mismatch argument count");
+		}
+		
+		for (auto i = 0ul; i < original.size(); i++) {
+			if (IsGenericType(original[i])) {
+				types.push_back(mContext->GetNodeType(node));
+			} else {
+				types.push_back(original[i]);
+			}
+		}
+	} else {
+		throw std::runtime_error("fatal: invalid node for ctx instantiation parameters");
+	}
+	
+	return types;
+}
+
 void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
 	mContext->SetNodeType(node, mContext->GetNodeType(node->value));
 }

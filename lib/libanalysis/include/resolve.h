@@ -27,6 +27,12 @@ namespace orange { namespace analysis {
 		TypeTable* mTypeTable;
 		NodeTypeContext* mContext;
 		AnalysisMessageLog& mLog;
+		
+		/// Gets the context parameters for a specific node in this context.
+		std::vector<Type*> GetContextParameters(Node* node);
+		
+		/// Gets the context parameters that would instantiate some context.
+		std::vector<Type*> GetContextInstParams(Node* node, Node* target);
 	public:
 		NodeTypeContext* GetContext() const;
 		AnalysisMessageLog& GetLog() const;
