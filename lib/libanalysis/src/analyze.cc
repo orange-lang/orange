@@ -16,10 +16,6 @@ using namespace orange::analysis;
 
 int NodeTypeContext::NodeID() const { return mID; }
 
-bool NodeTypeContext::IsGlobalContext() const { return mID == -1; }
-
-bool NodeTypeContext::IsDefault() const { return mDefault; }
-
 std::vector<NodeTypeContext*> NodeTypeContext::GetChildrenContexts() const { return mChildren; }
 
 std::vector<orange::ast::Type*> NodeTypeContext::GetTypes() const { return mParameters; }

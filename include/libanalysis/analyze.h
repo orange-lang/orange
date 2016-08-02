@@ -34,19 +34,13 @@ namespace orange { namespace analysis {
 		/// Children contexts that rely on this node's context
 		/// The children defined here are for different nodes.
 		std::vector<NodeTypeContext*> mChildren;
-
+		
 		/// The types defined for all the nodes in this context.
 		std::map<int, orange::ast::Type*> mTypes;
 	public:
 		/// Gets the node ID this context is for.
 		int NodeID() const;
-
-		/// Gets whether this context is global.
-		bool IsGlobalContext() const;
-
-		/// Gets whether or not this context is the default context for this node.
-		bool IsDefault() const;
-
+		
 		/// Gets all children contexts.
 		std::vector<NodeTypeContext*> GetChildrenContexts() const;
 
@@ -56,7 +50,7 @@ namespace orange { namespace analysis {
 
 		/// Gets the types for this context.
 		std::vector<orange::ast::Type*> GetTypes() const;
-
+		
 		/// Gets whether this context is generic (i.e., any of the types to initialize it are of var type)
 		bool IsGeneric() const;
 
