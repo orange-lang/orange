@@ -14,7 +14,7 @@
 
 using namespace orange::analysis;
 
-int NodeTypeContext::NodeID() const { return mID; }
+orange::ast::Node* NodeTypeContext::GetNode() const { return mNode; }
 
 std::vector<NodeTypeContext*> NodeTypeContext::GetChildrenContexts() const { return mChildren; }
 
@@ -24,7 +24,7 @@ std::vector<NodeTypeContext*> NodeTypeContext::GetChildrenContexts(orange::ast::
 	std::vector<NodeTypeContext*> contexts;
 
 	for (auto ctx : mChildren) {
-		if (ctx->mID == node->id) contexts.push_back(ctx);
+		if (ctx->mNode->id == mNode->id) contexts.push_back(ctx);
 		auto nested_contexts = ctx->GetChildrenContexts(node);
 		contexts.insert(contexts.end(), nested_contexts.begin(), nested_contexts.end());
 	}
@@ -32,45 +32,9 @@ std::vector<NodeTypeContext*> NodeTypeContext::GetChildrenContexts(orange::ast::
 	return contexts;
 }
 
-bool IsTypeGeneric(orange::ast::Type* ty) {
-	using namespace orange::ast;
-
-	if (isA<BuiltinType>(ty)) {
-		return asA<BuiltinType>(ty)->kind == BuiltinTypeKind::VAR;
-	} else if (isA<AccessType>(ty)) {
-		auto _ty = asA<AccessType>(ty);
-		return IsTypeGeneric(_ty->LHS) || IsTypeGeneric(_ty->RHS);
-	} else if (isA<IdentifierType>(ty)) {
-		// TODO: this may be true, depending on the circumstances
-		return false;
-	} else if (isA<ArrayType>(ty)) {
-		return IsTypeGeneric(asA<ArrayType>(ty)->base);
-	} else if (isA<PointerType>(ty)) {
-		return IsTypeGeneric(asA<PointerType>(ty)->base);
-	} else if (isA<ReferenceType>(ty)) {
-		return IsTypeGeneric(asA<ReferenceType>(ty)->base);
-	} else if (isA<TupleType>(ty)) {
-		auto _ty = asA<TupleType>(ty);
-		for (auto innerTy : _ty->types) {
-			if (IsTypeGeneric(innerTy)) return true;
-		}
-
-		return false;
-	} else if (isA<FunctionType>(ty)) {
-		auto _ty = asA<FunctionType>(ty);
-
-		for (auto innerTy : _ty->params) {
-			if (IsTypeGeneric(innerTy)) return true;
-		}
-
-		return IsTypeGeneric(_ty->returnType);
-	} else throw std::runtime_error("Compiler bug: Unexpected type");
-}
-
-
 bool NodeTypeContext::IsGeneric() const {
 	for (auto type : mParameters) {
-		if (IsTypeGeneric(type)) return true;
+		if (IsGenericType(type)) return true;
 	}
 
 	return false;
@@ -86,41 +50,47 @@ void NodeTypeContext::SetNodeType(orange::ast::Node* node, orange::ast::Type* ty
 }
 
 
-NodeTypeContext::NodeTypeContext() : mID(-1) { }
+NodeTypeContext::NodeTypeContext(orange::ast::Node* node) : mNode(node) { }
 
-NodeTypeContext::NodeTypeContext(orange::ast::Node* node) : mID(node->id) { }
+NodeTypeContext::NodeTypeContext(orange::ast::Node* node, NodeTypeContext* parent,
+                                 std::vector<orange::ast::Type*> params) :
+mNode(node), mParameters(params), mParent(parent) { }
 
-NodeTypeContext* TypeTable::GetGlobalContext() const { return mGlobalContext; }
+NodeTypeContext* NodeTypeContext::GetParent() const { return mParent; }
+
+std::vector<NodeTypeContext*> TypeTable::GetGlobalContexts() const { return mGlobalContexts; }
 
 NodeTypeContext* TypeTable::GetDefaultContext(orange::ast::Node* node) const {
-	// TODO: Find the default context
-	// If this node has a context, get the default context for this node.
-
-	// If not, find the nearest parent of a node where a context exists.
-	// Then, with the contexts for that parent, get the default one.
+	for (auto ctx : mGlobalContexts) {
+		if (ctx->GetNode()->id == node->id && ctx->GetTypes().size() == 0) return ctx;
+	}
+	
 	return nullptr;
 }
 
-orange::ast::Type* TypeTable::GetNodeType(orange::ast::Node* node, NodeTypeContext* context) {
-	if (context == nullptr) context = GetDefaultContext(node);
-	return context->GetNodeType(node);
-}
+void TypeTable::AddGlobalContext(NodeTypeContext* ctx) { mGlobalContexts.push_back(ctx); }
 
-TypeTable::TypeTable() {
-	mGlobalContext = new NodeTypeContext();
-}
-
+TypeTable::TypeTable() { }
 
 TypeTable* TypeResolution::GenerateTypeTable() {
 	auto tt = new TypeTable();
 
 	DefaultASTSearcher searcher(mASTs);
 	
-	ResolveVisitor resolver(tt->GetGlobalContext(), mLog, searcher);
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
-
-	for (auto ast : mASTs) walker.WalkLongBlockExpr(&resolver, ast);
-
+	// Create a global context for each AST.
+	for (auto ast : mASTs) {
+		auto ctx = new NodeTypeContext(ast);
+		tt->AddGlobalContext(ctx);
+	}
+	
+	// Resolve each context.
+	for (auto ctx : tt->GetGlobalContexts()) {
+		ResolveVisitor resolver(tt, ctx, mLog, searcher);
+		DepthFirstWalker walker(TraversalOrder::POSTORDER);
+		
+		walker.WalkLongBlockExpr(&resolver, asA<LongBlockExpr>(ctx->GetNode()));
+	}
+	
 	return tt;
 }
 

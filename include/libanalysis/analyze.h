@@ -23,11 +23,12 @@ namespace orange { namespace analysis {
 	/// for instances of functions/classes if the default context is generic.
 	class NodeTypeContext {
 	private:
-		/// Node ID this context is for. -1 if global.
-		int mID;
+		orange::ast::Node* mNode;
 
 		bool mDefault = true;
 
+		NodeTypeContext* mParent = nullptr;
+		
 		/// The types that uniquely define this context
 		std::vector<orange::ast::Type*> mParameters;
 
@@ -38,8 +39,8 @@ namespace orange { namespace analysis {
 		/// The types defined for all the nodes in this context.
 		std::map<int, orange::ast::Type*> mTypes;
 	public:
-		/// Gets the node ID this context is for.
-		int NodeID() const;
+		/// Gets the node assigned to this context.
+		orange::ast::Node* GetNode() const;
 		
 		/// Gets all children contexts.
 		std::vector<NodeTypeContext*> GetChildrenContexts() const;
@@ -53,12 +54,16 @@ namespace orange { namespace analysis {
 		
 		/// Gets whether this context is generic (i.e., any of the types to initialize it are of var type)
 		bool IsGeneric() const;
+		
+		/// Gets the parent of this context, if one exists.
+		NodeTypeContext* GetParent() const;
+		
 		orange::ast::Type* GetNodeType(orange::ast::Node* node) const;
 
 		void SetNodeType(orange::ast::Node* node, orange::ast::Type* type);
 
-		NodeTypeContext();
 		NodeTypeContext(orange::ast::Node* node);
+		NodeTypeContext(orange::ast::Node* node, NodeTypeContext* parent, std::vector<orange::ast::Type*> params);
 	};
 
 	/// The type table holds a reference to the global context and provides methods to get the type for any node.
@@ -66,17 +71,16 @@ namespace orange { namespace analysis {
 	/// node throughout the type context tree.
 	class TypeTable {
 	private:
-		NodeTypeContext* mGlobalContext;
+		std::vector<NodeTypeContext*> mGlobalContexts;
 	public:
-		/// Gets the global context.
-		NodeTypeContext* GetGlobalContext() const;
-
+		/// Gets the global contexts.
+		std::vector<NodeTypeContext*> GetGlobalContexts() const;
+		
+		/// Gets the default context for a node, if one exists.
 		NodeTypeContext* GetDefaultContext(orange::ast::Node* node) const;
 		
-		/// Gets the type of a node. A context may be passed in. If no context is specified, the default
-		/// context is used.
-		orange::ast::Type* GetNodeType(orange::ast::Node* node, NodeTypeContext* context = nullptr);
-
+		void AddGlobalContext(NodeTypeContext* ctx);
+		
 		TypeTable();
 	};
 
@@ -85,6 +89,7 @@ namespace orange { namespace analysis {
 		std::vector<orange::ast::LongBlockExpr*> mASTs;
 		AnalysisMessageLog mLog;
 	public:
+		/// Creates a type table with a global context for each AST, and then fills in the types for each.
 		TypeTable* GenerateTypeTable();
 
 		const AnalysisMessageLog GetLog() const;

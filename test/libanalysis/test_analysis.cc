@@ -57,7 +57,7 @@ TEST(Analysis, BuildsTypeTable) {
 	auto tt = tr.GenerateTypeTable();
 
 	ASSERT_NE(tt, nullptr);
-	ExpectTy(new IntType, tt->GetGlobalContext()->GetNodeType(intNode));
+	ExpectTy(new IntType, tt->GetDefaultContext(ast)->GetNodeType(intNode));
 
 	delete ast;
 }
@@ -111,9 +111,9 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 	MockPredicateWalker predWalker;
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ast}), &searchWalker, &predWalker);
 	
-	auto ctx = NodeTypeContext();
+	auto ctx = NodeTypeContext(ast);
 	auto log = AnalysisMessageLog();
-	ResolveVisitor resolver(&ctx, log, searcher);
+	ResolveVisitor resolver(nullptr, &ctx, log, searcher);
 
 	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, ast);
@@ -130,9 +130,9 @@ void TestType(Node* node, Type* target) {
 	MockPredicateWalker predWalker;
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>(), &searchWalker, &predWalker);
 	
-	auto ctx = NodeTypeContext();
+	auto ctx = NodeTypeContext(node);
 	auto log = AnalysisMessageLog();
-	ResolveVisitor resolver(&ctx, log, searcher);
+	ResolveVisitor resolver(nullptr, &ctx, log, searcher);
 
 	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, node);

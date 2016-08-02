@@ -73,6 +73,6 @@ namespace orange { namespace analysis {
 		virtual void VisitNewExpr(NewExpr* node) override;
 		virtual void VisitEnumMatch(EnumMatch* node) override;
 
-		ResolveVisitor(NodeTypeContext* context, AnalysisMessageLog& log, ASTSearcher& searcher);
+		ResolveVisitor(TypeTable* tt, NodeTypeContext* context, AnalysisMessageLog& log, ASTSearcher& searcher);
 	};
 }}

@@ -70,7 +70,7 @@ llvm::Value* CompileValueForNode(Node* node, Optional<ValueCallback> cb = Option
 	auto searcher = DefaultASTSearcher(astList);
 	orange::translate::TranslateVisitor visitor(walker, module, searcher);
 	visitor.SetCurrentBlock(body);
-	visitor.SetCurrentContext(tr.GenerateTypeTable()->GetGlobalContext());
+	visitor.SetCurrentContext(tr.GenerateTypeTable()->GetDefaultContext(&ast));
 	visitor.VisitLongBlockExpr(&ast);
 
 	if (cb.hasValue()) {

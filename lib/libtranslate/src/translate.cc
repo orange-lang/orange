@@ -30,7 +30,7 @@ std::shared_ptr<llvm::Module> Translator::Translate(LongBlockExpr* ast, std::str
 	ast::NonTraversalWalker walker;
 
 	TranslateVisitor visitor(walker, module, searcher);
-	visitor.SetCurrentContext(mTypeTable->GetGlobalContext());
+	visitor.SetCurrentContext(mTypeTable->GetDefaultContext(ast));
 
 	visitor.VisitLongBlockExpr(ast);
 
@@ -54,7 +54,7 @@ std::shared_ptr<llvm::Module> Translator::TranslateMain(LongBlockExpr* ast, std:
 
 	TranslateVisitor visitor(walker, module, searcher);
 	visitor.SetCurrentBlock(body);
-	visitor.SetCurrentContext(mTypeTable->GetGlobalContext());
+	visitor.SetCurrentContext(mTypeTable->GetDefaultContext(ast));
 
 	visitor.VisitLongBlockExpr(ast);
 
