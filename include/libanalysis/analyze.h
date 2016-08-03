@@ -56,6 +56,9 @@ namespace orange { namespace analysis {
 		/// Gets whether this context is generic (i.e., any of the types to initialize it are of var type)
 		bool IsGeneric() const;
 		
+		/// Gets whether this context is the default for a node.
+		bool IsDefault() const;
+		
 		/// Gets the parent of this context, if one exists.
 		NodeTypeContext* GetParent() const;
 		
@@ -63,8 +66,8 @@ namespace orange { namespace analysis {
 
 		void SetNodeType(orange::ast::Node* node, orange::ast::Type* type);
 
-		NodeTypeContext(orange::ast::Node* node);
-		NodeTypeContext(orange::ast::Node* node, NodeTypeContext* parent, std::vector<orange::ast::Type*> params);
+		NodeTypeContext(orange::ast::Node* node, bool isDefault);
+		NodeTypeContext(orange::ast::Node* node, NodeTypeContext* parent, bool isDefault, std::vector<orange::ast::Type*> params);
 	};
 
 	/// The type table holds a reference to the global context and provides methods to get the type for any node.

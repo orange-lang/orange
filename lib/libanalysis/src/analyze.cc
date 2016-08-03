@@ -14,6 +14,8 @@
 
 using namespace orange::analysis;
 
+bool NodeTypeContext::IsDefault() const { return mDefault; }
+
 orange::ast::Node* NodeTypeContext::GetNode() const { return mNode; }
 
 std::vector<NodeTypeContext*> NodeTypeContext::GetChildrenContexts() const { return mChildren; }
@@ -50,11 +52,11 @@ void NodeTypeContext::SetNodeType(orange::ast::Node* node, orange::ast::Type* ty
 }
 
 
-NodeTypeContext::NodeTypeContext(orange::ast::Node* node) : mNode(node) { }
+NodeTypeContext::NodeTypeContext(orange::ast::Node* node, bool def) : mNode(node), mDefault(def) { }
 
-NodeTypeContext::NodeTypeContext(orange::ast::Node* node, NodeTypeContext* parent,
+NodeTypeContext::NodeTypeContext(orange::ast::Node* node, NodeTypeContext* parent, bool def,
                                  std::vector<orange::ast::Type*> params) :
-mNode(node), mParameters(params), mParent(parent) { }
+mNode(node), mParameters(params), mParent(parent), mDefault(def) { }
 
 NodeTypeContext* NodeTypeContext::GetParent() const { return mParent; }
 
@@ -62,7 +64,7 @@ std::vector<NodeTypeContext*> TypeTable::GetGlobalContexts() const { return mGlo
 
 NodeTypeContext* TypeTable::GetDefaultContext(orange::ast::Node* node) const {
 	for (auto ctx : mGlobalContexts) {
-		if (ctx->GetNode()->id == node->id && ctx->GetTypes().size() == 0) return ctx;
+		if (ctx->GetNodeType(node) && ctx->IsDefault()) return ctx;
 	}
 	
 	return nullptr;
@@ -80,7 +82,7 @@ TypeTable* TypeResolution::GenerateTypeTable() {
 	
 	// Create a global context for each AST.
 	for (auto ast : mASTs) {
-		auto ctx = new NodeTypeContext(ast);
+		auto ctx = new NodeTypeContext(ast, true);
 		tt->AddGlobalContext(ctx);
 	}
 	
