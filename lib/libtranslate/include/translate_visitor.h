@@ -15,6 +15,8 @@
 #include <libast/search.h>
 #include <libtranslate/translate.h>
 #include <libanalysis/analyze.h>
+#include <libanalysis/typetable.h>
+#include <libanalysis/context.h>
 
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/BasicBlock.h>

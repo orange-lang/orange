@@ -15,6 +15,8 @@
 
 #include <libanalysis/error.h>
 #include <libanalysis/analyze.h>
+#include <libanalysis/typetable.h>
+#include <libanalysis/context.h>
 
 namespace orange { namespace analysis {
 	using namespace orange::ast;
