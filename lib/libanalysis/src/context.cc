@@ -32,16 +32,28 @@ std::vector<orange::ast::Type*> NodeTypeContext::GetTypes() const {
 	return mParameters;
 }
 
-std::vector<NodeTypeContext*> NodeTypeContext::GetChildrenContexts(orange::ast::Node* node) const {
+std::vector<NodeTypeContext*> NodeTypeContext::GetChildrenContexts(orange::ast::Node* node, bool recursive) const {
 	std::vector<NodeTypeContext*> contexts;
 	
 	for (auto ctx : mChildren) {
-		if (ctx->mNode->id == mNode->id) contexts.push_back(ctx);
-		auto nested_contexts = ctx->GetChildrenContexts(node);
-		contexts.insert(contexts.end(), nested_contexts.begin(), nested_contexts.end());
+		if (ctx->mNode->id == node->id) contexts.push_back(ctx);
+		if (recursive) {
+			auto nested_contexts = ctx->GetChildrenContexts(node, recursive);
+			contexts.insert(contexts.end(), nested_contexts.begin(), nested_contexts.end());
+		}
 	}
 	
 	return contexts;
+}
+
+NodeTypeContext* NodeTypeContext::GetDefaultChildContext(orange::ast::Node* node, bool recursive) const {
+	auto children = GetChildrenContexts(node, recursive);
+	
+	for (auto child : children) {
+		if (child->IsDefault()) return child;
+	}
+	
+	return nullptr;
 }
 
 bool NodeTypeContext::IsGeneric() const {

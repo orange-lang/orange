@@ -45,7 +45,10 @@ namespace orange { namespace analysis {
 
 		/// Gets all contexts tied a specific node. Searches contexts for any children where this
 		/// node also has a context.
-		std::vector<NodeTypeContext*> GetChildrenContexts(orange::ast::Node* node) const;
+		std::vector<NodeTypeContext*> GetChildrenContexts(orange::ast::Node* node, bool recursive) const;
+		
+		/// Gets the default context for a node from the set of children.
+		NodeTypeContext* GetDefaultChildContext(orange::ast::Node* node, bool recursive) const;
 
 		/// Gets the types for this context.
 		std::vector<orange::ast::Type*> GetTypes() const;
