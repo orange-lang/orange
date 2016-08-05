@@ -472,12 +472,6 @@ TEST(Analysis, InvalidReturn) {
 }
 
 TEST(Analysis, FunctionDecl) {
-	// Func Decl with type
-	TestType(std::vector<Node*>({
-		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new IntType,
-			CreateNode<LongBlockExpr>()),
-	}), new FunctionType(std::vector<Type*>(), new IntType));
-
 	// Func Decl with type and multiple returns
 	TestType(std::vector<Node*>({
 		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new IntType,
@@ -511,10 +505,16 @@ TEST(Analysis, FunctionDecl) {
 		CreateNode<LongBlockExpr>(std::vector<Node*>({
 			CreateNode<ReturnStmt>(CreateNode<ReferenceIDExpr>("foo")),
 		}))),
-	}), new FunctionType(std::vector<Type*>(), new DoubleType));
+	}), new FunctionType(std::vector<Type*>({new IntType}), new IntType));
 }
 
 TEST(Analysis, InvalidFunctionDecls) {
+	// Func Decl with type but missing return
+	TestType(std::vector<Node*>({
+		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new IntType,
+			CreateNode<LongBlockExpr>()),
+	}), new BuiltinType(VAR));
+
 	// Test incompatible types
 	TestType(std::vector<Node*>({
 		CreateNode<FunctionExpr>(CreateNode<NamedIDExpr>("a"), nullptr, std::vector<VarDeclExpr*>(), new PointerType(new IntType),
