@@ -108,6 +108,10 @@ namespace orange { namespace ast {
 	DEFINE_BUILTIN(DoubleType, BuiltinTypeKind::DOUBLE);
 
 	DEFINE_BUILTIN(CharType, BuiltinTypeKind::CHAR);
+	
+	DEFINE_BUILTIN(VarType, BuiltinTypeKind::VAR);
+	DEFINE_BUILTIN(VoidType, BuiltinTypeKind::VOID);
+	
 
 	struct StringType : PointerType {
 		StringType() : PointerType(new CharType) { }
