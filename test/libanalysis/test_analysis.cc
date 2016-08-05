@@ -531,3 +531,9 @@ TEST(Analysis, InvalidFunctionDecls) {
 		}))),
 	}), new BuiltinType(VAR));
 }
+
+TEST(Analysis, ExternFunctionDecl) {
+	TestType(CreateNode<ExternFuncStmt>(CreateNode<NamedIDExpr>("a"), std::vector<VarDeclExpr*>({
+		CreateTypedVariable("foo", new IntType)
+	}), new DoubleType), new FunctionType(std::vector<Type*>({new IntType}), new DoubleType));
+}

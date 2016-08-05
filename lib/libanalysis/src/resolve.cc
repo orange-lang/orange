@@ -78,7 +78,10 @@ void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
 }
 
 void ResolveVisitor::VisitExternFuncStmt(ExternFuncStmt* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	std::vector<Type*> paramTys;
+	for (auto param : node->params) paramTys.push_back(mContext->GetNodeType(param));
+	
+	mContext->SetNodeType(node, new FunctionType(paramTys, node->retType));
 }
 
 void ResolveVisitor::VisitClassStmt(ClassStmt* node) {
