@@ -61,6 +61,10 @@ void NodeTypeContext::SetNodeType(orange::ast::Node* node, orange::ast::Type* ty
 	mTypes[node->id] = type;
 }
 
+void NodeTypeContext::AddChildContext(NodeTypeContext* ctx) {
+	mChildren.push_back(ctx);
+}
+
 NodeTypeContext::NodeTypeContext(orange::ast::Node* node, bool def) : mNode(node), mDefault(def) { }
 
 NodeTypeContext::NodeTypeContext(orange::ast::Node* node, NodeTypeContext* parent, bool def,

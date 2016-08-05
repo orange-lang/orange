@@ -62,6 +62,8 @@ namespace orange { namespace analysis {
 		orange::ast::Type* GetNodeType(orange::ast::Node* node) const;
 
 		void SetNodeType(orange::ast::Node* node, orange::ast::Type* type);
+		
+		void AddChildContext(NodeTypeContext* ctx);
 
 		NodeTypeContext(orange::ast::Node* node, bool isDefault);
 		NodeTypeContext(orange::ast::Node* node, NodeTypeContext* parent, bool isDefault, std::vector<orange::ast::Type*> params);
