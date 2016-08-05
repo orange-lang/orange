@@ -365,7 +365,74 @@ void ResolveVisitor::VisitSwitchExpr(SwitchExpr* node) {
 }
 
 void ResolveVisitor::VisitFunctionExpr(FunctionExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	if (mContext->GetNode()->id != node->id) {
+		auto existingCtx = mContext->GetDefaultChildContext(node, false);
+		
+		if (existingCtx == nullptr) {
+			// Create a context and resolve this function in that context.
+			auto ctxParams = GetContextParameters(node);
+			
+			auto newCtx = new NodeTypeContext(node, mContext, true, ctxParams);
+			mContext->AddChildContext(newCtx);
+			
+			// Resolve this node in that context.
+			ResolveVisitor subVisitor(mTypeTable, newCtx, mLog);
+			mTypeTable->GetWalker().WalkFunctionExpr(&subVisitor, node);
+		}
+		
+		return;
+	}
+	
+	// Determine return type.
+	Type* retType      = node->retType;
+	Type* highestType  = nullptr;
+	
+	auto allRetStatements = mTypeTable->GetSearcher().FindChildren<ReturnStmt>(node, false);
+	
+	// Filter out return statements who have a different parent function than our node.
+	std::vector<ReturnStmt*> retStatements;
+	std::copy_if(allRetStatements.begin(), allRetStatements.end(), std::back_inserter(retStatements),
+	[this, node] (ReturnStmt* stmt) {
+		auto parent = this->mTypeTable->GetSearcher().FindParent<FunctionExpr>(stmt);
+		return parent != nullptr && parent->id == node->id;
+	});
+	
+	if (retStatements.size() == 0) {
+		if (retType != nullptr && IsVoidType(retType) == false) {
+			LogError(node, MISSING_RETURN);
+		} else {
+			mContext->SetNodeType(node, new BuiltinType(VOID));
+		}
+		
+		return;
+	}
+	
+	highestType = mContext->GetNodeType(retStatements.front());
+	
+	// Iterate through all the retStatements. Determine highest type and ensure compatibility with retType,
+	// if it exists.
+	for (auto retStatement : retStatements) {
+		auto ty = mContext->GetNodeType(retStatement);
+		
+		if (AreTypesCompatible(highestType, ty) == false) {
+			LogError(node, INVALID_TYPE);
+			return;
+		}
+		
+		if (retType && !AreTypesCompatible(ty, retType)) {
+			LogError(node, INVALID_TYPE);
+			return;
+		}
+		
+		highestType = GetImplicitType(highestType, ty);
+	}
+	
+	retType = (retType != nullptr) ? retType : highestType;
+	
+	std::vector<Type*> paramTys;
+	for (auto param : node->params) paramTys.push_back(mContext->GetNodeType(param));
+	
+	mContext->SetNodeType(node, new FunctionType(paramTys, retType));
 }
 
 void ResolveVisitor::VisitCatchBlock(CatchBlock* node) {

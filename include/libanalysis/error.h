@@ -27,6 +27,7 @@ namespace orange { namespace analysis {
 		INVALID_TYPE,
 		REFERENCE_NOT_FOUND,
 		INCOMPATIBLE_TYPES,
+		MISSING_RETURN
 	};
 
 	struct AnalysisMessage {
