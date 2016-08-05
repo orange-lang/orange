@@ -238,21 +238,21 @@ TEST(Analysis, VarDecl) {
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ }),
 		CreateMockExpr(new IntType)
-	), new TupleType(std::vector<Type*>({ new IntType })));
+	), new IntType);
 
 	// type without value
 	TestType(CreateNode<VarDeclExpr>(
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ new IntType }),
 		nullptr
-	), new TupleType(std::vector<Type*>({ new IntType })));
+	), new IntType);
 
 	// type with value
 	TestType(CreateNode<VarDeclExpr>(
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ new IntType }),
 		CreateMockExpr(new DoubleType)
-	), new TupleType(std::vector<Type*>({ new IntType })));
+	), new IntType);
 }
 
 TEST(Analysis, InvalidVarDecl) {

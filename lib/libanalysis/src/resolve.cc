@@ -139,11 +139,9 @@ void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 	}
 
 	mContext->SetNodeType(binding, nodeType);
-
+	
 	// Finally, set the type for the variable declaration, which will be a tuple of all the bindings
-	mContext->SetNodeType(node, new TupleType(std::vector<Type*>({
-		mContext->GetNodeType(binding)
-	})));
+	mContext->SetNodeType(node, mContext->GetNodeType(binding));
 }
 
 
