@@ -127,7 +127,7 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 	NodeTypeContext* checkContext = &ctx;
 	
 	if (ShouldHaveContext(nodes.back())) {
-		checkContext = tt.GetDefaultContext(nodes.back());
+		checkContext = ctx.GetDefaultChildContext(nodes.back(), false);
 	}
 	
 	ASSERT_NE(checkContext, nullptr);
@@ -155,7 +155,7 @@ void TestType(Node* node, Type* target) {
 	
 	NodeTypeContext* checkContext = &ctx;
 	if (ShouldHaveContext(node)) {
-		checkContext = tt.GetDefaultContext(node);
+		checkContext = ctx.GetDefaultChildContext(node, false);
 	}
 
 	auto ty = checkContext->GetNodeType(node);
