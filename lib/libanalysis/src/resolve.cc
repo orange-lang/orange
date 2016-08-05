@@ -282,6 +282,8 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 		// By this point, we've already determined that the types are compatible,
 		// so we don't need to do any extra error checking.
 		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::BOOL));
+	} else if (IsLogicalBinOp(node->op) && (!IsBooleanType(tyLHS) || !IsBooleanType(tyRHS))) {
+		LogError(node, INVALID_TYPE);
 	}
 }
 

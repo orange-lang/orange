@@ -366,6 +366,19 @@ TEST(Analysis, CompareBinOps) {
 	}, new BoolType);
 }
 
+TEST(Analysis, LogicalBinOps) {
+	TestType(CreateNode<BinOpExpr>(CreateMockExpr(new BoolType), BinOp::AND, CreateMockExpr(new BoolType)),
+		new BoolType);
+	
+	TestType(CreateNode<BinOpExpr>(CreateMockExpr(new BoolType), BinOp::OR, CreateMockExpr(new BoolType)),
+		new BoolType);
+}
+
+TEST(Analysis, IllegalLogicalBinOps) {
+	TestType(CreateNode<BinOpExpr>(CreateMockExpr(new IntType), BinOp::AND, CreateMockExpr(new IntType)), new VarType);
+	TestType(CreateNode<BinOpExpr>(CreateMockExpr(new IntType), BinOp::OR, CreateMockExpr(new IntType)), new VarType);
+}
+
 TEST(Analysis, YieldStmt) {
 	TestType(
 		CreateNode<YieldStmt>(CreateMockExpr(new DoubleType)),
