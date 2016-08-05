@@ -62,6 +62,11 @@ void ResolveVisitor::LogError(Node* node, AnalysisError err) {
 }
 
 void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
+	if (IsVoidType(mContext->GetNodeType(node->value))) {
+		LogError(node, INVALID_TYPE);
+		return;
+	}
+	
 	mContext->SetNodeType(node, mContext->GetNodeType(node->value));
 }
 

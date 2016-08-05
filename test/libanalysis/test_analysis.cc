@@ -400,6 +400,10 @@ TEST(Analysis, YieldInBlock) {
 	})), new DoubleType);
 }
 
+TEST(Analysis, InvalidYield) {
+	TestType(CreateNode<YieldStmt>(CreateNode<MockExpr>(new VoidType)), new VarType);
+}
+
 TEST(Analysis, ShortBlock) {
 	// With expr
 	TestType(CreateNode<ShortBlockExpr>(
