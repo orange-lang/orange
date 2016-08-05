@@ -113,16 +113,19 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 	MockPredicateWalker predWalker;
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ast}), &searchWalker, &predWalker);
 	
+	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
+	
 	auto ctx = NodeTypeContext(ast, true);
 	auto log = AnalysisMessageLog();
-	auto tt = TypeTable(searcher);
+	auto tt = TypeTable(searcher, walker);
+	
 	tt.AddGlobalContext(&ctx);
 	ResolveVisitor resolver(&tt, &ctx, log);
-
-	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
+	
 	walker.WalkNode(&resolver, ast);
 	
 	NodeTypeContext* checkContext = &ctx;
+	
 	if (ShouldHaveContext(nodes.back())) {
 		checkContext = tt.GetDefaultContext(nodes.back());
 	}
@@ -140,14 +143,14 @@ void TestType(Node* node, Type* target) {
 	MockDepthFirstWalker searchWalker(TraversalOrder::PREORDER);
 	MockPredicateWalker predWalker;
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>(), &searchWalker, &predWalker);
+	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	
 	auto ctx = NodeTypeContext(node, true);
 	auto log = AnalysisMessageLog();
-	auto tt = TypeTable(searcher);
+	auto tt = TypeTable(searcher, walker);
 	tt.AddGlobalContext(&ctx);
 	ResolveVisitor resolver(&tt, &ctx, log);
 
-	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	walker.WalkNode(&resolver, node);
 	
 	NodeTypeContext* checkContext = &ctx;

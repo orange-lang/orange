@@ -22,8 +22,11 @@ namespace orange { namespace analysis {
 	private:
 		std::vector<NodeTypeContext*> mGlobalContexts;
 		orange::ast::ASTSearcher& mSearcher;
+		orange::ast::Walker& mWalker;
 	public:
 		ast::ASTSearcher& GetSearcher() const;
+		
+		orange::ast::Walker& GetWalker() const;
 		
 		/// Gets the global contexts.
 		std::vector<NodeTypeContext*> GetGlobalContexts() const;
@@ -33,6 +36,6 @@ namespace orange { namespace analysis {
 		
 		void AddGlobalContext(NodeTypeContext* ctx);
 		
-		TypeTable(orange::ast::ASTSearcher& searcher);
+		TypeTable(orange::ast::ASTSearcher& searcher, orange::ast::Walker& walker);
 	};
 }}

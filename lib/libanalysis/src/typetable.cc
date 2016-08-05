@@ -11,6 +11,7 @@
 
 #include "resolve.h"
 
+using namespace orange::ast;
 using namespace orange::analysis;
 
 std::vector<NodeTypeContext*> TypeTable::GetGlobalContexts() const {
@@ -19,6 +20,10 @@ std::vector<NodeTypeContext*> TypeTable::GetGlobalContexts() const {
 
 ASTSearcher& TypeTable::GetSearcher() const {
 	return mSearcher;
+}
+
+orange::ast::Walker& TypeTable::GetWalker() const {
+	return mWalker;
 }
 
 NodeTypeContext* TypeTable::GetDefaultContext(orange::ast::Node* node) const {
@@ -33,5 +38,5 @@ void TypeTable::AddGlobalContext(NodeTypeContext* ctx) {
 	mGlobalContexts.push_back(ctx);
 }
 
-TypeTable::TypeTable(orange::ast::ASTSearcher& searcher) : mSearcher(searcher) { }
+TypeTable::TypeTable(ASTSearcher& searcher, Walker& walker) : mSearcher(searcher), mWalker(walker) { }
 
