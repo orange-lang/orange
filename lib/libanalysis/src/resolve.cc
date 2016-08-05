@@ -357,7 +357,12 @@ void ResolveVisitor::VisitMemberAccessExpr(MemberAccessExpr* node) {
 }
 
 void ResolveVisitor::VisitConditionalBlock(ConditionalBlock* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	if (node->condition && !IsBooleanType(mContext->GetNodeType(node->condition))) {
+		LogError(node, INVALID_TYPE);
+		return;
+	}
+
+	mContext->SetNodeType(node, mContext->GetNodeType(node->block));
 }
 
 void ResolveVisitor::VisitIfExpr(IfExpr* node) {

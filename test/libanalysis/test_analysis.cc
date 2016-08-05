@@ -564,6 +564,20 @@ TEST(Analysis, InvalidCastExpr) {
 	TestType(CreateNode<CastExpr>(new IntType, CreateMockExpr(new BuiltinType(VOID))), new BuiltinType(VAR));
 }
 
+TEST(Analysis, ConditionalBlock) {
+	TestType(CreateNode<ConditionalBlock>(
+		CreateNode<MockExpr>(new BoolType),
+		CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+	), new IntType);
+}
+
+TEST(Analysis, InvalidConditionalBlock) {
+	TestType(CreateNode<ConditionalBlock>(
+		CreateNode<MockExpr>(new IntType),
+		CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+	), new VarType);
+}
+
 TEST(Analysis, IfExpr) {
 	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
 		CreateNode<ConditionalBlock>(
