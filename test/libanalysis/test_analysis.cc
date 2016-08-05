@@ -653,14 +653,14 @@ TEST(Analysis, InvalidIfExprs) {
 			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new DoubleType))
 		),
 	})), new VarType);
-	
+
 	// Condition-less block first
 	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
 		CreateNode<ConditionalBlock>(
 			nullptr, CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
 		),
 	})), new VarType);
-	
+
 	// Value in one condition block but not others
 	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
 		CreateNode<ConditionalBlock>(
@@ -672,7 +672,7 @@ TEST(Analysis, InvalidIfExprs) {
 			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new DoubleType))
 		),
 	})), new VarType);
-	
+
 	// Incompatible value in one condition block
 	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
 		CreateNode<ConditionalBlock>(

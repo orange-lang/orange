@@ -366,7 +366,38 @@ void ResolveVisitor::VisitConditionalBlock(ConditionalBlock* node) {
 }
 
 void ResolveVisitor::VisitIfExpr(IfExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
+	Type* highestType = mContext->GetNodeType(node->blocks.front());
+	
+	if (node->blocks.front()->condition == nullptr) {
+		LogError(node, INVALID_PRECEDING_ELSE);
+		return;
+	}
+	
+	bool sawElse = false;
+	
+	for (auto ifExpr : node->blocks) {
+		if (sawElse) LogError(node, ELIF_AFTER_ELSE);
+		
+		auto ifType = mContext->GetNodeType(ifExpr->block);
+		
+		if ((highestType == nullptr || ifType == nullptr) && (highestType != nullptr || ifType != nullptr)) {
+			LogError(node, MISSING_YIELD);
+			return;
+		}
+		
+		if (!AreTypesCompatible(highestType, ifType)) {
+			LogError(node, INVALID_TYPE);
+		}
+		
+		highestType = GetImplicitType(highestType, ifType);
+		
+		sawElse = sawElse || (ifExpr->condition == nullptr);
+	}
+	
+	if (highestType == nullptr) highestType = new VoidType();
+	
+	if (mContext->GetNodeType(node) == nullptr)
+		mContext->SetNodeType(node, highestType);
 }
 
 void ResolveVisitor::VisitTernaryExpr(TernaryExpr* node) {
