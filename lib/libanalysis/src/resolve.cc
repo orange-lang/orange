@@ -6,6 +6,8 @@
 // may not be copied, modified, or distributed except according to those terms.
 //
 
+#include <algorithm>
+
 #include <libast/compare.h>
 #include <libast/typecheck.h>
 #include <libast/binop.h>

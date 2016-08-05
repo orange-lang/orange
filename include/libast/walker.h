@@ -9,6 +9,7 @@
 #pragma once
 
 #include <vector>
+#include <stdexcept>
 
 #include "ast.h"
 #include "typecheck.h"
