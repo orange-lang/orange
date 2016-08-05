@@ -35,6 +35,9 @@ namespace orange { namespace analysis {
 		
 		/// Gets the context parameters that would instantiate some context.
 		std::vector<Type*> GetContextInstParams(Node* node, Node* target);
+		
+		/// Logs an error and sets the type of node to var.
+		void LogError(Node* node, AnalysisError err);
 	public:
 		NodeTypeContext* GetContext() const;
 		AnalysisMessageLog& GetLog() const;

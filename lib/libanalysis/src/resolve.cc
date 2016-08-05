@@ -54,6 +54,11 @@ std::vector<Type*> ResolveVisitor::GetContextInstParams(Node* node, Node* target
 	return types;
 }
 
+void ResolveVisitor::LogError(Node* node, AnalysisError err) {
+	mLog.LogMessage(ERROR, err, node, mContext);
+	mContext->SetNodeType(node, new BuiltinType(VAR));
+}
+
 void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
 	mContext->SetNodeType(node, mContext->GetNodeType(node->value));
 }
