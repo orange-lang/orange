@@ -449,6 +449,11 @@ void ResolveVisitor::VisitTryExpr(TryExpr* node) {
 }
 
 void ResolveVisitor::VisitCastExpr(CastExpr* node) {
+	if (IsVoidType(mContext->GetNodeType(node->expr)) || IsVoidType(node->targetType)) {
+		LogError(node, INVALID_TYPE);
+		return;
+	}
+	
 	mContext->SetNodeType(node, node->targetType);
 }
 

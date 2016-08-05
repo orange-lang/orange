@@ -537,3 +537,12 @@ TEST(Analysis, ExternFunctionDecl) {
 		CreateTypedVariable("foo", new IntType)
 	}), new DoubleType), new FunctionType(std::vector<Type*>({new IntType}), new DoubleType));
 }
+
+TEST(Analysis, CastExpr) {
+	TestType(CreateNode<CastExpr>(new IntType, CreateMockExpr(new DoubleType)), new IntType);
+}
+
+TEST(Analysis, InvalidCastExpr) {
+	TestType(CreateNode<CastExpr>(new BuiltinType(VOID), CreateMockExpr(new DoubleType)), new BuiltinType(VAR));
+	TestType(CreateNode<CastExpr>(new IntType, CreateMockExpr(new BuiltinType(VOID))), new BuiltinType(VAR));
+}
