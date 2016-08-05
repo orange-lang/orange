@@ -54,7 +54,7 @@ namespace orange { namespace ast {
 				lookat = GetParent(lookat);
 			}
 
-			return lookat;
+			return isA<T>(lookat) ? asA<T>(lookat) : nullptr;
 		}
 		
 		/// Finds all children of a given type.
