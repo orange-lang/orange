@@ -223,6 +223,11 @@ TEST(Analysis, BinOps) {
 		new FloatType);
 }
 
+TEST(Analysis, InvalidBinOps) {
+	TestType(CreateNode<BinOpExpr>(CreateMockExpr(new FloatType), BinOp::ADD, CreateMockExpr(new BuiltinType(VOID))),
+		new BuiltinType(VAR));
+}
+
 // The type of a variable declaration is a tuple of a type for each binding
 TEST(Analysis, VarDecl) {
 	// typeless with value

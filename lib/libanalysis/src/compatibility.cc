@@ -32,6 +32,13 @@ static std::map<BuiltinTypeKind, int> BuiltinTypePrecedence = {
 
 bool orange::analysis::AreTypesCompatible(Type* a, Type* b) {
 	if (!isA<BuiltinType>(a) || !isA<BuiltinType>(b)) return false;
+	
+	bool isVoidA = IsVoidType(a);
+	bool isVoidB = IsVoidType(b);
+	
+	// If one of them are voids, they both have to be voids to be compatible.
+	if (isVoidA || isVoidB) return isVoidA && isVoidB;
+	
 	return true;
 }
 
