@@ -178,7 +178,7 @@ void ResolveVisitor::VisitThisID(ThisID* node) {
 }
 
 void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
-	auto original = mTypeTable->GetSearcher().FindNode(node, node, true);
+	auto original = mTypeTable->GetSearcher()->FindNode(node, node, true);
 
 	if (original == nullptr) {
 		mLog.LogMessage(ERROR, REFERENCE_NOT_FOUND, node, mContext);
@@ -216,7 +216,7 @@ void ResolveVisitor::VisitAccessIDExpr(AccessIDExpr* node) {
 
 void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
 	// The type of a long block is inherited from all yield statements of direct children.
-	auto yieldStatements = mTypeTable->GetSearcher().FindChildren<YieldStmt>(node, true);
+	auto yieldStatements = mTypeTable->GetSearcher()->FindChildren<YieldStmt>(node, true);
 	
 	if (yieldStatements.size() == 0) {
 		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::VOID));
@@ -377,7 +377,7 @@ void ResolveVisitor::VisitFunctionExpr(FunctionExpr* node) {
 			
 			// Resolve this node in that context.
 			ResolveVisitor subVisitor(mTypeTable, newCtx, mLog);
-			mTypeTable->GetWalker().WalkFunctionExpr(&subVisitor, node);
+			mTypeTable->GetWalker()->WalkFunctionExpr(&subVisitor, node);
 		}
 		
 		return;
@@ -387,13 +387,13 @@ void ResolveVisitor::VisitFunctionExpr(FunctionExpr* node) {
 	Type* retType      = node->retType;
 	Type* highestType  = nullptr;
 	
-	auto allRetStatements = mTypeTable->GetSearcher().FindChildren<ReturnStmt>(node, false);
+	auto allRetStatements = mTypeTable->GetSearcher()->FindChildren<ReturnStmt>(node, false);
 	
 	// Filter out return statements who have a different parent function than our node.
 	std::vector<ReturnStmt*> retStatements;
 	std::copy_if(allRetStatements.begin(), allRetStatements.end(), std::back_inserter(retStatements),
 	[this, node] (ReturnStmt* stmt) {
-		auto parent = this->mTypeTable->GetSearcher().FindParent<FunctionExpr>(stmt);
+		auto parent = this->mTypeTable->GetSearcher()->FindParent<FunctionExpr>(stmt);
 		return parent != nullptr && parent->id == node->id;
 	});
 	

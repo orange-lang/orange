@@ -117,7 +117,7 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 	
 	auto ctx = NodeTypeContext(ast, true);
 	auto log = AnalysisMessageLog();
-	auto tt = TypeTable(searcher, walker);
+	auto tt = TypeTable(&searcher, &walker);
 	
 	tt.AddGlobalContext(&ctx);
 	ResolveVisitor resolver(&tt, &ctx, log);
@@ -147,7 +147,7 @@ void TestType(Node* node, Type* target) {
 	
 	auto ctx = NodeTypeContext(node, true);
 	auto log = AnalysisMessageLog();
-	auto tt = TypeTable(searcher, walker);
+	auto tt = TypeTable(&searcher, &walker);
 	tt.AddGlobalContext(&ctx);
 	ResolveVisitor resolver(&tt, &ctx, log);
 

@@ -18,11 +18,11 @@ std::vector<NodeTypeContext*> TypeTable::GetGlobalContexts() const {
 	return mGlobalContexts;
 }
 
-ASTSearcher& TypeTable::GetSearcher() const {
+ASTSearcher* TypeTable::GetSearcher() const {
 	return mSearcher;
 }
 
-orange::ast::Walker& TypeTable::GetWalker() const {
+orange::ast::Walker* TypeTable::GetWalker() const {
 	return mWalker;
 }
 
@@ -38,5 +38,5 @@ void TypeTable::AddGlobalContext(NodeTypeContext* ctx) {
 	mGlobalContexts.push_back(ctx);
 }
 
-TypeTable::TypeTable(ASTSearcher& searcher, Walker& walker) : mSearcher(searcher), mWalker(walker) { }
+TypeTable::TypeTable(ASTSearcher* searcher, Walker* walker) : mSearcher(searcher), mWalker(walker) { }
 

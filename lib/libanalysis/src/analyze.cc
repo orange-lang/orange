@@ -17,9 +17,8 @@
 using namespace orange::analysis;
 
 TypeTable* TypeResolution::GenerateTypeTable() {
-	// TODO: there's a use-after-free bug here.
-	DefaultASTSearcher searcher(mASTs);
-	DepthFirstWalker walker(TraversalOrder::POSTORDER);
+	auto searcher = new DefaultASTSearcher(mASTs);
+	auto walker = new DepthFirstWalker(TraversalOrder::POSTORDER);
 	auto tt = new TypeTable(searcher, walker);
 	
 	// Create a global context for each AST.
@@ -32,7 +31,7 @@ TypeTable* TypeResolution::GenerateTypeTable() {
 	for (auto ctx : tt->GetGlobalContexts()) {
 		ResolveVisitor resolver(tt, ctx, mLog);
 		
-		walker.WalkLongBlockExpr(&resolver, asA<LongBlockExpr>(ctx->GetNode()));
+		walker->WalkLongBlockExpr(&resolver, asA<LongBlockExpr>(ctx->GetNode()));
 	}
 	
 	return tt;
