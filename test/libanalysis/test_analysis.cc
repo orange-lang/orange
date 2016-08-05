@@ -563,3 +563,111 @@ TEST(Analysis, InvalidCastExpr) {
 	TestType(CreateNode<CastExpr>(new BuiltinType(VOID), CreateMockExpr(new DoubleType)), new BuiltinType(VAR));
 	TestType(CreateNode<CastExpr>(new IntType, CreateMockExpr(new BuiltinType(VOID))), new BuiltinType(VAR));
 }
+
+TEST(Analysis, IfExpr) {
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<LongBlockExpr>()
+		)
+	})), new VoidType);
+	
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		)
+	})), new IntType);
+	
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new DoubleType))
+		),
+	})), new DoubleType);
+	
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new DoubleType))
+		),
+		CreateNode<ConditionalBlock>(
+			nullptr,
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+	})), new DoubleType);
+}
+
+TEST(Analysis, InvalidIfExprs) {
+	// More than one condition-less block
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new DoubleType))
+		),
+		CreateNode<ConditionalBlock>(
+			nullptr, CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+	    CreateNode<ConditionalBlock>(
+			nullptr, CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+	})), new VarType);
+	
+	// Condition block after a condition-less block.
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+		CreateNode<ConditionalBlock>(
+			nullptr, CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new DoubleType))
+		),
+	})), new VarType);
+	
+	// Condition-less block first
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			nullptr, CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+	})), new VarType);
+	
+	// Value in one condition block but not others
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<LongBlockExpr>()
+		),
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new DoubleType))
+		),
+	})), new VarType);
+	
+	// Incompatible value in one condition block
+	TestType(CreateNode<IfExpr>(std::vector<ConditionalBlock*>({
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new IntType))
+		),
+		CreateNode<ConditionalBlock>(
+			CreateNode<MockExpr>(new BoolType),
+			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new VoidType))
+		),
+	})), new VarType);
+}
