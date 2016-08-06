@@ -121,5 +121,14 @@ bool IsGenericType(orange::ast::Type* type) {
 bool IsLValue(orange::ast::Node* node, orange::ast::Type* nodeType) {
 	// TODO: this isn't complete.
 	if (isA<Identifier>(node)) return true;
+	
+	if (isA<TupleExpr>(node)) {
+		for (auto element : asA<TupleExpr>(node)->values) {
+			if (!IsLValue(element, nodeType)) return false;
+		}
+		
+		return true;
+	}
+	
 	return false;
 }

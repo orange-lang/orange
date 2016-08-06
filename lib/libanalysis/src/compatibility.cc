@@ -31,6 +31,20 @@ static std::map<BuiltinTypeKind, int> BuiltinTypePrecedence = {
 };
 
 bool orange::analysis::AreTypesCompatible(Type* a, Type* b) {
+	if (isA<TupleType>(a) && isA<TupleType>(b)) {
+		auto tupleA = asA<TupleType>(a);
+		auto tupleB = asA<TupleType>(b);
+		
+		if (tupleA->types.size() != tupleB->types.size()) return false;
+		
+		for (unsigned long i = 0; i < tupleA->types.size(); i++) {
+			if (!AreTypesCompatible(tupleA->types[i], tupleB->types[i])) return false;
+		}
+		
+		return true;
+	}
+	
+	
 	if (!isA<BuiltinType>(a) || !isA<BuiltinType>(b)) return false;
 	
 	bool isVoidA = IsVoidType(a);
@@ -51,7 +65,20 @@ int GetTypePrecedence(Type* a) {
 
 Type* orange::analysis::GetImplicitType(Type* a, Type* b) {
 	if (AreTypesCompatible(a, b) == false) return nullptr;
-
+	
+	if (isA<TupleType>(a) && isA<TupleType>(b)) {
+		auto tupleA = asA<TupleType>(a);
+		auto tupleB = asA<TupleType>(b);
+		
+		std::vector<Type*> highestTypes;
+		
+		for (unsigned long i = 0; i < tupleA->types.size(); i++) {
+			highestTypes.push_back(GetImplicitType(tupleA->types[i], tupleB->types[i]));
+		}
+		
+		return new TupleType(highestTypes);
+	}
+	
 	auto aPrec = GetTypePrecedence(a);
 	auto bPrec = GetTypePrecedence(b);
 

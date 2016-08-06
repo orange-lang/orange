@@ -266,7 +266,7 @@ TEST(Analysis, InvalidVarDecl) {
 			)}),
 			std::vector<Type*> ({ }),
 			CreateMockExpr(new IntType)
-		), nullptr);
+		), new VarType);
 	}, AnalysisMessage);
 	
 	// typeless without value
@@ -274,32 +274,21 @@ TEST(Analysis, InvalidVarDecl) {
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ }),
 		nullptr
-	), nullptr);
+	), new VarType);
 
 	// void type
 	TestType(CreateNode<VarDeclExpr>(
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
 		nullptr
-	), nullptr);
+	), new VarType);
 
 	// void value
 	TestType(CreateNode<VarDeclExpr>(
 		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
 		std::vector<Type*> ({ new BuiltinType(BuiltinTypeKind::VOID) }),
 		CreateMockExpr(new BuiltinType(VOID))
-	), nullptr);
-}
-
-TEST(Analysis, VarDeclPair) {
-	// TODO: remove expect throw when this feature is implemented
-	EXPECT_THROW({
-		TestType(CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b") }),
-			std::vector<Type*> ({ }),
-			CreateMockExpr(new TupleType(std::vector<Type*>({new IntType, new DoubleType})))
-		), new TupleType(std::vector<Type*>({ new IntType, new DoubleType })));
-	}, AnalysisMessage);
+	), new VarType);
 }
 
 TEST(Analysis, VarReference) {
@@ -344,6 +333,16 @@ TEST(Analysis, AssignBinOps) {
 		    CreateMockExpr(new IntType)
 	    ),
 	}, new IntType);
+}
+
+TEST(Analysis, TempAssign) {
+	TestType({
+	    CreateNode<BinOpExpr>(
+		    CreateNode<TempIDExpr>(),
+		    BinOp::ASSIGN,
+		    CreateMockExpr(new IntType)
+	    ),
+	}, new VarType);
 }
 
 TEST(Analysis, CompareBinOps) {
@@ -417,7 +416,6 @@ TEST(Analysis, ShortBlock) {
 		CreateNode<ExprStmt>(CreateMockExpr(new DoubleType))
 	), new BuiltinType(VOID));
 }
-
 
 TEST(Analysis, UnaryOps) {
 	// INCREMENT, DECREMENT, MINUS, NOT, TILDE, TIMES, REFERENCE
@@ -686,4 +684,61 @@ TEST(Analysis, InvalidIfExprs) {
 			CreateNode<ShortBlockExpr>(CreateNode<MockExpr>(new VoidType))
 		),
 	})), new VarType);
+}
+
+TEST(Analysis, VarDeclPair) {
+	TestType(CreateNode<VarDeclExpr>(
+		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a"), CreateNode<NamedIDExpr>("b") }),
+		std::vector<Type*> ({ }),
+		CreateMockExpr(new TupleType(std::vector<Type*>({new IntType, new DoubleType})))
+	), new TupleType(std::vector<Type*>({ new IntType, new DoubleType })));
+}
+
+TEST(Analysis, Tuples) {
+	// Single tuple
+	TestType(CreateNode<TupleExpr>(std::vector<Expression*>({
+		CreateNode<MockExpr>(new IntType)
+	})), new TupleType(std::vector<Type*>({ new IntType })));
+	
+	// Tuple with multiple elements
+	TestType(CreateNode<TupleExpr>(std::vector<Expression*>({
+		CreateNode<MockExpr>(new IntType),
+		CreateNode<MockExpr>(new DoubleType),
+	})), new TupleType(std::vector<Type*>({ new IntType, new DoubleType })));
+}
+
+TEST(Analysis, TupleDecoupling) {
+	// (a, b) = (3, 5)
+	TestType({
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNamedVariable("b", CreateMockExpr(new DoubleType)),
+		
+	    CreateNode<BinOpExpr>(
+		    CreateNode<TupleExpr>(std::vector<Expression*>({
+			    CreateNode<ReferenceIDExpr>("a"),
+			    CreateNode<ReferenceIDExpr>("b"),
+		    })),
+		    BinOp::TIMES_ASSIGN,
+		    CreateNode<MockExpr>(new TupleType(std::vector<Type*>({ new IntType, new IntType })))
+	    ),
+	}, new TupleType(std::vector<Type*>({ new IntType, new DoubleType })));
+	
+	// (a, _) = (3, 5)
+	TestType({
+		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		
+	    CreateNode<BinOpExpr>(
+		    CreateNode<TupleExpr>(std::vector<Expression*>({
+			    CreateNode<ReferenceIDExpr>("a"),
+			    CreateNode<TempIDExpr>()
+		    })),
+		    BinOp::TIMES_ASSIGN,
+		    CreateNode<MockExpr>(new TupleType(std::vector<Type*>({ new IntType, new IntType })))
+	    ),
+	}, new TupleType(std::vector<Type*>({ new IntType, new VarType })));
+}
+
+TEST(Analysis, InvalidTuples) {
+	// Empty tuple
+	// Tuple with void element
 }
