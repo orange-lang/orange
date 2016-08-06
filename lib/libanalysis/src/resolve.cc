@@ -61,6 +61,23 @@ void ResolveVisitor::LogError(Node* node, AnalysisError err) {
 	mContext->SetNodeType(node, new BuiltinType(VAR));
 }
 
+bool ResolveVisitor::ExpectCompatible(std::vector<Type*> params, Type* expected) {
+	for (auto param : params) {
+		if (!AreTypesCompatible(param, expected)) return false;
+	}
+	
+	return true;
+}
+
+Type* ResolveVisitor::GetHighestType(std::vector<Type*> params){
+	if (params.size() == 0) return nullptr;
+	
+	auto highestType = params.front();
+	for (auto ty : params) highestType = GetImplicitType(ty, highestType);
+	
+	return highestType;
+}
+
 void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
 	if (IsVoidType(mContext->GetNodeType(node->value))) {
 		LogError(node, INVALID_TYPE);
@@ -433,53 +450,35 @@ void ResolveVisitor::VisitFunctionExpr(FunctionExpr* node) {
 	
 	// Determine return type.
 	Type* retType      = node->retType;
-	Type* highestType  = nullptr;
 	
-	auto allRetStatements = mTypeTable->GetSearcher()->FindChildren<ReturnStmt>(node, false);
-	
-	// Filter out return statements who have a different parent function than our node.
-	std::vector<ReturnStmt*> retStatements;
-	std::copy_if(allRetStatements.begin(), allRetStatements.end(), std::back_inserter(retStatements),
-	[this, node] (ReturnStmt* stmt) {
-		auto parent = this->mTypeTable->GetSearcher()->FindParent<FunctionExpr>(stmt);
-		return parent != nullptr && parent->id == node->id;
-	});
+	auto retStatements = mTypeTable->GetSearcher()->FindFunctionStatements<ReturnStmt>(node);
 	
 	if (retStatements.size() == 0) {
 		if (retType != nullptr && IsVoidType(retType) == false) {
 			LogError(node, MISSING_RETURN);
 		} else {
-			mContext->SetNodeType(node, new BuiltinType(VOID));
+			mContext->SetNodeType(node, new FunctionType(std::vector<Type*>(), new VoidType));
 		}
 		
 		return;
 	}
 	
-	highestType = mContext->GetNodeType(retStatements.front());
+	bool typeError = false;
 	
-	// Iterate through all the retStatements. Determine highest type and ensure compatibility with retType,
-	// if it exists.
-	for (auto retStatement : retStatements) {
-		auto ty = mContext->GetNodeType(retStatement);
-		
-		if (AreTypesCompatible(highestType, ty) == false) {
-			LogError(node, INVALID_TYPE);
-			return;
-		}
-		
-		if (retType && !AreTypesCompatible(ty, retType)) {
-			LogError(node, INVALID_TYPE);
-			return;
-		}
-		
-		highestType = GetImplicitType(highestType, ty);
+	if (retType != nullptr) {
+		typeError = !ExpectCompatible(GetTypes(retStatements), retType);
+	} else {
+		retType = GetHighestType(GetTypes(retStatements));
 	}
 	
-	retType = (retType != nullptr) ? retType : highestType;
+	typeError = typeError || (retType == nullptr);
 	
-	std::vector<Type*> paramTys;
-	for (auto param : node->params) paramTys.push_back(mContext->GetNodeType(param));
+	if (typeError) {
+		LogError(node, INVALID_TYPE);
+		return;
+	}
 	
+	auto paramTys = GetTypes(node->params);
 	mContext->SetNodeType(node, new FunctionType(paramTys, retType));
 }
 

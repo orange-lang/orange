@@ -38,6 +38,18 @@ namespace orange { namespace analysis {
 		
 		/// Logs an error and sets the type of node to var.
 		void LogError(Node* node, AnalysisError err);
+		
+		template <typename T>
+		std::vector<Type*> GetTypes(std::vector<T*> params) {
+			std::vector<Type*> ret;
+			for (auto param : params) {
+				ret.push_back(mContext->GetNodeType(param));
+			}
+			return ret;
+		}
+		
+		bool ExpectCompatible(std::vector<Type*> params, Type* expected);
+		Type* GetHighestType(std::vector<Type*> params);
 	public:
 		NodeTypeContext* GetContext() const;
 		AnalysisMessageLog& GetLog() const;
