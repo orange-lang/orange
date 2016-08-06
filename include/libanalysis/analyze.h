@@ -35,5 +35,5 @@ namespace orange { namespace analysis {
 	};
 
 	/// Validates that an AST is well-formed and isn't missing any required components
-	bool ValidateAST(orange::ast::LongBlockExpr* AST);
+	bool ValidateAST(orange::ast::LongBlockExpr* AST, orange::ast::Walker* walker);
 }}
