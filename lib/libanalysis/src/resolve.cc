@@ -167,7 +167,8 @@ void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 			LogError(binding, ERROR_UNIMPLEMENTED);
 		}
 
-		mContext->SetNodeType(binding, bindingType);
+		if (mContext->GetNodeType(binding) == nullptr)
+			mContext->SetNodeType(binding, bindingType);
 	}
 	
 	Type* varDeclType = mContext->GetNodeType(node->bindings.front());
