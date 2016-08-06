@@ -29,7 +29,6 @@ namespace orange { namespace ast {
 		
 		virtual void WalkExpr(T* helper, Expression* node) {
 			if      (isA<VarDeclExpr>(node))      WalkVarDeclExpr(helper, asA<VarDeclExpr>(node));
-			else if (isA<EnumValue>(node))        WalkEnumValue(helper, asA<EnumValue>(node));
 			else if (isA<ConditionalBlock>(node)) WalkConditionalBlock(helper, asA<ConditionalBlock>(node));
 			else if (isA<BlockExpr>(node))        WalkBlockExpr(helper, asA<BlockExpr>(node));
 			else if (isA<Value>(node))            WalkValue(helper, asA<Value>(node));
@@ -101,7 +100,6 @@ namespace orange { namespace ast {
 		virtual void WalkContinueStmt(T* helper, ContinueStmt* node) = 0;
 		virtual void WalkReturnStmt(T* helper, ReturnStmt* node) = 0;
 		virtual void WalkExternFuncStmt(T* helper, ExternFuncStmt* node) = 0;
-		virtual void WalkEnumValue(T* helper, EnumValue* node) = 0;
 		virtual void WalkEnumStmt(T* helper, EnumStmt* node) = 0;
 		virtual void WalkClassStmt(T* helper, ClassStmt* node) = 0;
 		virtual void WalkInterfaceStmt(T* helper, InterfaceStmt* node) = 0;
@@ -154,7 +152,6 @@ namespace orange { namespace ast {
 		virtual void WalkContinueStmt(Visitor* visitor, ContinueStmt* node) override;
 		virtual void WalkReturnStmt(Visitor* visitor, ReturnStmt* node) override;
 		virtual void WalkExternFuncStmt(Visitor* visitor, ExternFuncStmt* node) override;
-		virtual void WalkEnumValue(Visitor* visitor, EnumValue* node) override;
 		virtual void WalkEnumStmt(Visitor* visitor, EnumStmt* node) override;
 		virtual void WalkClassStmt(Visitor* visitor, ClassStmt* node) override;
 		virtual void WalkInterfaceStmt(Visitor* visitor, InterfaceStmt* node) override;
@@ -207,7 +204,6 @@ namespace orange { namespace ast {
 		virtual void WalkContinueStmt(Visitor* visitor, ContinueStmt* node) override;
 		virtual void WalkReturnStmt(Visitor* visitor, ReturnStmt* node) override;
 		virtual void WalkExternFuncStmt(Visitor* visitor, ExternFuncStmt* node) override;
-		virtual void WalkEnumValue(Visitor* visitor, EnumValue* node) override;
 		virtual void WalkEnumStmt(Visitor* visitor, EnumStmt* node) override;
 		virtual void WalkClassStmt(Visitor* visitor, ClassStmt* node) override;
 		virtual void WalkInterfaceStmt(Visitor* visitor, InterfaceStmt* node) override;

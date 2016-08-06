@@ -19,7 +19,6 @@ namespace orange { namespace ast {
 		virtual void VisitContinueStmt(ContinueStmt* node) { }
 		virtual void VisitReturnStmt(ReturnStmt* node) { }
 		virtual void VisitExternFuncStmt(ExternFuncStmt* node) { }
-		virtual void VisitEnumValue(EnumValue* node) { }
 		virtual void VisitEnumStmt(EnumStmt* node) { }
 		virtual void VisitClassStmt(ClassStmt* node) { }
 		virtual void VisitInterfaceStmt(InterfaceStmt* node) { }

@@ -523,12 +523,12 @@ namespace orange { namespace parser { namespace impl {
 
 		EnumStmt* ParseEnum() {
 			if (!Expect(ENUM)) return nullptr;
-			Identifier* name = nullptr;
-			std::vector<EnumValue*> values;
+			std::string name;
+			std::vector<std::string> values;
 
 			auto token = GetNextConcreteToken();
 			if (!Expect(IDENTIFIER, token)) return nullptr;
-			name = CreateNode<NamedIDExpr>(token->value);
+			name = token->value;
 
 			if (!Expect(OPEN_CURLY)) return nullptr;
 
@@ -541,11 +541,11 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<EnumStmt>(name, values);
 		}
 
-		std::vector<EnumValue*> ParseEnumValues() {
-			std::vector<EnumValue*> values;
+		std::vector<std::string> ParseEnumValues() {
+			std::vector<std::string> values;
 
 			auto value = ParseEnumValue();
-			if (value == nullptr) { Expected("identitfer"); return std::vector<EnumValue*>(); }
+			if (value == "") { Expected("identitfer"); return std::vector<std::string>(); }
 			values.push_back(value);
 
 			while (PeekNextConcreteToken()->type == COMMA) {
@@ -556,31 +556,17 @@ namespace orange { namespace parser { namespace impl {
 				}
 
 				value = ParseEnumValue();
-				if (value == nullptr) { Expected("identitfer"); return std::vector<EnumValue*>(); }
+				if (value == "") { Expected("identitfer"); return std::vector<std::string>(); }
 				values.push_back(value);
 			}
 
 			return values;
 		}
 
-		EnumValue* ParseEnumValue() {
-			Identifier* name = nullptr;
-			std::vector<VarDeclExpr*> params;
-
+		std::string ParseEnumValue() {
 			auto token = GetNextConcreteToken();
-			if (!Expect(IDENTIFIER, token)) return nullptr;
-			name = CreateNode<NamedIDExpr>(token->value);
-
-			if (PeekNextConcreteToken()->type == OPEN_PAREN) {
-				GetNextConcreteToken();
-
-				params = ParseParameterList();
-
-				if (!Expect(CLOSE_PAREN)) return nullptr;
-			}
-
-
-			return CreateNode<EnumValue>(name, params);
+			if (!Expect(IDENTIFIER, token)) return "";
+			return token->value;
 		}
 
 		bool IsFlag(Token* tok) {

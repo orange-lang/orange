@@ -181,10 +181,6 @@ void NonTraversalWalker::WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr
 	visitor->VisitFunctionCallExpr(node);
 }
 
-void NonTraversalWalker::WalkEnumValue(Visitor* visitor, EnumValue* node) {
-	visitor->VisitEnumValue(node);
-}
-
 void NonTraversalWalker::WalkCatchBlock(Visitor* visitor, CatchBlock* node) {
 	visitor->VisitCatchBlock(node);
 }
@@ -239,8 +235,6 @@ void DepthFirstWalker::WalkExternFuncStmt(Visitor* visitor, ExternFuncStmt* node
 
 void DepthFirstWalker::WalkEnumStmt(Visitor* visitor, EnumStmt* node) {
 	if (mOrder == TraversalOrder::PREORDER) visitor->VisitEnumStmt(node);
-
-	WalkIdentifier(visitor, node->name);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitEnumStmt(node);
 }
@@ -485,15 +479,6 @@ void DepthFirstWalker::WalkFunctionCallExpr(Visitor* visitor, FunctionCallExpr* 
 	for (auto arg : node->args) WalkExpr(visitor, arg);
 
 	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitFunctionCallExpr(node);
-}
-
-void DepthFirstWalker::WalkEnumValue(Visitor* visitor, EnumValue* node) {
-	if (mOrder == TraversalOrder::PREORDER) visitor->VisitEnumValue(node);
-
-	WalkIdentifier(visitor, node->name);
-	for (auto param : node->params) WalkVarDeclExpr(visitor, param);
-
-	if (mOrder == TraversalOrder::POSTORDER) visitor->VisitEnumValue(node);
 }
 
 void DepthFirstWalker::WalkCatchBlock(Visitor* visitor, CatchBlock* node) {

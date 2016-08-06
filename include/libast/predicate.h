@@ -40,7 +40,6 @@ namespace orange { namespace ast {
 	template class PredicateT<ContinueStmt>;
 	template class PredicateT<ReturnStmt>;
 	template class PredicateT<ExternFuncStmt>;
-	template class PredicateT<EnumValue>;
 	template class PredicateT<EnumStmt>;
 	template class PredicateT<ClassStmt>;
 	template class PredicateT<InterfaceStmt>;
@@ -103,7 +102,6 @@ namespace orange { namespace ast {
 		virtual void WalkContinueStmt(Predicate* predicate, ContinueStmt* node);
 		virtual void WalkReturnStmt(Predicate* predicate, ReturnStmt* node);
 		virtual void WalkExternFuncStmt(Predicate* predicate, ExternFuncStmt* node);
-		virtual void WalkEnumValue(Predicate* predicate, EnumValue* node);
 		virtual void WalkEnumStmt(Predicate* predicate, EnumStmt* node);
 		virtual void WalkClassStmt(Predicate* predicate, ClassStmt* node);
 		virtual void WalkInterfaceStmt(Predicate* predicate, InterfaceStmt* node);

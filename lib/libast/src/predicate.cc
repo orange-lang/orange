@@ -57,20 +57,8 @@ void PredicateWalker::WalkExternFuncStmt(Predicate* predicate, ExternFuncStmt* n
 	for (auto param : node->params) WalkVarDeclExpr(predicate, param);
 }
 
-void PredicateWalker::WalkEnumValue(Predicate* predicate, EnumValue* node) {
-	TestPredicate(predicate, node);
-	
-	WalkIdentifier(predicate, node->name);
-	
-	for (auto param : node->params) WalkVarDeclExpr(predicate, param);
-}
-
 void PredicateWalker::WalkEnumStmt(Predicate* predicate, EnumStmt* node) {
 	TestPredicate(predicate, node);
-	
-	WalkIdentifier(predicate, node->name);
-	
-	for (auto value : node->values) WalkEnumValue(predicate, value);
 }
 
 void PredicateWalker::WalkClassStmt(Predicate* predicate, ClassStmt* node) {

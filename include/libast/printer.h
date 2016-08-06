@@ -31,7 +31,6 @@ namespace orange { namespace ast {
 		virtual void VisitContinueStmt(ContinueStmt* node) override;
 		virtual void VisitReturnStmt(ReturnStmt* node) override;
 		virtual void VisitExternFuncStmt(ExternFuncStmt* node) override;
-		virtual void VisitEnumValue(EnumValue* node) override;
 		virtual void VisitEnumStmt(EnumStmt* node) override;
 		virtual void VisitClassStmt(ClassStmt* node) override;
 		virtual void VisitInterfaceStmt(InterfaceStmt* node) override;

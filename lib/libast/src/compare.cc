@@ -39,6 +39,16 @@ bool CompareOptList(T a, T b) {
 	return true;
 }
 
+bool CompareOptStringList(std::vector<std::string> a, std::vector<std::string> b) {
+	if (a.size() != b.size()) return false;
+
+	for (unsigned long i = 0; i < a.size(); i++) {
+		if (a[i] != b[i]) return false;
+	}
+
+	return true;
+}
+
 template <typename T>
 bool CompareOptTypeList(T a, T b) {
 	if (a.size() != b.size()) return false;
@@ -137,8 +147,8 @@ bool orange::ast::CompareNode(ExternFuncStmt* a, ExternFuncStmt* b) {
 }
 
 bool orange::ast::CompareNode(EnumStmt* a, EnumStmt* b) {
-	return CompareOptNode(a->name, b->name) &&
-           CompareOptList(a->values, b->values);
+	return a->name == b->name &&
+	       CompareOptStringList(a->values, b->values);
 }
 
 bool orange::ast::CompareNode(ClassStmt* a, ClassStmt* b) {
@@ -174,9 +184,6 @@ bool orange::ast::CompareNode(ExprStmt* a, ExprStmt* b) {
 }
 
 bool orange::ast::CompareNode(Expression* a, Expression* b) {
-	if (isA<EnumValue>(a) && isA<EnumValue>(b))
-		return CompareNode(asA<EnumValue>(a), asA<EnumValue>(b));
-
 	if (isA<VarDeclExpr>(a) && isA<VarDeclExpr>(b))
 		return CompareNode(asA<VarDeclExpr>(a), asA<VarDeclExpr>(b));
 
@@ -232,11 +239,6 @@ bool orange::ast::CompareNode(Expression* a, Expression* b) {
 		return CompareNode(asA<NewExpr>(a), asA<NewExpr>(b));
 
 	return false;
-}
-
-bool orange::ast::CompareNode(EnumValue* a, EnumValue* b) {
-	return CompareOptNode(a->name, b->name) &&
-           CompareOptList(a->params, b->params);
 }
 
 bool orange::ast::CompareNode(VarDeclExpr* a, VarDeclExpr* b) {

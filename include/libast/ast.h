@@ -21,7 +21,6 @@ namespace orange { namespace ast {
 	struct Expression;
 	struct BlockExpr;
 	struct VarDeclExpr;
-	struct EnumValue;
 
 	struct Node {
 	protected:
@@ -90,11 +89,11 @@ namespace orange { namespace ast {
 
 	struct EnumStmt : Statement {
 	public:
-		Identifier* name = nullptr;
-		std::vector<EnumValue*> values;
+		std::string name = nullptr;
+		std::vector<std::string> values;
 
 		EnumStmt() { }
-		EnumStmt(Identifier* name, std::vector<EnumValue*> values) :
+		EnumStmt(std::string name, std::vector<std::string> values) :
 			name(name), values(values) { }
 	};
 
@@ -168,16 +167,6 @@ namespace orange { namespace ast {
 	struct Expression : Node {
 	protected:
 		Expression() { }
-	};
-
-	struct EnumValue : Expression {
-	public:
-		Identifier* name = nullptr;
-		std::vector<VarDeclExpr*> params;
-
-		EnumValue() { }
-		EnumValue(Identifier* name, std::vector<VarDeclExpr*> params) :
-			name(name), params(params) { }
 	};
 
 	struct VarDeclExpr : Expression {
