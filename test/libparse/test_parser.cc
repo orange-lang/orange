@@ -99,17 +99,11 @@ TEST(Parser, ParsesLongBlockSimpleExpressionOneLine) {
 	});
 }
 
-TEST(Parser, ParsesBasicVarDecl) { 
-	TestAST("var a", {
-		new VarDeclExpr("a", nullptr, nullptr)
-	});
-}
-
-TEST(Parser, ParsesBasicVarDeclWithValue) { 
+TEST(Parser, ParsesBasicVarDeclWithValue) {
 	TestAST(R"(
-		var a = 5
+		var a: int = 5
 	)", {
-		new VarDeclExpr("a", nullptr, new IntValue(5))
+		new VarDeclExpr("a", new IntType, new IntValue(5))
 	});
 }
 
@@ -415,7 +409,6 @@ TEST(Parser, Interface) {
 TEST(Parser, ParsesClass) { 
 	TestAST(R"(
 		class MyClass : Base1, Foo.Bar, Base2 {
-			var a
 			var a: int
 
 			class NestedClass { }
@@ -437,7 +430,6 @@ TEST(Parser, ParsesClass) {
 				new NamedIDExpr("Base2")
 			}),
 			new LongBlockExpr(std::vector<Node*>({
-				new VarDeclExpr("a", nullptr, nullptr),
 				new VarDeclExpr("a", new IntType, nullptr),
 				new ClassStmt(
 					new NamedIDExpr("NestedClass"),
@@ -483,22 +475,7 @@ TEST(Parser, BasicFunction) {
 	});
 }
 
-TEST(Parser, BasicFunctionParameterImplicit) { 
-	TestAST(R"(
-		def foo(a) { }
-	)", {
-		new FunctionExpr(
-			"foo",
-			std::vector<VarDeclExpr*>({
-				new VarDeclExpr("a", nullptr, nullptr)
-			}),
-			nullptr,
-			new LongBlockExpr()
-		)
-	});
-}
-
-TEST(Parser, BasicFunctionParameterExplicit) { 
+TEST(Parser, BasicFunctionParameterExplicit) {
 	TestAST(R"(
 		def foo(a:int) { }
 	)", {
@@ -513,39 +490,7 @@ TEST(Parser, BasicFunctionParameterExplicit) {
 	});
 }
 
-TEST(Parser, BasicFunctionParameterMixed) { 
-	TestAST(R"(
-		def foo(a,a:int) { }
-	)", {
-		new FunctionExpr(
-			"foo",
-			std::vector<VarDeclExpr*>({
-				new VarDeclExpr("a", nullptr, nullptr),
-				new VarDeclExpr("a", new IntType, nullptr),
-			}),
-			nullptr,
-			new LongBlockExpr()
-		)
-	});
-}
-
-TEST(Parser, BasicFunctionParameterMixedReturn) { 
-	TestAST(R"(
-		def foo(a,a:int) -> void { }
-	)", {
-		new FunctionExpr(
-			"foo",
-			std::vector<VarDeclExpr*>({
-				new VarDeclExpr("a", nullptr, nullptr),
-				new VarDeclExpr("a", new IntType, nullptr),
-			}),
-			new BuiltinType(BuiltinTypeKind::VOID),
-			new LongBlockExpr()
-		)
-	});
-}
-
-TEST(Parser, BasicValue) { 
+TEST(Parser, BasicValue) {
 	TestAST(R"(
 		0xF00u64
 	)", {
@@ -792,7 +737,7 @@ TEST(Parser, Loops) {
 	TestAST(R"(
 		for (;;) { }
 		for (a;b;c) { }
-		for (var a;b;c) { }
+		for (var a: int; b; c) { }
 		while (a) { }
 		forever { }
 		do { } while (a)
@@ -805,7 +750,7 @@ TEST(Parser, Loops) {
 			LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 		new LoopStmt(
-			new VarDeclExpr("a", nullptr, nullptr), new ReferenceIDExpr("b"), new ReferenceIDExpr("c"),
+			new VarDeclExpr("a", new IntType, nullptr), new ReferenceIDExpr("b"), new ReferenceIDExpr("c"),
 			LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 		new LoopStmt(

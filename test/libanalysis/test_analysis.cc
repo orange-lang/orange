@@ -71,6 +71,19 @@ public:
 
 Expression* CreateMockExpr(Type* ty) { return CreateNode<MockExpr>(ty); }
 
+class MockNonTraversalWalker : public NonTraversalWalker {
+public:
+	virtual void WalkExpr(Visitor* helper, Expression* node) override {
+		if (isA<MockExpr>(node)) {
+			return;
+		} else {
+			NonTraversalWalker::WalkExpr(helper, node);
+		}
+	}
+	
+	MockNonTraversalWalker() { }
+};
+
 class MockDepthFirstWalker : public DepthFirstWalker {
 public:
 	virtual void WalkExpr(Visitor* helper, Expression* node) override {
@@ -106,14 +119,17 @@ bool ShouldHaveContext(Node* node) {
 	return isA<FunctionExpr>(node);
 }
 
-void TestType(std::vector<Node*> nodes, Type* target) {
+void TestType(std::vector<Node*> nodes, Type* target, bool expectValid = true) {
 	auto ast = CreateNode<LongBlockExpr>(nodes);
-
 	MockDepthFirstWalker searchWalker(TraversalOrder::PREORDER);
 	MockPredicateWalker predWalker;
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({ast}), &searchWalker, &predWalker);
 	
 	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
+	
+	auto validateWalker = MockNonTraversalWalker();
+	ASSERT_EQ(ValidateAST(ast, &validateWalker), expectValid);
+	if (expectValid == false) return;
 	
 	auto ctx = NodeTypeContext(ast, true);
 	auto log = AnalysisMessageLog();
@@ -143,13 +159,18 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 	delete target;
 }
 
-void TestType(Node* node, Type* target) {
+void TestType(Node* node, Type* target, bool expectValid = true) {
 	MockDepthFirstWalker searchWalker(TraversalOrder::PREORDER);
 	MockPredicateWalker predWalker;
 	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({
 		CreateNode<LongBlockExpr>(std::vector<Node*>({ node }))
 	}), &searchWalker, &predWalker);
 	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
+	
+	auto validateWalker = MockNonTraversalWalker();
+	
+	ASSERT_EQ(ValidateAST(CreateNode<LongBlockExpr>(std::vector<Node*>({ node })), &validateWalker), expectValid);
+	if (expectValid == false) return;
 	
 	auto ctx = NodeTypeContext(node, true);
 	auto log = AnalysisMessageLog();
@@ -173,14 +194,6 @@ void TestType(Node* node, Type* target) {
 
 	delete node;
 	delete target;
-}
-
-VarDeclExpr* CreateNamedVariable(std::string name, Expression* value) {
-	return CreateNode<VarDeclExpr>(name, nullptr, value);
-}
-
-VarDeclExpr* CreateTypedVariable(std::string name, Type* ty) {
-	return CreateNode<VarDeclExpr>(name, ty, nullptr);
 }
 
 TEST(Analysis, MockExpression) {
@@ -235,11 +248,6 @@ TEST(Analysis, InvalidBinOps) {
 
 // The type of a variable declaration is a tuple of a type for each binding
 TEST(Analysis, VarDecl) {
-	// typeless with value
-	TestType(CreateNode<VarDeclExpr>(
-		"a", nullptr, CreateMockExpr(new IntType)
-	), new IntType);
-
 	// type without value
 	TestType(CreateNode<VarDeclExpr>(
 		"a", new IntType, nullptr
@@ -252,25 +260,30 @@ TEST(Analysis, VarDecl) {
 }
 
 TEST(Analysis, InvalidVarDecl) {
+	// typeless with value
+	TestType(CreateNode<VarDeclExpr>(
+		"a", nullptr, CreateMockExpr(new IntType)
+	), new IntType, false);
+
 	// typeless without value
 	TestType(CreateNode<VarDeclExpr>(
 		"a", nullptr, nullptr
-	), new VarType);
+	), new VarType, false);
 
 	// void type
 	TestType(CreateNode<VarDeclExpr>(
 		"a", new VoidType, nullptr
-	), new VarType);
+	), new VarType, true);
 
 	// void value
 	TestType(CreateNode<VarDeclExpr>(
-		"a", nullptr, CreateMockExpr(new VoidType)
-	), new VarType);
+		"a", new VoidType, CreateMockExpr(new VoidType)
+	), new VarType, true);
 }
 
 TEST(Analysis, VarReference) {
 	TestType({
-		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 
 	    CreateNode<BinOpExpr>(
 		    CreateNode<ReferenceIDExpr>("a"),
@@ -292,7 +305,7 @@ TEST(Analysis, InvalidVarReference) {
 
 TEST(Analysis, AssignBinOps) {
 	TestType({
-		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 
 	    CreateNode<BinOpExpr>(
 		    CreateNode<ReferenceIDExpr>("a"),
@@ -302,7 +315,7 @@ TEST(Analysis, AssignBinOps) {
 	}, new IntType);
 
 	TestType({
-		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 		
 	    CreateNode<BinOpExpr>(
 		    CreateNode<ReferenceIDExpr>("a"),
@@ -314,7 +327,7 @@ TEST(Analysis, AssignBinOps) {
 
 TEST(Analysis, CompareBinOps) {
 	TestType({
-		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 
 		CreateNode<BinOpExpr>(
 			CreateNode<ReferenceIDExpr>("a"),
@@ -324,7 +337,7 @@ TEST(Analysis, CompareBinOps) {
 	}, new BoolType);
 
 	TestType({
-		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 
 		CreateNode<BinOpExpr>(
 			CreateNode<ReferenceIDExpr>("a"),
@@ -360,7 +373,7 @@ TEST(Analysis, UnaryOps) {
 	
 	for (auto pair : tests) {
 		TestType({
-			CreateNamedVariable("a", CreateNode<IntValue>(52)),
+			CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 			CreateNode<UnaryExpr>(pair.first, pair.second, CreateNode<ReferenceIDExpr>("a"))
 		}, new IntType);
 	}
@@ -377,7 +390,7 @@ TEST(Analysis, UnaryOps) {
 	);
 	
 	TestType({
-		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 		CreateNode<UnaryExpr>(UnaryOp::REFERENCE, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")),
 	}, new PointerType(new IntType));
 }
@@ -385,14 +398,14 @@ TEST(Analysis, UnaryOps) {
 TEST(Analysis, InvalidUnaryOps) {
 	// INCREMENT/DECREMENT multiple times
 	TestType({
-		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 		CreateNode<UnaryExpr>(UnaryOp::INCREMENT, UnaryOrder::PREFIX, CreateNode<UnaryExpr>(
 			UnaryOp::INCREMENT, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")
 		)),
 	}, new BuiltinType(VAR));
 	
 	TestType({
-		CreateNamedVariable("a", CreateMockExpr(new IntType)),
+		CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 		CreateNode<UnaryExpr>(UnaryOp::DECREMENT, UnaryOrder::PREFIX, CreateNode<UnaryExpr>(
 			UnaryOp::DECREMENT, UnaryOrder::PREFIX, CreateNode<ReferenceIDExpr>("a")
 		)),
@@ -447,7 +460,7 @@ TEST(Analysis, FunctionDecl) {
 	// Test using referencing parameter
 	TestType(std::vector<Node*>({
 		CreateNode<FunctionExpr>("a", std::vector<VarDeclExpr*>({
-			CreateTypedVariable("foo", new IntType)
+			CreateNode<VarDeclExpr>("foo", new IntType, nullptr)
 		}), nullptr,
 		CreateNode<LongBlockExpr>(std::vector<Node*>({
 			CreateNode<ReturnStmt>(CreateNode<ReferenceIDExpr>("foo")),
@@ -481,7 +494,7 @@ TEST(Analysis, InvalidFunctionDecls) {
 
 TEST(Analysis, ExternFunctionDecl) {
 	TestType(CreateNode<ExternFuncStmt>("a", std::vector<VarDeclExpr*>({
-		CreateTypedVariable("foo", new IntType)
+	    CreateNode<VarDeclExpr>("a", new IntType, nullptr),
 	}), new DoubleType), new FunctionType(std::vector<Type*>({new IntType}), new DoubleType));
 }
 

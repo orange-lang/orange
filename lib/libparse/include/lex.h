@@ -44,7 +44,7 @@ namespace orange { namespace parser {
 		{SEMICOLON, ";"}, {INT, "int"}, {UINT, "uint"}, {INT8, "int8"},
 		{INT16, "int16"}, {INT32, "int32"}, {INT64, "int64"}, {UINT8, "uint8"},
 		{UINT16, "uint16"}, {UINT32, "uint32"}, {UINT64, "uint64"}, {DOUBLE, "double"},
-		{CHAR, "char"}, {VAR, "var"}, {VOID, "void"}, {IDENTIFIER, "identifier"},
+		{CHAR, "char"}, {VOID, "void"}, {IDENTIFIER, "identifier"},
 		{TEMP, "_"}, {OPERATOR, "operator"}, {OPEN_PAREN, "("}, {CLOSE_PAREN, ")"},
 		{PLUS, "+"}, {MINUS, "-"}, {DIVIDE, "/"}, {TIMES, "*"},
 		{REMAINDER, "%"}, {BIT_OR, "|"}, {BIT_AND, "&"}, {BIT_XOR, "^"},

@@ -697,19 +697,10 @@ namespace orange { namespace parser { namespace impl {
 
 			if (!Expect(IDENTIFIER, id)) return nullptr;
 
-			if (PeekNextConcreteToken()->type == COLON) {
-				GetNextConcreteToken();
-				type = ParseType();
-
-				if (type == nullptr) { Expected("type"); return nullptr; }
-			}
-
-			if (PeekNextConcreteToken()->type == ASSIGN) {
-				GetNextConcreteToken();
-				value = ParseExpression();
-
-				if (value == nullptr) { Expected("expression"); return nullptr; }
-			}
+			if (!Expect(COLON)) return nullptr;
+			
+			type = ParseType();
+			if (type == nullptr) { Expected("type"); return nullptr; }
 
 			return CreateNode<VarDeclExpr>(id->value, type, value);
 		}
@@ -766,15 +757,10 @@ namespace orange { namespace parser { namespace impl {
 				return nullptr;
 			}
 
-			if (PeekNextConcreteToken()->type == COLON) {
-				GetNextConcreteToken();
-				ty = ParseType();
-
-				if (ty == nullptr) {
-					Expected("type");
-					return nullptr;
-				}
-			}
+			if (!Expect(COLON)) return nullptr;
+			
+			ty = ParseType();
+			if (ty == nullptr) { Expected("type"); return nullptr; }
 
 			if (PeekNextConcreteToken()->type == ASSIGN) {
 				GetNextConcreteToken();
