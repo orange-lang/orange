@@ -60,11 +60,30 @@ namespace orange { namespace ast {
 		/// Finds all children of a given type.
 		template <class T>
 		std::vector<T*> FindChildren(Node* parent, bool directOnly) {
-			auto self = this;
+			auto predicate = CreatePredicate<T>([directOnly, this, parent] (T* node) {
+				return !directOnly || this->GetParent(node) == parent;
+			});
 			
-			auto predicate = CreatePredicate<T>([] (T* node) {
-				//return directOnly ? self->GetParent(node) == parent : true;
-				return true;
+			mPredWalker->Reset();
+			mPredWalker->WalkNode(predicate, parent);
+			
+			std::vector<T*> children;
+			auto matches = mPredWalker->GetMatches();
+			
+			for (auto match : matches) {
+				if (isA<T>(match)) children.push_back(asA<T>(match));
+			}
+			
+			delete predicate;
+			return children;
+		}
+		
+		/// Finds all children of a given type. Looks through children that aren't
+		/// other functions.
+		template <typename T>
+		std::vector<T*> FindFunctionStatements(FunctionExpr* parent) {
+			auto predicate = CreatePredicate<T>([this, parent] (T* node) {
+				return this->FindParent<FunctionExpr>(node) == parent;
 			});
 			
 			mPredWalker->Reset();

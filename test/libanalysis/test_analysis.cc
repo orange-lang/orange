@@ -142,7 +142,9 @@ void TestType(std::vector<Node*> nodes, Type* target) {
 void TestType(Node* node, Type* target) {
 	MockDepthFirstWalker searchWalker(TraversalOrder::PREORDER);
 	MockPredicateWalker predWalker;
-	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>(), &searchWalker, &predWalker);
+	auto searcher = ASTSearcher(std::vector<LongBlockExpr*>({
+		CreateNode<LongBlockExpr>(std::vector<Node*>({ node }))
+	}), &searchWalker, &predWalker);
 	MockDepthFirstWalker walker(TraversalOrder::POSTORDER);
 	
 	auto ctx = NodeTypeContext(node, true);
