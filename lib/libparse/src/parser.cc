@@ -283,12 +283,6 @@ namespace orange { namespace parser { namespace impl {
 						GetNextConcreteToken();
 						node = CreateNode<ContinueStmt>();
 						break;
-					case YIELD: {
-						GetNextConcreteToken();
-						auto expr = ParseExpression();
-						if (expr == nullptr) { Expected("expression"); return nullptr; }
-						break;
-					}
 					case FOR: node = ParseForLoop(); break;
 					case WHILE: node = ParseWhileLoop(); break;
 					case DO: node = ParseDoWhileLoop(); break;
