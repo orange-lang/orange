@@ -17,10 +17,8 @@ bool IsIntegerType(Type* type) {
 			ty->kind == UINT || ty->kind == UINT8 || ty->kind == UINT16 || ty->kind == UINT32 || ty->kind == UINT64;
 	} else if (isA<ArrayType>(type)) {
 		return IsIntegerType(asA<ArrayType>(type)->base);
-	} else if (isA<ReferenceType>(type)) {
-		return IsIntegerType(asA<ReferenceType>(type)->base);
 	}
-
+	
 	return false;
 }
 
@@ -30,10 +28,8 @@ bool IsSignedType(Type* type) {
 		return ty->kind == INT || ty->kind == INT8 || ty->kind == INT16 || ty->kind == INT32 || ty->kind == INT64;
 	} else if (isA<ArrayType>(type)) {
 		return IsSignedType(asA<ArrayType>(type)->base);
-	} else if (isA<ReferenceType>(type)) {
-		return IsSignedType(asA<ReferenceType>(type)->base);
 	}
-
+	
 	return false;
 }
 
@@ -43,10 +39,8 @@ bool IsFloatingPointType(Type* type) {
 		return ty->kind == FLOAT || ty->kind == DOUBLE;
 	} else if (isA<ArrayType>(type)) {
 		return IsFloatingPointType(asA<ArrayType>(type)->base);
-	} else if (isA<ReferenceType>(type)) {
-		return IsFloatingPointType(asA<ReferenceType>(type)->base);
 	}
-
+	
 	return false;
 }
 
@@ -79,8 +73,6 @@ int GetIntegerBitWidth(Type* type) {
 		}
 	} else if (isA<ArrayType>(type)) {
 		return IsIntegerType(asA<ArrayType>(type)->base);
-	} else if (isA<ReferenceType>(type)) {
-		return IsIntegerType(asA<ReferenceType>(type)->base);
 	}
 
 	return -1;
@@ -100,13 +92,6 @@ bool IsGenericType(orange::ast::Type* type) {
 		return IsGenericType(asA<ArrayType>(type)->base);
 	} else if (isA<PointerType>(type)) {
 		return IsGenericType(asA<PointerType>(type)->base);
-	} else if (isA<ReferenceType>(type)) {
-		return IsGenericType(asA<ReferenceType>(type)->base);
-	} else if (isA<TupleType>(type)) {
-		auto _ty = asA<TupleType>(type);
-		for (auto type : _ty->types) {
-			if (IsGenericType(type)) return true;
-		}
 	} else if (isA<FunctionType>(type)) {
 		auto _ty = asA<FunctionType>(type);
 		if (IsGenericType(_ty->returnType)) return true;
@@ -121,14 +106,6 @@ bool IsGenericType(orange::ast::Type* type) {
 bool IsLValue(orange::ast::Node* node, orange::ast::Type* nodeType) {
 	// TODO: this isn't complete.
 	if (isA<Identifier>(node)) return true;
-	
-	if (isA<TupleExpr>(node)) {
-		for (auto element : asA<TupleExpr>(node)->values) {
-			if (!IsLValue(element, nodeType)) return false;
-		}
-		
-		return true;
-	}
 	
 	return false;
 }

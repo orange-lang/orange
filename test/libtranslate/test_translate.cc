@@ -184,14 +184,12 @@ void ExpectInsts(Node* node, std::vector<unsigned> expect) {
 
 TEST(Translator, VarDeclNoValue) {
 	auto varDecl = CreateNode<VarDeclExpr>(
-		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-		std::vector<orange::ast::Type*>({ new IntType }), nullptr
+		"a", new IntType, nullptr
 	);
 
 	std::vector<unsigned> expectedInstructs({
 		Instruction::MemoryOps::Alloca
 	});
-
 
 	ExpectInsts(varDecl, expectedInstructs);
 	delete varDecl;
@@ -199,9 +197,7 @@ TEST(Translator, VarDeclNoValue) {
 
 TEST(Translator, SingleVarDecl) {
 	auto varDecl = CreateNode<VarDeclExpr>(
-		std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-		std::vector<orange::ast::Type*>({}),
-		CreateNode<IntValue>(951)
+		"a", nullptr, CreateNode<IntValue>(951)
 	);
 
 	std::vector<unsigned> expectedInstructs({
@@ -217,9 +213,7 @@ TEST(Translator, SingleVarDecl) {
 TEST(Translator, VarDeclReference) {
 	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
 		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<orange::ast::Type*>({}),
-			CreateNode<IntValue>(951)
+			"a", nullptr, CreateNode<IntValue>(951)
 		),
 
 	    CreateNode<ReferenceIDExpr>("a")
@@ -237,8 +231,7 @@ TEST(Translator, VarDeclReference) {
 TEST(Translator, AssignBinOps) {
 	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
 		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<orange::ast::Type*>(), CreateNode<IntValue>(5)
+			"a", nullptr, CreateNode<IntValue>(5)
 		),
 
 		CreateNode<BinOpExpr>(
@@ -270,13 +263,11 @@ TEST(Translator, AssignBinOps) {
 TEST(Translator, CompareBinOps) {
 	auto ast = CreateNode<LongBlockExpr>(std::vector<Node*>({
 		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("a") }),
-			std::vector<orange::ast::Type*>(), CreateNode<IntValue>(5)
+			"a", nullptr, CreateNode<IntValue>(5)
 		),
 
 		CreateNode<VarDeclExpr>(
-			std::vector<Identifier*>({ CreateNode<NamedIDExpr>("b") }),
-			std::vector<orange::ast::Type*>(), CreateNode<DoubleValue>(5)
+			"b", nullptr, CreateNode<DoubleValue>(5)
 		),
 
 		CreateNode<BinOpExpr>(

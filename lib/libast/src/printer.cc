@@ -102,18 +102,6 @@ void ASTPrinter::PrintType(Type* ty) {
 	} else if (isA<PointerType>(ty)) {
 		PrintType(asA<PointerType>(ty)->base);
 		mOutput << "*";
-	} else if (isA<ReferenceType>(ty)) {
-		PrintType(asA<ReferenceType>(ty)->base);
-		mOutput << "&";
-	} else if (isA<TupleType>(ty)) {
-		mOutput << "(";
-
-		for (auto innerTy : asA<TupleType>(ty)->types) {
-			PrintType(innerTy);
-			mOutput << ",";
-		}
-
-		mOutput << ")";
 	} else if (isA<FunctionType>(ty)) {
 		mOutput << "(";
 
@@ -183,28 +171,6 @@ void ASTPrinter::VisitLoopStmt(LoopStmt* node) {
 	mIndentation--;
 }
 
-void ASTPrinter::VisitForeachStmt(ForeachStmt* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "ForeachStmt():" << std::endl;
-
-	mIndentation++;
-
-	mWalker.WalkExpr(this, node->declaration);
-	mOutput << std::endl;
-
-	mWalker.WalkExpr(this, node->value);
-	mOutput << std::endl;
-
-	mWalker.WalkExpr(this, node->body);
-	mOutput << std::endl;
-
-	mWalker.WalkBlockExpr(this, node->body);
-
-	mIndentation--;
-}
-
 void ASTPrinter::VisitBreakStmt(BreakStmt* node) {
 	handleIdententation();
 	printID(node);
@@ -217,19 +183,6 @@ void ASTPrinter::VisitContinueStmt(ContinueStmt* node) {
 	printID(node);
 
 	mOutput << "ContinueStmt()";
-}
-
-void ASTPrinter::VisitYieldStmt(YieldStmt* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "YieldStmt():\n";
-
-	mIndentation++;
-
-	mWalker.WalkExpr(this, node->value);
-
-	mIndentation--;
 }
 
 void ASTPrinter::VisitReturnStmt(ReturnStmt* node) {
@@ -248,74 +201,20 @@ void ASTPrinter::VisitReturnStmt(ReturnStmt* node) {
 	mIndentation--;
 }
 
-void ASTPrinter::VisitAggregateStmt(AggregateStmt* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "AggregateStmt():" << std::endl;
-
-	mIndentation++;
-	mWalker.WalkBlockExpr(this, node->body);
-	mIndentation--;
-}
-
 void ASTPrinter::VisitExternFuncStmt(ExternFuncStmt* node) {
 	handleIdententation();
 	printID(node);
 
 	mOutput << "ExternFuncStmt(";
-	mOutput << "retType = ";
+	mOutput << "name = " << node->name << ", retType = ";
 	PrintType(node->retType);
     mOutput << "):" << std::endl;
 
 	mIndentation++;
 
-	mWalker.WalkIdentifier(this, node->name);
-	mOutput << std::endl;
-
 	for (auto param : node->params) {
 		mWalker.WalkVarDeclExpr(this, param);
 		mOutput << std::endl;
-	}
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitEnumValue(EnumValue* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "EnumValue():" << std::endl;
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->name);
-
-	if (node->params.size() > 0) mOutput << std::endl;
-
-	for (unsigned long i = 0; i < node->params.size(); i++) {
-		mWalker.WalkVarDeclExpr(this, node->params[i]);
-		if (i + 1 < node->params.size()) mOutput << std::endl;
-	}
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitEnumStmt(EnumStmt* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "EnumStmt():" << std::endl;
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->name);
-
-	if (node->values.size() > 0) mOutput << std::endl;
-
-	for (unsigned long i = 0; i < node->values.size(); i++) {
-		mWalker.WalkEnumValue(this, node->values[i]);
-		if (i + 1 < node->values.size()) mOutput << std::endl;
 	}
 
 	mIndentation--;
@@ -358,27 +257,6 @@ void ASTPrinter::VisitInterfaceStmt(InterfaceStmt* node) {
 	mIndentation--;
 }
 
-void ASTPrinter::VisitExtendStmt(ExtendStmt* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "ExtendStmt():" << std::endl;
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->name);
-	mOutput << std::endl;
-
-	for (auto super : node->supers) {
-		mWalker.WalkIdentifier(this, super);
-		mOutput << std::endl;
-	}
-
-	mWalker.WalkBlockExpr(this, node->body);
-
-	mIndentation--;
-}
-
 void ASTPrinter::VisitNamespaceStmt(NamespaceStmt* node) {
 	handleIdententation();
 	printID(node);
@@ -406,49 +284,6 @@ void ASTPrinter::VisitImportStmt(ImportStmt* node) {
 	mIndentation++;
 
 	mWalker.WalkIdentifier(this, node->name);
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitGetterStmt(GetterStmt* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "GetterStmt():" << std::endl;
-
-	mIndentation++;
-	mWalker.WalkBlockExpr(this, node->body);
-	mIndentation--;
-}
-
-void ASTPrinter::VisitSetterStmt(SetterStmt* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "SetterStmt():" << std::endl;
-
-	mIndentation++;
-	mWalker.WalkBlockExpr(this, node->body);
-	mIndentation--;
-}
-
-void ASTPrinter::VisitPropertyStmt(PropertyStmt* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "PropertyStmt(";
-	if (node->type != nullptr) {
-		mOutput << "type = ";
-		PrintType(node->type);
-	}
-	mOutput << "):" << std::endl;
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->name);
-	mOutput << std::endl;
-
-	mWalker.WalkBlockExpr(this, node->body);
 
 	mIndentation--;
 }
@@ -487,42 +322,18 @@ void ASTPrinter::VisitExprStmt(ExprStmt* node) {
 }
 
 
-void ASTPrinter::VisitEnumMatch(EnumMatch* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "EnumMatch():" << std::endl;
-
-	mIndentation++;
-
-	mWalker.WalkExpr(this, node->value);
-	for (auto expr : node->params) mWalker.WalkExpr(this, expr);
-
-	mIndentation--;
-}
-
 void ASTPrinter::VisitVarDeclExpr(VarDeclExpr* node) {
 	handleIdententation();
 	printID(node);
 
-	mOutput << "VarDeclExpr(";
-	if (node->types.size() > 0) {
-		mOutput << "types: [";
-		for (unsigned long i = 0; i < node->types.size(); i++) {
-			PrintType(node->types[i]);
-
-			if (i + 1 < node->types.size()) mOutput << ", ";
-		}
-		mOutput << "]";
+	mOutput << "VarDeclExpr(name: " << node->name;
+	if (node->type != nullptr) {
+		mOutput << ", ty: ";
+		PrintType(node->type);
 	}
 	mOutput << "):" << std::endl;
 
 	mIndentation++;
-
-	for (unsigned long i = 0; i < node->bindings.size(); i++) {
-		mWalker.WalkIdentifier(this, node->bindings[i]);
-		if (i + 1 < node->bindings.size()) mOutput << std::endl;
-	}
 
 	if (node->value) mWalker.WalkExpr(this, node->value);
 
@@ -622,13 +433,6 @@ void ASTPrinter::VisitNamedIDExpr(NamedIDExpr* node) {
 	mOutput << ")";
 }
 
-void ASTPrinter::VisitTempIDExpr(TempIDExpr* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "TempIDExpr()";
-}
-
 void ASTPrinter::VisitDtorIDExpr(DtorIDExpr* node) {
 	handleIdententation();
 	printID(node);
@@ -714,22 +518,6 @@ void ASTPrinter::VisitUnaryExpr(UnaryExpr* node) {
 	mIndentation--;
 }
 
-void ASTPrinter::VisitTupleExpr(TupleExpr* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "TupleExpr():\n";
-
-	mIndentation++;
-
-	for (unsigned long i = 0; i < node->values.size(); i++) {
-		mWalker.WalkExpr(this, node->values[i]);
-		if (i + 1 < node->values.size()) mOutput << std::endl;
-	}
-
-	mIndentation--;
-}
-
 void ASTPrinter::VisitArrayExpr(ArrayExpr* node) {
 	handleIdententation();
 	printID(node);
@@ -742,23 +530,6 @@ void ASTPrinter::VisitArrayExpr(ArrayExpr* node) {
 		mWalker.WalkExpr(this, node->values[i]);
 		if (i + 1 < node->values.size()) mOutput << std::endl;
 	}
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitArrayRangeExpr(ArrayRangeExpr* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "ArrayRangeExpr(";
-	mOutput << "type = " << node->type;
-	mOutput << "):\n";
-
-	mIndentation++;
-
-	mWalker.WalkExpr(this, node->LHS);
-	mOutput << std::endl;
-	mWalker.WalkExpr(this, node->RHS);
 
 	mIndentation--;
 }
@@ -789,21 +560,6 @@ void ASTPrinter::VisitMemberAccessExpr(MemberAccessExpr* node) {
 	mWalker.WalkExpr(this, node->LHS);
 	mOutput << std::endl;
 	mWalker.WalkExpr(this, node->RHS);
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitNamedExpr(NamedExpr* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "NamedExpr():\n";
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->name);
-	mOutput << std::endl;
-	mWalker.WalkExpr(this, node->value);
 
 	mIndentation--;
 }
@@ -859,156 +615,18 @@ void ASTPrinter::VisitTernaryExpr(TernaryExpr* node) {
 	mIndentation--;
 }
 
-void ASTPrinter::VisitSwitchPattern(SwitchPattern* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "SwitchPattern():\n";
-
-	mIndentation++;
-
-	for (auto pattern : node->patterns) {
-		mWalker.WalkExpr(this, pattern);
-		mOutput << std::endl;
-	}
-
-	mWalker.WalkBlockExpr(this, node->block);
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitSwitchExpr(SwitchExpr* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "SwitchExpr():\n";
-
-	mIndentation++;
-
-	mWalker.WalkExpr(this, node->condition);
-	if (node->patterns.size() > 0) mOutput << std::endl;
-
-	for (unsigned long i = 0; i < node->patterns.size(); i++) {
-		mWalker.WalkSwitchPattern(this, node->patterns[i]);
-		if (i + 1 < node->patterns.size()) mOutput << std::endl;
-	}
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitClassConstraint(ClassConstraint* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "ClassConstraint():\n";
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->identifier);
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitDefaultCtorConstraint(DefaultCtorConstraint* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "DefaultCtorConstraint():\n";
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->identifier);
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitBaseConstraint(BaseConstraint* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "BaseConstraint():\n";
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->identifier);
-	mWalker.WalkIdentifier(this, node->base);
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitDataConstraint(DataConstraint* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "DataConstraint(";
-	mOutput << "dataType: ";
-	PrintType(node->dataType);
-	mOutput << "):\n";
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->identifier);
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitTypeConstraint(TypeConstraint* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "TypeConstraint(";
-	mOutput << "dataType: ";
-	PrintType(node->type);
-	mOutput << "):\n";
-
-	mIndentation++;
-
-	mWalker.WalkIdentifier(this, node->identifier);
-
-	mIndentation--;
-}
-
-void ASTPrinter::VisitGenerics(Generics* node) {
-	handleIdententation();
-	printID(node);
-
-	mOutput << "Generics():\n";
-
-	mIndentation++;
-
-	for (unsigned long i = 0; i < node->genericTypes.size(); i++) {
-		mWalker.WalkIdentifier(this, node->genericTypes[i]);
-		if (i + 1 < node->genericTypes.size()) mOutput << std::endl;
-	}
-
-	if (node->constraints.size() > 0) mOutput << std::endl;
-
-	for (unsigned long i = 0; i < node->constraints.size(); i++) {
-		mWalker.WalkConstraint(this, node->constraints[i]);
-		if (i + 1 < node->constraints.size()) mOutput << std::endl;
-	}
-
-	mIndentation--;
-}
-
 void ASTPrinter::VisitFunctionExpr(FunctionExpr* node) {
 	handleIdententation();
 	printID(node);
 
-	mOutput << "FunctionExpr(";
+	mOutput << "FunctionExpr(name: " << node->name;
 	if (node->retType != nullptr) {
-		mOutput << "retType: ";
+		mOutput << ", retType: ";
 		PrintType(node->retType);
 	}
 	mOutput << "):\n";
 
 	mIndentation++;
-
-	if (node->name != nullptr) mWalker.WalkIdentifier(this, node->name);
-	if (node->name != nullptr && node->generics != nullptr) mOutput << std::endl;
-	if (node->generics != nullptr) mWalker.WalkGenerics(this, node->generics);
-
-	mOutput << std::endl;
 
 	for (auto param : node->params) {
 		mWalker.WalkVarDeclExpr(this, param);

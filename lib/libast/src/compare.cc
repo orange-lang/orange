@@ -57,12 +57,6 @@ bool orange::ast::CompareNode(Node* a, Node* b) {
 	if (isA<Expression>(a) && isA<Expression>(b))
 		return CompareNode(asA<Expression>(a), asA<Expression>(b));
 
-	if (isA<Constraint>(a) && isA<Constraint>(b))
-		return CompareNode(asA<Constraint>(a), asA<Constraint>(b));
-
-	if (isA<Generics>(a) && isA<Generics>(b))
-		return CompareNode(asA<Generics>(a), asA<Generics>(b));
-
 	return false;
 }
 
@@ -73,29 +67,17 @@ bool orange::ast::CompareNode(Statement* a, Statement* b) {
 	if (isA<LoopStmt>(a) && isA<LoopStmt>(b))
 		return CompareNode(asA<LoopStmt>(a), asA<LoopStmt>(b));
 
-	if (isA<ForeachStmt>(a) && isA<ForeachStmt>(b))
-		return CompareNode(asA<ForeachStmt>(a), asA<ForeachStmt>(b));
-
 	if (isA<BreakStmt>(a) && isA<BreakStmt>(b))
 		return CompareNode(asA<BreakStmt>(a), asA<BreakStmt>(b));
 
 	if (isA<ContinueStmt>(a) && isA<ContinueStmt>(b))
 		return CompareNode(asA<ContinueStmt>(a), asA<ContinueStmt>(b));
 
-	if (isA<YieldStmt>(a) && isA<YieldStmt>(b))
-		return CompareNode(asA<YieldStmt>(a), asA<YieldStmt>(b));
-
 	if (isA<ReturnStmt>(a) && isA<ReturnStmt>(b))
 		return CompareNode(asA<ReturnStmt>(a), asA<ReturnStmt>(b));
 
-	if (isA<AggregateStmt>(a) && isA<AggregateStmt>(b))
-		return CompareNode(asA<AggregateStmt>(a), asA<AggregateStmt>(b));
-
 	if (isA<ExternFuncStmt>(a) && isA<ExternFuncStmt>(b))
 		return CompareNode(asA<ExternFuncStmt>(a), asA<ExternFuncStmt>(b));
-
-	if (isA<EnumStmt>(a) && isA<EnumStmt>(b))
-		return CompareNode(asA<EnumStmt>(a), asA<EnumStmt>(b));
 
 	if (isA<ClassStmt>(a) && isA<ClassStmt>(b))
 		return CompareNode(asA<ClassStmt>(a), asA<ClassStmt>(b));
@@ -103,23 +85,11 @@ bool orange::ast::CompareNode(Statement* a, Statement* b) {
 	if (isA<InterfaceStmt>(a) && isA<InterfaceStmt>(b))
 		return CompareNode(asA<InterfaceStmt>(a), asA<InterfaceStmt>(b));
 
-	if (isA<ExtendStmt>(a) && isA<ExtendStmt>(b))
-		return CompareNode(asA<ExtendStmt>(a), asA<ExtendStmt>(b));
-
 	if (isA<NamespaceStmt>(a) && isA<NamespaceStmt>(b))
 		return CompareNode(asA<NamespaceStmt>(a), asA<NamespaceStmt>(b));
 
 	if (isA<ImportStmt>(a) && isA<ImportStmt>(b))
 		return CompareNode(asA<ImportStmt>(a), asA<ImportStmt>(b));
-
-	if (isA<GetterStmt>(a) && isA<GetterStmt>(b))
-		return CompareNode(asA<GetterStmt>(a), asA<GetterStmt>(b));
-
-	if (isA<SetterStmt>(a) && isA<SetterStmt>(b))
-		return CompareNode(asA<SetterStmt>(a), asA<SetterStmt>(b));
-
-	if (isA<PropertyStmt>(a) && isA<PropertyStmt>(b))
-		return CompareNode(asA<PropertyStmt>(a), asA<PropertyStmt>(b));
 
 	if (isA<ThrowStmt>(a) && isA<ThrowStmt>(b))
 		return CompareNode(asA<ThrowStmt>(a), asA<ThrowStmt>(b));
@@ -129,9 +99,6 @@ bool orange::ast::CompareNode(Statement* a, Statement* b) {
 
 	if (isA<ExprStmt>(a) && isA<ExprStmt>(b))
 		return CompareNode(asA<ExprStmt>(a), asA<ExprStmt>(b));
-
-	if (isA<SwitchPattern>(a) && isA<SwitchPattern>(b))
-		return CompareNode(asA<SwitchPattern>(a), asA<SwitchPattern>(b));
 
 	return false;
 }
@@ -148,12 +115,6 @@ bool orange::ast::CompareNode(LoopStmt* a, LoopStmt* b) {
 	       CompareOptNode(a->body, b->body);
 }
 
-bool orange::ast::CompareNode(ForeachStmt* a, ForeachStmt* b) {
-	return CompareOptNode(a->declaration, b->declaration) &&
-           CompareOptNode(a->value, b->value) &&
-           CompareOptNode(a->body, b->body);
-}
-
 bool orange::ast::CompareNode(BreakStmt* a, BreakStmt* b) {
 	return true;
 }
@@ -162,28 +123,14 @@ bool orange::ast::CompareNode(ContinueStmt* a, ContinueStmt* b) {
 	return true;
 }
 
-bool orange::ast::CompareNode(YieldStmt* a, YieldStmt* b) {
-	return CompareOptNode(a->value, b->value);
-}
-
 bool orange::ast::CompareNode(ReturnStmt* a, ReturnStmt* b) {
 	return CompareOptNode(a->value, b->value);
 }
 
-bool orange::ast::CompareNode(AggregateStmt* a, AggregateStmt* b) {
-	return CompareOptNode(a->name, b->name) &&
-	       CompareOptNode(a->body, b->body);
-}
-
 bool orange::ast::CompareNode(ExternFuncStmt* a, ExternFuncStmt* b) {
-	return CompareOptNode(a->name, b->name) &&
+	return a->name == b->name &&
 	       CompareOptList(a->params, b->params) &&
            CompareOptType(a->retType, b->retType);
-}
-
-bool orange::ast::CompareNode(EnumStmt* a, EnumStmt* b) {
-	return CompareOptNode(a->name, b->name) &&
-           CompareOptList(a->values, b->values);
 }
 
 bool orange::ast::CompareNode(ClassStmt* a, ClassStmt* b) {
@@ -197,12 +144,6 @@ bool orange::ast::CompareNode(InterfaceStmt* a, InterfaceStmt* b) {
            CompareOptNode(a->body, b->body);
 }
 
-bool orange::ast::CompareNode(ExtendStmt* a, ExtendStmt* b) {
-	return CompareOptNode(a->name, b->name) &&
-           CompareOptList(a->supers, b->supers) &&
-           CompareOptNode(a->body, b->body);
-}
-
 bool orange::ast::CompareNode(NamespaceStmt* a, NamespaceStmt* b) {
 	return CompareOptNode(a->name, b->name) &&
            CompareOptNode(a->body, b->body);
@@ -210,20 +151,6 @@ bool orange::ast::CompareNode(NamespaceStmt* a, NamespaceStmt* b) {
 
 bool orange::ast::CompareNode(ImportStmt* a, ImportStmt* b) {
 	return CompareOptNode(a->name, b->name);
-}
-
-bool orange::ast::CompareNode(GetterStmt* a, GetterStmt* b) {
-	return CompareOptNode(a->body, b->body);
-}
-
-bool orange::ast::CompareNode(SetterStmt* a, SetterStmt* b) {
-	return CompareOptNode(a->body, b->body);
-}
-
-bool orange::ast::CompareNode(PropertyStmt* a, PropertyStmt* b) {
-	return CompareOptNode(a->name, b->name) &&
-           CompareOptType(a->type, b->type) &&
-           CompareOptNode(a->body, b->body);
 }
 
 bool orange::ast::CompareNode(ThrowStmt* a, ThrowStmt* b) {
@@ -239,9 +166,6 @@ bool orange::ast::CompareNode(ExprStmt* a, ExprStmt* b) {
 }
 
 bool orange::ast::CompareNode(Expression* a, Expression* b) {
-	if (isA<EnumValue>(a) && isA<EnumValue>(b))
-		return CompareNode(asA<EnumValue>(a), asA<EnumValue>(b));
-
 	if (isA<VarDeclExpr>(a) && isA<VarDeclExpr>(b))
 		return CompareNode(asA<VarDeclExpr>(a), asA<VarDeclExpr>(b));
 
@@ -260,23 +184,14 @@ bool orange::ast::CompareNode(Expression* a, Expression* b) {
 	if (isA<UnaryExpr>(a) && isA<UnaryExpr>(b))
 		return CompareNode(asA<UnaryExpr>(a), asA<UnaryExpr>(b));
 
-	if (isA<TupleExpr>(a) && isA<TupleExpr>(b))
-		return CompareNode(asA<TupleExpr>(a), asA<TupleExpr>(b));
-
 	if (isA<ArrayExpr>(a) && isA<ArrayExpr>(b))
 		return CompareNode(asA<ArrayExpr>(a), asA<ArrayExpr>(b));
-
-	if (isA<ArrayRangeExpr>(a) && isA<ArrayRangeExpr>(b))
-		return CompareNode(asA<ArrayRangeExpr>(a), asA<ArrayRangeExpr>(b));
 
 	if (isA<ArrayAccessExpr>(a) && isA<ArrayAccessExpr>(b))
 		return CompareNode(asA<ArrayAccessExpr>(a), asA<ArrayAccessExpr>(b));
 
 	if (isA<MemberAccessExpr>(a) && isA<MemberAccessExpr>(b))
 		return CompareNode(asA<MemberAccessExpr>(a), asA<MemberAccessExpr>(b));
-
-	if (isA<NamedExpr>(a) && isA<NamedExpr>(b))
-		return CompareNode(asA<NamedExpr>(a), asA<NamedExpr>(b));
 
 	if (isA<ConditionalBlock>(a) && isA<ConditionalBlock>(b))
 		return CompareNode(asA<ConditionalBlock>(a), asA<ConditionalBlock>(b));
@@ -286,18 +201,6 @@ bool orange::ast::CompareNode(Expression* a, Expression* b) {
 
 	if (isA<TernaryExpr>(a) && isA<TernaryExpr>(b))
 		return CompareNode(asA<TernaryExpr>(a), asA<TernaryExpr>(b));
-
-	if (isA<SwitchPattern>(a) && isA<SwitchPattern>(b))
-		return CompareNode(asA<SwitchPattern>(a), asA<SwitchPattern>(b));
-
-	if (isA<SwitchExpr>(a) && isA<SwitchExpr>(b))
-		return CompareNode(asA<SwitchExpr>(a), asA<SwitchExpr>(b));
-
-	if (isA<Constraint>(a) && isA<Constraint>(b))
-		return CompareNode(asA<Constraint>(a), asA<Constraint>(b));
-
-	if (isA<Generics>(a) && isA<Generics>(b))
-		return CompareNode(asA<Generics>(a), asA<Generics>(b));
 
 	if (isA<FunctionExpr>(a) && isA<FunctionExpr>(b))
 		return CompareNode(asA<FunctionExpr>(a), asA<FunctionExpr>(b));
@@ -317,21 +220,13 @@ bool orange::ast::CompareNode(Expression* a, Expression* b) {
 	if (isA<NewExpr>(a) && isA<NewExpr>(b))
 		return CompareNode(asA<NewExpr>(a), asA<NewExpr>(b));
 
-	if (isA<EnumMatch>(a) && isA<EnumMatch>(b))
-		return CompareNode(asA<EnumMatch>(a), asA<EnumMatch>(b));
-
 	return false;
 }
 
-bool orange::ast::CompareNode(EnumValue* a, EnumValue* b) {
-	return CompareOptNode(a->name, b->name) &&
-           CompareOptList(a->params, b->params);
-}
-
 bool orange::ast::CompareNode(VarDeclExpr* a, VarDeclExpr* b) {
-	return CompareOptList(a->bindings, b->bindings) &&
-           CompareOptTypeList(a->types, b->types) &&
-           CompareOptNode(a->value, b->value);
+	return a->name == b->name &&
+		   CompareOptType(a->type, b->type) &&
+		   CompareOptNode(a->value, b->value);
 }
 
 bool orange::ast::CompareNode(Value* a, Value* b) {
@@ -401,9 +296,6 @@ bool orange::ast::CompareNode(Identifier* a, Identifier* b) {
 	if (isA<DtorIDExpr>(a) && isA<DtorIDExpr>(b))
 		return CompareNode(asA<DtorIDExpr>(a), asA<DtorIDExpr>(b));
 
-	if (isA<TempIDExpr>(a) && isA<TempIDExpr>(b))
-		return CompareNode(asA<TempIDExpr>(a), asA<TempIDExpr>(b));
-
 	if (isA<AccessIDExpr>(a) && isA<AccessIDExpr>(b))
 		return CompareNode(asA<AccessIDExpr>(a), asA<AccessIDExpr>(b));
 
@@ -425,10 +317,6 @@ bool orange::ast::CompareNode(NamedIDExpr* a, NamedIDExpr* b) {
 
 bool orange::ast::CompareNode(DtorIDExpr* a, DtorIDExpr* b) {
 	return CompareOptNode(a->base, b->base);
-}
-
-bool orange::ast::CompareNode(TempIDExpr* a, TempIDExpr* b) {
-	return true;
 }
 
 bool orange::ast::CompareNode(AccessIDExpr* a, AccessIDExpr* b) {
@@ -466,18 +354,8 @@ bool orange::ast::CompareNode(UnaryExpr* a, UnaryExpr* b) {
            CompareOptNode(a->LHS, b->LHS);
 }
 
-bool orange::ast::CompareNode(TupleExpr* a, TupleExpr* b) {
-	return CompareOptList(a->values, b->values);
-}
-
 bool orange::ast::CompareNode(ArrayExpr* a, ArrayExpr* b) {
 	return CompareOptList(a->values, b->values);
-}
-
-bool orange::ast::CompareNode(ArrayRangeExpr* a, ArrayRangeExpr* b) {
-	return CompareOptNode(a->LHS, b->LHS) &&
-           a->type == b->type &&
-           CompareOptNode(a->RHS, b->RHS);
 }
 
 bool orange::ast::CompareNode(ArrayAccessExpr* a, ArrayAccessExpr* b) {
@@ -488,11 +366,6 @@ bool orange::ast::CompareNode(ArrayAccessExpr* a, ArrayAccessExpr* b) {
 bool orange::ast::CompareNode(MemberAccessExpr* a, MemberAccessExpr* b) {
 	return CompareOptNode(a->LHS, b->LHS) &&
            CompareOptNode(a->RHS, b->RHS);
-}
-
-bool orange::ast::CompareNode(NamedExpr* a, NamedExpr* b) {
-	return CompareOptNode(a->name, b->name) &&
-           CompareOptNode(a->value, b->value);
 }
 
 bool orange::ast::CompareNode(ConditionalBlock* a, ConditionalBlock* b) {
@@ -510,66 +383,8 @@ bool orange::ast::CompareNode(TernaryExpr* a, TernaryExpr* b) {
            CompareOptNode(a->falseValue, b->falseValue);
 }
 
-bool orange::ast::CompareNode(SwitchPattern* a, SwitchPattern* b) {
-	return CompareOptList(a->patterns, b->patterns) &&
-           CompareOptNode(a->block, b->block);
-}
-
-bool orange::ast::CompareNode(SwitchExpr* a, SwitchExpr* b) {
-	return CompareOptNode(a->condition, b->condition) &&
-           CompareOptList(a->patterns, b->patterns);
-}
-
-bool orange::ast::CompareNode(Constraint* a, Constraint* b) {
-	if (isA<ClassConstraint>(a) && isA<ClassConstraint>(b))
-		return CompareNode(asA<ClassConstraint>(a), asA<ClassConstraint>(b));
-
-	if (isA<DefaultCtorConstraint>(a) && isA<DefaultCtorConstraint>(b))
-		return CompareNode(asA<DefaultCtorConstraint>(a), asA<DefaultCtorConstraint>(b));
-
-	if (isA<BaseConstraint>(a) && isA<BaseConstraint>(b))
-		return CompareNode(asA<BaseConstraint>(a), asA<BaseConstraint>(b));
-
-	if (isA<DataConstraint>(a) && isA<DataConstraint>(b))
-		return CompareNode(asA<DataConstraint>(a), asA<DataConstraint>(b));
-
-	if (isA<TypeConstraint>(a) && isA<TypeConstraint>(b))
-		return CompareNode(asA<TypeConstraint>(a), asA<TypeConstraint>(b));
-
-	return false;
-}
-
-bool orange::ast::CompareNode(ClassConstraint* a, ClassConstraint* b) {
-	return CompareOptNode(a->identifier, b->identifier);
-}
-
-bool orange::ast::CompareNode(DefaultCtorConstraint* a, DefaultCtorConstraint* b) {
-	return CompareOptNode(a->identifier, b->identifier);
-}
-
-bool orange::ast::CompareNode(BaseConstraint* a, BaseConstraint* b) {
-	return CompareOptNode(a->identifier, b->identifier) &&
-           CompareOptNode(a->base, b->base);
-}
-
-bool orange::ast::CompareNode(DataConstraint* a, DataConstraint* b) {
-	return CompareOptNode(a->identifier, b->identifier) &&
-           CompareOptType(a->dataType, b->dataType);
-}
-
-bool orange::ast::CompareNode(TypeConstraint* a, TypeConstraint* b) {
-	return CompareOptNode(a->identifier, b->identifier) &&
-           CompareOptType(a->type, b->type);
-}
-
-bool orange::ast::CompareNode(Generics* a, Generics* b) {
-	return CompareOptList(a->genericTypes, b->genericTypes) &&
-           CompareOptList(a->constraints, b->constraints);
-}
-
 bool orange::ast::CompareNode(FunctionExpr* a, FunctionExpr* b) {
-	return CompareOptNode(a->name, b->name) &&
-           CompareOptNode(a->generics, b->generics) &&
+	return a->name == b->name &&
            CompareOptList(a->params, b->params) &&
            CompareOptType(a->retType, b->retType) &&
            CompareOptNode(a->block, b->block);
@@ -598,12 +413,6 @@ bool orange::ast::CompareNode(FunctionCallExpr* a, FunctionCallExpr* b) {
 
 bool orange::ast::CompareNode(NewExpr* a, NewExpr* b) {
 	return CompareOptNode(a->allocation, b->allocation);
-}
-
-
-bool orange::ast::CompareNode(EnumMatch* a, EnumMatch* b) {
-	return CompareOptNode(a->value, b->value) &&
-           CompareOptList(a->params, b->params);
 }
 
 bool orange::ast::CompareFlag(Flag* a, Flag* b) {
@@ -646,8 +455,6 @@ bool orange::ast::CompareType(Type* a, Type* b) {
 	if (isA<BuiltinType>(a) && isA<BuiltinType>(b)) return CompareType(asA<BuiltinType>(a), asA<BuiltinType>(b));
 	if (isA<ArrayType>(a) && isA<ArrayType>(b)) return CompareType(asA<ArrayType>(a), asA<ArrayType>(b));
 	if (isA<PointerType>(a) && isA<PointerType>(b)) return CompareType(asA<PointerType>(a), asA<PointerType>(b));
-	if (isA<ReferenceType>(a) && isA<ReferenceType>(b)) return CompareType(asA<ReferenceType>(a), asA<ReferenceType>(b));
-	if (isA<TupleType>(a) && isA<TupleType>(b)) return CompareType(asA<TupleType>(a), asA<TupleType>(b));
 
 	return false;
 }
@@ -677,13 +484,5 @@ bool orange::ast::CompareType(ArrayType* a, ArrayType* b) {
 
 bool orange::ast::CompareType(PointerType* a, PointerType* b) {
 	return CompareOptType(a->base, b->base);
-}
-
-bool orange::ast::CompareType(ReferenceType* a, ReferenceType* b) {
-	return CompareOptType(a->base, b->base);
-}
-
-bool orange::ast::CompareType(TupleType* a, TupleType* b) {
-	return CompareOptTypeList(a->types, b->types);
 }
 

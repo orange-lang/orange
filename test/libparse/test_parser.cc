@@ -101,13 +101,7 @@ TEST(Parser, ParsesLongBlockSimpleExpressionOneLine) {
 
 TEST(Parser, ParsesBasicVarDecl) { 
 	TestAST("var a", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>(),
-			nullptr
-		)
+		new VarDeclExpr("a", nullptr, nullptr)
 	});
 }
 
@@ -115,80 +109,15 @@ TEST(Parser, ParsesBasicVarDeclWithValue) {
 	TestAST(R"(
 		var a = 5
 	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>(),
-			new IntValue(5)
-		)
+		new VarDeclExpr("a", nullptr, new IntValue(5))
 	});
 }
 
-TEST(Parser, ParsesMultipleBindingVarDecl) { 
-	TestAST(R"(
-		var (a, b)
-	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a"),
-				new NamedIDExpr("b")
-			}),
-			std::vector<Type*>(),
-			nullptr
-		)
-	});
-}
-
-TEST(Parser, ParsesTypedVarDecl) { 
+TEST(Parser, ParsesTypedVarDecl) {
 	TestAST(R"(
 		var a: int
 	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new BuiltinType(BuiltinTypeKind::INT)
-			}),
-			nullptr
-		)
-	});
-}
-
-TEST(Parser, ParsesMultipleTypedVarDecl) { 
-	TestAST(R"(
-		var (a, b): int, double
-	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a"),
-				new NamedIDExpr("b")
-			}),
-			std::vector<Type*>({
-				new BuiltinType(BuiltinTypeKind::INT),
-				new BuiltinType(BuiltinTypeKind::DOUBLE)
-			}),
-			nullptr
-		)
-	});
-}
-
-TEST(Parser, ParsesMultipleTypedVarDeclWithValue) { 
-	TestAST(R"(
-		var (a, b): int, double = 5
-	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a"),
-				new NamedIDExpr("b")
-			}),
-			std::vector<Type*>({
-				new BuiltinType(BuiltinTypeKind::INT),
-				new BuiltinType(BuiltinTypeKind::DOUBLE)
-			}),
-			new IntValue(5)
-		)
+		new VarDeclExpr("a", new IntType, nullptr)
 	});
 }
 
@@ -216,15 +145,7 @@ TEST(Parser, ParsesBasicTypes) {
 		ss << "var a: " << kvp.first;
 
 		TestAST(ss.str(), {
-			new VarDeclExpr(
-				std::vector<Identifier*>({
-					new NamedIDExpr("a")
-				}),
-				std::vector<Type*>({
-					new BuiltinType(kvp.second),
-				}),
-				nullptr
-			)
+			new VarDeclExpr("a", new BuiltinType(kvp.second), nullptr)
 		});
 	}
 }
@@ -234,18 +155,14 @@ TEST(Parser, ParsesAccessType) {
 		var a: Foo.Bar.Baz
 	)", {
 		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
+			"a",
+			new AccessType(
 				new AccessType(
-					new AccessType(
-						new IdentifierType(new ReferenceIDExpr("Foo")),
-						new IdentifierType(new ReferenceIDExpr("Bar"))
-					),
-					new IdentifierType(new ReferenceIDExpr("Baz"))
-				)
-			}),
+					new IdentifierType(new ReferenceIDExpr("Foo")),
+					new IdentifierType(new ReferenceIDExpr("Bar"))
+				),
+				new IdentifierType(new ReferenceIDExpr("Baz"))
+			),
 			nullptr
 		)
 	});
@@ -256,13 +173,7 @@ TEST(Parser, ParsesIdentifierType) {
 		var a: Foo
 	)", {
 		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new IdentifierType(new ReferenceIDExpr("Foo"))
-			}),
-			nullptr
+			"a", new IdentifierType(new ReferenceIDExpr("Foo")), nullptr
 		)
 	});
 }
@@ -272,18 +183,14 @@ TEST(Parser, ParsesArrayType) {
 		var a: Foo[5][3]
 	)", {
 		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
+			"a",
+			new ArrayType(
 				new ArrayType(
-					new ArrayType(
-						new IdentifierType(new ReferenceIDExpr("Foo")),
-						new IntValue(5)
-					),
-					new IntValue(3)
-				)
-			}),
+					new IdentifierType(new ReferenceIDExpr("Foo")),
+					new IntValue(5)
+				),
+				new IntValue(3)
+			),
 			nullptr
 		)
 	});
@@ -294,130 +201,30 @@ TEST(Parser, ParsesPointerType) {
 		var a: Foo**
 	)", {
 		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
+			"a",
+			new PointerType(
 				new PointerType(
-					new PointerType(
-						new IdentifierType(new ReferenceIDExpr("Foo"))
-					)
+					new IdentifierType(new ReferenceIDExpr("Foo"))
 				)
-			}),
+			),
 			nullptr
 		)
 	});
 }
 
-TEST(Parser, ParsesReferenceType) { 
-	TestAST(R"(
-		var a: Foo&&
-	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new ReferenceType(
-					new ReferenceType(
-						new IdentifierType(new ReferenceIDExpr("Foo"))
-					)
-				)
-			}),
-			nullptr
-		)
-	});
-}
-
-TEST(Parser, ParsesTypeInParens) { 
-	TestAST(R"(
-		var a: (int)
-	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new BuiltinType(BuiltinTypeKind::INT)
-			}),
-			nullptr
-		)
-	});
-}
-
-TEST(Parser, ParsesTupleType) { 
-	TestAST(R"(
-		var a: (int,)
-	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new TupleType(std::vector<Type*>({
-					new BuiltinType(BuiltinTypeKind::INT)
-				}))
-			}),
-			nullptr
-		)
-	});
-}
-
-TEST(Parser, ParseMultipleTupleType) { 
-	TestAST(R"(
-		var a: (int,double)
-	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new TupleType(std::vector<Type*>({
-					new BuiltinType(BuiltinTypeKind::INT),
-					new BuiltinType(BuiltinTypeKind::DOUBLE)
-				}))
-			}),
-			nullptr
-		)
-	});
-}
-
-TEST(Parser, ParseMultipleTupleTypeTrailingComma) { 
-	TestAST(R"(
-		var a: (int,double,)
-	)", {
-		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new TupleType(std::vector<Type*>({
-					new BuiltinType(BuiltinTypeKind::INT),
-					new BuiltinType(BuiltinTypeKind::DOUBLE)
-				}))
-			}),
-			nullptr
-		)
-	});
-}
-
-TEST(Parser, ParsesFunctionType) { 
+TEST(Parser, ParsesFunctionType) {
 	TestAST(R"(
 		var a: (int,double) -> Foo
 	)", {
 		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new FunctionType(
-					std::vector<Type*>({
-						new BuiltinType(BuiltinTypeKind::INT),
-						new BuiltinType(BuiltinTypeKind::DOUBLE)
-					}),
-					new IdentifierType(new ReferenceIDExpr("Foo"))
-				)
-			}),
+			"a",
+			new FunctionType(
+				std::vector<Type*>({
+					new BuiltinType(BuiltinTypeKind::INT),
+					new BuiltinType(BuiltinTypeKind::DOUBLE)
+				}),
+				new IdentifierType(new ReferenceIDExpr("Foo"))
+			),
 			nullptr
 		)
 	});
@@ -425,22 +232,18 @@ TEST(Parser, ParsesFunctionType) {
 
 TEST(Parser, ParsesComplexType) { 
 	TestAST(R"(
-		var a: int*[5]&
+		var a: int*[5]*
 	)", {
 		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new ReferenceType(
-					new ArrayType(
-						new PointerType(
-							new BuiltinType(BuiltinTypeKind::INT)
-						),
-						new IntValue(5)
-					)
+			"a",
+			new PointerType(
+				new ArrayType(
+					new PointerType(
+						new BuiltinType(BuiltinTypeKind::INT)
+					),
+					new IntValue(5)
 				)
-			}),
+			),
 			nullptr
 		)
 	});
@@ -451,21 +254,17 @@ TEST(Parser, ParsesArrayOfFunctionType) {
 		var a: ((int,double) -> Foo)[5]
 	)", {
 		new VarDeclExpr(
-			std::vector<Identifier*>({
-				new NamedIDExpr("a")
-			}),
-			std::vector<Type*>({
-				new ArrayType(
-					new FunctionType(
-						std::vector<Type*>({
-							new BuiltinType(BuiltinTypeKind::INT),
-							new BuiltinType(BuiltinTypeKind::DOUBLE)
-						}),
-						new IdentifierType(new ReferenceIDExpr("Foo"))
-					),
-					new IntValue(5)
-				)
-			}),
+			"a",
+			new ArrayType(
+				new FunctionType(
+					std::vector<Type*>({
+						new BuiltinType(BuiltinTypeKind::INT),
+						new BuiltinType(BuiltinTypeKind::DOUBLE)
+					}),
+					new IdentifierType(new ReferenceIDExpr("Foo"))
+				),
+				new IntValue(5)
+			),
 			nullptr
 		)
 	});
@@ -543,8 +342,7 @@ TEST(Parser, TestFlags) {
 
 	LongBlockExpr expected(std::vector<Node*>({
 		new FunctionExpr(
-			new NamedIDExpr("foo"),
-			nullptr,
+			"foo",
 			std::vector<VarDeclExpr*>(),
 			nullptr,
 			new LongBlockExpr()
@@ -562,87 +360,7 @@ TEST(Parser, TestFlags) {
 	delete ast;
 }
 
-TEST(Parser, TestEmptyEnum) { 
-	TestAST(R"(
-		enum Status { }
-	)", {
-		new EnumStmt(
-			new NamedIDExpr("Status"),
-			std::vector<EnumValue*>()
-		)
-	});
-}
-
-TEST(Parser, TestEnumBasicValues) { 
-	TestAST(R"(
-		enum Status {
-			PENDING,
-			RUNNING,
-			COMPLETED
-	}
-	)", {
-		new EnumStmt(
-			new NamedIDExpr("Status"),
-			std::vector<EnumValue*>({
-				new EnumValue(
-					new NamedIDExpr("PENDING"), std::vector<VarDeclExpr*>()
-				),
-				new EnumValue(
-					new NamedIDExpr("RUNNING"), std::vector<VarDeclExpr*>()
-				),
-				new EnumValue(
-					new NamedIDExpr("COMPLETED"), std::vector<VarDeclExpr*>()
-				)
-			})
-		)
-	});
-}
-
-TEST(Parser, TestEnumWithData) { 
-	TestAST(R"(
-		enum Status {
-			PENDING,
-			RUNNING(time:int),
-			COMPLETED(time,completed:double)
-	}
-	)", {
-		new EnumStmt(
-			new NamedIDExpr("Status"),
-			std::vector<EnumValue*>({
-				new EnumValue(
-					new NamedIDExpr("PENDING"), std::vector<VarDeclExpr*>()
-				),
-				new EnumValue(
-					new NamedIDExpr("RUNNING"),
-					std::vector<VarDeclExpr*>({
-						new VarDeclExpr(
-							std::vector<Identifier*>({new NamedIDExpr("time")}),
-							std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}),
-							nullptr
-						)
-					})
-				),
-				new EnumValue(
-					new NamedIDExpr("COMPLETED"),
-					std::vector<VarDeclExpr*>({
-						new VarDeclExpr(
-							std::vector<Identifier*>({new NamedIDExpr("time")}),
-							std::vector<Type*>(),
-							nullptr
-						),
-						new VarDeclExpr(
-							std::vector<Identifier*>({new NamedIDExpr("completed")}),
-							std::vector<Type*>({new BuiltinType(BuiltinTypeKind::DOUBLE)}),
-							nullptr
-						)
-					})
-				)
-			})
-		)
-	});
-}
-
-TEST(Parser, Interface) { 
+TEST(Parser, Interface) {
 	TestAST(R"(
 		interface Foo {
 			def foo() -> void
@@ -651,23 +369,15 @@ TEST(Parser, Interface) {
 	)", {
 		new InterfaceStmt(new NamedIDExpr("Foo"), new LongBlockExpr(std::vector<Node*>({
 			new ExternFuncStmt(
-				new NamedIDExpr("foo"),
+				"foo",
 				std::vector<VarDeclExpr*>(),
 				new BuiltinType(BuiltinTypeKind::VOID)
 			),
 			new ExternFuncStmt(
-				new NamedIDExpr("bar"),
+				"bar",
 				std::vector<VarDeclExpr*>({
-					new VarDeclExpr(
-						std::vector<Identifier*>({  new NamedIDExpr("a") }),
-						std::vector<Type*>({ new IntType }),
-						nullptr
-					),
-					new VarDeclExpr(
-						std::vector<Identifier*>({  new NamedIDExpr("b") }),
-						std::vector<Type*>({ new IntType }),
-						nullptr
-					)
+					new VarDeclExpr("a", new IntType, nullptr),
+					new VarDeclExpr("b", new IntType, nullptr),
 				}),
 				new IntType
 			)
@@ -683,18 +393,8 @@ TEST(Parser, ParsesClass) {
 
 			class NestedClass { }
 			def foo() { }
-			aggregate { }
 			extern def foo() -> int
 			import Foo
-			extend Foo { }
-
-			property Foo: a
-			property Foo -> int {
-				get: a
-				set: a
-			}
-
-			enum NestedEnum { }
 		}
 	)", {
 		new ClassStmt(
@@ -708,56 +408,20 @@ TEST(Parser, ParsesClass) {
 				new NamedIDExpr("Base2")
 			}),
 			new LongBlockExpr(std::vector<Node*>({
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>(), nullptr
-				),
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}),
-					nullptr
-				),
+				new VarDeclExpr("a", nullptr, nullptr),
+				new VarDeclExpr("a", new IntType, nullptr),
 				new ClassStmt(
 					new NamedIDExpr("NestedClass"),
 					std::vector<Identifier*>(),
 					new LongBlockExpr()
 				),
-				new FunctionExpr(
-					new NamedIDExpr("foo"),
-					nullptr,
-					std::vector<VarDeclExpr*>(),
-					nullptr,
-					new LongBlockExpr()
-				),
-				new AggregateStmt(nullptr, new LongBlockExpr),
+				new FunctionExpr("foo", std::vector<VarDeclExpr*>(), nullptr, new LongBlockExpr),
 				new ExternFuncStmt(
-					new NamedIDExpr("foo"),
+					"foo",
 					std::vector<VarDeclExpr*>(),
 					new BuiltinType(BuiltinTypeKind::INT)
 				),
 				new ImportStmt(new NamedIDExpr("Foo")),
-				new ExtendStmt(
-					new NamedIDExpr("Foo"),
-					std::vector<Identifier*>(),
-					new LongBlockExpr()
-				),
-				new PropertyStmt(
-					new NamedIDExpr("Foo"),
-					nullptr,
-					new ShortBlockExpr(new ReferenceIDExpr("a"))
-				),
-				new PropertyStmt(
-					new NamedIDExpr("Foo"),
-					new BuiltinType(BuiltinTypeKind::INT),
-					new LongBlockExpr(std::vector<Node*>({
-						new GetterStmt(new ShortBlockExpr(new ReferenceIDExpr("a"))),
-						new SetterStmt(new ShortBlockExpr(new ReferenceIDExpr("a")))
-					}))
-				),
-				new EnumStmt(
-					new NamedIDExpr("NestedEnum"),
-					std::vector<EnumValue*>()
-				)
 			}))
 		)
 	});
@@ -773,11 +437,7 @@ TEST(Parser, ClassMemberPrivacy) {
 			new NamedIDExpr("MyClass"),
 			std::vector<Identifier*>({ }),
 			new LongBlockExpr(std::vector<Node*>({
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}),
-					nullptr
-				)
+				new VarDeclExpr("a", new IntType, nullptr)
 			}))
 		)
 	});
@@ -787,13 +447,7 @@ TEST(Parser, BasicFunction) {
 	TestAST(R"(
 		def foo() { }
 	)", {
-		new FunctionExpr(
-			new NamedIDExpr("foo"),
-			nullptr,
-			std::vector<VarDeclExpr*>(),
-			nullptr,
-			new LongBlockExpr()
-		)
+		new FunctionExpr("foo", std::vector<VarDeclExpr*>(), nullptr, new LongBlockExpr())
 	});
 }
 
@@ -802,13 +456,9 @@ TEST(Parser, BasicFunctionParameterImplicit) {
 		def foo(a) { }
 	)", {
 		new FunctionExpr(
-			new NamedIDExpr("foo"),
-			nullptr,
+			"foo",
 			std::vector<VarDeclExpr*>({
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>(), nullptr
-				)
+				new VarDeclExpr("a", nullptr, nullptr)
 			}),
 			nullptr,
 			new LongBlockExpr()
@@ -821,13 +471,9 @@ TEST(Parser, BasicFunctionParameterExplicit) {
 		def foo(a:int) { }
 	)", {
 		new FunctionExpr(
-			new NamedIDExpr("foo"),
-			nullptr,
+			"foo",
 			std::vector<VarDeclExpr*>({
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}), nullptr
-				)
+				new VarDeclExpr("a", new IntType, nullptr)
 			}),
 			nullptr,
 			new LongBlockExpr()
@@ -840,17 +486,10 @@ TEST(Parser, BasicFunctionParameterMixed) {
 		def foo(a,a:int) { }
 	)", {
 		new FunctionExpr(
-			new NamedIDExpr("foo"),
-			nullptr,
+			"foo",
 			std::vector<VarDeclExpr*>({
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>(), nullptr
-				),
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}), nullptr
-				)
+				new VarDeclExpr("a", nullptr, nullptr),
+				new VarDeclExpr("a", new IntType, nullptr),
 			}),
 			nullptr,
 			new LongBlockExpr()
@@ -863,17 +502,10 @@ TEST(Parser, BasicFunctionParameterMixedReturn) {
 		def foo(a,a:int) -> void { }
 	)", {
 		new FunctionExpr(
-			new NamedIDExpr("foo"),
-			nullptr,
+			"foo",
 			std::vector<VarDeclExpr*>({
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>(), nullptr
-				),
-				new VarDeclExpr(
-					std::vector<Identifier*>({new NamedIDExpr("a")}),
-					std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}), nullptr
-				)
+				new VarDeclExpr("a", nullptr, nullptr),
+				new VarDeclExpr("a", new IntType, nullptr),
 			}),
 			new BuiltinType(BuiltinTypeKind::VOID),
 			new LongBlockExpr()
@@ -1089,54 +721,7 @@ TEST(Parser, NestedArray) {
 	});
 }
 
-TEST(Parser, ArrayRange) { 
-	TestAST(R"(
-		[a .. b]; [a ... b]
-	)", {
-		new ArrayRangeExpr(
-			new ReferenceIDExpr("a"), ArrayRangeType::INCLUSIVE, new ReferenceIDExpr("b")
-		),
-		new ArrayRangeExpr(
-			new ReferenceIDExpr("a"), ArrayRangeType::EXCLUSIVE, new ReferenceIDExpr("b")
-		)
-	});
-}
-
-TEST(Parser, TestTuples) { 
-	TestAST(R"(
-		(1,)
-		(1,2)
-		(a:1,b:2)
-	)", {
-		new TupleExpr(std::vector<Expression*>({
-			new IntValue(1)
-		})),
-		new TupleExpr(std::vector<Expression*>({
-			new IntValue(1),
-			new IntValue(2)
-		})),
-		new TupleExpr(std::vector<Expression*>({
-			new NamedExpr(new ReferenceIDExpr("a"), new IntValue(1)),
-			new NamedExpr(new ReferenceIDExpr("b"), new IntValue(2))
-		}))
-	});
-}
-
-TEST(Parser, NamedArguments) { 
-	TestAST(R"(
-		foo(a:1,b:2)
-	)", {
-		new FunctionCallExpr(
-			new ReferenceIDExpr("foo"),
-			std::vector<Expression*>({
-				new NamedExpr(new ReferenceIDExpr("a"), new IntValue(1)),
-				new NamedExpr(new ReferenceIDExpr("b"), new IntValue(2))
-			})
-		)
-	});
-}
-
-TEST(Parser, TestIfs) { 
+TEST(Parser, TestIfs) {
 	TestAST(R"(
 		if (1) { }
 
@@ -1176,7 +761,6 @@ TEST(Parser, Loops) {
 		for (;;) { }
 		for (a;b;c) { }
 		for (var a;b;c) { }
-		foreach (var a in b) { }
 		while (a) { }
 		forever { }
 		do { } while (a)
@@ -1189,19 +773,8 @@ TEST(Parser, Loops) {
 			LoopConditionCheck::BEFORE, new LongBlockExpr()
 		),
 		new LoopStmt(
-			new VarDeclExpr(
-				std::vector<Identifier*>({new NamedIDExpr("a")}),
-				std::vector<Type*>(),
-				nullptr
-			), new ReferenceIDExpr("b"), new ReferenceIDExpr("c"),
+			new VarDeclExpr("a", nullptr, nullptr), new ReferenceIDExpr("b"), new ReferenceIDExpr("c"),
 			LoopConditionCheck::BEFORE, new LongBlockExpr()
-		),
-		new ForeachStmt(
-			new VarDeclExpr(
-				std::vector<Identifier*>({new NamedIDExpr("a")}),
-				std::vector<Type*>(),
-				nullptr
-			), new ReferenceIDExpr("b"), new LongBlockExpr()
 		),
 		new LoopStmt(
 			nullptr, new ReferenceIDExpr("a"), nullptr,
@@ -1218,51 +791,11 @@ TEST(Parser, Loops) {
 	});
 }
 
-TEST(Parser, SwitchStatement) { 
+TEST(Parser, ControlStatements) {
 	TestAST(R"(
-		switch (a) {
-			1, 2: { },
-			A.B(a, b): { },
-			_: { }
-		}
-	)", {
-		new SwitchExpr(
-			new ReferenceIDExpr("a"),
-			std::vector<SwitchPattern*>({
-				new SwitchPattern(
-					std::vector<Expression*>({
-						new IntValue(1), new IntValue(2)
-					}),
-					new LongBlockExpr()
-				),
-				new SwitchPattern(
-					std::vector<Expression*>({
-						new EnumMatch(
-							new AccessIDExpr(
-								new ReferenceIDExpr("A"), new ReferenceIDExpr("B")
-							),
-							std::vector<Expression*>({
-								new ReferenceIDExpr("a"), new ReferenceIDExpr("b")
-							})
-						)
-					}),
-					new LongBlockExpr()
-				),
-				new SwitchPattern(
-					std::vector<Expression*>({ new TempIDExpr() }),
-					new LongBlockExpr()
-				),
-			})
-		)
-	});
-}
-
-TEST(Parser, ControlStatements) { 
-	TestAST(R"(
-		break; continue; yield 5
+		break; continue;
 	)", {
 		new BreakStmt(), new ContinueStmt,
-		new YieldStmt(new IntValue(5))
 	});
 }
 
@@ -1285,16 +818,10 @@ TEST(Parser, TryCatches) {
 			new LongBlockExpr(),
 			std::vector<CatchBlock*>({
 				new CatchBlock(
-					new VarDeclExpr(
-						std::vector<Identifier*>({new NamedIDExpr("a")}),
-						std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}), nullptr
-					), new LongBlockExpr()
+					new VarDeclExpr("a", new IntType, nullptr), new LongBlockExpr()
 				),
 				new CatchBlock(
-					new VarDeclExpr(
-						std::vector<Identifier*>({new NamedIDExpr("b")}),
-						std::vector<Type*>({new BuiltinType(BuiltinTypeKind::INT)}), nullptr
-					), new LongBlockExpr()
+					new VarDeclExpr("b", new IntType, nullptr), new LongBlockExpr()
 				)
 			}),
 			new LongBlockExpr()

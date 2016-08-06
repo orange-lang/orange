@@ -109,13 +109,13 @@ namespace orange { namespace parser { namespace impl {
 
 			if (!Expect(DEF)) return nullptr;
 
-			Identifier* id = nullptr;
+			std::string name;
 			std::vector<VarDeclExpr*> params;
 			Type* retType = nullptr;
 
 			if (PeekNextConcreteToken()->type == IDENTIFIER) {
 				auto token = GetNextConcreteToken();
-				id = CreateNode<NamedIDExpr>(token->value);
+				name = token->value;
 			}
 
 			if (!Expect(OPEN_PAREN)) return nullptr;
@@ -133,7 +133,7 @@ namespace orange { namespace parser { namespace impl {
 				return nullptr;
 			}
 
-			auto node = CreateNode<ExternFuncStmt>(id, params, retType);
+			auto node = CreateNode<ExternFuncStmt>(name, params, retType);
 
 			if (node != nullptr) {
 				node->flags.insert(node->flags.end(), flags.begin(), flags.end());
@@ -249,13 +249,8 @@ namespace orange { namespace parser { namespace impl {
 				case DEF: node = ParseFunction(); break;
 				case EXTERN: node = ParseExternFunction(); break;
 				case NAMESPACE: node = ParseNamespace(); break;
-				case ENUM: node = ParseEnum(); break;
 				case CLASS: node = ParseClass(); break;
-				case AGGREGATE: node = ParseAggregate(); break;
 				case IMPORT: node = ParseImport(); break;
-				case EXTEND: node = ParseExtend(); break;
-				case GET: node = ParseGet(); break;
-				case SET: node = ParseSet(); break;
 				case INTERFACE: node = ParseInterface(); break;
 				default: break;
 			}
@@ -291,11 +286,9 @@ namespace orange { namespace parser { namespace impl {
 						GetNextConcreteToken();
 						auto expr = ParseExpression();
 						if (expr == nullptr) { Expected("expression"); return nullptr; }
-						node = CreateNode<YieldStmt>(expr);
 						break;
 					}
 					case FOR: node = ParseForLoop(); break;
-					case FOREACH: node = ParseForEachLoop(); break;
 					case WHILE: node = ParseWhileLoop(); break;
 					case DO: node = ParseDoWhileLoop(); break;
 					case FOREVER: node = ParseForeverLoop(); break;
@@ -309,20 +302,6 @@ namespace orange { namespace parser { namespace impl {
 			}
 
 			return node;
-		}
-
-		GetterStmt* ParseGet() {
-			if (!Expect(GET)) return nullptr;
-			auto body = ParseBlock();
-			if (body == nullptr) { Expected("block"); return nullptr; }
-			return CreateNode<GetterStmt>(body);
-		}
-
-		SetterStmt* ParseSet() {
-			if (!Expect(SET)) return nullptr;
-			auto body = ParseBlock();
-			if (body == nullptr) { Expected("block"); return nullptr; }
-			return CreateNode<SetterStmt>(body);
 		}
 
 		InterfaceStmt* ParseInterface() {
@@ -417,11 +396,7 @@ namespace orange { namespace parser { namespace impl {
 				case TokenType::VAR: node = ParseVarDecl(); break;
 				case DEF: node = ParseFunction(); break;
 				case EXTERN: node = ParseExternFunction(); break;
-				case AGGREGATE: node = ParseAggregate(); break;
 				case IMPORT: node = ParseImport(); break;
-				case EXTEND: node = ParseExtend(); break;
-				case PROPERTY: node = ParseProperty(); break;
-				case ENUM: node = ParseEnum(); break;
 				case CLASS: node = ParseClass(); break;
 				case INTERFACE: node = ParseInterface(); break;
 				default: break;
@@ -434,81 +409,11 @@ namespace orange { namespace parser { namespace impl {
 			return node;
 		}
 
-		PropertyStmt* ParseProperty() {
-			if (!Expect(PROPERTY)) return nullptr;
-
-			auto token = GetNextConcreteToken();
-			if (!Expect(IDENTIFIER, token)) return nullptr;
-
-			auto name = CreateNode<NamedIDExpr>(token->value);
-			Type* type = nullptr;
-
-			if (PeekNextConcreteToken()->type == ARROW) {
-				GetNextConcreteToken();
-
-				type = ParseType();
-				if (type == nullptr) { Expected("type"); return nullptr; }
-			}
-
-			auto body = ParseBlock();
-			if (body == nullptr) { Expected("block"); return nullptr; }
-
-			return CreateNode<PropertyStmt>(name, type, body);
-		}
-
-		ExtendStmt* ParseExtend() {
-			if (!Expect(EXTEND)) return nullptr;
-
-			Identifier* name = nullptr;
-			std::vector<Identifier*> supers;
-
-			auto token = GetNextConcreteToken();
-			if (!Expect(IDENTIFIER, token)) return nullptr;
-
-			name = CreateNode<NamedIDExpr>(token->value);
-
-			if (PeekNextConcreteToken()->type == COLON) {
-				GetNextConcreteToken();
-
-				auto base = ParseLongID();
-				if (base == nullptr) { Expected("base class"); return nullptr; }
-				supers.push_back(base);
-
-				while (PeekNextConcreteToken()->type == COMMA) {
-					GetNextConcreteToken();
-
-					auto base = ParseLongID();
-					if (base == nullptr) { Expected("base class"); return nullptr; }
-					supers.push_back(base);
-				}
-			}
-
-			auto body = ParseClassBody();
-
-			return CreateNode<ExtendStmt>(name, supers, body);
-		}
-
 		ImportStmt* ParseImport() {
 			if (!Expect(IMPORT)) return nullptr;
 			auto name = ParseLongID();
 			if (name == nullptr) { Expected("identifier"); return nullptr; }
 			return CreateNode<ImportStmt>(name);
-		}
-
-		AggregateStmt* ParseAggregate() {
-			if (!Expect(AGGREGATE)) return nullptr;
-
-			Identifier* name = nullptr;
-
-			if (PeekNextConcreteToken()->type == IDENTIFIER) {
-				name = ParseLongID();
-				if (name == nullptr) { Expected("identifier"); return nullptr; }
-			}
-
-			auto block = ParseLongBlock();
-			if (block == nullptr) { Expected("block"); return nullptr; }
-
-			return CreateNode<AggregateStmt>(name, block);
 		}
 
 		TryExpr* ParseTryCatch() {
@@ -581,26 +486,6 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<LoopStmt>(initializer, condition, afterthought, LoopConditionCheck::BEFORE, body);
 		}
 
-		ForeachStmt* ParseForEachLoop() {
-			if (!Expect(FOREACH)) return nullptr;
-			if (!Expect(OPEN_PAREN)) return nullptr;
-
-			auto LHS = ParseVarDecl();
-			if (LHS == nullptr) { Expected("variable declaration"); return nullptr; }
-
-			if (!Expect(IN)) return nullptr;
-
-			auto RHS = ParseExpression();
-			if (RHS == nullptr) { Expected("expression"); return nullptr; }
-
-			if (!Expect(CLOSE_PAREN)) return nullptr;
-
-			auto body = ParseBlock();
-			if (body == nullptr) { Expected("block"); return nullptr; }
-
-			return CreateNode<ForeachStmt>(LHS, RHS, body);
-		}
-
 		LoopStmt* ParseWhileLoop() {
 			if (!Expect(WHILE)) return nullptr;
 			if (!Expect(OPEN_PAREN)) return nullptr;
@@ -640,68 +525,6 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<LoopStmt>(nullptr, nullptr, nullptr, LoopConditionCheck::BEFORE, body);
 		}
 
-		EnumStmt* ParseEnum() {
-			if (!Expect(ENUM)) return nullptr;
-			Identifier* name = nullptr;
-			std::vector<EnumValue*> values;
-
-			auto token = GetNextConcreteToken();
-			if (!Expect(IDENTIFIER, token)) return nullptr;
-			name = CreateNode<NamedIDExpr>(token->value);
-
-			if (!Expect(OPEN_CURLY)) return nullptr;
-
-			if (PeekNextConcreteToken()->type == IDENTIFIER) {
-				values = ParseEnumValues();
-			}
-
-			if (!Expect(CLOSE_CURLY)) return nullptr;
-
-			return CreateNode<EnumStmt>(name, values);
-		}
-
-		std::vector<EnumValue*> ParseEnumValues() {
-			std::vector<EnumValue*> values;
-
-			auto value = ParseEnumValue();
-			if (value == nullptr) { Expected("identitfer"); return std::vector<EnumValue*>(); }
-			values.push_back(value);
-
-			while (PeekNextConcreteToken()->type == COMMA) {
-				GetNextConcreteToken();
-
-				if (PeekNextConcreteToken()->type != IDENTIFIER) {
-					break;
-				}
-
-				value = ParseEnumValue();
-				if (value == nullptr) { Expected("identitfer"); return std::vector<EnumValue*>(); }
-				values.push_back(value);
-			}
-
-			return values;
-		}
-
-		EnumValue* ParseEnumValue() {
-			Identifier* name = nullptr;
-			std::vector<VarDeclExpr*> params;
-
-			auto token = GetNextConcreteToken();
-			if (!Expect(IDENTIFIER, token)) return nullptr;
-			name = CreateNode<NamedIDExpr>(token->value);
-
-			if (PeekNextConcreteToken()->type == OPEN_PAREN) {
-				GetNextConcreteToken();
-
-				params = ParseParameterList();
-
-				if (!Expect(CLOSE_PAREN)) return nullptr;
-			}
-
-
-			return CreateNode<EnumValue>(name, params);
-		}
-
 		bool IsFlag(Token* tok) {
 			switch (tok->type) {
 				case TokenType::PRIVATE: case TokenType::PROTECTED: case TokenType::PUBLIC:
@@ -736,13 +559,13 @@ namespace orange { namespace parser { namespace impl {
 			if (!Expect(EXTERN)) return nullptr;
 			if (!Expect(DEF)) return nullptr;
 
-			Identifier* id = nullptr;
+			std::string name;
 			std::vector<VarDeclExpr*> params;
 			Type* retType = nullptr;
 
 			if (PeekNextConcreteToken()->type == IDENTIFIER) {
 				auto token = GetNextConcreteToken();
-				id = CreateNode<NamedIDExpr>(token->value);
+				name = token->value;
 			}
 
 			if (!Expect(OPEN_PAREN)) return nullptr;
@@ -760,19 +583,22 @@ namespace orange { namespace parser { namespace impl {
 				return nullptr;
 			}
 
-			return CreateNode<ExternFuncStmt>(id, params, retType);
+			return CreateNode<ExternFuncStmt>(name, params, retType);
 		}
 
 		FunctionExpr* ParseFunction() {
 			if (!Expect(DEF)) return nullptr;
 
-			Identifier* id = nullptr;
+			std::string id;
 			std::vector<VarDeclExpr*> params;
 			Type* retType = nullptr;
-
+			
 			if (PeekNextConcreteToken()->type == IDENTIFIER) {
 				auto token = GetNextConcreteToken();
-                id = CreateNode<NamedIDExpr>(token->value);
+                id = token->value;
+			} else {
+				Expected("identifier");
+				return nullptr;
 			}
 
 			if (!Expect(OPEN_PAREN)) return nullptr;
@@ -799,7 +625,7 @@ namespace orange { namespace parser { namespace impl {
 				return nullptr;
 			}
 
-			return CreateNode<FunctionExpr>(id, nullptr, params, retType, body);
+			return CreateNode<FunctionExpr>(id, params, retType, body);
 		}
 
 		std::vector<VarDeclExpr*> ParseParameterList() {
@@ -822,18 +648,16 @@ namespace orange { namespace parser { namespace impl {
 
 		VarDeclExpr* ParseImplicitParameter() {
 			auto id = GetNextConcreteToken();
-			std::vector<Type*> types;
+			Type* type;
 			Expression* value = nullptr;
 
 			if (!Expect(IDENTIFIER, id)) return nullptr;
 
 			if (PeekNextConcreteToken()->type == COLON) {
 				GetNextConcreteToken();
-				auto ty = ParseType();
+				type = ParseType();
 
-				if (ty == nullptr) { Expected("type"); return nullptr; }
-
-				types.push_back(ty);
+				if (type == nullptr) { Expected("type"); return nullptr; }
 			}
 
 			if (PeekNextConcreteToken()->type == ASSIGN) {
@@ -843,10 +667,7 @@ namespace orange { namespace parser { namespace impl {
 				if (value == nullptr) { Expected("expression"); return nullptr; }
 			}
 
-			return CreateNode<VarDeclExpr>(
-				std::vector<Identifier*>({ CreateNode<NamedIDExpr>(id->value) }),
-				types, value
-			);
+			return CreateNode<VarDeclExpr>(id->value, type, value);
 		}
 
 		NamespaceStmt* ParseNamespace() {
@@ -889,31 +710,13 @@ namespace orange { namespace parser { namespace impl {
 			if (!Expect(TokenType::VAR)) return nullptr;
 
 			// Allow single identifier or (
-			std::vector<Identifier*> ids;
-			std::vector<Type*> tys;
+			std::string name;
+			Type* ty = nullptr;
 			Expression* value = nullptr;
 
 			auto next = GetNextConcreteToken();
 			if (next->type == IDENTIFIER) {
-				ids.push_back(CreateNode<NamedIDExpr>(next->value));
-			} else if (next->type == OPEN_PAREN) {
-				next = GetNextConcreteToken();
-				if (!Expect(IDENTIFIER, next)) return nullptr;
-
-				ids.push_back(CreateNode<NamedIDExpr>(next->value));
-
-				next = GetNextConcreteToken();
-
-				while (next->type == COMMA) {
-					next = GetNextConcreteToken();
-					if (!Expect(IDENTIFIER, next)) return nullptr;
-
-					ids.push_back(CreateNode<NamedIDExpr>(next->value));
-
-					next = GetNextConcreteToken();
-				}
-
-				if (!Expect(CLOSE_PAREN, next)) return nullptr;
+				name = next->value;
 			} else {
 				Expected("identifier", next);
 				return nullptr;
@@ -921,26 +724,11 @@ namespace orange { namespace parser { namespace impl {
 
 			if (PeekNextConcreteToken()->type == COLON) {
 				GetNextConcreteToken();
-				auto ty = ParseType();
+				ty = ParseType();
 
 				if (ty == nullptr) {
 					Expected("type");
 					return nullptr;
-				}
-
-				tys.push_back(ty);
-
-				while (PeekNextConcreteToken()->type == COMMA) {
-					GetNextConcreteToken();
-
-					auto ty = ParseType();
-
-					if (ty == nullptr) {
-						Expected("type");
-						return nullptr;
-					}
-
-					tys.push_back(ty);
 				}
 			}
 
@@ -954,7 +742,7 @@ namespace orange { namespace parser { namespace impl {
 				}
 			}
 
-			return CreateNode<VarDeclExpr>(ids, tys, value);
+			return CreateNode<VarDeclExpr>(name, ty, value);
 		}
 
 		/// Parse type _or_ basic type
@@ -973,10 +761,6 @@ namespace orange { namespace parser { namespace impl {
 					base = new ArrayType(base, value);
 				} else if (lookahead->type == TIMES) {
 					base = new PointerType(base);
-				} else if (lookahead->type == BIT_AND) {
-					base = new ReferenceType(base);
-				} else if (lookahead->type == AND) {
-					base = new ReferenceType(new ReferenceType(base));
 				}
 
 				lookahead = mStream.peek();
@@ -1062,8 +846,8 @@ namespace orange { namespace parser { namespace impl {
 
 					return new FunctionType(tys, ret);
 				}
-
-				return commas > 0 ? new TupleType(tys) : tys.front();
+				
+				return commas > 0 ? nullptr : tys.front();
 			}
 
 			Expected("type", ty);
@@ -1251,17 +1035,7 @@ namespace orange { namespace parser { namespace impl {
 		}
 
 		Expression* ParseArgument() {
-			auto lookahead = mStream.peek(2);
-			if (lookahead[0]->type == IDENTIFIER && lookahead[1]->type == COLON) {
-				auto id = CreateNode<ReferenceIDExpr>(mStream.get()->value);
-
-				if (!Expect(COLON)) return nullptr;
-
-				auto val = ParseExpression();
-				if (val == nullptr) { Expected("Expression"); }
-
-				return CreateNode<NamedExpr>(id, val);
-			} else return ParseExpression();
+			return ParseExpression();
 		}
 
 		Identifier* ParseIdentifier() {
@@ -1284,8 +1058,6 @@ namespace orange { namespace parser { namespace impl {
 				case IDENTIFIER: return CreateNode<ReferenceIDExpr>(GetNextConcreteToken()->value);
 				case THIS: GetNextConcreteToken(); return CreateNode<ThisID>();
 				case IF: return ParseIf();
-				case SWITCH: return ParseSwitch();
-				case TEMP: GetNextConcreteToken(); return CreateNode<TempIDExpr>();
 				default:
 					Expected("value", token);
 					return nullptr;
@@ -1305,131 +1077,6 @@ namespace orange { namespace parser { namespace impl {
 				default:
 					return false;
 			}
-		}
-
-		SwitchPattern* ParseSwitchPattern() {
-			std::vector<Expression*> matches;
-
-			auto match = ParseSwitchPatternMatch();
-			if (match == nullptr) { Expected("pattern"); return nullptr; }
-			matches.push_back(match);
-
-			while (PeekNextConcreteToken()->type == COMMA) {
-				GetNextConcreteToken();
-
-				auto match = ParseSwitchPatternMatch();
-				if (match == nullptr) { Expected("pattern"); return nullptr; }
-				matches.push_back(match);
-			}
-
-			if (!Expect(COLON)) return nullptr;
-
-			BlockExpr* value = nullptr;
-
-			if (PeekNextConcreteToken()->type == OPEN_CURLY) {
-				GetNextConcreteToken();
-
-				value = CreateNode<LongBlockExpr>(ParseStatements());
-
-				if (!Expect(CLOSE_CURLY)) return nullptr;
-			} else {
-				Expression* expr = ParseExpression();
-
-				if (expr != nullptr && mStream.peek()->type == SEMICOLON) {
-					mStream.get();
-					value = CreateNode<LongBlockExpr>(std::vector<Node*>({
-						CreateNode<ExprStmt>(expr)
-					}));
-				} else {
-					value = CreateNode<LongBlockExpr>(std::vector<Node*>({ expr }));
-				}
-			}
-
-			if (value == nullptr) { Expected("expression"); return nullptr; }
-			return CreateNode<SwitchPattern>(matches, value);
-		}
-
-		Expression* ParseEnumMatch() {
-			auto token = GetNextConcreteToken();
-			if (!Expect(IDENTIFIER, token)) return nullptr;
-
-			Identifier* id = CreateNode<ReferenceIDExpr>(token->value);
-
-			while (mStream.peek()->type == DOT) {
-				mStream.get();
-
-				token = GetNextConcreteToken();
-				if (!Expect(IDENTIFIER, token)) return nullptr;
-
-				id = CreateNode<AccessIDExpr>(id, CreateNode<ReferenceIDExpr>(token->value));
-			}
-
-			if (mStream.peek()->type == OPEN_PAREN) {
-				mStream.get();
-
-				std::vector<Expression*> args;
-
-				if (IsSwitchPatternToken(PeekNextConcreteToken())) {
-					auto arg = ParseSwitchPatternMatch();
-					if (arg == nullptr) { Expected("expression"); return nullptr; }
-					args.push_back(arg);
-
-					while (PeekNextConcreteToken()->type == COMMA) {
-						GetNextConcreteToken();
-
-						auto arg = ParseSwitchPatternMatch();
-						if (arg == nullptr) { Expected("expression"); return nullptr; }
-						args.push_back(arg);
-					}
-				}
-
-				if (!Expect(CLOSE_PAREN)) return nullptr;
-
-				return CreateNode<EnumMatch>(id, args);
-			} else {
-				return id;
-			}
-		}
-
-		Expression* ParseSwitchPatternMatch() {
-			switch (PeekNextConcreteToken()->type) {
-				case IDENTIFIER: return ParseEnumMatch();
-				default: return ParsePrimary();
-			}
-		}
-
-		SwitchExpr* ParseSwitch() {
-			if (!Expect(SWITCH)) return nullptr;
-			if (!Expect(OPEN_PAREN)) return nullptr;
-
-			auto expr = ParseExpression();
-			if (expr == nullptr) { Expected("Expression"); return nullptr; }
-
-			if (!Expect(CLOSE_PAREN)) return nullptr;
-
-			if (!Expect(OPEN_CURLY)) return nullptr;
-
-			std::vector<SwitchPattern*> patterns;
-
-			if (IsSwitchPatternToken(PeekNextConcreteToken())) {
-				auto pattern = ParseSwitchPattern();
-				if (pattern == nullptr) { Expected("pattern"); return nullptr; }
-				patterns.push_back(pattern);
-
-				while (PeekNextConcreteToken()->type == COMMA) {
-					GetNextConcreteToken();
-
-					if (!IsSwitchPatternToken(PeekNextConcreteToken())) break;
-
-					auto pattern = ParseSwitchPattern();
-					if (pattern == nullptr) { Expected("pattern"); return nullptr; }
-					patterns.push_back(pattern);
-				}
-			}
-
-			if (!Expect(CLOSE_CURLY)) return nullptr;
-
-			return CreateNode<SwitchExpr>(expr, patterns);
 		}
 
 		IfExpr* ParseIf() {
@@ -1488,24 +1135,9 @@ namespace orange { namespace parser { namespace impl {
 
 			int numCommas = 0;
 
-			while (PeekNextConcreteToken()->type == COMMA) {
-				GetNextConcreteToken();
-				numCommas++;
-
-				if (IsExpressionToken(PeekNextConcreteToken())) {
-					expr = ParseArgument();
-					if (expr == nullptr) { Expected("expression"); return nullptr; }
-					exprs.push_back(expr);
-				}
-			}
-
 			if (!Expect(CLOSE_PAREN)) return nullptr;
 
-			if (numCommas == 0 && !isA<NamedExpr>(exprs.front())) {
-				return exprs.front();
-			} else {
-				return CreateNode<TupleExpr>(exprs);
-			}
+			return exprs.front();
 		}
 
 		Expression* ParseArray() {
@@ -1529,18 +1161,6 @@ namespace orange { namespace parser { namespace impl {
 					}
 
 					array = CreateNode<ArrayExpr>(values);
-				} else if (PeekNextConcreteToken()->type == INCLUSIVE_RANGE) {
-					GetNextConcreteToken();
-					auto second = ParseExpression();
-					if (second == nullptr) { Expected("expression"); return nullptr; }
-
-					array = CreateNode<ArrayRangeExpr>(first, ArrayRangeType::INCLUSIVE, second);
-				} else if (PeekNextConcreteToken()->type == EXCLUSIVE_RANGE) {
-					GetNextConcreteToken();
-					auto second = ParseExpression();
-					if (second == nullptr) { Expected("expression"); return nullptr; }
-
-					array = CreateNode<ArrayRangeExpr>(first, ArrayRangeType::EXCLUSIVE, second);
 				} else { // array with single element
 					array = CreateNode<ArrayExpr>(std::vector<Expression*>({ first }));
 				}

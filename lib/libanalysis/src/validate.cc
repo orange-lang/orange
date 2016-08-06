@@ -39,69 +39,18 @@ public:
 		mWalker.WalkBlockExpr(this, node->body);
 	}
 
-	virtual void VisitForeachStmt(ForeachStmt* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->declaration == nullptr) { mValid = false; return; }
-		if (node->value == nullptr) { mValid = false; return; }
-		if (node->body == nullptr) { mValid = false; return; }
-
-		mWalker.WalkVarDeclExpr(this, node->declaration);
-		mWalker.WalkExpr(this, node->value);
-		mWalker.WalkBlockExpr(this, node->body);
-	}
-
-	virtual void VisitYieldStmt(YieldStmt* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->value == nullptr) { mValid = false; return; }
-		mWalker.WalkExpr(this, node->value);
-	}
-
 	virtual void VisitReturnStmt(ReturnStmt* node) override {
 		if (BaseValid(node) == false) { mValid = false; return; }
 		mWalker.WalkExpr(this, node->value);
 	}
 
-	virtual void VisitAggregateStmt(AggregateStmt* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->body == nullptr) { mValid = false; return; }
-		if (node->name) mWalker.WalkIdentifier(this, node->name);
-		mWalker.WalkBlockExpr(this, node->body);
-	}
-
 	virtual void VisitExternFuncStmt(ExternFuncStmt* node) override {
 		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->name == nullptr) { mValid = false; return; }
 		if (node->retType == nullptr) { mValid = false; return; }
 
-		mWalker.WalkIdentifier(this, node->name);
-
 		for (auto param : node->params) {
 			if (param == nullptr) { mValid = false; return; }
 			mWalker.WalkVarDeclExpr(this, param);
-		}
-	}
-
-	virtual void VisitEnumValue(EnumValue* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->name == nullptr) { mValid = false; return; }
-
-		mWalker.WalkIdentifier(this, node->name);
-
-		for (auto param : node->params) {
-			if (param == nullptr) { mValid = false; return; }
-			mWalker.WalkVarDeclExpr(this, param);
-		}
-	}
-
-	virtual void VisitEnumStmt(EnumStmt* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->name == nullptr) { mValid = false; return; }
-
-		mWalker.WalkIdentifier(this, node->name);
-
-		for (auto value : node->values) {
-			if (value == nullptr) { mValid = false; return; }
-			mWalker.WalkEnumValue(this, value);
 		}
 	}
 
@@ -129,21 +78,6 @@ public:
 		mWalker.WalkBlockExpr(this, node->body);
 	}
 
-	virtual void VisitExtendStmt(ExtendStmt* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->name == nullptr) { mValid = false; return; }
-		if (node->body == nullptr) { mValid = false; return; }
-
-		mWalker.WalkIdentifier(this, node->name);
-
-		for (auto super : node->supers) {
-			if (super == nullptr) { mValid = false; return; }
-			mWalker.WalkIdentifier(this, super);
-		}
-
-		mWalker.WalkBlockExpr(this, node->body);
-	}
-
 	virtual void VisitNamespaceStmt(NamespaceStmt* node) override {
 		if (BaseValid(node) == false) { mValid = false; return; }
 		if (node->name == nullptr) { mValid = false; return; }
@@ -157,27 +91,6 @@ public:
 		if (BaseValid(node) == false) { mValid = false; return; }
 		if (node->name == nullptr) { mValid = false; return; }
 		mWalker.WalkIdentifier(this, node->name);
-	}
-
-	virtual void VisitGetterStmt(GetterStmt* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->body == nullptr) { mValid = false; return; }
-		mWalker.WalkBlockExpr(this, node->body);
-	}
-
-	virtual void VisitSetterStmt(SetterStmt* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->body == nullptr) { mValid = false; return; }
-		mWalker.WalkBlockExpr(this, node->body);
-	}
-
-	virtual void VisitPropertyStmt(PropertyStmt* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->name == nullptr) { mValid = false; return; }
-		if (node->body == nullptr) { mValid = false; return; }
-
-		mWalker.WalkIdentifier(this, node->name);
-		mWalker.WalkBlockExpr(this, node->body);
 	}
 
 	virtual void VisitThrowStmt(ThrowStmt* node) override {
@@ -200,14 +113,6 @@ public:
 
 	virtual void VisitVarDeclExpr(VarDeclExpr* node) override {
 		if (BaseValid(node) == false) { mValid = false; return; }
-		for (auto binding : node->bindings) {
-			if (binding == nullptr) { mValid = false; return; }
-			mWalker.WalkIdentifier(this, binding);
-		}
-
-		for (auto ty : node->types) {
-			if (ty == nullptr) { mValid = false; return; }
-		}
 
 		if (node->value) mWalker.WalkExpr(this, node->value);
 	}
@@ -250,29 +155,12 @@ public:
 		mWalker.WalkExpr(this, node->LHS);
 	}
 
-	virtual void VisitTupleExpr(TupleExpr* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		for (auto value : node->values) {
-			if (value == nullptr) { mValid = false; return; }
-			mWalker.WalkExpr(this, value);
-		}
-	}
-
 	virtual void VisitArrayExpr(ArrayExpr* node) override {
 		if (BaseValid(node) == false) { mValid = false; return; }
 		for (auto value : node->values) {
 			if (value == nullptr) { mValid = false; return; }
 			mWalker.WalkExpr(this, value);
 		}
-	}
-
-	virtual void VisitArrayRangeExpr(ArrayRangeExpr* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->LHS == nullptr) { mValid = false; return; }
-		if (node->RHS == nullptr) { mValid = false; return; }
-
-		mWalker.WalkExpr(this, node->LHS);
-		mWalker.WalkExpr(this, node->RHS);
 	}
 
 	virtual void VisitArrayAccessExpr(ArrayAccessExpr* node) override {
@@ -291,15 +179,6 @@ public:
 
 		mWalker.WalkExpr(this, node->LHS);
 		mWalker.WalkExpr(this, node->RHS);
-	}
-
-	virtual void VisitNamedExpr(NamedExpr* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->name == nullptr) { mValid = false; return; }
-		if (node->value == nullptr) { mValid = false; return; }
-
-		mWalker.WalkExpr(this, node->name);
-		mWalker.WalkExpr(this, node->value);
 	}
 
 	virtual void VisitConditionalBlock(ConditionalBlock* node) override {
@@ -329,81 +208,8 @@ public:
 		mWalker.WalkExpr(this, node->falseValue);
 	}
 
-	virtual void VisitSwitchPattern(SwitchPattern* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		for (auto pattern : node->patterns) {
-			if (pattern == nullptr) { mValid = false; return; }
-			mWalker.WalkExpr(this, pattern);
-		}
-
-		if (node->block == nullptr) { mValid = false; return; }
-		mWalker.WalkBlockExpr(this, node->block);
-	}
-
-	virtual void VisitSwitchExpr(SwitchExpr* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->condition == nullptr) { mValid = false; return; }
-
-		for (auto pattern : node->patterns) {
-			if (pattern == nullptr) { mValid = false; return; }
-			mWalker.WalkSwitchPattern(this, pattern);
-		}
-	}
-
-	virtual void VisitClassConstraint(ClassConstraint* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->identifier == nullptr) { mValid = false; return; }
-		mWalker.WalkIdentifier(this, node->identifier);
-	}
-
-	virtual void VisitDefaultCtorConstraint(DefaultCtorConstraint* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->identifier == nullptr) { mValid = false; return; }
-		mWalker.WalkIdentifier(this, node->identifier);
-	}
-
-	virtual void VisitBaseConstraint(BaseConstraint* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->identifier == nullptr) { mValid = false; return; }
-		if (node->base == nullptr) { mValid = false; return; }
-
-		mWalker.WalkIdentifier(this, node->identifier);
-		mWalker.WalkIdentifier(this, node->base);
-	}
-
-	virtual void VisitDataConstraint(DataConstraint* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->identifier == nullptr) { mValid = false; return; }
-		if (node->dataType == nullptr) { mValid = false; return; }
-
-		mWalker.WalkIdentifier(this, node->identifier);
-	}
-
-	virtual void VisitTypeConstraint(TypeConstraint* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->identifier == nullptr) { mValid = false; return; }
-		if (node->type == nullptr) { mValid = false; return; }
-
-		mWalker.WalkIdentifier(this, node->identifier);
-	}
-
-	virtual void VisitGenerics(Generics* node) override {
-		if (BaseValid(node) == false) { mValid = false; return; }
-		for (auto declaredTy : node->genericTypes) {
-			if (declaredTy == nullptr) { mValid = false; return; }
-			mWalker.WalkIdentifier(this, declaredTy);
-		}
-
-		for (auto constraint : node->constraints) {
-			if (constraint == nullptr) { mValid = false; return; }
-			mWalker.WalkConstraint(this, constraint);
-		}
-	}
-
 	virtual void VisitFunctionExpr(FunctionExpr* node) override {
 		if (BaseValid(node) == false) { mValid = false; return; }
-		if (node->name != nullptr) mWalker.WalkIdentifier(this, node->name);
-		if (node->generics != nullptr) mWalker.WalkGenerics(this, node->generics);
 
 		for (auto param : node->params) {
 			if (param == nullptr) { mValid = false; return; }

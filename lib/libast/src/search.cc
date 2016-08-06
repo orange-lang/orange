@@ -22,14 +22,19 @@ public:
 
 	/// Returns whether or not a node is "declarative" (e.g., declares a structure, function, enum, class, etc)
 	bool IsDeclarativeNode(Node* node) {
-		return isA<ExternFuncStmt>(node) || isA<FunctionExpr>(node) || isA<EnumStmt>(node) || isA<ClassStmt>(node) ||
+		return isA<ExternFuncStmt>(node) || isA<FunctionExpr>(node) || isA<ClassStmt>(node) ||
 			isA<VarDeclExpr>(node);
+	}
+	
+	virtual void VisitVarDeclExpr(VarDeclExpr* node) {
+		if (node->name != mName->name) return;
+		mNode = node;
 	}
 
 	virtual void VisitNamedIDExpr(NamedIDExpr* node) {
 		if (node->name != mName->name) return;
+		
 		// This matches, let's continuously search for the parent of this node until we find a declarative block.
-
 		Node* it = node;
 		while (it != nullptr) {
 			if (IsDeclarativeNode(it)) break;
@@ -57,38 +62,12 @@ public:
 		if (node->body == mChild) mParent = node;
 	}
 
-	virtual void VisitForeachStmt(ForeachStmt* node) override {
-		if (node->body == mChild) mParent = node;
-		if (node->declaration == mChild) mParent = node;
-		if (node->value == mChild) mParent = node;
-	}
-
-	virtual void VisitYieldStmt(YieldStmt* node) override {
-		if (node->value == mChild) mParent = node;
-	}
-
 	virtual void VisitReturnStmt(ReturnStmt* node) override {
 		if (node->value == mChild) mParent = node;
 	}
 
-	virtual void VisitAggregateStmt(AggregateStmt* node) override {
-		if (node->name == mChild) mParent = node;
-		if (node->body == mChild) mParent = node;
-	}
-
 	virtual void VisitExternFuncStmt(ExternFuncStmt* node) override {
-		if (node->name == mChild) mParent = node;
 		for (auto param : node->params) if (param == mChild) mParent = node;
-	}
-
-	virtual void VisitEnumValue(EnumValue* node) override {
-		if (node->name == mChild) mParent = node;
-		for (auto param : node->params) if (param == mChild) mParent = node;
-	}
-
-	virtual void VisitEnumStmt(EnumStmt* node) override {
-		if (node->name == mChild) mParent = node;
-		for (auto value : node->values) if (value == mChild) mParent = node;
 	}
 
 	virtual void VisitClassStmt(ClassStmt* node) override {
@@ -102,12 +81,6 @@ public:
 		if (node->body == mChild) mParent = node;
 	}
 
-	virtual void VisitExtendStmt(ExtendStmt* node) override {
-		if (node->body == mChild) mParent = node;
-		if (node->name == mChild) mParent = node;
-		for (auto super : node->supers) if (super == mChild) mParent = node;
-	}
-
 	virtual void VisitNamespaceStmt(NamespaceStmt* node) override {
 		if (node->name == mChild) mParent = node;
 		if (node->body == mChild) mParent = node;
@@ -115,19 +88,6 @@ public:
 
 	virtual void VisitImportStmt(ImportStmt* node) override {
 		if (node->name == mChild) mParent = node;
-	}
-
-	virtual void VisitGetterStmt(GetterStmt* node) override {
-		if (node->body == mChild) mParent = node;
-	}
-
-	virtual void VisitSetterStmt(SetterStmt* node) override {
-		if (node->body == mChild) mParent = node;
-	}
-
-	virtual void VisitPropertyStmt(PropertyStmt* node) override {
-		if (node->name == mChild) mParent = node;
-		if (node->body == mChild) mParent = node;
 	}
 
 	virtual void VisitThrowStmt(ThrowStmt* node) override {
@@ -143,7 +103,6 @@ public:
 	}
 
 	virtual void VisitVarDeclExpr(VarDeclExpr* node) override {
-		for (auto binding : node->bindings) if (binding == mChild) mParent = node;
 		if (node->value == mChild) mParent = node;
 	}
 
@@ -173,17 +132,8 @@ public:
 		if (node->LHS == mChild) mParent = node;
 	}
 
-	virtual void VisitTupleExpr(TupleExpr* node) override {
-		for (auto val : node->values) if (val == mChild) mParent = node;
-	}
-
 	virtual void VisitArrayExpr(ArrayExpr* node) override {
 		for (auto val : node->values) if (val == mChild) mParent = node;
-	}
-
-	virtual void VisitArrayRangeExpr(ArrayRangeExpr* node) override {
-		if (node->LHS == mChild) mParent = node;
-		if (node->RHS == mChild) mParent = node;
 	}
 
 	virtual void VisitArrayAccessExpr(ArrayAccessExpr* node) override {
@@ -194,11 +144,6 @@ public:
 	virtual void VisitMemberAccessExpr(MemberAccessExpr* node) override {
 		if (node->LHS == mChild) mParent = node;
 		if (node->RHS == mChild) mParent = node;
-	}
-
-	virtual void VisitNamedExpr(NamedExpr* node) override {
-		if (node->value == mChild) mParent = node;
-		if (node->name == mChild) mParent = node;
 	}
 
 	virtual void VisitConditionalBlock(ConditionalBlock* node) override {
@@ -216,46 +161,8 @@ public:
 		if (node->falseValue == mChild) mParent = node;
 	}
 
-	virtual void VisitSwitchPattern(SwitchPattern* node) override {
-		if (node->block == mChild) mParent = node;
-		for (auto pattern : node->patterns) if (pattern == mChild) mParent = node;
-	}
-
-	virtual void VisitSwitchExpr(SwitchExpr* node) override {
-		if (node->condition == mChild) mParent = node;
-		for (auto pattern : node->patterns) if (pattern == mChild) mParent = node;
-	}
-
-	virtual void VisitClassConstraint(ClassConstraint* node) override {
-		if (node->identifier == mChild) mParent = node;
-	}
-
-	virtual void VisitDefaultCtorConstraint(DefaultCtorConstraint* node) override {
-		if (node->identifier == mChild) mParent = node;
-	}
-
-	virtual void VisitBaseConstraint(BaseConstraint* node) override {
-		if (node->identifier == mChild) mParent = node;
-		if (node->base == mChild) mParent = node;
-	}
-
-	virtual void VisitDataConstraint(DataConstraint* node) override {
-		if (node->identifier == mChild) mParent = node;
-	}
-
-	virtual void VisitTypeConstraint(TypeConstraint* node) override {
-		if (node->identifier == mChild) mParent = node;
-	}
-
-	virtual void VisitGenerics(Generics* node) override {
-		for (auto constraint : node->constraints) if (constraint == mChild) mParent = node;
-		for (auto ty : node->genericTypes) if (ty == mChild) mParent = node;
-	}
-
 	virtual void VisitFunctionExpr(FunctionExpr* node) override {
 		if (node->block == mChild) mParent = node;
-		if (node->generics == mChild) mParent = node;
-		if (node->name == mChild) mParent = node;
 		for (auto param : node->params) if (param == mChild) mParent = node;
 	}
 

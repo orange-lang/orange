@@ -21,7 +21,6 @@ namespace orange { namespace ast {
 	struct Expression;
 	struct BlockExpr;
 	struct VarDeclExpr;
-	struct EnumValue;
 
 	struct Node {
 	protected:
@@ -65,28 +64,9 @@ namespace orange { namespace ast {
 			initializer(initializer), condition(condition), afterthought(afterthought), check(check), body(body) { }
 	};
 
-	struct ForeachStmt : Statement {
-	public:
-		VarDeclExpr* declaration = nullptr;
-		Expression* value = nullptr;
-		BlockExpr* body = nullptr;
-
-		ForeachStmt() { }
-		ForeachStmt(VarDeclExpr* declaration, Expression* value, BlockExpr* body) :
-			declaration(declaration), value(value), body(body) { }
-	};
-
 	struct BreakStmt : Statement { };
 
 	struct ContinueStmt : Statement { };
-
-	struct YieldStmt : Statement {
-	public:
-		Expression* value = nullptr;
-
-		YieldStmt() { }
-		YieldStmt(Expression* value) : value(value) { }
-	};
 
 	struct ReturnStmt : Statement {
 	public:
@@ -96,35 +76,15 @@ namespace orange { namespace ast {
 		ReturnStmt(Expression* value) : value(value) { }
 	};
 
-	struct AggregateStmt : Statement {
-	public:
-		Identifier* name = nullptr;
-		BlockExpr* body = nullptr;
-
-		AggregateStmt() { }
-		AggregateStmt(Identifier* name, BlockExpr* body) :
-			name(name), body(body) { }
-	};
-
 	struct ExternFuncStmt : Statement {
 	public:
-		Identifier* name = nullptr;
+		std::string name = "";
 		std::vector<VarDeclExpr*> params;
 		Type* retType = nullptr;
 
 		ExternFuncStmt() { }
-		ExternFuncStmt(Identifier* name, std::vector<VarDeclExpr*> params, Type* retType) :
+		ExternFuncStmt(std::string name, std::vector<VarDeclExpr*> params, Type* retType) :
 			name(name), params(params), retType(retType) { }
-	};
-
-	struct EnumStmt : Statement {
-	public:
-		Identifier* name = nullptr;
-		std::vector<EnumValue*> values;
-
-		EnumStmt() { }
-		EnumStmt(Identifier* name, std::vector<EnumValue*> values) :
-			name(name), values(values) { }
 	};
 
 	struct ClassStmt : Statement {
@@ -148,17 +108,6 @@ namespace orange { namespace ast {
 			name(name), body(body) { }
 	};
 
-	struct ExtendStmt : Statement {
-	public:
-		Identifier* name = nullptr;
-		std::vector<Identifier*> supers;
-		BlockExpr* body = nullptr;
-
-		ExtendStmt() { }
-		ExtendStmt(Identifier* name, std::vector<Identifier*> supers, BlockExpr* body) :
-			name(name), supers(supers), body(body) { }
-	};
-
 	struct NamespaceStmt : Statement {
 	public:
 		Identifier* name = nullptr;
@@ -175,29 +124,6 @@ namespace orange { namespace ast {
 
 		ImportStmt() { }
 		ImportStmt(Identifier* name) : name(name) { }
-	};
-
-	struct GetterStmt : Statement {
-		BlockExpr* body = nullptr;
-
-		GetterStmt() { }
-		GetterStmt(BlockExpr* body) : body(body) { }
-	};
-
-	struct SetterStmt : Statement {
-		BlockExpr* body = nullptr;
-
-		SetterStmt() { }
-		SetterStmt(BlockExpr* body) : body(body) { }
-	};
-
-	struct PropertyStmt : Statement {
-		Identifier* name = nullptr;
-		Type* type = nullptr;
-		BlockExpr* body = nullptr;
-
-		PropertyStmt() { }
-		PropertyStmt(Identifier* name, Type* type, BlockExpr* body) : name(name), type(type), body(body) { }
 	};
 
 	struct ThrowStmt : Statement {
@@ -233,25 +159,14 @@ namespace orange { namespace ast {
 		Expression() { }
 	};
 
-	struct EnumValue : Expression {
-	public:
-		Identifier* name = nullptr;
-		std::vector<VarDeclExpr*> params;
-
-		EnumValue() { }
-		EnumValue(Identifier* name, std::vector<VarDeclExpr*> params) :
-			name(name), params(params) { }
-	};
-
 	struct VarDeclExpr : Expression {
 	public:
-		std::vector<Identifier*> bindings;
-		std::vector<Type*> types;
+		std::string name;
+		Type* type;
 		Expression* value = nullptr;
 
 		VarDeclExpr() { }
-		VarDeclExpr(std::vector<Identifier*> bindings, std::vector<Type*> types, Expression* value) :
-			bindings(bindings), types(types), value(value) { }
+		VarDeclExpr(std::string name, Type* type, Expression* value) : name(name), type(type), value(value) { }
 	};
 
 	struct Value : Expression { };
@@ -352,11 +267,6 @@ namespace orange { namespace ast {
 		DtorIDExpr(NamedIDExpr* base) : base(base) { }
 	};
 
-	struct TempIDExpr : Identifier {
-	public:
-		TempIDExpr() { }
-	};
-
 	struct AccessIDExpr : Identifier {
 	public:
 		Identifier* LHS = nullptr;
@@ -418,33 +328,12 @@ namespace orange { namespace ast {
 		UnaryExpr(UnaryOp op, UnaryOrder order, Expression* LHS) : op(op), order(order), LHS(LHS) { }
 	};
 
-	struct TupleExpr : Expression {
-	public:
-		std::vector<Expression*> values;
-
-		TupleExpr() { }
-		TupleExpr(std::vector<Expression*> values) : values(values) { }
-	};
-
 	struct ArrayExpr : Expression {
 	public:
 		std::vector<Expression*> values;
 
 		ArrayExpr() { }
 		ArrayExpr(std::vector<Expression*> values) : values(values) { }
-	};
-
-	enum ArrayRangeType { EXCLUSIVE, INCLUSIVE };
-
-	struct ArrayRangeExpr : Expression {
-	public:
-		Expression* LHS = nullptr;
-		ArrayRangeType type;
-		Expression* RHS = nullptr;
-
-		ArrayRangeExpr() { }
-		ArrayRangeExpr(Expression* LHS, ArrayRangeType type, Expression* RHS) :
-			LHS(LHS), type(type), RHS(RHS) { }
 	};
 
 	struct ArrayAccessExpr : Expression {
@@ -465,16 +354,6 @@ namespace orange { namespace ast {
 		MemberAccessExpr () { }
 		MemberAccessExpr (Expression* LHS, Identifier* RHS) :
 			LHS(LHS), RHS(RHS) { }
-	};
-
-	struct NamedExpr : Expression {
-	public:
-		Identifier* name = nullptr;
-		Expression* value = nullptr;
-
-		NamedExpr() { }
-		NamedExpr(Identifier* name, Expression* value) :
-			name(name), value(value) { }
 	};
 
 	struct ConditionalBlock : Expression {
@@ -505,109 +384,16 @@ namespace orange { namespace ast {
 			condition(condition), trueValue(trueValue), falseValue(falseValue) { }
 	};
 
-	struct SwitchPattern : Statement {
-	public:
-		std::vector<Expression*> patterns;
-		BlockExpr* block = nullptr;
-
-		SwitchPattern() { }
-		SwitchPattern(std::vector<Expression*> patterns, BlockExpr* block) :
-			patterns(patterns), block(block) { }
-	};
-
-	struct SwitchExpr : Expression {
-	public:
-		Expression* condition = nullptr;
-		std::vector<SwitchPattern*> patterns;
-
-		SwitchExpr() { }
-		SwitchExpr(Expression* condition, std::vector<SwitchPattern*> patterns) :
-			condition(condition), patterns(patterns) { }
-	};
-
-	struct EnumMatch : Expression {
-	public:
-		Expression* value;
-		std::vector<Expression*> params;
-
-		EnumMatch() { }
-		EnumMatch(Expression* value, std::vector<Expression*> params) :
-			value(value), params(params) { }
-	};
-
-	struct Constraint : Node {
-	protected:
-		Constraint() { }
-	};
-
-	struct ClassConstraint : Constraint {
-	public:
-		Identifier* identifier = nullptr;
-
-		ClassConstraint() { }
-		ClassConstraint(Identifier* identifier) : identifier(identifier) { }
-	};
-
-	struct DefaultCtorConstraint : Constraint {
-	public:
-		Identifier* identifier = nullptr;
-
-		DefaultCtorConstraint() { }
-		DefaultCtorConstraint(Identifier* identifier) : identifier(identifier) { }
-	};
-
-	struct BaseConstraint : Constraint {
-	public:
-		Identifier* identifier = nullptr;
-		Identifier* base = nullptr;
-
-		BaseConstraint() { }
-		BaseConstraint(Identifier* identifier, Identifier* base) :
-			identifier(identifier), base(base) { }
-	};
-
-	struct DataConstraint : Constraint {
-	public:
-		Identifier* identifier = nullptr;
-		Type* dataType = nullptr;
-
-		DataConstraint() { }
-		DataConstraint(Identifier* identifier, Type* dataType) :
-			identifier(identifier), dataType(dataType) { }
-	};
-
-	struct TypeConstraint : Constraint {
-	public:
-		Identifier* identifier = nullptr;
-		Type* type = nullptr;
-
-		TypeConstraint() { }
-		TypeConstraint(Identifier* identifier, Type* type) :
-			identifier(identifier), type(type) { }
-	};
-
-	struct Generics : Node {
-	public:
-		std::vector<Identifier*> genericTypes;
-		std::vector<Constraint*> constraints;
-
-		Generics() { }
-		Generics(std::vector<Identifier*> genericTypes, std::vector<Constraint*> constraints) :
-			genericTypes(genericTypes), constraints(constraints) { }
-	};
-
 	struct FunctionExpr : Expression {
 	public:
-		Identifier* name = nullptr;
-		Generics* generics = nullptr;
+		std::string name;
 		std::vector<VarDeclExpr*> params;
 		Type* retType = nullptr;
 		BlockExpr* block = nullptr;
 
 		FunctionExpr() { }
-		FunctionExpr(Identifier* name, Generics* generics, std::vector<VarDeclExpr*> params,
-		             Type* retType, BlockExpr* block) :
-			name(name), generics(generics), params(params), retType(retType), block(block) { }
+		FunctionExpr(std::string name, std::vector<VarDeclExpr*> params, Type* retType, BlockExpr* block) :
+			name(name), params(params), retType(retType), block(block) { }
 	};
 
 	struct CatchBlock : Expression {

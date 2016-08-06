@@ -78,15 +78,6 @@ Type* ResolveVisitor::GetHighestType(std::vector<Type*> params){
 	return highestType;
 }
 
-void ResolveVisitor::VisitYieldStmt(YieldStmt* node) {
-	if (IsVoidType(mContext->GetNodeType(node->value))) {
-		LogError(node, INVALID_TYPE);
-		return;
-	}
-	
-	mContext->SetNodeType(node, mContext->GetNodeType(node->value));
-}
-
 void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
 	auto ty = (node->value == nullptr) ? new BuiltinType(BuiltinTypeKind::VOID) : mContext->GetNodeType(node->value);
 	
@@ -109,75 +100,26 @@ void ResolveVisitor::VisitClassStmt(ClassStmt* node) {
 	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
-void ResolveVisitor::VisitGetterStmt(GetterStmt* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
-void ResolveVisitor::VisitPropertyStmt(PropertyStmt* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
 void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
-	if (node->types.size() > 0 && node->types.size() != node->bindings.size()) {
-		LogError(node, MISMATCHED_TYPES_FOR_BINDINGS);
-		for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
-		return;
-	}
-
-	if (node->value == nullptr && node->types.size() == 0) {
+	if (node->value == nullptr && node->type == nullptr) {
 		LogError(node, MISSING_DEFAULT_VALUE);
-		for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
 		return;
 	}
 	
-	if (node->value != nullptr && node->bindings.size() > 1) {
-		auto valueTy = mContext->GetNodeType(node->value);
-		if (!isA<TupleType>(valueTy) || asA<TupleType>(valueTy)->types.size() != node->bindings.size()) {
-			LogError(node, MISSING_DEFAULT_VALUE);
-			for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
-			return;
-		}
+	Type* bindingType = nullptr;
+	
+	if (node->value != nullptr) {
+		bindingType = mContext->GetNodeType(node->value);
+		if (IsVoidType(bindingType)) LogError(node, INVALID_VALUE);
 	}
 	
-	for (unsigned long i = 0; i < node->bindings.size(); i++) {
-		auto binding = node->bindings[i];
-		
-		if (isA<NamedIDExpr>(binding) == false) {
-			throw AnalysisMessage(FATAL, INVALID_NAME, node->id, mContext);
-		}
-		
-		Type* bindingType = nullptr;
-		
-		if (node->value != nullptr) {
-			bindingType = mContext->GetNodeType(node->value);
-			
-			if (node->bindings.size() > 1) {
-				bindingType = asA<TupleType>(bindingType)->types[i];
-			}
-			
-			if (IsVoidType(bindingType)) LogError(binding, INVALID_VALUE);
-		}
-		
-		if (node->types.size() > 0) {
-			bindingType = node->types[i];
-			if (IsVoidType(bindingType)) LogError(binding, INVALID_VALUE);
-		}
-		
-		if (isA<ReferenceType>(bindingType)) {
-			LogError(binding, ERROR_UNIMPLEMENTED);
-		}
-
-		if (mContext->GetNodeType(binding) == nullptr)
-			mContext->SetNodeType(binding, bindingType);
+	if (node->type != nullptr) {
+		bindingType = node->type;
+		if (IsVoidType(bindingType)) LogError(node, INVALID_VALUE);
 	}
 	
-	Type* varDeclType = mContext->GetNodeType(node->bindings.front());
-	
-	if (node->bindings.size() > 1) {
-		varDeclType = new TupleType(GetTypes(node->bindings));
-	}
-	
-	mContext->SetNodeType(node, varDeclType);
+	if (mContext->GetNodeType(node) == nullptr)
+		mContext->SetNodeType(node, bindingType);
 }
 
 
@@ -228,18 +170,8 @@ void ResolveVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
 
 	if (isA<VarDeclExpr>(original)) {
 		auto varDecl = asA<VarDeclExpr>(original);
-		for (auto binding : varDecl->bindings) {
-			if (isA<NamedIDExpr>(binding) == false) continue;
-			if (asA<NamedIDExpr>(binding)->name == node->name) {
-				mContext->SetNodeType(node, mContext->GetNodeType(binding));
-				break;
-			}
-		}
+		mContext->SetNodeType(node, mContext->GetNodeType(varDecl));
 	}
-}
-
-void ResolveVisitor::VisitTempIDExpr(TempIDExpr* node) {
-	mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::VAR));
 }
 
 void ResolveVisitor::VisitDtorIDExpr(DtorIDExpr* node) {
@@ -251,23 +183,11 @@ void ResolveVisitor::VisitAccessIDExpr(AccessIDExpr* node) {
 }
 
 void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
-	// The type of a long block is inherited from all yield statements of direct children.
-	auto yieldStatements = mTypeTable->GetSearcher()->FindChildren<YieldStmt>(node, true);
-	
-	if (yieldStatements.size() == 0) {
-		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::VOID));
-		return;
-	}
-	
-	auto maxType = GetHighestType(GetTypes(yieldStatements));
-	mContext->SetNodeType(node, maxType);
+	mContext->SetNodeType(node, new VoidType);
 }
 
 void ResolveVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {
-	auto type = mContext->GetNodeType(node->statement);
-	if (type == nullptr) type = new BuiltinType(VOID);
-	
-	mContext->SetNodeType(node, type);
+	mContext->SetNodeType(node, new VoidType);
 }
 
 void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
@@ -335,21 +255,7 @@ void ResolveVisitor::VisitUnaryExpr(UnaryExpr* node) {
 	}
 }
 
-void ResolveVisitor::VisitTupleExpr(TupleExpr* node) {
-	std::vector<Type*> types;
-	
-	for (auto value : node->values) {
-		types.push_back(mContext->GetNodeType(value));
-	}
-	
-	mContext->SetNodeType(node, new TupleType(types));
-}
-
 void ResolveVisitor::VisitArrayExpr(ArrayExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
-void ResolveVisitor::VisitArrayRangeExpr(ArrayRangeExpr* node) {
 	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
@@ -406,14 +312,6 @@ void ResolveVisitor::VisitIfExpr(IfExpr* node) {
 }
 
 void ResolveVisitor::VisitTernaryExpr(TernaryExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
-void ResolveVisitor::VisitSwitchPattern(SwitchPattern* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
-void ResolveVisitor::VisitSwitchExpr(SwitchExpr* node) {
 	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 
@@ -492,10 +390,6 @@ void ResolveVisitor::VisitFunctionCallExpr(FunctionCallExpr* node) {
 }
 
 void ResolveVisitor::VisitNewExpr(NewExpr* node) {
-	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-}
-
-void ResolveVisitor::VisitEnumMatch(EnumMatch* node) {
 	throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
 }
 

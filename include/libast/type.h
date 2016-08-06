@@ -63,20 +63,6 @@ namespace orange { namespace ast {
 		PointerType(Type* base) : base(base) { }
 	};
 
-	struct ReferenceType : Type {
-		Type* base;
-
-		ReferenceType() { }
-		ReferenceType(Type* base) : base(base) { }
-	};
-
-	struct TupleType : Type {
-		std::vector<Type*> types;
-
-		TupleType() { }
-		TupleType(std::vector<Type*> types) : types(types) { }
-	};
-
 	struct FunctionType : Type {
 		std::vector<Type*> params;
 		Type* returnType;

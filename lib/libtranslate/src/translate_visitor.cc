@@ -39,20 +39,12 @@ void TranslateVisitor::VisitLoopStmt(LoopStmt* node) {
 	throw std::runtime_error("Don't know how to handle LoopStmt");
 }
 
-void TranslateVisitor::VisitForeachStmt(ForeachStmt* node) {
-	throw std::runtime_error("Don't know how to handle ForeachStmt");
-}
-
 void TranslateVisitor::VisitBreakStmt(BreakStmt* node) {
 	throw std::runtime_error("Don't know how to handle BreakStmt");
 }
 
 void TranslateVisitor::VisitContinueStmt(ContinueStmt* node) {
 	throw std::runtime_error("Don't know how to handle ContinueStmt");
-}
-
-void TranslateVisitor::VisitYieldStmt(YieldStmt* node) {
-	throw std::runtime_error("Don't know how to handle YieldStmt");
 }
 
 void TranslateVisitor::VisitReturnStmt(ReturnStmt* node) {
@@ -69,20 +61,8 @@ void TranslateVisitor::VisitReturnStmt(ReturnStmt* node) {
 	SetValue(node, val);
 }
 
-void TranslateVisitor::VisitAggregateStmt(AggregateStmt* node) {
-	throw std::runtime_error("Don't know how to handle AggregateStmt");
-}
-
 void TranslateVisitor::VisitExternFuncStmt(ExternFuncStmt* node) {
 	throw std::runtime_error("Don't know how to handle ExternFuncStmt");
-}
-
-void TranslateVisitor::VisitEnumValue(EnumValue* node) {
-	throw std::runtime_error("Don't know how to handle EnumValue");
-}
-
-void TranslateVisitor::VisitEnumStmt(EnumStmt* node) {
-	throw std::runtime_error("Don't know how to handle EnumStmt");
 }
 
 void TranslateVisitor::VisitClassStmt(ClassStmt* node) {
@@ -91,22 +71,6 @@ void TranslateVisitor::VisitClassStmt(ClassStmt* node) {
 
 void TranslateVisitor::VisitInterfaceStmt(InterfaceStmt* node) {
 	throw std::runtime_error("Don't know how to handle InterfaceStmt");
-}
-
-void TranslateVisitor::VisitExtendStmt(ExtendStmt* node) {
-	throw std::runtime_error("Don't know how to handle ExtendStmt");
-}
-
-void TranslateVisitor::VisitGetterStmt(GetterStmt* node) {
-	throw std::runtime_error("Don't know how to handle GetterStmt");
-}
-
-void TranslateVisitor::VisitSetterStmt(SetterStmt* node) {
-	throw std::runtime_error("Don't know how to handle SetterStmt");
-}
-
-void TranslateVisitor::VisitPropertyStmt(PropertyStmt* node) {
-	throw std::runtime_error("Don't know how to handle PropertyStmt");
 }
 
 void TranslateVisitor::VisitThrowStmt(ThrowStmt* node) {
@@ -122,15 +86,10 @@ void TranslateVisitor::VisitExprStmt(ExprStmt* node) {
 }
 
 void TranslateVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
-	if (node->bindings.size() > 1) {
-		throw std::runtime_error("Can't handle multiple bindings yet.");
-	}
-
-	auto binding = asA<NamedIDExpr>(node->bindings[0]);
-	auto ty = mCurrentContext->GetNodeType(binding);
+	auto ty = mCurrentContext->GetNodeType(node);
 	auto llvmTy = GetLLVMType(ty);
 
-	auto var = mBuilder->CreateAlloca(llvmTy, nullptr, binding->name);
+	auto var = mBuilder->CreateAlloca(llvmTy, nullptr, node->name);
 
 	if (node->value != nullptr) {
 		mWalker.WalkExpr(this, node->value);
@@ -143,7 +102,7 @@ void TranslateVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
 		mBuilder->CreateStore(val, var);
 	}
 
-	SetValue(binding, ValueInfo(var, true));
+	SetValue(node, ValueInfo(var, true));
 }
 
 
@@ -208,23 +167,13 @@ void TranslateVisitor::VisitReferenceIDExpr(ReferenceIDExpr* node) {
 
 	if (isA<VarDeclExpr>(original)) {
 		auto varDecl = asA<VarDeclExpr>(original);
-		for (auto binding : varDecl->bindings) {
-			if (isA<NamedIDExpr>(binding) == false) continue;
-			if (asA<NamedIDExpr>(binding)->name == node->name) {
-				auto value = GetValue(binding, true);
-				SetValue(node, ValueInfo(value, true));
-				break;
-			}
-		}
+		auto value = GetValue(varDecl, true);
+		SetValue(node, ValueInfo(value, true));
 	}
 }
 
 void TranslateVisitor::VisitNamedIDExpr(NamedIDExpr* node) {
 	throw std::runtime_error("Don't know how to handle NamedIDExpr");
-}
-
-void TranslateVisitor::VisitTempIDExpr(TempIDExpr* node) {
-	throw std::runtime_error("Don't know how to handle TempIDExpr");
 }
 
 void TranslateVisitor::VisitDtorIDExpr(DtorIDExpr* node) {
@@ -339,16 +288,8 @@ void TranslateVisitor::VisitUnaryExpr(UnaryExpr* node) {
 	throw std::runtime_error("Don't know how to handle UnaryExpr");
 }
 
-void TranslateVisitor::VisitTupleExpr(TupleExpr* node) {
-	throw std::runtime_error("Don't know how to handle TupleExpr");
-}
-
 void TranslateVisitor::VisitArrayExpr(ArrayExpr* node) {
 	throw std::runtime_error("Don't know how to handle ArrayExpr");
-}
-
-void TranslateVisitor::VisitArrayRangeExpr(ArrayRangeExpr* node) {
-	throw std::runtime_error("Don't know how to handle ArrayRangeExpr");
 }
 
 void TranslateVisitor::VisitArrayAccessExpr(ArrayAccessExpr* node) {
@@ -357,10 +298,6 @@ void TranslateVisitor::VisitArrayAccessExpr(ArrayAccessExpr* node) {
 
 void TranslateVisitor::VisitMemberAccessExpr(MemberAccessExpr* node) {
 	throw std::runtime_error("Don't know how to handle MemberAccessExpr");
-}
-
-void TranslateVisitor::VisitNamedExpr(NamedExpr* node) {
-	throw std::runtime_error("Don't know how to handle NamedExpr");
 }
 
 void TranslateVisitor::VisitConditionalBlock(ConditionalBlock* node) {
@@ -373,38 +310,6 @@ void TranslateVisitor::VisitIfExpr(IfExpr* node) {
 
 void TranslateVisitor::VisitTernaryExpr(TernaryExpr* node) {
 	throw std::runtime_error("Don't know how to handle TernaryExpr");
-}
-
-void TranslateVisitor::VisitSwitchPattern(SwitchPattern* node) {
-	throw std::runtime_error("Don't know how to handle SwitchPattern");
-}
-
-void TranslateVisitor::VisitSwitchExpr(SwitchExpr* node) {
-	throw std::runtime_error("Don't know how to handle SwitchExpr");
-}
-
-void TranslateVisitor::VisitClassConstraint(ClassConstraint* node) {
-	throw std::runtime_error("Don't know how to handle ClassConstraint");
-}
-
-void TranslateVisitor::VisitDefaultCtorConstraint(DefaultCtorConstraint* node) {
-	throw std::runtime_error("Don't know how to handle DefaultCtorConstraint");
-}
-
-void TranslateVisitor::VisitBaseConstraint(BaseConstraint* node) {
-	throw std::runtime_error("Don't know how to handle BaseConstraint");
-}
-
-void TranslateVisitor::VisitDataConstraint(DataConstraint* node) {
-	throw std::runtime_error("Don't know how to handle DataConstraint");
-}
-
-void TranslateVisitor::VisitTypeConstraint(TypeConstraint* node) {
-	throw std::runtime_error("Don't know how to handle TypeConstraint");
-}
-
-void TranslateVisitor::VisitGenerics(Generics* node) {
-	throw std::runtime_error("Don't know how to handle Generics");
 }
 
 void TranslateVisitor::VisitFunctionExpr(FunctionExpr* node) {
@@ -430,11 +335,6 @@ void TranslateVisitor::VisitFunctionCallExpr(FunctionCallExpr* node) {
 void TranslateVisitor::VisitNewExpr(NewExpr* node) {
 	throw std::runtime_error("Don't know how to handle NewExpr");
 }
-
-void TranslateVisitor::VisitEnumMatch(EnumMatch* node) {
-	throw std::runtime_error("Don't know how to handle EnumMatch");
-}
-
 
 void TranslateVisitor::SetCurrentBlock(llvm::BasicBlock* currentBlock) {
 	mCurrentBlock = currentBlock;
