@@ -74,6 +74,11 @@ public:
 		if (node->name == mChild) mParent = node;
 		for (auto value : node->values) if (value == mChild) mParent = node;
 	}
+	
+	virtual void VisitEnumValue(EnumValue* node) override {
+		if (node->name == mChild) mParent = node;
+		for (auto param : node->params) if (param == mChild) mParent = node;
+	}
 
 	virtual void VisitClassStmt(ClassStmt* node) override {
 		if (node->name == mChild) mParent = node;
