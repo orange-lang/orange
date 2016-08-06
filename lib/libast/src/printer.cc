@@ -220,6 +220,46 @@ void ASTPrinter::VisitExternFuncStmt(ExternFuncStmt* node) {
 	mIndentation--;
 }
 
+void ASTPrinter::VisitEnumValue(EnumValue* node) {
+	handleIdententation();
+	printID(node);
+
+	mOutput << "EnumValue():" << std::endl;
+
+	mIndentation++;
+
+	mWalker.WalkIdentifier(this, node->name);
+
+	if (node->params.size() > 0) mOutput << std::endl;
+
+	for (unsigned long i = 0; i < node->params.size(); i++) {
+		mWalker.WalkVarDeclExpr(this, node->params[i]);
+		if (i + 1 < node->params.size()) mOutput << std::endl;
+	}
+
+	mIndentation--;
+}
+
+void ASTPrinter::VisitEnumStmt(EnumStmt* node) {
+	handleIdententation();
+	printID(node);
+
+	mOutput << "EnumStmt():" << std::endl;
+
+	mIndentation++;
+
+	mWalker.WalkIdentifier(this, node->name);
+
+	if (node->values.size() > 0) mOutput << std::endl;
+
+	for (unsigned long i = 0; i < node->values.size(); i++) {
+		mWalker.WalkEnumValue(this, node->values[i]);
+		if (i + 1 < node->values.size()) mOutput << std::endl;
+	}
+
+	mIndentation--;
+}
+
 void ASTPrinter::VisitClassStmt(ClassStmt* node) {
 	handleIdententation();
 	printID(node);

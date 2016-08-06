@@ -21,6 +21,7 @@ namespace orange { namespace ast {
 	struct Expression;
 	struct BlockExpr;
 	struct VarDeclExpr;
+	struct EnumValue;
 
 	struct Node {
 	protected:
@@ -85,6 +86,16 @@ namespace orange { namespace ast {
 		ExternFuncStmt() { }
 		ExternFuncStmt(std::string name, std::vector<VarDeclExpr*> params, Type* retType) :
 			name(name), params(params), retType(retType) { }
+	};
+
+	struct EnumStmt : Statement {
+	public:
+		Identifier* name = nullptr;
+		std::vector<EnumValue*> values;
+
+		EnumStmt() { }
+		EnumStmt(Identifier* name, std::vector<EnumValue*> values) :
+			name(name), values(values) { }
 	};
 
 	struct ClassStmt : Statement {
@@ -157,6 +168,16 @@ namespace orange { namespace ast {
 	struct Expression : Node {
 	protected:
 		Expression() { }
+	};
+
+	struct EnumValue : Expression {
+	public:
+		Identifier* name = nullptr;
+		std::vector<VarDeclExpr*> params;
+
+		EnumValue() { }
+		EnumValue(Identifier* name, std::vector<VarDeclExpr*> params) :
+			name(name), params(params) { }
 	};
 
 	struct VarDeclExpr : Expression {

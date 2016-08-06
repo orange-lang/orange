@@ -54,6 +54,30 @@ public:
 		}
 	}
 
+	virtual void VisitEnumValue(EnumValue* node) override {
+		if (BaseValid(node) == false) { mValid = false; return; }
+		if (node->name == nullptr) { mValid = false; return; }
+
+		mWalker.WalkIdentifier(this, node->name);
+
+		for (auto param : node->params) {
+			if (param == nullptr) { mValid = false; return; }
+			mWalker.WalkVarDeclExpr(this, param);
+		}
+	}
+
+	virtual void VisitEnumStmt(EnumStmt* node) override {
+		if (BaseValid(node) == false) { mValid = false; return; }
+		if (node->name == nullptr) { mValid = false; return; }
+
+		mWalker.WalkIdentifier(this, node->name);
+
+		for (auto value : node->values) {
+			if (value == nullptr) { mValid = false; return; }
+			mWalker.WalkEnumValue(this, value);
+		}
+	}
+
 	virtual void VisitClassStmt(ClassStmt* node) override {
 		if (BaseValid(node) == false) { mValid = false; return; }
 		if (node->name == nullptr) { mValid = false; return; }

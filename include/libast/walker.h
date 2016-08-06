@@ -29,6 +29,7 @@ namespace orange { namespace ast {
 		
 		virtual void WalkExpr(T* helper, Expression* node) {
 			if      (isA<VarDeclExpr>(node))      WalkVarDeclExpr(helper, asA<VarDeclExpr>(node));
+			else if (isA<EnumValue>(node))        WalkEnumValue(helper, asA<EnumValue>(node));
 			else if (isA<ConditionalBlock>(node)) WalkConditionalBlock(helper, asA<ConditionalBlock>(node));
 			else if (isA<BlockExpr>(node))        WalkBlockExpr(helper, asA<BlockExpr>(node));
 			else if (isA<Value>(node))            WalkValue(helper, asA<Value>(node));
@@ -57,6 +58,7 @@ namespace orange { namespace ast {
 			else if (isA<ContinueStmt>(node))   WalkContinueStmt(helper, asA<ContinueStmt>(node));
 			else if (isA<ReturnStmt>(node))     WalkReturnStmt(helper, asA<ReturnStmt>(node));
 			else if (isA<ExternFuncStmt>(node)) WalkExternFuncStmt(helper, asA<ExternFuncStmt>(node));
+			else if (isA<EnumStmt>(node))       WalkEnumStmt(helper, asA<EnumStmt>(node));
 			else if (isA<ClassStmt>(node))      WalkClassStmt(helper, asA<ClassStmt>(node));
 			else if (isA<InterfaceStmt>(node))  WalkInterfaceStmt(helper, asA<InterfaceStmt>(node));
 			else if (isA<NamespaceStmt>(node))  WalkNamespaceStmt(helper, asA<NamespaceStmt>(node));
@@ -99,6 +101,8 @@ namespace orange { namespace ast {
 		virtual void WalkContinueStmt(T* helper, ContinueStmt* node) = 0;
 		virtual void WalkReturnStmt(T* helper, ReturnStmt* node) = 0;
 		virtual void WalkExternFuncStmt(T* helper, ExternFuncStmt* node) = 0;
+		virtual void WalkEnumValue(T* helper, EnumValue* node) = 0;
+		virtual void WalkEnumStmt(T* helper, EnumStmt* node) = 0;
 		virtual void WalkClassStmt(T* helper, ClassStmt* node) = 0;
 		virtual void WalkInterfaceStmt(T* helper, InterfaceStmt* node) = 0;
 		virtual void WalkNamespaceStmt(T* helper, NamespaceStmt* node) = 0;
@@ -150,6 +154,8 @@ namespace orange { namespace ast {
 		virtual void WalkContinueStmt(Visitor* visitor, ContinueStmt* node) override;
 		virtual void WalkReturnStmt(Visitor* visitor, ReturnStmt* node) override;
 		virtual void WalkExternFuncStmt(Visitor* visitor, ExternFuncStmt* node) override;
+		virtual void WalkEnumValue(Visitor* visitor, EnumValue* node) override;
+		virtual void WalkEnumStmt(Visitor* visitor, EnumStmt* node) override;
 		virtual void WalkClassStmt(Visitor* visitor, ClassStmt* node) override;
 		virtual void WalkInterfaceStmt(Visitor* visitor, InterfaceStmt* node) override;
 		virtual void WalkNamespaceStmt(Visitor* visitor, NamespaceStmt* node) override;
@@ -201,6 +207,8 @@ namespace orange { namespace ast {
 		virtual void WalkContinueStmt(Visitor* visitor, ContinueStmt* node) override;
 		virtual void WalkReturnStmt(Visitor* visitor, ReturnStmt* node) override;
 		virtual void WalkExternFuncStmt(Visitor* visitor, ExternFuncStmt* node) override;
+		virtual void WalkEnumValue(Visitor* visitor, EnumValue* node) override;
+		virtual void WalkEnumStmt(Visitor* visitor, EnumStmt* node) override;
 		virtual void WalkClassStmt(Visitor* visitor, ClassStmt* node) override;
 		virtual void WalkInterfaceStmt(Visitor* visitor, InterfaceStmt* node) override;
 		virtual void WalkNamespaceStmt(Visitor* visitor, NamespaceStmt* node) override;

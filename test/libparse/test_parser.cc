@@ -360,7 +360,75 @@ TEST(Parser, TestFlags) {
 	delete ast;
 }
 
-TEST(Parser, Interface) {
+TEST(Parser, TestEmptyEnum) { 
+	TestAST(R"(
+		enum Status { }
+	)", {
+		new EnumStmt(
+			new NamedIDExpr("Status"),
+			std::vector<EnumValue*>()
+		)
+	});
+}
+
+TEST(Parser, TestEnumBasicValues) { 
+	TestAST(R"(
+		enum Status {
+			PENDING,
+			RUNNING,
+			COMPLETED
+	}
+	)", {
+		new EnumStmt(
+			new NamedIDExpr("Status"),
+			std::vector<EnumValue*>({
+				new EnumValue(
+					new NamedIDExpr("PENDING"), std::vector<VarDeclExpr*>()
+				),
+				new EnumValue(
+					new NamedIDExpr("RUNNING"), std::vector<VarDeclExpr*>()
+				),
+				new EnumValue(
+					new NamedIDExpr("COMPLETED"), std::vector<VarDeclExpr*>()
+				)
+			})
+		)
+	});
+}
+
+TEST(Parser, TestEnumWithData) { 
+	TestAST(R"(
+		enum Status {
+			PENDING,
+			RUNNING(time:int),
+			COMPLETED(time,completed:double)
+	}
+	)", {
+		new EnumStmt(
+			new NamedIDExpr("Status"),
+			std::vector<EnumValue*>({
+				new EnumValue(
+					new NamedIDExpr("PENDING"), std::vector<VarDeclExpr*>()
+				),
+				new EnumValue(
+					new NamedIDExpr("RUNNING"),
+					std::vector<VarDeclExpr*>({
+						new VarDeclExpr("time", new IntType, nullptr)
+					})
+				),
+				new EnumValue(
+					new NamedIDExpr("COMPLETED"),
+					std::vector<VarDeclExpr*>({
+						new VarDeclExpr("time", nullptr, nullptr),
+						new VarDeclExpr("completed", new DoubleType, nullptr)
+					})
+				)
+			})
+		)
+	});
+}
+
+TEST(Parser, Interface) { 
 	TestAST(R"(
 		interface Foo {
 			def foo() -> void
@@ -395,6 +463,8 @@ TEST(Parser, ParsesClass) {
 			def foo() { }
 			extern def foo() -> int
 			import Foo
+
+			enum NestedEnum { }
 		}
 	)", {
 		new ClassStmt(
@@ -422,6 +492,10 @@ TEST(Parser, ParsesClass) {
 					new BuiltinType(BuiltinTypeKind::INT)
 				),
 				new ImportStmt(new NamedIDExpr("Foo")),
+				new EnumStmt(
+					new NamedIDExpr("NestedEnum"),
+					std::vector<EnumValue*>()
+				)
 			}))
 		)
 	});

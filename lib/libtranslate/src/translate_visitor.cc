@@ -65,6 +65,14 @@ void TranslateVisitor::VisitExternFuncStmt(ExternFuncStmt* node) {
 	throw std::runtime_error("Don't know how to handle ExternFuncStmt");
 }
 
+void TranslateVisitor::VisitEnumValue(EnumValue* node) {
+	throw std::runtime_error("Don't know how to handle EnumValue");
+}
+
+void TranslateVisitor::VisitEnumStmt(EnumStmt* node) {
+	throw std::runtime_error("Don't know how to handle EnumStmt");
+}
+
 void TranslateVisitor::VisitClassStmt(ClassStmt* node) {
 	throw std::runtime_error("Don't know how to handle ClassStmt");
 }

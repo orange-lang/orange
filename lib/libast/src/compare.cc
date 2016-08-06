@@ -79,6 +79,9 @@ bool orange::ast::CompareNode(Statement* a, Statement* b) {
 	if (isA<ExternFuncStmt>(a) && isA<ExternFuncStmt>(b))
 		return CompareNode(asA<ExternFuncStmt>(a), asA<ExternFuncStmt>(b));
 
+	if (isA<EnumStmt>(a) && isA<EnumStmt>(b))
+		return CompareNode(asA<EnumStmt>(a), asA<EnumStmt>(b));
+
 	if (isA<ClassStmt>(a) && isA<ClassStmt>(b))
 		return CompareNode(asA<ClassStmt>(a), asA<ClassStmt>(b));
 
@@ -133,6 +136,11 @@ bool orange::ast::CompareNode(ExternFuncStmt* a, ExternFuncStmt* b) {
            CompareOptType(a->retType, b->retType);
 }
 
+bool orange::ast::CompareNode(EnumStmt* a, EnumStmt* b) {
+	return CompareOptNode(a->name, b->name) &&
+           CompareOptList(a->values, b->values);
+}
+
 bool orange::ast::CompareNode(ClassStmt* a, ClassStmt* b) {
 	return CompareOptNode(a->name, b->name) &&
            CompareOptList(a->supers, b->supers) &&
@@ -166,6 +174,9 @@ bool orange::ast::CompareNode(ExprStmt* a, ExprStmt* b) {
 }
 
 bool orange::ast::CompareNode(Expression* a, Expression* b) {
+	if (isA<EnumValue>(a) && isA<EnumValue>(b))
+		return CompareNode(asA<EnumValue>(a), asA<EnumValue>(b));
+
 	if (isA<VarDeclExpr>(a) && isA<VarDeclExpr>(b))
 		return CompareNode(asA<VarDeclExpr>(a), asA<VarDeclExpr>(b));
 
@@ -221,6 +232,11 @@ bool orange::ast::CompareNode(Expression* a, Expression* b) {
 		return CompareNode(asA<NewExpr>(a), asA<NewExpr>(b));
 
 	return false;
+}
+
+bool orange::ast::CompareNode(EnumValue* a, EnumValue* b) {
+	return CompareOptNode(a->name, b->name) &&
+           CompareOptList(a->params, b->params);
 }
 
 bool orange::ast::CompareNode(VarDeclExpr* a, VarDeclExpr* b) {

@@ -249,6 +249,7 @@ namespace orange { namespace parser { namespace impl {
 				case DEF: node = ParseFunction(); break;
 				case EXTERN: node = ParseExternFunction(); break;
 				case NAMESPACE: node = ParseNamespace(); break;
+				case ENUM: node = ParseEnum(); break;
 				case CLASS: node = ParseClass(); break;
 				case IMPORT: node = ParseImport(); break;
 				case INTERFACE: node = ParseInterface(); break;
@@ -397,6 +398,7 @@ namespace orange { namespace parser { namespace impl {
 				case DEF: node = ParseFunction(); break;
 				case EXTERN: node = ParseExternFunction(); break;
 				case IMPORT: node = ParseImport(); break;
+				case ENUM: node = ParseEnum(); break;
 				case CLASS: node = ParseClass(); break;
 				case INTERFACE: node = ParseInterface(); break;
 				default: break;
@@ -525,6 +527,68 @@ namespace orange { namespace parser { namespace impl {
 			return CreateNode<LoopStmt>(nullptr, nullptr, nullptr, LoopConditionCheck::BEFORE, body);
 		}
 
+		EnumStmt* ParseEnum() {
+			if (!Expect(ENUM)) return nullptr;
+			Identifier* name = nullptr;
+			std::vector<EnumValue*> values;
+
+			auto token = GetNextConcreteToken();
+			if (!Expect(IDENTIFIER, token)) return nullptr;
+			name = CreateNode<NamedIDExpr>(token->value);
+
+			if (!Expect(OPEN_CURLY)) return nullptr;
+
+			if (PeekNextConcreteToken()->type == IDENTIFIER) {
+				values = ParseEnumValues();
+			}
+
+			if (!Expect(CLOSE_CURLY)) return nullptr;
+
+			return CreateNode<EnumStmt>(name, values);
+		}
+
+		std::vector<EnumValue*> ParseEnumValues() {
+			std::vector<EnumValue*> values;
+
+			auto value = ParseEnumValue();
+			if (value == nullptr) { Expected("identitfer"); return std::vector<EnumValue*>(); }
+			values.push_back(value);
+
+			while (PeekNextConcreteToken()->type == COMMA) {
+				GetNextConcreteToken();
+
+				if (PeekNextConcreteToken()->type != IDENTIFIER) {
+					break;
+				}
+
+				value = ParseEnumValue();
+				if (value == nullptr) { Expected("identitfer"); return std::vector<EnumValue*>(); }
+				values.push_back(value);
+			}
+
+			return values;
+		}
+
+		EnumValue* ParseEnumValue() {
+			Identifier* name = nullptr;
+			std::vector<VarDeclExpr*> params;
+
+			auto token = GetNextConcreteToken();
+			if (!Expect(IDENTIFIER, token)) return nullptr;
+			name = CreateNode<NamedIDExpr>(token->value);
+
+			if (PeekNextConcreteToken()->type == OPEN_PAREN) {
+				GetNextConcreteToken();
+
+				params = ParseParameterList();
+
+				if (!Expect(CLOSE_PAREN)) return nullptr;
+			}
+
+
+			return CreateNode<EnumValue>(name, params);
+		}
+
 		bool IsFlag(Token* tok) {
 			switch (tok->type) {
 				case TokenType::PRIVATE: case TokenType::PROTECTED: case TokenType::PUBLIC:
@@ -648,7 +712,7 @@ namespace orange { namespace parser { namespace impl {
 
 		VarDeclExpr* ParseImplicitParameter() {
 			auto id = GetNextConcreteToken();
-			Type* type;
+			Type* type = nullptr;
 			Expression* value = nullptr;
 
 			if (!Expect(IDENTIFIER, id)) return nullptr;
