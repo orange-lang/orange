@@ -91,8 +91,7 @@ void ResolveVisitor::VisitReturnStmt(ReturnStmt* node) {
 	auto ty = (node->value == nullptr) ? new BuiltinType(BuiltinTypeKind::VOID) : mContext->GetNodeType(node->value);
 	
 	if (IsVoidType(ty) && node->value != nullptr) {
-		mLog.LogMessage(MessageSeverity::ERROR, AnalysisError::INVALID_TYPE, node, mContext);
-		mContext->SetNodeType(node, new BuiltinType(VAR));
+		LogError(node, INVALID_TYPE);
 		return;
 	}
 	
@@ -119,56 +118,65 @@ void ResolveVisitor::VisitPropertyStmt(PropertyStmt* node) {
 }
 
 void ResolveVisitor::VisitVarDeclExpr(VarDeclExpr* node) {
-	if (node->bindings.size() > 1) {
-		throw AnalysisMessage(MessageSeverity::FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-	}
-
 	if (node->types.size() > 0 && node->types.size() != node->bindings.size()) {
-		mLog.LogMessage(MessageSeverity::ERROR, MISMATCHED_TYPES_FOR_BINDINGS, node, mContext);
+		LogError(node, MISMATCHED_TYPES_FOR_BINDINGS);
 		for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
 		return;
 	}
 
 	if (node->value == nullptr && node->types.size() == 0) {
-		mLog.LogMessage(ERROR, MISSING_DEFAULT_VALUE, node, mContext);
+		LogError(node, MISSING_DEFAULT_VALUE);
 		for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
 		return;
 	}
-
-	auto binding = node->bindings[0];
-
-	if (isA<NamedIDExpr>(binding) == false) {
-		throw AnalysisMessage(FATAL, INVALID_NAME, node->id, mContext);
-	}
-
-	Type* nodeType = nullptr;
-
-	if (node->value != nullptr) {
-		nodeType = mContext->GetNodeType(node->value);
-		if (IsVoidType(nodeType)) {
-			mLog.LogMessage(ERROR, INVALID_VALUE, node, mContext);
-			for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
-			return;
-		}
-	}
-
-	if (node->types.size() > 0) {
-		nodeType = node->types[0];
-		if (IsVoidType(nodeType)) {
-			mLog.LogMessage(ERROR, INVALID_TYPE, node, mContext);
-			for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
-			return;
-		}
-	}
-
-	if (isA<ReferenceType>(nodeType)) {
-		throw AnalysisMessage(FATAL, ERROR_UNIMPLEMENTED, node->id, mContext);
-	}
-
-	mContext->SetNodeType(binding, nodeType);
 	
-	// Finally, set the type for the variable declaration, which will be a tuple of all the bindings
-	mContext->SetNodeType(node, mContext->GetNodeType(binding));
+	if (node->value != nullptr && node->bindings.size() > 1) {
+		auto valueTy = mContext->GetNodeType(node->value);
+		if (!isA<TupleType>(valueTy) || asA<TupleType>(valueTy)->types.size() != node->bindings.size()) {
+			LogError(node, MISSING_DEFAULT_VALUE);
+			for (auto binding : node->bindings) mContext->SetNodeType(binding, new BuiltinType(VAR));
+			return;
+		}
+	}
+	
+	for (unsigned long i = 0; i < node->bindings.size(); i++) {
+		auto binding = node->bindings[i];
+		
+		if (isA<NamedIDExpr>(binding) == false) {
+			throw AnalysisMessage(FATAL, INVALID_NAME, node->id, mContext);
+		}
+		
+		Type* bindingType = nullptr;
+		
+		if (node->value != nullptr) {
+			bindingType = mContext->GetNodeType(node->value);
+			
+			if (node->bindings.size() > 1) {
+				bindingType = asA<TupleType>(bindingType)->types[i];
+			}
+			
+			if (IsVoidType(bindingType)) LogError(binding, INVALID_VALUE);
+		}
+		
+		if (node->types.size() > 0) {
+			bindingType = node->types[i];
+			if (IsVoidType(bindingType)) LogError(binding, INVALID_VALUE);
+		}
+		
+		if (isA<ReferenceType>(bindingType)) {
+			LogError(binding, ERROR_UNIMPLEMENTED);
+		}
+
+		mContext->SetNodeType(binding, bindingType);
+	}
+	
+	Type* varDeclType = mContext->GetNodeType(node->bindings.front());
+	
+	if (node->bindings.size() > 1) {
+		varDeclType = new TupleType(GetTypes(node->bindings));
+	}
+	
+	mContext->SetNodeType(node, varDeclType);
 }
 
 
@@ -250,21 +258,7 @@ void ResolveVisitor::VisitLongBlockExpr(LongBlockExpr* node) {
 		return;
 	}
 	
-	auto maxType = mContext->GetNodeType(yieldStatements[0]);
-	for (unsigned long i = 1; i < yieldStatements.size(); i++) {
-		auto stmtType = mContext->GetNodeType(yieldStatements[i]);
-		
-		if (CompareType(maxType, stmtType)) {
-			continue;
-		} else if (AreTypesCompatible(stmtType, maxType)) {
-			maxType = GetImplicitType(stmtType, maxType);
-		} else {
-			mLog.LogMessage(ERROR, INCOMPATIBLE_TYPES, node, mContext);
-			mContext->SetNodeType(node, new BuiltinType(VAR));
-			return;
-		}
-	}
-	
+	auto maxType = GetHighestType(GetTypes(yieldStatements));
 	mContext->SetNodeType(node, maxType);
 }
 
@@ -278,14 +272,11 @@ void ResolveVisitor::VisitShortBlockExpr(ShortBlockExpr* node) {
 void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 	auto tyLHS = mContext->GetNodeType(node->LHS);
 	auto tyRHS = mContext->GetNodeType(node->RHS);
-
-	if (CompareType(tyLHS, tyRHS)) {
-		mContext->SetNodeType(node, tyLHS);
-	} else if (AreTypesCompatible(tyLHS, tyRHS)) {
+	
+	if (AreTypesCompatible(tyLHS, tyRHS)) {
 		mContext->SetNodeType(node, GetImplicitType(tyLHS, tyRHS));
 	} else {
-		mLog.LogMessage(ERROR, INCOMPATIBLE_TYPES, node, mContext);
-		mContext->SetNodeType(node, new BuiltinType(VAR));
+		LogError(node, INCOMPATIBLE_TYPES);
 		return;
 	}
 
@@ -293,18 +284,17 @@ void ResolveVisitor::VisitBinOpExpr(BinOpExpr* node) {
 		mContext->SetNodeType(node, tyLHS);
 		
 		auto lval = IsLValue(node->LHS, mContext->GetNodeType(node->LHS));
-		if (!lval) throw std::runtime_error("Can only assign to lvalues");
+		if (!lval) {
+			LogError(node, INVALID_VALUE);
+			return;
+		}
 	}
 
 	if (IsCompareBinOp(node->op)) {
-		// The type of compare nodes is always a boolean. Code generation will 
-		// have to find the implicit type between the two nodes to be able to 
-		// generate it successfully.
-		//
-		// By this point, we've already determined that the types are compatible,
-		// so we don't need to do any extra error checking.
 		mContext->SetNodeType(node, new BuiltinType(BuiltinTypeKind::BOOL));
-	} else if (IsLogicalBinOp(node->op) && (!IsBooleanType(tyLHS) || !IsBooleanType(tyRHS))) {
+	}
+	
+	if (IsLogicalBinOp(node->op) && (!IsBooleanType(tyLHS) || !IsBooleanType(tyRHS))) {
 		LogError(node, INVALID_TYPE);
 	}
 }
@@ -318,8 +308,7 @@ void ResolveVisitor::VisitUnaryExpr(UnaryExpr* node) {
 		auto lval = IsLValue(node->LHS, mContext->GetNodeType(node->LHS));
 		
 		if (!lval) {
-			mLog.LogMessage(ERROR, AnalysisError::INVALID_VALUE, node, mContext);
-			mContext->SetNodeType(node, new BuiltinType(VAR));
+			LogError(node, INVALID_VALUE);
 			return;
 		}
 		
@@ -330,16 +319,14 @@ void ResolveVisitor::VisitUnaryExpr(UnaryExpr* node) {
 	
 	// If NOT, LHS must be a boolean
 	if (node->op == NOT && !IsBooleanType(mContext->GetNodeType(node->LHS))) {
-		mLog.LogMessage(ERROR, AnalysisError::INVALID_VALUE, node, mContext);
-		mContext->SetNodeType(node, new BuiltinType(VAR));
+		LogError(node, INVALID_VALUE);
 		return;
 	}
 	
 	// If TIMES, LHS must be a pointer
 	if (node->op == UnaryOp::TIMES) {
 		if (!isA<PointerType>(mContext->GetNodeType(node->LHS))) {
-			mLog.LogMessage(ERROR, AnalysisError::INVALID_VALUE, node, mContext);
-			mContext->SetNodeType(node, new BuiltinType(VAR));
+			LogError(node, INVALID_VALUE);
 			return;
 		}
 		
