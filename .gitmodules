@@ -1,4 +1,4 @@
 [submodule "etc/llvm"]
 	path = etc/llvm
-	url = https://github.com/rfratto/llvm
+	url = https://github.com/orange-lang/llvm
 	branch = release_36
