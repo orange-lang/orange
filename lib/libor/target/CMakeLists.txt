@@ -33,4 +33,4 @@ endif()
 add_custom_target(boot DEPENDS ${objname})
 set_target_properties (boot PROPERTIES FOLDER lib)
 
-install(FILES ${objname} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/libor)
+install(FILES ${CMAKE_CURRENT_LIST_DIR}/../${objname} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/libor)
