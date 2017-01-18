@@ -1,0 +1,4 @@
+build*
+.git* 
+etc/llvm
+.idea
