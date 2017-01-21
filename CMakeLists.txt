@@ -21,4 +21,11 @@ endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
 
+add_subdirectory(lib/analysis)
+add_subdirectory(lib/ast)
+add_subdirectory(lib/generate)
+add_subdirectory(lib/parse)
+add_subdirectory(lib/translate)
+add_subdirectory(tools/oc)
+
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include DESTINATION include)
