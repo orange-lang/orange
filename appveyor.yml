@@ -8,7 +8,6 @@ cache:
 
 install:
   - git submodule init
-  - git submodule update etc/gtest
   - if not exist C:\projects\mingw610.7z appveyor DownloadFile http://downloads.sourceforge.net/mingw-w64/x86_64-6.1.0-release-posix-seh-rt_v5-rev0.7z -FileName C:\projects\mingw610.7z
   - 7z x -oC:\tools C:\projects\mingw610.7z > nul
 

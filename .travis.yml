@@ -29,7 +29,6 @@ matrix:
     compiler: clang
     before_install:
     - git submodule init
-    - git submodule update etc/gtest
     - brew update
     - brew upgrade cmake
   - os: linux
