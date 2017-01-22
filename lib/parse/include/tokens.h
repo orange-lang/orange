@@ -10,7 +10,7 @@
 
 namespace orange { namespace parse {
 	enum Token {
-		EOF, // End of file 
+		TOKEN_EOF, // End of file 
 
 		// Values 
 		INT_VAL, INT8_VAL, INT16_VAL, INT32_VAL, INT64_VAL,
