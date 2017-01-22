@@ -6,4 +6,8 @@
 ** may not be copied, modified, or distributed except according to those terms.
 */
 
-// Temporary placeholder so we can check the .h files 
+// Temporary placeholder so we can check the .h files on compile
+
+#include <ast/ast.h>
+#include <ast/module.h>
+#include <ast/type.h>
