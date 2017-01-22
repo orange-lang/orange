@@ -10,3 +10,4 @@ Makefile
 /.clang_complete
 /.idea
 /nbproject
+/.vscode
