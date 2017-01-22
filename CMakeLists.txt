@@ -12,6 +12,7 @@ enable_testing()
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/orange")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/etc/CMake")
+set(INCLUDES "${CMAKE_SOURCE_DIR}/include")
 
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
    message(FATAL_ERROR "In-source builds are not allowed.
