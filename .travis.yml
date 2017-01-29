@@ -63,3 +63,4 @@ script:
 - cd build
 - cmake .. ${CMAKE_LLVM_PATH} -DCMAKE_BUILD_TYPE=Debug -DUSE_SYSTEM_LLVM=True
 - make all
+- ctest -V

@@ -24,3 +24,6 @@ build_script:
   - cmake --version
   - cmake .. -G "MinGW Makefiles" -DCMAKE_CXX_FLAGS=-m64 -DCMAKE_BUILD_TYPE=Debug
   - mingw32-make
+
+test_script:
+  - cmd /C "ctest -V"
