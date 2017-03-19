@@ -15,9 +15,13 @@ namespace orange { namespace parse {
 	class Lexeme;
 
 	class Lexer {
-	public:
-		Lexeme next() { }
+	private:
+		std::istream& mInput;
 
-		Lexer(std::istream& input) { }
+        Lexeme lexNumber();
+	public:
+		Lexeme next();
+
+		Lexer(std::istream& input);
 	};
 }}
