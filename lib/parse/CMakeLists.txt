@@ -7,10 +7,8 @@
 ##
 
 add_library(parse
-	"include/tokens.h"
-	"include/lexeme.h"
-	"src/parse.cc"
-	"src/lexer.cc"
+	include/tokens.h include/lexeme.h src/parse.cc src/lexer.cc include/numberLexer.h include/numberLexer.h
+    src/numberLexer.cc
 )
 
 target_include_directories(parse PRIVATE include)
