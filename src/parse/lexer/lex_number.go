@@ -73,16 +73,22 @@ func lexNumber(s RuneStream) (Lexeme, error) {
 		return l, errors.New("Floating-point value cannot have integral suffix")
 	}
 
-	if base != 10 {
-		i, err := strconv.ParseInt(l.Value, base, 64)
-		if err != nil {
-			return l, errors.New("Number out of range")
-		}
+	val, err := convertNumber(l.Value, base)
+	l.Value = val
+	return l, err
+}
 
-		l.Value = fmt.Sprintf("%v", i)
+func convertNumber(s string, b int) (string, error) {
+	if b == 10 {
+		return s, nil
 	}
 
-	return l, nil
+	i, err := strconv.ParseInt(s, b, 64)
+	if err != nil {
+		return s, errors.New("Number out of range")
+	}
+
+	return fmt.Sprintf("%v", i), nil
 }
 
 func lexPrefix(s RuneStream) (prefix, error) {
