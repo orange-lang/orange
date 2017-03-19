@@ -44,11 +44,24 @@ using namespace orange::parse;
 //
 
 TEST(Lexer, TestWhitespace) {
-     std::map<std::string, Token> testTable = {
+    std::map<std::string, Token> testTable = {
         {"          1234567890", Token::INT_VAL},
     };
 
 	for (auto row : testTable) {
+		TEST_TOKEN(row.first, row.second);
+	}
+}
+
+TEST(Lexer, TestNumberMethods) {
+    std::map<std::string, Token> testTable = {
+        {"0.test(5)", Token::INT_VAL},
+        {"0i16.test(5)", Token::INT16_VAL},
+        {"0xABC.test(5)", Token::UINT_VAL},
+    };
+
+	for (auto row : testTable) {
+        std::cout << "Testing " << row.first << std::endl;
 		TEST_TOKEN(row.first, row.second);
 	}
 }
