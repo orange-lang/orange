@@ -10,15 +10,18 @@ notifications:
 go:
   - 1.8
 cache: apt
-os: linux
+os: 
+  - linux 
+  -  osx 
 matrix:
   include:
-  - os: osx
   - os: linux
+    language: go
     sudo: required
     services:
       - docker
     before_install:
+    install:
     script: 
     - docker build -t orangelang/orange .
 git:
