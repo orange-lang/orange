@@ -1,0 +1,37 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/golang/protobuf/proto",
+			"repository": "https://github.com/golang/protobuf",
+			"revision": "c9c7427a2a70d2eb3bafa0ab2dc163e45f143317",
+			"branch": "master",
+			"path": "/proto"
+		},
+		{
+			"importpath": "github.com/onsi/ginkgo",
+			"repository": "https://github.com/onsi/ginkgo",
+			"revision": "67b9df7f55fe1165fd9ad49aca7754cce01a42b8",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/onsi/ginkgo/extensions/table",
+			"repository": "https://github.com/onsi/ginkgo",
+			"revision": "67b9df7f55fe1165fd9ad49aca7754cce01a42b8",
+			"branch": "master",
+			"path": "/extensions/table"
+		},
+		{
+			"importpath": "github.com/onsi/gomega",
+			"repository": "https://github.com/onsi/gomega",
+			"revision": "c5ef0831376c8ddd17f7deb3d343d981d38a3c23",
+			"branch": "master"
+		},
+		{
+			"importpath": "gopkg.in/yaml.v2",
+			"repository": "https://gopkg.in/yaml.v2",
+			"revision": "a3f3340b5840cee44f372bddb5880fcbc419b46a",
+			"branch": "v2"
+		}
+	]
+}

@@ -1,14 +1,3 @@
-CMakeCache.txt
-CMakeFiles
-cmake_install.cmake
-Makefile
-.DS_Store
-/build
-/build*
-/.ycm_extra_conf.py*
-*.swp
-/.clang_complete
-/.idea
-/nbproject
-/.vscode
-/cmake-build-debug
+pkg/
+vendor/src/
+.vscode/
