@@ -9,96 +9,96 @@ import (
 	"unicode"
 )
 
-type prefix int8
+func lexNumber(s RuneStream) (Lexeme, error) {
+	base := 10
+	l := Lexeme{Token: token.IntVal}
+	shouldParseSuffix := true
 
-const (
-	NoPrefix prefix = iota
-	HexadecimalPrefix
-	OctalPrefix
-	BinaryPrefix
-)
-
-func lexPrefix(s RuneStream) (prefix, error) {
-	lookahead := s.Lookahead(2)
-	if lookahead[0] != '0' || lookahead[1] == '.' {
-		return NoPrefix, nil
+	// Get the prefix so we can get the base of the number
+	if p, err := lexPrefix(s); err != nil {
+		return l, err
+	} else if p != NoPrefix {
+		base = p.GetBase()
+		l.Token = token.UIntVal
 	}
 
-	if validPrefix(lookahead[1]) {
+	// Get the "body" of the number.
+	for isHexDigit(s.Peek()) {
+		val := s.Peek()
+
+		// f and d are suffixes, but we may have peeked them
+		// here thinking they were numbers.
+		if base != 16 && isFloatingPointSuffix(val) {
+			break
+		}
+
+		l.Value += string(s.Next())
+
+		consumeSeparators(s)
+
+		// Next sequence is .[character]
+		if next := s.Lookahead(2); next[0] == '.' && !isHexDigit(next[1]) {
+			shouldParseSuffix = false
+			break
+		} else if next[0] == '.' && l.Token != token.DoubleVal {
+			// We've come across the first .; let's consume
+			// and change to being a Double
+			l.Value += string(s.Next())
+			l.Token = token.DoubleVal
+		}
+	}
+
+	if !validStringForBase(l.Value, base) {
+		return l, fmt.Errorf("Invalid number %v for base %v", l.Value, base)
+	}
+
+	if shouldParseSuffix {
+		if tokFromSuffix, err := lexNumberSuffix(s); err != nil {
+			return l, err
+		} else if tokFromSuffix != token.EOF {
+			l.Token = tokFromSuffix
+		}
+
+		if base != 10 && (l.Token == token.FloatVal || l.Token == token.Double) {
+			return l, errors.New("Number of non-decimal base cannot be floating-point")
+		}
+
+		if base != 10 && l.Token.SignedValue() {
+			return l, errors.New("Number of non-decimal base cannot be signed")
+		}
+	}
+
+	if l.Token != token.FloatVal && l.Token != token.DoubleVal &&
+		strings.Contains(l.Value, ".") {
+		return l, errors.New("Floating-point value cannot have integral suffix")
+	}
+
+	if base != 10 {
+		i, err := strconv.ParseInt(l.Value, base, 64)
+		if err != nil {
+			return l, errors.New("Number out of range")
+		}
+
+		l.Value = fmt.Sprintf("%v", i)
+	}
+
+	return l, nil
+}
+
+func lexPrefix(s RuneStream) (prefix, error) {
+	if lookahead := s.Lookahead(2); lookahead[0] != '0' || lookahead[1] == '.' {
+		return NoPrefix, nil
+	} else if prefix := makePrefix(lookahead[1]); prefix != NoPrefix {
 		s.Get(2)
-		return getPrefixFromRune(lookahead[1]), nil
-	} else if !validSuffixStarter(lookahead[0]) {
+		return prefix, nil
+	} else if !validSuffixStarter(lookahead[1]) {
+		// If the character that we're treating as a prefix would be valid
+		// for a suffix, then we can ignore it. Otherwise, it's an
+		// invalid suffix.
 		return NoPrefix, fmt.Errorf("Invalid numeric prefix %v", lookahead[0])
 	}
 
 	return NoPrefix, nil
-}
-
-func validPrefix(r rune) bool {
-	return r == 'o' || r == 'x' || r == 'b'
-}
-
-func getPrefixFromRune(r rune) prefix {
-	switch r {
-	case 'b':
-		return BinaryPrefix
-	case 'o':
-		return OctalPrefix
-	case 'x':
-		return HexadecimalPrefix
-	default:
-		return NoPrefix
-	}
-}
-
-func validSuffixStarter(r rune) bool {
-	return r == 'i' || r == 'f' || r == 'd' || r == 'u'
-}
-
-func isHexDigit(r rune) bool {
-	return (r >= '0' && r <= '9') || (r >= 'a' && r <= 'f') ||
-		(r >= 'A' && r <= 'F')
-}
-
-func prefixToBase(p prefix) int {
-	switch p {
-	case HexadecimalPrefix:
-		return 16
-	case BinaryPrefix:
-		return 2
-	case OctalPrefix:
-		return 8
-	default:
-		return -1
-	}
-}
-
-func validNumberForBase(n string, b int) bool {
-	for _, c := range n {
-		if c == '.' && b == 10 {
-			continue
-		}
-
-		if !isBaseDigit(c, b) {
-			return false
-		}
-	}
-
-	return true
-}
-
-func isBaseDigit(r rune, b int) bool {
-	if b == 2 {
-		return r == '0' || r == '1'
-	} else if b == 8 {
-		return r >= '0' && r <= '7'
-	} else if b == 10 {
-		return r >= '0' && r <= '9'
-	} else if b == 16 {
-		return isHexDigit(r)
-	}
-
-	return false
 }
 
 func lexNumberSuffix(s RuneStream) (token.Token, error) {
@@ -131,105 +131,8 @@ func lexNumberSuffix(s RuneStream) (token.Token, error) {
 	return tok, nil
 }
 
-func signedValue(t token.Token) bool {
-	switch t {
-	case token.IntVal:
-		return true
-	case token.Int8Val:
-		return true
-	case token.Int16Val:
-		return true
-	case token.Int32Val:
-		return true
-	case token.Int64Val:
-		return true
-	default:
-		return false
+func consumeSeparators(s RuneStream) {
+	for s.Peek() == '_' {
+		s.Next()
 	}
-}
-
-func lexNumber(s RuneStream) (Lexeme, error) {
-	base := 10
-	l := Lexeme{Token: token.IntVal}
-	shouldParseSuffix := true
-
-	p, err := lexPrefix(s)
-
-	if err != nil {
-		return l, err
-	}
-
-	if p != NoPrefix {
-		base = prefixToBase(p)
-		l.Token = token.UIntVal
-	}
-
-	for isHexDigit(s.Peek()) {
-		val := s.Peek()
-
-		if (val == 'f' || val == 'd') && base != 16 {
-			break
-		}
-
-		l.Value += string(s.Next())
-
-		// Consume all separators
-		for s.Peek() == '_' {
-			s.Next()
-		}
-
-		// Next sequence is .[character]
-		next := s.Lookahead(2)
-		if next[0] == '.' && isHexDigit(next[1]) == false {
-			shouldParseSuffix = false
-			break
-		} else if next[0] == '.' && l.Token != token.DoubleVal {
-			// If the next character is a period and we're
-			// not already a double, let's consume it now
-
-			l.Value += string(s.Next())
-			l.Token = token.DoubleVal
-		}
-	}
-
-	if !validNumberForBase(l.Value, base) {
-		return l, fmt.Errorf("Invalid number %v for base %v", l.Value, base)
-	}
-
-	if shouldParseSuffix {
-		tokFromSuffix, err := lexNumberSuffix(s)
-		if err != nil {
-			return l, err
-		}
-
-		if tokFromSuffix != token.EOF {
-			l.Token = tokFromSuffix
-		}
-
-		if base != 10 && (l.Token == token.FloatVal || l.Token == token.Double) {
-			return l, errors.New("Number of non-decimal base cannot be floating-point")
-		}
-
-		if base != 10 && signedValue(l.Token) {
-			return l, errors.New("Number of non-decimal base cannot be signed")
-		}
-	}
-
-	if l.Token != token.FloatVal && l.Token != token.DoubleVal {
-		if strings.Contains(l.Value, ".") {
-			return l, errors.New("Floating-point value cannot have integral suffix")
-		}
-	}
-
-	if base != 10 {
-		// convert the number to decimal for the string
-		i, err := strconv.ParseInt(l.Value, base, 64)
-		if err != nil {
-			return l, errors.New("Number out of range")
-		}
-
-		l.Value = fmt.Sprintf("%v", i)
-	}
-
-	return l, nil
 }

@@ -161,3 +161,21 @@ const (
 
 	Identifier
 )
+
+// SignedValue returns true if the token represents a signed integer value
+func (t Token) SignedValue() bool {
+	switch t {
+	case IntVal:
+		return true
+	case Int8Val:
+		return true
+	case Int16Val:
+		return true
+	case Int32Val:
+		return true
+	case Int64Val:
+		return true
+	default:
+		return false
+	}
+}
