@@ -8,18 +8,13 @@
 
 #pragma once
 
-#include <string>
 #include <istream>
+#include "lexeme.h"
 
-namespace orange { namespace parse {
-	class Lexeme;
+namespace orange {
+    namespace parse {
+        Lexeme lexNumber(std::istream& input);
+    }
+}
 
-	class Lexer {
-	private:
-		std::istream& mInput;
-	public:
-		Lexeme next();
 
-		Lexer(std::istream& input);
-	};
-}}
