@@ -31,6 +31,7 @@ Building on OS X, Linux, and Windows are supported. Make sure to install `go` an
 
 ```sh 
 $ go get github.com/constabulary/gb/...
+$ gb vendor restore
 $ gb build 
 ``` 
 
