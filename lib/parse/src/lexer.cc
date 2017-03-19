@@ -38,6 +38,10 @@ int prefixToBase(char prefix) {
     }
 }
 
+bool validSuffixStarter(char suffix) {
+    return suffix == 'i' || suffix == 'f' || suffix == 'd' || suffix == 'u';
+}
+
 bool validPrefix(char prefix) {
     return prefixToBase(prefix) != -1;
 }
@@ -69,7 +73,7 @@ Lexeme Lexer::lexNumber() {
             mInput.get();
             numberBase = prefixToBase(next);
             numberType = Token::UINT_VAL;
-        } else {
+        } else if (!validSuffixStarter(next)) {
             std::stringstream errMsg;
             errMsg << "Invalid numeric prefix " << next;
             throw std::runtime_error(errMsg.str());
@@ -108,7 +112,7 @@ Lexeme Lexer::lexNumber() {
     if (sourceValue[sourceValue.size()-1] == '.') {
         mInput.putback('.');
         sourceValue = sourceValue.substr(0, sourceValue.size() - 1);
-        numberType = Token::INT_VAL;
+        numberType = (numberBase == 10) ? Token::INT_VAL : Token::UINT_VAL;
     } else {
         std::string suffix = "";
 
