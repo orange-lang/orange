@@ -9,6 +9,81 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var _ = Describe("Identifiers", func() {
+	DescribeTable("will be lexed when", expectToken,
+		Entry("it's letters only", "abcdef", token.Identifier),
+		Entry("it's alphanumeric", "a12def", token.Identifier),
+		Entry("it's alphanumeric with underscores", "a_1", token.Identifier),
+		Entry("it ends in an underscore", "abc_", token.Identifier),
+	)
+
+	DescribeTable("will have the appropriate value when", expectValue,
+		Entry("it's letters only", "abcdef", "abcdef"),
+		Entry("it's alphanumeric", "a12def", "a12def"),
+		Entry("it's alphanumeric with underscores", "a_1", "a_1"),
+		Entry("it ends in an underscore", "abc_", "abc_"),
+	)
+})
+
+var _ = Describe("Constants", func() {
+	Describe("Strings", func() {
+		DescribeTable("will be lexed when", expectToken,
+			Entry("a string is provided", "\"foobar\"", token.StringVal),
+			Entry("a has an escaped double quote", "\"fo\\\"obar\"", token.StringVal),
+			Entry("a has a newline", "\"foo\\nbar\"", token.StringVal),
+			Entry("a has a tab", "\"foo\\tbar\"", token.StringVal),
+			Entry("a has a backslash", "\"foo\\\\bar\"", token.StringVal),
+		)
+
+		DescribeTable("will have the correct value when", expectValue,
+			Entry("a string is provided", "\"foobar\"", "foobar"),
+			Entry("a has an escaped double quote", "\"fo\\\"obar\"", "fo\"obar"),
+			Entry("a has a newline", "\"foo\\nbar\"", "foo\nbar"),
+			Entry("a has a tab", "\"foo\\tbar\"", "foo\tbar"),
+			Entry("a has a backslash", "\"foo\\\\bar\"", "foo\\bar"),
+		)
+	})
+
+	Describe("Chars", func() {
+		DescribeTable("will have the right token when", expectToken,
+			Entry("one is provided", "'c'", token.CharVal),
+			Entry("it's a newline", "'\n'", token.CharVal),
+			Entry("it's a tab", "'\t'", token.CharVal),
+			Entry("it's a backslash", "'\\\\'", token.CharVal),
+			Entry("it's a single quote", "'\\''", token.CharVal),
+		)
+
+		DescribeTable("will have the right value when", expectValue,
+			Entry("one is provided", "'c'", "c"),
+			Entry("it's a newline", "'\n'", "\n"),
+			Entry("it's a tab", "'\t'", "\t"),
+			Entry("it's a backslash", "'\\\\'", "\\"),
+			Entry("it's a single quote", "'\\''", "'"),
+		)
+	})
+
+	Describe("Booleans", func() {
+		DescribeTable("will have the right token when", expectToken,
+			Entry("it's true", "true", token.BoolVal),
+			Entry("it's false", "false", token.BoolVal),
+		)
+
+		DescribeTable("will have the right value when", expectValue,
+			Entry("it's true", "true", "true"),
+			Entry("it's false", "false", "false"),
+		)
+	})
+
+	Describe("Comments", func() {
+		DescribeTable("will be ignored when it's a", expectToken,
+			Entry("single line comment", "// Testing \n5", token.IntVal),
+			Entry("block comment", "/*Testing*/5", token.IntVal),
+			Entry("multi-line comment", "/*Testing\nComments*/5", token.IntVal),
+			Entry("nested block comment", "/*testing/*comments*/*/5", token.IntVal),
+		)
+	})
+})
+
 var _ = Describe("Numbers", func() {
 	Describe("Whitespace", func() {
 		DescribeTable("should be ignored when",
