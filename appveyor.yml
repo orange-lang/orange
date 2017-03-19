@@ -4,6 +4,7 @@ skip_commits:
   message: /\[ci skip\]/
 
 install:
+  - SET
   - git submodule init
   - go get github.com/constabulary/gb/...
   - gb vendor restore 
