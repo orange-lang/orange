@@ -26,4 +26,7 @@ install:
 script:
 - cd ${TRAVIS_BUILD_DIR}
 - gb test -v
-- docker build -t orangelang/orange . 
+- |
+  if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+    docker build -t orangelang/orange . 
+  fi
