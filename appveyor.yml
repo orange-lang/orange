@@ -3,27 +3,13 @@ version: alpha-0.0.1.{build}-{branch}
 skip_commits:
   message: /\[ci skip\]/
 
-cache:
-  - C:\projects\mingw610.7z
-
 install:
   - git submodule init
-  - if not exist C:\projects\mingw610.7z appveyor DownloadFile http://downloads.sourceforge.net/mingw-w64/x86_64-6.1.0-release-posix-seh-rt_v5-rev0.7z -FileName C:\projects\mingw610.7z
-  - 7z x -oC:\tools C:\projects\mingw610.7z > nul
-
-  # validate toolchain
-  - set PATH=%PATH%;C:\tools\mingw64\bin
-  - gcc --version
-  - wmic os get osarchitecture
-
-  - md build
-  - cd build
+  - go get github.com/constabulary/gb/...
+  - gb vendor restore 
 
 build_script:
-  - set PATH=C:\tools\mingw64\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Python27;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\CMake\bin
-  - cmake --version
-  - cmake .. -G "MinGW Makefiles" -DCMAKE_CXX_FLAGS=-m64 -DCMAKE_BUILD_TYPE=Debug
-  - mingw32-make
+  - gb build 
 
 test_script:
-  - cmd /C "ctest -V"
+  - gb test -v 

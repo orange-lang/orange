@@ -27,17 +27,12 @@ People who pulled `master` before January 2017 may have to do a force reset to t
 * [Language Guide](http://docs.orange-lang.org/v/rev-3/) ([Github](https://github.com/orange-lang/orange-docs/tree/rev-3))
 
 # Building
-Building on OS X and Linux should be straightforward. Make sure git and CMake are installed and then run the following commands:
+Building on OS X, Linux, and Windows are supported. Make sure to install `go` and then run the following commands:
 
-```sh
-$ git clone --recursive https://github.com/orange-lang/orange.git
-$ cd orange
-$ mkdir build-orange && cd build-orange
-$ cmake ..
-$ make all
-```
-
-Building on Windows is supported through [MSYS2](https://msys2.github.io)
+```sh 
+$ go get github.com/constabulary/gb/...
+$ gb build 
+``` 
 
 # Community
 

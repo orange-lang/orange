@@ -1,0 +1,163 @@
+package token
+
+type Token int16
+
+const (
+	EOF Token = iota
+
+	//
+	// Values
+	//
+
+	IntVal
+	Int8Val
+	Int16Val
+	Int32Val
+	Int64Val
+	UIntVal
+	UInt8Val
+	UInt16Val
+	UInt32Val
+	UInt64Val
+	FloatVal
+	DoubleVal
+	StringVal
+	CharVal
+	BoolVal
+
+	//
+	// Type Names
+	//
+
+	Int
+	Int8
+	Int16
+	Int32
+	Int64
+	UInt
+	UInt8
+	UInt16
+	UInt32
+	UInt64
+	Float
+	Double
+	String
+	Char
+	Bool
+	Void
+
+	//
+	// Statement endings
+	//
+
+	Newline
+	Semicolon
+
+	//
+	// Keywords
+	//
+
+	Var
+	Enum
+	Class
+	Public
+	Protected
+	Private
+	If
+	Elif
+	Else
+	For
+	While
+	Do
+	Break
+	Continue
+	Def
+	Extern
+	Interface
+	Package
+	Import
+	New
+	Delete
+	Get
+	Set
+	Virtual
+	Final
+	Where
+	Data
+	Extend
+	Const
+	Try
+	Catch
+	Finally
+	Throw
+	Of
+	Property
+	This
+
+	//
+	// Operators
+	//
+
+	OpenParen
+	CloseParen
+	OpenCurly
+	CloseCurly
+	OpenBracket
+	CloseBracket
+	Dot
+	Comma
+	Colon
+	Arrow
+
+	//
+	// Comparison operators
+	//
+
+	LogicalOr
+	LogicalAnd
+	LogicalNot
+	Question
+	EQ
+	NEQ
+	LE
+	GE
+	LT
+	GT
+
+	//
+	// Mathematical operators
+	//
+
+	Plus
+	Minus
+	Divide
+	Times
+	Mod
+	BitOr
+	BitAnd
+	BitXor
+	BitNot
+	ShiftLeft
+	ShiftRight
+
+	Assign
+	PlusAssign
+	MinusAssign
+	DivideAssign
+	TimesAssign
+	ModAssign
+	BitOrAssign
+	BitAndAssign
+	BitXorAssign
+	ShiftLeftAssign
+	ShiftRightAssign
+
+	Increment
+	Decrement
+
+	//
+	// Other
+	//
+
+	Identifier
+)
