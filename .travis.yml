@@ -14,11 +14,7 @@ os: linux
 matrix:
   include:
   - os: osx
-    compiler: clang
-    before_install:
-    - git submodule init 
   - os: linux
-    compiler: gcc
     sudo: required
     services:
       - docker
@@ -30,6 +26,7 @@ git:
 before_install:
 - git submodule init 
 - git submodule update --recursive
+install:
 - go get github.com/constabulary/gb/...
 - gb vendor restore 
 script:
