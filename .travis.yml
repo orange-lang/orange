@@ -10,22 +10,11 @@ notifications:
 go:
   - 1.8
 cache: apt
+services:
+  - docker 
 os: 
   - linux 
   -  osx 
-matrix:
-  include:
-  - os: linux
-    language: go
-    go:
-      - 1.8
-    sudo: required
-    services:
-      - docker
-    before_install:
-    install:
-    script: 
-    - docker build -t orangelang/orange .
 git:
   depth: 1
 before_install:
@@ -37,3 +26,4 @@ install:
 script:
 - cd ${TRAVIS_BUILD_DIR}
 - gb test -v
+- docker build -t orangelang/orange . 
