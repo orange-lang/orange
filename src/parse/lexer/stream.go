@@ -12,7 +12,14 @@ type LexemeStream interface {
 	Lookahead(n int) ([]Lexeme, error)
 }
 
-// ByteStream provides a constant stream of bytes, potentially from a file
+// RuneStreamPosition represents some column and row in the
+// rune stream
+type RuneStreamPosition struct {
+	Row    int
+	Column int
+}
+
+// RuneStream provides a constant stream of bytes, potentially from a file
 type RuneStream interface {
 	EOF() bool
 
@@ -21,6 +28,8 @@ type RuneStream interface {
 
 	Peek() rune
 	Lookahead(n int) []rune
+
+	Position() RuneStreamPosition
 }
 
 //
@@ -28,9 +37,27 @@ type RuneStream interface {
 //
 
 type StringRuneStream struct {
-	Source    string
+	Source string
+
 	at        int
 	lookahead []rune
+	x         int
+	y         int
+}
+
+// Position returns the current column the row is pointed at; e.g.,
+// the rune returned at Peek() would be at this location.
+func (s *StringRuneStream) Position() RuneStreamPosition {
+	return RuneStreamPosition{Row: s.y + 1, Column: s.x + 1}
+}
+
+func (s *StringRuneStream) updatePosition(r rune) {
+	if r == '\n' {
+		s.y++
+		s.x = 0
+	} else {
+		s.x++
+	}
 }
 
 func (s *StringRuneStream) EOF() bool {
@@ -43,6 +70,7 @@ func (s *StringRuneStream) getOne() rune {
 	}
 
 	next := []rune(s.Source)[s.at]
+
 	s.at++
 	return next
 }
@@ -61,10 +89,13 @@ func (s *StringRuneStream) Next() rune {
 	if len(s.lookahead) > 0 {
 		next := s.lookahead[0]
 		s.lookahead = s.lookahead[1:]
+		s.updatePosition(next)
 		return next
 	}
 
-	return s.getOne()
+	next := s.getOne()
+	s.updatePosition(next)
+	return next
 }
 
 func (s *StringRuneStream) Get(n int) []rune {

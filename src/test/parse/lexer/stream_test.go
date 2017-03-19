@@ -105,4 +105,30 @@ var _ = Describe("String Rune String", func() {
 		})
 	})
 
+	Describe("Position", func() {
+		It("should be correct", func() {
+			s := getStream("foo\nbar")
+			Expect(s.Position()).To(Equal(lexer.RuneStreamPosition{Row: 1, Column: 1}))
+
+			s.Peek()
+			Expect(s.Position()).To(Equal(lexer.RuneStreamPosition{Row: 1, Column: 1}))
+
+			s.Lookahead(3)
+			Expect(s.Position()).To(Equal(lexer.RuneStreamPosition{Row: 1, Column: 1}))
+
+			s.Next()
+			Expect(s.Position()).To(Equal(lexer.RuneStreamPosition{Row: 1, Column: 2}))
+
+			s.Get(2)
+			Expect(s.Position()).To(Equal(lexer.RuneStreamPosition{Row: 1, Column: 4}))
+
+			s.Get(4)
+			Expect(s.Position()).To(Equal(lexer.RuneStreamPosition{Row: 2, Column: 4}))
+
+			s = getStream("foo\n\nbar")
+			s.Get(6)
+			Expect(s.Position()).To(Equal(lexer.RuneStreamPosition{Row: 3, Column: 2}))
+		})
+	})
+
 })
