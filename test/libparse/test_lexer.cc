@@ -43,11 +43,23 @@ using namespace orange::parse;
 //   NUMBERS TESTS
 //
 
+TEST(Lexer, TestWhitespace) {
+     std::map<std::string, Token> testTable = {
+        {"          1234567890", Token::INT_VAL},
+    };
+
+	for (auto row : testTable) {
+		TEST_TOKEN(row.first, row.second);
+	}
+}
+
 TEST(Lexer, TestTypes) {
     std::map<std::string, Token> testTable = {
         {"0b01", Token::UINT_VAL},
 		{"0o01234567", Token::UINT_VAL},
-        {"0x0123456789abcdefABCDEF", Token::UINT_VAL},
+        {"0x0123456789", Token::UINT_VAL},
+        {"0xabcdef", Token::UINT_VAL},
+        {"0xABCDEF", Token::UINT_VAL},
         {"1234567890", Token::INT_VAL},
         {"1234.567890", Token::DOUBLE_VAL},
         {"1234.567890f", Token::FLOAT_VAL},
@@ -82,26 +94,11 @@ TEST(Lexer, TestSuffixedTypes) {
         {"0o32u64", Token::UINT64_VAL},
         {"0xFAu64", Token::UINT64_VAL},
         {"12u64",   Token::UINT64_VAL},
-        {"0b11i", Token::UINT_VAL},
-        {"0o32i", Token::UINT_VAL},
-        {"0xFAi", Token::UINT_VAL},
-        {"12i",   Token::UINT_VAL},
-        {"0b11i8", Token::UINT8_VAL},
-        {"0o32i8", Token::UINT8_VAL},
-        {"0xFAi8", Token::UINT8_VAL},
-        {"12i8",   Token::UINT8_VAL},
-        {"0b11i16", Token::UINT16_VAL},
-        {"0o32i16", Token::UINT16_VAL},
-        {"0xFAi16", Token::UINT16_VAL},
-        {"12i16",   Token::UINT16_VAL},
-        {"0b11i32", Token::UINT32_VAL},
-        {"0o32i32", Token::UINT32_VAL},
-        {"0xFAi32", Token::UINT32_VAL},
-        {"12i32",   Token::UINT32_VAL},
-        {"0b11i64", Token::UINT64_VAL},
-        {"0o32i64", Token::UINT64_VAL},
-        {"0xFAi64", Token::UINT64_VAL},
-        {"12i64",   Token::UINT64_VAL},
+        {"12i",   Token::INT_VAL},
+        {"12i8",   Token::INT8_VAL},
+        {"12i16",   Token::INT16_VAL},
+        {"12i32",   Token::INT32_VAL},
+        {"12i64",   Token::INT64_VAL},
 	};
 
  	for (auto row : testTable) {
@@ -111,7 +108,7 @@ TEST(Lexer, TestSuffixedTypes) {
 
 TEST(Lexer, TestSeparators) {
     std::map<std::string, Token> testTable = {
-        {"0b0000_1111_1010_2_1__2", Token::UINT_VAL},
+        {"0b0000_1111_1010_0_1__0", Token::UINT_VAL},
         {"0o12_345_76__3", Token::UINT_VAL},
         {"0xAAAA_BBBB_C_D_123", Token::UINT_VAL},
         {"123_456_78_9", Token::INT_VAL},
@@ -153,47 +150,32 @@ TEST(Lexer, LeadingZeroesValues) {
 
 TEST(Lexer, ValuesWithSuffixes) {
     std::map<std::string, std::string> testTable = {
-			{"0b11u", "3"},
-			{"0o32u", "26"},
-			{"0xFAu", "250"},
-			{"12u",   "12"},
-			{"0b11u8", "3"},
-			{"0o32u8", "26"},
-			{"0xFAu8", "250"},
-			{"12u8",   "12"},
-			{"0b11u16", "3"},
-			{"0o32u16", "26"},
-			{"0xFAu16", "250"},
-			{"12u16",   "12"},
-			{"0b11u32", "3"},
-			{"0o32u32", "26"},
-			{"0xFAu32", "250"},
-			{"12u32",   "12"},
-			{"0b11u64", "3"},
-			{"0o32u64", "26"},
-			{"0xFAu64", "250"},
-			{"12u64",   "12"},
-			{"0b11i", "3"},
-			{"0o32i", "26"},
-			{"0xFAi", "250"},
-			{"12i",   "12"},
-			{"0b11i8", "3"},
-			{"0o32i8", "26"},
-			{"0xFAi8", "250"},
-			{"12i8",   "12"},
-			{"0b11i16", "3"},
-			{"0o32i16", "26"},
-			{"0xFAi16", "250"},
-			{"12i16",   "12"},
-			{"0b11i32", "3"},
-			{"0o32i32", "26"},
-			{"0xFAi32", "250"},
-			{"12i32",   "12"},
-			{"0b11i64", "3"},
-			{"0o32i64", "26"},
-			{"0xFAi64", "250"},
-			{"12i64",   "12"},
-	};
+        {"0b11u", "3"},
+        {"0o32u", "26"},
+        {"0xFAu", "250"},
+        {"12u",   "12"},
+        {"0b11u8", "3"},
+        {"0o32u8", "26"},
+        {"0xFAu8", "250"},
+        {"12u8",   "12"},
+        {"0b11u16", "3"},
+        {"0o32u16", "26"},
+        {"0xFAu16", "250"},
+        {"12u16",   "12"},
+        {"0b11u32", "3"},
+        {"0o32u32", "26"},
+        {"0xFAu32", "250"},
+        {"12u32",   "12"},
+        {"0b11u64", "3"},
+        {"0o32u64", "26"},
+        {"0xFAu64", "250"},
+        {"12u64",   "12"},
+        {"12i",   "12"},
+        {"12i8",   "12"},
+        {"12i16",   "12"},
+        {"12i32",   "12"},
+        {"12i64",   "12"},
+};
 
 	for (auto row : testTable) {
 		TEST_VALUE(row.first, row.second);
@@ -205,6 +187,8 @@ TEST(Lexer, InvalidNumbers) {
         "0d51",
         "052",
         "32z",
+        "0b0110_102",
+        "0xFADi8",
 	};
 
 	for (auto row : testTable) {
