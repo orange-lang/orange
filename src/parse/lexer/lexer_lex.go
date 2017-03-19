@@ -16,6 +16,14 @@ func (l *Lexer) lex() (Lexeme, error) {
 		_ = l.Stream.Next()
 	}
 
+	if lookahead := string(l.Stream.Lookahead(2)); isCommentStarter(lookahead) {
+		if lookahead == "//" {
+			consumeSingleLineComment(l.Stream)
+		} else {
+			consumeBlockComment(l.Stream)
+		}
+	}
+
 	next := l.Stream.Peek()
 
 	switch true {
@@ -23,9 +31,86 @@ func (l *Lexer) lex() (Lexeme, error) {
 		return lexNumber(l.Stream)
 	case unicode.IsLetter(next):
 		return lexKeywordOrIdentifier(l.Stream)
+	case next == '\'':
+		return lexCharacter(l.Stream)
+	case next == '"':
+		return lexString(l.Stream)
 	default:
 		return lexOperator(l.Stream)
 	}
+}
+
+func lexString(s RuneStream) (Lexeme, error) {
+	var value string
+
+	s.Next()
+
+	for s.Peek() != '"' {
+		if s.Peek() == '\\' {
+			seq, err := lexEscapeSequence(s)
+			if err != nil {
+				return Lexeme{}, err
+			}
+
+			value += seq
+			continue
+		}
+
+		value += string(s.Next())
+	}
+
+	// Finish consuming the string
+	s.Next()
+	return Lexeme{Value: value, Token: token.StringVal}, nil
+}
+
+func lexEscapeSequence(s RuneStream) (string, error) {
+	value := ""
+
+	s.Next()
+
+	switch s.Peek() {
+	case 'n':
+		value = fmt.Sprintf("\n")
+	case 't':
+		value = fmt.Sprintf("\t")
+	case '\\':
+		value = fmt.Sprintf("\\")
+	case '\'':
+		value = "'"
+	case '"':
+		value = "\""
+	default:
+		return "", fmt.Errorf("Unexpected escape sequence %v", string(s.Peek()))
+	}
+
+	// Consume full escape sequence
+	s.Next()
+	return value, nil
+}
+
+func lexCharacter(s RuneStream) (Lexeme, error) {
+	var value string
+
+	s.Next()
+
+	if s.Peek() == '\\' {
+		val, err := lexEscapeSequence(s)
+		if err != nil {
+			return Lexeme{}, err
+		}
+
+		value = val
+	} else {
+		value = string(s.Next())
+	}
+
+	if next := s.Next(); next != '\'' {
+		return Lexeme{}, fmt.Errorf("Unexpected character in character constant %v",
+			string(next))
+	}
+
+	return Lexeme{Value: value, Token: token.CharVal}, nil
 }
 
 func lexOperator(s RuneStream) (Lexeme, error) {
@@ -93,7 +178,8 @@ func lexOperator(s RuneStream) (Lexeme, error) {
 
 // getPotentialOperators returns a slice of operators ordered by
 // length descending, allowing for looking ahead by length incrementally
-// to determine if that operator is being lexed
+// to determine if that specific operator is being lexed, rather than
+// another operator that is a substring of the longer one
 func getPotentialOperators(table map[string]token.Token) []string {
 	var operators []string
 	for k := range table {
@@ -151,6 +237,8 @@ func lexKeywordOrIdentifier(s RuneStream) (Lexeme, error) {
 		"of":        token.Of,
 		"property":  token.Property,
 		"this":      token.This,
+		"false":     token.BoolVal,
+		"true":      token.BoolVal,
 	}
 
 	value := ""
@@ -166,7 +254,42 @@ func lexKeywordOrIdentifier(s RuneStream) (Lexeme, error) {
 		}, nil
 	}
 
-	return Lexeme{}, fmt.Errorf("Could not handle identifier %v", value)
+	return Lexeme{
+		Token: token.Identifier,
+		Value: value,
+	}, nil
+}
+
+func consumeSingleLineComment(s RuneStream) {
+	s.Get(2)
+
+	for s.Peek() != '\n' {
+		s.Next()
+	}
+
+	// Consume the newline
+	s.Next()
+}
+
+func consumeBlockComment(s RuneStream) {
+	s.Get(2)
+
+	level := 1
+
+	for level > 0 {
+		// Nested comment
+		if lookahead := string(s.Lookahead(2)); lookahead == "/*" {
+			s.Get(2)
+			level++
+			continue
+		} else if lookahead == "*/" {
+			s.Get(2)
+			level--
+			continue
+		}
+
+		s.Next()
+	}
 }
 
 func isIdentifierCharacter(r rune) bool {
@@ -176,4 +299,8 @@ func isIdentifierCharacter(r rune) bool {
 func isIgnoreableSpace(r rune) bool {
 	// We can ignore anything that's not a newline
 	return r != '\n' && unicode.IsSpace(r)
+}
+
+func isCommentStarter(s string) bool {
+	return s == "//" || s == "/*"
 }
