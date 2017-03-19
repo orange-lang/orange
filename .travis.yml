@@ -16,7 +16,6 @@ matrix:
   - os: osx
     compiler: clang
     before_install:
-    - go get github.com/constabulary/gb/...
     - git submodule init 
   - os: linux
     compiler: gcc
@@ -31,6 +30,7 @@ git:
 before_install:
 - git submodule init 
 - git submodule update --recursive
+- go get github.com/constabulary/gb/...
 - gb vendor restore 
 script:
 - cd ${TRAVIS_BUILD_DIR}
