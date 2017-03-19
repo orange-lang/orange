@@ -11,3 +11,4 @@ Makefile
 /.idea
 /nbproject
 /.vscode
+/cmake-build-debug
