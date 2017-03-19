@@ -5,6 +5,9 @@ skip_commits:
 
 install:
   - SET
+  - mkdir C:\go-code
+  - set GOPATH=C:\go-code
+  - set PATH=%PATH%;C:\go-code\bin
   - git submodule init
   - go get github.com/constabulary/gb/...
   - gb vendor restore 
