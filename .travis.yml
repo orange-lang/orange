@@ -21,11 +21,10 @@ before_install:
 - git submodule init 
 - git submodule update --recursive
 install:
-- go get github.com/constabulary/gb/...
-- gb vendor restore 
+- go get -t -v ./...
 script:
 - cd ${TRAVIS_BUILD_DIR}
-- gb test -v
+- go test ./test/... -v 
 - |
   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
     docker build -t orangelang/orange . 

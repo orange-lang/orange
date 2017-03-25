@@ -1,6 +1,6 @@
 package lexer
 
-import "parse/lexer/token"
+import "github.com/orange-lang/orange/parse/lexer/token"
 
 // Lexeme is a single unit of code retrieved from a RuneStream
 type Lexeme struct {

@@ -2,9 +2,9 @@ package test
 
 import (
 	"fmt"
-	"parse/lexer/token"
 
 	"github.com/onsi/gomega/types"
+	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
 var tokenLookup = map[token.Token]string{

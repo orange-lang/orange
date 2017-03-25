@@ -3,17 +3,17 @@ version: alpha-0.0.1.{build}-{branch}
 skip_commits:
   message: /\[ci skip\]/
 
+clone_folder: C:\go-code\src\github.com\orange-lang\orange
+
 install:
   - SET
-  - mkdir C:\go-code
   - set GOPATH=C:\go-code
   - set PATH=%PATH%;C:\go-code\bin
   - git submodule init
-  - go get github.com/constabulary/gb/...
-  - gb vendor restore 
+  - go get -t -v ./...
 
 build_script:
-  - gb build 
+  - go build 
 
 test_script:
-  - gb test -v 
+  - go test ./test/... -v 

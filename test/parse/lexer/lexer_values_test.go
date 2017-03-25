@@ -1,8 +1,8 @@
 package test
 
 import (
-	"parse/lexer"
-	"parse/lexer/token"
+	"github.com/orange-lang/orange/parse/lexer"
+	"github.com/orange-lang/orange/parse/lexer/token"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
