@@ -10,8 +10,10 @@ import (
 )
 
 func lexNumber(s RuneStream) (Lexeme, error) {
-	base := 10
 	l := Lexeme{Token: token.IntVal}
+	l.SetStartPosition(s)
+
+	base := 10
 	shouldParseSuffix := true
 
 	// Get the prefix so we can get the base of the number
@@ -75,6 +77,7 @@ func lexNumber(s RuneStream) (Lexeme, error) {
 
 	val, err := convertNumber(l.Value, base)
 	l.Value = val
+	l.SetEndPosition(s)
 	return l, err
 }
 
@@ -101,7 +104,7 @@ func lexPrefix(s RuneStream) (prefix, error) {
 		// If the character that we're treating as a prefix would be valid
 		// for a suffix, then we can ignore it. Otherwise, it's an
 		// invalid suffix.
-		return NoPrefix, fmt.Errorf("Invalid numeric prefix %v", lookahead[0])
+		return NoPrefix, fmt.Errorf("Invalid numeric prefix %v", string(lookahead[:2]))
 	}
 
 	return NoPrefix, nil

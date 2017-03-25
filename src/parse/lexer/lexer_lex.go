@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"errors"
 	"fmt"
 	"parse/lexer/token"
 	"sort"
@@ -41,6 +42,9 @@ func (l *Lexer) lex() (Lexeme, error) {
 }
 
 func lexString(s RuneStream) (Lexeme, error) {
+	l := Lexeme{}
+	l.SetStartPosition(s)
+
 	var value string
 
 	s.Next()
@@ -49,7 +53,7 @@ func lexString(s RuneStream) (Lexeme, error) {
 		if s.Peek() == '\\' {
 			seq, err := lexEscapeSequence(s)
 			if err != nil {
-				return Lexeme{}, err
+				return l, err
 			}
 
 			value += seq
@@ -61,7 +65,12 @@ func lexString(s RuneStream) (Lexeme, error) {
 
 	// Finish consuming the string
 	s.Next()
-	return Lexeme{Value: value, Token: token.StringVal}, nil
+
+	l.Value = value
+	l.Token = token.StringVal
+	l.SetEndPosition(s)
+
+	return l, nil
 }
 
 func lexEscapeSequence(s RuneStream) (string, error) {
@@ -90,6 +99,9 @@ func lexEscapeSequence(s RuneStream) (string, error) {
 }
 
 func lexCharacter(s RuneStream) (Lexeme, error) {
+	l := Lexeme{}
+	l.SetStartPosition(s)
+
 	var value string
 
 	s.Next()
@@ -97,7 +109,7 @@ func lexCharacter(s RuneStream) (Lexeme, error) {
 	if s.Peek() == '\\' {
 		val, err := lexEscapeSequence(s)
 		if err != nil {
-			return Lexeme{}, err
+			return l, err
 		}
 
 		value = val
@@ -106,11 +118,14 @@ func lexCharacter(s RuneStream) (Lexeme, error) {
 	}
 
 	if next := s.Next(); next != '\'' {
-		return Lexeme{}, fmt.Errorf("Unexpected character in character constant %v",
-			string(next))
+		return l, errors.New("Too many characters in character constant")
 	}
 
-	return Lexeme{Value: value, Token: token.CharVal}, nil
+	l.Value = value
+	l.Token = token.CharVal
+	l.SetEndPosition(s)
+
+	return l, nil
 }
 
 func lexOperator(s RuneStream) (Lexeme, error) {
@@ -163,17 +178,25 @@ func lexOperator(s RuneStream) (Lexeme, error) {
 		">>=": token.ShiftRightAssign,
 	}
 
+	l := Lexeme{}
+	l.SetStartPosition(s)
+
 	operators := getPotentialOperators(operatorTable)
 
 	for _, op := range operators {
 		lookahead := string(s.Lookahead(len(op)))
 		if tok, ok := operatorTable[lookahead]; ok {
 			s.Get(len(op))
-			return Lexeme{Token: tok, Value: op}, nil
+
+			l.Token = tok
+			l.Value = op
+			l.SetEndPosition(s)
+
+			return l, nil
 		}
 	}
 
-	return Lexeme{}, fmt.Errorf("Unexpected character %v", string(s.Peek()))
+	return l, fmt.Errorf("Unexpected character %v", string(s.Peek()))
 }
 
 // getPotentialOperators returns a slice of operators ordered by
@@ -190,6 +213,9 @@ func getPotentialOperators(table map[string]token.Token) []string {
 }
 
 func lexKeywordOrIdentifier(s RuneStream) (Lexeme, error) {
+	l := Lexeme{}
+	l.SetStartPosition(s)
+
 	keywordTable := map[string]token.Token{
 		"int":       token.Int,
 		"int8":      token.Int8,
@@ -248,16 +274,14 @@ func lexKeywordOrIdentifier(s RuneStream) (Lexeme, error) {
 	}
 
 	if tok, ok := keywordTable[value]; ok {
-		return Lexeme{
-			Value: value,
-			Token: tok,
-		}, nil
+		l.Token = tok
+	} else {
+		l.Token = token.Identifier
 	}
 
-	return Lexeme{
-		Token: token.Identifier,
-		Value: value,
-	}, nil
+	l.Value = value
+	l.SetEndPosition(s)
+	return l, nil
 }
 
 func consumeSingleLineComment(s RuneStream) {
