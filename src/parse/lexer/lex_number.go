@@ -52,8 +52,10 @@ func lexNumber(s RuneStream) (Lexeme, error) {
 	}
 
 	if !validStringForBase(l.Value, base) {
+		err := NewError(s, "Invalid number %v for base %v", l.Value, base)
 		consumeUntilWhitespace(s)
-		return l, fmt.Errorf("Invalid number %v for base %v", l.Value, base)
+
+		return l, err
 	}
 
 	if shouldParseSuffix {
@@ -64,20 +66,24 @@ func lexNumber(s RuneStream) (Lexeme, error) {
 		}
 
 		if base != 10 && (l.Token == token.FloatVal || l.Token == token.Double) {
-			return l, errors.New("Number of non-decimal base cannot be floating-point")
+			return l, NewError(s, "Number of non-decimal base cannot be floating-point")
 		}
 
 		if base != 10 && l.Token.SignedValue() {
-			return l, errors.New("Number of non-decimal base cannot be signed")
+			return l, NewError(s, "Number of non-decimal base cannot be signed")
 		}
 	}
 
 	if l.Token != token.FloatVal && l.Token != token.DoubleVal &&
 		strings.Contains(l.Value, ".") {
-		return l, errors.New("Floating-point value cannot have integral suffix")
+		return l, NewError(s, "Floating-point value cannot have integral suffix")
 	}
 
 	val, err := convertNumber(l.Value, base)
+	if err != nil {
+		err = NewError(s, err.Error())
+	}
+
 	l.Value = val
 	l.SetEndPosition(s)
 	return l, err
@@ -106,7 +112,8 @@ func lexPrefix(s RuneStream) (prefix, error) {
 		// If the character that we're treating as a prefix would be valid
 		// for a suffix, then we can ignore it. Otherwise, it's an
 		// invalid suffix.
-		return NoPrefix, fmt.Errorf("Invalid numeric prefix %v", string(lookahead[:2]))
+		err := NewError(s, "Invalid numeric prefix %v", string(lookahead[:2]))
+		return NoPrefix, err
 	}
 
 	return NoPrefix, nil
@@ -136,7 +143,7 @@ func lexNumberSuffix(s RuneStream) (token.Token, error) {
 
 	tok, ok := suffixTable[suffix]
 	if !ok && suffix != "" {
-		return token.EOF, fmt.Errorf("Invalid suffix %v", suffix)
+		return token.EOF, NewError(s, "Invalid suffix %v", suffix)
 	}
 
 	return tok, nil

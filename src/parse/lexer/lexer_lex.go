@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"errors"
 	"fmt"
 	"parse/lexer/token"
 	"sort"
@@ -66,7 +65,7 @@ func lexString(s RuneStream) (Lexeme, error) {
 
 	// Finish consuming the string
 	if val := s.Next(); val != '"' {
-		return l, errors.New("Unterminated string constant")
+		return l, NewError(s, "Unterminated string constant")
 	}
 
 	l.Value = value
@@ -93,7 +92,7 @@ func lexEscapeSequence(s RuneStream) (string, error) {
 	case '"':
 		value = "\""
 	default:
-		return "", fmt.Errorf("Unexpected escape sequence %v", string(s.Peek()))
+		return "", NewError(s, "Unexpected escape sequence %v", string(s.Peek()))
 	}
 
 	// Consume full escape sequence
@@ -126,11 +125,11 @@ func lexCharacter(s RuneStream) (Lexeme, error) {
 
 	// Finish consuming the character
 	if val := s.Next(); val != '\'' {
-		return l, errors.New("Unterminated character constant")
+		return l, NewError(s, "Unterminated character constant")
 	}
 
 	if len(value) > 1 {
-		return l, errors.New("Too many characters in character constant")
+		return l, NewError(s, "Too many characters in character constant")
 	}
 
 	l.Value = value
@@ -208,7 +207,9 @@ func lexOperator(s RuneStream) (Lexeme, error) {
 		}
 	}
 
-	return l, fmt.Errorf("Unexpected character %v", string(s.Next()))
+	err := NewError(s, "Unepxected character %v", string(s.Peek()))
+	s.Next()
+	return l, err
 }
 
 // getPotentialOperators returns a slice of operators ordered by
