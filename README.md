@@ -27,12 +27,10 @@ People who pulled `master` before January 2017 may have to do a force reset to t
 * [Language Guide](http://docs.orange-lang.org/v/rev-3/) ([Github](https://github.com/orange-lang/orange-docs/tree/rev-3))
 
 # Building
-Building on OS X, Linux, and Windows are supported. Make sure to install `go` and then run the following commands:
+Building on OS X, Linux, and Windows are supported. Make sure to install `go` and then simply run the following command:
 
 ```sh 
-$ go get github.com/constabulary/gb/...
-$ gb vendor restore
-$ gb build 
+$ go get github.com/orange-lang/orange/...
 ``` 
 
 # Community
