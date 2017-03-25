@@ -3,10 +3,11 @@ package lexer
 import (
 	"errors"
 	"fmt"
-	"parse/lexer/token"
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
 func lexNumber(s RuneStream) (Lexeme, error) {

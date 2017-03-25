@@ -1,9 +1,9 @@
 FROM golang:1.8 
 
-RUN go get github.com/constabulary/gb/...
+WORKDIR /go/src/github.com/orange-lang/orange 
+ADD . /go/src/github.com/orange-lang/orange 
 
-WORKDIR /project 
-ADD . /project 
 
-RUN gb build 
-RUN gb test -v 
+RUN go get -t -v ./...
+RUN go build 
+RUN go test -v ./test/...

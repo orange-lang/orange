@@ -1,7 +1,7 @@
 package test
 
 import (
-	"parse/lexer"
+	"github.com/orange-lang/orange/parse/lexer"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

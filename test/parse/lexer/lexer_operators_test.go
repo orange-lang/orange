@@ -2,7 +2,8 @@ package test
 
 import (
 	"fmt"
-	"parse/lexer/token"
+
+	"github.com/orange-lang/orange/parse/lexer/token"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"

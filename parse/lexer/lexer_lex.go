@@ -2,9 +2,10 @@ package lexer
 
 import (
 	"fmt"
-	"parse/lexer/token"
 	"sort"
 	"unicode"
+
+	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
 func (l *Lexer) lex() (Lexeme, error) {
