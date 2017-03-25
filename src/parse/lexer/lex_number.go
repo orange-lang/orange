@@ -18,6 +18,7 @@ func lexNumber(s RuneStream) (Lexeme, error) {
 
 	// Get the prefix so we can get the base of the number
 	if p, err := lexPrefix(s); err != nil {
+		consumeUntilWhitespace(s)
 		return l, err
 	} else if p != NoPrefix {
 		base = p.GetBase()
@@ -51,6 +52,7 @@ func lexNumber(s RuneStream) (Lexeme, error) {
 	}
 
 	if !validStringForBase(l.Value, base) {
+		consumeUntilWhitespace(s)
 		return l, fmt.Errorf("Invalid number %v for base %v", l.Value, base)
 	}
 

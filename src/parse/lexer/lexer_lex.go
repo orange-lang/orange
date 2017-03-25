@@ -49,10 +49,11 @@ func lexString(s RuneStream) (Lexeme, error) {
 
 	s.Next()
 
-	for s.Peek() != '"' {
+	for !s.EOF() && s.Peek() != '"' {
 		if s.Peek() == '\\' {
 			seq, err := lexEscapeSequence(s)
 			if err != nil {
+				consumeUntilCharacter(s, '"')
 				return l, err
 			}
 
@@ -64,7 +65,9 @@ func lexString(s RuneStream) (Lexeme, error) {
 	}
 
 	// Finish consuming the string
-	s.Next()
+	if val := s.Next(); val != '"' {
+		return l, errors.New("Unterminated string constant")
+	}
 
 	l.Value = value
 	l.Token = token.StringVal
@@ -106,18 +109,27 @@ func lexCharacter(s RuneStream) (Lexeme, error) {
 
 	s.Next()
 
-	if s.Peek() == '\\' {
-		val, err := lexEscapeSequence(s)
-		if err != nil {
-			return l, err
+	for !s.EOF() && s.Peek() != '\'' {
+		if s.Peek() == '\\' {
+			seq, err := lexEscapeSequence(s)
+			if err != nil {
+				consumeUntilCharacter(s, '\'')
+				return l, err
+			}
+
+			value += seq
+			continue
 		}
 
-		value = val
-	} else {
-		value = string(s.Next())
+		value += string(s.Next())
 	}
 
-	if next := s.Next(); next != '\'' {
+	// Finish consuming the character
+	if val := s.Next(); val != '\'' {
+		return l, errors.New("Unterminated character constant")
+	}
+
+	if len(value) > 1 {
 		return l, errors.New("Too many characters in character constant")
 	}
 
@@ -196,7 +208,7 @@ func lexOperator(s RuneStream) (Lexeme, error) {
 		}
 	}
 
-	return l, fmt.Errorf("Unexpected character %v", string(s.Peek()))
+	return l, fmt.Errorf("Unexpected character %v", string(s.Next()))
 }
 
 // getPotentialOperators returns a slice of operators ordered by
@@ -282,6 +294,21 @@ func lexKeywordOrIdentifier(s RuneStream) (Lexeme, error) {
 	l.Value = value
 	l.SetEndPosition(s)
 	return l, nil
+}
+
+func consumeUntilCharacter(s RuneStream, c rune) {
+	for !s.EOF() && s.Peek() != c {
+		_ = s.Next()
+	}
+
+	// Then consume the character
+	s.Next()
+}
+
+func consumeUntilWhitespace(s RuneStream) {
+	for !s.EOF() && !isIgnoreableSpace(s.Peek()) {
+		_ = s.Next()
+	}
 }
 
 func consumeSingleLineComment(s RuneStream) {
