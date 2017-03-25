@@ -43,7 +43,7 @@ type GetterStmt struct {
 }
 
 type SetterStmt struct {
-	SetterVariable VarDecl
+	SetterVariable *VarDecl
 	Body           []Node
 }
 
@@ -85,15 +85,15 @@ type ImportDecl struct {
 
 type FunctionExpr struct {
 	Name       string
-	Parameters []VarDecl
+	Parameters []*VarDecl
 	RetType    *Type
 	Body       []Node
 }
 
 type ExternFuncExpr struct {
 	Name       string
-	Parameters []VarDecl
-	RetType    Type
+	Parameters []*VarDecl
+	RetType    *Type
 }
 
 type ArrayExpr struct {
