@@ -9,69 +9,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Lexeme position", func() {
-	It("should be correct after parsing a number", func() {
-		input := "mykeyword 0xDEADBEEFu16"
-
-		expectPosition(input, 2, lexemePosition{
-			LineNumber: 1, EndLineNumber: 1,
-			ColumnNumber: 11, EndColumnNumber: 23,
-		})
-	})
-
-	It("should be correct after parsing a identifier", func() {
-		input := "mykeyword foobar"
-
-		expectPosition(input, 2, lexemePosition{
-			LineNumber: 1, EndLineNumber: 1,
-			ColumnNumber: 11, EndColumnNumber: 16,
-		})
-	})
-
-	It("should be correct after parsing a string", func() {
-		input := "mykeyword \"hello, world!\""
-
-		expectPosition(input, 2, lexemePosition{
-			LineNumber: 1, EndLineNumber: 1,
-			ColumnNumber: 11, EndColumnNumber: 25,
-		})
-	})
-
-	It("should be correct after parsing a char", func() {
-		input := "mykeyword 'c'"
-
-		expectPosition(input, 2, lexemePosition{
-			LineNumber: 1, EndLineNumber: 1,
-			ColumnNumber: 11, EndColumnNumber: 13,
-		})
-	})
-
-	It("should be correct after parsing a operator", func() {
-		input := "mykeyword <<="
-
-		expectPosition(input, 2, lexemePosition{
-			LineNumber: 1, EndLineNumber: 1,
-			ColumnNumber: 11, EndColumnNumber: 13,
-		})
-	})
-})
-
-var _ = Describe("Identifiers", func() {
-	DescribeTable("will be lexed when", expectToken,
-		Entry("it's letters only", "abcdef", token.Identifier),
-		Entry("it's alphanumeric", "a12def", token.Identifier),
-		Entry("it's alphanumeric with underscores", "a_1", token.Identifier),
-		Entry("it ends in an underscore", "abc_", token.Identifier),
-	)
-
-	DescribeTable("will have the appropriate value when", expectValue,
-		Entry("it's letters only", "abcdef", "abcdef"),
-		Entry("it's alphanumeric", "a12def", "a12def"),
-		Entry("it's alphanumeric with underscores", "a_1", "a_1"),
-		Entry("it ends in an underscore", "abc_", "abc_"),
-	)
-})
-
 var _ = Describe("Constants", func() {
 	Describe("Strings", func() {
 		DescribeTable("will be lexed when", expectToken,
@@ -287,30 +224,4 @@ func expectToken(input string, expect token.Token) {
 
 	Expect(err).To(BeNil())
 	Expect(next.Token).To(equalToken(expect))
-}
-
-type lexemePosition struct {
-	LineNumber      int
-	EndLineNumber   int
-	ColumnNumber    int
-	EndColumnNumber int
-}
-
-func expectPosition(input string, lexeme int, expect lexemePosition) {
-	l := getLexer(input)
-
-	// Skip over (lexeme - 1) lexemes so we get to the one we want
-	l.Get(lexeme - 1)
-
-	next, err := l.Next()
-
-	actual := lexemePosition{
-		LineNumber:      next.LineNumber,
-		EndLineNumber:   next.EndLineNumber,
-		ColumnNumber:    next.ColumnNumber,
-		EndColumnNumber: next.EndColumnNumber,
-	}
-
-	Expect(err).To(BeNil())
-	Expect(actual).To(Equal(expect))
 }
