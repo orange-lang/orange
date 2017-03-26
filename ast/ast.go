@@ -1,5 +1,10 @@
 package ast
 
+// AST represents one module of Orange code
+type AST struct {
+	Nodes []Node
+}
+
 type Node interface {
 	isNode()
 }
