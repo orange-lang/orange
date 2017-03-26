@@ -13,7 +13,7 @@ func isExpressionToken(t token.Token) bool {
 }
 
 func (p parser) parseExpr() (ast.Expression, error) {
-	node, err := p.parseUnary()
+	node, err := p.parseSingle()
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (p parser) parseExpr() (ast.Expression, error) {
 	return node, nil
 }
 
-func (p parser) parseUnary() (ast.Expression, error) {
+func (p parser) parseSingle() (ast.Expression, error) {
 	// Placeholder. Prefix unary operators will be parsed here.
 	return p.parseOperation()
 }
