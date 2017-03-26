@@ -119,6 +119,7 @@ type LoopExpr struct {
 type UnaryExpr struct {
 	Operation string
 	Operand   Expression
+	Order     UnaryOrder
 }
 
 type BinaryExpr struct {
