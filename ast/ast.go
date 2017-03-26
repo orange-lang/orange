@@ -10,10 +10,12 @@ type Node interface {
 }
 
 type Statement interface {
+	Node
 	isStatement()
 }
 
 type Expression interface {
+	Node
 	isExpression()
 }
 
