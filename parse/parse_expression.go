@@ -9,7 +9,8 @@ import (
 )
 
 func isExpressionToken(t token.Token) bool {
-	return isConstantToken(t) || t == token.OpenParen || t == token.Identifier
+	return isConstantToken(t) || t == token.OpenParen || t == token.Identifier ||
+		isUnaryToken(t)
 }
 
 func (p parser) parseExpr() (ast.Expression, error) {
@@ -27,12 +28,16 @@ func (p parser) parseExpr() (ast.Expression, error) {
 }
 
 func (p parser) parseSingle() (ast.Expression, error) {
-	// Placeholder. Prefix unary operators will be parsed here.
+	if next, _ := p.stream.Peek(); isUnaryToken(next.Token) {
+		return p.parseUnary()
+	}
+
 	return p.parseOperation()
 }
 
 func isOperationToken(t token.Token) bool {
-	return t == token.Dot || t == token.OpenBracket
+	return t == token.Dot || t == token.OpenBracket || t == token.Increment ||
+		t == token.Decrement
 }
 
 func (p parser) parseOperation() (ast.Expression, error) {
@@ -48,14 +53,16 @@ func (p parser) parseOperation() (ast.Expression, error) {
 		switch lexeme.Token {
 		case token.Dot:
 			expr, err = p.parseMemberAccess(expr)
-			if err != nil {
-				return nil, err
-			}
 		case token.OpenBracket:
 			expr, err = p.parseArrayAccess(expr)
-			if err != nil {
-				return nil, err
-			}
+		case token.Increment:
+			expr, err = p.parseUnaryPostfix(expr)
+		case token.Decrement:
+			expr, err = p.parseUnaryPostfix(expr)
+		}
+
+		if err != nil {
+			return nil, err
 		}
 
 		lexeme, _ = p.stream.Peek()
