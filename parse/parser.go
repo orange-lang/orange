@@ -5,7 +5,6 @@ import (
 
 	"github.com/orange-lang/orange/ast"
 	"github.com/orange-lang/orange/parse/lexer"
-	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
 // Parse takes a lexeme stream and returns an AST. Consumes the entire
@@ -32,14 +31,8 @@ func parseNode(s lexer.LexemeStream) (ast.Node, error) {
 	}
 
 	switch true {
-	case lexeme.Token == token.StringVal:
-		return parseString(s)
-	case lexeme.Token == token.BoolVal:
-		return parseBoolean(s)
-	case numberToken(lexeme.Token):
-		return parseNumber(s)
-	case lexeme.Token == token.CharVal:
-		return parseChar(s)
+	case isExpressionToken(lexeme.Token):
+		return parseExpr(s)
 	}
 
 	s.Next()
