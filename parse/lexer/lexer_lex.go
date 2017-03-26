@@ -201,7 +201,7 @@ func lexOperator(s RuneStream) (Lexeme, error) {
 			s.Get(len(op))
 
 			l.Token = tok
-			l.Value = op
+			l.Value = lookahead
 			l.SetEndPosition(s)
 
 			return l, nil
