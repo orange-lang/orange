@@ -179,3 +179,20 @@ func (t Token) SignedValue() bool {
 		return false
 	}
 }
+
+// IntegerSize returns the bitsize of the token if it's an integer, -1 otherwise
+func (t Token) IntegerSize() int {
+	if t == IntVal || t == UIntVal {
+		return 64
+	} else if t == Int8Val || t == UInt8Val {
+		return 8
+	} else if t == Int16Val || t == UInt16Val {
+		return 16
+	} else if t == Int32Val || t == UInt32Val {
+		return 32
+	} else if t == Int64Val || t == UInt64Val {
+		return 64
+	}
+
+	return -1
+}
