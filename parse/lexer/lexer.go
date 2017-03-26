@@ -51,6 +51,10 @@ func (l *Lexer) Peek() (Lexeme, error) {
 func (l *Lexer) Lookahead(n int) ([]Lexeme, []error) {
 	rem := n - len(l.lookahead)
 
+	if rem > 0 && l.EOF() {
+		return make([]Lexeme, n), []error{}
+	}
+
 	if rem > 0 {
 		lexemes, errors := l.getN(rem)
 
