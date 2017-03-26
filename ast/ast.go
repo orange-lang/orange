@@ -41,7 +41,7 @@ type ClassDecl struct {
 
 type VarDecl struct {
 	Name  string
-	Type  *Type
+	Type  Type
 	Value Expression
 }
 
@@ -56,7 +56,7 @@ type SetterStmt struct {
 
 type PropertyDecl struct {
 	Name   string
-	Type   *Type
+	Type   Type
 	Getter *GetterStmt
 	Setter *SetterStmt
 }
@@ -93,14 +93,14 @@ type ImportDecl struct {
 type FunctionExpr struct {
 	Name       string
 	Parameters []*VarDecl
-	RetType    *Type
+	RetType    Type
 	Body       []Node
 }
 
 type ExternFuncExpr struct {
 	Name       string
 	Parameters []*VarDecl
-	RetType    *Type
+	RetType    Type
 }
 
 type ArrayExpr struct {
