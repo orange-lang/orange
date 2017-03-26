@@ -36,7 +36,7 @@ func parseConstant(s lexer.LexemeStream) (ast.Expression, error) {
 	}
 
 	s.Next()
-	return nil, fmt.Errorf("Unexpected lexeme %v", lexeme)
+	return nil, fmt.Errorf("Unexpected lexeme %v; expected constant", lexeme)
 }
 
 func parseChar(s lexer.LexemeStream) (ast.Expression, error) {
