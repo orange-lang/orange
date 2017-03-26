@@ -2,6 +2,7 @@ package parse
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/orange-lang/orange/ast"
@@ -9,7 +10,36 @@ import (
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
-func parseChar(s lexer.LexemeStream) (ast.Node, error) {
+func isConstantToken(t token.Token) bool {
+	return t == token.StringVal || t == token.BoolVal ||
+		numberToken(t) || t == token.CharVal
+}
+
+func parseConstant(s lexer.LexemeStream) (ast.Expression, error) {
+	lexeme, err := s.Peek()
+	if err != nil {
+		s.Next()
+		return nil, err
+	} else if !isConstantToken(lexeme.Token) {
+		return nil, errors.New("Expected constant")
+	}
+
+	switch true {
+	case lexeme.Token == token.StringVal:
+		return parseString(s)
+	case lexeme.Token == token.BoolVal:
+		return parseBoolean(s)
+	case numberToken(lexeme.Token):
+		return parseNumber(s)
+	case lexeme.Token == token.CharVal:
+		return parseChar(s)
+	}
+
+	s.Next()
+	return nil, fmt.Errorf("Unexpected lexeme %v", lexeme)
+}
+
+func parseChar(s lexer.LexemeStream) (ast.Expression, error) {
 	lexeme, err := s.Next()
 	if err != nil {
 		return nil, err
@@ -36,7 +66,7 @@ func numberToken(t token.Token) bool {
 	return false
 }
 
-func parseNumber(s lexer.LexemeStream) (ast.Node, error) {
+func parseNumber(s lexer.LexemeStream) (ast.Expression, error) {
 	lexeme, err := s.Next()
 	if err != nil {
 		return nil, err
@@ -61,7 +91,7 @@ func parseNumber(s lexer.LexemeStream) (ast.Node, error) {
 	return nil, errors.New("Expected number")
 }
 
-func parseBoolean(s lexer.LexemeStream) (ast.Node, error) {
+func parseBoolean(s lexer.LexemeStream) (ast.Expression, error) {
 	lexeme, err := s.Next()
 	if err != nil {
 		return nil, err
@@ -73,7 +103,7 @@ func parseBoolean(s lexer.LexemeStream) (ast.Node, error) {
 	return &ast.BoolExpr{Value: val}, nil
 }
 
-func parseString(s lexer.LexemeStream) (ast.Node, error) {
+func parseString(s lexer.LexemeStream) (ast.Expression, error) {
 	lexeme, err := s.Next()
 	if err != nil {
 		return nil, err
