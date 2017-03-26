@@ -21,12 +21,15 @@ func (l *Lexer) EOF() bool {
 // Get returns the very next lexeme from the byte stream
 func (l *Lexer) Get(n int) ([]Lexeme, []error) {
 	lexemes := make([]Lexeme, n)
-	errors := make([]error, n)
+	errors := []error{}
 
 	for i := 0; i < n; i++ {
 		lexeme, err := l.Next()
 		lexemes[i] = lexeme
-		errors[i] = err
+
+		if err != nil {
+			errors = append(errors, err)
+		}
 	}
 
 	return lexemes, errors
@@ -35,7 +38,13 @@ func (l *Lexer) Get(n int) ([]Lexeme, []error) {
 // Peek does a lookahead at the very next lexeme
 func (l *Lexer) Peek() (Lexeme, error) {
 	lexemes, errors := l.Lookahead(1)
-	return lexemes[0], errors[0]
+
+	var err error
+	if len(errors) > 0 {
+		err = errors[0]
+	}
+
+	return lexemes[0], err
 }
 
 // Lookahead peeks at the next n lexemes
@@ -55,11 +64,14 @@ func (l *Lexer) Lookahead(n int) ([]Lexeme, []error) {
 
 	lookahead := l.lookahead[0:n]
 	lexemes := make([]Lexeme, n)
-	errors := make([]error, n)
+	errors := []error{}
 
 	for i := 0; i < n; i++ {
 		lexemes[i] = lookahead[i].Lexeme
-		errors[i] = lookahead[i].Error
+
+		if lookahead[i].Error != nil {
+			errors = append(errors, lookahead[i].Error)
+		}
 	}
 
 	return lexemes, errors
@@ -78,15 +90,12 @@ func (l *Lexer) Next() (Lexeme, error) {
 
 func (l *Lexer) getN(n int) ([]Lexeme, []error) {
 	lexemes := make([]Lexeme, n)
-	errors := []error{}
+	errors := make([]error, n)
 
 	for i := 0; i < n; i++ {
 		lexeme, err := l.lex()
 		lexemes[i] = lexeme
-
-		if err != nil {
-			errors = append(errors, err)
-		}
+		errors[i] = err
 	}
 
 	return lexemes, errors
