@@ -39,6 +39,8 @@ func parseBinary(s lexer.LexemeStream, lhs ast.Expression, minPrec int) (ast.Exp
 
 	for getOperatorPrecedence(next.Token) >= minPrec {
 		op := next
+		operatorPrec := getOperatorPrecedence(op.Token)
+
 		s.Next()
 
 		rhs, err := parseUnary(s)
@@ -48,11 +50,15 @@ func parseBinary(s lexer.LexemeStream, lhs ast.Expression, minPrec int) (ast.Exp
 
 		next, err = s.Peek()
 
-		for (getAssociativity(next.Token) == token.LeftAssociativity &&
-			getOperatorPrecedence(next.Token) > getOperatorPrecedence(op.Token)) ||
-			(getAssociativity(next.Token) == token.RightAssociativity &&
-				getOperatorPrecedence(next.Token) == getOperatorPrecedence(op.Token)) {
-			rhs, err = parseBinary(s, rhs, getOperatorPrecedence(next.Token))
+		// currentPrec is the precedence of the operator past the
+		// RHS of the parsed binary operation. We're going to continue to
+		// parse the binary expression until we're out of binary operators
+		// to look at.
+		currentPrec := getOperatorPrecedence(next.Token)
+
+		for (leftAssociative(next.Token) && currentPrec > operatorPrec) ||
+			(rightAssociative(next.Token) && currentPrec == operatorPrec) {
+			rhs, err = parseBinary(s, rhs, currentPrec)
 			if err != nil {
 				return nil, err
 			}
@@ -61,6 +67,8 @@ func parseBinary(s lexer.LexemeStream, lhs ast.Expression, minPrec int) (ast.Exp
 			if err != nil {
 				return nil, err
 			}
+
+			currentPrec = getOperatorPrecedence(next.Token)
 		}
 
 		lhs = &ast.BinaryExpr{LHS: lhs, Operation: op.Value, RHS: rhs}
@@ -120,4 +128,12 @@ func getAssociativity(tok token.Token) token.Associativity {
 	}
 
 	return token.LeftAssociativity
+}
+
+func leftAssociative(tok token.Token) bool {
+	return getAssociativity(tok) == token.LeftAssociativity
+}
+
+func rightAssociative(tok token.Token) bool {
+	return getAssociativity(tok) == token.RightAssociativity
 }
