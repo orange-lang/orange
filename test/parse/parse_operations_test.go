@@ -13,12 +13,26 @@ var _ = Describe("Parsing Operations", func() {
 			Object: &ast.NamedIDExpr{Name: "a"},
 			Name:   "b",
 		}),
+
 		Entry("multiple member access", "a.b.c", &ast.MemberAccessExpr{
 			Object: &ast.MemberAccessExpr{
 				Object: &ast.NamedIDExpr{Name: "a"},
 				Name:   "b",
 			},
 			Name: "c",
+		}),
+
+		Entry("single array access", "a[1]", &ast.ArrayAccessExpr{
+			Object: &ast.NamedIDExpr{Name: "a"},
+			Index:  &ast.IntExpr{Value: 1, Size: 64},
+		}),
+
+		Entry("multiple array access", "a[1][2]", &ast.ArrayAccessExpr{
+			Object: &ast.ArrayAccessExpr{
+				Object: &ast.NamedIDExpr{Name: "a"},
+				Index:  &ast.IntExpr{Value: 1, Size: 64},
+			},
+			Index: &ast.IntExpr{Value: 2, Size: 64},
 		}),
 	)
 })
