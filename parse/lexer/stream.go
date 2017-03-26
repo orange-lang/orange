@@ -115,6 +115,10 @@ func (s *StringRuneStream) Peek() rune {
 func (s *StringRuneStream) Lookahead(n int) []rune {
 	rem := n - len(s.lookahead)
 
+	if s.at+rem > len(s.Source) {
+		return make([]rune, n)
+	}
+
 	if rem > 0 {
 		s.lookahead = append(s.lookahead, s.getN(rem)...)
 	}
