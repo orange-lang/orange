@@ -9,7 +9,7 @@ type LexemeStream interface {
 	Get(n int) ([]Lexeme, []error)
 
 	Peek() (Lexeme, error)
-	Lookahead(n int) ([]Lexeme, error)
+	Lookahead(n int) ([]Lexeme, []error)
 }
 
 // RuneStreamPosition represents some column and row in the
