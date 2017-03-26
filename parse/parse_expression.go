@@ -33,7 +33,7 @@ func parseUnary(s lexer.LexemeStream) (ast.Expression, error) {
 }
 
 func isOperationToken(t token.Token) bool {
-	return t == token.Dot
+	return t == token.Dot || t == token.OpenBracket
 }
 
 func parseOperation(s lexer.LexemeStream) (ast.Expression, error) {
@@ -52,12 +52,37 @@ func parseOperation(s lexer.LexemeStream) (ast.Expression, error) {
 			if err != nil {
 				return nil, err
 			}
+		case token.OpenBracket:
+			expr, err = parseArrayAccess(s, expr)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		lexeme, _ = s.Peek()
 	}
 
 	return expr, nil
+}
+
+func parseArrayAccess(s lexer.LexemeStream, lhs ast.Expression) (*ast.ArrayAccessExpr, error) {
+	lexeme, err := s.Next()
+	if err != nil {
+		return nil, err
+	} else if lexeme.Token != token.OpenBracket {
+		return nil, errors.New("Expected open bracket")
+	}
+
+	expr, err := parseExpr(s)
+	if err != nil {
+		return nil, err
+	}
+
+	if lexeme, err := s.Next(); err != nil || lexeme.Token != token.CloseBracket {
+		return nil, errors.New("Expected close bracket")
+	}
+
+	return &ast.ArrayAccessExpr{Object: lhs, Index: expr}, nil
 }
 
 func parseMemberAccess(s lexer.LexemeStream, lhs ast.Expression) (*ast.MemberAccessExpr, error) {
