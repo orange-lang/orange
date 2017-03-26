@@ -174,6 +174,7 @@ func lexOperator(s RuneStream) (Lexeme, error) {
 		"==":  token.EQ,
 		"!=":  token.NEQ,
 		"<=":  token.LE,
+		">=":  token.GE,
 		"<<":  token.ShiftLeft,
 		">>":  token.ShiftRight,
 		"+=":  token.PlusAssign,
