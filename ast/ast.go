@@ -135,6 +135,36 @@ type MemberAccessExpr struct {
 	Name   string
 }
 
+type StringExpr struct {
+	Value string
+}
+
+type BoolExpr struct {
+	Value bool
+}
+
+type CharExpr struct {
+	Value byte
+}
+
+type IntExpr struct {
+	Value int64
+	Size  int
+}
+
+type UIntExpr struct {
+	Value uint64
+	Size  int
+}
+
+type DoubleExpr struct {
+	Value float64
+}
+
+type FloatExpr struct {
+	Value float32
+}
+
 //
 // Identifiers
 //
@@ -172,6 +202,13 @@ func (e BinaryExpr) isNode()       {}
 func (e CallExpr) isNode()         {}
 func (e ArrayAccessExpr) isNode()  {}
 func (e MemberAccessExpr) isNode() {}
+func (e StringExpr) isNode()       {}
+func (e BoolExpr) isNode()         {}
+func (e CharExpr) isNode()         {}
+func (e IntExpr) isNode()          {}
+func (e UIntExpr) isNode()         {}
+func (e DoubleExpr) isNode()       {}
+func (e FloatExpr) isNode()        {}
 func (i NamedIDExpr) isNode()      {}
 func (i IDAccessExpr) isNode()     {}
 
@@ -196,6 +233,13 @@ func (e BinaryExpr) isExpression()       {}
 func (e CallExpr) isExpression()         {}
 func (e ArrayAccessExpr) isExpression()  {}
 func (e MemberAccessExpr) isExpression() {}
+func (e StringExpr) isExpression()       {}
+func (e BoolExpr) isExpression()         {}
+func (e CharExpr) isExpression()         {}
+func (e IntExpr) isExpression()          {}
+func (e UIntExpr) isExpression()         {}
+func (e DoubleExpr) isExpression()       {}
+func (e FloatExpr) isExpression()        {}
 func (i NamedIDExpr) isExpression()      {}
 func (i IDAccessExpr) isExpression()     {}
 
