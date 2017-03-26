@@ -10,10 +10,24 @@ import (
 )
 
 func isExpressionToken(t token.Token) bool {
-	return isConstantToken(t)
+	return isConstantToken(t) || t == token.OpenParen
 }
 
 func parseExpr(s lexer.LexemeStream) (ast.Expression, error) {
+	node, err := parseUnary(s)
+	if err != nil {
+		return nil, err
+	}
+
+	// Try parsing a binary operation now
+	if lexeme, err := s.Peek(); err == nil && isBinOpToken(lexeme.Token) {
+		node, err = parseBinary(s, node, 0)
+	}
+
+	return node, nil
+}
+
+func parsePrimary(s lexer.LexemeStream) (ast.Expression, error) {
 	lexeme, err := s.Peek()
 	if err != nil {
 		s.Next()
@@ -25,8 +39,30 @@ func parseExpr(s lexer.LexemeStream) (ast.Expression, error) {
 	switch true {
 	case isConstantToken(lexeme.Token):
 		return parseConstant(s)
-	}
+	case lexeme.Token == token.OpenParen:
+		s.Next()
+		expr, err := parseExpr(s)
+		if err != nil {
+			return nil, err
+		}
 
-	s.Next()
-	return nil, fmt.Errorf("Unexpected lexeme %v", lexeme)
+		if lexeme, err := s.Next(); err != nil || lexeme.Token != token.CloseParen {
+			return nil, errors.New("Expected close parenthesis")
+		}
+
+		return expr, nil
+	default:
+		return nil, fmt.Errorf("Unexpected lexeme %v; expected expression", lexeme.Value)
+	}
+}
+
+func parseUnary(s lexer.LexemeStream) (ast.Expression, error) {
+	// Placeholder. Prefix unary operators will be parsed here.
+	return parseOperation(s)
+}
+
+func parseOperation(s lexer.LexemeStream) (ast.Expression, error) {
+	// Placeholder. Postfix unary operators, functions, member accessing,
+	// and array access will be parsed here.
+	return parsePrimary(s)
 }

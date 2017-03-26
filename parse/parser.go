@@ -10,6 +10,8 @@ import (
 // Parse takes a lexeme stream and returns an AST. Consumes the entire
 // lexeme stream, and returns a list of errors for each parsing error.
 func Parse(s lexer.LexemeStream) (ast ast.AST, errors []error) {
+	errors = []error{}
+
 	for !s.EOF() {
 		node, err := parseNode(s)
 
@@ -36,5 +38,5 @@ func parseNode(s lexer.LexemeStream) (ast.Node, error) {
 	}
 
 	s.Next()
-	return nil, fmt.Errorf("Unexpected lexeme %v", lexeme)
+	return nil, fmt.Errorf("Unexpected lexeme %v; expected node", lexeme.Value)
 }

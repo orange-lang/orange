@@ -122,8 +122,8 @@ type UnaryExpr struct {
 }
 
 type BinaryExpr struct {
-	Operation string
 	LHS       Expression
+	Operation string
 	RHS       Expression
 }
 

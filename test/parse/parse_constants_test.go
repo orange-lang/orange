@@ -4,7 +4,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
-
 	"github.com/orange-lang/orange/ast"
 	"github.com/orange-lang/orange/parse"
 	"github.com/orange-lang/orange/parse/lexer"
@@ -49,8 +48,9 @@ func expectNode(input string, expect ast.Node) {
 	}}
 
 	p, errs := parse.Parse(&l)
-	Expect(len(errs)).To(Equal(0))
-	Expect(len(p.Nodes)).To(BeNumerically(">", 0))
 
+	Expect(errs).To(Equal([]error{}))
+
+	Expect(len(p.Nodes)).To(BeNumerically(">", 0))
 	Expect(p.Nodes[0]).To(Equal(expect))
 }
