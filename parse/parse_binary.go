@@ -42,7 +42,7 @@ func (p parser) parseBinary(lhs ast.Expression, minPrec int) (ast.Expression, er
 
 		p.stream.Next()
 
-		rhs, err := p.parseUnary()
+		rhs, err := p.parseSingle()
 		if err != nil {
 			return nil, err
 		}
