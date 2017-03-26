@@ -10,7 +10,7 @@ import (
 
 func (l *Lexer) lex() (Lexeme, error) {
 	if l.EOF() {
-		return Lexeme{}, nil
+		return Lexeme{Token: token.EOF}, nil
 	}
 
 	for isIgnoreableSpace(l.Stream.Peek()) {
