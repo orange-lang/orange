@@ -48,19 +48,32 @@ func parseOperation(s lexer.LexemeStream) (ast.Expression, error) {
 	for isOperationToken(lexeme.Token) {
 		switch lexeme.Token {
 		case token.Dot:
-			s.Next() // consume dot
-			next, err := s.Next()
-			if err != nil || next.Token != token.Identifier {
-				return nil, errors.New("Expected identifier")
+			expr, err = parseMemberAccess(s, expr)
+			if err != nil {
+				return nil, err
 			}
-
-			expr = &ast.MemberAccessExpr{Object: expr, Name: next.Value}
 		}
 
 		lexeme, _ = s.Peek()
 	}
 
 	return expr, nil
+}
+
+func parseMemberAccess(s lexer.LexemeStream, lhs ast.Expression) (*ast.MemberAccessExpr, error) {
+	lexeme, err := s.Next()
+	if err != nil {
+		return nil, err
+	} else if lexeme.Token != token.Dot {
+		return nil, errors.New("Expected dot")
+	}
+
+	ident, err := s.Next()
+	if err != nil || ident.Token != token.Identifier {
+		return nil, errors.New("Expected identifier")
+	}
+
+	return &ast.MemberAccessExpr{Object: lhs, Name: ident.Value}, nil
 }
 
 func parsePrimary(s lexer.LexemeStream) (ast.Expression, error) {
@@ -76,21 +89,41 @@ func parsePrimary(s lexer.LexemeStream) (ast.Expression, error) {
 	case isConstantToken(lexeme.Token):
 		return parseConstant(s)
 	case lexeme.Token == token.Identifier:
-		s.Next()
-		return &ast.NamedIDExpr{Name: lexeme.Value}, nil
+		return parseIdentifier(s)
 	case lexeme.Token == token.OpenParen:
-		s.Next()
-		expr, err := parseExpr(s)
-		if err != nil {
-			return nil, err
-		}
-
-		if lexeme, err := s.Next(); err != nil || lexeme.Token != token.CloseParen {
-			return nil, errors.New("Expected close parenthesis")
-		}
-
-		return expr, nil
+		return parseParethentizedExpr(s)
 	default:
 		return nil, fmt.Errorf("Unexpected lexeme %v; expected expression", lexeme.Value)
 	}
+}
+
+func parseIdentifier(s lexer.LexemeStream) (ast.Identifier, error) {
+	lexeme, err := s.Next()
+	if err != nil {
+		return nil, err
+	} else if lexeme.Token != token.Identifier {
+		return nil, errors.New("Expected identifier")
+	}
+
+	return &ast.NamedIDExpr{Name: lexeme.Value}, nil
+}
+
+func parseParethentizedExpr(s lexer.LexemeStream) (ast.Expression, error) {
+	lexeme, err := s.Next()
+	if err != nil {
+		return nil, err
+	} else if lexeme.Token != token.OpenParen {
+		return nil, errors.New("Expected open parenthesis")
+	}
+
+	expr, err := parseExpr(s)
+	if err != nil {
+		return nil, err
+	}
+
+	if lexeme, err := s.Next(); err != nil || lexeme.Token != token.CloseParen {
+		return nil, errors.New("Expected close parenthesis")
+	}
+
+	return expr, nil
 }
