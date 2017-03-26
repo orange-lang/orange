@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/orange-lang/orange/ast"
-	"github.com/orange-lang/orange/parse/lexer"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -13,87 +12,87 @@ func isExpressionToken(t token.Token) bool {
 	return isConstantToken(t) || t == token.OpenParen || t == token.Identifier
 }
 
-func parseExpr(s lexer.LexemeStream) (ast.Expression, error) {
-	node, err := parseUnary(s)
+func (p parser) parseExpr() (ast.Expression, error) {
+	node, err := p.parseUnary()
 	if err != nil {
 		return nil, err
 	}
 
 	// Try parsing a binary operation now
-	if lexeme, err := s.Peek(); err == nil && isBinOpToken(lexeme.Token) {
-		node, err = parseBinary(s, node, 0)
+	if lexeme, err := p.stream.Peek(); err == nil && isBinOpToken(lexeme.Token) {
+		node, err = p.parseBinary(node, 0)
 	}
 
 	return node, nil
 }
 
-func parseUnary(s lexer.LexemeStream) (ast.Expression, error) {
+func (p parser) parseUnary() (ast.Expression, error) {
 	// Placeholder. Prefix unary operators will be parsed here.
-	return parseOperation(s)
+	return p.parseOperation()
 }
 
 func isOperationToken(t token.Token) bool {
 	return t == token.Dot || t == token.OpenBracket
 }
 
-func parseOperation(s lexer.LexemeStream) (ast.Expression, error) {
+func (p parser) parseOperation() (ast.Expression, error) {
 	// Placeholder. Postfix unary operators, functions, member accessing,
 	// and array access will be parsed here.
-	expr, err := parsePrimary(s)
+	expr, err := p.parsePrimary()
 	if err != nil {
 		return nil, err
 	}
 
-	lexeme, _ := s.Peek()
+	lexeme, _ := p.stream.Peek()
 	for isOperationToken(lexeme.Token) {
 		switch lexeme.Token {
 		case token.Dot:
-			expr, err = parseMemberAccess(s, expr)
+			expr, err = p.parseMemberAccess(expr)
 			if err != nil {
 				return nil, err
 			}
 		case token.OpenBracket:
-			expr, err = parseArrayAccess(s, expr)
+			expr, err = p.parseArrayAccess(expr)
 			if err != nil {
 				return nil, err
 			}
 		}
 
-		lexeme, _ = s.Peek()
+		lexeme, _ = p.stream.Peek()
 	}
 
 	return expr, nil
 }
 
-func parseArrayAccess(s lexer.LexemeStream, lhs ast.Expression) (*ast.ArrayAccessExpr, error) {
-	lexeme, err := s.Next()
+func (p parser) parseArrayAccess(lhs ast.Expression) (*ast.ArrayAccessExpr, error) {
+	lexeme, err := p.stream.Next()
 	if err != nil {
 		return nil, err
 	} else if lexeme.Token != token.OpenBracket {
 		return nil, errors.New("Expected open bracket")
 	}
 
-	expr, err := parseExpr(s)
+	expr, err := p.parseExpr()
 	if err != nil {
 		return nil, err
 	}
 
-	if lexeme, err := s.Next(); err != nil || lexeme.Token != token.CloseBracket {
+	if lexeme, err := p.stream.Next(); err != nil || lexeme.Token != token.CloseBracket {
 		return nil, errors.New("Expected close bracket")
 	}
 
 	return &ast.ArrayAccessExpr{Object: lhs, Index: expr}, nil
 }
 
-func parseMemberAccess(s lexer.LexemeStream, lhs ast.Expression) (*ast.MemberAccessExpr, error) {
-	lexeme, err := s.Next()
+func (p parser) parseMemberAccess(lhs ast.Expression) (*ast.MemberAccessExpr, error) {
+	lexeme, err := p.stream.Next()
 	if err != nil {
 		return nil, err
 	} else if lexeme.Token != token.Dot {
 		return nil, errors.New("Expected dot")
 	}
 
-	ident, err := s.Next()
+	ident, err := p.stream.Next()
 	if err != nil || ident.Token != token.Identifier {
 		return nil, errors.New("Expected identifier")
 	}
@@ -101,10 +100,10 @@ func parseMemberAccess(s lexer.LexemeStream, lhs ast.Expression) (*ast.MemberAcc
 	return &ast.MemberAccessExpr{Object: lhs, Name: ident.Value}, nil
 }
 
-func parsePrimary(s lexer.LexemeStream) (ast.Expression, error) {
-	lexeme, err := s.Peek()
+func (p parser) parsePrimary() (ast.Expression, error) {
+	lexeme, err := p.stream.Peek()
 	if err != nil {
-		s.Next()
+		p.stream.Next()
 		return nil, err
 	} else if !isExpressionToken(lexeme.Token) {
 		return nil, errors.New("Expected expression")
@@ -112,18 +111,18 @@ func parsePrimary(s lexer.LexemeStream) (ast.Expression, error) {
 
 	switch true {
 	case isConstantToken(lexeme.Token):
-		return parseConstant(s)
+		return p.parseConstant()
 	case lexeme.Token == token.Identifier:
-		return parseIdentifier(s)
+		return p.parseIdentifier()
 	case lexeme.Token == token.OpenParen:
-		return parseParethentizedExpr(s)
+		return p.parseParethentizedExpr()
 	default:
 		return nil, fmt.Errorf("Unexpected lexeme %v; expected expression", lexeme.Value)
 	}
 }
 
-func parseIdentifier(s lexer.LexemeStream) (ast.Identifier, error) {
-	lexeme, err := s.Next()
+func (p parser) parseIdentifier() (ast.Identifier, error) {
+	lexeme, err := p.stream.Next()
 	if err != nil {
 		return nil, err
 	} else if lexeme.Token != token.Identifier {
@@ -133,20 +132,20 @@ func parseIdentifier(s lexer.LexemeStream) (ast.Identifier, error) {
 	return &ast.NamedIDExpr{Name: lexeme.Value}, nil
 }
 
-func parseParethentizedExpr(s lexer.LexemeStream) (ast.Expression, error) {
-	lexeme, err := s.Next()
+func (p parser) parseParethentizedExpr() (ast.Expression, error) {
+	lexeme, err := p.stream.Next()
 	if err != nil {
 		return nil, err
 	} else if lexeme.Token != token.OpenParen {
 		return nil, errors.New("Expected open parenthesis")
 	}
 
-	expr, err := parseExpr(s)
+	expr, err := p.parseExpr()
 	if err != nil {
 		return nil, err
 	}
 
-	if lexeme, err := s.Next(); err != nil || lexeme.Token != token.CloseParen {
+	if lexeme, err := p.stream.Next(); err != nil || lexeme.Token != token.CloseParen {
 		return nil, errors.New("Expected close parenthesis")
 	}
 

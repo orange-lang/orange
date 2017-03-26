@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/orange-lang/orange/ast"
-	"github.com/orange-lang/orange/parse/lexer"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -15,10 +14,10 @@ func isConstantToken(t token.Token) bool {
 		numberToken(t) || t == token.CharVal
 }
 
-func parseConstant(s lexer.LexemeStream) (ast.Expression, error) {
-	lexeme, err := s.Peek()
+func (p parser) parseConstant() (ast.Expression, error) {
+	lexeme, err := p.stream.Peek()
 	if err != nil {
-		s.Next()
+		p.stream.Next()
 		return nil, err
 	} else if !isConstantToken(lexeme.Token) {
 		return nil, errors.New("Expected constant")
@@ -26,21 +25,21 @@ func parseConstant(s lexer.LexemeStream) (ast.Expression, error) {
 
 	switch true {
 	case lexeme.Token == token.StringVal:
-		return parseString(s)
+		return p.parseString()
 	case lexeme.Token == token.BoolVal:
-		return parseBoolean(s)
+		return p.parseBoolean()
 	case numberToken(lexeme.Token):
-		return parseNumber(s)
+		return p.parseNumber()
 	case lexeme.Token == token.CharVal:
-		return parseChar(s)
+		return p.parseChar()
 	}
 
-	s.Next()
+	p.stream.Next()
 	return nil, fmt.Errorf("Unexpected lexeme %v; expected constant", lexeme)
 }
 
-func parseChar(s lexer.LexemeStream) (ast.Expression, error) {
-	lexeme, err := s.Next()
+func (p parser) parseChar() (ast.Expression, error) {
+	lexeme, err := p.stream.Next()
 	if err != nil {
 		return nil, err
 	} else if lexeme.Token != token.CharVal {
@@ -66,8 +65,8 @@ func numberToken(t token.Token) bool {
 	return false
 }
 
-func parseNumber(s lexer.LexemeStream) (ast.Expression, error) {
-	lexeme, err := s.Next()
+func (p parser) parseNumber() (ast.Expression, error) {
+	lexeme, err := p.stream.Next()
 	if err != nil {
 		return nil, err
 	}
@@ -91,8 +90,8 @@ func parseNumber(s lexer.LexemeStream) (ast.Expression, error) {
 	return nil, errors.New("Expected number")
 }
 
-func parseBoolean(s lexer.LexemeStream) (ast.Expression, error) {
-	lexeme, err := s.Next()
+func (p parser) parseBoolean() (ast.Expression, error) {
+	lexeme, err := p.stream.Next()
 	if err != nil {
 		return nil, err
 	} else if lexeme.Token != token.BoolVal {
@@ -103,8 +102,8 @@ func parseBoolean(s lexer.LexemeStream) (ast.Expression, error) {
 	return &ast.BoolExpr{Value: val}, nil
 }
 
-func parseString(s lexer.LexemeStream) (ast.Expression, error) {
-	lexeme, err := s.Next()
+func (p parser) parseString() (ast.Expression, error) {
+	lexeme, err := p.stream.Next()
 	if err != nil {
 		return nil, err
 	} else if lexeme.Token != token.StringVal {

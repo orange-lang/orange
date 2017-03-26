@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/orange-lang/orange/ast"
-	"github.com/orange-lang/orange/parse/lexer"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -29,8 +28,8 @@ func isBinOpToken(t token.Token) bool {
 	return false
 }
 
-func parseBinary(s lexer.LexemeStream, lhs ast.Expression, minPrec int) (ast.Expression, error) {
-	next, err := s.Peek()
+func (p parser) parseBinary(lhs ast.Expression, minPrec int) (ast.Expression, error) {
+	next, err := p.stream.Peek()
 	if err != nil {
 		return nil, err
 	} else if !isBinOpToken(next.Token) {
@@ -41,14 +40,14 @@ func parseBinary(s lexer.LexemeStream, lhs ast.Expression, minPrec int) (ast.Exp
 		op := next
 		operatorPrec := getOperatorPrecedence(op.Token)
 
-		s.Next()
+		p.stream.Next()
 
-		rhs, err := parseUnary(s)
+		rhs, err := p.parseUnary()
 		if err != nil {
 			return nil, err
 		}
 
-		next, err = s.Peek()
+		next, err = p.stream.Peek()
 
 		// currentPrec is the precedence of the operator past the
 		// RHS of the parsed binary operation. We're going to continue to
@@ -58,12 +57,12 @@ func parseBinary(s lexer.LexemeStream, lhs ast.Expression, minPrec int) (ast.Exp
 
 		for (leftAssociative(next.Token) && currentPrec > operatorPrec) ||
 			(rightAssociative(next.Token) && currentPrec == operatorPrec) {
-			rhs, err = parseBinary(s, rhs, currentPrec)
+			rhs, err = p.parseBinary(rhs, currentPrec)
 			if err != nil {
 				return nil, err
 			}
 
-			next, err = s.Peek()
+			next, err = p.stream.Peek()
 			if err != nil {
 				return nil, err
 			}
