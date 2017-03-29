@@ -34,27 +34,12 @@ func (p parser) parseType() (ast.Type, error) {
 
 	var ty ast.Type
 
+	if intSize := lexeme.Token.IntegerSize(); intSize > 0 {
+		signed := lexeme.Token.SignedValue()
+		ty = &ast.IntType{Size: intSize, Signed: signed}
+	}
+
 	switch lexeme.Token {
-	case token.Int:
-		ty = &ast.IntType{Size: 64, Signed: true}
-	case token.Int8:
-		ty = &ast.IntType{Size: 8, Signed: true}
-	case token.Int16:
-		ty = &ast.IntType{Size: 16, Signed: true}
-	case token.Int32:
-		ty = &ast.IntType{Size: 32, Signed: true}
-	case token.Int64:
-		ty = &ast.IntType{Size: 64, Signed: true}
-	case token.UInt:
-		ty = &ast.IntType{Size: 64, Signed: false}
-	case token.UInt8:
-		ty = &ast.IntType{Size: 8, Signed: false}
-	case token.UInt16:
-		ty = &ast.IntType{Size: 16, Signed: false}
-	case token.UInt32:
-		ty = &ast.IntType{Size: 32, Signed: false}
-	case token.UInt64:
-		ty = &ast.IntType{Size: 64, Signed: false}
 	case token.Double:
 		ty = &ast.DoubleType{}
 	case token.Float:
@@ -67,6 +52,7 @@ func (p parser) parseType() (ast.Type, error) {
 		ty = &ast.BoolType{}
 	}
 
+	// Parse pointer and array types
 	for {
 		lexeme, _ = p.stream.Peek()
 		if lexeme.Token == token.Times {

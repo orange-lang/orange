@@ -164,33 +164,31 @@ const (
 
 // SignedValue returns true if the token represents a signed integer value
 func (t Token) SignedValue() bool {
-	switch t {
-	case IntVal:
-		return true
-	case Int8Val:
-		return true
-	case Int16Val:
-		return true
-	case Int32Val:
-		return true
-	case Int64Val:
-		return true
-	default:
-		return false
+	signedTokens := []Token{
+		IntVal, Int8Val, Int16Val, Int32Val, Int64Val,
+		Int, Int8, Int16, Int32, Int64,
 	}
+
+	for _, signedToken := range signedTokens {
+		if signedToken == t {
+			return true
+		}
+	}
+
+	return false
 }
 
 // IntegerSize returns the bitsize of the token if it's an integer, -1 otherwise
 func (t Token) IntegerSize() int {
-	if t == IntVal || t == UIntVal {
+	if t == IntVal || t == UIntVal || t == Int || t == UInt {
 		return 64
-	} else if t == Int8Val || t == UInt8Val {
+	} else if t == Int8Val || t == UInt8Val || t == Int8 || t == UInt8 {
 		return 8
-	} else if t == Int16Val || t == UInt16Val {
+	} else if t == Int16Val || t == UInt16Val || t == Int16 || t == UInt16 {
 		return 16
-	} else if t == Int32Val || t == UInt32Val {
+	} else if t == Int32Val || t == UInt32Val || t == Int32 || t == UInt32 {
 		return 32
-	} else if t == Int64Val || t == UInt64Val {
+	} else if t == Int64Val || t == UInt64Val || t == Int64 || t == UInt64 {
 		return 64
 	}
 
