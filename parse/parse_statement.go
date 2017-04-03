@@ -9,7 +9,7 @@ import (
 )
 
 func isStatementToken(t token.Token) bool {
-	return t == token.Var
+	return t == token.Var || t == token.Package || t == token.Import
 }
 
 func (p parser) parseStatement() (ast.Statement, error) {
@@ -25,9 +25,63 @@ func (p parser) parseStatement() (ast.Statement, error) {
 	switch lexeme.Token {
 	case token.Var:
 		return p.parseVarDecl()
+	case token.Package:
+		return p.parsePackageDecl()
+	case token.Import:
+		return p.parseImportDecl()
 	}
 
 	return nil, errors.New("Unexpected lexeme")
+}
+
+func (p parser) parseImportDecl() (*ast.ImportDecl, error) {
+	var fullPackageName string
+
+	if _, err := p.expect(token.Import); err != nil {
+		return nil, err
+	}
+
+	for true {
+		name, err := p.expect(token.Identifier)
+		if err != nil {
+			return nil, err
+		}
+
+		fullPackageName += name.Value
+
+		if ok, _ := p.allow(token.Dot); !ok {
+			break
+		}
+
+		fullPackageName += "."
+	}
+
+	return &ast.ImportDecl{Name: fullPackageName}, nil
+}
+
+func (p parser) parsePackageDecl() (*ast.PackageDecl, error) {
+	var fullPackageName string
+
+	if _, err := p.expect(token.Package); err != nil {
+		return nil, err
+	}
+
+	for true {
+		name, err := p.expect(token.Identifier)
+		if err != nil {
+			return nil, err
+		}
+
+		fullPackageName += name.Value
+
+		if ok, _ := p.allow(token.Dot); !ok {
+			break
+		}
+
+		fullPackageName += "."
+	}
+
+	return &ast.PackageDecl{Name: fullPackageName}, nil
 }
 
 func (p parser) parseVarDecl() (*ast.VarDecl, error) {
