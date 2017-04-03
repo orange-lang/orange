@@ -36,6 +36,44 @@ var _ = Describe("Parsing constants", func() {
 			Entry("float", "32.0f", &ast.FloatExpr{Value: 32.0}),
 		)
 
+		DescribeTable("arrays", expectNode,
+			Entry("empty array", "[]", &ast.ArrayExpr{Members: []ast.Expression{}}),
+			Entry("array with one member", "[1]", &ast.ArrayExpr{
+				Members: []ast.Expression{
+					&ast.IntExpr{Value: 1, Size: 64},
+				}},
+			),
+			Entry("array with multiple members", "[1,2,3]", &ast.ArrayExpr{
+				Members: []ast.Expression{
+					&ast.IntExpr{Value: 1, Size: 64},
+					&ast.IntExpr{Value: 2, Size: 64},
+					&ast.IntExpr{Value: 3, Size: 64},
+				}},
+			),
+			Entry("nested arrays", "[[1,2],[3,4],[5,6]]", &ast.ArrayExpr{
+				Members: []ast.Expression{
+					&ast.ArrayExpr{
+						Members: []ast.Expression{
+							&ast.IntExpr{Value: 1, Size: 64},
+							&ast.IntExpr{Value: 2, Size: 64},
+						},
+					},
+					&ast.ArrayExpr{
+						Members: []ast.Expression{
+							&ast.IntExpr{Value: 3, Size: 64},
+							&ast.IntExpr{Value: 4, Size: 64},
+						},
+					},
+					&ast.ArrayExpr{
+						Members: []ast.Expression{
+							&ast.IntExpr{Value: 5, Size: 64},
+							&ast.IntExpr{Value: 6, Size: 64},
+						},
+					},
+				}},
+			),
+		)
+
 		It("characters", func() {
 			expectNode("'t'", &ast.CharExpr{Value: 't'})
 		})

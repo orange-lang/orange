@@ -10,7 +10,7 @@ import (
 
 func isExpressionToken(t token.Token) bool {
 	return isConstantToken(t) || t == token.OpenParen || t == token.Identifier ||
-		isUnaryToken(t)
+		isUnaryToken(t) || t == token.OpenBracket
 }
 
 func (p parser) parseExpr() (ast.Expression, error) {
@@ -121,6 +121,8 @@ func (p parser) parsePrimary() (ast.Expression, error) {
 		return p.parseConstant()
 	case lexeme.Token == token.Identifier:
 		return p.parseIdentifier()
+	case lexeme.Token == token.OpenBracket:
+		return p.parseArray()
 	case lexeme.Token == token.OpenParen:
 		return p.parseParethentizedExpr()
 	default:
@@ -137,6 +139,51 @@ func (p parser) parseIdentifier() (ast.Identifier, error) {
 	}
 
 	return &ast.NamedIDExpr{Name: lexeme.Value}, nil
+}
+
+func (p parser) parseArray() (*ast.ArrayExpr, error) {
+	// Parse opening
+	if _, err := p.expect(token.OpenBracket); err != nil {
+		return nil, err
+	}
+
+	// Check for empty array
+	if ok, _ := p.allow(token.CloseBracket); ok {
+		return &ast.ArrayExpr{Members: []ast.Expression{}}, nil
+	}
+
+	// Parse members
+	exprs, err := p.parseExprList()
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse close bracket
+	if _, err := p.expect(token.CloseBracket); err != nil {
+		return nil, err
+	}
+
+	return &ast.ArrayExpr{Members: exprs}, nil
+}
+
+func (p parser) parseExprList() ([]ast.Expression, error) {
+	exprs := []ast.Expression{}
+
+	// expr (COMMA expr)*
+	for true {
+		expr, err := p.parseExpr()
+		if err != nil {
+			return nil, err
+		}
+
+		exprs = append(exprs, expr)
+
+		if foundComma, _ := p.allow(token.Comma); !foundComma {
+			break
+		}
+	}
+
+	return exprs, nil
 }
 
 func (p parser) parseParethentizedExpr() (ast.Expression, error) {
