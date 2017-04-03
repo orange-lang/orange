@@ -33,4 +33,24 @@ var _ = Describe("Parsing Statements", func() {
 			Value: nil,
 		}),
 	)
+
+	DescribeTable("should be able to handle package", expectNode,
+		Entry("simple name", "package A", &ast.PackageDecl{
+			Name: "A",
+		}),
+
+		Entry("nested name", "package A.B", &ast.PackageDecl{
+			Name: "A.B",
+		}),
+	)
+
+	DescribeTable("should be able to handle import", expectNode,
+		Entry("simple name", "import A", &ast.ImportDecl{
+			Name: "A",
+		}),
+
+		Entry("nested name", "import A.B", &ast.ImportDecl{
+			Name: "A.B",
+		}),
+	)
 })
