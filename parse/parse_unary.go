@@ -14,11 +14,9 @@ func isUnaryToken(t token.Token) bool {
 }
 
 func (p parser) parseUnary() (ast.Expression, error) {
-	lexeme, err := p.stream.Next()
+	lexeme, err := p.expectFrom(isUnaryToken)
 	if err != nil {
 		return nil, err
-	} else if !isUnaryToken(lexeme.Token) {
-		return nil, errors.New("Expected unary token")
 	}
 
 	operand, err := p.parseSingle()
@@ -54,11 +52,9 @@ func (p parser) parseUnary() (ast.Expression, error) {
 }
 
 func (p parser) parseUnaryPostfix(lhs ast.Expression) (*ast.UnaryExpr, error) {
-	lexeme, err := p.stream.Next()
+	lexeme, err := p.expectFrom(isIncrementOrDecrement)
 	if err != nil {
 		return nil, err
-	} else if lexeme.Token != token.Decrement && lexeme.Token != token.Increment {
-		return nil, errors.New("Expected increment or decrement")
 	}
 
 	return &ast.UnaryExpr{
@@ -66,4 +62,8 @@ func (p parser) parseUnaryPostfix(lhs ast.Expression) (*ast.UnaryExpr, error) {
 		Operation: lexeme.Value,
 		Order:     ast.PostfixOrder,
 	}, nil
+}
+
+func isIncrementOrDecrement(t token.Token) bool {
+	return t == token.Increment || t == token.Decrement
 }

@@ -93,6 +93,37 @@ func (p parser) consumeUntilTerminator() {
 	}
 }
 
+func (p parser) peekFrom(c func(token.Token) bool) (ok bool, err error) {
+	if lexeme, err := p.stream.Peek(); err != nil {
+		return false, err
+	} else if c(lexeme.Token) {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (p parser) peek(t token.Token) (ok bool, err error) {
+	if lexeme, err := p.stream.Peek(); err != nil {
+		return false, err
+	} else if lexeme.Token == t {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (p parser) allowFrom(c func(token.Token) bool) (ok bool, err error) {
+	if lexeme, err := p.stream.Peek(); err != nil {
+		return false, err
+	} else if c(lexeme.Token) {
+		p.stream.Next()
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func (p parser) allow(t token.Token) (ok bool, err error) {
 	if lexeme, err := p.stream.Peek(); err != nil {
 		return false, err
@@ -102,6 +133,17 @@ func (p parser) allow(t token.Token) (ok bool, err error) {
 	}
 
 	return false, nil
+}
+
+func (p parser) expectFrom(c func(token.Token) bool) (lexer.Lexeme, error) {
+	lexeme, err := p.stream.Next()
+	if err != nil {
+		return lexeme, err
+	} else if !c(lexeme.Token) {
+		return lexeme, fmt.Errorf("Unexpected %v", lexeme.Token)
+	}
+
+	return lexeme, nil
 }
 
 func (p parser) expect(t token.Token) (lexer.Lexeme, error) {
