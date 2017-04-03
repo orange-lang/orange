@@ -15,13 +15,11 @@ func isConstantToken(t token.Token) bool {
 }
 
 func (p parser) parseConstant() (ast.Expression, error) {
-	lexeme, err := p.stream.Peek()
-	if err != nil {
-		p.stream.Next()
-		return nil, err
-	} else if !isConstantToken(lexeme.Token) {
+	if ok, _ := p.peekFrom(isConstantToken); !ok {
 		return nil, errors.New("Expected constant")
 	}
+
+	lexeme, _ := p.stream.Peek()
 
 	switch true {
 	case lexeme.Token == token.StringVal:
@@ -39,11 +37,9 @@ func (p parser) parseConstant() (ast.Expression, error) {
 }
 
 func (p parser) parseChar() (ast.Expression, error) {
-	lexeme, err := p.stream.Next()
+	lexeme, err := p.expect(token.CharVal)
 	if err != nil {
 		return nil, err
-	} else if lexeme.Token != token.CharVal {
-		return nil, errors.New("Expected char")
 	}
 
 	return &ast.CharExpr{Value: lexeme.Value[0]}, nil
@@ -91,11 +87,9 @@ func (p parser) parseNumber() (ast.Expression, error) {
 }
 
 func (p parser) parseBoolean() (ast.Expression, error) {
-	lexeme, err := p.stream.Next()
+	lexeme, err := p.expect(token.BoolVal)
 	if err != nil {
 		return nil, err
-	} else if lexeme.Token != token.BoolVal {
-		return nil, errors.New("Expected boolean")
 	}
 
 	val, _ := strconv.ParseBool(lexeme.Value)
@@ -103,11 +97,9 @@ func (p parser) parseBoolean() (ast.Expression, error) {
 }
 
 func (p parser) parseString() (ast.Expression, error) {
-	lexeme, err := p.stream.Next()
+	lexeme, err := p.expect(token.StringVal)
 	if err != nil {
 		return nil, err
-	} else if lexeme.Token != token.StringVal {
-		return nil, errors.New("Expected string")
 	}
 
 	return &ast.StringExpr{Value: lexeme.Value}, nil

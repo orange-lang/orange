@@ -13,16 +13,11 @@ func isStatementToken(t token.Token) bool {
 }
 
 func (p parser) parseStatement() (ast.Statement, error) {
-	lexeme, err := p.stream.Peek()
-	if err != nil {
-		p.stream.Next()
-		return nil, err
-	} else if !isStatementToken(lexeme.Token) {
-		p.stream.Next()
+	if ok, _ := p.peekFrom(isStatementToken); !ok {
 		return nil, errors.New("Expected statement")
 	}
 
-	switch lexeme.Token {
+	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
 	case token.Var:
 		return p.parseVarDecl()
 	case token.Package:

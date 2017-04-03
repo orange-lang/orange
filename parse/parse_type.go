@@ -25,10 +25,8 @@ func isTypeToken(t token.Token) bool {
 }
 
 func (p parser) parseType() (ast.Type, error) {
-	lexeme, err := p.stream.Next()
+	lexeme, err := p.expectFrom(isTypeToken)
 	if err != nil {
-		return nil, nil
-	} else if !isTypeToken(lexeme.Token) {
 		return nil, fmt.Errorf("Expected type, got %v", lexeme.Value)
 	}
 

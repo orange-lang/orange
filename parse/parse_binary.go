@@ -29,12 +29,11 @@ func isBinOpToken(t token.Token) bool {
 }
 
 func (p parser) parseBinary(lhs ast.Expression, minPrec int) (ast.Expression, error) {
-	next, err := p.stream.Peek()
-	if err != nil {
-		return nil, err
-	} else if !isBinOpToken(next.Token) {
+	if ok, _ := p.peekFrom(isBinOpToken); !ok {
 		return nil, errors.New("Expected binary operator")
 	}
+
+	next, _ := p.stream.Peek()
 
 	for getOperatorPrecedence(next.Token) >= minPrec {
 		op := next
