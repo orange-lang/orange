@@ -28,6 +28,10 @@ type Identifier interface {
 // Statements
 //
 
+type BlockStmt struct {
+	Nodes []Node
+}
+
 type AliasDecl struct {
 	Name string
 	Type Type
@@ -36,7 +40,7 @@ type AliasDecl struct {
 type ClassDecl struct {
 	Name   string
 	Supers []Identifier
-	Body   []Node
+	Body   *BlockStmt
 }
 
 type VarDecl struct {
@@ -46,12 +50,12 @@ type VarDecl struct {
 }
 
 type GetterStmt struct {
-	Body []Node
+	Body *BlockStmt
 }
 
 type SetterStmt struct {
 	SetterVariable *VarDecl
-	Body           []Node
+	Body           *BlockStmt
 }
 
 type PropertyDecl struct {
@@ -69,13 +73,13 @@ type EnumDecl struct {
 type ExtensionDecl struct {
 	Name   string
 	Supers []Identifier
-	Body   []Node
+	Body   *BlockStmt
 }
 
 type InterfaceDecl struct {
 	Name   string
 	Supers []Identifier
-	Body   []Node
+	Body   *BlockStmt
 }
 
 type PackageDecl struct {
@@ -94,7 +98,7 @@ type FunctionExpr struct {
 	Name       string
 	Parameters []*VarDecl
 	RetType    Type
-	Body       []Node
+	Body       *BlockStmt
 }
 
 type ExternFuncExpr struct {
@@ -113,7 +117,7 @@ type LoopExpr struct {
 	Afterthought Expression
 
 	CheckTime LoopConditionTime
-	Body      []Node
+	Body      *BlockStmt
 }
 
 type UnaryExpr struct {
