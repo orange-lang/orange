@@ -1,3 +1,4 @@
 pkg/
 vendor/src/
 .vscode/
+debug.test 
