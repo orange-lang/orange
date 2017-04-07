@@ -111,6 +111,12 @@ type ArrayExpr struct {
 	Members []Expression
 }
 
+type IfExpr struct {
+	Condition Expression
+	Body      *BlockStmt
+	Else      Statement // either nil, IfExpr (elif), or BlockStmt (else)
+}
+
 type LoopExpr struct {
 	Initializer  Expression
 	Condition    Expression
