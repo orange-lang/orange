@@ -10,7 +10,7 @@ import (
 
 func isStatementToken(t token.Token) bool {
 	return t == token.Var || t == token.Package || t == token.Import ||
-		t == token.If
+		t == token.If || t == token.Alias
 }
 
 func (p parser) parseStatement() (ast.Statement, error) {
@@ -27,9 +27,33 @@ func (p parser) parseStatement() (ast.Statement, error) {
 		return p.parseImportDecl()
 	case token.If:
 		return p.parseIf()
+	case token.Alias:
+		return p.parseAlias()
 	}
 
 	return nil, errors.New("Unexpected lexeme")
+}
+
+func (p parser) parseAlias() (*ast.AliasDecl, error) {
+	if _, err := p.expect(token.Alias); err != nil {
+		return nil, err
+	}
+
+	nameLexeme, err := p.expect(token.Identifier)
+	if err != nil {
+		return nil, errors.New("Expected identifier")
+	}
+
+	if _, err := p.expect(token.Assign); err != nil {
+		return nil, err
+	}
+
+	targetType, err := p.parseType()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ast.AliasDecl{Name: nameLexeme.Value, Type: targetType}, nil
 }
 
 func (p parser) parseIf() (*ast.IfStmt, error) {

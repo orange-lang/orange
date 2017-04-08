@@ -42,6 +42,13 @@ var _ = Describe("Parsing Statements", func() {
 		})
 	})
 
+	DescribeTable("should be able to parse", expectNode,
+		Entry("alias", "alias mystring = char[]", &ast.AliasDecl{
+			Name: "mystring",
+			Type: &ast.ArrayType{InnerType: &ast.CharType{}},
+		}),
+	)
+
 	DescribeTable("should be able to handle variable declarations", expectNode,
 		Entry("type and value", "var a: int = 5", &ast.VarDecl{
 			Name:  "a",
