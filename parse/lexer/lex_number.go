@@ -104,7 +104,7 @@ func convertNumber(s string, b int) (string, error) {
 }
 
 func lexPrefix(s RuneStream) (prefix, error) {
-	if lookahead := s.Lookahead(2); lookahead[0] != '0' || lookahead[1] == '.' {
+	if lookahead := s.Lookahead(2); lookahead[0] != '0' || !unicode.IsLetter(lookahead[1]) {
 		return NoPrefix, nil
 	} else if prefix := makePrefix(lookahead[1]); prefix != NoPrefix {
 		s.Get(2)
