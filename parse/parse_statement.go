@@ -9,7 +9,8 @@ import (
 )
 
 func isStatementToken(t token.Token) bool {
-	return t == token.Var || t == token.Package || t == token.Import
+	return t == token.Var || t == token.Package || t == token.Import ||
+		t == token.If
 }
 
 func (p parser) parseStatement() (ast.Statement, error) {
@@ -24,9 +25,67 @@ func (p parser) parseStatement() (ast.Statement, error) {
 		return p.parsePackageDecl()
 	case token.Import:
 		return p.parseImportDecl()
+	case token.If:
+		return p.parseIf()
 	}
 
 	return nil, errors.New("Unexpected lexeme")
+}
+
+func (p parser) parseIf() (*ast.IfStmt, error) {
+	if _, err := p.expect(token.If); err != nil {
+		return nil, err
+	}
+
+	mainCondition, err := p.parseCondition()
+	if err != nil {
+		return nil, err
+	}
+
+	return mainCondition, err
+}
+
+// Parses the condition part of an if statement, and then
+// elif or else.
+func (p parser) parseCondition() (*ast.IfStmt, error) {
+	var condition ast.Expression
+	var ifPart *ast.BlockStmt
+	var elsePart ast.Node
+	var err error
+
+	if _, err := p.expect(token.OpenParen); err != nil {
+		return nil, errors.New("Expected open parenthesis")
+	}
+
+	condition, err = p.parseExpr()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := p.expect(token.CloseParen); err != nil {
+		return nil, errors.New("Expected close parenthesis")
+	}
+
+	ifPart, err = p.parseBlock()
+	if err != nil {
+		return nil, err
+	}
+
+	if ok, _ := p.allow(token.Elif); err == nil && ok {
+		elsePart, err = p.parseCondition()
+	} else if ok, _ := p.allow(token.Else); err == nil && ok {
+		elsePart, err = p.parseBlock()
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &ast.IfStmt{
+		Condition: condition,
+		Body:      ifPart,
+		Else:      elsePart,
+	}, nil
 }
 
 func (p parser) parseImportDecl() (*ast.ImportDecl, error) {
