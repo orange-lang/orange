@@ -10,7 +10,8 @@ import (
 
 func isStatementToken(t token.Token) bool {
 	return t == token.Var || t == token.Package || t == token.Import ||
-		t == token.If || t == token.Alias
+		t == token.If || t == token.Alias || t == token.For || t == token.While ||
+		t == token.Do
 }
 
 func (p parser) parseStatement() (ast.Statement, error) {
@@ -29,6 +30,12 @@ func (p parser) parseStatement() (ast.Statement, error) {
 		return p.parseIf()
 	case token.Alias:
 		return p.parseAlias()
+	case token.For:
+		return p.parseForLoop()
+	case token.While:
+		return p.parseWhileLoop()
+	case token.Do:
+		return p.parseDoWhileLoop()
 	}
 
 	return nil, errors.New("Unexpected lexeme")

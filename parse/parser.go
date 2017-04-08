@@ -20,8 +20,8 @@ func Parse(s lexer.LexemeStream) (ast ast.AST, errors []error) {
 	return p.parse()
 }
 
-func (p parser) parse() (ast ast.AST, errors []error) {
-	errors = []error{}
+func (p parser) parse() (ast ast.AST, errs []error) {
+	errs = []error{}
 
 	for !p.stream.EOF() {
 		if ok, _ := p.allowFrom(isStatementTerminator); ok {
@@ -31,14 +31,21 @@ func (p parser) parse() (ast ast.AST, errors []error) {
 		node, err := p.parseNode()
 
 		if err != nil {
-			errors = append(errors, err)
+			errs = append(errs, err)
+			continue
+		}
+
+		if _, err := p.expectFrom(isStatementTerminator); err != nil {
+			p.consumeUntilTerminator()
+			err = errors.New("Expected statement terminator or EOF")
+			errs = append(errs, err)
 			continue
 		}
 
 		ast.Nodes = append(ast.Nodes, node)
 	}
 
-	return ast, errors
+	return
 }
 
 func (p parser) parseBlock() (*ast.BlockStmt, error) {
@@ -63,6 +70,15 @@ func (p parser) parseBlock() (*ast.BlockStmt, error) {
 		}
 
 		nodes = append(nodes, node)
+
+		if ok, _ := p.peek(token.CloseCurly); ok {
+			break
+		}
+
+		if _, err := p.expectFrom(isStatementTerminator); err != nil {
+			p.consumeUntilTerminator()
+			return nil, errors.New("Expected statement terminator or EOF")
+		}
 	}
 
 	if _, err := p.expect(token.CloseCurly); err != nil {
@@ -98,9 +114,6 @@ func (p parser) parseNode() (ast.Node, error) {
 	if err != nil {
 		p.consumeUntilTerminator()
 		return nil, err
-	} else if _, err := p.expectFrom(isStatementTerminator); err != nil {
-		p.consumeUntilTerminator()
-		return nil, errors.New("Expected statement terminator or EOF")
 	}
 
 	return node, nil
