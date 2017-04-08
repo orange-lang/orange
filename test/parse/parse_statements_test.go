@@ -8,6 +8,40 @@ import (
 )
 
 var _ = Describe("Parsing Statements", func() {
+	Describe("should be able to parse multiple statements", func() {
+		It("separated by newlines", func() {
+			expectNodes(`
+				1
+				2
+				3
+			`, []ast.Node{
+				&ast.IntExpr{Value: 1, Size: 64},
+				&ast.IntExpr{Value: 2, Size: 64},
+				&ast.IntExpr{Value: 3, Size: 64},
+			})
+		})
+
+		It("separted by semicolons", func() {
+			expectNodes("1; 2; 3", []ast.Node{
+				&ast.IntExpr{Value: 1, Size: 64},
+				&ast.IntExpr{Value: 2, Size: 64},
+				&ast.IntExpr{Value: 3, Size: 64},
+			})
+		})
+
+		It("separated by newlines and semicolons", func() {
+			expectNodes(`
+				1;
+				2;
+				3
+			`, []ast.Node{
+				&ast.IntExpr{Value: 1, Size: 64},
+				&ast.IntExpr{Value: 2, Size: 64},
+				&ast.IntExpr{Value: 3, Size: 64},
+			})
+		})
+	})
+
 	DescribeTable("should be able to handle variable declarations", expectNode,
 		Entry("type and value", "var a: int = 5", &ast.VarDecl{
 			Name:  "a",

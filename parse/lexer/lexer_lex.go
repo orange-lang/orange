@@ -17,6 +17,10 @@ func (l *Lexer) lex() (Lexeme, error) {
 		_ = l.Stream.Next()
 	}
 
+	if l.EOF() {
+		return Lexeme{Token: token.EOF}, nil
+	}
+
 	if lookahead := string(l.Stream.Lookahead(2)); isCommentStarter(lookahead) {
 		if lookahead == "//" {
 			consumeSingleLineComment(l.Stream)
@@ -209,7 +213,7 @@ func lexOperator(s RuneStream) (Lexeme, error) {
 		}
 	}
 
-	err := NewError(s, "Unepxected character %v", string(s.Peek()))
+	err := NewError(s, "Unexpected character %v", string(s.Peek()))
 	s.Next()
 	return l, err
 }
