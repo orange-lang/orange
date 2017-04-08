@@ -78,6 +78,12 @@ var _ = Describe("Numbers", func() {
 		)
 	})
 
+	DescribeTable("plain zeroes", expectToken,
+		Entry("0", "0", token.IntVal),
+		Entry("0;", "0;", token.IntVal),
+		Entry("0 ", "0 ", token.IntVal),
+	)
+
 	Describe("as the object in a method", func() {
 		DescribeTable("should ignore the period when", expectToken,
 			Entry("the number is zero", "0.test(5)", token.IntVal),
