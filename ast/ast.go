@@ -58,6 +58,21 @@ type SetterStmt struct {
 	Body           *BlockStmt
 }
 
+type IfStmt struct {
+	Condition Expression
+	Body      *BlockStmt
+	Else      Node // either nil, IfStmt (elif), or BlockStmt (else)
+}
+
+type LoopStmt struct {
+	Initializer  Expression
+	Condition    Expression
+	Afterthought Expression
+
+	CheckTime LoopConditionTime
+	Body      *BlockStmt
+}
+
 type PropertyDecl struct {
 	Name   string
 	Type   Type
@@ -109,21 +124,6 @@ type ExternFuncExpr struct {
 
 type ArrayExpr struct {
 	Members []Expression
-}
-
-type IfExpr struct {
-	Condition Expression
-	Body      *BlockStmt
-	Else      Statement // either nil, IfExpr (elif), or BlockStmt (else)
-}
-
-type LoopExpr struct {
-	Initializer  Expression
-	Condition    Expression
-	Afterthought Expression
-
-	CheckTime LoopConditionTime
-	Body      *BlockStmt
 }
 
 type UnaryExpr struct {
@@ -200,6 +200,7 @@ type IDAccessExpr struct {
 // Implement interfaces to enforce types
 //
 
+func (s BlockStmt) isNode()        {}
 func (s AliasDecl) isNode()        {}
 func (s ClassDecl) isNode()        {}
 func (s VarDecl) isNode()          {}
@@ -211,10 +212,11 @@ func (s ExtensionDecl) isNode()    {}
 func (s InterfaceDecl) isNode()    {}
 func (s PackageDecl) isNode()      {}
 func (s ImportDecl) isNode()       {}
+func (s IfStmt) isNode()           {}
+func (s LoopStmt) isNode()         {}
 func (e FunctionExpr) isNode()     {}
 func (e ExternFuncExpr) isNode()   {}
 func (e ArrayExpr) isNode()        {}
-func (e LoopExpr) isNode()         {}
 func (e UnaryExpr) isNode()        {}
 func (e BinaryExpr) isNode()       {}
 func (e CallExpr) isNode()         {}
@@ -230,6 +232,7 @@ func (e FloatExpr) isNode()        {}
 func (i NamedIDExpr) isNode()      {}
 func (i IDAccessExpr) isNode()     {}
 
+func (s BlockStmt) isStatement()     {}
 func (s AliasDecl) isStatement()     {}
 func (s ClassDecl) isStatement()     {}
 func (s VarDecl) isStatement()       {}
@@ -241,11 +244,12 @@ func (s ExtensionDecl) isStatement() {}
 func (s InterfaceDecl) isStatement() {}
 func (s PackageDecl) isStatement()   {}
 func (s ImportDecl) isStatement()    {}
+func (s LoopStmt) isStatement()      {}
+func (s IfStmt) isStatement()        {}
 
 func (e FunctionExpr) isExpression()     {}
 func (e ExternFuncExpr) isExpression()   {}
 func (e ArrayExpr) isExpression()        {}
-func (e LoopExpr) isExpression()         {}
 func (e UnaryExpr) isExpression()        {}
 func (e BinaryExpr) isExpression()       {}
 func (e CallExpr) isExpression()         {}

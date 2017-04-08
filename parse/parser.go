@@ -23,31 +23,38 @@ func Parse(s lexer.LexemeStream) (ast ast.AST, errors []error) {
 func (p parser) parse() (ast ast.AST, errors []error) {
 	errors = []error{}
 
-	// parseStatements should parse the entire program,
-	// but in case there was an error, we want to continue
-	// parsing at the statement following the incorrect one,
-	// so we loop again here until we've definitely reached
-	// EOF.
 	for !p.stream.EOF() {
-		nodes, err := p.parseStatements()
+		if ok, _ := p.allowFrom(isStatementTerminator); ok {
+			continue
+		}
+
+		node, err := p.parseNode()
 
 		if err != nil {
 			errors = append(errors, err)
 			continue
 		}
 
-		ast.Nodes = append(ast.Nodes, nodes...)
+		ast.Nodes = append(ast.Nodes, node)
 	}
 
 	return ast, errors
 }
 
-func (p parser) parseStatements() (nodes []ast.Node, err error) {
-	nodes = []ast.Node{}
+func (p parser) parseBlock() (*ast.BlockStmt, error) {
+	if _, err := p.expect(token.OpenCurly); err != nil {
+		return nil, errors.New("Expected open curly brace")
+	}
+
+	nodes := []ast.Node{}
 
 	for !p.stream.EOF() {
 		if ok, _ := p.allowFrom(isStatementTerminator); ok {
 			continue
+		}
+
+		if ok, _ := p.peekFrom(isNodeToken); !ok {
+			break
 		}
 
 		node, err := p.parseNode()
@@ -58,7 +65,15 @@ func (p parser) parseStatements() (nodes []ast.Node, err error) {
 		nodes = append(nodes, node)
 	}
 
-	return
+	if _, err := p.expect(token.CloseCurly); err != nil {
+		return nil, errors.New("Expected close curly brace")
+	}
+
+	return &ast.BlockStmt{Nodes: nodes}, nil
+}
+
+func isNodeToken(t token.Token) bool {
+	return isExpressionToken(t) || isStatementToken(t)
 }
 
 func (p parser) parseNode() (ast.Node, error) {

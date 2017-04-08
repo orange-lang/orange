@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestLexer(t *testing.T) {
+func TestParser(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Parser Suite")
 }
