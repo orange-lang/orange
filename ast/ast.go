@@ -65,7 +65,7 @@ type IfStmt struct {
 }
 
 type LoopStmt struct {
-	Initializer  Expression
+	Initializer  *VarDecl
 	Condition    Expression
 	Afterthought Expression
 
