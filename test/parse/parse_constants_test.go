@@ -3,10 +3,7 @@ package test
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
-	. "github.com/onsi/gomega"
 	"github.com/orange-lang/orange/ast"
-	"github.com/orange-lang/orange/parse"
-	"github.com/orange-lang/orange/parse/lexer"
 )
 
 var _ = Describe("Parsing constants", func() {
@@ -79,16 +76,3 @@ var _ = Describe("Parsing constants", func() {
 		})
 	})
 })
-
-func expectNode(input string, expect ast.Node) {
-	l := lexer.Lexer{Stream: &lexer.StringRuneStream{
-		Source: input,
-	}}
-
-	p, errs := parse.Parse(&l)
-
-	Expect(errs).To(Equal([]error{}))
-
-	Expect(len(p.Nodes)).To(BeNumerically(">", 0))
-	Expect(p.Nodes[0]).To(Equal(expect))
-}

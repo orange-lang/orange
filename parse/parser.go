@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/orange-lang/orange/ast"
@@ -23,6 +24,10 @@ func (p parser) parse() (ast ast.AST, errors []error) {
 	errors = []error{}
 
 	for !p.stream.EOF() {
+		if ok, _ := p.allowFrom(isStatementTerminator); ok {
+			continue
+		}
+
 		node, err := p.parseNode()
 
 		if err != nil {
@@ -58,31 +63,16 @@ func (p parser) parseNode() (ast.Node, error) {
 	if err != nil {
 		p.consumeUntilTerminator()
 		return nil, err
-	} else if err := p.parseTerminator(); err != nil {
+	} else if _, err := p.expectFrom(isStatementTerminator); err != nil {
 		p.consumeUntilTerminator()
-		return nil, err
+		return nil, errors.New("Expected statement terminator or EOF")
 	}
 
 	return node, nil
 }
 
 func isStatementTerminator(t token.Token) bool {
-	return t == token.Semicolon || t == token.Newline
-}
-
-func (p parser) parseTerminator() error {
-	if p.stream.EOF() {
-		return nil
-	}
-
-	lexeme, err := p.stream.Next()
-	if err != nil {
-		return err
-	} else if !isStatementTerminator(lexeme.Token) {
-		return fmt.Errorf("Expected statement terminator, got %v", lexeme.Value)
-	}
-
-	return nil
+	return t == token.Semicolon || t == token.Newline || t == token.EOF
 }
 
 func (p parser) consumeUntilTerminator() {
