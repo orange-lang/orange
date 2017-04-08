@@ -23,22 +23,42 @@ func Parse(s lexer.LexemeStream) (ast ast.AST, errors []error) {
 func (p parser) parse() (ast ast.AST, errors []error) {
 	errors = []error{}
 
+	// parseStatements should parse the entire program,
+	// but in case there was an error, we want to continue
+	// parsing at the statement following the incorrect one,
+	// so we loop again here until we've definitely reached
+	// EOF.
+	for !p.stream.EOF() {
+		nodes, err := p.parseStatements()
+
+		if err != nil {
+			errors = append(errors, err)
+			continue
+		}
+
+		ast.Nodes = append(ast.Nodes, nodes...)
+	}
+
+	return ast, errors
+}
+
+func (p parser) parseStatements() (nodes []ast.Node, err error) {
+	nodes = []ast.Node{}
+
 	for !p.stream.EOF() {
 		if ok, _ := p.allowFrom(isStatementTerminator); ok {
 			continue
 		}
 
 		node, err := p.parseNode()
-
 		if err != nil {
-			errors = append(errors, err)
-		} else {
-			ast.Nodes = append(ast.Nodes, node)
+			return nil, err
 		}
+
+		nodes = append(nodes, node)
 	}
 
-	return ast, errors
-
+	return
 }
 
 func (p parser) parseNode() (ast.Node, error) {
