@@ -10,7 +10,8 @@ import (
 
 func isStatementToken(t token.Token) bool {
 	return t == token.Var || t == token.Package || t == token.Import ||
-		t == token.If || t == token.Alias || isLoopToken(t) || t == token.Enum
+		t == token.If || t == token.Alias || isLoopToken(t) || t == token.Enum ||
+		t == token.Try
 }
 
 func (p parser) parseStatement() (ast.Statement, error) {
@@ -37,9 +38,87 @@ func (p parser) parseStatement() (ast.Statement, error) {
 		return p.parseDoWhileLoop()
 	case token.Enum:
 		return p.parseEnum()
+	case token.Try:
+		return p.parseTry()
 	}
 
 	return nil, errors.New("Unexpected lexeme")
+}
+
+func (p parser) parseTry() (*ast.TryStmt, error) {
+	var tryBlock *ast.BlockStmt
+	var finallyBlock *ast.BlockStmt
+	catches := []*ast.CatchStmt{}
+
+	if _, err := p.expect(token.Try); err != nil {
+		return nil, err
+	}
+
+	tryBlock, err := p.parseBlock()
+	if err != nil {
+		return nil, err
+	}
+
+	catchBlock, err := p.parseCatch()
+	if err != nil {
+		return nil, err
+	}
+
+	catches = append(catches, catchBlock)
+
+	nextLexeme, _ := p.stream.Peek()
+	for nextLexeme.Token == token.Catch {
+		catchBlock, err := p.parseCatch()
+		if err != nil {
+			return nil, err
+		}
+
+		catches = append(catches, catchBlock)
+
+		nextLexeme, _ = p.stream.Peek()
+	}
+
+	if ok, _ := p.allow(token.Finally); ok {
+		finallyBlock, err = p.parseBlock()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &ast.TryStmt{
+		Body:    tryBlock,
+		Catch:   catches,
+		Finally: finallyBlock,
+	}, nil
+}
+
+func (p parser) parseCatch() (*ast.CatchStmt, error) {
+	if _, err := p.expect(token.Catch); err != nil {
+		return nil, err
+	}
+
+	if _, err := p.expect(token.OpenParen); err != nil {
+		return nil, err
+	}
+
+	exVar, err := p.parseVarDecl()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := p.expect(token.CloseParen); err != nil {
+		return nil, err
+	}
+
+	catchBlock, err := p.parseBlock()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ast.CatchStmt{
+		Variable: exVar,
+		Body:     catchBlock,
+	}, nil
 }
 
 func (p parser) parseEnum() (*ast.EnumDecl, error) {

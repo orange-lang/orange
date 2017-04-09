@@ -13,6 +13,7 @@ func isTypeToken(t token.Token) bool {
 		token.Int, token.Int8, token.Int16, token.Int32, token.Int64,
 		token.UInt, token.UInt8, token.UInt16, token.UInt32, token.UInt64,
 		token.Float, token.Double, token.Char, token.String, token.Bool,
+		token.Identifier,
 	}
 
 	for _, typeToken := range typeTokens {
@@ -48,6 +49,8 @@ func (p parser) parseType() (ast.Type, error) {
 		ty = &ast.NamedType{Name: "string"}
 	case token.Bool:
 		ty = &ast.BoolType{}
+	case token.Identifier:
+		ty = &ast.NamedType{Name: lexeme.Value}
 	}
 
 	// Parse pointer and array types

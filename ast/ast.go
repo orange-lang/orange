@@ -105,6 +105,17 @@ type ImportDecl struct {
 	Name string
 }
 
+type TryStmt struct {
+	Body    *BlockStmt
+	Catch   []*CatchStmt
+	Finally *BlockStmt
+}
+
+type CatchStmt struct {
+	Variable *VarDecl
+	Body     *BlockStmt
+}
+
 //
 // Expressions
 //
@@ -214,6 +225,8 @@ func (s PackageDecl) isNode()      {}
 func (s ImportDecl) isNode()       {}
 func (s IfStmt) isNode()           {}
 func (s LoopStmt) isNode()         {}
+func (s TryStmt) isNode()          {}
+func (s CatchStmt) isNode()        {}
 func (e FunctionExpr) isNode()     {}
 func (e ExternFuncExpr) isNode()   {}
 func (e ArrayExpr) isNode()        {}
@@ -246,6 +259,8 @@ func (s PackageDecl) isStatement()   {}
 func (s ImportDecl) isStatement()    {}
 func (s LoopStmt) isStatement()      {}
 func (s IfStmt) isStatement()        {}
+func (s TryStmt) isStatement()       {}
+func (s CatchStmt) isStatement()     {}
 
 func (e FunctionExpr) isExpression()     {}
 func (e ExternFuncExpr) isExpression()   {}

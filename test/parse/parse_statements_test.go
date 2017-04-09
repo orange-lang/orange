@@ -8,6 +8,87 @@ import (
 )
 
 var _ = Describe("Parsing Statements", func() {
+	DescribeTable("should be able to parse try/catch finally", expectNode,
+		Entry("one catch ", `try {
+				1
+				2	
+			} catch (var e: Exception) {
+				3
+				4	
+			}`, &ast.TryStmt{
+			Body: &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.IntExpr{Value: 1, Size: 64},
+				&ast.IntExpr{Value: 2, Size: 64},
+			}},
+			Catch: []*ast.CatchStmt{&ast.CatchStmt{
+				Variable: &ast.VarDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+				Body: &ast.BlockStmt{Nodes: []ast.Node{
+					&ast.IntExpr{Value: 3, Size: 64},
+					&ast.IntExpr{Value: 4, Size: 64},
+				}},
+			}},
+		}),
+
+		Entry("multiple catches", `try {
+				1
+				2	
+			} catch (var e: Exception) {
+				3
+				4	
+			} catch (var e: Exception) {
+				5
+				6	
+			}`, &ast.TryStmt{
+			Body: &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.IntExpr{Value: 1, Size: 64},
+				&ast.IntExpr{Value: 2, Size: 64},
+			}},
+			Catch: []*ast.CatchStmt{
+				&ast.CatchStmt{
+					Variable: &ast.VarDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+					Body: &ast.BlockStmt{Nodes: []ast.Node{
+						&ast.IntExpr{Value: 3, Size: 64},
+						&ast.IntExpr{Value: 4, Size: 64},
+					}},
+				},
+				&ast.CatchStmt{
+					Variable: &ast.VarDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+					Body: &ast.BlockStmt{Nodes: []ast.Node{
+						&ast.IntExpr{Value: 5, Size: 64},
+						&ast.IntExpr{Value: 6, Size: 64},
+					}},
+				},
+			},
+		}),
+
+		Entry("finally block", `try {
+				1
+				2	
+			} catch (var e: Exception) {
+				3
+				4	
+			} finally {
+				5
+				6	
+			}`, &ast.TryStmt{
+			Body: &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.IntExpr{Value: 1, Size: 64},
+				&ast.IntExpr{Value: 2, Size: 64},
+			}},
+			Catch: []*ast.CatchStmt{&ast.CatchStmt{
+				Variable: &ast.VarDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+				Body: &ast.BlockStmt{Nodes: []ast.Node{
+					&ast.IntExpr{Value: 3, Size: 64},
+					&ast.IntExpr{Value: 4, Size: 64},
+				}},
+			}},
+			Finally: &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.IntExpr{Value: 5, Size: 64},
+				&ast.IntExpr{Value: 6, Size: 64},
+			}},
+		}),
+	)
+
 	Describe("should be able to parse enums", func() {
 		DescribeTable("one line", expectNode,
 			Entry("one member", "enum Status { Pending }", &ast.EnumDecl{
