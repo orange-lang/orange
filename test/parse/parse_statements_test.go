@@ -8,6 +8,29 @@ import (
 )
 
 var _ = Describe("Parsing Statements", func() {
+	DescribeTable("should be able to parse function calls", expectNode,
+		Entry("no arguments", "func()", &ast.CallExpr{
+			Object:    &ast.NamedIDExpr{Name: "func"},
+			Arguments: []ast.Expression{},
+		}),
+
+		Entry("one argument", "func(1)", &ast.CallExpr{
+			Object: &ast.NamedIDExpr{Name: "func"},
+			Arguments: []ast.Expression{
+				&ast.IntExpr{Value: 1, Size: 64},
+			},
+		}),
+
+		Entry("multiple arguments", "func(1,2,3)", &ast.CallExpr{
+			Object: &ast.NamedIDExpr{Name: "func"},
+			Arguments: []ast.Expression{
+				&ast.IntExpr{Value: 1, Size: 64},
+				&ast.IntExpr{Value: 2, Size: 64},
+				&ast.IntExpr{Value: 3, Size: 64},
+			},
+		}),
+	)
+
 	Describe("should be able to parse multiple statements", func() {
 		It("separated by newlines", func() {
 			expectNodes(`

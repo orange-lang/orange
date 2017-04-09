@@ -37,7 +37,7 @@ func (p parser) parseSingle() (ast.Expression, error) {
 
 func isOperationToken(t token.Token) bool {
 	return t == token.Dot || t == token.OpenBracket || t == token.Increment ||
-		t == token.Decrement
+		t == token.Decrement || t == token.OpenParen
 }
 
 func (p parser) parseOperation() (ast.Expression, error) {
@@ -59,6 +59,8 @@ func (p parser) parseOperation() (ast.Expression, error) {
 			expr, err = p.parseUnaryPostfix(expr)
 		case token.Decrement:
 			expr, err = p.parseUnaryPostfix(expr)
+		case token.OpenParen:
+			expr, err = p.parseFuncCall(expr)
 		}
 
 		if err != nil {
@@ -71,12 +73,38 @@ func (p parser) parseOperation() (ast.Expression, error) {
 	return expr, nil
 }
 
-func (p parser) parseArrayAccess(lhs ast.Expression) (*ast.ArrayAccessExpr, error) {
-	lexeme, err := p.stream.Next()
+func (p parser) parseFuncCall(lhs ast.Expression) (*ast.CallExpr, error) {
+	if _, err := p.expect(token.OpenParen); err != nil {
+		return nil, err
+	}
+
+	// Check for a zero-argument function call
+	if ok, _ := p.allow(token.CloseParen); ok {
+		return &ast.CallExpr{
+			Object:    lhs,
+			Arguments: []ast.Expression{},
+		}, nil
+	}
+
+	// Parse arguments
+	args, err := p.parseExprList()
 	if err != nil {
 		return nil, err
-	} else if lexeme.Token != token.OpenBracket {
-		return nil, errors.New("Expected open bracket")
+	}
+
+	if _, err := p.expect(token.CloseParen); err != nil {
+		return nil, err
+	}
+
+	return &ast.CallExpr{
+		Object:    lhs,
+		Arguments: args,
+	}, nil
+}
+
+func (p parser) parseArrayAccess(lhs ast.Expression) (*ast.ArrayAccessExpr, error) {
+	if _, err := p.expect(token.OpenBracket); err != nil {
+		return nil, err
 	}
 
 	expr, err := p.parseExpr()
