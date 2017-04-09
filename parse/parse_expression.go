@@ -120,11 +120,8 @@ func (p parser) parseArrayAccess(lhs ast.Expression) (*ast.ArrayAccessExpr, erro
 }
 
 func (p parser) parseMemberAccess(lhs ast.Expression) (*ast.MemberAccessExpr, error) {
-	lexeme, err := p.stream.Next()
-	if err != nil {
+	if _, err := p.expect(token.Dot); err != nil {
 		return nil, err
-	} else if lexeme.Token != token.Dot {
-		return nil, errors.New("Expected dot")
 	}
 
 	ident, err := p.stream.Next()
@@ -159,11 +156,9 @@ func (p parser) parsePrimary() (ast.Expression, error) {
 }
 
 func (p parser) parseIdentifier() (ast.Identifier, error) {
-	lexeme, err := p.stream.Next()
+	lexeme, err := p.expect(token.Identifier)
 	if err != nil {
 		return nil, err
-	} else if lexeme.Token != token.Identifier {
-		return nil, errors.New("Expected identifier")
 	}
 
 	return &ast.NamedIDExpr{Name: lexeme.Value}, nil
@@ -215,11 +210,8 @@ func (p parser) parseExprList() ([]ast.Expression, error) {
 }
 
 func (p parser) parseParethentizedExpr() (ast.Expression, error) {
-	lexeme, err := p.stream.Next()
-	if err != nil {
+	if _, err := p.expect(token.OpenParen); err != nil {
 		return nil, err
-	} else if lexeme.Token != token.OpenParen {
-		return nil, errors.New("Expected open parenthesis")
 	}
 
 	expr, err := p.parseExpr()
