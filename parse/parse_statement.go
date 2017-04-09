@@ -10,8 +10,7 @@ import (
 
 func isStatementToken(t token.Token) bool {
 	return t == token.Var || t == token.Package || t == token.Import ||
-		t == token.If || t == token.Alias || t == token.For || t == token.While ||
-		t == token.Do
+		t == token.If || t == token.Alias || isLoopToken(t) || t == token.Enum
 }
 
 func (p parser) parseStatement() (ast.Statement, error) {
@@ -36,9 +35,69 @@ func (p parser) parseStatement() (ast.Statement, error) {
 		return p.parseWhileLoop()
 	case token.Do:
 		return p.parseDoWhileLoop()
+	case token.Enum:
+		return p.parseEnum()
 	}
 
 	return nil, errors.New("Unexpected lexeme")
+}
+
+func (p parser) parseEnum() (*ast.EnumDecl, error) {
+	name := ""
+
+	if _, err := p.expect(token.Enum); err != nil {
+		return nil, err
+	}
+
+	nameLexeme, err := p.expect(token.Identifier)
+	if err != nil {
+		return nil, err
+	}
+
+	name = nameLexeme.Value
+
+	if _, err := p.nextConcrete(token.OpenCurly); err != nil {
+		return nil, err
+	}
+
+	members, err := p.parseEnumMembers()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := p.nextConcrete(token.CloseCurly); err != nil {
+		return nil, err
+	}
+
+	return &ast.EnumDecl{Name: name, Members: members}, nil
+}
+
+// identifier (, identifier)*
+func (p parser) parseEnumMembers() ([]string, error) {
+	members := []string{}
+
+	lexeme, err := p.nextConcrete(token.Identifier)
+	if err != nil {
+		return nil, err
+	}
+
+	members = append(members, lexeme.Value)
+
+	lexeme, _ = p.stream.Peek()
+	for lexeme.Token == token.Comma {
+		p.stream.Next()
+
+		lexeme, err = p.nextConcrete(token.Identifier)
+		if err != nil {
+			return nil, err
+		}
+
+		members = append(members, lexeme.Value)
+
+		lexeme, _ = p.stream.Peek()
+	}
+
+	return members, nil
 }
 
 func (p parser) parseAlias() (*ast.AliasDecl, error) {

@@ -8,6 +8,66 @@ import (
 )
 
 var _ = Describe("Parsing Statements", func() {
+	Describe("should be able to parse enums", func() {
+		DescribeTable("one line", expectNode,
+			Entry("one member", "enum Status { Pending }", &ast.EnumDecl{
+				Name:    "Status",
+				Members: []string{"Pending"},
+			}),
+			Entry("multiple members", "enum Status { Pending, Running, Finished }",
+				&ast.EnumDecl{
+					Name:    "Status",
+					Members: []string{"Pending", "Running", "Finished"},
+				},
+			),
+		)
+
+		DescribeTable("multiple lines", expectNode,
+			Entry("one member", `enum Status {
+				Pending	
+			}`, &ast.EnumDecl{
+				Name:    "Status",
+				Members: []string{"Pending"},
+			}),
+
+			Entry("multiple members", `enum Status {
+				Pending, 
+				Running,
+				Finished
+			}`, &ast.EnumDecl{
+				Name:    "Status",
+				Members: []string{"Pending", "Running", "Finished"},
+			}),
+		)
+
+		DescribeTable("lines with extra whitespace", expectNode,
+			Entry("one member", `enum Status {
+
+				Pending	
+
+			}`, &ast.EnumDecl{
+				Name:    "Status",
+				Members: []string{"Pending"},
+			}),
+
+			Entry("multiple members", `enum Status {
+
+				Pending, 
+
+
+				Running,
+
+				Finished
+				
+
+
+			}`, &ast.EnumDecl{
+				Name:    "Status",
+				Members: []string{"Pending", "Running", "Finished"},
+			}),
+		)
+	})
+
 	DescribeTable("should be able to parse function calls", expectNode,
 		Entry("no arguments", "func()", &ast.CallExpr{
 			Object:    &ast.NamedIDExpr{Name: "func"},
