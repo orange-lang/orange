@@ -5,6 +5,10 @@ import (
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
+func isLoopToken(t token.Token) bool {
+	return t == token.For || t == token.While || t == token.Do
+}
+
 func (p parser) parseDoWhileLoop() (*ast.LoopStmt, error) {
 	if _, err := p.expect(token.Do); err != nil {
 		return nil, err

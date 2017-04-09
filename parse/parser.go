@@ -194,3 +194,20 @@ func (p parser) expect(t token.Token) (lexer.Lexeme, error) {
 
 	return lexeme, nil
 }
+
+// Gets the next non-whitespace token.
+func (p parser) nextConcrete(t token.Token) (lexer.Lexeme, error) {
+	lexeme, err := p.stream.Next()
+
+	for lexeme.Token == token.Newline {
+		lexeme, err = p.stream.Next()
+	}
+
+	if err != nil {
+		return lexeme, err
+	} else if lexeme.Token != t {
+		return lexeme, fmt.Errorf("Expected %v, got %v", t, lexeme.Token)
+	}
+
+	return lexeme, nil
+}
