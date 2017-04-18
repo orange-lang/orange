@@ -14,9 +14,9 @@ func isConstantToken(t token.Token) bool {
 		numberToken(t) || t == token.CharVal
 }
 
-func (p parser) parseConstant() (ast.Expression, error) {
-	if ok, _ := p.peekFrom(isConstantToken); !ok {
-		return nil, errors.New("Expected constant")
+func (p parser) parseConstant() ast.Expression {
+	if ok := p.peekFrom(isConstantToken); !ok {
+		panic(errors.New("Expected constant"))
 	}
 
 	lexeme, _ := p.stream.Peek()
@@ -33,16 +33,12 @@ func (p parser) parseConstant() (ast.Expression, error) {
 	}
 
 	p.stream.Next()
-	return nil, fmt.Errorf("Unexpected lexeme %v; expected constant", lexeme)
+	panic(fmt.Errorf("Unexpected lexeme %v; expected constant", lexeme))
 }
 
-func (p parser) parseChar() (ast.Expression, error) {
-	lexeme, err := p.expect(token.CharVal)
-	if err != nil {
-		return nil, err
-	}
-
-	return &ast.CharExpr{Value: lexeme.Value[0]}, nil
+func (p parser) parseChar() ast.Expression {
+	lexeme := p.expect(token.CharVal)
+	return &ast.CharExpr{Value: lexeme.Value[0]}
 }
 
 func numberToken(t token.Token) bool {
@@ -61,46 +57,40 @@ func numberToken(t token.Token) bool {
 	return false
 }
 
-func (p parser) parseNumber() (ast.Expression, error) {
+func (p parser) parseNumber() ast.Expression {
 	lexeme, err := p.stream.Next()
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	if sz := lexeme.Token.IntegerSize(); sz > 0 {
 		if lexeme.Token.SignedValue() {
 			v, _ := strconv.ParseInt(lexeme.Value, 10, sz)
-			return &ast.IntExpr{Value: v, Size: sz}, nil
+			return &ast.IntExpr{Value: v, Size: sz}
 		}
 
 		v, _ := strconv.ParseUint(lexeme.Value, 10, sz)
-		return &ast.UIntExpr{Value: v, Size: sz}, nil
+		return &ast.UIntExpr{Value: v, Size: sz}
 	} else if lexeme.Token == token.FloatVal {
 		v, _ := strconv.ParseFloat(lexeme.Value, 32)
-		return &ast.FloatExpr{Value: float32(v)}, nil
+		return &ast.FloatExpr{Value: float32(v)}
 	} else if lexeme.Token == token.DoubleVal {
 		v, _ := strconv.ParseFloat(lexeme.Value, 64)
-		return &ast.DoubleExpr{Value: v}, nil
+		return &ast.DoubleExpr{Value: v}
 	}
 
-	return nil, errors.New("Expected number")
+	panic(errors.New("Expected number"))
 }
 
-func (p parser) parseBoolean() (ast.Expression, error) {
-	lexeme, err := p.expect(token.BoolVal)
-	if err != nil {
-		return nil, err
-	}
+func (p parser) parseBoolean() ast.Expression {
+	lexeme := p.expect(token.BoolVal)
 
 	val, _ := strconv.ParseBool(lexeme.Value)
-	return &ast.BoolExpr{Value: val}, nil
+	return &ast.BoolExpr{Value: val}
 }
 
-func (p parser) parseString() (ast.Expression, error) {
-	lexeme, err := p.expect(token.StringVal)
-	if err != nil {
-		return nil, err
-	}
+func (p parser) parseString() ast.Expression {
+	lexeme := p.expect(token.StringVal)
 
-	return &ast.StringExpr{Value: lexeme.Value}, nil
+	return &ast.StringExpr{Value: lexeme.Value}
 }

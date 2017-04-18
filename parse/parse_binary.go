@@ -28,9 +28,9 @@ func isBinOpToken(t token.Token) bool {
 	return false
 }
 
-func (p parser) parseBinary(lhs ast.Expression, minPrec int) (ast.Expression, error) {
-	if ok, _ := p.peekFrom(isBinOpToken); !ok {
-		return nil, errors.New("Expected binary operator")
+func (p parser) parseBinary(lhs ast.Expression, minPrec int) ast.Expression {
+	if ok := p.peekFrom(isBinOpToken); !ok {
+		panic(errors.New("Expected binary operator"))
 	}
 
 	next, _ := p.stream.Peek()
@@ -41,12 +41,9 @@ func (p parser) parseBinary(lhs ast.Expression, minPrec int) (ast.Expression, er
 
 		p.stream.Next()
 
-		rhs, err := p.parseSingle()
-		if err != nil {
-			return nil, err
-		}
+		rhs := p.parseSingle()
 
-		next, err = p.stream.Peek()
+		next, _ = p.stream.Peek()
 
 		// currentPrec is the precedence of the operator past the
 		// RHS of the parsed binary operation. We're going to continue to
@@ -56,23 +53,16 @@ func (p parser) parseBinary(lhs ast.Expression, minPrec int) (ast.Expression, er
 
 		for (leftAssociative(next.Token) && currentPrec > operatorPrec) ||
 			(rightAssociative(next.Token) && currentPrec == operatorPrec) {
-			rhs, err = p.parseBinary(rhs, currentPrec)
-			if err != nil {
-				return nil, err
-			}
+			rhs = p.parseBinary(rhs, currentPrec)
 
-			next, err = p.stream.Peek()
-			if err != nil {
-				return nil, err
-			}
-
+			next, _ = p.stream.Peek()
 			currentPrec = getOperatorPrecedence(next.Token)
 		}
 
 		lhs = &ast.BinaryExpr{LHS: lhs, Operation: op.Value, RHS: rhs}
 	}
 
-	return lhs, nil
+	return lhs
 }
 
 func getOperatorPrecedence(tok token.Token) int {

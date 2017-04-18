@@ -9,121 +9,71 @@ func isLoopToken(t token.Token) bool {
 	return t == token.For || t == token.While || t == token.Do
 }
 
-func (p parser) parseDoWhileLoop() (*ast.LoopStmt, error) {
-	if _, err := p.expect(token.Do); err != nil {
-		return nil, err
-	}
+func (p parser) parseDoWhileLoop() *ast.LoopStmt {
+	p.expect(token.Do)
 
-	body, err := p.parseBlock()
-	if err != nil {
-		return nil, err
-	}
+	body := p.parseBlock()
 
-	if _, err := p.expect(token.While); err != nil {
-		return nil, err
-	}
+	p.expect(token.While)
 
-	if _, err := p.expect(token.OpenParen); err != nil {
-		return nil, err
-	}
+	p.expect(token.OpenParen)
 
-	condition, err := p.parseExpr()
-	if err != nil {
-		return nil, err
-	}
+	condition := p.parseExpr()
 
-	if _, err := p.expect(token.CloseParen); err != nil {
-		return nil, err
-	}
+	p.expect(token.CloseParen)
 
 	return &ast.LoopStmt{
 		Condition: condition,
 		Body:      body,
 		CheckTime: ast.CheckAfter,
-	}, nil
+	}
 }
 
-func (p parser) parseWhileLoop() (*ast.LoopStmt, error) {
-	if _, err := p.expect(token.While); err != nil {
-		return nil, err
-	}
+func (p parser) parseWhileLoop() *ast.LoopStmt {
+	p.expect(token.While)
+	p.expect(token.OpenParen)
 
-	if _, err := p.expect(token.OpenParen); err != nil {
-		return nil, err
-	}
+	condition := p.parseExpr()
 
-	condition, err := p.parseExpr()
-	if err != nil {
-		return nil, err
-	}
+	p.expect(token.CloseParen)
 
-	if _, err := p.expect(token.CloseParen); err != nil {
-		return nil, err
-	}
-
-	body, err := p.parseBlock()
-	if err != nil {
-		return nil, err
-	}
+	body := p.parseBlock()
 
 	return &ast.LoopStmt{
 		Condition: condition,
 		Body:      body,
 		CheckTime: ast.CheckBefore,
-	}, nil
+	}
 }
 
-func (p parser) parseForLoop() (*ast.LoopStmt, error) {
+func (p parser) parseForLoop() *ast.LoopStmt {
 	var initializer *ast.VarDecl
 	var condition ast.Expression
 	var afterthought ast.Expression
-	var err error
 
-	if _, err = p.expect(token.For); err != nil {
-		return nil, err
+	p.expect(token.For)
+
+	p.expect(token.OpenParen)
+
+	if ok := p.peek(token.Var); ok {
+		initializer = p.parseVarDecl()
 	}
 
-	if _, err = p.expect(token.OpenParen); err != nil {
-		return nil, err
+	p.expect(token.Semicolon)
+
+	if ok := p.peekFrom(isExpressionToken); ok {
+		condition = p.parseExpr()
 	}
 
-	if ok, _ := p.peek(token.Var); ok {
-		initializer, err = p.parseVarDecl()
-		if err != nil {
-			return nil, err
-		}
+	p.expect(token.Semicolon)
+
+	if ok := p.peekFrom(isExpressionToken); ok {
+		afterthought = p.parseExpr()
 	}
 
-	if _, err := p.expect(token.Semicolon); err != nil {
-		return nil, err
-	}
+	p.expect(token.CloseParen)
 
-	if ok, _ := p.peekFrom(isExpressionToken); ok {
-		condition, err = p.parseExpr()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if _, err := p.expect(token.Semicolon); err != nil {
-		return nil, err
-	}
-
-	if ok, _ := p.peekFrom(isExpressionToken); ok {
-		afterthought, err = p.parseExpr()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if _, err = p.expect(token.CloseParen); err != nil {
-		return nil, err
-	}
-
-	body, err := p.parseBlock()
-	if err != nil {
-		return nil, err
-	}
+	body := p.parseBlock()
 
 	return &ast.LoopStmt{
 		Initializer:  initializer,
@@ -131,5 +81,5 @@ func (p parser) parseForLoop() (*ast.LoopStmt, error) {
 		Afterthought: afterthought,
 		Body:         body,
 		CheckTime:    ast.CheckBefore,
-	}, nil
+	}
 }
