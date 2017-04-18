@@ -2,7 +2,6 @@ package parse
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/orange-lang/orange/ast"
 	"github.com/orange-lang/orange/parse/lexer/token"
@@ -25,11 +24,8 @@ func isTypeToken(t token.Token) bool {
 	return false
 }
 
-func (p parser) parseType() (ast.Type, error) {
-	lexeme, err := p.expectFrom(isTypeToken)
-	if err != nil {
-		return nil, fmt.Errorf("Expected type, got %v", lexeme.Value)
-	}
+func (p parser) parseType() ast.Type {
+	lexeme := p.expectFrom(isTypeToken)
 
 	var ty ast.Type
 
@@ -61,9 +57,7 @@ func (p parser) parseType() (ast.Type, error) {
 			ty = &ast.PointerType{InnerType: ty}
 		} else if lexeme.Token == token.OpenBracket {
 			p.stream.Next()
-			if _, err := p.expect(token.CloseBracket); err != nil {
-				return ty, err
-			}
+			p.expect(token.CloseBracket)
 
 			ty = &ast.ArrayType{InnerType: ty}
 		} else {
@@ -72,8 +66,8 @@ func (p parser) parseType() (ast.Type, error) {
 	}
 
 	if ty == nil {
-		return nil, errors.New("Unexpected type")
+		panic(errors.New("Unexpected type"))
 	}
 
-	return ty, nil
+	return ty
 }

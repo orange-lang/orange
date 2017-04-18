@@ -1,7 +1,6 @@
 package parse
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/orange-lang/orange/ast"
@@ -24,20 +23,13 @@ func (p parser) parse() (ast ast.AST, errs []error) {
 	errs = []error{}
 
 	for !p.stream.EOF() {
-		if ok, _ := p.allowFrom(isStatementTerminator); ok {
+		if ok := p.allowFrom(isStatementTerminator); ok {
 			continue
 		}
 
-		node, err := p.parseNode()
+		node, err := p.parseNodeWithRecovery()
 
 		if err != nil {
-			errs = append(errs, err)
-			continue
-		}
-
-		if _, err := p.expectFrom(isStatementTerminator); err != nil {
-			p.consumeUntilTerminator()
-			err = errors.New("Expected statement terminator or EOF")
 			errs = append(errs, err)
 			continue
 		}
@@ -48,75 +40,65 @@ func (p parser) parse() (ast ast.AST, errs []error) {
 	return
 }
 
-func (p parser) parseBlock() (*ast.BlockStmt, error) {
-	if _, err := p.expect(token.OpenCurly); err != nil {
-		return nil, errors.New("Expected open curly brace")
-	}
+func (p parser) parseNodeWithRecovery() (node ast.Node, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = r.(error)
+		}
+	}()
+
+	node = p.parseNode()
+	p.expectFrom(isStatementTerminator)
+	return node, err
+}
+
+func (p parser) parseBlock() *ast.BlockStmt {
+	p.expect(token.OpenCurly)
 
 	nodes := []ast.Node{}
 
 	for !p.stream.EOF() {
-		if ok, _ := p.allowFrom(isStatementTerminator); ok {
+		if ok := p.allowFrom(isStatementTerminator); ok {
 			continue
 		}
 
-		if ok, _ := p.peekFrom(isNodeToken); !ok {
+		if ok := p.peekFrom(isNodeToken); !ok {
 			break
 		}
 
-		node, err := p.parseNode()
-		if err != nil {
-			return nil, err
-		}
+		nodes = append(nodes, p.parseNode())
 
-		nodes = append(nodes, node)
-
-		if ok, _ := p.peek(token.CloseCurly); ok {
+		if ok := p.peek(token.CloseCurly); ok {
 			break
 		}
 
-		if _, err := p.expectFrom(isStatementTerminator); err != nil {
-			p.consumeUntilTerminator()
-			return nil, errors.New("Expected statement terminator or EOF")
-		}
+		p.expectFrom(isStatementTerminator)
 	}
 
-	if _, err := p.expect(token.CloseCurly); err != nil {
-		return nil, errors.New("Expected close curly brace")
-	}
-
-	return &ast.BlockStmt{Nodes: nodes}, nil
+	p.expect(token.CloseCurly)
+	return &ast.BlockStmt{Nodes: nodes}
 }
 
 func isNodeToken(t token.Token) bool {
 	return isExpressionToken(t) || isStatementToken(t)
 }
 
-func (p parser) parseNode() (ast.Node, error) {
-	lexeme, err := p.stream.Peek()
-	if err != nil {
-		p.stream.Next()
-		return nil, err
-	}
+func (p parser) parseNode() ast.Node {
+	lexeme, _ := p.stream.Peek()
 
 	var node ast.Node
 
 	switch true {
 	case isExpressionToken(lexeme.Token):
-		node, err = p.parseExpr()
+		node = p.parseExpr()
 	case isStatementToken(lexeme.Token):
-		node, err = p.parseStatement()
+		node = p.parseStatement()
 	default:
 		p.consumeUntilTerminator()
-		return nil, fmt.Errorf("Unexpected lexeme %v; expected statement", lexeme.Value)
+		panic(fmt.Errorf("Unexpected lexeme %v; expected statement", lexeme.Value))
 	}
 
-	if err != nil {
-		p.consumeUntilTerminator()
-		return nil, err
-	}
-
-	return node, nil
+	return node
 }
 
 func isStatementTerminator(t token.Token) bool {
@@ -131,72 +113,74 @@ func (p parser) consumeUntilTerminator() {
 	}
 }
 
-func (p parser) peekFrom(c func(token.Token) bool) (ok bool, err error) {
-	if lexeme, err := p.stream.Peek(); err != nil {
-		return false, err
-	} else if c(lexeme.Token) {
-		return true, nil
+func (p parser) peekFrom(c func(token.Token) bool) bool {
+	lexeme, _ := p.stream.Peek()
+
+	if c(lexeme.Token) {
+		return true
 	}
 
-	return false, nil
+	return false
 }
 
-func (p parser) peek(t token.Token) (ok bool, err error) {
-	if lexeme, err := p.stream.Peek(); err != nil {
-		return false, err
-	} else if lexeme.Token == t {
-		return true, nil
+func (p parser) peek(t token.Token) bool {
+	lexeme, _ := p.stream.Peek()
+
+	if lexeme.Token == t {
+		return true
 	}
 
-	return false, nil
+	return false
 }
 
-func (p parser) allowFrom(c func(token.Token) bool) (ok bool, err error) {
-	if lexeme, err := p.stream.Peek(); err != nil {
-		return false, err
-	} else if c(lexeme.Token) {
+func (p parser) allowFrom(c func(token.Token) bool) bool {
+	lexeme, _ := p.stream.Peek()
+
+	if c(lexeme.Token) {
 		p.stream.Next()
-		return true, nil
+		return true
 	}
 
-	return false, nil
+	return false
 }
 
-func (p parser) allow(t token.Token) (ok bool, err error) {
-	if lexeme, err := p.stream.Peek(); err != nil {
-		return false, err
-	} else if lexeme.Token == t {
+func (p parser) allow(t token.Token) bool {
+	lexeme, _ := p.stream.Peek()
+
+	if lexeme.Token == t {
 		p.stream.Next()
-		return true, nil
+		return true
 	}
 
-	return false, nil
+	return false
 }
 
-func (p parser) expectFrom(c func(token.Token) bool) (lexer.Lexeme, error) {
+func (p parser) expectFrom(c func(token.Token) bool) lexer.Lexeme {
 	lexeme, err := p.stream.Next()
+
 	if err != nil {
-		return lexeme, err
+		panic(err)
 	} else if !c(lexeme.Token) {
-		return lexeme, fmt.Errorf("Unexpected %v", lexeme.Token)
+		panic(fmt.Errorf("Unexpected %v", lexeme.Token))
 	}
 
-	return lexeme, nil
+	return lexeme
 }
 
-func (p parser) expect(t token.Token) (lexer.Lexeme, error) {
+func (p parser) expect(t token.Token) lexer.Lexeme {
 	lexeme, err := p.stream.Next()
+
 	if err != nil {
-		return lexeme, err
+		panic(err)
 	} else if lexeme.Token != t {
-		return lexeme, fmt.Errorf("Expected %v, got %v", t, lexeme.Token)
+		panic(fmt.Errorf("Expected %v, got %v", t, lexeme.Token))
 	}
 
-	return lexeme, nil
+	return lexeme
 }
 
 // Gets the next non-whitespace token.
-func (p parser) nextConcrete(t token.Token) (lexer.Lexeme, error) {
+func (p parser) nextConcrete(t token.Token) lexer.Lexeme {
 	lexeme, err := p.stream.Next()
 
 	for lexeme.Token == token.Newline {
@@ -204,10 +188,10 @@ func (p parser) nextConcrete(t token.Token) (lexer.Lexeme, error) {
 	}
 
 	if err != nil {
-		return lexeme, err
+		panic(err)
 	} else if lexeme.Token != t {
-		return lexeme, fmt.Errorf("Expected %v, got %v", t, lexeme.Token)
+		panic(fmt.Errorf("Expected %v, got %v", t, lexeme.Token))
 	}
 
-	return lexeme, nil
+	return lexeme
 }

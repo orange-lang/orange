@@ -14,9 +14,9 @@ func isStatementToken(t token.Token) bool {
 		t == token.Try
 }
 
-func (p parser) parseStatement() (ast.Statement, error) {
-	if ok, _ := p.peekFrom(isStatementToken); !ok {
-		return nil, errors.New("Expected statement")
+func (p parser) parseStatement() ast.Statement {
+	if ok := p.peekFrom(isStatementToken); !ok {
+		panic(errors.New("Expected statement"))
 	}
 
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
@@ -42,123 +42,80 @@ func (p parser) parseStatement() (ast.Statement, error) {
 		return p.parseTry()
 	}
 
-	return nil, errors.New("Unexpected lexeme")
+	panic(errors.New("Unexpected lexeme"))
 }
 
-func (p parser) parseTry() (*ast.TryStmt, error) {
+func (p parser) parseTry() *ast.TryStmt {
 	var tryBlock *ast.BlockStmt
 	var finallyBlock *ast.BlockStmt
 	catches := []*ast.CatchStmt{}
 
-	if _, err := p.expect(token.Try); err != nil {
-		return nil, err
-	}
+	p.expect(token.Try)
 
-	tryBlock, err := p.parseBlock()
-	if err != nil {
-		return nil, err
-	}
-
-	catchBlock, err := p.parseCatch()
-	if err != nil {
-		return nil, err
-	}
+	tryBlock = p.parseBlock()
+	catchBlock := p.parseCatch()
 
 	catches = append(catches, catchBlock)
 
 	nextLexeme, _ := p.stream.Peek()
 	for nextLexeme.Token == token.Catch {
-		catchBlock, err := p.parseCatch()
-		if err != nil {
-			return nil, err
-		}
-
+		catchBlock := p.parseCatch()
 		catches = append(catches, catchBlock)
 
 		nextLexeme, _ = p.stream.Peek()
 	}
 
-	if ok, _ := p.allow(token.Finally); ok {
-		finallyBlock, err = p.parseBlock()
-		if err != nil {
-			return nil, err
-		}
+	if ok := p.allow(token.Finally); ok {
+		finallyBlock = p.parseBlock()
 	}
 
 	return &ast.TryStmt{
 		Body:    tryBlock,
 		Catch:   catches,
 		Finally: finallyBlock,
-	}, nil
+	}
 }
 
-func (p parser) parseCatch() (*ast.CatchStmt, error) {
-	if _, err := p.expect(token.Catch); err != nil {
-		return nil, err
-	}
+func (p parser) parseCatch() *ast.CatchStmt {
+	p.expect(token.Catch)
 
-	if _, err := p.expect(token.OpenParen); err != nil {
-		return nil, err
-	}
+	p.expect(token.OpenParen)
 
-	exVar, err := p.parseVarDecl()
-	if err != nil {
-		return nil, err
-	}
+	exVar := p.parseVarDecl()
 
-	if _, err := p.expect(token.CloseParen); err != nil {
-		return nil, err
-	}
+	p.expect(token.CloseParen)
 
-	catchBlock, err := p.parseBlock()
-	if err != nil {
-		return nil, err
-	}
+	catchBlock := p.parseBlock()
 
 	return &ast.CatchStmt{
 		Variable: exVar,
 		Body:     catchBlock,
-	}, nil
+	}
 }
 
-func (p parser) parseEnum() (*ast.EnumDecl, error) {
+func (p parser) parseEnum() *ast.EnumDecl {
 	name := ""
 
-	if _, err := p.expect(token.Enum); err != nil {
-		return nil, err
-	}
+	p.expect(token.Enum)
 
-	nameLexeme, err := p.expect(token.Identifier)
-	if err != nil {
-		return nil, err
-	}
+	nameLexeme := p.expect(token.Identifier)
 
 	name = nameLexeme.Value
 
-	if _, err := p.nextConcrete(token.OpenCurly); err != nil {
-		return nil, err
-	}
+	p.nextConcrete(token.OpenCurly)
 
-	members, err := p.parseEnumMembers()
-	if err != nil {
-		return nil, err
-	}
+	members := p.parseEnumMembers()
 
-	if _, err := p.nextConcrete(token.CloseCurly); err != nil {
-		return nil, err
-	}
+	p.nextConcrete(token.CloseCurly)
 
-	return &ast.EnumDecl{Name: name, Members: members}, nil
+	return &ast.EnumDecl{Name: name, Members: members}
 }
 
 // identifier (, identifier)*
-func (p parser) parseEnumMembers() ([]string, error) {
+func (p parser) parseEnumMembers() []string {
 	members := []string{}
 
-	lexeme, err := p.nextConcrete(token.Identifier)
-	if err != nil {
-		return nil, err
-	}
+	lexeme := p.nextConcrete(token.Identifier)
 
 	members = append(members, lexeme.Value)
 
@@ -166,192 +123,134 @@ func (p parser) parseEnumMembers() ([]string, error) {
 	for lexeme.Token == token.Comma {
 		p.stream.Next()
 
-		lexeme, err = p.nextConcrete(token.Identifier)
-		if err != nil {
-			return nil, err
-		}
+		lexeme = p.nextConcrete(token.Identifier)
 
 		members = append(members, lexeme.Value)
 
 		lexeme, _ = p.stream.Peek()
 	}
 
-	return members, nil
+	return members
 }
 
-func (p parser) parseAlias() (*ast.AliasDecl, error) {
-	if _, err := p.expect(token.Alias); err != nil {
-		return nil, err
-	}
+func (p parser) parseAlias() *ast.AliasDecl {
+	p.expect(token.Alias)
 
-	nameLexeme, err := p.expect(token.Identifier)
-	if err != nil {
-		return nil, errors.New("Expected identifier")
-	}
+	nameLexeme := p.expect(token.Identifier)
 
-	if _, err := p.expect(token.Assign); err != nil {
-		return nil, err
-	}
+	p.expect(token.Assign)
 
-	targetType, err := p.parseType()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ast.AliasDecl{Name: nameLexeme.Value, Type: targetType}, nil
+	targetType := p.parseType()
+	return &ast.AliasDecl{Name: nameLexeme.Value, Type: targetType}
 }
 
-func (p parser) parseIf() (*ast.IfStmt, error) {
-	if _, err := p.expect(token.If); err != nil {
-		return nil, err
-	}
+func (p parser) parseIf() *ast.IfStmt {
+	p.expect(token.If)
 
-	mainCondition, err := p.parseCondition()
-	if err != nil {
-		return nil, err
-	}
-
-	return mainCondition, err
+	mainCondition := p.parseCondition()
+	return mainCondition
 }
 
 // Parses the condition part of an if statement, and then
 // elif or else.
-func (p parser) parseCondition() (*ast.IfStmt, error) {
+func (p parser) parseCondition() *ast.IfStmt {
 	var condition ast.Expression
 	var ifPart *ast.BlockStmt
 	var elsePart ast.Node
-	var err error
 
-	if _, err := p.expect(token.OpenParen); err != nil {
-		return nil, errors.New("Expected open parenthesis")
-	}
+	p.expect(token.OpenParen)
 
-	condition, err = p.parseExpr()
-	if err != nil {
-		return nil, err
-	}
+	condition = p.parseExpr()
 
-	if _, err := p.expect(token.CloseParen); err != nil {
-		return nil, errors.New("Expected close parenthesis")
-	}
+	p.expect(token.CloseParen)
 
-	ifPart, err = p.parseBlock()
-	if err != nil {
-		return nil, err
-	}
+	ifPart = p.parseBlock()
 
-	if ok, _ := p.allow(token.Elif); err == nil && ok {
-		elsePart, err = p.parseCondition()
-	} else if ok, _ := p.allow(token.Else); err == nil && ok {
-		elsePart, err = p.parseBlock()
-	}
-
-	if err != nil {
-		return nil, err
+	if ok := p.allow(token.Elif); ok {
+		elsePart = p.parseCondition()
+	} else if ok := p.allow(token.Else); ok {
+		elsePart = p.parseBlock()
 	}
 
 	return &ast.IfStmt{
 		Condition: condition,
 		Body:      ifPart,
 		Else:      elsePart,
-	}, nil
+	}
 }
 
-func (p parser) parseImportDecl() (*ast.ImportDecl, error) {
+func (p parser) parseImportDecl() *ast.ImportDecl {
 	var fullPackageName string
 
-	if _, err := p.expect(token.Import); err != nil {
-		return nil, err
-	}
+	p.expect(token.Import)
 
 	for true {
-		name, err := p.expect(token.Identifier)
-		if err != nil {
-			return nil, err
-		}
+		name := p.expect(token.Identifier)
 
 		fullPackageName += name.Value
 
-		if ok, _ := p.allow(token.Dot); !ok {
+		if ok := p.allow(token.Dot); !ok {
 			break
 		}
 
 		fullPackageName += "."
 	}
 
-	return &ast.ImportDecl{Name: fullPackageName}, nil
+	return &ast.ImportDecl{Name: fullPackageName}
 }
 
-func (p parser) parsePackageDecl() (*ast.PackageDecl, error) {
+func (p parser) parsePackageDecl() *ast.PackageDecl {
 	var fullPackageName string
 
-	if _, err := p.expect(token.Package); err != nil {
-		return nil, err
-	}
+	p.expect(token.Package)
 
 	for true {
-		name, err := p.expect(token.Identifier)
-		if err != nil {
-			return nil, err
-		}
+		name := p.expect(token.Identifier)
 
 		fullPackageName += name.Value
 
-		if ok, _ := p.allow(token.Dot); !ok {
+		if ok := p.allow(token.Dot); !ok {
 			break
 		}
 
 		fullPackageName += "."
 	}
 
-	return &ast.PackageDecl{Name: fullPackageName}, nil
+	return &ast.PackageDecl{Name: fullPackageName}
 }
 
-func (p parser) parseVarDecl() (*ast.VarDecl, error) {
+func (p parser) parseVarDecl() *ast.VarDecl {
 	var idLexeme lexer.Lexeme
 	var nodeType ast.Type
 	var nodeValue ast.Expression
-	var err error
 
-	if _, err := p.expect(token.Var); err != nil {
-		return nil, err
-	}
+	p.expect(token.Var)
 
-	if idLexeme, err = p.expect(token.Identifier); err != nil {
-		return nil, err
-	}
+	idLexeme = p.expect(token.Identifier)
 
-	if nodeType, err = p.tryParseColonType(); err != nil {
-		return nil, err
-	}
+	nodeType = p.tryParseColonType()
 
-	if nodeValue, err = p.tryParseEqualValue(); err != nil {
-		return nil, err
-	}
+	nodeValue = p.tryParseEqualValue()
 
 	return &ast.VarDecl{
 		Name:  idLexeme.Value,
 		Type:  nodeType,
 		Value: nodeValue,
-	}, nil
+	}
 }
 
-func (p parser) tryParseColonType() (ast.Type, error) {
-	if ok, err := p.allow(token.Colon); err != nil {
-		return nil, err
-	} else if ok {
+func (p parser) tryParseColonType() ast.Type {
+	if ok := p.allow(token.Colon); ok {
 		return p.parseType()
 	}
 
-	return nil, nil
+	return nil
 }
 
-func (p parser) tryParseEqualValue() (ast.Expression, error) {
-	if ok, err := p.allow(token.Assign); err != nil {
-		return nil, err
-	} else if ok {
+func (p parser) tryParseEqualValue() ast.Expression {
+	if ok := p.allow(token.Assign); ok {
 		return p.parseExpr()
 	}
 
-	return nil, nil
+	return nil
 }
