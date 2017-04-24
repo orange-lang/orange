@@ -14,6 +14,7 @@ import (
 
 var _ = Describe("Parsing Types", func() {
 	DescribeTable("should be able to parse a", expectType,
+		Entry("void", "void", &ast.VoidType{}),
 		Entry("int", "int", &ast.IntType{Size: 64, Signed: true}),
 		Entry("int8", "int8", &ast.IntType{Size: 8, Signed: true}),
 		Entry("int16", "int16", &ast.IntType{Size: 16, Signed: true}),

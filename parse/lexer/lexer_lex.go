@@ -290,6 +290,7 @@ func lexKeywordOrIdentifier(s RuneStream) (Lexeme, error) {
 		"false":     token.BoolVal,
 		"true":      token.BoolVal,
 		"alias":     token.Alias,
+		"void":      token.Void,
 	}
 
 	value := ""
