@@ -11,7 +11,7 @@ import (
 func isStatementToken(t token.Token) bool {
 	return t == token.Var || t == token.Package || t == token.Import ||
 		t == token.If || t == token.Alias || isLoopToken(t) || t == token.Enum ||
-		t == token.Try
+		t == token.Try || t == token.Extern
 }
 
 func (p parser) parseStatement() ast.Statement {
@@ -40,6 +40,8 @@ func (p parser) parseStatement() ast.Statement {
 		return p.parseEnum()
 	case token.Try:
 		return p.parseTry()
+	case token.Extern:
+		return p.parseExternFunc()
 	}
 
 	panic(errors.New("Unexpected lexeme"))
