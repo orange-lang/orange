@@ -193,6 +193,7 @@ func lexOperator(s RuneStream) (Lexeme, error) {
 		"--":  token.Decrement,
 		"<<=": token.ShiftLeftAssign,
 		">>=": token.ShiftRightAssign,
+		"...": token.Elipsis,
 	}
 
 	l := Lexeme{}

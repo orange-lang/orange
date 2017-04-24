@@ -109,6 +109,7 @@ const (
 	Comma
 	Colon
 	Arrow
+	Elipsis
 
 	//
 	// Comparison operators
