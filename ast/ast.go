@@ -116,22 +116,23 @@ type CatchStmt struct {
 	Body     *BlockStmt
 }
 
-//
-// Expressions
-//
-
-type FunctionExpr struct {
+type FunctionStmt struct {
 	Name       string
 	Parameters []*VarDecl
 	RetType    Type
 	Body       *BlockStmt
 }
 
-type ExternFuncExpr struct {
-	Name       string
-	Parameters []*VarDecl
-	RetType    Type
+type ExternFuncStmt struct {
+	Name             string
+	Parameters       []*VarDecl
+	RetType          Type
+	VariableArgument bool
 }
+
+//
+// Expressions
+//
 
 type ArrayExpr struct {
 	Members []Expression
@@ -227,8 +228,8 @@ func (s IfStmt) isNode()           {}
 func (s LoopStmt) isNode()         {}
 func (s TryStmt) isNode()          {}
 func (s CatchStmt) isNode()        {}
-func (e FunctionExpr) isNode()     {}
-func (e ExternFuncExpr) isNode()   {}
+func (s FunctionStmt) isNode()     {}
+func (s ExternFuncStmt) isNode()   {}
 func (e ArrayExpr) isNode()        {}
 func (e UnaryExpr) isNode()        {}
 func (e BinaryExpr) isNode()       {}
@@ -245,25 +246,25 @@ func (e FloatExpr) isNode()        {}
 func (i NamedIDExpr) isNode()      {}
 func (i IDAccessExpr) isNode()     {}
 
-func (s BlockStmt) isStatement()     {}
-func (s AliasDecl) isStatement()     {}
-func (s ClassDecl) isStatement()     {}
-func (s VarDecl) isStatement()       {}
-func (s GetterStmt) isStatement()    {}
-func (s SetterStmt) isStatement()    {}
-func (s PropertyDecl) isStatement()  {}
-func (s EnumDecl) isStatement()      {}
-func (s ExtensionDecl) isStatement() {}
-func (s InterfaceDecl) isStatement() {}
-func (s PackageDecl) isStatement()   {}
-func (s ImportDecl) isStatement()    {}
-func (s LoopStmt) isStatement()      {}
-func (s IfStmt) isStatement()        {}
-func (s TryStmt) isStatement()       {}
-func (s CatchStmt) isStatement()     {}
+func (s BlockStmt) isStatement()      {}
+func (s AliasDecl) isStatement()      {}
+func (s ClassDecl) isStatement()      {}
+func (s VarDecl) isStatement()        {}
+func (s GetterStmt) isStatement()     {}
+func (s SetterStmt) isStatement()     {}
+func (s PropertyDecl) isStatement()   {}
+func (s EnumDecl) isStatement()       {}
+func (s ExtensionDecl) isStatement()  {}
+func (s InterfaceDecl) isStatement()  {}
+func (s PackageDecl) isStatement()    {}
+func (s ImportDecl) isStatement()     {}
+func (s LoopStmt) isStatement()       {}
+func (s IfStmt) isStatement()         {}
+func (s TryStmt) isStatement()        {}
+func (s CatchStmt) isStatement()      {}
+func (s FunctionStmt) isStatement()   {}
+func (s ExternFuncStmt) isStatement() {}
 
-func (e FunctionExpr) isExpression()     {}
-func (e ExternFuncExpr) isExpression()   {}
 func (e ArrayExpr) isExpression()        {}
 func (e UnaryExpr) isExpression()        {}
 func (e BinaryExpr) isExpression()       {}
