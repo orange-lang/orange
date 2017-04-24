@@ -56,6 +56,7 @@ var _ = Describe("Operators", func() {
 		Entry(">>=", ">>=", ">>="),
 		Entry("++", "++", "++"),
 		Entry("--", "--", "--"),
+		Entry("...", "...", "..."),
 	)
 
 	DescribeTable("should get lexed when the operator is", expectToken,
@@ -105,5 +106,6 @@ var _ = Describe("Operators", func() {
 		Entry(">>=", ">>=", token.ShiftRightAssign),
 		Entry("++", "++", token.Increment),
 		Entry("--", "--", token.Decrement),
+		Entry("...", "...", token.Elipsis),
 	)
 })
