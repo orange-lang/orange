@@ -4,6 +4,8 @@ type Type interface {
 	isType()
 }
 
+type VoidType struct{}
+
 type IntType struct {
 	Size   int
 	Signed bool
@@ -29,6 +31,7 @@ type PointerType struct {
 	InnerType Type
 }
 
+func (t VoidType) isType()    {}
 func (t IntType) isType()     {}
 func (t NamedType) isType()   {}
 func (t FloatType) isType()   {}
