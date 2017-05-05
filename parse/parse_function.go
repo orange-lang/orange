@@ -5,6 +5,58 @@ import (
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
+func (p parser) parseFunc() *ast.FunctionStmt {
+	var name string
+	var params []*ast.VarDecl
+	var retTy ast.Type
+	var genericParams []ast.Type
+	var body *ast.BlockStmt
+
+	p.expect(token.Def)
+
+	if p.peek(token.LT) {
+		genericParams = p.parseGenericList()
+	}
+
+	name = p.expect(token.Identifier).Value
+
+	p.expect(token.OpenParen)
+	params, _ = p.parseVarDeclList(false)
+	p.expect(token.CloseParen)
+
+	if p.allow(token.Arrow) {
+		retTy = p.parseType()
+	} else {
+		retTy = &ast.VoidType{}
+	}
+
+	body = p.parseBlock()
+
+	return &ast.FunctionStmt{
+		Name:         name,
+		GenericTypes: genericParams,
+		Parameters:   params,
+		RetType:      retTy,
+		Body:         body,
+	}
+}
+
+func (p parser) parseGenericList() (types []ast.Type) {
+	p.expect(token.LT)
+
+	tyName := p.expect(token.Identifier).Value
+	types = append(types, &ast.NamedType{Name: tyName})
+
+	for p.allow(token.Comma) {
+		tyName = p.expect(token.Identifier).Value
+		types = append(types, &ast.NamedType{Name: tyName})
+	}
+
+	p.expect(token.GT)
+
+	return
+}
+
 func (p parser) parseExternFunc() *ast.ExternFuncStmt {
 	var name string
 	var params []*ast.VarDecl
@@ -16,7 +68,7 @@ func (p parser) parseExternFunc() *ast.ExternFuncStmt {
 	name = p.expect(token.Identifier).Value
 
 	p.expect(token.OpenParen)
-	params, varArg := p.parseVarDeclList()
+	params, varArg := p.parseVarDeclList(true)
 	p.expect(token.CloseParen)
 
 	if p.allow(token.Arrow) {
@@ -33,7 +85,7 @@ func (p parser) parseExternFunc() *ast.ExternFuncStmt {
 	}
 }
 
-func (p parser) parseVarDeclList() (params []*ast.VarDecl, isVarArg bool) {
+func (p parser) parseVarDeclList(allowVarArg bool) (params []*ast.VarDecl, isVarArg bool) {
 	params = []*ast.VarDecl{}
 
 	if !p.peek(token.Identifier) {
@@ -43,7 +95,7 @@ func (p parser) parseVarDeclList() (params []*ast.VarDecl, isVarArg bool) {
 	params = append(params, p.parseParam())
 
 	for p.allow(token.Comma) {
-		if p.allow(token.Elipsis) {
+		if allowVarArg && p.allow(token.Elipsis) {
 			isVarArg = true
 			break
 		}

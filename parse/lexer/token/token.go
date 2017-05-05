@@ -94,6 +94,7 @@ const (
 	Property
 	This
 	Alias
+	Return
 
 	//
 	// Operators
