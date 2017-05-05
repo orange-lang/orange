@@ -62,5 +62,6 @@ var _ = Describe("Keywords", func() {
 		Entry("this", "this", token.This),
 		Entry("alias", "alias", token.Alias),
 		Entry("void", "void", token.Void),
+		Entry("return", "return", token.Return),
 	)
 })

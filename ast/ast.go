@@ -117,10 +117,11 @@ type CatchStmt struct {
 }
 
 type FunctionStmt struct {
-	Name       string
-	Parameters []*VarDecl
-	RetType    Type
-	Body       *BlockStmt
+	Name         string
+	GenericTypes []Type
+	Parameters   []*VarDecl
+	RetType      Type
+	Body         *BlockStmt
 }
 
 type ExternFuncStmt struct {
@@ -128,6 +129,10 @@ type ExternFuncStmt struct {
 	Parameters       []*VarDecl
 	RetType          Type
 	VariableArgument bool
+}
+
+type ReturnStmt struct {
+	Value Expression
 }
 
 //
@@ -230,6 +235,7 @@ func (s TryStmt) isNode()          {}
 func (s CatchStmt) isNode()        {}
 func (s FunctionStmt) isNode()     {}
 func (s ExternFuncStmt) isNode()   {}
+func (s ReturnStmt) isNode()       {}
 func (e ArrayExpr) isNode()        {}
 func (e UnaryExpr) isNode()        {}
 func (e BinaryExpr) isNode()       {}
@@ -264,6 +270,7 @@ func (s TryStmt) isStatement()        {}
 func (s CatchStmt) isStatement()      {}
 func (s FunctionStmt) isStatement()   {}
 func (s ExternFuncStmt) isStatement() {}
+func (s ReturnStmt) isStatement()     {}
 
 func (e ArrayExpr) isExpression()        {}
 func (e UnaryExpr) isExpression()        {}

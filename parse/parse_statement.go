@@ -11,7 +11,7 @@ import (
 func isStatementToken(t token.Token) bool {
 	return t == token.Var || t == token.Package || t == token.Import ||
 		t == token.If || t == token.Alias || isLoopToken(t) || t == token.Enum ||
-		t == token.Try || t == token.Extern
+		t == token.Try || t == token.Extern || t == token.Def || t == token.Return
 }
 
 func (p parser) parseStatement() ast.Statement {
@@ -42,9 +42,25 @@ func (p parser) parseStatement() ast.Statement {
 		return p.parseTry()
 	case token.Extern:
 		return p.parseExternFunc()
+	case token.Def:
+		return p.parseFunc()
+	case token.Return:
+		return p.parseReturnStmt()
 	}
 
 	panic(errors.New("Unexpected lexeme"))
+}
+
+func (p parser) parseReturnStmt() *ast.ReturnStmt {
+	var value ast.Expression
+
+	p.expect(token.Return)
+
+	if p.peekFrom(isExpressionToken) {
+		value = p.parseExpr()
+	}
+
+	return &ast.ReturnStmt{Value: value}
 }
 
 func (p parser) parseTry() *ast.TryStmt {
