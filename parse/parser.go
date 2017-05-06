@@ -53,7 +53,7 @@ func (p parser) parseNodeWithRecovery() (node ast.Node, err error) {
 }
 
 func (p parser) parseBlock() *ast.BlockStmt {
-	p.expect(token.OpenCurly)
+	p.nextConcrete(token.OpenCurly)
 
 	nodes := []ast.Node{}
 
