@@ -11,11 +11,16 @@ func (p parser) parseFunc() *ast.FunctionStmt {
 	var retTy ast.Type
 	var genericParams []ast.Type
 	var body *ast.BlockStmt
+	var isDtor bool
 
 	p.expect(token.Def)
 
 	if p.peek(token.LT) {
 		genericParams = p.parseGenericList()
+	}
+
+	if p.allow(token.BitNot) {
+		isDtor = true
 	}
 
 	name = p.expect(token.Identifier).Value
@@ -36,6 +41,7 @@ func (p parser) parseFunc() *ast.FunctionStmt {
 		Parameters:   params,
 		RetType:      retTy,
 		Body:         body,
+		Destructor:   isDtor,
 	}
 }
 
