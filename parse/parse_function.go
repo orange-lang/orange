@@ -26,8 +26,6 @@ func (p parser) parseFunc() *ast.FunctionStmt {
 
 	if p.allow(token.Arrow) {
 		retTy = p.parseType()
-	} else {
-		retTy = &ast.VoidType{}
 	}
 
 	body = p.parseBlock()
