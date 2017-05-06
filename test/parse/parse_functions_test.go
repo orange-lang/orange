@@ -11,14 +11,12 @@ var _ = DescribeTable("Parsing functions", expectNode,
 	{}`, &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.VarDecl{},
-		RetType:    &ast.VoidType{},
 		Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	Entry("no arguments, return type, or body", "def foo() {  }", &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.VarDecl{},
-		RetType:    &ast.VoidType{},
 		Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
@@ -28,7 +26,6 @@ var _ = DescribeTable("Parsing functions", expectNode,
 	}`, &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.VarDecl{},
-		RetType:    &ast.VoidType{},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.IntExpr{Value: 5, Size: 64},
 			&ast.IntExpr{Value: 3, Size: 64},
@@ -40,7 +37,6 @@ var _ = DescribeTable("Parsing functions", expectNode,
 	}`, &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.VarDecl{},
-		RetType:    &ast.VoidType{},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.ReturnStmt{Value: &ast.IntExpr{Value: 5, Size: 64}},
 		}},
@@ -51,7 +47,6 @@ var _ = DescribeTable("Parsing functions", expectNode,
 	}`, &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.VarDecl{},
-		RetType:    &ast.VoidType{},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.ReturnStmt{},
 		}},
@@ -69,8 +64,7 @@ var _ = DescribeTable("Parsing functions", expectNode,
 		Parameters: []*ast.VarDecl{
 			&ast.VarDecl{Name: "a", Type: &ast.VoidType{}},
 		},
-		RetType: &ast.VoidType{},
-		Body:    &ast.BlockStmt{Nodes: []ast.Node{}},
+		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	Entry("multiple parameters", "def foo(a: void, b: void) {}", &ast.FunctionStmt{
@@ -79,14 +73,12 @@ var _ = DescribeTable("Parsing functions", expectNode,
 			&ast.VarDecl{Name: "a", Type: &ast.VoidType{}},
 			&ast.VarDecl{Name: "b", Type: &ast.VoidType{}},
 		},
-		RetType: &ast.VoidType{},
-		Body:    &ast.BlockStmt{Nodes: []ast.Node{}},
+		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	Entry("one generic type", "def<T> foo() {}", &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.VarDecl{},
-		RetType:    &ast.VoidType{},
 		Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 		GenericTypes: []ast.Type{
 			&ast.NamedType{Name: "T"},
@@ -96,7 +88,6 @@ var _ = DescribeTable("Parsing functions", expectNode,
 	Entry("multiple generic types", "def<T,V,U> foo() {}", &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.VarDecl{},
-		RetType:    &ast.VoidType{},
 		Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 		GenericTypes: []ast.Type{
 			&ast.NamedType{Name: "T"},
