@@ -13,7 +13,7 @@ func isClassStmtToken(t token.Token) bool {
 
 func (p parser) parseClass() *ast.ClassDecl {
 	var name string
-	var supers []ast.Identifier
+	var supers []ast.Type
 	var genericParams []ast.Type
 	var body *ast.BlockStmt
 
@@ -26,7 +26,7 @@ func (p parser) parseClass() *ast.ClassDecl {
 	name = p.expect(token.Identifier).Value
 
 	if p.allow(token.Colon) {
-		supers = p.parseIdentifierList()
+		supers = p.parseTypeList()
 	}
 
 	body = p.parseClassBody()
@@ -143,13 +143,13 @@ func (p parser) parseSetter() *ast.SetterStmt {
 	}
 }
 
-func (p parser) parseIdentifierList() (ids []ast.Identifier) {
-	idName := p.expect(token.Identifier).Value
-	ids = append(ids, &ast.NamedIDExpr{Name: idName})
+func (p parser) parseTypeList() (tys []ast.Type) {
+	ty := p.parseType()
+	tys = append(tys, ty)
 
 	for p.allow(token.Comma) {
-		idName = p.expect(token.Identifier).Value
-		ids = append(ids, &ast.NamedIDExpr{Name: idName})
+		ty := p.parseType()
+		tys = append(tys, ty)
 	}
 
 	return

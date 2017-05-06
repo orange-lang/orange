@@ -58,18 +58,18 @@ var _ = DescribeTable("Parsing classes", expectNode,
 
 	Entry("one super", "class TestClass : Super1 { }", &ast.ClassDecl{
 		Name: "TestClass",
-		Supers: []ast.Identifier{
-			&ast.NamedIDExpr{Name: "Super1"},
+		Supers: []ast.Type{
+			&ast.NamedType{Name: "Super1"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	Entry("multiple supers", "class TestClass : Super1, Super2, Super3 { }", &ast.ClassDecl{
 		Name: "TestClass",
-		Supers: []ast.Identifier{
-			&ast.NamedIDExpr{Name: "Super1"},
-			&ast.NamedIDExpr{Name: "Super2"},
-			&ast.NamedIDExpr{Name: "Super3"},
+		Supers: []ast.Type{
+			&ast.NamedType{Name: "Super1"},
+			&ast.NamedType{Name: "Super2"},
+			&ast.NamedType{Name: "Super3"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),

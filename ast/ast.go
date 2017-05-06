@@ -40,7 +40,7 @@ type AliasDecl struct {
 type ClassDecl struct {
 	Name         string
 	GenericTypes []Type
-	Supers       []Identifier
+	Supers       []Type
 	Body         *BlockStmt
 }
 
