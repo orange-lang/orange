@@ -87,14 +87,15 @@ type EnumDecl struct {
 }
 
 type ExtensionDecl struct {
-	Name   string
-	Supers []Identifier
-	Body   *BlockStmt
+	Original     Type
+	GenericTypes []Type
+	Supers       []Type
+	Body         *BlockStmt
 }
 
 type InterfaceDecl struct {
 	Name   string
-	Supers []Identifier
+	Supers []Type
 	Body   *BlockStmt
 }
 
