@@ -105,6 +105,12 @@ func isStatementTerminator(t token.Token) bool {
 	return t == token.Semicolon || t == token.Newline || t == token.EOF
 }
 
+func (p parser) consumeTerminators() {
+	for p.allowFrom(isStatementTerminator) {
+		// Do nothing
+	}
+}
+
 func (p parser) consumeUntilTerminator() {
 	lexeme, _ := p.stream.Peek()
 

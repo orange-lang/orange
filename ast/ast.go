@@ -38,9 +38,10 @@ type AliasDecl struct {
 }
 
 type ClassDecl struct {
-	Name   string
-	Supers []Identifier
-	Body   *BlockStmt
+	Name         string
+	GenericTypes []Type
+	Supers       []Identifier
+	Body         *BlockStmt
 }
 
 type VarDecl struct {
@@ -118,6 +119,7 @@ type CatchStmt struct {
 
 type FunctionStmt struct {
 	Name         string
+	Destructor   bool
 	GenericTypes []Type
 	Parameters   []*VarDecl
 	RetType      Type
@@ -168,6 +170,9 @@ type ArrayAccessExpr struct {
 type MemberAccessExpr struct {
 	Object Expression
 	Name   string
+}
+
+type ThisExpr struct {
 }
 
 type StringExpr struct {
@@ -249,6 +254,7 @@ func (e IntExpr) isNode()          {}
 func (e UIntExpr) isNode()         {}
 func (e DoubleExpr) isNode()       {}
 func (e FloatExpr) isNode()        {}
+func (e ThisExpr) isNode()         {}
 func (i NamedIDExpr) isNode()      {}
 func (i IDAccessExpr) isNode()     {}
 
@@ -285,6 +291,7 @@ func (e IntExpr) isExpression()          {}
 func (e UIntExpr) isExpression()         {}
 func (e DoubleExpr) isExpression()       {}
 func (e FloatExpr) isExpression()        {}
+func (e ThisExpr) isExpression()         {}
 func (i NamedIDExpr) isExpression()      {}
 func (i IDAccessExpr) isExpression()     {}
 
