@@ -94,9 +94,10 @@ type ExtensionDecl struct {
 }
 
 type InterfaceDecl struct {
-	Name   string
-	Supers []Type
-	Body   *BlockStmt
+	Name         string
+	GenericTypes []Type
+	Supers       []Type
+	Body         *BlockStmt
 }
 
 type PackageDecl struct {
