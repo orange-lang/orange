@@ -7,6 +7,14 @@ import (
 )
 
 var _ = DescribeTable("Parsing functions", expectNode,
+	Entry("body on new line", `def foo() 
+	{}`, &ast.FunctionStmt{
+		Name:       "foo",
+		Parameters: []*ast.VarDecl{},
+		RetType:    &ast.VoidType{},
+		Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
+	}),
+
 	Entry("no arguments, return type, or body", "def foo() {  }", &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.VarDecl{},
