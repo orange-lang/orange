@@ -73,7 +73,7 @@ func (p parser) parseClassStmt() ast.Node {
 
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
 	case token.Var:
-		return p.parseVarDecl()
+		return p.parseMemberDecl()
 	case token.Property:
 		return p.parseProperty()
 	case token.Def:
@@ -81,6 +81,16 @@ func (p parser) parseClassStmt() ast.Node {
 	}
 
 	panic(errors.New("Unexpected lexeme"))
+}
+
+func (p parser) parseMemberDecl() *ast.MemberDecl {
+	varDecl := p.parseVarDecl()
+
+	return &ast.MemberDecl{
+		Name:  varDecl.Name,
+		Type:  varDecl.Type,
+		Value: varDecl.Value,
+	}
 }
 
 func (p parser) parseProperty() *ast.PropertyDecl {

@@ -83,7 +83,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
-			&ast.VarDecl{Name: "a", Type: &ast.BoolType{}},
+			&ast.MemberDecl{Name: "a", Type: &ast.BoolType{}},
 		}},
 	}),
 
@@ -93,8 +93,8 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
-			&ast.VarDecl{Name: "a", Type: &ast.BoolType{}},
-			&ast.VarDecl{Name: "b", Type: &ast.BoolType{}},
+			&ast.MemberDecl{Name: "a", Type: &ast.BoolType{}},
+			&ast.MemberDecl{Name: "b", Type: &ast.BoolType{}},
 		}},
 	}),
 
@@ -103,8 +103,8 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
-			&ast.VarDecl{Name: "a", Type: &ast.BoolType{}},
-			&ast.VarDecl{Name: "b", Type: &ast.BoolType{}},
+			&ast.MemberDecl{Name: "a", Type: &ast.BoolType{}},
+			&ast.MemberDecl{Name: "b", Type: &ast.BoolType{}},
 		}},
 	}),
 
