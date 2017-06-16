@@ -106,7 +106,7 @@ func (p parser) parseCatch() *ast.CatchStmt {
 
 	p.expect(token.OpenParen)
 
-	exVar := p.parseVarDecl()
+	exVar := p.parseParam()
 
 	p.expect(token.CloseParen)
 
