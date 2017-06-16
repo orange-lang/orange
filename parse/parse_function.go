@@ -7,7 +7,7 @@ import (
 
 func (p parser) parseFunc() *ast.FunctionStmt {
 	var name string
-	var params []*ast.VarDecl
+	var params []*ast.ParamDecl
 	var retTy ast.Type
 	var genericParams []ast.Type
 	var body *ast.BlockStmt
@@ -63,7 +63,7 @@ func (p parser) parseGenericList() (types []ast.Type) {
 
 func (p parser) parseExternFunc() *ast.ExternFuncStmt {
 	var name string
-	var params []*ast.VarDecl
+	var params []*ast.ParamDecl
 	var retTy ast.Type
 
 	p.expect(token.Extern)
@@ -89,8 +89,8 @@ func (p parser) parseExternFunc() *ast.ExternFuncStmt {
 	}
 }
 
-func (p parser) parseVarDeclList(allowVarArg bool) (params []*ast.VarDecl, isVarArg bool) {
-	params = []*ast.VarDecl{}
+func (p parser) parseVarDeclList(allowVarArg bool) (params []*ast.ParamDecl, isVarArg bool) {
+	params = []*ast.ParamDecl{}
 
 	if !p.peek(token.Identifier) {
 		return
@@ -110,11 +110,11 @@ func (p parser) parseVarDeclList(allowVarArg bool) (params []*ast.VarDecl, isVar
 	return
 }
 
-func (p parser) parseParam() *ast.VarDecl {
+func (p parser) parseParam() *ast.ParamDecl {
 	name := p.expect(token.Identifier).Value
 
 	p.expect(token.Colon)
 	ty := p.parseType()
 
-	return &ast.VarDecl{Name: name, Type: ty}
+	return &ast.ParamDecl{Name: name, Type: ty}
 }

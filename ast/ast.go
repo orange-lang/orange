@@ -50,6 +50,13 @@ type VarDecl struct {
 	Value Expression
 }
 
+// ParamDecl is similar to VarDecl but is only found as a parameter to a function
+// or method
+type ParamDecl struct {
+	Name string
+	Type Type
+}
+
 // MemberDecl is similar to a VarDecl but is only found in the body of a class
 // (i.e., is it a declaration of a class member)
 type MemberDecl struct {
@@ -63,7 +70,7 @@ type GetterStmt struct {
 }
 
 type SetterStmt struct {
-	SetterVariable *VarDecl
+	SetterVariable *ParamDecl
 	Body           *BlockStmt
 }
 
@@ -123,7 +130,7 @@ type TryStmt struct {
 }
 
 type CatchStmt struct {
-	Variable *VarDecl
+	Variable *ParamDecl
 	Body     *BlockStmt
 }
 
@@ -131,14 +138,14 @@ type FunctionStmt struct {
 	Name         string
 	Destructor   bool
 	GenericTypes []Type
-	Parameters   []*VarDecl
+	Parameters   []*ParamDecl
 	RetType      Type
 	Body         *BlockStmt
 }
 
 type ExternFuncStmt struct {
 	Name             string
-	Parameters       []*VarDecl
+	Parameters       []*ParamDecl
 	RetType          Type
 	VariableArgument bool
 }
@@ -236,6 +243,7 @@ func (s BlockStmt) isNode()        {}
 func (s AliasDecl) isNode()        {}
 func (s ClassDecl) isNode()        {}
 func (s VarDecl) isNode()          {}
+func (s ParamDecl) isNode()        {}
 func (s MemberDecl) isNode()       {}
 func (s GetterStmt) isNode()       {}
 func (s SetterStmt) isNode()       {}
@@ -273,6 +281,7 @@ func (s BlockStmt) isStatement()      {}
 func (s AliasDecl) isStatement()      {}
 func (s ClassDecl) isStatement()      {}
 func (s VarDecl) isStatement()        {}
+func (s ParamDecl) isStatement()      {}
 func (s MemberDecl) isStatement()     {}
 func (s GetterStmt) isStatement()     {}
 func (s SetterStmt) isStatement()     {}

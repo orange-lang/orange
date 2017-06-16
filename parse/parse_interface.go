@@ -81,7 +81,7 @@ func (p parser) parseInterfaceStmt() ast.Node {
 
 func (p parser) parseInterfaceMethod() *ast.FunctionStmt {
 	var name string
-	var params []*ast.VarDecl
+	var params []*ast.ParamDecl
 	var retTy ast.Type
 	var genericParams []ast.Type
 

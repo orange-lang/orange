@@ -148,7 +148,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 					}},
 				},
 				Setter: &ast.SetterStmt{
-					SetterVariable: &ast.VarDecl{Name: "value", Type: &ast.BoolType{}},
+					SetterVariable: &ast.ParamDecl{Name: "value", Type: &ast.BoolType{}},
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.BoolExpr{Value: true},
 					}},
@@ -173,7 +173,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 					}},
 				},
 				Setter: &ast.SetterStmt{
-					SetterVariable: &ast.VarDecl{Name: "value", Type: &ast.BoolType{}},
+					SetterVariable: &ast.ParamDecl{Name: "value", Type: &ast.BoolType{}},
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.BoolExpr{Value: true},
 					}},
@@ -193,7 +193,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.FunctionStmt{
 				Name:       "foo",
-				Parameters: []*ast.VarDecl{},
+				Parameters: []*ast.ParamDecl{},
 				Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 			},
 		}},
@@ -206,7 +206,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.FunctionStmt{
 				Name:       "foo",
-				Parameters: []*ast.VarDecl{},
+				Parameters: []*ast.ParamDecl{},
 				Body: &ast.BlockStmt{Nodes: []ast.Node{
 					&ast.ReturnStmt{Value: &ast.ThisExpr{}},
 				}},
@@ -226,7 +226,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 			&ast.FunctionStmt{
 				Name:       "TestClass",
 				Destructor: true,
-				Parameters: []*ast.VarDecl{},
+				Parameters: []*ast.ParamDecl{},
 				Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 			},
 		}},
