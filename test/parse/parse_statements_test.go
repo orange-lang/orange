@@ -21,7 +21,7 @@ var _ = Describe("Parsing Statements", func() {
 				&ast.IntExpr{Value: 2, Size: 64},
 			}},
 			Catch: []*ast.CatchStmt{&ast.CatchStmt{
-				Variable: &ast.VarDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+				Variable: &ast.ParamDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
 				Body: &ast.BlockStmt{Nodes: []ast.Node{
 					&ast.IntExpr{Value: 3, Size: 64},
 					&ast.IntExpr{Value: 4, Size: 64},
@@ -45,14 +45,14 @@ var _ = Describe("Parsing Statements", func() {
 			}},
 			Catch: []*ast.CatchStmt{
 				&ast.CatchStmt{
-					Variable: &ast.VarDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+					Variable: &ast.ParamDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.IntExpr{Value: 3, Size: 64},
 						&ast.IntExpr{Value: 4, Size: 64},
 					}},
 				},
 				&ast.CatchStmt{
-					Variable: &ast.VarDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+					Variable: &ast.ParamDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.IntExpr{Value: 5, Size: 64},
 						&ast.IntExpr{Value: 6, Size: 64},
@@ -76,7 +76,7 @@ var _ = Describe("Parsing Statements", func() {
 				&ast.IntExpr{Value: 2, Size: 64},
 			}},
 			Catch: []*ast.CatchStmt{&ast.CatchStmt{
-				Variable: &ast.VarDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+				Variable: &ast.ParamDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
 				Body: &ast.BlockStmt{Nodes: []ast.Node{
 					&ast.IntExpr{Value: 3, Size: 64},
 					&ast.IntExpr{Value: 4, Size: 64},

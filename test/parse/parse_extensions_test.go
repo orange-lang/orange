@@ -85,7 +85,7 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.FunctionStmt{
 				Name:       "foo",
-				Parameters: []*ast.VarDecl{},
+				Parameters: []*ast.ParamDecl{},
 				Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 			},
 		}},
