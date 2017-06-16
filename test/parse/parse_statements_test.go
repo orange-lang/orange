@@ -12,7 +12,7 @@ var _ = Describe("Parsing Statements", func() {
 		Entry("one catch ", `try {
 				1
 				2	
-			} catch (var e: Exception) {
+			} catch (e: Exception) {
 				3
 				4	
 			}`, &ast.TryStmt{
@@ -32,10 +32,10 @@ var _ = Describe("Parsing Statements", func() {
 		Entry("multiple catches", `try {
 				1
 				2	
-			} catch (var e: Exception) {
+			} catch (e: Exception) {
 				3
 				4	
-			} catch (var e: Exception) {
+			} catch (e: Exception) {
 				5
 				6	
 			}`, &ast.TryStmt{
@@ -64,7 +64,7 @@ var _ = Describe("Parsing Statements", func() {
 		Entry("finally block", `try {
 				1
 				2	
-			} catch (var e: Exception) {
+			} catch (e: Exception) {
 				3
 				4	
 			} finally {
