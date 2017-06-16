@@ -50,6 +50,14 @@ type VarDecl struct {
 	Value Expression
 }
 
+// MemberDecl is similar to a VarDecl but is only found in the body of a class
+// (i.e., is it a declaration of a class member)
+type MemberDecl struct {
+	Name  string
+	Type  Type
+	Value Expression
+}
+
 type GetterStmt struct {
 	Body *BlockStmt
 }
@@ -228,6 +236,7 @@ func (s BlockStmt) isNode()        {}
 func (s AliasDecl) isNode()        {}
 func (s ClassDecl) isNode()        {}
 func (s VarDecl) isNode()          {}
+func (s MemberDecl) isNode()       {}
 func (s GetterStmt) isNode()       {}
 func (s SetterStmt) isNode()       {}
 func (s PropertyDecl) isNode()     {}
@@ -264,6 +273,7 @@ func (s BlockStmt) isStatement()      {}
 func (s AliasDecl) isStatement()      {}
 func (s ClassDecl) isStatement()      {}
 func (s VarDecl) isStatement()        {}
+func (s MemberDecl) isStatement()     {}
 func (s GetterStmt) isStatement()     {}
 func (s SetterStmt) isStatement()     {}
 func (s PropertyDecl) isStatement()   {}
