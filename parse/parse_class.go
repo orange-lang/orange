@@ -9,7 +9,7 @@ import (
 
 func isClassStmtToken(t token.Token) bool {
 	return t == token.Var || t == token.Property || t == token.Def ||
-		isPrivacyToken(t)
+		isPrivacyToken(t) || t == token.Const
 }
 
 func (p parser) parseClass() *ast.ClassDecl {
@@ -73,6 +73,8 @@ func (p parser) parseClassStmt() ast.Node {
 	}
 
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
+	case token.Const:
+		fallthrough
 	case token.Var:
 		return p.parseMemberDecl()
 	case token.Property:
@@ -89,11 +91,18 @@ func (p parser) parseClassStmt() ast.Node {
 }
 
 func (p parser) parseMemberDecl() *ast.MemberDecl {
+	isConst := p.allow(token.Const)
+
 	varDecl := p.parseVarDecl()
+	ty := varDecl.Type
+
+	if isConst {
+		ty = &ast.ConstType{InnerType: ty}
+	}
 
 	return &ast.MemberDecl{
 		Name:  varDecl.Name,
-		Type:  varDecl.Type,
+		Type:  ty,
 		Value: varDecl.Value,
 	}
 }

@@ -62,6 +62,12 @@ var _ = Describe("Parsing Types", func() {
 				InnerType: &ast.IntType{Size: 64, Signed: true},
 			},
 		}),
+
+		Entry("const int[]", "const int[]", &ast.ConstType{
+			InnerType: &ast.ArrayType{
+				InnerType: &ast.IntType{Size: 64, Signed: true},
+			},
+		}),
 	)
 })
 

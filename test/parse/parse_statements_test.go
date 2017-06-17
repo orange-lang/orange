@@ -237,6 +237,20 @@ var _ = Describe("Parsing Statements", func() {
 			Type:  nil,
 			Value: nil,
 		}),
+
+		Entry("constant with type and value", "const var a: int = 5", &ast.VarDecl{
+			Name: "a",
+			Type: &ast.ConstType{
+				InnerType: &ast.IntType{Size: 64, Signed: true},
+			},
+			Value: &ast.IntExpr{Value: 5, Size: 64},
+		}),
+
+		Entry("constant with value", "const var a = 5", &ast.VarDecl{
+			Name:  "a",
+			Type:  &ast.ConstType{InnerType: nil},
+			Value: &ast.IntExpr{Value: 5, Size: 64},
+		}),
 	)
 
 	DescribeTable("should be able to handle package", expectNode,

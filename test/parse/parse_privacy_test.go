@@ -54,6 +54,19 @@ var _ = Describe("Parsing privacy", func() {
 			}},
 		}),
 
+		Entry("const member", `class Test {
+			public const var a: bool
+		}`, &ast.ClassDecl{
+			Name: "Test",
+			Body: &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.MemberDecl{
+					Name:    "a",
+					Type:    &ast.ConstType{InnerType: &ast.BoolType{}},
+					Privacy: ast.PrivacyPublic,
+				},
+			}},
+		}),
+
 		Entry("class property", `class Test {
 			public property Prop -> bool {
 				get { true; }

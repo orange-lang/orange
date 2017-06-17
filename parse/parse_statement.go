@@ -13,7 +13,7 @@ func isStatementToken(t token.Token) bool {
 		t == token.If || t == token.Alias || isLoopToken(t) || t == token.Enum ||
 		t == token.Try || t == token.Extern || t == token.Def || t == token.Return ||
 		t == token.Class || t == token.Extend || t == token.Interface ||
-		isPrivacyToken(t)
+		isPrivacyToken(t) || t == token.Const
 }
 
 func (p parser) parseStatement() ast.Statement {
@@ -22,6 +22,8 @@ func (p parser) parseStatement() ast.Statement {
 	}
 
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
+	case token.Const:
+		fallthrough
 	case token.Var:
 		return p.parseVarDecl()
 	case token.Package:
@@ -250,6 +252,8 @@ func (p parser) parsePackageDecl() *ast.PackageDecl {
 }
 
 func (p parser) parseVarDecl() *ast.VarDecl {
+	isConst := p.allow(token.Const)
+
 	var idLexeme lexer.Lexeme
 	var nodeType ast.Type
 	var nodeValue ast.Expression
@@ -257,10 +261,12 @@ func (p parser) parseVarDecl() *ast.VarDecl {
 	p.expect(token.Var)
 
 	idLexeme = p.expect(token.Identifier)
-
 	nodeType = p.tryParseColonType()
-
 	nodeValue = p.tryParseEqualValue()
+
+	if isConst {
+		nodeType = &ast.ConstType{InnerType: nodeType}
+	}
 
 	return &ast.VarDecl{
 		Name:  idLexeme.Value,
