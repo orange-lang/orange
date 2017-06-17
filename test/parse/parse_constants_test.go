@@ -92,5 +92,13 @@ var _ = Describe("Parsing constants", func() {
 		It("characters", func() {
 			expectNode("'t'", &ast.CharExpr{Value: 't'})
 		})
+
+		It("this", func() {
+			expectNode("this", &ast.ThisExpr{})
+		})
+
+		It("super", func() {
+			expectNode("super", &ast.SuperExpr{})
+		})
 	})
 })

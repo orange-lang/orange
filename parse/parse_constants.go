@@ -11,7 +11,8 @@ import (
 
 func isConstantToken(t token.Token) bool {
 	return t == token.StringVal || t == token.BoolVal ||
-		numberToken(t) || t == token.CharVal || t == token.This
+		numberToken(t) || t == token.CharVal || t == token.This ||
+		t == token.Super
 }
 
 func (p parser) parseConstant() ast.Expression {
@@ -30,6 +31,9 @@ func (p parser) parseConstant() ast.Expression {
 		return p.parseNumber()
 	case lexeme.Token == token.CharVal:
 		return p.parseChar()
+	case lexeme.Token == token.Super:
+		p.stream.Next()
+		return &ast.SuperExpr{}
 	case lexeme.Token == token.This:
 		p.stream.Next()
 		return &ast.ThisExpr{}

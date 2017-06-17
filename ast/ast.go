@@ -214,8 +214,9 @@ type GenericInst struct {
 	Annotations []Type
 }
 
-type ThisExpr struct {
-}
+type ThisExpr struct{}
+
+type SuperExpr struct{}
 
 type StringExpr struct {
 	Value string
@@ -301,6 +302,7 @@ func (e UIntExpr) isNode()         {}
 func (e DoubleExpr) isNode()       {}
 func (e FloatExpr) isNode()        {}
 func (e ThisExpr) isNode()         {}
+func (e SuperExpr) isNode()        {}
 func (i NamedIDExpr) isNode()      {}
 func (i IDAccessExpr) isNode()     {}
 
@@ -342,6 +344,7 @@ func (e UIntExpr) isExpression()         {}
 func (e DoubleExpr) isExpression()       {}
 func (e FloatExpr) isExpression()        {}
 func (e ThisExpr) isExpression()         {}
+func (e SuperExpr) isExpression()        {}
 func (i NamedIDExpr) isExpression()      {}
 func (i IDAccessExpr) isExpression()     {}
 
