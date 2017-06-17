@@ -93,6 +93,7 @@ const (
 	Of
 	Property
 	This
+	Super
 	Alias
 	Return
 
