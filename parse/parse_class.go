@@ -8,8 +8,12 @@ import (
 )
 
 func isClassStmtToken(t token.Token) bool {
+	return isClassComponentToken(t) || isPrivacyToken(t)
+}
+
+func isClassComponentToken(t token.Token) bool {
 	return t == token.Var || t == token.Property || t == token.Def ||
-		isPrivacyToken(t) || t == token.Const
+		t == token.Const
 }
 
 func (p parser) parseClass() *ast.ClassDecl {
@@ -72,6 +76,18 @@ func (p parser) parseClassStmt() ast.Node {
 		panic(errors.New("Expected statement"))
 	}
 
+	if p.peekFrom(isPrivacyToken) {
+		return p.parseClassPrivacy()
+	}
+
+	return p.parseClassComponent()
+}
+
+func (p parser) parseClassComponent() ast.PrivacyFlag {
+	if ok := p.peekFrom(isClassComponentToken); !ok {
+		panic(errors.New("Expected declaration"))
+	}
+
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
 	case token.Const:
 		fallthrough
@@ -81,10 +97,6 @@ func (p parser) parseClassStmt() ast.Node {
 		return p.parseProperty()
 	case token.Def:
 		return p.parseFunc()
-	default:
-		if isPrivacyToken(lexeme.Token) {
-			return p.parseClassPrivacy()
-		}
 	}
 
 	panic(errors.New("Unexpected lexeme"))

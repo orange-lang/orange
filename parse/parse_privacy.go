@@ -12,65 +12,25 @@ func isPrivacyToken(t token.Token) bool {
 		t == token.Package
 }
 
-func isPrivacyStatement(t token.Token) bool {
-	return t == token.Enum || t == token.Def || t == token.Class ||
-		t == token.Interface
-}
-
-func isClassPrivacyStatement(t token.Token) bool {
-	return t == token.Var || t == token.Property || t == token.Def ||
-		t == token.Const
-}
-
 func (p parser) parsePrivacy() ast.Statement {
 	privacyLevel := p.parsePrivacyLevel()
 
-	if ok := p.peekFrom(isPrivacyStatement); !ok {
+	if ok := p.peekFrom(isDeclarationToken); !ok {
 		panic(errors.New("Expected declaration"))
 	}
 
-	var declaration ast.PrivacyFlag
-
-	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
-	case token.Enum:
-		declaration = p.parseEnum()
-	case token.Def:
-		declaration = p.parseFunc()
-	case token.Class:
-		declaration = p.parseClass()
-	case token.Interface:
-		declaration = p.parseInterface()
-	default:
-		panic(errors.New("Unexpected lexeme"))
-	}
-
+	var declaration ast.PrivacyFlag = p.parseDeclaration()
 	declaration.SetPrivacyLevel(privacyLevel)
+
 	return declaration
 }
 
 func (p parser) parseClassPrivacy() ast.Statement {
 	privacyLevel := p.parsePrivacyLevel()
 
-	if ok := p.peekFrom(isClassPrivacyStatement); !ok {
-		panic(errors.New("Expected declaration"))
-	}
-
-	var declaration ast.PrivacyFlag
-
-	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
-	case token.Const:
-		fallthrough
-	case token.Var:
-		declaration = p.parseMemberDecl()
-	case token.Property:
-		declaration = p.parseProperty()
-	case token.Def:
-		declaration = p.parseFunc()
-	default:
-		panic(errors.New("Unexpected lexeme"))
-	}
-
+	var declaration ast.PrivacyFlag = p.parseClassComponent()
 	declaration.SetPrivacyLevel(privacyLevel)
+
 	return declaration
 }
 

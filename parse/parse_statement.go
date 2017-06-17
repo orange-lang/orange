@@ -16,6 +16,11 @@ func isStatementToken(t token.Token) bool {
 		isPrivacyToken(t) || t == token.Const
 }
 
+func isDeclarationToken(t token.Token) bool {
+	return t == token.Enum || t == token.Def || t == token.Class ||
+		t == token.Interface
+}
+
 func (p parser) parseStatement() ast.Statement {
 	if ok := p.peekFrom(isStatementToken); !ok {
 		panic(errors.New("Expected statement"))
@@ -40,26 +45,37 @@ func (p parser) parseStatement() ast.Statement {
 		return p.parseWhileLoop()
 	case token.Do:
 		return p.parseDoWhileLoop()
-	case token.Enum:
-		return p.parseEnum()
 	case token.Try:
 		return p.parseTry()
 	case token.Extern:
 		return p.parseExternFunc()
-	case token.Def:
-		return p.parseFunc()
 	case token.Return:
 		return p.parseReturnStmt()
-	case token.Class:
-		return p.parseClass()
 	case token.Extend:
 		return p.parseExtension()
-	case token.Interface:
-		return p.parseInterface()
 	default:
 		if isPrivacyToken(lexeme.Token) {
 			return p.parsePrivacy()
 		}
+	}
+
+	return p.parseDeclaration()
+}
+
+func (p parser) parseDeclaration() ast.PrivacyFlag {
+	if ok := p.peekFrom(isDeclarationToken); !ok {
+		panic(errors.New("Expected statement"))
+	}
+
+	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
+	case token.Enum:
+		return p.parseEnum()
+	case token.Def:
+		return p.parseFunc()
+	case token.Class:
+		return p.parseClass()
+	case token.Interface:
+		return p.parseInterface()
 	}
 
 	panic(errors.New("Unexpected lexeme"))
