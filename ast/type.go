@@ -31,6 +31,10 @@ type PointerType struct {
 	InnerType Type
 }
 
+type ConstType struct {
+	InnerType Type
+}
+
 func (t VoidType) isType()    {}
 func (t IntType) isType()     {}
 func (t NamedType) isType()   {}
@@ -40,3 +44,4 @@ func (t BoolType) isType()    {}
 func (t CharType) isType()    {}
 func (t ArrayType) isType()   {}
 func (t PointerType) isType() {}
+func (t ConstType) isType()   {}

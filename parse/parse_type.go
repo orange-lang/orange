@@ -25,9 +25,14 @@ func isTypeToken(t token.Token) bool {
 }
 
 func (p parser) parseType() ast.Type {
-	lexeme := p.expectFrom(isTypeToken)
-
+	var isConst bool
 	var ty ast.Type
+
+	if p.allow(token.Const) {
+		isConst = true
+	}
+
+	lexeme := p.expectFrom(isTypeToken)
 
 	if intSize := lexeme.Token.IntegerSize(); intSize > 0 {
 		signed := lexeme.Token.SignedValue()
@@ -69,6 +74,10 @@ func (p parser) parseType() ast.Type {
 
 	if ty == nil {
 		panic(errors.New("Unexpected type"))
+	}
+
+	if isConst {
+		return &ast.ConstType{InnerType: ty}
 	}
 
 	return ty

@@ -18,7 +18,8 @@ func isPrivacyStatement(t token.Token) bool {
 }
 
 func isClassPrivacyStatement(t token.Token) bool {
-	return t == token.Var || t == token.Property || t == token.Def
+	return t == token.Var || t == token.Property || t == token.Def ||
+		t == token.Const
 }
 
 func (p parser) parsePrivacy() ast.Statement {
@@ -57,6 +58,8 @@ func (p parser) parseClassPrivacy() ast.Statement {
 	var declaration ast.PrivacyFlag
 
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
+	case token.Const:
+		fallthrough
 	case token.Var:
 		declaration = p.parseMemberDecl()
 	case token.Property:

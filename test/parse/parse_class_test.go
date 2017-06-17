@@ -87,6 +87,17 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		}},
 	}),
 
+	Entry("const class member", `class TestClass {
+		const var a: bool
+	}`, &ast.ClassDecl{
+		Name: "TestClass",
+		Body: &ast.BlockStmt{Nodes: []ast.Node{
+			&ast.MemberDecl{Name: "a", Type: &ast.ConstType{
+				InnerType: &ast.BoolType{},
+			}},
+		}},
+	}),
+
 	Entry("multiple class members", `class TestClass {
 		var a: bool
 		var b: bool
