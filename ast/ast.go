@@ -14,6 +14,11 @@ type Statement interface {
 	isStatement()
 }
 
+type PrivacyFlag interface {
+	Statement
+	SetPrivacyLevel(level PrivacyLevel)
+}
+
 type Expression interface {
 	Node
 	isExpression()
@@ -42,6 +47,7 @@ type ClassDecl struct {
 	GenericTypes []Type
 	Supers       []Type
 	Body         *BlockStmt
+	Privacy      PrivacyLevel
 }
 
 type VarDecl struct {
@@ -60,9 +66,10 @@ type ParamDecl struct {
 // MemberDecl is similar to a VarDecl but is only found in the body of a class
 // (i.e., is it a declaration of a class member)
 type MemberDecl struct {
-	Name  string
-	Type  Type
-	Value Expression
+	Name    string
+	Type    Type
+	Value   Expression
+	Privacy PrivacyLevel
 }
 
 type GetterStmt struct {
@@ -90,15 +97,17 @@ type LoopStmt struct {
 }
 
 type PropertyDecl struct {
-	Name   string
-	Type   Type
-	Getter *GetterStmt
-	Setter *SetterStmt
+	Name    string
+	Type    Type
+	Getter  *GetterStmt
+	Setter  *SetterStmt
+	Privacy PrivacyLevel
 }
 
 type EnumDecl struct {
 	Name    string
 	Members []string
+	Privacy PrivacyLevel
 }
 
 type ExtensionDecl struct {
@@ -113,6 +122,7 @@ type InterfaceDecl struct {
 	GenericTypes []Type
 	Supers       []Type
 	Body         *BlockStmt
+	Privacy      PrivacyLevel
 }
 
 type PackageDecl struct {
@@ -141,6 +151,7 @@ type FunctionStmt struct {
 	Parameters   []*ParamDecl
 	RetType      Type
 	Body         *BlockStmt
+	Privacy      PrivacyLevel
 }
 
 type ExternFuncStmt struct {
@@ -318,3 +329,14 @@ func (i IDAccessExpr) isExpression()     {}
 
 func (i NamedIDExpr) isIdentifier()  {}
 func (i IDAccessExpr) isIdentifier() {}
+
+//
+// Privacy levels
+//
+
+func (s *EnumDecl) SetPrivacyLevel(l PrivacyLevel)      { s.Privacy = l }
+func (s *FunctionStmt) SetPrivacyLevel(l PrivacyLevel)  { s.Privacy = l }
+func (s *ClassDecl) SetPrivacyLevel(l PrivacyLevel)     { s.Privacy = l }
+func (s *InterfaceDecl) SetPrivacyLevel(l PrivacyLevel) { s.Privacy = l }
+func (s *MemberDecl) SetPrivacyLevel(l PrivacyLevel)    { s.Privacy = l }
+func (s *PropertyDecl) SetPrivacyLevel(l PrivacyLevel)  { s.Privacy = l }

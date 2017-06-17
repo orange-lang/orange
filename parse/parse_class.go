@@ -8,7 +8,8 @@ import (
 )
 
 func isClassStmtToken(t token.Token) bool {
-	return t == token.Var || t == token.Property || t == token.Def
+	return t == token.Var || t == token.Property || t == token.Def ||
+		isPrivacyToken(t)
 }
 
 func (p parser) parseClass() *ast.ClassDecl {
@@ -78,6 +79,10 @@ func (p parser) parseClassStmt() ast.Node {
 		return p.parseProperty()
 	case token.Def:
 		return p.parseFunc()
+	default:
+		if isPrivacyToken(lexeme.Token) {
+			return p.parseClassPrivacy()
+		}
 	}
 
 	panic(errors.New("Unexpected lexeme"))
