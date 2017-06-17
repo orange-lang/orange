@@ -7,6 +7,24 @@ import (
 )
 
 var _ = Describe("Parsing constants", func() {
+	Describe("should parse", func() {
+		It("constant ifs", func() {
+			expectNode(`const if (false) {
+
+			} elif (true) {
+				
+			} else {}`, &ast.ConstIfStmt{
+				Condition: &ast.BoolExpr{Value: false},
+				Body:      ast.NewBlockStmt(),
+				Else: &ast.ConstIfStmt{
+					Condition: &ast.BoolExpr{Value: true},
+					Body:      ast.NewBlockStmt(),
+					Else:      ast.NewBlockStmt(),
+				},
+			})
+		})
+	})
+
 	Describe("should return an expr for", func() {
 		It("strings", func() {
 			expectNode(`"hello, world"`, &ast.StringExpr{

@@ -28,7 +28,7 @@ func (p parser) parseStatement() ast.Statement {
 
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
 	case token.Const:
-		fallthrough
+		return p.parseConst()
 	case token.Var:
 		return p.parseVarDecl()
 	case token.Package:
@@ -76,6 +76,19 @@ func (p parser) parseDeclaration() ast.PrivacyFlag {
 		return p.parseClass()
 	case token.Interface:
 		return p.parseInterface()
+	}
+
+	panic(errors.New("Unexpected lexeme"))
+}
+
+func (p parser) parseConst() ast.Statement {
+	lookahead, _ := p.stream.Lookahead(2)
+
+	switch lookahead[1].Token {
+	case token.Var:
+		return p.parseVarDecl()
+	case token.If:
+		return p.parseConstIf()
 	}
 
 	panic(errors.New("Unexpected lexeme"))
@@ -221,6 +234,39 @@ func (p parser) parseCondition() *ast.IfStmt {
 	}
 
 	return &ast.IfStmt{
+		Condition: condition,
+		Body:      ifPart,
+		Else:      elsePart,
+	}
+}
+
+func (p parser) parseConstIf() *ast.ConstIfStmt {
+	p.expect(token.Const)
+	p.expect(token.If)
+
+	return p.parseConstCondition()
+}
+
+func (p parser) parseConstCondition() *ast.ConstIfStmt {
+	var condition ast.Expression
+	var ifPart *ast.BlockStmt
+	var elsePart ast.Node
+
+	p.expect(token.OpenParen)
+
+	condition = p.parseExpr()
+
+	p.expect(token.CloseParen)
+
+	ifPart = p.parseBlock()
+
+	if p.allow(token.Elif) {
+		elsePart = p.parseConstCondition()
+	} else if p.allow(token.Else) {
+		elsePart = p.parseBlock()
+	}
+
+	return &ast.ConstIfStmt{
 		Condition: condition,
 		Body:      ifPart,
 		Else:      elsePart,
