@@ -207,6 +207,13 @@ type MemberAccessExpr struct {
 	Name   string
 }
 
+// GenericInst represents an explicit type annotation on an expression
+// which has a generic type
+type GenericInst struct {
+	Object      Expression
+	Annotations []Type
+}
+
 type ThisExpr struct {
 }
 
@@ -285,6 +292,7 @@ func (e BinaryExpr) isNode()       {}
 func (e CallExpr) isNode()         {}
 func (e ArrayAccessExpr) isNode()  {}
 func (e MemberAccessExpr) isNode() {}
+func (e GenericInst) isNode()      {}
 func (e StringExpr) isNode()       {}
 func (e BoolExpr) isNode()         {}
 func (e CharExpr) isNode()         {}
@@ -325,6 +333,7 @@ func (e BinaryExpr) isExpression()       {}
 func (e CallExpr) isExpression()         {}
 func (e ArrayAccessExpr) isExpression()  {}
 func (e MemberAccessExpr) isExpression() {}
+func (e GenericInst) isExpression()      {}
 func (e StringExpr) isExpression()       {}
 func (e BoolExpr) isExpression()         {}
 func (e CharExpr) isExpression()         {}

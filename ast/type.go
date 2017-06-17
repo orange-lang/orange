@@ -15,6 +15,11 @@ type NamedType struct {
 	Name string
 }
 
+type GenericAnnotation struct {
+	Type        *NamedType
+	Annotations []Type
+}
+
 type FloatType struct{}
 
 type DoubleType struct{}
@@ -35,13 +40,14 @@ type ConstType struct {
 	InnerType Type
 }
 
-func (t VoidType) isType()    {}
-func (t IntType) isType()     {}
-func (t NamedType) isType()   {}
-func (t FloatType) isType()   {}
-func (t DoubleType) isType()  {}
-func (t BoolType) isType()    {}
-func (t CharType) isType()    {}
-func (t ArrayType) isType()   {}
-func (t PointerType) isType() {}
-func (t ConstType) isType()   {}
+func (t GenericAnnotation) isType() {}
+func (t VoidType) isType()          {}
+func (t IntType) isType()           {}
+func (t NamedType) isType()         {}
+func (t FloatType) isType()         {}
+func (t DoubleType) isType()        {}
+func (t BoolType) isType()          {}
+func (t CharType) isType()          {}
+func (t ArrayType) isType()         {}
+func (t PointerType) isType()       {}
+func (t ConstType) isType()         {}

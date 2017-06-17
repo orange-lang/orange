@@ -31,6 +31,21 @@ var _ = Describe("Parsing Types", func() {
 		Entry("string", "string", &ast.NamedType{Name: "string"}),
 		Entry("bool", "bool", &ast.BoolType{}),
 
+		Entry("annotation", "List<string>", &ast.GenericAnnotation{
+			Type: &ast.NamedType{Name: "List"},
+			Annotations: []ast.Type{
+				&ast.NamedType{Name: "string"},
+			},
+		}),
+
+		Entry("multiple annotations", "Map<bool, string>", &ast.GenericAnnotation{
+			Type: &ast.NamedType{Name: "Map"},
+			Annotations: []ast.Type{
+				&ast.BoolType{},
+				&ast.NamedType{Name: "string"},
+			},
+		}),
+
 		Entry("int*", "int*", &ast.PointerType{
 			InnerType: &ast.IntType{Size: 64, Signed: true},
 		}),

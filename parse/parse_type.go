@@ -54,6 +54,7 @@ func (p parser) parseType() ast.Type {
 		ty = &ast.BoolType{}
 	case token.Identifier:
 		ty = &ast.NamedType{Name: lexeme.Value}
+		ty = p.tryParseGenericAnnotation(ty.(*ast.NamedType))
 	}
 
 	// Parse pointer and array types
@@ -81,4 +82,22 @@ func (p parser) parseType() ast.Type {
 	}
 
 	return ty
+}
+
+func (p parser) tryParseGenericAnnotation(ty *ast.NamedType) ast.Type {
+	if !p.allow(token.LT) {
+		return ty
+	}
+
+	annotations := []ast.Type{p.parseType()}
+
+	for p.allow(token.Comma) {
+		annotations = append(annotations, p.parseType())
+	}
+
+	p.expect(token.GT)
+	return &ast.GenericAnnotation{
+		Type:        ty,
+		Annotations: annotations,
+	}
 }

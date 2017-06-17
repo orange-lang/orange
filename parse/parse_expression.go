@@ -46,7 +46,7 @@ func (p parser) parseOperation() ast.Expression {
 	for isOperationToken(lexeme.Token) {
 		switch lexeme.Token {
 		case token.Dot:
-			expr = p.parseMemberAccess(expr)
+			expr = p.handleAccess(expr)
 		case token.OpenBracket:
 			expr = p.parseArrayAccess(expr)
 		case token.Increment:
@@ -95,6 +95,37 @@ func (p parser) parseArrayAccess(lhs ast.Expression) *ast.ArrayAccessExpr {
 	}
 
 	return &ast.ArrayAccessExpr{Object: lhs, Index: expr}
+}
+
+func (p parser) handleAccess(lhs ast.Expression) ast.Expression {
+	lookahead, _ := p.stream.Lookahead(2)
+
+	switch lookahead[1].Token {
+	case token.LT:
+		return p.parseGenericInst(lhs)
+	case token.Identifier:
+		return p.parseMemberAccess(lhs)
+	}
+
+	panic(errors.New("Unexpected lexeme"))
+}
+
+func (p parser) parseGenericInst(lhs ast.Expression) *ast.GenericInst {
+	p.expect(token.Dot)
+	p.expect(token.LT)
+
+	annotations := []ast.Type{p.parseType()}
+
+	for p.allow(token.Comma) {
+		annotations = append(annotations, p.parseType())
+	}
+
+	p.expect(token.GT)
+
+	return &ast.GenericInst{
+		Object:      lhs,
+		Annotations: annotations,
+	}
 }
 
 func (p parser) parseMemberAccess(lhs ast.Expression) *ast.MemberAccessExpr {

@@ -14,6 +14,21 @@ var _ = Describe("Parsing Operations", func() {
 			Name:   "b",
 		}),
 
+		Entry("single generic type instantiation", "a.<bool>", &ast.GenericInst{
+			Object: &ast.NamedIDExpr{Name: "a"},
+			Annotations: []ast.Type{
+				&ast.BoolType{},
+			},
+		}),
+
+		Entry("mutliple generic type instantiation", "a.<bool, bool>", &ast.GenericInst{
+			Object: &ast.NamedIDExpr{Name: "a"},
+			Annotations: []ast.Type{
+				&ast.BoolType{},
+				&ast.BoolType{},
+			},
+		}),
+
 		Entry("multiple member access", "a.b.c", &ast.MemberAccessExpr{
 			Object: &ast.MemberAccessExpr{
 				Object: &ast.NamedIDExpr{Name: "a"},
