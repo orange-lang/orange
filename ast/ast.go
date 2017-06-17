@@ -87,6 +87,13 @@ type IfStmt struct {
 	Else      Node // either nil, IfStmt (elif), or BlockStmt (else)
 }
 
+// ConstIfStmt represents an if statement evaluated on compile time
+type ConstIfStmt struct {
+	Condition Expression
+	Body      *BlockStmt
+	Else      Node // either nil, ConstIfStmt (elif), or BlockStmt (else)
+}
+
 type LoopStmt struct {
 	Initializer  *VarDecl
 	Condition    Expression
@@ -265,6 +272,7 @@ func (s InterfaceDecl) isNode()    {}
 func (s PackageDecl) isNode()      {}
 func (s ImportDecl) isNode()       {}
 func (s IfStmt) isNode()           {}
+func (s ConstIfStmt) isNode()      {}
 func (s LoopStmt) isNode()         {}
 func (s TryStmt) isNode()          {}
 func (s CatchStmt) isNode()        {}
@@ -304,6 +312,7 @@ func (s PackageDecl) isStatement()    {}
 func (s ImportDecl) isStatement()     {}
 func (s LoopStmt) isStatement()       {}
 func (s IfStmt) isStatement()         {}
+func (s ConstIfStmt) isStatement()    {}
 func (s TryStmt) isStatement()        {}
 func (s CatchStmt) isStatement()      {}
 func (s FunctionStmt) isStatement()   {}
@@ -340,3 +349,11 @@ func (s *ClassDecl) SetPrivacyLevel(l PrivacyLevel)     { s.Privacy = l }
 func (s *InterfaceDecl) SetPrivacyLevel(l PrivacyLevel) { s.Privacy = l }
 func (s *MemberDecl) SetPrivacyLevel(l PrivacyLevel)    { s.Privacy = l }
 func (s *PropertyDecl) SetPrivacyLevel(l PrivacyLevel)  { s.Privacy = l }
+
+//
+// Helper functions
+//
+
+func NewBlockStmt() *BlockStmt {
+	return &BlockStmt{Nodes: []Node{}}
+}

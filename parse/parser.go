@@ -76,6 +76,7 @@ func (p parser) parseBlock() *ast.BlockStmt {
 	}
 
 	p.expect(token.CloseCurly)
+
 	return &ast.BlockStmt{Nodes: nodes}
 }
 
