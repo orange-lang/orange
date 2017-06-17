@@ -12,7 +12,8 @@ func isStatementToken(t token.Token) bool {
 	return t == token.Var || t == token.Package || t == token.Import ||
 		t == token.If || t == token.Alias || isLoopToken(t) || t == token.Enum ||
 		t == token.Try || t == token.Extern || t == token.Def || t == token.Return ||
-		t == token.Class || t == token.Extend || t == token.Interface
+		t == token.Class || t == token.Extend || t == token.Interface ||
+		isPrivacyToken(t)
 }
 
 func (p parser) parseStatement() ast.Statement {
@@ -53,6 +54,10 @@ func (p parser) parseStatement() ast.Statement {
 		return p.parseExtension()
 	case token.Interface:
 		return p.parseInterface()
+	default:
+		if isPrivacyToken(lexeme.Token) {
+			return p.parsePrivacy()
+		}
 	}
 
 	panic(errors.New("Unexpected lexeme"))
