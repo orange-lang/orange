@@ -22,8 +22,8 @@ Orange is a statically typed, multi-paradigm (imperative, object-oriented) syste
 # Goals
 
 - _Be Productive_. Provide a simple syntax for writing code quickly and make it easy to download and install project dependencies. Provide strict type checking to make sure basic type errors can’t happen.
-- _Be Extendible_. Allow developers to extend new interfaces to existing types, and allow for creating/downloading compiler extensions that can add new language features and code checks.
-- _Be Flexible_. Combine the extendibility and productivity to make Orange suitable for any kind of development, from embedded programming to high-level applications like web servers.
+- _Be Extendible_. Allow developers to extend new interfaces to existing types, and allow creating/using compiler extensions that can add new language features or code checks.
+- _Be Flexible_. Combine the extendability and productivity to make Orange suitable for any kind of development, from embedded programming to high-level applications like web servers.
 
 # Resources
 
@@ -42,4 +42,4 @@ Orange has a [Gitter](https://gitter.im/orange-lang/orange?utm_source=share-link
 
 # Contributing
 
-All pull requests are welcome. Orange is in early development, and all planned code is documented in the issues. Feel free to claim any of the issues or contribute in any other way you'd like!
+All pull requests, questions, and suggestions are welcome. Orange is in early development, and all planned code is documented in the issues. Feel free to claim any of the issues or contribute in any other way you'd like!
