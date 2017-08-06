@@ -10,19 +10,19 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 	// Empty interfaces
 	//
 
-	Entry("empty interface same line body", "interface foo { }", &ast.InterfaceDecl{
+	CEntry("interface foo { }", &ast.InterfaceDecl{
 		Name: "foo",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("empty interface } new line", `interface foo { 
+	CEntry(`interface foo {
 
 	}`, &ast.InterfaceDecl{
 		Name: "foo",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("empty interface { new line", `interface foo
+	CEntry(`interface foo
 	{ 
 
 	}`, &ast.InterfaceDecl{
@@ -34,7 +34,7 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 	// Supers
 	//
 
-	Entry("single super", "interface foo: A { }", &ast.InterfaceDecl{
+	CEntry("interface foo: A { }", &ast.InterfaceDecl{
 		Name: "foo",
 		Supers: []ast.Type{
 			&ast.NamedType{Name: "A"},
@@ -42,7 +42,7 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("multiple supers", "interface foo: A,B,C { }", &ast.InterfaceDecl{
+	CEntry("interface foo: A,B,C { }", &ast.InterfaceDecl{
 		Name: "foo",
 		Supers: []ast.Type{
 			&ast.NamedType{Name: "A"},
@@ -56,7 +56,7 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 	// Generics
 	//
 
-	Entry("one generic extension", `interface<T> foo { }`, &ast.InterfaceDecl{
+	CEntry(`interface<T> foo { }`, &ast.InterfaceDecl{
 		Name: "foo",
 		GenericTypes: []ast.Type{
 			&ast.NamedType{Name: "T"},
@@ -64,7 +64,7 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("multiple generic extensions", `interface<T,U,V> foo { }`, &ast.InterfaceDecl{
+	CEntry(`interface<T,U,V> foo { }`, &ast.InterfaceDecl{
 		Name: "foo",
 		GenericTypes: []ast.Type{
 			&ast.NamedType{Name: "T"},
@@ -78,7 +78,7 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 	// Methods
 	//
 
-	Entry("methods in interface", `interface foo {
+	CEntry(`interface foo {
 		def foo() 
 		def foo() -> bool
 	}`, &ast.InterfaceDecl{

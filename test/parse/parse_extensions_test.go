@@ -10,19 +10,19 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	// Empty extensions
 	//
 
-	Entry("empty extension same line body", "extend bool { }", &ast.ExtensionDecl{
+	CEntry("extend bool { }", &ast.ExtensionDecl{
 		Original: &ast.BoolType{},
 		Body:     &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("empty extension } new line", `extend bool { 
+	CEntry(`extend bool {
 
 	}`, &ast.ExtensionDecl{
 		Original: &ast.BoolType{},
 		Body:     &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("empty extension { new line", `extend bool
+	CEntry(`extend bool
 	{ 
 
 	}`, &ast.ExtensionDecl{
@@ -34,7 +34,7 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	// Supers
 	//
 
-	Entry("single super", "extend bool: A { }", &ast.ExtensionDecl{
+	CEntry("extend bool: A { }", &ast.ExtensionDecl{
 		Original: &ast.BoolType{},
 		Supers: []ast.Type{
 			&ast.NamedType{Name: "A"},
@@ -42,7 +42,7 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("multiple supers", "extend bool: A,B,C { }", &ast.ExtensionDecl{
+	CEntry("extend bool: A,B,C { }", &ast.ExtensionDecl{
 		Original: &ast.BoolType{},
 		Supers: []ast.Type{
 			&ast.NamedType{Name: "A"},
@@ -56,7 +56,7 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	// Generics
 	//
 
-	Entry("one generic extension", `extend<T> bool { }`, &ast.ExtensionDecl{
+	CEntry(`extend<T> bool { }`, &ast.ExtensionDecl{
 		Original: &ast.BoolType{},
 		GenericTypes: []ast.Type{
 			&ast.NamedType{Name: "T"},
@@ -64,7 +64,7 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("multiple generic extensions", `extend<T,U,V> bool { }`, &ast.ExtensionDecl{
+	CEntry(`extend<T,U,V> bool { }`, &ast.ExtensionDecl{
 		Original: &ast.BoolType{},
 		GenericTypes: []ast.Type{
 			&ast.NamedType{Name: "T"},
@@ -78,7 +78,7 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	// Methods
 	//
 
-	Entry("methods in extension", `extend bool {
+	CEntry(`extend bool {
 		def foo() {}
 	}`, &ast.ExtensionDecl{
 		Original: &ast.BoolType{},

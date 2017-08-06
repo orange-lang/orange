@@ -7,20 +7,20 @@ import (
 )
 
 var _ = DescribeTable("Parsing functions", expectNode,
-	Entry("body on new line", `def foo() 
+	CEntry(`def foo()
 	{}`, &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.ParamDecl{},
 		Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("no arguments, return type, or body", "def foo() {  }", &ast.FunctionStmt{
+	CEntry("def foo() {  }", &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.ParamDecl{},
 		Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("body", `def foo() {  
+	CEntry(`def foo() {
 		5
 		3
 	}`, &ast.FunctionStmt{
@@ -32,7 +32,7 @@ var _ = DescribeTable("Parsing functions", expectNode,
 		}},
 	}),
 
-	Entry("return statement", `def foo() {  
+	CEntry(`def foo() {
 		return 5
 	}`, &ast.FunctionStmt{
 		Name:       "foo",
@@ -42,7 +42,7 @@ var _ = DescribeTable("Parsing functions", expectNode,
 		}},
 	}),
 
-	Entry("void return statement", `def foo() {  
+	CEntry(`def foo() {
 		return
 	}`, &ast.FunctionStmt{
 		Name:       "foo",
@@ -52,7 +52,7 @@ var _ = DescribeTable("Parsing functions", expectNode,
 		}},
 	}),
 
-	Entry("return type", "def foo() -> int {}", &ast.FunctionStmt{
+	CEntry("def foo() -> int {}", &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.ParamDecl{},
 		RetType:    &ast.IntType{Signed: true, Size: 64},

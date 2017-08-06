@@ -52,20 +52,20 @@ var _ = Describe("Parsing constants", func() {
 		)
 
 		DescribeTable("arrays", expectNode,
-			Entry("empty array", "[]", &ast.ArrayExpr{Members: []ast.Expression{}}),
-			Entry("array with one member", "[1]", &ast.ArrayExpr{
+			CEntry("[]", &ast.ArrayExpr{Members: []ast.Expression{}}),
+			CEntry("[1]", &ast.ArrayExpr{
 				Members: []ast.Expression{
 					&ast.IntExpr{Value: 1, Size: 64},
 				}},
 			),
-			Entry("array with multiple members", "[1,2,3]", &ast.ArrayExpr{
+			CEntry("[1,2,3]", &ast.ArrayExpr{
 				Members: []ast.Expression{
 					&ast.IntExpr{Value: 1, Size: 64},
 					&ast.IntExpr{Value: 2, Size: 64},
 					&ast.IntExpr{Value: 3, Size: 64},
 				}},
 			),
-			Entry("nested arrays", "[[1,2],[3,4],[5,6]]", &ast.ArrayExpr{
+			CEntry("[[1,2],[3,4],[5,6]]", &ast.ArrayExpr{
 				Members: []ast.Expression{
 					&ast.ArrayExpr{
 						Members: []ast.Expression{

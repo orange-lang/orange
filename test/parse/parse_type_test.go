@@ -14,31 +14,31 @@ import (
 
 var _ = Describe("Parsing Types", func() {
 	DescribeTable("should be able to parse a", expectType,
-		Entry("void", "void", &ast.VoidType{}),
-		Entry("int", "int", &ast.IntType{Size: 64, Signed: true}),
-		Entry("int8", "int8", &ast.IntType{Size: 8, Signed: true}),
-		Entry("int16", "int16", &ast.IntType{Size: 16, Signed: true}),
-		Entry("int32", "int32", &ast.IntType{Size: 32, Signed: true}),
-		Entry("int64", "int64", &ast.IntType{Size: 64, Signed: true}),
-		Entry("uint", "uint", &ast.IntType{Size: 64, Signed: false}),
-		Entry("uint8", "uint8", &ast.IntType{Size: 8, Signed: false}),
-		Entry("uint16", "uint16", &ast.IntType{Size: 16, Signed: false}),
-		Entry("uint32", "uint32", &ast.IntType{Size: 32, Signed: false}),
-		Entry("uint64", "uint64", &ast.IntType{Size: 64, Signed: false}),
-		Entry("float", "float", &ast.FloatType{}),
-		Entry("double", "double", &ast.DoubleType{}),
-		Entry("char", "char", &ast.CharType{}),
-		Entry("string", "string", &ast.NamedType{Name: "string"}),
-		Entry("bool", "bool", &ast.BoolType{}),
+		CEntry("void", &ast.VoidType{}),
+		CEntry("int", &ast.IntType{Size: 64, Signed: true}),
+		CEntry("int8", &ast.IntType{Size: 8, Signed: true}),
+		CEntry("int16", &ast.IntType{Size: 16, Signed: true}),
+		CEntry("int32", &ast.IntType{Size: 32, Signed: true}),
+		CEntry("int64", &ast.IntType{Size: 64, Signed: true}),
+		CEntry("uint", &ast.IntType{Size: 64, Signed: false}),
+		CEntry("uint8", &ast.IntType{Size: 8, Signed: false}),
+		CEntry("uint16", &ast.IntType{Size: 16, Signed: false}),
+		CEntry("uint32", &ast.IntType{Size: 32, Signed: false}),
+		CEntry("uint64", &ast.IntType{Size: 64, Signed: false}),
+		CEntry("float", &ast.FloatType{}),
+		CEntry("double", &ast.DoubleType{}),
+		CEntry("char", &ast.CharType{}),
+		CEntry("string", &ast.NamedType{Name: "string"}),
+		CEntry("bool", &ast.BoolType{}),
 
-		Entry("annotation", "List<string>", &ast.GenericAnnotation{
+		CEntry("List<string>", &ast.GenericAnnotation{
 			Type: &ast.NamedType{Name: "List"},
 			Annotations: []ast.Type{
 				&ast.NamedType{Name: "string"},
 			},
 		}),
 
-		Entry("multiple annotations", "Map<bool, string>", &ast.GenericAnnotation{
+		CEntry("Map<bool, string>", &ast.GenericAnnotation{
 			Type: &ast.NamedType{Name: "Map"},
 			Annotations: []ast.Type{
 				&ast.BoolType{},
@@ -46,39 +46,39 @@ var _ = Describe("Parsing Types", func() {
 			},
 		}),
 
-		Entry("int*", "int*", &ast.PointerType{
+		CEntry("int*", &ast.PointerType{
 			InnerType: &ast.IntType{Size: 64, Signed: true},
 		}),
 
-		Entry("int**", "int**", &ast.PointerType{
+		CEntry("int**", &ast.PointerType{
 			InnerType: &ast.PointerType{
 				InnerType: &ast.IntType{Size: 64, Signed: true},
 			},
 		}),
 
-		Entry("int[]", "int[]", &ast.ArrayType{
+		CEntry("int[]", &ast.ArrayType{
 			InnerType: &ast.IntType{Size: 64, Signed: true},
 		}),
 
-		Entry("int[][]", "int[][]", &ast.ArrayType{
+		CEntry("int[][]", &ast.ArrayType{
 			InnerType: &ast.ArrayType{
 				InnerType: &ast.IntType{Size: 64, Signed: true},
 			},
 		}),
 
-		Entry("int[]*", "int[]*", &ast.PointerType{
+		CEntry("int[]*", &ast.PointerType{
 			InnerType: &ast.ArrayType{
 				InnerType: &ast.IntType{Size: 64, Signed: true},
 			},
 		}),
 
-		Entry("int*[]", "int*[]", &ast.ArrayType{
+		CEntry("int*[]", &ast.ArrayType{
 			InnerType: &ast.PointerType{
 				InnerType: &ast.IntType{Size: 64, Signed: true},
 			},
 		}),
 
-		Entry("const int[]", "const int[]", &ast.ConstType{
+		CEntry("const int[]", &ast.ConstType{
 			InnerType: &ast.ArrayType{
 				InnerType: &ast.IntType{Size: 64, Signed: true},
 			},

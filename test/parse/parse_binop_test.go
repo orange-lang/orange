@@ -35,150 +35,154 @@ var _ = Describe("Parsing Binary Operations", func() {
 	})
 
 	DescribeTable("should return a BinOpExpr for", expectNode,
-		Entry("+", "3+2", &ast.BinaryExpr{
+		CEntry("3+2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "+",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("-", "3-2", &ast.BinaryExpr{
+		CEntry("3-2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "-",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("*", "3*2", &ast.BinaryExpr{
+		CEntry("3*2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "*",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("/", "3/2", &ast.BinaryExpr{
+		CEntry("3/2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "/",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("%", "3%2", &ast.BinaryExpr{
+		CEntry("3%2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "%",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("<<", "3<<2", &ast.BinaryExpr{
+		CEntry("3<<2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "<<",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry(">>", "3>>2", &ast.BinaryExpr{
+		CEntry("3>>2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: ">>",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("==", "3==2", &ast.BinaryExpr{
+		CEntry("3==2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "==",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("!=", "3!=2", &ast.BinaryExpr{
+		CEntry("3!=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "!=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("<", "3<2", &ast.BinaryExpr{
+		CEntry("3<2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "<",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("<=", "3<=2", &ast.BinaryExpr{
+		CEntry("3<=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "<=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry(">", "3>2", &ast.BinaryExpr{
+		CEntry("3>2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: ">",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry(">=", "3>=2", &ast.BinaryExpr{
+		CEntry("3>=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: ">=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("=", "3=2", &ast.BinaryExpr{
+		CEntry("3=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("+=", "3+=2", &ast.BinaryExpr{
+		CEntry("3+=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "+=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("-=", "3-=2", &ast.BinaryExpr{
+		CEntry("3-=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "-=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("*=", "3*=2", &ast.BinaryExpr{
+		CEntry("3*=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "*=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("/=", "3/=2", &ast.BinaryExpr{
+		CEntry("3/=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "/=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("%=", "3%=2", &ast.BinaryExpr{
+		CEntry("3%=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "%=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("^=", "3^=2", &ast.BinaryExpr{
+		CEntry("3^=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "^=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("&=", "3&=2", &ast.BinaryExpr{
+		CEntry("3&=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "&=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("|=", "3|=2", &ast.BinaryExpr{
+		CEntry("3|=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "|=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("<<=", "3<<=2", &ast.BinaryExpr{
+		CEntry("3<<=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "<<=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry(">>=", "3>>=2", &ast.BinaryExpr{
+		CEntry("3>>=2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: ">>=",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("|", "3|2", &ast.BinaryExpr{
+		CEntry("3|2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "|",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("&", "3&2", &ast.BinaryExpr{
+		CEntry("3&2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "&",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("^", "3^2", &ast.BinaryExpr{
+		CEntry("3^2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "^",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("||", "3||2", &ast.BinaryExpr{
+		CEntry("3||2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "||",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
-		Entry("&&", "3&&2", &ast.BinaryExpr{
+		CEntry("3&&2", &ast.BinaryExpr{
 			LHS:       &ast.IntExpr{Value: 3, Size: 64},
 			Operation: "&&",
 			RHS:       &ast.IntExpr{Value: 2, Size: 64},
 		}),
 	)
 })
+
+func CEntry(code string, expected interface{}) TableEntry {
+	return Entry(code, code, expected)
+}

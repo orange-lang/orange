@@ -9,25 +9,25 @@ import (
 
 var _ = Describe("Parsing privacy", func() {
 	DescribeTable("Levels", expectNode,
-		Entry("default", "class Test{}", &ast.ClassDecl{
+		CEntry("class Test{}", &ast.ClassDecl{
 			Name:    "Test",
 			Body:    &ast.BlockStmt{Nodes: []ast.Node{}},
 			Privacy: ast.PrivacyDefault,
 		}),
 
-		Entry("public", "public class Test{}", &ast.ClassDecl{
+		CEntry("public class Test{}", &ast.ClassDecl{
 			Name:    "Test",
 			Body:    &ast.BlockStmt{Nodes: []ast.Node{}},
 			Privacy: ast.PrivacyPublic,
 		}),
 
-		Entry("protected", "protected class Test{}", &ast.ClassDecl{
+		CEntry("protected class Test{}", &ast.ClassDecl{
 			Name:    "Test",
 			Body:    &ast.BlockStmt{Nodes: []ast.Node{}},
 			Privacy: ast.PrivacyProtected,
 		}),
 
-		Entry("private", "private class Test{}", &ast.ClassDecl{
+		CEntry("private class Test{}", &ast.ClassDecl{
 			Name:    "Test",
 			Body:    &ast.BlockStmt{Nodes: []ast.Node{}},
 			Privacy: ast.PrivacyPrivate,
@@ -35,13 +35,13 @@ var _ = Describe("Parsing privacy", func() {
 	)
 
 	DescribeTable("Elements", expectNode,
-		Entry("class", "public class Test{}", &ast.ClassDecl{
+		CEntry("public class Test{}", &ast.ClassDecl{
 			Name:    "Test",
 			Body:    &ast.BlockStmt{Nodes: []ast.Node{}},
 			Privacy: ast.PrivacyPublic,
 		}),
 
-		Entry("class member", `class Test {
+		CEntry(`class Test {
 			public var a: bool
 		}`, &ast.ClassDecl{
 			Name: "Test",
@@ -54,7 +54,7 @@ var _ = Describe("Parsing privacy", func() {
 			}},
 		}),
 
-		Entry("const member", `class Test {
+		CEntry(`class Test {
 			public const var a: bool
 		}`, &ast.ClassDecl{
 			Name: "Test",
@@ -67,7 +67,7 @@ var _ = Describe("Parsing privacy", func() {
 			}},
 		}),
 
-		Entry("class property", `class Test {
+		CEntry(`class Test {
 			public property Prop -> bool {
 				get { true; }
 			}
@@ -87,7 +87,7 @@ var _ = Describe("Parsing privacy", func() {
 			}},
 		}),
 
-		Entry("class method", `class Test {
+		CEntry(`class Test {
 			public def foo() {}
 		}`, &ast.ClassDecl{
 			Name: "Test",
@@ -101,20 +101,20 @@ var _ = Describe("Parsing privacy", func() {
 			}},
 		}),
 
-		Entry("function", "public def foo(){}", &ast.FunctionStmt{
+		CEntry("public def foo(){}", &ast.FunctionStmt{
 			Name:       "foo",
 			Parameters: []*ast.ParamDecl{},
 			Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
 			Privacy:    ast.PrivacyPublic,
 		}),
 
-		Entry("enum", "public enum Status { Pending }", &ast.EnumDecl{
+		CEntry("public enum Status { Pending }", &ast.EnumDecl{
 			Name:    "Status",
 			Members: []string{"Pending"},
 			Privacy: ast.PrivacyPublic,
 		}),
 
-		Entry("interface", "public interface foo { }", &ast.InterfaceDecl{
+		CEntry("public interface foo { }", &ast.InterfaceDecl{
 			Name:    "foo",
 			Body:    &ast.BlockStmt{Nodes: []ast.Node{}},
 			Privacy: ast.PrivacyPublic,

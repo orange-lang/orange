@@ -10,19 +10,19 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	// Empty classes
 	//
 
-	Entry("empty class same line body", "class TestClass { }", &ast.ClassDecl{
+	CEntry("class TestClass { }", &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("empty class } new line", `class TestClass { 
+	CEntry(`class TestClass {
 
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("empty class { new line", `class TestClass 
+	CEntry(`class TestClass
 	{ 
 
 	}`, &ast.ClassDecl{
@@ -34,7 +34,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	// Generics
 	//
 
-	Entry("one generic", "class<T> TestClass { }", &ast.ClassDecl{
+	CEntry("class<T> TestClass { }", &ast.ClassDecl{
 		Name: "TestClass",
 		GenericTypes: []ast.Type{
 			&ast.NamedType{Name: "T"},
@@ -42,7 +42,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("multiple generics", "class<T,V,U> TestClass { }", &ast.ClassDecl{
+	CEntry("class<T,V,U> TestClass { }", &ast.ClassDecl{
 		Name: "TestClass",
 		GenericTypes: []ast.Type{
 			&ast.NamedType{Name: "T"},
@@ -56,7 +56,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	// Supers
 	//
 
-	Entry("one super", "class TestClass : Super1 { }", &ast.ClassDecl{
+	CEntry("class TestClass : Super1 { }", &ast.ClassDecl{
 		Name: "TestClass",
 		Supers: []ast.Type{
 			&ast.NamedType{Name: "Super1"},
@@ -64,7 +64,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
-	Entry("multiple supers", "class TestClass : Super1, Super2, Super3 { }", &ast.ClassDecl{
+	CEntry("class TestClass : Super1, Super2, Super3 { }", &ast.ClassDecl{
 		Name: "TestClass",
 		Supers: []ast.Type{
 			&ast.NamedType{Name: "Super1"},
@@ -78,7 +78,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	// Members
 	//
 
-	Entry("single class member", `class TestClass {
+	CEntry(`class TestClass {
 		var a: bool
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
@@ -87,7 +87,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		}},
 	}),
 
-	Entry("const class member", `class TestClass {
+	CEntry(`class TestClass {
 		const var a: bool
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
@@ -98,7 +98,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		}},
 	}),
 
-	Entry("multiple class members", `class TestClass {
+	CEntry(`class TestClass {
 		var a: bool
 		var b: bool
 	}`, &ast.ClassDecl{
@@ -109,7 +109,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		}},
 	}),
 
-	Entry("multiple class members w/ semicolons", `class TestClass {
+	CEntry(`class TestClass {
 		var a: bool; var b: bool
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
@@ -123,7 +123,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	// Properties
 	//
 
-	Entry("property with getter", `class TestClass {
+	CEntry(`class TestClass {
 		property Prop -> bool {
 			get { true; }
 		}
@@ -142,7 +142,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		}},
 	}),
 
-	Entry("property with getter and setter", `class TestClass {
+	CEntry(`class TestClass {
 		property Prop -> bool {
 			get { true; }
 			set(value: bool) { true; }
@@ -168,7 +168,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		}},
 	}),
 
-	Entry("property with implicit type", `class TestClass {
+	CEntry(`class TestClass {
 		property Prop {
 			get { true; }
 			set(value: bool) { true; }
@@ -197,7 +197,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	// Methods
 	//
 
-	Entry("method", `class TestClass {
+	CEntry(`class TestClass {
 		def foo() {}
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
@@ -210,7 +210,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		}},
 	}),
 
-	Entry("this in method", `class TestClass {
+	CEntry(`class TestClass {
 		def foo() { return this; }
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
@@ -229,7 +229,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	// Destructors
 	//
 
-	Entry("destructor", `class TestClass {
+	CEntry(`class TestClass {
 		def ~TestClass() {}
 	}`, &ast.ClassDecl{
 		Name: "TestClass",

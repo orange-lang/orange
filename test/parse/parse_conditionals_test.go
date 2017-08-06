@@ -7,7 +7,7 @@ import (
 )
 
 var _ = DescribeTable("Parsing conditionals", expectNode,
-	Entry("if", `if (5) {
+	CEntry(`if (5) {
 			1
 			2
 		}`, &ast.IfStmt{
@@ -18,7 +18,7 @@ var _ = DescribeTable("Parsing conditionals", expectNode,
 		}},
 	}),
 
-	Entry("elif", `if (5) {
+	CEntry(`if (5) {
 			1
 			2
 		} elif (6) {
@@ -49,7 +49,7 @@ var _ = DescribeTable("Parsing conditionals", expectNode,
 		},
 	}),
 
-	Entry("elif and else", `if (5) {
+	CEntry(`if (5) {
 			1
 		} elif (6) {
 			2
@@ -71,7 +71,7 @@ var _ = DescribeTable("Parsing conditionals", expectNode,
 		},
 	}),
 
-	Entry("else", `if (5) {
+	CEntry(`if (5) {
 			1
 		} else {
 		  2

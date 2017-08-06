@@ -9,7 +9,7 @@ import (
 
 var _ = Describe("Parsing Statements", func() {
 	DescribeTable("should be able to parse try/catch finally", expectNode,
-		Entry("one catch ", `try {
+		CEntry(`try {
 				1
 				2	
 			} catch (e: Exception) {
@@ -29,7 +29,7 @@ var _ = Describe("Parsing Statements", func() {
 			}},
 		}),
 
-		Entry("multiple catches", `try {
+		CEntry(`try {
 				1
 				2	
 			} catch (e: Exception) {
@@ -61,7 +61,7 @@ var _ = Describe("Parsing Statements", func() {
 			},
 		}),
 
-		Entry("finally block", `try {
+		CEntry(`try {
 				1
 				2	
 			} catch (e: Exception) {
@@ -91,11 +91,11 @@ var _ = Describe("Parsing Statements", func() {
 
 	Describe("should be able to parse enums", func() {
 		DescribeTable("one line", expectNode,
-			Entry("one member", "enum Status { Pending }", &ast.EnumDecl{
+			CEntry("enum Status { Pending }", &ast.EnumDecl{
 				Name:    "Status",
 				Members: []string{"Pending"},
 			}),
-			Entry("multiple members", "enum Status { Pending, Running, Finished }",
+			CEntry("enum Status { Pending, Running, Finished }",
 				&ast.EnumDecl{
 					Name:    "Status",
 					Members: []string{"Pending", "Running", "Finished"},
@@ -104,14 +104,14 @@ var _ = Describe("Parsing Statements", func() {
 		)
 
 		DescribeTable("multiple lines", expectNode,
-			Entry("one member", `enum Status {
+			CEntry(`enum Status {
 				Pending	
 			}`, &ast.EnumDecl{
 				Name:    "Status",
 				Members: []string{"Pending"},
 			}),
 
-			Entry("multiple members", `enum Status {
+			CEntry(`enum Status {
 				Pending, 
 				Running,
 				Finished
@@ -122,7 +122,7 @@ var _ = Describe("Parsing Statements", func() {
 		)
 
 		DescribeTable("lines with extra whitespace", expectNode,
-			Entry("one member", `enum Status {
+			CEntry(`enum Status {
 
 				Pending	
 
@@ -131,7 +131,7 @@ var _ = Describe("Parsing Statements", func() {
 				Members: []string{"Pending"},
 			}),
 
-			Entry("multiple members", `enum Status {
+			CEntry(`enum Status {
 
 				Pending, 
 
@@ -150,19 +150,19 @@ var _ = Describe("Parsing Statements", func() {
 	})
 
 	DescribeTable("should be able to parse function calls", expectNode,
-		Entry("no arguments", "func()", &ast.CallExpr{
+		CEntry("func()", &ast.CallExpr{
 			Object:    &ast.NamedIDExpr{Name: "func"},
 			Arguments: []ast.Expression{},
 		}),
 
-		Entry("one argument", "func(1)", &ast.CallExpr{
+		CEntry("func(1)", &ast.CallExpr{
 			Object: &ast.NamedIDExpr{Name: "func"},
 			Arguments: []ast.Expression{
 				&ast.IntExpr{Value: 1, Size: 64},
 			},
 		}),
 
-		Entry("multiple arguments", "func(1,2,3)", &ast.CallExpr{
+		CEntry("func(1,2,3)", &ast.CallExpr{
 			Object: &ast.NamedIDExpr{Name: "func"},
 			Arguments: []ast.Expression{
 				&ast.IntExpr{Value: 1, Size: 64},
@@ -207,38 +207,38 @@ var _ = Describe("Parsing Statements", func() {
 	})
 
 	DescribeTable("should be able to parse", expectNode,
-		Entry("alias", "alias mystring = char[]", &ast.AliasDecl{
+		CEntry("alias mystring = char[]", &ast.AliasDecl{
 			Name: "mystring",
 			Type: &ast.ArrayType{InnerType: &ast.CharType{}},
 		}),
 	)
 
 	DescribeTable("should be able to handle variable declarations", expectNode,
-		Entry("type and value", "var a: int = 5", &ast.VarDecl{
+		CEntry("var a: int = 5", &ast.VarDecl{
 			Name:  "a",
 			Type:  &ast.IntType{Size: 64, Signed: true},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 
-		Entry("type", "var a: int", &ast.VarDecl{
+		CEntry("var a: int", &ast.VarDecl{
 			Name:  "a",
 			Type:  &ast.IntType{Size: 64, Signed: true},
 			Value: nil,
 		}),
 
-		Entry("value", "var a = 5", &ast.VarDecl{
+		CEntry("var a = 5", &ast.VarDecl{
 			Name:  "a",
 			Type:  nil,
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 
-		Entry("neither type nor value", "var a", &ast.VarDecl{
+		CEntry("var a", &ast.VarDecl{
 			Name:  "a",
 			Type:  nil,
 			Value: nil,
 		}),
 
-		Entry("constant with type and value", "const var a: int = 5", &ast.VarDecl{
+		CEntry("const var a: int = 5", &ast.VarDecl{
 			Name: "a",
 			Type: &ast.ConstType{
 				InnerType: &ast.IntType{Size: 64, Signed: true},
@@ -246,7 +246,7 @@ var _ = Describe("Parsing Statements", func() {
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 
-		Entry("constant with value", "const var a = 5", &ast.VarDecl{
+		CEntry("const var a = 5", &ast.VarDecl{
 			Name:  "a",
 			Type:  &ast.ConstType{InnerType: nil},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
@@ -254,21 +254,21 @@ var _ = Describe("Parsing Statements", func() {
 	)
 
 	DescribeTable("should be able to handle package", expectNode,
-		Entry("simple name", "package A", &ast.PackageDecl{
+		CEntry("package A", &ast.PackageDecl{
 			Name: "A",
 		}),
 
-		Entry("nested name", "package A.B", &ast.PackageDecl{
+		CEntry("package A.B", &ast.PackageDecl{
 			Name: "A.B",
 		}),
 	)
 
 	DescribeTable("should be able to handle import", expectNode,
-		Entry("simple name", "import A", &ast.ImportDecl{
+		CEntry("import A", &ast.ImportDecl{
 			Name: "A",
 		}),
 
-		Entry("nested name", "import A.B", &ast.ImportDecl{
+		CEntry("import A.B", &ast.ImportDecl{
 			Name: "A.B",
 		}),
 	)
