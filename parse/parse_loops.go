@@ -11,15 +11,11 @@ func isLoopToken(t token.Token) bool {
 
 func (p parser) parseDoWhileLoop() *ast.LoopStmt {
 	p.expect(token.Do)
-
 	body := p.parseBlock()
-
 	p.expect(token.While)
 
 	p.expect(token.OpenParen)
-
 	condition := p.parseExpr()
-
 	p.expect(token.CloseParen)
 
 	return &ast.LoopStmt{
@@ -31,10 +27,9 @@ func (p parser) parseDoWhileLoop() *ast.LoopStmt {
 
 func (p parser) parseWhileLoop() *ast.LoopStmt {
 	p.expect(token.While)
+
 	p.expect(token.OpenParen)
-
 	condition := p.parseExpr()
-
 	p.expect(token.CloseParen)
 
 	body := p.parseBlock()
@@ -47,39 +42,30 @@ func (p parser) parseWhileLoop() *ast.LoopStmt {
 }
 
 func (p parser) parseForLoop() *ast.LoopStmt {
-	var initializer *ast.VarDecl
-	var condition ast.Expression
-	var afterthought ast.Expression
+	node := &ast.LoopStmt{CheckTime: ast.CheckBefore}
 
 	p.expect(token.For)
 
 	p.expect(token.OpenParen)
 
 	if ok := p.peek(token.Var); ok {
-		initializer = p.parseVarDecl()
+		node.Initializer = p.parseVarDecl()
 	}
 
 	p.expect(token.Semicolon)
 
 	if ok := p.peekFrom(isExpressionToken); ok {
-		condition = p.parseExpr()
+		node.Condition = p.parseExpr()
 	}
 
 	p.expect(token.Semicolon)
 
 	if ok := p.peekFrom(isExpressionToken); ok {
-		afterthought = p.parseExpr()
+		node.Afterthought = p.parseExpr()
 	}
 
 	p.expect(token.CloseParen)
 
-	body := p.parseBlock()
-
-	return &ast.LoopStmt{
-		Initializer:  initializer,
-		Condition:    condition,
-		Afterthought: afterthought,
-		Body:         body,
-		CheckTime:    ast.CheckBefore,
-	}
+	node.Body = p.parseBlock()
+	return node
 }

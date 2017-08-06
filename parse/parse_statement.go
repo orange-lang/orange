@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/orange-lang/orange/ast"
-	"github.com/orange-lang/orange/parse/lexer"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -141,9 +140,7 @@ func (p parser) parseCatch() *ast.CatchStmt {
 	p.expect(token.Catch)
 
 	p.expect(token.OpenParen)
-
 	exVar := p.parseParam()
-
 	p.expect(token.CloseParen)
 
 	catchBlock := p.parseBlock()
@@ -155,18 +152,12 @@ func (p parser) parseCatch() *ast.CatchStmt {
 }
 
 func (p parser) parseEnum() *ast.EnumDecl {
-	name := ""
-
 	p.expect(token.Enum)
 
-	nameLexeme := p.expect(token.Identifier)
-
-	name = nameLexeme.Value
+	name := p.expect(token.Identifier).Value
 
 	p.nextConcrete(token.OpenCurly)
-
 	members := p.parseEnumMembers()
-
 	p.nextConcrete(token.CloseCurly)
 
 	return &ast.EnumDecl{Name: name, Members: members}
@@ -215,29 +206,21 @@ func (p parser) parseIf() *ast.IfStmt {
 // Parses the condition part of an if statement, and then
 // elif or else.
 func (p parser) parseCondition() *ast.IfStmt {
-	var condition ast.Expression
-	var ifPart *ast.BlockStmt
-	var elsePart ast.Node
+	node := &ast.IfStmt{}
 
 	p.expect(token.OpenParen)
-
-	condition = p.parseExpr()
-
+	node.Condition = p.parseExpr()
 	p.expect(token.CloseParen)
 
-	ifPart = p.parseBlock()
+	node.Body = p.parseBlock()
 
 	if ok := p.allow(token.Elif); ok {
-		elsePart = p.parseCondition()
+		node.Else = p.parseCondition()
 	} else if ok := p.allow(token.Else); ok {
-		elsePart = p.parseBlock()
+		node.Else = p.parseBlock()
 	}
 
-	return &ast.IfStmt{
-		Condition: condition,
-		Body:      ifPart,
-		Else:      elsePart,
-	}
+	return node
 }
 
 func (p parser) parseConstIf() *ast.ConstIfStmt {
@@ -248,29 +231,21 @@ func (p parser) parseConstIf() *ast.ConstIfStmt {
 }
 
 func (p parser) parseConstCondition() *ast.ConstIfStmt {
-	var condition ast.Expression
-	var ifPart *ast.BlockStmt
-	var elsePart ast.Node
+	node := &ast.ConstIfStmt{}
 
 	p.expect(token.OpenParen)
-
-	condition = p.parseExpr()
-
+	node.Condition = p.parseExpr()
 	p.expect(token.CloseParen)
 
-	ifPart = p.parseBlock()
+	node.Body = p.parseBlock()
 
 	if p.allow(token.Elif) {
-		elsePart = p.parseConstCondition()
+		node.Else = p.parseConstCondition()
 	} else if p.allow(token.Else) {
-		elsePart = p.parseBlock()
+		node.Else = p.parseBlock()
 	}
 
-	return &ast.ConstIfStmt{
-		Condition: condition,
-		Body:      ifPart,
-		Else:      elsePart,
-	}
+	return node
 }
 
 func (p parser) parseImportDecl() *ast.ImportDecl {
@@ -315,40 +290,23 @@ func (p parser) parsePackageDecl() *ast.PackageDecl {
 
 func (p parser) parseVarDecl() *ast.VarDecl {
 	isConst := p.allow(token.Const)
-
-	var idLexeme lexer.Lexeme
-	var nodeType ast.Type
-	var nodeValue ast.Expression
+	node := &ast.VarDecl{}
 
 	p.expect(token.Var)
 
-	idLexeme = p.expect(token.Identifier)
-	nodeType = p.tryParseColonType()
-	nodeValue = p.tryParseEqualValue()
+	node.Name = p.expect(token.Identifier).Value
+
+	if p.allow(token.Colon) {
+		node.Type = p.parseType()
+	}
+
+	if p.allow(token.Assign) {
+		node.Value = p.parseExpr()
+	}
 
 	if isConst {
-		nodeType = &ast.ConstType{InnerType: nodeType}
+		node.Type = &ast.ConstType{InnerType: node.Type}
 	}
 
-	return &ast.VarDecl{
-		Name:  idLexeme.Value,
-		Type:  nodeType,
-		Value: nodeValue,
-	}
-}
-
-func (p parser) tryParseColonType() ast.Type {
-	if ok := p.allow(token.Colon); ok {
-		return p.parseType()
-	}
-
-	return nil
-}
-
-func (p parser) tryParseEqualValue() ast.Expression {
-	if ok := p.allow(token.Assign); ok {
-		return p.parseExpr()
-	}
-
-	return nil
+	return node
 }

@@ -6,43 +6,31 @@ import (
 )
 
 func (p parser) parseFunc() *ast.FunctionStmt {
-	var name string
-	var params []*ast.ParamDecl
-	var retTy ast.Type
-	var genericParams []ast.Type
-	var body *ast.BlockStmt
-	var isDtor bool
+	fn := &ast.FunctionStmt{}
 
 	p.expect(token.Def)
 
 	if p.peek(token.LT) {
-		genericParams = p.parseGenericList()
+		fn.GenericTypes = p.parseGenericList()
 	}
 
 	if p.allow(token.BitNot) {
-		isDtor = true
+		fn.Destructor = true
 	}
 
-	name = p.expect(token.Identifier).Value
+	fn.Name = p.expect(token.Identifier).Value
 
 	p.expect(token.OpenParen)
-	params, _ = p.parseVarDeclList(false)
+	fn.Parameters, _ = p.parseVarDeclList(false)
 	p.expect(token.CloseParen)
 
 	if p.allow(token.Arrow) {
-		retTy = p.parseType()
+		fn.RetType = p.parseType()
 	}
 
-	body = p.parseBlock()
+	fn.Body = p.parseBlock()
 
-	return &ast.FunctionStmt{
-		Name:         name,
-		GenericTypes: genericParams,
-		Parameters:   params,
-		RetType:      retTy,
-		Body:         body,
-		Destructor:   isDtor,
-	}
+	return fn
 }
 
 func (p parser) parseGenericList() (types []ast.Type) {
@@ -62,31 +50,24 @@ func (p parser) parseGenericList() (types []ast.Type) {
 }
 
 func (p parser) parseExternFunc() *ast.ExternFuncStmt {
-	var name string
-	var params []*ast.ParamDecl
-	var retTy ast.Type
+	fn := &ast.ExternFuncStmt{}
 
 	p.expect(token.Extern)
 	p.expect(token.Def)
 
-	name = p.expect(token.Identifier).Value
+	fn.Name = p.expect(token.Identifier).Value
 
 	p.expect(token.OpenParen)
-	params, varArg := p.parseVarDeclList(true)
+	fn.Parameters, fn.VariableArgument = p.parseVarDeclList(true)
 	p.expect(token.CloseParen)
 
 	if p.allow(token.Arrow) {
-		retTy = p.parseType()
+		fn.RetType = p.parseType()
 	} else {
-		retTy = &ast.VoidType{}
+		fn.RetType = &ast.VoidType{}
 	}
 
-	return &ast.ExternFuncStmt{
-		Name:             name,
-		Parameters:       params,
-		RetType:          retTy,
-		VariableArgument: varArg,
-	}
+	return fn
 }
 
 func (p parser) parseVarDeclList(allowVarArg bool) (params []*ast.ParamDecl, isVarArg bool) {

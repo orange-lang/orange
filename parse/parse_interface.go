@@ -12,31 +12,22 @@ func isInterfaceToken(t token.Token) bool {
 }
 
 func (p parser) parseInterface() *ast.InterfaceDecl {
-	var name string
-	var supers []ast.Type
-	var genericParams []ast.Type
-	var body *ast.BlockStmt
+	node := &ast.InterfaceDecl{}
 
 	p.expect(token.Interface)
 
 	if p.peek(token.LT) {
-		genericParams = p.parseGenericList()
+		node.GenericTypes = p.parseGenericList()
 	}
 
-	name = p.expect(token.Identifier).Value
+	node.Name = p.expect(token.Identifier).Value
 
 	if p.allow(token.Colon) {
-		supers = p.parseTypeList()
+		node.Supers = p.parseTypeList()
 	}
 
-	body = p.parseInterfaceBody()
-
-	return &ast.InterfaceDecl{
-		Name:         name,
-		GenericTypes: genericParams,
-		Supers:       supers,
-		Body:         body,
-	}
+	node.Body = p.parseInterfaceBody()
+	return node
 }
 
 func (p parser) parseInterfaceBody() *ast.BlockStmt {
@@ -80,34 +71,25 @@ func (p parser) parseInterfaceStmt() ast.Node {
 }
 
 func (p parser) parseInterfaceMethod() *ast.FunctionStmt {
-	var name string
-	var params []*ast.ParamDecl
-	var retTy ast.Type
-	var genericParams []ast.Type
+	node := &ast.FunctionStmt{}
 
 	p.expect(token.Def)
 
 	if p.peek(token.LT) {
-		genericParams = p.parseGenericList()
+		node.GenericTypes = p.parseGenericList()
 	}
 
-	name = p.expect(token.Identifier).Value
+	node.Name = p.expect(token.Identifier).Value
 
 	p.expect(token.OpenParen)
-	params, _ = p.parseVarDeclList(false)
+	node.Parameters, _ = p.parseVarDeclList(false)
 	p.expect(token.CloseParen)
 
 	if p.allow(token.Arrow) {
-		retTy = p.parseType()
+		node.RetType = p.parseType()
 	} else {
-		retTy = &ast.VoidType{}
+		node.RetType = &ast.VoidType{}
 	}
 
-	return &ast.FunctionStmt{
-		Name:         name,
-		GenericTypes: genericParams,
-		Parameters:   params,
-		RetType:      retTy,
-		Body:         nil,
-	}
+	return node
 }

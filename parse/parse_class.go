@@ -17,31 +17,23 @@ func isClassComponentToken(t token.Token) bool {
 }
 
 func (p parser) parseClass() *ast.ClassDecl {
-	var name string
-	var supers []ast.Type
-	var genericParams []ast.Type
-	var body *ast.BlockStmt
+	node := &ast.ClassDecl{}
 
 	p.expect(token.Class)
 
 	if p.peek(token.LT) {
-		genericParams = p.parseGenericList()
+		node.GenericTypes = p.parseGenericList()
 	}
 
-	name = p.expect(token.Identifier).Value
+	node.Name = p.expect(token.Identifier).Value
 
 	if p.allow(token.Colon) {
-		supers = p.parseTypeList()
+		node.Supers = p.parseTypeList()
 	}
 
-	body = p.parseClassBody()
+	node.Body = p.parseClassBody()
 
-	return &ast.ClassDecl{
-		Name:         name,
-		GenericTypes: genericParams,
-		Supers:       supers,
-		Body:         body,
-	}
+	return node
 }
 
 func (p parser) parseClassBody() *ast.BlockStmt {
@@ -120,39 +112,31 @@ func (p parser) parseMemberDecl() *ast.MemberDecl {
 }
 
 func (p parser) parseProperty() *ast.PropertyDecl {
-	var name string
-	var propType ast.Type
-	var getter *ast.GetterStmt
-	var setter *ast.SetterStmt
+	node := &ast.PropertyDecl{}
 
 	p.expect(token.Property)
 
-	name = p.expect(token.Identifier).Value
+	node.Name = p.expect(token.Identifier).Value
 
 	if p.allow(token.Arrow) {
-		propType = p.parseType()
+		node.Type = p.parseType()
 	}
 
 	p.nextConcrete(token.OpenCurly)
 
 	p.consumeTerminators()
 	if p.peek(token.Get) {
-		getter = p.parseGetter()
+		node.Getter = p.parseGetter()
 	}
 
 	p.consumeTerminators()
 	if p.peek(token.Set) {
-		setter = p.parseSetter()
+		node.Setter = p.parseSetter()
 	}
 
 	p.nextConcrete(token.CloseCurly)
 
-	return &ast.PropertyDecl{
-		Name:   name,
-		Type:   propType,
-		Getter: getter,
-		Setter: setter,
-	}
+	return node
 }
 
 func (p parser) parseGetter() *ast.GetterStmt {

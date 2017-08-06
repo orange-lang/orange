@@ -12,31 +12,22 @@ func isExtensionStmtToken(t token.Token) bool {
 }
 
 func (p parser) parseExtension() *ast.ExtensionDecl {
-	var original ast.Type
-	var supers []ast.Type
-	var genericParams []ast.Type
-	var body *ast.BlockStmt
+	node := &ast.ExtensionDecl{}
 
 	p.expect(token.Extend)
 
 	if p.peek(token.LT) {
-		genericParams = p.parseGenericList()
+		node.GenericTypes = p.parseGenericList()
 	}
 
-	original = p.parseType()
+	node.Original = p.parseType()
 
 	if p.allow(token.Colon) {
-		supers = p.parseTypeList()
+		node.Supers = p.parseTypeList()
 	}
 
-	body = p.parseExtensionBody()
-
-	return &ast.ExtensionDecl{
-		Original:     original,
-		GenericTypes: genericParams,
-		Supers:       supers,
-		Body:         body,
-	}
+	node.Body = p.parseExtensionBody()
+	return node
 }
 
 func (p parser) parseExtensionBody() *ast.BlockStmt {
