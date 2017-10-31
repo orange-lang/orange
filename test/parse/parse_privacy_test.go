@@ -60,8 +60,10 @@ var _ = Describe("Parsing privacy", func() {
 			Name: "Test",
 			Body: &ast.BlockStmt{Nodes: []ast.Node{
 				&ast.MemberDecl{
-					Name:    "a",
-					Type:    &ast.ConstType{InnerType: &ast.BoolType{}},
+					Name: "a",
+					Type: &ast.BoolType{
+						TypeBase: ast.TypeBase{ast.FlagConst},
+					},
 					Privacy: ast.PrivacyPublic,
 				},
 			}},

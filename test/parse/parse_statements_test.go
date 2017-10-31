@@ -228,27 +228,31 @@ var _ = Describe("Parsing Statements", func() {
 
 		CEntry("var a = 5", &ast.VarDecl{
 			Name:  "a",
-			Type:  nil,
+			Type:  &ast.UnresolvedType{},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 
 		CEntry("var a", &ast.VarDecl{
 			Name:  "a",
-			Type:  nil,
+			Type:  &ast.UnresolvedType{},
 			Value: nil,
 		}),
 
 		CEntry("const var a: int = 5", &ast.VarDecl{
 			Name: "a",
-			Type: &ast.ConstType{
-				InnerType: &ast.IntType{Size: 64, Signed: true},
+			Type: &ast.IntType{
+				TypeBase: ast.TypeBase{ast.FlagConst},
+				Size:     64,
+				Signed:   true,
 			},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 
 		CEntry("const var a = 5", &ast.VarDecl{
-			Name:  "a",
-			Type:  &ast.ConstType{InnerType: nil},
+			Name: "a",
+			Type: &ast.UnresolvedType{
+				TypeBase: ast.TypeBase{ast.FlagConst},
+			},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 	)

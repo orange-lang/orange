@@ -78,7 +78,7 @@ func (p parser) parseType() ast.Type {
 	}
 
 	if isConst {
-		return &ast.ConstType{InnerType: ty}
+		ty.SetFlag(ast.FlagConst)
 	}
 
 	return ty

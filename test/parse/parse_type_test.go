@@ -78,9 +78,11 @@ var _ = Describe("Parsing Types", func() {
 			},
 		}),
 
-		CEntry("const int[]", &ast.ConstType{
-			InnerType: &ast.ArrayType{
-				InnerType: &ast.IntType{Size: 64, Signed: true},
+		CEntry("const int[]", &ast.ArrayType{
+			TypeBase: ast.TypeBase{ast.FlagConst},
+			InnerType: &ast.IntType{
+				Size:   64,
+				Signed: true,
 			},
 		}),
 	)

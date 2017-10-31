@@ -92,8 +92,8 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
-			&ast.MemberDecl{Name: "a", Type: &ast.ConstType{
-				InnerType: &ast.BoolType{},
+			&ast.MemberDecl{Name: "a", Type: &ast.BoolType{
+				TypeBase: ast.TypeBase{ast.FlagConst},
 			}},
 		}},
 	}),

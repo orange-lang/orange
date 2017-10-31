@@ -298,6 +298,8 @@ func (p parser) parseVarDecl() *ast.VarDecl {
 
 	if p.allow(token.Colon) {
 		node.Type = p.parseType()
+	} else {
+		node.Type = &ast.UnresolvedType{}
 	}
 
 	if p.allow(token.Assign) {
@@ -305,7 +307,7 @@ func (p parser) parseVarDecl() *ast.VarDecl {
 	}
 
 	if isConst {
-		node.Type = &ast.ConstType{InnerType: node.Type}
+		node.Type.SetFlag(ast.FlagConst)
 	}
 
 	return node

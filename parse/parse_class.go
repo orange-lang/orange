@@ -101,7 +101,7 @@ func (p parser) parseMemberDecl() *ast.MemberDecl {
 	ty := varDecl.Type
 
 	if isConst {
-		ty = &ast.ConstType{InnerType: ty}
+		ty.SetFlag(ast.FlagConst)
 	}
 
 	return &ast.MemberDecl{
