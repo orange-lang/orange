@@ -8,12 +8,13 @@ type AST struct {
 }
 
 type Node interface {
-	isNode()
+	IsNode()
+	Accept(visitor NodeVisitor)
 }
 
 type Statement interface {
 	Node
-	isStatement()
+	IsStatement()
 }
 
 type PrivacyFlag interface {
@@ -23,12 +24,12 @@ type PrivacyFlag interface {
 
 type Expression interface {
 	Node
-	isExpression()
+	IsExpression()
 }
 
 type Identifier interface {
 	Expression
-	isIdentifier()
+	IsIdentifier()
 }
 
 //
@@ -41,7 +42,7 @@ type BlockStmt struct {
 
 type AliasDecl struct {
 	Name string
-	Type Type
+	Type types.Type
 }
 
 type ClassDecl struct {
@@ -267,91 +268,91 @@ type IDAccessExpr struct {
 // Implement interfaces to enforce types
 //
 
-func (s BlockStmt) isNode()        {}
-func (s AliasDecl) isNode()        {}
-func (s ClassDecl) isNode()        {}
-func (s VarDecl) isNode()          {}
-func (s ParamDecl) isNode()        {}
-func (s MemberDecl) isNode()       {}
-func (s GetterStmt) isNode()       {}
-func (s SetterStmt) isNode()       {}
-func (s PropertyDecl) isNode()     {}
-func (s EnumDecl) isNode()         {}
-func (s ExtensionDecl) isNode()    {}
-func (s InterfaceDecl) isNode()    {}
-func (s PackageDecl) isNode()      {}
-func (s ImportDecl) isNode()       {}
-func (s IfStmt) isNode()           {}
-func (s ConstIfStmt) isNode()      {}
-func (s LoopStmt) isNode()         {}
-func (s TryStmt) isNode()          {}
-func (s CatchStmt) isNode()        {}
-func (s FunctionStmt) isNode()     {}
-func (s ExternFuncStmt) isNode()   {}
-func (s ReturnStmt) isNode()       {}
-func (e ArrayExpr) isNode()        {}
-func (e UnaryExpr) isNode()        {}
-func (e BinaryExpr) isNode()       {}
-func (e CallExpr) isNode()         {}
-func (e ArrayAccessExpr) isNode()  {}
-func (e MemberAccessExpr) isNode() {}
-func (e GenericInst) isNode()      {}
-func (e StringExpr) isNode()       {}
-func (e BoolExpr) isNode()         {}
-func (e CharExpr) isNode()         {}
-func (e IntExpr) isNode()          {}
-func (e UIntExpr) isNode()         {}
-func (e DoubleExpr) isNode()       {}
-func (e FloatExpr) isNode()        {}
-func (e ThisExpr) isNode()         {}
-func (e SuperExpr) isNode()        {}
-func (i NamedIDExpr) isNode()      {}
-func (i IDAccessExpr) isNode()     {}
+func (s BlockStmt) IsNode()        {}
+func (s AliasDecl) IsNode()        {}
+func (s ClassDecl) IsNode()        {}
+func (s VarDecl) IsNode()          {}
+func (s ParamDecl) IsNode()        {}
+func (s MemberDecl) IsNode()       {}
+func (s GetterStmt) IsNode()       {}
+func (s SetterStmt) IsNode()       {}
+func (s PropertyDecl) IsNode()     {}
+func (s EnumDecl) IsNode()         {}
+func (s ExtensionDecl) IsNode()    {}
+func (s InterfaceDecl) IsNode()    {}
+func (s PackageDecl) IsNode()      {}
+func (s ImportDecl) IsNode()       {}
+func (s IfStmt) IsNode()           {}
+func (s ConstIfStmt) IsNode()      {}
+func (s LoopStmt) IsNode()         {}
+func (s TryStmt) IsNode()          {}
+func (s CatchStmt) IsNode()        {}
+func (s FunctionStmt) IsNode()     {}
+func (s ExternFuncStmt) IsNode()   {}
+func (s ReturnStmt) IsNode()       {}
+func (e ArrayExpr) IsNode()        {}
+func (e UnaryExpr) IsNode()        {}
+func (e BinaryExpr) IsNode()       {}
+func (e CallExpr) IsNode()         {}
+func (e ArrayAccessExpr) IsNode()  {}
+func (e MemberAccessExpr) IsNode() {}
+func (e GenericInst) IsNode()      {}
+func (e StringExpr) IsNode()       {}
+func (e BoolExpr) IsNode()         {}
+func (e CharExpr) IsNode()         {}
+func (e IntExpr) IsNode()          {}
+func (e UIntExpr) IsNode()         {}
+func (e DoubleExpr) IsNode()       {}
+func (e FloatExpr) IsNode()        {}
+func (e ThisExpr) IsNode()         {}
+func (e SuperExpr) IsNode()        {}
+func (i NamedIDExpr) IsNode()      {}
+func (i IDAccessExpr) IsNode()     {}
 
-func (s BlockStmt) isStatement()      {}
-func (s AliasDecl) isStatement()      {}
-func (s ClassDecl) isStatement()      {}
-func (s VarDecl) isStatement()        {}
-func (s ParamDecl) isStatement()      {}
-func (s MemberDecl) isStatement()     {}
-func (s GetterStmt) isStatement()     {}
-func (s SetterStmt) isStatement()     {}
-func (s PropertyDecl) isStatement()   {}
-func (s EnumDecl) isStatement()       {}
-func (s ExtensionDecl) isStatement()  {}
-func (s InterfaceDecl) isStatement()  {}
-func (s PackageDecl) isStatement()    {}
-func (s ImportDecl) isStatement()     {}
-func (s LoopStmt) isStatement()       {}
-func (s IfStmt) isStatement()         {}
-func (s ConstIfStmt) isStatement()    {}
-func (s TryStmt) isStatement()        {}
-func (s CatchStmt) isStatement()      {}
-func (s FunctionStmt) isStatement()   {}
-func (s ExternFuncStmt) isStatement() {}
-func (s ReturnStmt) isStatement()     {}
+func (s BlockStmt) IsStatement()      {}
+func (s AliasDecl) IsStatement()      {}
+func (s ClassDecl) IsStatement()      {}
+func (s VarDecl) IsStatement()        {}
+func (s ParamDecl) IsStatement()      {}
+func (s MemberDecl) IsStatement()     {}
+func (s GetterStmt) IsStatement()     {}
+func (s SetterStmt) IsStatement()     {}
+func (s PropertyDecl) IsStatement()   {}
+func (s EnumDecl) IsStatement()       {}
+func (s ExtensionDecl) IsStatement()  {}
+func (s InterfaceDecl) IsStatement()  {}
+func (s PackageDecl) IsStatement()    {}
+func (s ImportDecl) IsStatement()     {}
+func (s LoopStmt) IsStatement()       {}
+func (s IfStmt) IsStatement()         {}
+func (s ConstIfStmt) IsStatement()    {}
+func (s TryStmt) IsStatement()        {}
+func (s CatchStmt) IsStatement()      {}
+func (s FunctionStmt) IsStatement()   {}
+func (s ExternFuncStmt) IsStatement() {}
+func (s ReturnStmt) IsStatement()     {}
 
-func (e ArrayExpr) isExpression()        {}
-func (e UnaryExpr) isExpression()        {}
-func (e BinaryExpr) isExpression()       {}
-func (e CallExpr) isExpression()         {}
-func (e ArrayAccessExpr) isExpression()  {}
-func (e MemberAccessExpr) isExpression() {}
-func (e GenericInst) isExpression()      {}
-func (e StringExpr) isExpression()       {}
-func (e BoolExpr) isExpression()         {}
-func (e CharExpr) isExpression()         {}
-func (e IntExpr) isExpression()          {}
-func (e UIntExpr) isExpression()         {}
-func (e DoubleExpr) isExpression()       {}
-func (e FloatExpr) isExpression()        {}
-func (e ThisExpr) isExpression()         {}
-func (e SuperExpr) isExpression()        {}
-func (i NamedIDExpr) isExpression()      {}
-func (i IDAccessExpr) isExpression()     {}
+func (e ArrayExpr) IsExpression()        {}
+func (e UnaryExpr) IsExpression()        {}
+func (e BinaryExpr) IsExpression()       {}
+func (e CallExpr) IsExpression()         {}
+func (e ArrayAccessExpr) IsExpression()  {}
+func (e MemberAccessExpr) IsExpression() {}
+func (e GenericInst) IsExpression()      {}
+func (e StringExpr) IsExpression()       {}
+func (e BoolExpr) IsExpression()         {}
+func (e CharExpr) IsExpression()         {}
+func (e IntExpr) IsExpression()          {}
+func (e UIntExpr) IsExpression()         {}
+func (e DoubleExpr) IsExpression()       {}
+func (e FloatExpr) IsExpression()        {}
+func (e ThisExpr) IsExpression()         {}
+func (e SuperExpr) IsExpression()        {}
+func (i NamedIDExpr) IsExpression()      {}
+func (i IDAccessExpr) IsExpression()     {}
 
-func (i NamedIDExpr) isIdentifier()  {}
-func (i IDAccessExpr) isIdentifier() {}
+func (i NamedIDExpr) IsIdentifier()  {}
+func (i IDAccessExpr) IsIdentifier() {}
 
 //
 // Privacy levels
