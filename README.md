@@ -1,4 +1,5 @@
-<h1 align="center">Orange</h1>
+<h1 align="center"><img src="http://orange-lang.org/assets/img/orange-logo.png" alt="Orange logo" height="100" >
+</h1>
 
 <p align="center">
   <b>Linux/OS X</b> 
