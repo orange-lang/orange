@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -88,7 +89,7 @@ func (p parser) parseInterfaceMethod() *ast.FunctionStmt {
 	if p.allow(token.Arrow) {
 		node.RetType = p.parseType()
 	} else {
-		node.RetType = &ast.VoidType{}
+		node.RetType = &types.Void{}
 	}
 
 	return node

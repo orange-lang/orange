@@ -3,6 +3,7 @@ package test
 import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 )
 
 var _ = DescribeTable("Parsing interfaces", expectNode,
@@ -36,18 +37,18 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 
 	CEntry("interface foo: A { }", &ast.InterfaceDecl{
 		Name: "foo",
-		Supers: []ast.Type{
-			&ast.NamedType{Name: "A"},
+		Supers: []types.Type{
+			&types.Named{Name: "A"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	CEntry("interface foo: A,B,C { }", &ast.InterfaceDecl{
 		Name: "foo",
-		Supers: []ast.Type{
-			&ast.NamedType{Name: "A"},
-			&ast.NamedType{Name: "B"},
-			&ast.NamedType{Name: "C"},
+		Supers: []types.Type{
+			&types.Named{Name: "A"},
+			&types.Named{Name: "B"},
+			&types.Named{Name: "C"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
@@ -58,18 +59,18 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 
 	CEntry(`interface<T> foo { }`, &ast.InterfaceDecl{
 		Name: "foo",
-		GenericTypes: []ast.Type{
-			&ast.NamedType{Name: "T"},
+		GenericTypes: []types.Type{
+			&types.Named{Name: "T"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	CEntry(`interface<T,U,V> foo { }`, &ast.InterfaceDecl{
 		Name: "foo",
-		GenericTypes: []ast.Type{
-			&ast.NamedType{Name: "T"},
-			&ast.NamedType{Name: "U"},
-			&ast.NamedType{Name: "V"},
+		GenericTypes: []types.Type{
+			&types.Named{Name: "T"},
+			&types.Named{Name: "U"},
+			&types.Named{Name: "V"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
@@ -85,13 +86,13 @@ var _ = DescribeTable("Parsing interfaces", expectNode,
 		Name: "foo",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.FunctionStmt{
-				RetType:    &ast.VoidType{},
+				RetType:    &types.Void{},
 				Name:       "foo",
 				Parameters: []*ast.ParamDecl{},
 			},
 			&ast.FunctionStmt{
 				Name:       "foo",
-				RetType:    &ast.BoolType{},
+				RetType:    &types.Bool{},
 				Parameters: []*ast.ParamDecl{},
 			},
 		}},

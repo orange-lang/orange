@@ -2,6 +2,7 @@ package parse
 
 import (
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -33,15 +34,15 @@ func (p parser) parseFunc() *ast.FunctionStmt {
 	return fn
 }
 
-func (p parser) parseGenericList() (types []ast.Type) {
+func (p parser) parseGenericList() (tys []types.Type) {
 	p.expect(token.LT)
 
 	tyName := p.expect(token.Identifier).Value
-	types = append(types, &ast.NamedType{Name: tyName})
+	tys = append(tys, &types.Named{Name: tyName})
 
 	for p.allow(token.Comma) {
 		tyName = p.expect(token.Identifier).Value
-		types = append(types, &ast.NamedType{Name: tyName})
+		tys = append(tys, &types.Named{Name: tyName})
 	}
 
 	p.expect(token.GT)
@@ -64,7 +65,7 @@ func (p parser) parseExternFunc() *ast.ExternFuncStmt {
 	if p.allow(token.Arrow) {
 		fn.RetType = p.parseType()
 	} else {
-		fn.RetType = &ast.VoidType{}
+		fn.RetType = &types.Void{}
 	}
 
 	return fn

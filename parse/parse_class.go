@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -101,7 +102,7 @@ func (p parser) parseMemberDecl() *ast.MemberDecl {
 	ty := varDecl.Type
 
 	if isConst {
-		ty.SetFlag(ast.FlagConst)
+		ty.SetFlag(types.FlagConst)
 	}
 
 	return &ast.MemberDecl{
@@ -163,7 +164,7 @@ func (p parser) parseSetter() *ast.SetterStmt {
 	}
 }
 
-func (p parser) parseTypeList() (tys []ast.Type) {
+func (p parser) parseTypeList() (tys []types.Type) {
 	ty := p.parseType()
 	tys = append(tys, ty)
 

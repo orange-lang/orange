@@ -8,79 +8,80 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 	"github.com/orange-lang/orange/parse"
 	"github.com/orange-lang/orange/parse/lexer"
 )
 
 var _ = Describe("Parsing Types", func() {
 	DescribeTable("should be able to parse a", expectType,
-		CEntry("void", &ast.VoidType{}),
-		CEntry("int", &ast.IntType{Size: 64, Signed: true}),
-		CEntry("int8", &ast.IntType{Size: 8, Signed: true}),
-		CEntry("int16", &ast.IntType{Size: 16, Signed: true}),
-		CEntry("int32", &ast.IntType{Size: 32, Signed: true}),
-		CEntry("int64", &ast.IntType{Size: 64, Signed: true}),
-		CEntry("uint", &ast.IntType{Size: 64, Signed: false}),
-		CEntry("uint8", &ast.IntType{Size: 8, Signed: false}),
-		CEntry("uint16", &ast.IntType{Size: 16, Signed: false}),
-		CEntry("uint32", &ast.IntType{Size: 32, Signed: false}),
-		CEntry("uint64", &ast.IntType{Size: 64, Signed: false}),
-		CEntry("float", &ast.FloatType{}),
-		CEntry("double", &ast.DoubleType{}),
-		CEntry("char", &ast.CharType{}),
-		CEntry("string", &ast.NamedType{Name: "string"}),
-		CEntry("bool", &ast.BoolType{}),
+		CEntry("void", &types.Void{}),
+		CEntry("int", &types.Int{Size: 64, Signed: true}),
+		CEntry("int8", &types.Int{Size: 8, Signed: true}),
+		CEntry("int16", &types.Int{Size: 16, Signed: true}),
+		CEntry("int32", &types.Int{Size: 32, Signed: true}),
+		CEntry("int64", &types.Int{Size: 64, Signed: true}),
+		CEntry("uint", &types.Int{Size: 64, Signed: false}),
+		CEntry("uint8", &types.Int{Size: 8, Signed: false}),
+		CEntry("uint16", &types.Int{Size: 16, Signed: false}),
+		CEntry("uint32", &types.Int{Size: 32, Signed: false}),
+		CEntry("uint64", &types.Int{Size: 64, Signed: false}),
+		CEntry("float", &types.Float{}),
+		CEntry("double", &types.Double{}),
+		CEntry("char", &types.Char{}),
+		CEntry("string", &types.Named{Name: "string"}),
+		CEntry("bool", &types.Bool{}),
 
-		CEntry("List<string>", &ast.GenericAnnotation{
-			Type: &ast.NamedType{Name: "List"},
-			Annotations: []ast.Type{
-				&ast.NamedType{Name: "string"},
+		CEntry("List<string>", &types.Annotation{
+			Type: &types.Named{Name: "List"},
+			Annotations: []types.Type{
+				&types.Named{Name: "string"},
 			},
 		}),
 
-		CEntry("Map<bool, string>", &ast.GenericAnnotation{
-			Type: &ast.NamedType{Name: "Map"},
-			Annotations: []ast.Type{
-				&ast.BoolType{},
-				&ast.NamedType{Name: "string"},
+		CEntry("Map<bool, string>", &types.Annotation{
+			Type: &types.Named{Name: "Map"},
+			Annotations: []types.Type{
+				&types.Bool{},
+				&types.Named{Name: "string"},
 			},
 		}),
 
-		CEntry("int*", &ast.PointerType{
-			InnerType: &ast.IntType{Size: 64, Signed: true},
+		CEntry("int*", &types.Pointer{
+			InnerType: &types.Int{Size: 64, Signed: true},
 		}),
 
-		CEntry("int**", &ast.PointerType{
-			InnerType: &ast.PointerType{
-				InnerType: &ast.IntType{Size: 64, Signed: true},
+		CEntry("int**", &types.Pointer{
+			InnerType: &types.Pointer{
+				InnerType: &types.Int{Size: 64, Signed: true},
 			},
 		}),
 
-		CEntry("int[]", &ast.ArrayType{
-			InnerType: &ast.IntType{Size: 64, Signed: true},
+		CEntry("int[]", &types.Array{
+			InnerType: &types.Int{Size: 64, Signed: true},
 		}),
 
-		CEntry("int[][]", &ast.ArrayType{
-			InnerType: &ast.ArrayType{
-				InnerType: &ast.IntType{Size: 64, Signed: true},
+		CEntry("int[][]", &types.Array{
+			InnerType: &types.Array{
+				InnerType: &types.Int{Size: 64, Signed: true},
 			},
 		}),
 
-		CEntry("int[]*", &ast.PointerType{
-			InnerType: &ast.ArrayType{
-				InnerType: &ast.IntType{Size: 64, Signed: true},
+		CEntry("int[]*", &types.Pointer{
+			InnerType: &types.Array{
+				InnerType: &types.Int{Size: 64, Signed: true},
 			},
 		}),
 
-		CEntry("int*[]", &ast.ArrayType{
-			InnerType: &ast.PointerType{
-				InnerType: &ast.IntType{Size: 64, Signed: true},
+		CEntry("int*[]", &types.Array{
+			InnerType: &types.Pointer{
+				InnerType: &types.Int{Size: 64, Signed: true},
 			},
 		}),
 
-		CEntry("const int[]", &ast.ArrayType{
-			TypeBase: ast.TypeBase{ast.FlagConst},
-			InnerType: &ast.IntType{
+		CEntry("const int[]", &types.Array{
+			Base: types.MakeBase(types.FlagConst),
+			InnerType: &types.Int{
 				Size:   64,
 				Signed: true,
 			},
@@ -88,7 +89,7 @@ var _ = Describe("Parsing Types", func() {
 	)
 })
 
-func expectType(input string, expect ast.Type) {
+func expectType(input string, expect types.Type) {
 	fullInput := fmt.Sprintf("var a: %v", input)
 	l := lexer.Lexer{Stream: &lexer.StringRuneStream{
 		Source: fullInput,

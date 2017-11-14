@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -299,7 +300,7 @@ func (p parser) parseVarDecl() *ast.VarDecl {
 	if p.allow(token.Colon) {
 		node.Type = p.parseType()
 	} else {
-		node.Type = &ast.UnresolvedType{}
+		node.Type = &types.Unresolved{}
 	}
 
 	if p.allow(token.Assign) {
@@ -307,7 +308,7 @@ func (p parser) parseVarDecl() *ast.VarDecl {
 	}
 
 	if isConst {
-		node.Type.SetFlag(ast.FlagConst)
+		node.Type.SetFlag(types.FlagConst)
 	}
 
 	return node

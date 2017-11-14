@@ -1,5 +1,7 @@
 package ast
 
+import "github.com/orange-lang/orange/ast/types"
+
 // AST represents one module of Orange code
 type AST struct {
 	Nodes []Node
@@ -44,15 +46,15 @@ type AliasDecl struct {
 
 type ClassDecl struct {
 	Name         string
-	GenericTypes []Type
-	Supers       []Type
+	GenericTypes []types.Type
+	Supers       []types.Type
 	Body         *BlockStmt
 	Privacy      PrivacyLevel
 }
 
 type VarDecl struct {
 	Name  string
-	Type  Type
+	Type  types.Type
 	Value Expression
 }
 
@@ -60,14 +62,14 @@ type VarDecl struct {
 // or method
 type ParamDecl struct {
 	Name string
-	Type Type
+	Type types.Type
 }
 
 // MemberDecl is similar to a VarDecl but is only found in the body of a class
 // (i.e., is it a declaration of a class member)
 type MemberDecl struct {
 	Name    string
-	Type    Type
+	Type    types.Type
 	Value   Expression
 	Privacy PrivacyLevel
 }
@@ -105,7 +107,7 @@ type LoopStmt struct {
 
 type PropertyDecl struct {
 	Name    string
-	Type    Type
+	Type    types.Type
 	Getter  *GetterStmt
 	Setter  *SetterStmt
 	Privacy PrivacyLevel
@@ -118,16 +120,16 @@ type EnumDecl struct {
 }
 
 type ExtensionDecl struct {
-	Original     Type
-	GenericTypes []Type
-	Supers       []Type
+	Original     types.Type
+	GenericTypes []types.Type
+	Supers       []types.Type
 	Body         *BlockStmt
 }
 
 type InterfaceDecl struct {
 	Name         string
-	GenericTypes []Type
-	Supers       []Type
+	GenericTypes []types.Type
+	Supers       []types.Type
 	Body         *BlockStmt
 	Privacy      PrivacyLevel
 }
@@ -154,9 +156,9 @@ type CatchStmt struct {
 type FunctionStmt struct {
 	Name         string
 	Destructor   bool
-	GenericTypes []Type
+	GenericTypes []types.Type
 	Parameters   []*ParamDecl
-	RetType      Type
+	RetType      types.Type
 	Body         *BlockStmt
 	Privacy      PrivacyLevel
 }
@@ -164,7 +166,7 @@ type FunctionStmt struct {
 type ExternFuncStmt struct {
 	Name             string
 	Parameters       []*ParamDecl
-	RetType          Type
+	RetType          types.Type
 	VariableArgument bool
 }
 
@@ -211,7 +213,7 @@ type MemberAccessExpr struct {
 // which has a generic type
 type GenericInst struct {
 	Object      Expression
-	Annotations []Type
+	Annotations []types.Type
 }
 
 type ThisExpr struct{}

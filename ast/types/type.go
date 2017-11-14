@@ -1,0 +1,189 @@
+package types
+
+type Type interface {
+	IsType()
+
+	Clone() Type
+	Equals(to Type, compareFlags bool) bool
+
+	SetFlag(f Flag)
+	UnsetFlag(f Flag)
+	GetFlag(f Flag) bool
+	Flags() Flag
+}
+
+type Unresolved struct{ Base }
+
+type Void struct{ Base }
+
+type Int struct {
+	Base
+	Size   int
+	Signed bool
+}
+
+type Named struct {
+	Base
+	Name string
+}
+
+type Annotation struct {
+	Base
+	Type        *Named
+	Annotations []Type
+}
+
+type Float struct{ Base }
+
+type Double struct{ Base }
+
+type Bool struct{ Base }
+
+type Char struct{ Base }
+
+type Array struct {
+	Base
+	InnerType Type
+}
+
+type Pointer struct {
+	Base
+	InnerType Type
+}
+
+func (t Annotation) IsType() {}
+func (t Unresolved) IsType() {}
+func (t Void) IsType()       {}
+func (t Int) IsType()        {}
+func (t Named) IsType()      {}
+func (t Float) IsType()      {}
+func (t Double) IsType()     {}
+func (t Bool) IsType()       {}
+func (t Char) IsType()       {}
+func (t Array) IsType()      {}
+func (t Pointer) IsType()    {}
+
+func (t Annotation) Clone() Type { return &t }
+func (t Unresolved) Clone() Type { return &t }
+func (t Void) Clone() Type       { return &t }
+func (t Int) Clone() Type        { return &t }
+func (t Named) Clone() Type      { return &t }
+func (t Float) Clone() Type      { return &t }
+func (t Double) Clone() Type     { return &t }
+func (t Bool) Clone() Type       { return &t }
+func (t Char) Clone() Type       { return &t }
+func (t Array) Clone() Type      { return &t }
+func (t Pointer) Clone() Type    { return &t }
+
+func (t Annotation) Equals(to Type, compareFlags bool) bool {
+	otherTy, ok := to.(*Annotation)
+
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	if !ok || !otherTy.Type.Equals(t.Type, compareFlags) ||
+		len(otherTy.Annotations) != len(t.Annotations) {
+		return false
+	}
+
+	for i := range t.Annotations {
+		if !t.Annotations[i].Equals(otherTy.Annotations[i], compareFlags) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (t Unresolved) Equals(to Type, compareFlags bool) bool {
+	_, ok := to.(*Unresolved)
+
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	return ok
+}
+
+func (t Void) Equals(to Type, compareFlags bool) bool {
+	_, ok := to.(*Void)
+
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	return ok
+}
+
+func (t Int) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	other, ok := to.(*Int)
+	return ok && other.Signed == t.Signed && other.Size == t.Size
+}
+
+func (t Named) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	otherTy, ok := to.(*Named)
+	return ok && otherTy.Name == t.Name
+}
+
+func (t Float) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	_, ok := to.(*Float)
+	return ok
+}
+
+func (t Double) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	_, ok := to.(*Double)
+	return ok
+}
+
+func (t Bool) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	_, ok := to.(*Bool)
+	return ok
+}
+
+func (t Char) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	_, ok := to.(*Char)
+	return ok
+}
+
+func (t Array) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	otherTy, ok := to.(*Array)
+	return ok && otherTy.InnerType.Equals(t.InnerType, compareFlags)
+}
+
+func (t Pointer) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	otherTy, ok := to.(*Pointer)
+	return ok && otherTy.InnerType.Equals(t.InnerType, compareFlags)
+}

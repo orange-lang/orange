@@ -3,7 +3,7 @@ package parse
 import (
 	"errors"
 
-	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -24,9 +24,9 @@ func isTypeToken(t token.Token) bool {
 	return false
 }
 
-func (p parser) parseType() ast.Type {
+func (p parser) parseType() types.Type {
 	var isConst bool
-	var ty ast.Type
+	var ty types.Type
 
 	if p.allow(token.Const) {
 		isConst = true
@@ -36,25 +36,25 @@ func (p parser) parseType() ast.Type {
 
 	if intSize := lexeme.Token.IntegerSize(); intSize > 0 {
 		signed := lexeme.Token.SignedValue()
-		ty = &ast.IntType{Size: intSize, Signed: signed}
+		ty = &types.Int{Size: intSize, Signed: signed}
 	}
 
 	switch lexeme.Token {
 	case token.Void:
-		ty = &ast.VoidType{}
+		ty = &types.Void{}
 	case token.Double:
-		ty = &ast.DoubleType{}
+		ty = &types.Double{}
 	case token.Float:
-		ty = &ast.FloatType{}
+		ty = &types.Float{}
 	case token.Char:
-		ty = &ast.CharType{}
+		ty = &types.Char{}
 	case token.String:
-		ty = &ast.NamedType{Name: "string"}
+		ty = &types.Named{Name: "string"}
 	case token.Bool:
-		ty = &ast.BoolType{}
+		ty = &types.Bool{}
 	case token.Identifier:
-		ty = &ast.NamedType{Name: lexeme.Value}
-		ty = p.tryParseGenericAnnotation(ty.(*ast.NamedType))
+		ty = &types.Named{Name: lexeme.Value}
+		ty = p.tryParseGenericAnnotation(ty.(*types.Named))
 	}
 
 	// Parse pointer and array types
@@ -62,12 +62,12 @@ func (p parser) parseType() ast.Type {
 		lexeme, _ = p.stream.Peek()
 		if lexeme.Token == token.Times {
 			p.stream.Next()
-			ty = &ast.PointerType{InnerType: ty}
+			ty = &types.Pointer{InnerType: ty}
 		} else if lexeme.Token == token.OpenBracket {
 			p.stream.Next()
 			p.expect(token.CloseBracket)
 
-			ty = &ast.ArrayType{InnerType: ty}
+			ty = &types.Array{InnerType: ty}
 		} else {
 			break
 		}
@@ -78,25 +78,25 @@ func (p parser) parseType() ast.Type {
 	}
 
 	if isConst {
-		ty.SetFlag(ast.FlagConst)
+		ty.SetFlag(types.FlagConst)
 	}
 
 	return ty
 }
 
-func (p parser) tryParseGenericAnnotation(ty *ast.NamedType) ast.Type {
+func (p parser) tryParseGenericAnnotation(ty *types.Named) types.Type {
 	if !p.allow(token.LT) {
 		return ty
 	}
 
-	annotations := []ast.Type{p.parseType()}
+	annotations := []types.Type{p.parseType()}
 
 	for p.allow(token.Comma) {
 		annotations = append(annotations, p.parseType())
 	}
 
 	p.expect(token.GT)
-	return &ast.GenericAnnotation{
+	return &types.Annotation{
 		Type:        ty,
 		Annotations: annotations,
 	}

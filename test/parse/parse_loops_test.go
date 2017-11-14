@@ -4,6 +4,7 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 )
 
 var _ = DescribeTable("should be able to handle loops", expectNode,
@@ -15,7 +16,7 @@ var _ = DescribeTable("should be able to handle loops", expectNode,
 	}),
 
 	CEntry("for(var i=0;;){5}", &ast.LoopStmt{
-		Initializer: &ast.VarDecl{Name: "i", Type: &ast.UnresolvedType{}, Value: &ast.IntExpr{Value: 0, Size: 64}},
+		Initializer: &ast.VarDecl{Name: "i", Type: &types.Unresolved{}, Value: &ast.IntExpr{Value: 0, Size: 64}},
 		CheckTime:   ast.CheckBefore,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.IntExpr{Value: 5, Size: 64},
@@ -23,7 +24,7 @@ var _ = DescribeTable("should be able to handle loops", expectNode,
 	}),
 
 	CEntry("for(var i=0;i<5;){5}", &ast.LoopStmt{
-		Initializer: &ast.VarDecl{Name: "i", Type: &ast.UnresolvedType{}, Value: &ast.IntExpr{Value: 0, Size: 64}},
+		Initializer: &ast.VarDecl{Name: "i", Type: &types.Unresolved{}, Value: &ast.IntExpr{Value: 0, Size: 64}},
 		Condition: &ast.BinaryExpr{
 			LHS:       &ast.NamedIDExpr{Name: "i"},
 			Operation: "<",
@@ -36,7 +37,7 @@ var _ = DescribeTable("should be able to handle loops", expectNode,
 	}),
 
 	CEntry("for(var i =0;i<5;i++){5}", &ast.LoopStmt{
-		Initializer: &ast.VarDecl{Name: "i", Type: &ast.UnresolvedType{}, Value: &ast.IntExpr{Value: 0, Size: 64}},
+		Initializer: &ast.VarDecl{Name: "i", Type: &types.Unresolved{}, Value: &ast.IntExpr{Value: 0, Size: 64}},
 		Condition: &ast.BinaryExpr{
 			LHS:       &ast.NamedIDExpr{Name: "i"},
 			Operation: "<",

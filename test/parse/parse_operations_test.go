@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -16,16 +17,16 @@ var _ = Describe("Parsing Operations", func() {
 
 		CEntry("a.<bool>", &ast.GenericInst{
 			Object: &ast.NamedIDExpr{Name: "a"},
-			Annotations: []ast.Type{
-				&ast.BoolType{},
+			Annotations: []types.Type{
+				&types.Bool{},
 			},
 		}),
 
 		CEntry("a.<bool, bool>", &ast.GenericInst{
 			Object: &ast.NamedIDExpr{Name: "a"},
-			Annotations: []ast.Type{
-				&ast.BoolType{},
-				&ast.BoolType{},
+			Annotations: []types.Type{
+				&types.Bool{},
+				&types.Bool{},
 			},
 		}),
 

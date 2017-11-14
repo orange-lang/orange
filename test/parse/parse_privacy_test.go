@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -48,7 +49,7 @@ var _ = Describe("Parsing privacy", func() {
 			Body: &ast.BlockStmt{Nodes: []ast.Node{
 				&ast.MemberDecl{
 					Name:    "a",
-					Type:    &ast.BoolType{},
+					Type:    &types.Bool{},
 					Privacy: ast.PrivacyPublic,
 				},
 			}},
@@ -61,8 +62,8 @@ var _ = Describe("Parsing privacy", func() {
 			Body: &ast.BlockStmt{Nodes: []ast.Node{
 				&ast.MemberDecl{
 					Name: "a",
-					Type: &ast.BoolType{
-						TypeBase: ast.TypeBase{ast.FlagConst},
+					Type: &types.Bool{
+						Base: types.MakeBase(types.FlagConst),
 					},
 					Privacy: ast.PrivacyPublic,
 				},
@@ -78,7 +79,7 @@ var _ = Describe("Parsing privacy", func() {
 			Body: &ast.BlockStmt{Nodes: []ast.Node{
 				&ast.PropertyDecl{
 					Name: "Prop",
-					Type: &ast.BoolType{},
+					Type: &types.Bool{},
 					Getter: &ast.GetterStmt{
 						Body: &ast.BlockStmt{Nodes: []ast.Node{
 							&ast.BoolExpr{Value: true},

@@ -5,6 +5,7 @@ import (
 	. "github.com/onsi/ginkgo/extensions/table"
 
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 )
 
 var _ = Describe("Parsing Statements", func() {
@@ -21,7 +22,7 @@ var _ = Describe("Parsing Statements", func() {
 				&ast.IntExpr{Value: 2, Size: 64},
 			}},
 			Catch: []*ast.CatchStmt{&ast.CatchStmt{
-				Variable: &ast.ParamDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+				Variable: &ast.ParamDecl{Name: "e", Type: &types.Named{Name: "Exception"}},
 				Body: &ast.BlockStmt{Nodes: []ast.Node{
 					&ast.IntExpr{Value: 3, Size: 64},
 					&ast.IntExpr{Value: 4, Size: 64},
@@ -45,14 +46,14 @@ var _ = Describe("Parsing Statements", func() {
 			}},
 			Catch: []*ast.CatchStmt{
 				&ast.CatchStmt{
-					Variable: &ast.ParamDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+					Variable: &ast.ParamDecl{Name: "e", Type: &types.Named{Name: "Exception"}},
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.IntExpr{Value: 3, Size: 64},
 						&ast.IntExpr{Value: 4, Size: 64},
 					}},
 				},
 				&ast.CatchStmt{
-					Variable: &ast.ParamDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+					Variable: &ast.ParamDecl{Name: "e", Type: &types.Named{Name: "Exception"}},
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.IntExpr{Value: 5, Size: 64},
 						&ast.IntExpr{Value: 6, Size: 64},
@@ -76,7 +77,7 @@ var _ = Describe("Parsing Statements", func() {
 				&ast.IntExpr{Value: 2, Size: 64},
 			}},
 			Catch: []*ast.CatchStmt{&ast.CatchStmt{
-				Variable: &ast.ParamDecl{Name: "e", Type: &ast.NamedType{Name: "Exception"}},
+				Variable: &ast.ParamDecl{Name: "e", Type: &types.Named{Name: "Exception"}},
 				Body: &ast.BlockStmt{Nodes: []ast.Node{
 					&ast.IntExpr{Value: 3, Size: 64},
 					&ast.IntExpr{Value: 4, Size: 64},
@@ -209,49 +210,49 @@ var _ = Describe("Parsing Statements", func() {
 	DescribeTable("should be able to parse", expectNode,
 		CEntry("alias mystring = char[]", &ast.AliasDecl{
 			Name: "mystring",
-			Type: &ast.ArrayType{InnerType: &ast.CharType{}},
+			Type: &types.Array{InnerType: &types.Char{}},
 		}),
 	)
 
 	DescribeTable("should be able to handle variable declarations", expectNode,
 		CEntry("var a: int = 5", &ast.VarDecl{
 			Name:  "a",
-			Type:  &ast.IntType{Size: 64, Signed: true},
+			Type:  &types.Int{Size: 64, Signed: true},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 
 		CEntry("var a: int", &ast.VarDecl{
 			Name:  "a",
-			Type:  &ast.IntType{Size: 64, Signed: true},
+			Type:  &types.Int{Size: 64, Signed: true},
 			Value: nil,
 		}),
 
 		CEntry("var a = 5", &ast.VarDecl{
 			Name:  "a",
-			Type:  &ast.UnresolvedType{},
+			Type:  &types.Unresolved{},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 
 		CEntry("var a", &ast.VarDecl{
 			Name:  "a",
-			Type:  &ast.UnresolvedType{},
+			Type:  &types.Unresolved{},
 			Value: nil,
 		}),
 
 		CEntry("const var a: int = 5", &ast.VarDecl{
 			Name: "a",
-			Type: &ast.IntType{
-				TypeBase: ast.TypeBase{ast.FlagConst},
-				Size:     64,
-				Signed:   true,
+			Type: &types.Int{
+				Base:   types.MakeBase(types.FlagConst),
+				Size:   64,
+				Signed: true,
 			},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
 
 		CEntry("const var a = 5", &ast.VarDecl{
 			Name: "a",
-			Type: &ast.UnresolvedType{
-				TypeBase: ast.TypeBase{ast.FlagConst},
+			Type: &types.Unresolved{
+				Base: types.MakeBase(types.FlagConst),
 			},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),

@@ -3,6 +3,7 @@ package test
 import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 )
 
 var _ = DescribeTable("Parsing classes", expectNode,
@@ -36,18 +37,18 @@ var _ = DescribeTable("Parsing classes", expectNode,
 
 	CEntry("class<T> TestClass { }", &ast.ClassDecl{
 		Name: "TestClass",
-		GenericTypes: []ast.Type{
-			&ast.NamedType{Name: "T"},
+		GenericTypes: []types.Type{
+			&types.Named{Name: "T"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	CEntry("class<T,V,U> TestClass { }", &ast.ClassDecl{
 		Name: "TestClass",
-		GenericTypes: []ast.Type{
-			&ast.NamedType{Name: "T"},
-			&ast.NamedType{Name: "V"},
-			&ast.NamedType{Name: "U"},
+		GenericTypes: []types.Type{
+			&types.Named{Name: "T"},
+			&types.Named{Name: "V"},
+			&types.Named{Name: "U"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
@@ -58,18 +59,18 @@ var _ = DescribeTable("Parsing classes", expectNode,
 
 	CEntry("class TestClass : Super1 { }", &ast.ClassDecl{
 		Name: "TestClass",
-		Supers: []ast.Type{
-			&ast.NamedType{Name: "Super1"},
+		Supers: []types.Type{
+			&types.Named{Name: "Super1"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	CEntry("class TestClass : Super1, Super2, Super3 { }", &ast.ClassDecl{
 		Name: "TestClass",
-		Supers: []ast.Type{
-			&ast.NamedType{Name: "Super1"},
-			&ast.NamedType{Name: "Super2"},
-			&ast.NamedType{Name: "Super3"},
+		Supers: []types.Type{
+			&types.Named{Name: "Super1"},
+			&types.Named{Name: "Super2"},
+			&types.Named{Name: "Super3"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
@@ -83,7 +84,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
-			&ast.MemberDecl{Name: "a", Type: &ast.BoolType{}},
+			&ast.MemberDecl{Name: "a", Type: &types.Bool{}},
 		}},
 	}),
 
@@ -92,8 +93,8 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
-			&ast.MemberDecl{Name: "a", Type: &ast.BoolType{
-				TypeBase: ast.TypeBase{ast.FlagConst},
+			&ast.MemberDecl{Name: "a", Type: &types.Bool{
+				Base: types.MakeBase(types.FlagConst),
 			}},
 		}},
 	}),
@@ -104,8 +105,8 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
-			&ast.MemberDecl{Name: "a", Type: &ast.BoolType{}},
-			&ast.MemberDecl{Name: "b", Type: &ast.BoolType{}},
+			&ast.MemberDecl{Name: "a", Type: &types.Bool{}},
+			&ast.MemberDecl{Name: "b", Type: &types.Bool{}},
 		}},
 	}),
 
@@ -114,8 +115,8 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}`, &ast.ClassDecl{
 		Name: "TestClass",
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
-			&ast.MemberDecl{Name: "a", Type: &ast.BoolType{}},
-			&ast.MemberDecl{Name: "b", Type: &ast.BoolType{}},
+			&ast.MemberDecl{Name: "a", Type: &types.Bool{}},
+			&ast.MemberDecl{Name: "b", Type: &types.Bool{}},
 		}},
 	}),
 
@@ -132,7 +133,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.PropertyDecl{
 				Name: "Prop",
-				Type: &ast.BoolType{},
+				Type: &types.Bool{},
 				Getter: &ast.GetterStmt{
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.BoolExpr{Value: true},
@@ -152,14 +153,14 @@ var _ = DescribeTable("Parsing classes", expectNode,
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.PropertyDecl{
 				Name: "Prop",
-				Type: &ast.BoolType{},
+				Type: &types.Bool{},
 				Getter: &ast.GetterStmt{
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.BoolExpr{Value: true},
 					}},
 				},
 				Setter: &ast.SetterStmt{
-					SetterVariable: &ast.ParamDecl{Name: "value", Type: &ast.BoolType{}},
+					SetterVariable: &ast.ParamDecl{Name: "value", Type: &types.Bool{}},
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.BoolExpr{Value: true},
 					}},
@@ -184,7 +185,7 @@ var _ = DescribeTable("Parsing classes", expectNode,
 					}},
 				},
 				Setter: &ast.SetterStmt{
-					SetterVariable: &ast.ParamDecl{Name: "value", Type: &ast.BoolType{}},
+					SetterVariable: &ast.ParamDecl{Name: "value", Type: &types.Bool{}},
 					Body: &ast.BlockStmt{Nodes: []ast.Node{
 						&ast.BoolExpr{Value: true},
 					}},

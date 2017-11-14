@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 	"github.com/orange-lang/orange/parse/lexer/token"
 )
 
@@ -114,7 +115,7 @@ func (p parser) parseGenericInst(lhs ast.Expression) *ast.GenericInst {
 	p.expect(token.Dot)
 	p.expect(token.LT)
 
-	annotations := []ast.Type{p.parseType()}
+	annotations := []types.Type{p.parseType()}
 
 	for p.allow(token.Comma) {
 		annotations = append(annotations, p.parseType())

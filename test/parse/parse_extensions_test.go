@@ -3,6 +3,7 @@ package test
 import (
 	. "github.com/onsi/ginkgo/extensions/table"
 	"github.com/orange-lang/orange/ast"
+	"github.com/orange-lang/orange/ast/types"
 )
 
 var _ = DescribeTable("Parsing extensions", expectNode,
@@ -11,14 +12,14 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	//
 
 	CEntry("extend bool { }", &ast.ExtensionDecl{
-		Original: &ast.BoolType{},
+		Original: &types.Bool{},
 		Body:     &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	CEntry(`extend bool {
 
 	}`, &ast.ExtensionDecl{
-		Original: &ast.BoolType{},
+		Original: &types.Bool{},
 		Body:     &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
@@ -26,7 +27,7 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	{ 
 
 	}`, &ast.ExtensionDecl{
-		Original: &ast.BoolType{},
+		Original: &types.Bool{},
 		Body:     &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
@@ -35,19 +36,19 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	//
 
 	CEntry("extend bool: A { }", &ast.ExtensionDecl{
-		Original: &ast.BoolType{},
-		Supers: []ast.Type{
-			&ast.NamedType{Name: "A"},
+		Original: &types.Bool{},
+		Supers: []types.Type{
+			&types.Named{Name: "A"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	CEntry("extend bool: A,B,C { }", &ast.ExtensionDecl{
-		Original: &ast.BoolType{},
-		Supers: []ast.Type{
-			&ast.NamedType{Name: "A"},
-			&ast.NamedType{Name: "B"},
-			&ast.NamedType{Name: "C"},
+		Original: &types.Bool{},
+		Supers: []types.Type{
+			&types.Named{Name: "A"},
+			&types.Named{Name: "B"},
+			&types.Named{Name: "C"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
@@ -57,19 +58,19 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	//
 
 	CEntry(`extend<T> bool { }`, &ast.ExtensionDecl{
-		Original: &ast.BoolType{},
-		GenericTypes: []ast.Type{
-			&ast.NamedType{Name: "T"},
+		Original: &types.Bool{},
+		GenericTypes: []types.Type{
+			&types.Named{Name: "T"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
 
 	CEntry(`extend<T,U,V> bool { }`, &ast.ExtensionDecl{
-		Original: &ast.BoolType{},
-		GenericTypes: []ast.Type{
-			&ast.NamedType{Name: "T"},
-			&ast.NamedType{Name: "U"},
-			&ast.NamedType{Name: "V"},
+		Original: &types.Bool{},
+		GenericTypes: []types.Type{
+			&types.Named{Name: "T"},
+			&types.Named{Name: "U"},
+			&types.Named{Name: "V"},
 		},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{}},
 	}),
@@ -81,7 +82,7 @@ var _ = DescribeTable("Parsing extensions", expectNode,
 	CEntry(`extend bool {
 		def foo() {}
 	}`, &ast.ExtensionDecl{
-		Original: &ast.BoolType{},
+		Original: &types.Bool{},
 		Body: &ast.BlockStmt{Nodes: []ast.Node{
 			&ast.FunctionStmt{
 				Name:       "foo",
