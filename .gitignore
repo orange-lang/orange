@@ -1,6 +1,5 @@
-pkg/
 vendor/src/
 .vscode/
-debug.test 
+debug.test
 .idea/
 Makefile
