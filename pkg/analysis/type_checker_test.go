@@ -1,7 +1,7 @@
 package analysis
 
 import (
-	"errors"
+	"fmt"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -11,10 +11,21 @@ import (
 	"github.com/orange-lang/orange/pkg/types"
 )
 
+func resolveType(node ast.Node) (types.Type, error) {
+	scope := NewScope(node)
+	ti := NewTypeInfo(scope)
+
+	if err := ti.Resolve(); err != nil {
+		return nil, err
+	}
+
+	return ti.Types[node], nil
+}
+
 var _ = Describe("Type Detection", func() {
 	Describe("BinOpExpr", func() {
 		getBinOpType := func(lhs types.Type, op string,
-			rhs types.Type) (types.Type, []error) {
+			rhs types.Type) (types.Type, error) {
 			node := &ast.BinaryExpr{
 				LHS: newMockNode(lhs),
 				RHS: newMockNode(rhs),
@@ -22,14 +33,14 @@ var _ = Describe("Type Detection", func() {
 				Operation: op,
 			}
 
-			return getType(node)
+			return resolveType(node)
 		}
 
 		DescribeTable("Disallow binary operations on void type",
 			func(op string) {
-				_, errs := getBinOpType(&types.Void{}, op, &types.Void{})
-				Expect(len(errs)).NotTo(BeZero())
-				Expect(errs[0]).To(Equal(errors.New("Cannot perform binary operation on void types")))
+				_, err := getBinOpType(&types.Void{}, op, &types.Void{})
+				Expect(err).NotTo(BeNil())
+				Expect(err).To(Equal(fmt.Errorf(BinOpOnVoid)))
 			},
 
 			// TODO: could test for all the ops here instead of a subset
@@ -44,8 +55,9 @@ var _ = Describe("Type Detection", func() {
 
 		DescribeTable("Arithmetic ops must be number types",
 			func(lhs types.Type, op string, rhs types.Type) {
-				_, errs := getBinOpType(lhs, op, rhs)
-				Expect(len(errs)).NotTo(BeZero())
+				_, err := getBinOpType(lhs, op, rhs)
+				Expect(err).NotTo(BeNil())
+				Expect(err).To(Equal(fmt.Errorf(BinOpInvalid, op, lhs, rhs)))
 			},
 
 			// All ops
@@ -57,7 +69,6 @@ var _ = Describe("Type Detection", func() {
 			// Other types
 			Entry("bool", &types.Bool{}, "+", &types.Bool{}),
 			Entry("named type", &types.Named{Name: "ok"}, "+", &types.Named{Name: "ok"}),
-			Entry("void type", &types.Void{}, "+", &types.Void{}),
 			Entry("array type",
 				&types.Array{InnerType: &types.Int{}},
 				"+",
@@ -74,44 +85,44 @@ var _ = Describe("Type Detection", func() {
 
 		Describe("Operator", func() {
 			It("Must exist", func() {
-				_, errs := getBinOpType(&types.Int{}, "1", &types.Int{})
-				Expect(len(errs)).NotTo(BeZero())
-				Expect(errs[0]).To(Equal(errors.New("1 is not a valid binary operation")))
+				_, err := getBinOpType(&types.Int{}, "1", &types.Int{})
+				Expect(err).NotTo(BeNil())
+				Expect(err).To(Equal(fmt.Errorf(InvalidBinOp, "1")))
 			})
 		})
 	})
 
 	Describe("StringExpr", func() {
 		It("Must be a char[]", func() {
-			ty, _ := getType(&ast.StringExpr{})
+			ty, _ := resolveType(&ast.StringExpr{})
 			Expect(ty).To(Equal(&types.Array{InnerType: &types.Char{}}))
 		})
 	})
 
 	Describe("BoolExpr", func() {
 		It("Must be a bool", func() {
-			ty, _ := getType(&ast.BoolExpr{})
+			ty, _ := resolveType(&ast.BoolExpr{})
 			Expect(ty).To(Equal(&types.Bool{}))
 		})
 	})
 
 	Describe("CharExpr", func() {
 		It("Must be a char", func() {
-			ty, _ := getType(&ast.CharExpr{})
+			ty, _ := resolveType(&ast.CharExpr{})
 			Expect(ty).To(Equal(&types.Char{}))
 		})
 	})
 
 	Describe("DoubleExpr", func() {
 		It("Must be a double", func() {
-			ty, _ := getType(&ast.DoubleExpr{})
+			ty, _ := resolveType(&ast.DoubleExpr{})
 			Expect(ty).To(Equal(&types.Double{}))
 		})
 	})
 
 	Describe("FloatExpr", func() {
 		It("Must be a float", func() {
-			ty, _ := getType(&ast.FloatExpr{})
+			ty, _ := resolveType(&ast.FloatExpr{})
 			Expect(ty).To(Equal(&types.Float{}))
 		})
 	})
@@ -119,7 +130,7 @@ var _ = Describe("Type Detection", func() {
 	Describe("IntExpr", func() {
 		DescribeTable("Should keep precision",
 			func(prec int) {
-				ty, _ := getType(&ast.IntExpr{Size: prec})
+				ty, _ := resolveType(&ast.IntExpr{Size: prec})
 				Expect(ty).To(Equal(&types.Int{Size: prec, Signed: true}))
 			},
 			Entry("8 bits", 8),
@@ -132,7 +143,7 @@ var _ = Describe("Type Detection", func() {
 	Describe("UIntExpr", func() {
 		DescribeTable("Should keep precision",
 			func(prec int) {
-				ty, _ := getType(&ast.UIntExpr{Size: prec})
+				ty, _ := resolveType(&ast.UIntExpr{Size: prec})
 				Expect(ty).To(Equal(&types.Int{Size: prec, Signed: false}))
 			},
 			Entry("8 bits", 8),

@@ -13,7 +13,7 @@ func (*mockNode) IsIdentifier() {}
 func (*mockNode) IsStatement()  {}
 
 func (n *mockNode) Accept(visitor ast.NodeVisitor) {
-	visitor.(*typeResolutionVisitor).Type = n.nodeType
+	visitor.(*typeChecker).SetType(n, n.nodeType)
 }
 
 func newMockNode(ty types.Type) *mockNode {
