@@ -34,7 +34,7 @@ Orange is a statically typed, multi-paradigm (imperative, object-oriented) syste
 Building on OS X, Linux, and Windows are supported. Make sure to install `go` and then simply run the following command:
 
 ```sh 
-$ go get github.com/orange-lang/orange/...
+$ go get -u github.com/orange-lang/orange/cmd/...
 ``` 
 
 # Community
