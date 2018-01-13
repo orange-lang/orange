@@ -8,7 +8,7 @@ notifications:
     on_failure: change
   email: false
 go:
-  - 1.8
+  - 1.9
 cache: apt
 services:
   - docker 
@@ -24,7 +24,7 @@ install:
 - go get -t -v ./...
 script:
 - cd ${TRAVIS_BUILD_DIR}
-- go test ./test/... -v 
+- go test ./... -v
 - |
   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
     docker build -t orangelang/orange . 
