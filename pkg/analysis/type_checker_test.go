@@ -43,7 +43,6 @@ var _ = Describe("Type Detection", func() {
 				Expect(err).To(Equal(fmt.Errorf(BinOpOnVoid)))
 			},
 
-			// TODO: could test for all the ops here instead of a subset
 			Entry("+", "+"),
 			Entry("-", "-"),
 			Entry("<", "<"),
@@ -80,7 +79,24 @@ var _ = Describe("Type Detection", func() {
 		)
 
 		Describe("Binary logical operations", func() {
-			XIt("Must be boolean types")
+			It("Must be boolean types", func() {
+				logicalOps := []string{"||", "&&"}
+				nonBooleanTypes := []types.Type{
+					&types.Int{},
+					&types.Char{},
+					&types.Pointer{InnerType: &types.Int{}},
+				}
+
+				for _, ty := range nonBooleanTypes {
+					lhsTy := ty.Clone()
+					rhsTy := ty.Clone()
+
+					for _, op := range logicalOps {
+						_, err := getBinOpType(lhsTy, op, rhsTy)
+						Expect(err).To(Equal(fmt.Errorf(BinOpLogicalOpErr, op)))
+					}
+				}
+			})
 		})
 
 		Describe("Operator", func() {

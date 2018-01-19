@@ -17,6 +17,10 @@ func isArithmeticOp(op string) bool {
 	return op == "+" || op == "-" || op == "/" || op == "*"
 }
 
+func isLogicalOp(op string) bool {
+	return op == "&&" || op == "||"
+}
+
 func isNumericType(ty types.Type) bool {
 	switch ty.(type) {
 	case *types.Int:
@@ -28,6 +32,14 @@ func isNumericType(ty types.Type) bool {
 	default:
 		return false
 	}
+}
+
+func isBooleanType(ty types.Type) bool {
+	if _, ok := ty.(*types.Bool); ok {
+		return true
+	}
+
+	return false
 }
 
 func isVoidType(ty types.Type) bool {

@@ -81,6 +81,12 @@ func (v *typeChecker) VisitBinaryExpr(node *ast.BinaryExpr) {
 		}
 	}
 
+	if isLogicalOp(node.Operation) {
+		if !isBooleanType(lhsType) || !isBooleanType(rhsType) {
+			reportError(BinOpLogicalOpErr, node.Operation)
+		}
+	}
+
 	if !hadError {
 		ty := lhsType.Clone()
 		ty.UnsetFlag(types.FlagConst | types.FlagLValue)
