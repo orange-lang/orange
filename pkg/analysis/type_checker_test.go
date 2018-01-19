@@ -27,8 +27,8 @@ var _ = Describe("Type Detection", func() {
 		getBinOpType := func(lhs types.Type, op string,
 			rhs types.Type) (types.Type, error) {
 			node := &ast.BinaryExpr{
-				LHS: newMockNode(lhs),
-				RHS: newMockNode(rhs),
+				LHS: newMockExpr(lhs),
+				RHS: newMockExpr(rhs),
 
 				Operation: op,
 			}
