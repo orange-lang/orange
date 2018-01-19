@@ -34,13 +34,14 @@ func (v *typeChecker) addError(str string, args ...interface{}) {
 
 // getType walks a node and looks up its type in the cache if it
 // doesn't already exist
-func (v *typeChecker) getType(node ast.Node) types.Type {
+func (v *typeChecker) getType(node ast.Node) (types.Type, bool) {
 	if ty, ok := v.typeInfo.Types[node]; ok {
-		return ty
+		return ty, true
 	}
 
 	node.Accept(v)
-	return v.typeInfo.Types[node]
+	ty, ok := v.typeInfo.Types[node]
+	return ty, ok
 }
 
 func (v *typeChecker) SetType(node ast.Node, ty types.Type) {
@@ -48,19 +49,39 @@ func (v *typeChecker) SetType(node ast.Node, ty types.Type) {
 }
 
 func (v *typeChecker) VisitBinaryExpr(node *ast.BinaryExpr) {
-	lhsType := v.getType(node.LHS)
-	rhsType := v.getType(node.RHS)
+	lhsType, lhsOk := v.getType(node.LHS)
+	rhsType, rhsOk := v.getType(node.RHS)
+
+	if !lhsOk || !rhsOk {
+		return
+	}
+
+	hadError := false
+
+	reportError := func(str string, args ...interface{}) {
+		v.addError(str, args...)
+		hadError = true
+	}
 
 	if !isBinOp(node.Operation) {
-		v.addError(InvalidBinOp, node.Operation)
-	} else if isVoidType(lhsType) || isVoidType(rhsType) {
-		v.addError(BinOpOnVoid)
-	} else if !lhsType.Equals(rhsType, false) {
-		v.addError(BinOpMismatch)
-	} else if isArithmeticOp(node.Operation) &&
-		!(isNumericType(lhsType) && isNumericType(rhsType)) {
-		v.addError(BinOpInvalid, node.Operation, lhsType, rhsType)
-	} else if lhsType != nil {
+		reportError(InvalidBinOp, node.Operation)
+	}
+
+	if isVoidType(lhsType) || isVoidType(rhsType) {
+		reportError(BinOpOnVoid)
+	}
+
+	if !lhsType.Equals(rhsType, false) {
+		reportError(BinOpMismatch)
+	}
+
+	if isArithmeticOp(node.Operation) {
+		if !isNumericType(lhsType) || !isNumericType(rhsType) {
+			reportError(BinOpInvalid, node.Operation, lhsType, rhsType)
+		}
+	}
+
+	if !hadError {
 		ty := lhsType.Clone()
 		ty.UnsetFlag(types.FlagConst | types.FlagLValue)
 		v.SetType(node, ty)
