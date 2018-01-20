@@ -10,8 +10,8 @@ import (
 type typeChecker struct {
 	ast.DefaultNodeVisitor
 
-	scope    *Scope
-	typeInfo *TypeInfo
+	currentScope *Scope
+	typeInfo     *TypeInfo
 
 	firstError error
 
@@ -124,7 +124,7 @@ func (v *typeChecker) VisitFloatExpr(node *ast.FloatExpr) {
 
 func newTypeChecker(scope *Scope, ti *TypeInfo) *typeChecker {
 	return &typeChecker{
-		scope:    scope,
-		typeInfo: ti,
+		currentScope: scope,
+		typeInfo:     ti,
 	}
 }
