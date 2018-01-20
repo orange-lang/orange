@@ -24,9 +24,9 @@ type Scope struct {
 func (s *Scope) nodeDefines(node ast.Node, name string) bool {
 	switch declNode := node.(type) {
 	case *ast.VarDecl:
-		if declNode.Name == name {
-			return true
-		}
+		return declNode.Name == name
+	case *ast.AliasDecl:
+		return declNode.Name == name
 	}
 
 	return false

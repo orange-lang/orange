@@ -320,4 +320,51 @@ var _ = Describe("Type Detection", func() {
 			Expect(err).To(Equal(fmt.Errorf(ReferenceNotFound, "fizzbuzz")))
 		})
 	})
+
+	Describe("AliasDecl", func() {
+		alias := &ast.AliasDecl{Name: "Number", Type: &types.Int{}}
+
+		It("should resolve to an Alias type", func() {
+			ty, err := resolveType(alias)
+			Expect(err).To(BeNil())
+			Expect(ty).To(Equal(&types.Alias{
+				Name: "Number", OriginalType: &types.Int{},
+			}))
+		})
+
+		It("should resolve to an Alias type from a var decl", func() {
+			varDecl := &ast.VarDecl{Name: "foobar", Type: &types.Named{Name: "Number"}}
+			block := &ast.BlockStmt{Nodes: []ast.Node{alias, varDecl}}
+
+			scope := NewScope(block)
+			ti := NewTypeInfo(scope)
+
+			err := ti.Resolve()
+			Expect(err).To(BeNil())
+
+			ty := ti.Types[varDecl]
+			Expect(ty).To(Equal(&types.Alias{
+				Name: "Number", OriginalType: &types.Int{},
+			}))
+		})
+
+		It("should resolve to an Alias type from nested Aliases", func() {
+			alias2 := &ast.AliasDecl{Name: "Number2", Type: &types.Named{Name: "Number"}}
+			varDecl := &ast.VarDecl{Name: "foobar", Type: &types.Named{Name: "Number2"}}
+			block := &ast.BlockStmt{Nodes: []ast.Node{alias, alias2, varDecl}}
+
+			scope := NewScope(block)
+			ti := NewTypeInfo(scope)
+
+			err := ti.Resolve()
+			Expect(err).To(BeNil())
+
+			ty := ti.Types[varDecl]
+			Expect(ty).To(Equal(&types.Alias{
+				Name: "Number2", OriginalType: &types.Alias{
+					Name: "Number", OriginalType: &types.Int{},
+				},
+			}))
+		})
+	})
 })

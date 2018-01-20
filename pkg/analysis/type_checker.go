@@ -130,8 +130,15 @@ func (v *typeChecker) VisitVarDecl(node *ast.VarDecl) {
 	var valueTy, hintTy, varType types.Type
 
 	if node.Type != nil {
-		hintTy = node.Type
+		var err error
+
+		hintTy, err = v.findType(node.Type, node)
 		varType = hintTy
+
+		if err != nil {
+			v.addError(err.Error())
+			return
+		}
 	}
 
 	if node.Value != nil {
@@ -167,6 +174,36 @@ func (v *typeChecker) VisitNamedIDExpr(node *ast.NamedIDExpr) {
 
 	refTy, _ := v.getType(ref)
 	v.SetType(node, refTy.Clone())
+}
+
+func (v *typeChecker) findType(ty types.Type, caller ast.Node) (types.Type, error) {
+	namedTy, isNamed := ty.(*types.Named)
+
+	if !isNamed {
+		return ty, nil
+	}
+
+	if declNode, err := v.currentScope.FindDecl(v.typeInfo.hierarchy,
+		namedTy.Name, caller); err != nil {
+		return nil, err
+	} else if ty, gotType := v.getType(declNode); !gotType {
+		return nil, fmt.Errorf(ReferenceNotFound, namedTy.Name)
+	} else {
+		return ty, nil
+	}
+}
+
+func (v *typeChecker) VisitAliasDecl(node *ast.AliasDecl) {
+	orig, err := v.findType(node.Type, node)
+
+	if err != nil {
+		v.addError(err.Error())
+	}
+
+	v.SetType(node, &types.Alias{
+		Name:         node.Name,
+		OriginalType: orig,
+	})
 }
 
 func newTypeChecker(scope *Scope, ti *TypeInfo) *typeChecker {
