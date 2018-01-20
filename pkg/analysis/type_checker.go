@@ -122,6 +122,30 @@ func (v *typeChecker) VisitFloatExpr(node *ast.FloatExpr) {
 	v.SetType(node, &types.Float{})
 }
 
+func (v *typeChecker) VisitVarDecl(node *ast.VarDecl) {
+	var valueTy, hintTy, varType types.Type
+
+	if node.Type != nil {
+		hintTy = node.Type
+		varType = hintTy
+	}
+
+	if node.Value != nil {
+		valueTy, _ = v.getType(node.Value)
+		varType = valueTy
+	}
+
+	if valueTy != nil && hintTy != nil && !valueTy.Equals(hintTy, false) {
+		v.addError(VarTypeMismatch, hintTy, valueTy)
+	} else if node.Type == nil && node.Value == nil {
+		v.addError(VarIncomplete)
+	} else if _, isVoid := varType.(*types.Void); isVoid {
+		v.addError(VarVoidType)
+	} else if varType != nil {
+		v.SetType(node, varType.Clone())
+	}
+}
+
 func newTypeChecker(scope *Scope, ti *TypeInfo) *typeChecker {
 	return &typeChecker{
 		currentScope: scope,

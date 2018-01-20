@@ -168,4 +168,70 @@ var _ = Describe("Type Detection", func() {
 			Entry("64 bits", 64),
 		)
 	})
+
+	Describe("VarDecl", func() {
+		It("should take on the type of the expression", func() {
+			node := &ast.VarDecl{
+				Name:  "foobar",
+				Value: newMockExpr(&types.Int{}),
+			}
+
+			ty, err := resolveType(node)
+			Expect(err).To(BeNil())
+			Expect(ty).To(Equal(&types.Int{}))
+		})
+
+		It("cannot have a void type", func() {
+			node := &ast.VarDecl{
+				Name:  "foobar",
+				Value: newMockExpr(&types.Void{}),
+			}
+
+			_, err := resolveType(node)
+			Expect(err).To(Equal(fmt.Errorf(VarVoidType)))
+		})
+
+		It("should take on the type of the type hint (no expr)", func() {
+			node := &ast.VarDecl{
+				Name: "foobar",
+				Type: &types.Int{},
+			}
+
+			ty, err := resolveType(node)
+			Expect(err).To(BeNil())
+			Expect(ty).To(Equal(&types.Int{}))
+		})
+
+		It("should take on the type of the type hint (w/ expr)", func() {
+			node := &ast.VarDecl{
+				Name:  "foobar",
+				Type:  &types.Int{},
+				Value: newMockExpr(&types.Int{}),
+			}
+
+			ty, err := resolveType(node)
+			Expect(err).To(BeNil())
+			Expect(ty).To(Equal(&types.Int{}))
+		})
+
+		It("should require expression and type hint to be the same type", func() {
+			node := &ast.VarDecl{
+				Name:  "foobar",
+				Type:  &types.Int{},
+				Value: newMockExpr(&types.Bool{}),
+			}
+
+			_, err := resolveType(node)
+			Expect(err).To(Equal(fmt.Errorf(VarTypeMismatch, node.Type, &types.Bool{})))
+		})
+
+		It("should require one type hint or expression", func() {
+			node := &ast.VarDecl{
+				Name: "foobar",
+			}
+
+			_, err := resolveType(node)
+			Expect(err).To(Equal(fmt.Errorf(VarIncomplete)))
+		})
+	})
 })
