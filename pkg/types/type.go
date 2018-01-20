@@ -51,6 +51,12 @@ type Pointer struct {
 	InnerType Type
 }
 
+type Alias struct {
+	Base
+	Name         string
+	OriginalType Type
+}
+
 func (t Annotation) IsType() {}
 func (t Unresolved) IsType() {}
 func (t Void) IsType()       {}
@@ -62,6 +68,7 @@ func (t Bool) IsType()       {}
 func (t Char) IsType()       {}
 func (t Array) IsType()      {}
 func (t Pointer) IsType()    {}
+func (t Alias) IsType()      {}
 
 func (t Annotation) Clone() Type { return &t }
 func (t Unresolved) Clone() Type { return &t }
@@ -74,13 +81,14 @@ func (t Bool) Clone() Type       { return &t }
 func (t Char) Clone() Type       { return &t }
 func (t Array) Clone() Type      { return &t }
 func (t Pointer) Clone() Type    { return &t }
+func (t Alias) Clone() Type      { return &t }
 
 func (t Annotation) Equals(to Type, compareFlags bool) bool {
-	otherTy, ok := to.(*Annotation)
-
 	if compareFlags && to.Flags() != t.Flags() {
 		return false
 	}
+
+	otherTy, ok := getRealType(to).(*Annotation)
 
 	if !ok || !otherTy.Type.Equals(t.Type, compareFlags) ||
 		len(otherTy.Annotations) != len(t.Annotations) {
@@ -97,22 +105,20 @@ func (t Annotation) Equals(to Type, compareFlags bool) bool {
 }
 
 func (t Unresolved) Equals(to Type, compareFlags bool) bool {
-	_, ok := to.(*Unresolved)
-
 	if compareFlags && to.Flags() != t.Flags() {
 		return false
 	}
 
+	_, ok := getRealType(to).(*Unresolved)
 	return ok
 }
 
 func (t Void) Equals(to Type, compareFlags bool) bool {
-	_, ok := to.(*Void)
-
 	if compareFlags && to.Flags() != t.Flags() {
 		return false
 	}
 
+	_, ok := getRealType(to).(*Void)
 	return ok
 }
 
@@ -121,7 +127,7 @@ func (t Int) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	other, ok := to.(*Int)
+	other, ok := getRealType(to).(*Int)
 	return ok && other.Signed == t.Signed && other.Size == t.Size
 }
 
@@ -130,7 +136,7 @@ func (t Named) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	otherTy, ok := to.(*Named)
+	otherTy, ok := getRealType(to).(*Named)
 	return ok && otherTy.Name == t.Name
 }
 
@@ -139,7 +145,7 @@ func (t Float) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	_, ok := to.(*Float)
+	_, ok := getRealType(to).(*Float)
 	return ok
 }
 
@@ -148,7 +154,7 @@ func (t Double) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	_, ok := to.(*Double)
+	_, ok := getRealType(to).(*Double)
 	return ok
 }
 
@@ -157,7 +163,7 @@ func (t Bool) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	_, ok := to.(*Bool)
+	_, ok := getRealType(to).(*Bool)
 	return ok
 }
 
@@ -166,7 +172,7 @@ func (t Char) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	_, ok := to.(*Char)
+	_, ok := getRealType(to).(*Char)
 	return ok
 }
 
@@ -175,7 +181,7 @@ func (t Array) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	otherTy, ok := to.(*Array)
+	otherTy, ok := getRealType(to).(*Array)
 	return ok && otherTy.InnerType.Equals(t.InnerType, compareFlags)
 }
 
@@ -184,6 +190,29 @@ func (t Pointer) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	otherTy, ok := to.(*Pointer)
+	otherTy, ok := getRealType(to).(*Pointer)
 	return ok && otherTy.InnerType.Equals(t.InnerType, compareFlags)
+}
+
+func (t Alias) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	if other, ok := to.(*Alias); ok {
+		return t.Name == other.Name &&
+			other.OriginalType.Equals(t.OriginalType, compareFlags)
+	}
+
+	return t.OriginalType.Equals(to, compareFlags)
+}
+
+// getRealType will return the original type if the type is an alias;
+// otherwise just returns the source type.
+func getRealType(source Type) Type {
+	if ty, isAlias := source.(*Alias); isAlias {
+		return ty.OriginalType
+	}
+
+	return source
 }

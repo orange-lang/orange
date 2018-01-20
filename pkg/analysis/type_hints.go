@@ -27,13 +27,15 @@ func isAssignmentOp(op string) bool {
 }
 
 func isNumericType(ty types.Type) bool {
-	switch ty.(type) {
+	switch casted := ty.(type) {
 	case *types.Int:
 		return true
 	case *types.Float:
 		return true
 	case *types.Double:
 		return true
+	case *types.Alias:
+		return isNumericType(casted.OriginalType)
 	default:
 		return false
 	}
@@ -42,12 +44,19 @@ func isNumericType(ty types.Type) bool {
 func isBooleanType(ty types.Type) bool {
 	if _, ok := ty.(*types.Bool); ok {
 		return true
+	} else if casted, ok := ty.(*types.Alias); ok {
+		return isBooleanType(casted.OriginalType)
 	}
 
 	return false
 }
 
 func isVoidType(ty types.Type) bool {
-	_, isVoid := ty.(*types.Void)
-	return isVoid
+	if _, isVoid := ty.(*types.Void); isVoid {
+		return true
+	} else if casted, ok := ty.(*types.Alias); ok {
+		return isVoidType(casted.OriginalType)
+	}
+
+	return false
 }
