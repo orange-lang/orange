@@ -199,19 +199,14 @@ func (t Alias) Equals(to Type, compareFlags bool) bool {
 		return false
 	}
 
-	if other, ok := to.(*Alias); ok {
-		return t.Name == other.Name &&
-			other.OriginalType.Equals(t.OriginalType, compareFlags)
-	}
-
-	return t.OriginalType.Equals(to, compareFlags)
+	return getRealType(&t).Equals(getRealType(to), compareFlags)
 }
 
 // getRealType will return the original type if the type is an alias;
 // otherwise just returns the source type.
 func getRealType(source Type) Type {
 	if ty, isAlias := source.(*Alias); isAlias {
-		return ty.OriginalType
+		return getRealType(ty.OriginalType)
 	}
 
 	return source
