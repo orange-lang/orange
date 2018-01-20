@@ -9,6 +9,8 @@ import (
 type TypeInfo struct {
 	GlobalScope *Scope
 
+	hierarchy *ast.Hierarchy
+
 	// Types is a map of nodes to the types they are representative of.
 	// Not all nodes will have types.
 	Types map[ast.Node]types.Type
@@ -27,6 +29,8 @@ func (i *TypeInfo) Resolve() error {
 func NewTypeInfo(globalScope *Scope) *TypeInfo {
 	ti := &TypeInfo{
 		GlobalScope: globalScope,
+
+		hierarchy: ast.NewHierarchy(globalScope.Node),
 
 		Types:  make(map[ast.Node]types.Type),
 		Scopes: make(map[ast.Node]*Scope),

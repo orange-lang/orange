@@ -22,7 +22,9 @@ func (*mockExpr) IsIdentifier() {}
 func (*mockExpr) IsStatement()  {}
 
 func (n *mockExpr) Accept(visitor ast.NodeVisitor) {
-	visitor.(*typeChecker).SetType(n, n.nodeType)
+	if tc, ok := visitor.(*typeChecker); ok {
+		tc.SetType(n, n.nodeType)
+	}
 }
 
 func newMockExpr(ty types.Type) *mockExpr {
