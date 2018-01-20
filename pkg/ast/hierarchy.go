@@ -45,6 +45,17 @@ func (h *Hierarchy) Children(node Node) []Node {
 	return h.children[node]
 }
 
+func (h *Hierarchy) ChildIdx(parent Node, child Node) int {
+	children := h.Children(parent)
+	for i, node := range children {
+		if node == child {
+			return i
+		}
+	}
+
+	return -1
+}
+
 func NewHierarchy(root Node) *Hierarchy {
 	hier := &Hierarchy{
 		root:     root,
