@@ -11,6 +11,9 @@ type Scope struct {
 	// Node is tied to the node that this scope is representative of
 	Node ast.Node
 
+	// Parent of this Scope
+	Parent *Scope
+
 	// Children of this scope - nested functions, if statements, etc.
 	Children []*Scope
 }
@@ -25,6 +28,14 @@ func (s *Scope) Resolve(ti *TypeInfo) error {
 	return visitor.GetError()
 }
 
+// AddScope adds a scope as a scope as a child and sets its parent to
+// this scope.
+func (s *Scope) AddScope(child *Scope) {
+	child.Parent = s
+	s.Children = append(s.Children, child)
+}
+
+// NewScope creates a new scope given a node to represent it.
 func NewScope(node ast.Node) *Scope {
 	return &Scope{
 		Node:     node,
