@@ -276,4 +276,48 @@ var _ = Describe("Type Detection", func() {
 			Expect(err).To(Equal(fmt.Errorf(VarIncomplete)))
 		})
 	})
+
+	Describe("NamedIDExpr", func() {
+		It("should be able to look up type from VarDecl", func() {
+			ref := &ast.NamedIDExpr{Name: "foobar"}
+			block := &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.VarDecl{Name: "foobar", Type: &types.Bool{}},
+				ref,
+			}}
+
+			scope := NewScope(block)
+			ti := NewTypeInfo(scope)
+
+			err := ti.Resolve()
+			Expect(err).To(BeNil())
+
+			ty := ti.Types[ref]
+			Expect(ty).To(Equal(&types.Bool{}))
+		})
+
+		It("requires the reference to exist", func() {
+			ref := &ast.NamedIDExpr{Name: "foobar"}
+			block := &ast.BlockStmt{Nodes: []ast.Node{ref}}
+
+			scope := NewScope(block)
+			ti := NewTypeInfo(scope)
+
+			err := ti.Resolve()
+			Expect(err).To(Equal(fmt.Errorf(ReferenceNotFound, "foobar")))
+		})
+
+		It("requires the reference to have the same name", func() {
+			ref := &ast.NamedIDExpr{Name: "fizzbuzz"}
+			block := &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.VarDecl{Name: "foobar", Type: &types.Bool{}},
+				ref,
+			}}
+
+			scope := NewScope(block)
+			ti := NewTypeInfo(scope)
+
+			err := ti.Resolve()
+			Expect(err).To(Equal(fmt.Errorf(ReferenceNotFound, "fizzbuzz")))
+		})
+	})
 })

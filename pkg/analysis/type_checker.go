@@ -150,6 +150,25 @@ func (v *typeChecker) VisitVarDecl(node *ast.VarDecl) {
 	}
 }
 
+func (v *typeChecker) VisitNamedIDExpr(node *ast.NamedIDExpr) {
+	ref, err := v.currentScope.FindDecl(v.typeInfo.hierarchy, node.Name, node)
+
+	if err != nil {
+		v.addError(err.Error())
+		return
+	} else if ref == nil {
+		v.addError(ReferenceNotFound, node.Name)
+		return
+	}
+
+	if _, isVar := ref.(*ast.VarDecl); !isVar {
+		panic("cannot handle references to non-variables yet")
+	}
+
+	refTy, _ := v.getType(ref)
+	v.SetType(node, refTy.Clone())
+}
+
 func newTypeChecker(scope *Scope, ti *TypeInfo) *typeChecker {
 	return &typeChecker{
 		currentScope: scope,

@@ -11,6 +11,7 @@ const (
 
 	// Referencs
 	UseBeforeDeclared = "expression %v is using identifier %v before it is declared"
+	ReferenceNotFound = "identifier %v not declared"
 
 	// VarDecl
 	VarVoidType     = "variables cannot be type void"
