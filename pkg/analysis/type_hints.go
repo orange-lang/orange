@@ -41,6 +41,17 @@ func isNumericType(ty types.Type) bool {
 	}
 }
 
+func isIntegerType(ty types.Type) bool {
+	switch casted := ty.(type) {
+	case *types.Int:
+		return true
+	case *types.Alias:
+		return isIntegerType(casted.OriginalType)
+	default:
+		return false
+	}
+}
+
 func isBooleanType(ty types.Type) bool {
 	if _, ok := ty.(*types.Bool); ok {
 		return true

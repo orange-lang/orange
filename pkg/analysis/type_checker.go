@@ -81,6 +81,12 @@ func (v *typeChecker) VisitBinaryExpr(node *ast.BinaryExpr) {
 		}
 	}
 
+	if node.Operation == "%" {
+		if !isIntegerType(lhsType) || !isIntegerType(rhsType) {
+			reportError(BinOpInvalid, node.Operation, lhsType, rhsType)
+		}
+	}
+
 	if isLogicalOp(node.Operation) {
 		if !isBooleanType(lhsType) || !isBooleanType(rhsType) {
 			reportError(BinOpLogicalOpErr, node.Operation)

@@ -48,6 +48,9 @@ var _ = Describe("Type Detection", func() {
 			Entry("<", "<"),
 			Entry(">", ">"),
 			Entry("==", "=="),
+			Entry("!=", "!="),
+			Entry(">=", ">="),
+			Entry("<=", "<="),
 			Entry("*", "*"),
 			Entry("/", "/"),
 		)
@@ -106,6 +109,7 @@ var _ = Describe("Type Detection", func() {
 			Entry("-", &types.Char{}, "-", &types.Char{}),
 			Entry("*", &types.Char{}, "*", &types.Char{}),
 			Entry("/", &types.Char{}, "/", &types.Char{}),
+			Entry("%", &types.Char{}, "%", &types.Char{}),
 
 			// Other types
 			Entry("bool", &types.Bool{}, "+", &types.Bool{}),
