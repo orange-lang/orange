@@ -1,6 +1,10 @@
 package analysis
 
 const (
+	// UnaryExpr
+	UnaryOpInvalid   = "operation %v not valid for type %v"
+	UnaryOpNonLvalue = "operation %v only valid when operand is an lvalue"
+
 	// BinaryExpr
 	InvalidBinOp      = "%v is not a valid binary operation"
 	BinOpOnVoid       = "cannot perform binary operations on void types"

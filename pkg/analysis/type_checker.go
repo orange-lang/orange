@@ -48,6 +48,59 @@ func (v *typeChecker) SetType(node ast.Node, ty types.Type) {
 	v.typeInfo.Types[node] = ty
 }
 
+func (v *typeChecker) VisitUnaryExpr(node *ast.UnaryExpr) {
+	operandTy, opOk := v.getType(node.Operand)
+	if !opOk {
+		return
+	}
+
+	hadError := false
+	isLvalue := func(ty types.Type) bool { return ty.GetFlag(types.FlagLValue) }
+	reportError := func(str string, args ...interface{}) {
+		v.addError(str, args...)
+		hadError = true
+	}
+
+	nodeTy := operandTy.Clone()
+
+	flagCheck := map[string]func(types.Type) bool{
+		"--": isLvalue,
+		"++": isLvalue,
+		"&":  isLvalue,
+	}
+
+	typeCheck := map[string]func(types.Type) bool{
+		"~":  isIntegerType,
+		"!":  isBooleanType,
+		"-":  isNumericType,
+		"--": isNumericType,
+		"++": isNumericType,
+		"*":  isPointerType,
+	}
+
+	if checker, checked := flagCheck[node.Operation]; checked {
+		if !checker(operandTy) {
+			reportError(UnaryOpNonLvalue, node.Operation)
+		}
+	}
+
+	if checker, checked := typeCheck[node.Operation]; checked {
+		if !checker(operandTy) {
+			reportError(UnaryOpInvalid, node.Operation, operandTy)
+		}
+	}
+
+	if node.Operation == "&" {
+		nodeTy = &types.Pointer{InnerType: nodeTy}
+	} else if node.Operation == "*" && !hadError {
+		nodeTy = nodeTy.(*types.Pointer).InnerType.Clone()
+	}
+
+	if !hadError {
+		v.SetType(node, nodeTy)
+	}
+}
+
 func (v *typeChecker) VisitBinaryExpr(node *ast.BinaryExpr) {
 	lhsType, lhsOk := v.getType(node.LHS)
 	rhsType, rhsOk := v.getType(node.RHS)

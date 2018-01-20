@@ -27,46 +27,54 @@ func isAssignmentOp(op string) bool {
 }
 
 func isNumericType(ty types.Type) bool {
-	switch casted := ty.(type) {
+	switch getRealType(ty).(type) {
 	case *types.Int:
 		return true
 	case *types.Float:
 		return true
 	case *types.Double:
 		return true
-	case *types.Alias:
-		return isNumericType(casted.OriginalType)
 	default:
 		return false
 	}
 }
 
 func isIntegerType(ty types.Type) bool {
-	switch casted := ty.(type) {
+	switch getRealType(ty).(type) {
 	case *types.Int:
 		return true
-	case *types.Alias:
-		return isIntegerType(casted.OriginalType)
 	default:
 		return false
 	}
 }
 
-func isBooleanType(ty types.Type) bool {
-	if _, ok := ty.(*types.Bool); ok {
+func getRealType(ty types.Type) types.Type {
+	if casted, ok := ty.(*types.Alias); ok {
+		return getRealType(casted.OriginalType)
+	}
+
+	return ty
+}
+
+func isPointerType(ty types.Type) bool {
+	if _, ok := getRealType(ty).(*types.Pointer); ok {
 		return true
-	} else if casted, ok := ty.(*types.Alias); ok {
-		return isBooleanType(casted.OriginalType)
+	}
+
+	return false
+}
+
+func isBooleanType(ty types.Type) bool {
+	if _, ok := getRealType(ty).(*types.Bool); ok {
+		return true
 	}
 
 	return false
 }
 
 func isVoidType(ty types.Type) bool {
-	if _, isVoid := ty.(*types.Void); isVoid {
+	if _, isVoid := getRealType(ty).(*types.Void); isVoid {
 		return true
-	} else if casted, ok := ty.(*types.Alias); ok {
-		return isVoidType(casted.OriginalType)
 	}
 
 	return false

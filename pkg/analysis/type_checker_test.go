@@ -23,6 +23,319 @@ func resolveType(node ast.Node) (types.Type, error) {
 }
 
 var _ = Describe("Type Detection", func() {
+	Describe("UnaryExpr", func() {
+		Context("bitwise not operator", func() {
+			operator := "~"
+
+			Context("integer operand", func() {
+				operand := newMockExpr(&types.Int{})
+				ty, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should not have an error", func() {
+					Expect(err).To(BeNil())
+				})
+
+				It("should return the original type", func() {
+					Expect(ty).To(Equal(&types.Int{}))
+				})
+			})
+
+			Context("non-integer operand", func() {
+				operand := newMockExpr(&types.Bool{})
+				_, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should fail", func() {
+					Expect(err).To(Equal(fmt.Errorf(UnaryOpInvalid, operator,
+						&types.Bool{})))
+				})
+			})
+		})
+
+		Context("logical not operator", func() {
+			operator := "!"
+
+			Context("boolean operand", func() {
+				operand := newMockExpr(&types.Bool{})
+				ty, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should not have an error", func() {
+					Expect(err).To(BeNil())
+				})
+
+				It("should return the original type", func() {
+					Expect(ty).To(Equal(&types.Bool{}))
+				})
+			})
+
+			Context("non-boolean operand", func() {
+				operand := newMockExpr(&types.Int{})
+				_, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should fail", func() {
+					Expect(err).To(Equal(fmt.Errorf(UnaryOpInvalid, operator,
+						&types.Int{})))
+				})
+			})
+		})
+
+		Context("unary negation operator", func() {
+			operator := "-"
+
+			Context("numeric operand", func() {
+				operand := newMockExpr(&types.Double{})
+				ty, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should not have an error", func() {
+					Expect(err).To(BeNil())
+				})
+
+				It("should return the original type", func() {
+					Expect(ty).To(Equal(&types.Double{}))
+				})
+			})
+
+			Context("non-numeric operand", func() {
+				operand := newMockExpr(&types.Bool{})
+				_, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should fail", func() {
+					Expect(err).To(Equal(fmt.Errorf(UnaryOpInvalid, operator,
+						&types.Bool{})))
+				})
+			})
+		})
+
+		Context("increment operator", func() {
+			operator := "++"
+
+			Context("lvalue", func() {
+				Context("numeric operand", func() {
+					operandTy := &types.Double{}
+					operandTy.SetFlag(types.FlagLValue)
+
+					operand := newMockExpr(operandTy)
+					ty, err := resolveType(&ast.UnaryExpr{
+						Operation: operator,
+						Operand:   operand,
+					})
+
+					It("should not have an error", func() {
+						Expect(err).To(BeNil())
+					})
+
+					It("should return the original type", func() {
+						Expect(ty).To(Equal(operandTy.Clone()))
+					})
+				})
+
+				Context("non-numeric operand", func() {
+					operandTy := &types.Bool{}
+					operandTy.SetFlag(types.FlagLValue)
+
+					operand := newMockExpr(operandTy)
+					_, err := resolveType(&ast.UnaryExpr{
+						Operation: operator,
+						Operand:   operand,
+					})
+
+					It("should fail", func() {
+						Expect(err).To(Equal(fmt.Errorf(UnaryOpInvalid,
+							operator, operandTy)))
+					})
+				})
+			})
+
+			Context("non-lvalue", func() {
+				Context("numeric operand", func() {
+					operand := newMockExpr(&types.Double{})
+					_, err := resolveType(&ast.UnaryExpr{
+						Operation: operator,
+						Operand:   operand,
+					})
+
+					It("should fail", func() {
+						Expect(err).To(Equal(fmt.Errorf(UnaryOpNonLvalue,
+							operator)))
+					})
+				})
+
+				Context("non-numeric operand", func() {
+					operand := newMockExpr(&types.Bool{})
+					_, err := resolveType(&ast.UnaryExpr{
+						Operation: operator,
+						Operand:   operand,
+					})
+
+					It("should fail", func() {
+						Expect(err).To(Equal(fmt.Errorf(UnaryOpNonLvalue,
+							operator)))
+					})
+				})
+			})
+		})
+
+		Context("decrement operator", func() {
+			operator := "--"
+
+			Context("lvalue", func() {
+				Context("numeric operand", func() {
+					operandTy := &types.Double{}
+					operandTy.SetFlag(types.FlagLValue)
+
+					operand := newMockExpr(operandTy)
+					ty, err := resolveType(&ast.UnaryExpr{
+						Operation: operator,
+						Operand:   operand,
+					})
+
+					It("should not have an error", func() {
+						Expect(err).To(BeNil())
+					})
+
+					It("should return the original type", func() {
+						Expect(ty).To(Equal(operandTy.Clone()))
+					})
+				})
+
+				Context("non-numeric operand", func() {
+					operandTy := &types.Bool{}
+					operandTy.SetFlag(types.FlagLValue)
+
+					operand := newMockExpr(operandTy)
+					_, err := resolveType(&ast.UnaryExpr{
+						Operation: operator,
+						Operand:   operand,
+					})
+
+					It("should fail", func() {
+						Expect(err).To(Equal(fmt.Errorf(UnaryOpInvalid,
+							operator, operandTy)))
+					})
+				})
+			})
+
+			Context("non-lvalue", func() {
+				Context("numeric operand", func() {
+					operand := newMockExpr(&types.Double{})
+					_, err := resolveType(&ast.UnaryExpr{
+						Operation: operator,
+						Operand:   operand,
+					})
+
+					It("should fail", func() {
+						Expect(err).To(Equal(fmt.Errorf(UnaryOpNonLvalue,
+							operator)))
+					})
+				})
+
+				Context("non-numeric operand", func() {
+					operand := newMockExpr(&types.Bool{})
+					_, err := resolveType(&ast.UnaryExpr{
+						Operation: operator,
+						Operand:   operand,
+					})
+
+					It("should fail", func() {
+						Expect(err).To(Equal(fmt.Errorf(UnaryOpNonLvalue,
+							operator)))
+					})
+				})
+			})
+		})
+
+		Context("address-of operator", func() {
+			operator := "&"
+
+			Context("lvalue", func() {
+				operandTy := &types.Double{}
+				operandTy.SetFlag(types.FlagLValue)
+
+				operand := newMockExpr(operandTy)
+				ty, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should not have an error", func() {
+					Expect(err).To(BeNil())
+				})
+
+				It("should return a pointer to the original type", func() {
+					Expect(ty).To(Equal(&types.Pointer{
+						InnerType: operandTy.Clone(),
+					}))
+				})
+			})
+
+			Context("non-lvalue", func() {
+				operand := newMockExpr(&types.Double{})
+				_, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should fail", func() {
+					Expect(err).To(Equal(fmt.Errorf(UnaryOpNonLvalue,
+						operator)))
+				})
+			})
+		})
+
+		Context("address inderection operator", func() {
+			operator := "*"
+
+			Context("pointer operand", func() {
+				operand := newMockExpr(&types.Pointer{
+					InnerType: &types.Double{},
+				})
+
+				ty, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should not have an error", func() {
+					Expect(err).To(BeNil())
+				})
+
+				It("should return the pointed-to type", func() {
+					Expect(ty).To(Equal(&types.Double{}))
+				})
+			})
+
+			Context("non-pointer operand", func() {
+				operand := newMockExpr(&types.Bool{})
+				_, err := resolveType(&ast.UnaryExpr{
+					Operation: operator,
+					Operand:   operand,
+				})
+
+				It("should fail", func() {
+					Expect(err).To(Equal(fmt.Errorf(UnaryOpInvalid, operator,
+						&types.Bool{})))
+				})
+			})
+		})
+	})
+
 	Describe("BinOpExpr", func() {
 		getBinOpType := func(lhs types.Type, op string,
 			rhs types.Type) (types.Type, error) {
