@@ -21,6 +21,11 @@ func isLogicalOp(op string) bool {
 	return op == "&&" || op == "||"
 }
 
+func isAssignmentOp(op string) bool {
+	return op == "=" || op == "+=" || op == "-=" || op == "/=" ||
+		op == "*=" || op == "&=" || op == "^=" || op == "|="
+}
+
 func isNumericType(ty types.Type) bool {
 	switch ty.(type) {
 	case *types.Int:

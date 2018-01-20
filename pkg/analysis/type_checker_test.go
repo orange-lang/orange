@@ -52,6 +52,48 @@ var _ = Describe("Type Detection", func() {
 			Entry("/", "/"),
 		)
 
+		DescribeTable("Assignment ops require LHS to be lvalue",
+			func(op string) {
+				instances := []struct {
+					lhsLval, rhsLval, accept bool
+				}{
+					{false, false, false},
+					{false, true, false},
+					{true, false, true},
+					{true, true, true},
+				}
+
+				for _, instance := range instances {
+					lhsTy := &types.Int{}
+					if instance.lhsLval {
+						lhsTy.SetFlag(types.FlagLValue)
+					}
+
+					rhsTy := &types.Int{}
+					if instance.rhsLval {
+						rhsTy.SetFlag(types.FlagLValue)
+					}
+
+					_, err := getBinOpType(lhsTy, op, rhsTy)
+
+					if !instance.accept {
+						Expect(err).To(Equal(fmt.Errorf(InvalidAssignment, op)))
+					} else {
+						Expect(err).To(BeNil())
+					}
+				}
+			},
+
+			Entry("=", "="),
+			Entry("+=", "+="),
+			Entry("-=", "-="),
+			Entry("*=", "*="),
+			Entry("/=", "/="),
+			Entry("^=", "^="),
+			Entry("&=", "&="),
+			Entry("|=", "|="),
+		)
+
 		DescribeTable("Arithmetic ops must be number types",
 			func(lhs types.Type, op string, rhs types.Type) {
 				_, err := getBinOpType(lhs, op, rhs)

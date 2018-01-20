@@ -87,6 +87,10 @@ func (v *typeChecker) VisitBinaryExpr(node *ast.BinaryExpr) {
 		}
 	}
 
+	if isAssignmentOp(node.Operation) && !lhsType.GetFlag(types.FlagLValue) {
+		reportError(InvalidAssignment, node.Operation)
+	}
+
 	if !hadError {
 		ty := lhsType.Clone()
 		ty.UnsetFlag(types.FlagConst | types.FlagLValue)

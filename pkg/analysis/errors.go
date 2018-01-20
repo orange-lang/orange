@@ -7,6 +7,7 @@ const (
 	BinOpMismatch     = "types of LHS and RHS do not match"
 	BinOpInvalid      = "operation %v not valid for types %v and %v"
 	BinOpLogicalOpErr = "operation %v only valid when both LHS and RHS are boolean types"
+	InvalidAssignment = "LHS of assignment operator %v must be an lvalue"
 
 	// Referencs
 	UseBeforeDeclared = "expression %v is using identifier %v before it is declared"
