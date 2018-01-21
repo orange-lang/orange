@@ -23,6 +23,62 @@ func resolveType(node ast.Node) (types.Type, error) {
 }
 
 var _ = Describe("Type Detection", func() {
+	Describe("ArrayExpr", func() {
+		Context("no members", func() {
+			expr := &ast.ArrayExpr{}
+
+			// TODO: this should be unresolved[] and receive type hints from parent nodes
+			It("should fail", func() {
+				_, err := resolveType(expr)
+				Expect(err).To(Equal(fmt.Errorf(NoMembers)))
+			})
+		})
+
+		Context("one member", func() {
+			expr := &ast.ArrayExpr{
+				Members: []ast.Expression{newMockExpr(&types.Bool{})},
+			}
+
+			It("should be an array of the member type", func() {
+				ty, err := resolveType(expr)
+				Expect(err).To(BeNil())
+				Expect(ty).To(Equal(&types.Array{InnerType: &types.Bool{}}))
+			})
+		})
+
+		Context("multiple members", func() {
+			Context("same type", func() {
+				expr := &ast.ArrayExpr{
+					Members: []ast.Expression{
+						newMockExpr(&types.Bool{}),
+						newMockExpr(&types.Bool{}),
+					},
+				}
+
+				It("should be an array of the same type", func() {
+					ty, err := resolveType(expr)
+					Expect(err).To(BeNil())
+					Expect(ty).To(Equal(&types.Array{InnerType: &types.Bool{}}))
+				})
+			})
+
+			Context("different types", func() {
+				expr := &ast.ArrayExpr{
+					Members: []ast.Expression{
+						newMockExpr(&types.Bool{}),
+						newMockExpr(&types.Int{}),
+						newMockExpr(&types.Bool{}),
+					},
+				}
+
+				It("should fail", func() {
+					_, err := resolveType(expr)
+					Expect(err).To(Equal(fmt.Errorf(InconsistentMemberTypes)))
+				})
+			})
+		})
+	})
+
 	Describe("UnaryExpr", func() {
 		Context("bitwise not operator", func() {
 			operator := "~"

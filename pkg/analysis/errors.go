@@ -13,6 +13,10 @@ const (
 	BinOpLogicalOpErr = "operation %v only valid when both LHS and RHS are boolean types"
 	InvalidAssignment = "LHS of assignment operator %v must be an lvalue"
 
+	// ArrayExpr
+	NoMembers               = "arrays must have at least one member"
+	InconsistentMemberTypes = "array members must all have the same type"
+
 	// Referencs
 	UseBeforeDeclared = "expression %v is using identifier %v before it is declared"
 	ReferenceNotFound = "identifier %v not declared"

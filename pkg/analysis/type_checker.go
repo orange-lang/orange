@@ -265,6 +265,42 @@ func (v *typeChecker) VisitAliasDecl(node *ast.AliasDecl) {
 	})
 }
 
+func (v *typeChecker) VisitArrayExpr(node *ast.ArrayExpr) {
+	if len(node.Members) == 0 {
+		v.addError(NoMembers)
+		return
+	}
+
+	memberTypes := []types.Type{}
+
+	hadError := false
+	for _, member := range node.Members {
+		ty, ok := v.getType(member)
+		if !ok {
+			hadError = true
+		}
+
+		memberTypes = append(memberTypes, ty)
+	}
+
+	if hadError {
+		return
+	}
+
+	ty := memberTypes[0]
+
+	for _, compTy := range memberTypes {
+		if !compTy.Equals(ty, false) {
+			v.addError(InconsistentMemberTypes)
+			return
+		}
+	}
+
+	v.SetType(node, &types.Array{
+		InnerType: ty.Clone(),
+	})
+}
+
 func newTypeChecker(scope *Scope, ti *TypeInfo) *typeChecker {
 	return &typeChecker{
 		currentScope: scope,
