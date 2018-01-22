@@ -73,6 +73,11 @@ func (p parser) parseType() types.Type {
 		}
 	}
 
+	if lexeme, _ := p.stream.Peek(); lexeme.Token == token.BitAnd {
+		p.stream.Next()
+		ty = &types.Reference{InnerType: ty}
+	}
+
 	if ty == nil {
 		panic(errors.New("Unexpected type"))
 	}

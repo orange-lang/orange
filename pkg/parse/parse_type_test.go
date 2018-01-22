@@ -72,6 +72,12 @@ var _ = Describe("Parsing Types", func() {
 			},
 		}),
 
+		CEntry("int[]&", &types.Reference{
+			InnerType: &types.Array{
+				InnerType: &types.Int{Size: 64, Signed: true},
+			},
+		}),
+
 		CEntry("int*[]", &types.Array{
 			InnerType: &types.Pointer{
 				InnerType: &types.Int{Size: 64, Signed: true},

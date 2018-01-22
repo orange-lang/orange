@@ -51,6 +51,11 @@ type Pointer struct {
 	InnerType Type
 }
 
+type Reference struct {
+	Base
+	InnerType Type
+}
+
 type Alias struct {
 	Base
 	Name         string
@@ -74,6 +79,7 @@ func (t Bool) IsType()       {}
 func (t Char) IsType()       {}
 func (t Array) IsType()      {}
 func (t Pointer) IsType()    {}
+func (t Reference) IsType()  {}
 func (t Alias) IsType()      {}
 func (t Function) IsType()   {}
 
@@ -88,6 +94,7 @@ func (t Bool) Clone() Type       { return &t }
 func (t Char) Clone() Type       { return &t }
 func (t Array) Clone() Type      { return &t }
 func (t Pointer) Clone() Type    { return &t }
+func (t Reference) Clone() Type  { return &t }
 func (t Alias) Clone() Type      { return &t }
 func (t Function) Clone() Type   { return &t }
 
@@ -199,6 +206,15 @@ func (t Pointer) Equals(to Type, compareFlags bool) bool {
 	}
 
 	otherTy, ok := getRealType(to).(*Pointer)
+	return ok && otherTy.InnerType.Equals(t.InnerType, compareFlags)
+}
+
+func (t Reference) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	otherTy, ok := getRealType(to).(*Reference)
 	return ok && otherTy.InnerType.Equals(t.InnerType, compareFlags)
 }
 
