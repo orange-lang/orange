@@ -23,6 +23,48 @@ func resolveType(node ast.Node) (types.Type, error) {
 }
 
 var _ = Describe("Type Detection", func() {
+	Describe("ArrayAccessExpr", func() {
+		Context("object", func() {
+			It("must be an array", func() {
+				node := &ast.ArrayAccessExpr{
+					Object: newMockExpr(&types.Int{}),
+					Index:  newMockExpr(&types.Int{}),
+				}
+
+				_, err := resolveType(node)
+				Expect(err).To(Equal(fmt.Errorf(ArrayAccessNotArray,
+					&types.Int{})))
+			})
+		})
+
+		Context("index", func() {
+			It("must be an integer", func() {
+				node := &ast.ArrayAccessExpr{
+					Object: newMockExpr(&types.Array{
+						InnerType: &types.Int{},
+					}),
+					Index: newMockExpr(&types.Bool{}),
+				}
+
+				_, err := resolveType(node)
+				Expect(err).To(Equal(fmt.Errorf(ArrayAccessIndexNonInt,
+					&types.Bool{})))
+			})
+		})
+
+		It("must resolve to the array member type", func() {
+			node := &ast.ArrayAccessExpr{
+				Object: newMockExpr(&types.Array{
+					InnerType: &types.Bool{},
+				}),
+				Index: newMockExpr(&types.Int{}),
+			}
+
+			ty, _ := resolveType(node)
+			Expect(ty).To(Equal(&types.Bool{}))
+		})
+	})
+
 	Describe("ArrayExpr", func() {
 		Context("no members", func() {
 			expr := &ast.ArrayExpr{}

@@ -17,6 +17,10 @@ const (
 	NoMembers               = "arrays must have at least one member"
 	InconsistentMemberTypes = "array members must all have the same type"
 
+	// ArrayAccessExpr
+	ArrayAccessNotArray    = "Index of type %v cannot be accessed"
+	ArrayAccessIndexNonInt = "Array index must be integer, used typed %v"
+
 	// Referencs
 	UseBeforeDeclared = "expression %v is using identifier %v before it is declared"
 	ReferenceNotFound = "identifier %v not declared"

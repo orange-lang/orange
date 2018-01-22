@@ -79,3 +79,11 @@ func isVoidType(ty types.Type) bool {
 
 	return false
 }
+
+func isArrayType(ty types.Type) bool {
+	if _, isArray := getRealType(ty).(*types.Array); isArray {
+		return true
+	}
+
+	return false
+}

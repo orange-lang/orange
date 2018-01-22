@@ -265,6 +265,23 @@ func (v *typeChecker) VisitAliasDecl(node *ast.AliasDecl) {
 	})
 }
 
+func (v *typeChecker) VisitArrayAccessExpr(node *ast.ArrayAccessExpr) {
+	objTy, objOk := v.getType(node.Object)
+	indexTy, indexOk := v.getType(node.Index)
+
+	if !objOk || !indexOk {
+		return
+	}
+
+	if !isArrayType(objTy) {
+		v.addError(ArrayAccessNotArray, objTy)
+	} else if !isIntegerType(indexTy) {
+		v.addError(ArrayAccessIndexNonInt, indexTy)
+	} else {
+		v.SetType(node, objTy.(*types.Array).InnerType.Clone())
+	}
+}
+
 func (v *typeChecker) VisitArrayExpr(node *ast.ArrayExpr) {
 	if len(node.Members) == 0 {
 		v.addError(NoMembers)
