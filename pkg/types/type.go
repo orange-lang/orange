@@ -57,6 +57,12 @@ type Alias struct {
 	OriginalType Type
 }
 
+type Function struct {
+	Base
+	Parameters []Type
+	ReturnType Type
+}
+
 func (t Annotation) IsType() {}
 func (t Unresolved) IsType() {}
 func (t Void) IsType()       {}
@@ -69,6 +75,7 @@ func (t Char) IsType()       {}
 func (t Array) IsType()      {}
 func (t Pointer) IsType()    {}
 func (t Alias) IsType()      {}
+func (t Function) IsType()   {}
 
 func (t Annotation) Clone() Type { return &t }
 func (t Unresolved) Clone() Type { return &t }
@@ -82,6 +89,7 @@ func (t Char) Clone() Type       { return &t }
 func (t Array) Clone() Type      { return &t }
 func (t Pointer) Clone() Type    { return &t }
 func (t Alias) Clone() Type      { return &t }
+func (t Function) Clone() Type   { return &t }
 
 func (t Annotation) Equals(to Type, compareFlags bool) bool {
 	if compareFlags && to.Flags() != t.Flags() {
@@ -200,6 +208,31 @@ func (t Alias) Equals(to Type, compareFlags bool) bool {
 	}
 
 	return getRealType(&t).Equals(getRealType(to), compareFlags)
+}
+
+func (t Function) Equals(to Type, compareFlags bool) bool {
+	if compareFlags && to.Flags() != t.Flags() {
+		return false
+	}
+
+	if otherTy, ok := getRealType(to).(*Function); !ok {
+		return false
+	} else if len(t.Parameters) != len(otherTy.Parameters) {
+		return false
+	} else if !otherTy.ReturnType.Equals(t.ReturnType, compareFlags) {
+		return false
+	} else {
+		for i := range t.Parameters {
+			ourParam := t.Parameters[i]
+			theirParam := otherTy.Parameters[i]
+
+			if !ourParam.Equals(theirParam, compareFlags) {
+				return false
+			}
+		}
+	}
+
+	return true
 }
 
 // getRealType will return the original type if the type is an alias;
