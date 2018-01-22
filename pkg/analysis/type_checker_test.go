@@ -22,6 +22,11 @@ func resolveType(node ast.Node) (types.Type, error) {
 	return ti.Types[node], nil
 }
 
+func makeLvalue(ty types.Type) types.Type {
+	ty.SetFlag(types.FlagLValue)
+	return ty
+}
+
 var _ = Describe("Type Detection", func() {
 	Describe("ArrayAccessExpr", func() {
 		Context("object", func() {
@@ -635,7 +640,7 @@ var _ = Describe("Type Detection", func() {
 
 			ty, err := resolveType(node)
 			Expect(err).To(BeNil())
-			Expect(ty).To(Equal(&types.Int{}))
+			Expect(ty).To(Equal(makeLvalue(&types.Int{})))
 		})
 
 		It("cannot have a void type", func() {
@@ -656,7 +661,20 @@ var _ = Describe("Type Detection", func() {
 
 			ty, err := resolveType(node)
 			Expect(err).To(BeNil())
-			Expect(ty).To(Equal(&types.Int{}))
+			Expect(ty).To(Equal(makeLvalue(&types.Int{})))
+		})
+
+		It("should be an lvalue", func() {
+			node := &ast.VarDecl{
+				Name: "foobar",
+				Type: &types.Int{},
+			}
+
+			expect := &types.Int{}
+			expect.SetFlag(types.FlagLValue)
+
+			ty, _ := resolveType(node)
+			Expect(ty).To(Equal(expect))
 		})
 
 		It("should take on the type of the type hint (w/ expr)", func() {
@@ -668,7 +686,7 @@ var _ = Describe("Type Detection", func() {
 
 			ty, err := resolveType(node)
 			Expect(err).To(BeNil())
-			Expect(ty).To(Equal(&types.Int{}))
+			Expect(ty).To(Equal(makeLvalue(&types.Int{})))
 		})
 
 		It("should require expression and type hint to be the same type", func() {
@@ -707,7 +725,7 @@ var _ = Describe("Type Detection", func() {
 			Expect(err).To(BeNil())
 
 			ty := ti.Types[ref]
-			Expect(ty).To(Equal(&types.Bool{}))
+			Expect(ty).To(Equal(makeLvalue(&types.Bool{})))
 		})
 
 		It("requires the reference to exist", func() {
@@ -758,9 +776,9 @@ var _ = Describe("Type Detection", func() {
 			Expect(err).To(BeNil())
 
 			ty := ti.Types[varDecl]
-			Expect(ty).To(Equal(&types.Alias{
+			Expect(ty).To(Equal(makeLvalue(&types.Alias{
 				Name: "Number", OriginalType: &types.Int{},
-			}))
+			})))
 		})
 
 		It("should resolve to an Alias type from nested Aliases", func() {
@@ -775,11 +793,11 @@ var _ = Describe("Type Detection", func() {
 			Expect(err).To(BeNil())
 
 			ty := ti.Types[varDecl]
-			Expect(ty).To(Equal(&types.Alias{
+			Expect(ty).To(Equal(makeLvalue(&types.Alias{
 				Name: "Number2", OriginalType: &types.Alias{
 					Name: "Number", OriginalType: &types.Int{},
 				},
-			}))
+			})))
 		})
 	})
 })

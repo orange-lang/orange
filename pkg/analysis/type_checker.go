@@ -212,7 +212,9 @@ func (v *typeChecker) VisitVarDecl(node *ast.VarDecl) {
 	} else if _, isVoid := varType.(*types.Void); isVoid {
 		v.addError(VarVoidType)
 	} else if varType != nil {
-		v.SetType(node, varType.Clone())
+		finalTy := varType.Clone()
+		finalTy.SetFlag(types.FlagLValue)
+		v.SetType(node, finalTy)
 	}
 }
 
