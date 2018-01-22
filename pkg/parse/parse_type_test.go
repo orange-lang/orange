@@ -91,6 +91,21 @@ var _ = Describe("Parsing Types", func() {
 				Signed: true,
 			},
 		}),
+
+		CEntry("() -> int", &types.Function{
+			Parameters: []types.Type{},
+			ReturnType: &types.Int{Size: 64, Signed: true},
+		}),
+
+		CEntry("(float) -> int", &types.Function{
+			Parameters: []types.Type{&types.Float{}},
+			ReturnType: &types.Int{Size: 64, Signed: true},
+		}),
+
+		CEntry("(float, bool) -> int", &types.Function{
+			Parameters: []types.Type{&types.Float{}, &types.Bool{}},
+			ReturnType: &types.Int{Size: 64, Signed: true},
+		}),
 	)
 })
 

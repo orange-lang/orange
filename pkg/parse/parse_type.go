@@ -7,12 +7,20 @@ import (
 	"github.com/orange-lang/orange/pkg/types"
 )
 
+func isTypeTokenOrFlag(t token.Token) bool {
+	if t == token.Const {
+		return true
+	}
+
+	return isTypeToken(t)
+}
+
 func isTypeToken(t token.Token) bool {
 	typeTokens := []token.Token{
 		token.Int, token.Int8, token.Int16, token.Int32, token.Int64,
 		token.UInt, token.UInt8, token.UInt16, token.UInt32, token.UInt64,
 		token.Float, token.Double, token.Char, token.String, token.Bool,
-		token.Identifier, token.Void,
+		token.Identifier, token.Void, token.OpenParen,
 	}
 
 	for _, typeToken := range typeTokens {
@@ -28,8 +36,19 @@ func (p parser) parseType() types.Type {
 	var isConst bool
 	var ty types.Type
 
+	defer func() {
+		if isConst {
+			ty.SetFlag(types.FlagConst)
+		}
+	}()
+
 	if p.allow(token.Const) {
 		isConst = true
+	}
+
+	if ok := p.peek(token.OpenParen); ok {
+		ty = p.tryParseFunctionTy()
+		return ty
 	}
 
 	lexeme := p.expectFrom(isTypeToken)
@@ -82,11 +101,34 @@ func (p parser) parseType() types.Type {
 		panic(errors.New("Unexpected type"))
 	}
 
-	if isConst {
-		ty.SetFlag(types.FlagConst)
+	return ty
+}
+
+func (p parser) tryParseFunctionTy() types.Type {
+	p.expect(token.OpenParen)
+
+	paramTys := []types.Type{}
+
+	for {
+		if p.peekFrom(isTypeTokenOrFlag) {
+			paramTys = append(paramTys, p.parseType())
+		}
+
+		if !p.allow(token.Comma) {
+			break
+		}
 	}
 
-	return ty
+	p.expect(token.CloseParen)
+
+	p.expect(token.Arrow)
+
+	retTy := p.parseType()
+
+	return &types.Function{
+		Parameters: paramTys,
+		ReturnType: retTy,
+	}
 }
 
 func (p parser) tryParseGenericAnnotation(ty *types.Named) types.Type {
