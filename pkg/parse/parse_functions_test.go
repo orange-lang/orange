@@ -53,6 +53,17 @@ var _ = DescribeTable("Parsing functions", expectNode,
 		}},
 	}),
 
+	CEntry(`static def foo() {
+		return
+	}`, &ast.FunctionStmt{
+		Name:       "foo",
+		Parameters: []*ast.ParamDecl{},
+		Body: &ast.BlockStmt{Nodes: []ast.Node{
+			&ast.ReturnStmt{},
+		}},
+		Static: true,
+	}),
+
 	CEntry("def foo() -> int {}", &ast.FunctionStmt{
 		Name:       "foo",
 		Parameters: []*ast.ParamDecl{},

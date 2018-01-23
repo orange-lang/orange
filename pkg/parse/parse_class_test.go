@@ -100,6 +100,15 @@ var _ = DescribeTable("Parsing classes", expectNode,
 	}),
 
 	CEntry(`class TestClass {
+		static var a: bool
+	}`, &ast.ClassDecl{
+		Name: "TestClass",
+		Body: &ast.BlockStmt{Nodes: []ast.Node{
+			&ast.MemberDecl{Name: "a", Type: &types.Bool{}, Static: true},
+		}},
+	}),
+
+	CEntry(`class TestClass {
 		var a: bool
 		var b: bool
 	}`, &ast.ClassDecl{
@@ -207,6 +216,20 @@ var _ = DescribeTable("Parsing classes", expectNode,
 				Name:       "foo",
 				Parameters: []*ast.ParamDecl{},
 				Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
+			},
+		}},
+	}),
+
+	CEntry(`class TestClass {
+		static def foo() {}
+	}`, &ast.ClassDecl{
+		Name: "TestClass",
+		Body: &ast.BlockStmt{Nodes: []ast.Node{
+			&ast.FunctionStmt{
+				Name:       "foo",
+				Parameters: []*ast.ParamDecl{},
+				Body:       &ast.BlockStmt{Nodes: []ast.Node{}},
+				Static:     true,
 			},
 		}},
 	}),

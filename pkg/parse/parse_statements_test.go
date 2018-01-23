@@ -256,6 +256,13 @@ var _ = Describe("Parsing Statements", func() {
 			},
 			Value: &ast.IntExpr{Value: 5, Size: 64},
 		}),
+
+		CEntry("static var a = 5", &ast.VarDecl{
+			Name:   "a",
+			Type:   &types.Unresolved{},
+			Value:  &ast.IntExpr{Value: 5, Size: 64},
+			Static: true,
+		}),
 	)
 
 	DescribeTable("should be able to handle package", expectNode,

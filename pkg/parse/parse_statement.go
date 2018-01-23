@@ -13,12 +13,12 @@ func isStatementToken(t token.Token) bool {
 		t == token.If || t == token.Alias || isLoopToken(t) || t == token.Enum ||
 		t == token.Try || t == token.Extern || t == token.Def || t == token.Return ||
 		t == token.Class || t == token.Extend || t == token.Interface ||
-		isPrivacyToken(t) || t == token.Const
+		isPrivacyToken(t) || t == token.Const || t == token.Static
 }
 
 func isDeclarationToken(t token.Token) bool {
 	return t == token.Enum || t == token.Def || t == token.Class ||
-		t == token.Interface
+		t == token.Interface || t == token.Static
 }
 
 func (p parser) parseStatement() ast.Statement {
@@ -29,6 +29,8 @@ func (p parser) parseStatement() ast.Statement {
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
 	case token.Const:
 		return p.parseConst()
+	case token.Static:
+		return p.parseStatic()
 	case token.Var:
 		return p.parseVarDecl()
 	case token.Package:
@@ -70,7 +72,7 @@ func (p parser) parseDeclaration() ast.PrivacyFlag {
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
 	case token.Enum:
 		return p.parseEnum()
-	case token.Def:
+	case token.Def, token.Static:
 		return p.parseFunc()
 	case token.Class:
 		return p.parseClass()
@@ -89,6 +91,23 @@ func (p parser) parseConst() ast.Statement {
 		return p.parseVarDecl()
 	case token.If:
 		return p.parseConstIf()
+	default:
+		p.stream.Get(1)
+	}
+
+	panic(errors.New("Unexpected lexeme"))
+}
+
+func (p parser) parseStatic() ast.Statement {
+	lookahead, _ := p.stream.Lookahead(2)
+
+	switch lookahead[1].Token {
+	case token.Var:
+		return p.parseVarDecl()
+	case token.Def:
+		return p.parseFunc()
+	default:
+		p.stream.Get(1)
 	}
 
 	panic(errors.New("Unexpected lexeme"))
@@ -290,7 +309,18 @@ func (p parser) parsePackageDecl() *ast.PackageDecl {
 }
 
 func (p parser) parseVarDecl() *ast.VarDecl {
-	isConst := p.allow(token.Const)
+	isConst, isStatic := false, false
+
+	for {
+		if p.allow(token.Const) {
+			isConst = true
+		} else if p.allow(token.Static) {
+			isStatic = true
+		}
+
+		break
+	}
+
 	node := &ast.VarDecl{}
 
 	p.expect(token.Var)
@@ -310,6 +340,8 @@ func (p parser) parseVarDecl() *ast.VarDecl {
 	if isConst {
 		node.Type.SetFlag(types.FlagConst)
 	}
+
+	node.Static = isStatic
 
 	return node
 }

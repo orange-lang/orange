@@ -54,9 +54,10 @@ type ClassDecl struct {
 }
 
 type VarDecl struct {
-	Name  string
-	Type  types.Type
-	Value Expression
+	Name   string
+	Type   types.Type
+	Value  Expression
+	Static bool
 }
 
 // ParamDecl is similar to VarDecl but is only found as a parameter to a function
@@ -73,6 +74,7 @@ type MemberDecl struct {
 	Type    types.Type
 	Value   Expression
 	Privacy PrivacyLevel
+	Static  bool
 }
 
 type GetterStmt struct {
@@ -162,6 +164,7 @@ type FunctionStmt struct {
 	RetType      types.Type
 	Body         *BlockStmt
 	Privacy      PrivacyLevel
+	Static       bool
 }
 
 type ExternFuncStmt struct {

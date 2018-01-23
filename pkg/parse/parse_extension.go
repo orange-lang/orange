@@ -8,7 +8,7 @@ import (
 )
 
 func isExtensionStmtToken(t token.Token) bool {
-	return t == token.Def
+	return t == token.Def || t == token.Static
 }
 
 func (p parser) parseExtension() *ast.ExtensionDecl {
@@ -63,7 +63,7 @@ func (p parser) parseExtensionStmt() ast.Node {
 	}
 
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
-	case token.Def:
+	case token.Def, token.Static:
 		return p.parseFunc()
 	}
 

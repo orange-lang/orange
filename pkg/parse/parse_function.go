@@ -7,7 +7,9 @@ import (
 )
 
 func (p parser) parseFunc() *ast.FunctionStmt {
-	fn := &ast.FunctionStmt{}
+	fn := &ast.FunctionStmt{
+		Static: p.allow(token.Static),
+	}
 
 	p.expect(token.Def)
 

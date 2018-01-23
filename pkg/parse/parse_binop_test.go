@@ -186,3 +186,7 @@ var _ = Describe("Parsing Binary Operations", func() {
 func CEntry(code string, expected interface{}) TableEntry {
 	return Entry(code, code, expected)
 }
+
+func FCEntry(code string, expected interface{}) TableEntry {
+	return FEntry(code, code, expected)
+}

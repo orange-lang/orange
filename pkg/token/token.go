@@ -85,6 +85,7 @@ const (
 	Where
 	Data
 	Extend
+	Static
 	Const
 	Try
 	Catch

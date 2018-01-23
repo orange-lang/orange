@@ -14,7 +14,7 @@ func isClassStmtToken(t token.Token) bool {
 
 func isClassComponentToken(t token.Token) bool {
 	return t == token.Var || t == token.Property || t == token.Def ||
-		t == token.Const
+		t == token.Const || t == token.Static
 }
 
 func (p parser) parseClass() *ast.ClassDecl {
@@ -81,6 +81,16 @@ func (p parser) parseClassComponent() ast.PrivacyFlag {
 		panic(errors.New("Expected declaration"))
 	}
 
+	lexemes, _ := p.stream.Lookahead(2)
+	if lexemes[0].Token == token.Static {
+		switch lexemes[1].Token {
+		case token.Var:
+			return p.parseMemberDecl()
+		case token.Def:
+			return p.parseFunc()
+		}
+	}
+
 	switch lexeme, _ := p.stream.Peek(); lexeme.Token {
 	case token.Const:
 		fallthrough
@@ -96,7 +106,17 @@ func (p parser) parseClassComponent() ast.PrivacyFlag {
 }
 
 func (p parser) parseMemberDecl() *ast.MemberDecl {
-	isConst := p.allow(token.Const)
+	isConst, isStatic := false, false
+
+	for {
+		if p.allow(token.Const) {
+			isConst = true
+		} else if p.allow(token.Static) {
+			isStatic = true
+		} else {
+			break
+		}
+	}
 
 	varDecl := p.parseVarDecl()
 	ty := varDecl.Type
@@ -106,9 +126,10 @@ func (p parser) parseMemberDecl() *ast.MemberDecl {
 	}
 
 	return &ast.MemberDecl{
-		Name:  varDecl.Name,
-		Type:  ty,
-		Value: varDecl.Value,
+		Name:   varDecl.Name,
+		Type:   ty,
+		Value:  varDecl.Value,
+		Static: isStatic,
 	}
 }
 

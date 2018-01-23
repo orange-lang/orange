@@ -52,6 +52,7 @@ var _ = Describe("Keywords", func() {
 		Entry("data", "data", token.Data),
 		Entry("extend", "extend", token.Extend),
 		Entry("const", "const", token.Const),
+		Entry("static", "static", token.Static),
 		Entry("try", "try", token.Try),
 		Entry("catch", "catch", token.Catch),
 		Entry("finally", "finally", token.Finally),

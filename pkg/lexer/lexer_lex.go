@@ -281,6 +281,7 @@ func lexKeywordOrIdentifier(s RuneStream) (Lexeme, error) {
 		"data":      token.Data,
 		"extend":    token.Extend,
 		"const":     token.Const,
+		"static":    token.Static,
 		"try":       token.Try,
 		"catch":     token.Catch,
 		"finally":   token.Finally,
