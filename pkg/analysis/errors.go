@@ -30,6 +30,9 @@ const (
 	VarTypeMismatch = "variable declared as type %v but assigned initial value of type %v"
 	VarIncomplete   = "variable declarations require at least a type or an initial value"
 
+	// FunctionDecl
+	OutOfScope = "variable %v is out of scope from function %v (closures are not yet supported)"
+
 	// Internal Error
 	InvalidSearchUser = "node searching for declaration outside of the scope where it is declared"
 )

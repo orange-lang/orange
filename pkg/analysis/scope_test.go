@@ -106,4 +106,63 @@ var _ = Describe("Scope", func() {
 		Expect(foundDecl).To(BeNil())
 		Expect(err).To(Equal(fmt.Errorf(UseBeforeDeclared, searcher, decl)))
 	})
+
+	It("should be able to find global variables outside of a function", func() {
+		decl := &ast.VarDecl{Name: "foobar", Static: true}
+
+		searcher := &mockNode{}
+
+		innerFunction := &ast.FunctionStmt{
+			Name: "fun_inner",
+			Body: &ast.BlockStmt{Nodes: []ast.Node{searcher}},
+		}
+
+		outerBlock := &ast.BlockStmt{Nodes: []ast.Node{decl, innerFunction}}
+
+		scopes := map[string]*Scope{
+			"global":   NewScope(outerBlock),
+			"function": NewScope(innerFunction),
+			"fun_body": NewScope(innerFunction.Body),
+		}
+
+		scopes["global"].AddScope(scopes["function"])
+		scopes["function"].AddScope(scopes["fun_body"])
+
+		hier := ast.NewHierarchy(outerBlock)
+
+		foundDecl, err := scopes["fun_body"].FindDecl(hier, "foobar", searcher)
+		Expect(err).To(BeNil())
+		Expect(foundDecl).To(Equal(decl))
+	})
+
+	It("should not be able to find variables outside of a nested function", func() {
+		decl := &ast.VarDecl{Name: "foobar"}
+		searcher := &mockNode{}
+
+		innerFunction := &ast.FunctionStmt{
+			Name: "fun_inner",
+			Body: &ast.BlockStmt{Nodes: []ast.Node{searcher}},
+		}
+
+		outerFunction := &ast.FunctionStmt{
+			Name: "fun_outer",
+			Body: &ast.BlockStmt{Nodes: []ast.Node{decl, innerFunction}},
+		}
+
+		scopes := map[string]*Scope{
+			"outer_fun":      NewScope(outerFunction),
+			"outer_fun_body": NewScope(outerFunction.Body),
+			"inner_fun":      NewScope(innerFunction),
+			"inner_fun_body": NewScope(innerFunction.Body),
+		}
+
+		scopes["outer_fun"].AddScope(scopes["outer_fun_body"])
+		scopes["outer_fun_body"].AddScope(scopes["inner_fun"])
+		scopes["inner_fun"].AddScope(scopes["inner_fun_body"])
+
+		hier := ast.NewHierarchy(outerFunction)
+
+		_, err := scopes["inner_fun_body"].FindDecl(hier, "foobar", searcher)
+		Expect(err).To(Equal(fmt.Errorf(OutOfScope, decl, innerFunction)))
+	})
 })

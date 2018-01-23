@@ -35,8 +35,11 @@ func (s *Scope) nodeDefines(node ast.Node, name string) bool {
 // isPositionalDecl returns true if a node can only be used after it is
 // declared
 func (s *Scope) isPositionalDecl(node ast.Node) bool {
-	_, ok := node.(*ast.VarDecl)
-	return ok
+	if decl, ok := node.(*ast.VarDecl); ok {
+		return !decl.Static
+	}
+
+	return false
 }
 
 // FindDecl searches up the list of scopes until a name declared by a specific
@@ -47,8 +50,11 @@ func (s *Scope) FindDecl(hier *ast.Hierarchy, name string, user ast.Node) (ast.N
 
 	peekScope := s
 
+	var leftFunction *ast.FunctionStmt
+
 	for peekScope != nil {
 		userIdx := hier.ChildIdx(peekScope.Node, user)
+
 		if userIdx == -1 {
 			return nil, fmt.Errorf(InvalidSearchUser)
 		}
@@ -58,10 +64,16 @@ func (s *Scope) FindDecl(hier *ast.Hierarchy, name string, user ast.Node) (ast.N
 			if s.nodeDefines(child, name) {
 				if s.isPositionalDecl(child) && childIdx > userIdx {
 					return nil, fmt.Errorf(UseBeforeDeclared, originalUser, child)
+				} else if s.isPositionalDecl(child) && leftFunction != nil {
+					return nil, fmt.Errorf(OutOfScope, child, leftFunction)
 				}
 
 				return child, nil
 			}
+		}
+
+		if fn, isFunction := peekScope.Node.(*ast.FunctionStmt); isFunction {
+			leftFunction = fn
 		}
 
 		// Go up the tree. The new user is the scope's node and we're looking
