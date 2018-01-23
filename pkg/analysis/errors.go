@@ -33,6 +33,9 @@ const (
 	// FunctionDecl
 	OutOfScope = "variable %v is out of scope from function %v (closures are not yet supported)"
 
+	// ExternFunctionStmt
+	MissingReturnType = "external functions must be given a return type"
+
 	// Internal Error
 	InvalidSearchUser = "node searching for declaration outside of the scope where it is declared"
 )

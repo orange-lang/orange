@@ -320,6 +320,42 @@ func (v *typeChecker) VisitArrayExpr(node *ast.ArrayExpr) {
 	})
 }
 
+func (v *typeChecker) VisitParamDecl(node *ast.ParamDecl) {
+	if ty, err := v.findType(node.Type, node); err != nil {
+		v.addError(err.Error())
+	} else {
+		v.SetType(node, ty.Clone())
+	}
+}
+
+func (v *typeChecker) VisitExternFuncStmt(node *ast.ExternFuncStmt) {
+	paramTys := []types.Type{}
+
+	for _, param := range node.Parameters {
+		if paramTy, ok := v.getType(param); !ok {
+			return
+		} else {
+			paramTys = append(paramTys, paramTy.Clone())
+		}
+	}
+
+	if node.RetType == nil {
+		v.addError(MissingReturnType)
+		return
+	}
+
+	retTy, err := v.findType(node.RetType, node)
+	if err != nil {
+		v.addError(err.Error())
+		return
+	}
+
+	v.SetType(node, &types.Function{
+		Parameters: paramTys,
+		ReturnType: retTy.Clone(),
+	})
+}
+
 func newTypeChecker(scope *Scope, ti *TypeInfo) *typeChecker {
 	return &typeChecker{
 		currentScope: scope,

@@ -28,6 +28,62 @@ func makeLvalue(ty types.Type) types.Type {
 }
 
 var _ = Describe("Type Detection", func() {
+	Describe("ExternFuncStmt", func() {
+		It("must have a return type", func() {
+			stmt := &ast.ExternFuncStmt{Name: "foo"}
+
+			_, err := resolveType(stmt)
+			Expect(err).To(HaveOccurred())
+			Expect(err).To(Equal(fmt.Errorf(MissingReturnType)))
+		})
+
+		It("must turn into a Function type", func() {
+			stmt := &ast.ExternFuncStmt{
+				Name: "foo",
+				Parameters: []*ast.ParamDecl{
+					{Name: "a", Type: &types.Bool{}},
+				},
+				RetType: &types.Float{},
+			}
+
+			ty, err := resolveType(stmt)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(ty).To(Equal(&types.Function{
+				Parameters: []types.Type{&types.Bool{}},
+				ReturnType: &types.Float{},
+			}))
+		})
+
+		It("must lookup named types", func() {
+			alias := &ast.AliasDecl{Name: "Number", Type: &types.Bool{}}
+			stmt := &ast.ExternFuncStmt{
+				Name: "foo",
+				Parameters: []*ast.ParamDecl{
+					{Name: "a", Type: &types.Named{Name: "Number"}},
+					{Name: "b", Type: &types.Bool{}},
+				},
+				RetType: &types.Named{Name: "Number"},
+			}
+
+			block := &ast.BlockStmt{Nodes: []ast.Node{alias, stmt}}
+
+			scope := NewScope(block)
+			ti := NewTypeInfo(scope)
+
+			err := ti.Resolve()
+			Expect(err).To(BeNil())
+
+			ty := ti.Types[stmt]
+			Expect(ty).To(Equal(&types.Function{
+				Parameters: []types.Type{
+					&types.Alias{Name: "Number", OriginalType: &types.Bool{}},
+					&types.Bool{},
+				},
+				ReturnType: &types.Alias{Name: "Number", OriginalType: &types.Bool{}},
+			}))
+		})
+	})
+
 	Describe("ArrayAccessExpr", func() {
 		Context("object", func() {
 			It("must be an array", func() {

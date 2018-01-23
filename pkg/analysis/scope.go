@@ -55,6 +55,20 @@ func (s *Scope) FindDecl(hier *ast.Hierarchy, name string, user ast.Node) (ast.N
 	for peekScope != nil {
 		userIdx := hier.ChildIdx(peekScope.Node, user)
 
+		// The user is currently set to the literal node which is finding the
+		// declaration, however in many circumstances we require to find the "true"
+		// user, which the node that is the immediate child of the peekScope.Node.
+		// Climb the tree of parentage until this node is found.
+		for userIdx == -1 {
+			ok := false
+
+			if user, ok = hier.Parent(user); !ok {
+				return nil, fmt.Errorf(InvalidSearchUser)
+			}
+
+			userIdx = hier.ChildIdx(peekScope.Node, user)
+		}
+
 		if userIdx == -1 {
 			return nil, fmt.Errorf(InvalidSearchUser)
 		}
