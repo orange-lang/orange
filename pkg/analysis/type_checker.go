@@ -324,7 +324,9 @@ func (v *typeChecker) VisitParamDecl(node *ast.ParamDecl) {
 	if ty, err := v.findType(node.Type, node); err != nil {
 		v.addError(err.Error())
 	} else {
-		v.SetType(node, ty.Clone())
+		setTy := ty.Clone()
+		setTy.SetFlag(types.FlagLValue)
+		v.SetType(node, setTy)
 	}
 }
 
@@ -335,7 +337,10 @@ func (v *typeChecker) VisitExternFuncStmt(node *ast.ExternFuncStmt) {
 		if paramTy, ok := v.getType(param); !ok {
 			return
 		} else {
-			paramTys = append(paramTys, paramTy.Clone())
+			paramTy := paramTy.Clone()
+			paramTy.UnsetFlag(types.FlagLValue)
+
+			paramTys = append(paramTys, paramTy)
 		}
 	}
 

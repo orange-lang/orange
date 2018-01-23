@@ -28,6 +28,32 @@ func makeLvalue(ty types.Type) types.Type {
 }
 
 var _ = Describe("Type Detection", func() {
+	Describe("ParamDecl", func() {
+		It("must lookup named types", func() {
+			alias := &ast.AliasDecl{Name: "Number", Type: &types.Bool{}}
+			stmt := &ast.ParamDecl{Type: &types.Named{Name: "Number"}}
+
+			block := &ast.BlockStmt{Nodes: []ast.Node{alias, stmt}}
+
+			scope := NewScope(block)
+			ti := NewTypeInfo(scope)
+
+			err := ti.Resolve()
+			Expect(err).To(BeNil())
+
+			ty := ti.Types[stmt]
+			Expect(ty).To(Equal(makeLvalue(&types.Alias{
+				Name: "Number", OriginalType: &types.Bool{},
+			})))
+		})
+
+		It("must turn into an lvalue type", func() {
+			stmt := &ast.ParamDecl{Type: &types.Bool{}}
+			ty, _ := resolveType(stmt)
+			Expect(ty).To(Equal(makeLvalue(&types.Bool{})))
+		})
+	})
+
 	Describe("ExternFuncStmt", func() {
 		It("must have a return type", func() {
 			stmt := &ast.ExternFuncStmt{Name: "foo"}
