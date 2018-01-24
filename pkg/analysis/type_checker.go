@@ -48,6 +48,15 @@ func (v *typeChecker) getType(node ast.Node) (types.Type, bool) {
 	return ty, ok
 }
 
+// tryResolve will resolve a node if it doesn't already have a type
+func (v *typeChecker) tryResolve(node ast.Node) {
+	if _, ok := v.typeInfo.Types[node]; ok {
+		return
+	}
+
+	node.Accept(v)
+}
+
 func (v *typeChecker) SetType(node ast.Node, ty types.Type) {
 	v.typeInfo.Types[node] = ty
 }
