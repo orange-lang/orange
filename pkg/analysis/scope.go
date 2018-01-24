@@ -70,26 +70,23 @@ func (s *Scope) isUniqueVarDecl(hier *ast.Hierarchy, node *ast.VarDecl) bool {
 		}
 	}
 
-	isFuncNode := func(node ast.Node) bool {
-		_, ok := node.(*ast.FunctionStmt)
-		return ok
-	}
-
-	findFuncScope := func() *Scope {
-		peekScope := s
-
-		for peekScope != nil && !isFuncNode(peekScope.Node) {
-			peekScope = peekScope.Parent
+	// Check to see if the node is at the same scope as a function
+	// parameter with the same name.
+	inFunctionBody := func() bool {
+		if _, isBlock := s.Node.(*ast.BlockStmt); !isBlock {
+			return false
+		} else if s.Parent == nil {
+			return false
+		} else if _, isFunc := s.Parent.Node.(*ast.FunctionStmt); !isFunc {
+			return false
 		}
 
-		return peekScope
+		return true
 	}
 
-	// Check to see if any of our parent scopes is a function - if it is,
-	// we have to make sure none of the parameters of that function
-	// declare something of the same name.
-	if funcScope := findFuncScope(); funcScope != nil {
-		funcNode := funcScope.Node.(*ast.FunctionStmt)
+	if inFunctionBody() {
+		funcNode := s.Parent.Node.(*ast.FunctionStmt)
+
 		for _, param := range funcNode.Parameters {
 			if s.nodeDefines(param, node.Name) {
 				return false
