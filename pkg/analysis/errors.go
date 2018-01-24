@@ -29,6 +29,7 @@ const (
 	VarVoidType     = "variables cannot be type void"
 	VarTypeMismatch = "variable declared as type %v but assigned initial value of type %v"
 	VarIncomplete   = "variable declarations require at least a type or an initial value"
+	VarRedeclared   = "variable %v already defined in this scope"
 
 	// FunctionDecl
 	OutOfScope = "variable %v is out of scope from function %v (closures are not yet supported)"

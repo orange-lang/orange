@@ -18,6 +18,10 @@ type typeChecker struct {
 	Error func(e error)
 }
 
+func (v *typeChecker) hierarchy() *ast.Hierarchy {
+	return v.typeInfo.hierarchy
+}
+
 func (v *typeChecker) GetError() error { return v.firstError }
 
 func (v *typeChecker) addError(str string, args ...interface{}) {
@@ -187,6 +191,11 @@ func (v *typeChecker) VisitFloatExpr(node *ast.FloatExpr) {
 
 func (v *typeChecker) VisitVarDecl(node *ast.VarDecl) {
 	var valueTy, hintTy, varType types.Type
+
+	if !v.currentScope.IsUnique(v.hierarchy(), node) {
+		v.addError(VarRedeclared, node)
+		return
+	}
 
 	if node.Type != nil {
 		var err error

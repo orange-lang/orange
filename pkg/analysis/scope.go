@@ -27,6 +27,8 @@ func (s *Scope) nodeDefines(node ast.Node, name string) bool {
 		return declNode.Name == name
 	case *ast.AliasDecl:
 		return declNode.Name == name
+	case *ast.ParamDecl:
+		return declNode.Name == name
 	}
 
 	return false
@@ -40,6 +42,62 @@ func (s *Scope) isPositionalDecl(node ast.Node) bool {
 	}
 
 	return false
+}
+
+func (s *Scope) IsUnique(hier *ast.Hierarchy, user ast.Node) bool {
+	switch node := user.(type) {
+	case *ast.VarDecl:
+		return s.isUniqueVarDecl(hier, node)
+	}
+
+	return true
+}
+
+func (s *Scope) isUniqueVarDecl(hier *ast.Hierarchy, node *ast.VarDecl) bool {
+	parent, _ := hier.Parent(node)
+	if parent == nil {
+		return true
+	}
+
+	nodeIdx := hier.ChildIdx(parent, node)
+
+	// Check direct siblings first
+	for _, sibling := range hier.Siblings(node) {
+		siblingIdx := hier.ChildIdx(parent, sibling)
+
+		if siblingIdx < nodeIdx && s.nodeDefines(sibling, node.Name) {
+			return false
+		}
+	}
+
+	isFuncNode := func(node ast.Node) bool {
+		_, ok := node.(*ast.FunctionStmt)
+		return ok
+	}
+
+	findFuncScope := func() *Scope {
+		peekScope := s
+
+		for peekScope != nil && !isFuncNode(peekScope.Node) {
+			peekScope = peekScope.Parent
+		}
+
+		return peekScope
+	}
+
+	// Check to see if any of our parent scopes is a function - if it is,
+	// we have to make sure none of the parameters of that function
+	// declare something of the same name.
+	if funcScope := findFuncScope(); funcScope != nil {
+		funcNode := funcScope.Node.(*ast.FunctionStmt)
+		for _, param := range funcNode.Parameters {
+			if s.nodeDefines(param, node.Name) {
+				return false
+			}
+		}
+	}
+
+	return true
 }
 
 // FindDecl searches up the list of scopes until a name declared by a specific

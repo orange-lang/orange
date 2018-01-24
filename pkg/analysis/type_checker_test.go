@@ -790,6 +790,36 @@ var _ = Describe("Type Detection", func() {
 			_, err := resolveType(node)
 			Expect(err).To(Equal(fmt.Errorf(VarIncomplete)))
 		})
+
+		It("should be able to shadow a definition in a nested scope", func() {
+			shadow := &ast.VarDecl{Name: "foobar", Type: &types.Bool{}}
+			block := &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.VarDecl{Name: "foobar", Type: &types.Bool{}},
+				&ast.BlockStmt{Nodes: []ast.Node{shadow}},
+			}}
+
+			ti := NewTypeInfo(NewScope(block))
+
+			err := ti.Resolve()
+			Expect(err).To(BeNil())
+
+			ty := ti.Types[shadow]
+			Expect(ty).To(Equal(makeLvalue(&types.Bool{})))
+		})
+
+		It("should not be able to shadow a definition in the same scope", func() {
+			shadow := &ast.VarDecl{Name: "foobar", Type: &types.Bool{}}
+			block := &ast.BlockStmt{Nodes: []ast.Node{
+				&ast.VarDecl{Name: "foobar", Type: &types.Bool{}},
+				shadow,
+			}}
+
+			ti := NewTypeInfo(NewScope(block))
+
+			err := ti.Resolve()
+			Expect(err).To(Equal(fmt.Errorf(VarRedeclared, shadow)))
+		})
+
 	})
 
 	Describe("NamedIDExpr", func() {

@@ -32,6 +32,27 @@ func (h *Hierarchy) Parent(node Node) (Node, bool) {
 	return nil, false
 }
 
+// Siblings gets all the direct siblings of a specific node, not
+// including the node itself.
+func (h *Hierarchy) Siblings(node Node) []Node {
+	var siblings []Node
+	var parent Node
+
+	if parent, _ = h.Parent(node); parent == nil {
+		return siblings
+	}
+
+	for _, child := range h.Children(parent) {
+		if child == node {
+			continue
+		}
+
+		siblings = append(siblings, child)
+	}
+
+	return siblings
+}
+
 // Children gets all the direct children nodes of a certain node.
 // Rewalks the root node of the hierarchy if the children could not
 // be found, then returns nil if the node could not be walked.
